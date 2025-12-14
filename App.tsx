@@ -36,7 +36,8 @@ import {
   Lock,
   Gamepad2,
   Mic2,
-  Settings
+  Settings,
+  Network
 } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { BrowserData } from './types';
@@ -50,6 +51,7 @@ import { AboutModal } from './components/AboutModal';
 import { SensorModal } from './components/SensorModal';
 import { ScoreModal } from './components/ScoreModal';
 import { FingerprintModal } from './components/FingerprintModal';
+import { SettingsModal } from './components/SettingsModal';
 import { RefreshRate } from './components/RefreshRate';
 import { translations, languageNames, Language } from './utils/i18n/index';
 import { applyTheme, getSavedTheme, Theme } from './appearance/theme';
@@ -78,6 +80,7 @@ const App: React.FC = () => {
   const [isSensorModalOpen, setIsSensorModalOpen] = useState(false);
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
   const [isFingerprintModalOpen, setIsFingerprintModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [uaCopied, setUaCopied] = useState(false);
   
   const [permStatus, setPermStatus] = useState<Record<PermissionKey, PermissionStatusType>>({
@@ -344,6 +347,12 @@ const App: React.FC = () => {
             t={t.fingerprintModal}
           />
       )}
+      {isSettingsModalOpen && (
+          <SettingsModal
+            onClose={() => setIsSettingsModalOpen(false)}
+            t={t.settingsModal}
+          />
+      )}
 
       <div className="max-w-7xl mx-auto space-y-8">
         
@@ -365,6 +374,14 @@ const App: React.FC = () => {
                 title={theme === 'dark' ? t.actions.theme_light : t.actions.theme_dark}
             >
                 {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+            
+            <button 
+                onClick={() => setIsSettingsModalOpen(true)}
+                className="flex items-center justify-center p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm active:scale-95"
+                title="Settings & Tools"
+            >
+                <Network size={16} />
             </button>
             
             <button 

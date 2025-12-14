@@ -119,6 +119,7 @@ export interface Translation {
     sensor_allow: string;
     accelerometer: string;
     gyroscope: string;
+    magnetometer: string;
     close: string;
   };
 
@@ -132,5 +133,23 @@ export interface Translation {
     factors: Record<string, string>;
     values: Record<string, string>;
     descriptions: Record<string, string>;
+  };
+
+  settingsModal: {
+    title: string;
+    tab_cdn: string;
+    tab_conn: string;
+    tab_resources: string;
+    cdn_status: string;
+    latency: string;
+    check_all: string;
+    url_placeholder: string;
+    test_conn: string;
+    test_result: string;
+    resource_list: string;
+    res_name: string;
+    res_type: string;
+    res_duration: string;
+    close: string;
   };
 }

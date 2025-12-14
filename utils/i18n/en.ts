@@ -269,7 +269,7 @@ export const en: Translation = {
     desc: "BrowserScope is a comprehensive browser analysis tool designed to verify your system's capabilities and fingerprint uniqueness.",
     version: "Version",
     changelog: "Changelog",
-    latest_update: "Added Privacy & Security detection (WebRTC/Bot), multi-monitor & gamepad support, and richer network/media analysis.",
+    latest_update: "Added network diagnostics (CDN/Connectivity), expanded sensor support (Magnetometer), and external resource analysis.",
     close: "Close"
   },
 
@@ -279,6 +279,7 @@ export const en: Translation = {
     sensor_allow: "Allow Access",
     accelerometer: "Accelerometer",
     gyroscope: "Gyroscope",
+    magnetometer: "Magnetometer",
     close: "Close"
   },
 
@@ -321,5 +322,23 @@ export const en: Translation = {
       desc_battery_generic: "Battery status is hidden or unsupported.",
       desc_locale_unique: "Timezone and language settings narrow down location."
     }
+  },
+
+  settingsModal: {
+    title: "Network & Diagnostics",
+    tab_cdn: "CDN Status",
+    tab_conn: "Connectivity",
+    tab_resources: "Resources",
+    cdn_status: "Library Status",
+    latency: "Latency",
+    check_all: "Check All",
+    url_placeholder: "Enter URL (e.g., https://google.com)",
+    test_conn: "Test Connectivity",
+    test_result: "Result",
+    resource_list: "External Resources",
+    res_name: "Resource URL",
+    res_type: "Type",
+    res_duration: "Duration",
+    close: "Close"
   }
 };

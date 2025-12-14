@@ -269,7 +269,7 @@ export const zhCN: Translation = {
     desc: "BrowserScope 是一款全面的浏览器分析工具，旨在验证您的系统能力和指纹唯一性。",
     version: "版本",
     changelog: "更新日志",
-    latest_update: "新增隐私与安全检测 (WebRTC/Bot)、多显示器与手柄支持、以及更丰富的网络和媒体能力分析。",
+    latest_update: "新增网络诊断 (CDN/连通性测试)、扩展传感器支持 (磁力计) 及外部资源分析。",
     close: "关闭"
   },
 
@@ -279,6 +279,7 @@ export const zhCN: Translation = {
     sensor_allow: "允许访问",
     accelerometer: "加速度计",
     gyroscope: "陀螺仪",
+    magnetometer: "磁力计",
     close: "关闭"
   },
 
@@ -321,5 +322,23 @@ export const zhCN: Translation = {
       desc_battery_generic: "电池状态已被隐藏或不支持。",
       desc_locale_unique: "时区和语言设置可缩小用户的位置范围。"
     }
+  },
+
+  settingsModal: {
+    title: "网络与诊断",
+    tab_cdn: "CDN 状态",
+    tab_conn: "连通性测试",
+    tab_resources: "外部资源",
+    cdn_status: "依赖库状态",
+    latency: "延迟",
+    check_all: "检查所有",
+    url_placeholder: "输入 URL (如 https://google.com)",
+    test_conn: "测试连通性",
+    test_result: "测试结果",
+    resource_list: "已加载资源",
+    res_name: "资源 URL",
+    res_type: "类型",
+    res_duration: "加载耗时",
+    close: "关闭"
   }
 };

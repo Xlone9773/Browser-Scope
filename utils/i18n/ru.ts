@@ -1,4 +1,3 @@
-
 import { Translation } from './types';
 import { en } from './en';
 
@@ -271,6 +270,7 @@ export const ru: Translation = {
     sensor_allow: "Разрешить доступ",
     accelerometer: "Акселерометр",
     gyroscope: "Гироскоп",
+    magnetometer: "Магнитометр",
     close: "Закрыть"
   },
 

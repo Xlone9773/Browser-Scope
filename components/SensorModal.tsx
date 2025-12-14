@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Activity, Compass, Move } from 'lucide-react';
+import { X, Activity, Compass, Move, Navigation } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 
 interface SensorModalProps {
   onClose: () => void;
-  t: any; // Using any for flexibility with new translations, ideally strongly typed
+  t: Translation['sensorModal'];
 }
 
 export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
@@ -14,7 +15,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
   
   const [accel, setAccel] = useState({ x: 0, y: 0, z: 0 });
   const [gyro, setGyro] = useState({ alpha: 0, beta: 0, gamma: 0 });
-  const [maxAccel, setMaxAccel] = useState(0);
+  const [magnet, setMagnet] = useState<{ x: number, y: number, z: number } | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 10);
@@ -36,9 +37,6 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
               y: y || 0, 
               z: z || 0 
           });
-          
-          const total = Math.sqrt((x||0)**2 + (y||0)**2 + (z||0)**2);
-          setMaxAccel(prev => Math.max(prev, total));
       }
   };
 
@@ -49,6 +47,31 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
           gamma: event.gamma || 0
       });
   };
+
+  // Setup Magnetometer
+  useEffect(() => {
+      let magSensor: any = null;
+
+      // Check if Magnetometer API is available (usually Chrome/Android behind flag or HTTPS)
+      if ('Magnetometer' in window) {
+          try {
+              // @ts-ignore
+              magSensor = new Magnetometer({ frequency: 10 });
+              magSensor.addEventListener('reading', () => {
+                  setMagnet({ x: magSensor.x, y: magSensor.y, z: magSensor.z });
+              });
+              magSensor.start();
+          } catch (error) {
+              console.log("Magnetometer not supported or permission denied", error);
+          }
+      } 
+      // Fallback: iOS sometimes provides webkitCompassHeading, but raw magnetic field isn't standard in DeviceOrientation
+      // However, deviceorientationabsolute provides absolute orientation which implies magnetometer usage.
+      
+      return () => {
+          if (magSensor) magSensor.stop();
+      };
+  }, []);
 
   const requestPermission = async () => {
       // iOS 13+ requires permission for these events
@@ -224,10 +247,45 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         </div>
                     </div>
                 </div>
+
+                {/* Magnetometer (Full Width) */}
+                <div className="col-span-1 md:col-span-2 bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div className="flex items-center gap-2 mb-4">
+                        <div className="p-2 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400">
+                            <Navigation size={20} />
+                        </div>
+                        <div className="flex flex-col">
+                            <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.magnetometer}</h3>
+                            <span className="text-[10px] text-slate-400">Requires dedicated hardware & permissions</span>
+                        </div>
+                    </div>
+                    
+                    {magnet ? (
+                         <div className="grid grid-cols-3 gap-4">
+                            <div className="text-center">
+                                <div className="text-xs text-slate-400 mb-1">X (µT)</div>
+                                <div className="font-mono font-bold text-slate-700 dark:text-slate-300">{magnet.x.toFixed(2)}</div>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-xs text-slate-400 mb-1">Y (µT)</div>
+                                <div className="font-mono font-bold text-slate-700 dark:text-slate-300">{magnet.y.toFixed(2)}</div>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-xs text-slate-400 mb-1">Z (µT)</div>
+                                <div className="font-mono font-bold text-slate-700 dark:text-slate-300">{magnet.z.toFixed(2)}</div>
+                            </div>
+                         </div>
+                    ) : (
+                        <div className="text-center py-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs">
+                            Magnetometer API unavailable or permission denied.<br/>
+                            Try enabling "Generic Sensor Extra Classes" flag in chrome://flags on Android.
+                        </div>
+                    )}
+                </div>
             </div>
             
             <div className="mt-4 text-center text-xs text-slate-400">
-                Data provided by DeviceMotion & DeviceOrientation APIs.
+                Data provided by DeviceMotion, DeviceOrientation & Magnetometer APIs.
             </div>
         </div>
         

@@ -1,4 +1,3 @@
-
 import { Translation } from './types';
 import { en } from './en';
 
@@ -271,6 +270,7 @@ export const ja: Translation = {
     sensor_allow: "アクセスを許可",
     accelerometer: "加速度センサー",
     gyroscope: "ジャイロスコープ",
+    magnetometer: "磁力計",
     close: "閉じる"
   },
   
