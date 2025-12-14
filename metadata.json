@@ -1,0 +1,9 @@
+{
+  "name": "BrowserScope",
+  "description": "A comprehensive browser and device capability detection tool featuring a clean, minimalist design.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

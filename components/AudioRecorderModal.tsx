@@ -1,0 +1,395 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Mic, Square, Download, Play, Pause, RefreshCw, Activity, Music } from 'lucide-react';
+import { Translation } from '../utils/i18n/types';
+
+interface AudioRecorderModalProps {
+  onClose: () => void;
+  t: Translation['audioTool'];
+}
+
+export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose, t }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyzerRef = useRef<AnalyserNode | null>(null);
+  const dataArrayRef = useRef<Uint8Array | null>(null);
+  const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // New info states
+  const [fileSize, setFileSize] = useState<string>('');
+  const [sampleRate, setSampleRate] = useState<number>(0);
+  const [mimeType, setMimeType] = useState<string>('');
+
+  const [isVisible, setIsVisible] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 10);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  };
+
+  // Timer for duration
+  useEffect(() => {
+    let interval: number;
+    if (isRecording) {
+      interval = window.setInterval(() => {
+        setRecordingDuration(d => d + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isRecording]);
+
+  // Audio Playback Listener
+  useEffect(() => {
+      const player = audioPlayerRef.current;
+      if (player) {
+          const onEnded = () => setIsPlaying(false);
+          const onPause = () => setIsPlaying(false);
+          const onPlay = () => setIsPlaying(true);
+          
+          player.addEventListener('ended', onEnded);
+          player.addEventListener('pause', onPause);
+          player.addEventListener('play', onPlay);
+          
+          return () => {
+              player.removeEventListener('ended', onEnded);
+              player.removeEventListener('pause', onPause);
+              player.removeEventListener('play', onPlay);
+          }
+      }
+  }, [audioUrl]);
+
+  // Visualizer Loop
+  const drawVisualizer = () => {
+    if (!canvasRef.current || !analyzerRef.current || !dataArrayRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const analyzer = analyzerRef.current;
+    const dataArray = dataArrayRef.current;
+
+    if (!ctx) return;
+
+    const bufferLength = analyzer.frequencyBinCount;
+    analyzer.getByteFrequencyData(dataArray);
+
+    ctx.fillStyle = 'rgb(248, 250, 252)'; // slate-50 (This needs to be dynamic or transparent for dark mode)
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Use clearRect for transparency
+
+    const barWidth = (canvas.width / bufferLength) * 2.5;
+    let barHeight;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+      barHeight = (dataArray[i] / 255) * canvas.height;
+
+      // Gradient color based on height
+      const hue = 220 + (barHeight / canvas.height) * 40; // Blue/Indigo range
+      ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+
+      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+      x += barWidth + 1;
+    }
+
+    animationRef.current = requestAnimationFrame(drawVisualizer);
+  };
+
+  // Start Mic
+  useEffect(() => {
+    const initAudio = async () => {
+      try {
+        const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        setStream(localStream);
+        
+        // Setup Audio Context for Visualizer
+        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+        const audioCtx = new AudioContext();
+        setSampleRate(audioCtx.sampleRate);
+        
+        const analyzer = audioCtx.createAnalyser();
+        const source = audioCtx.createMediaStreamSource(localStream);
+        
+        analyzer.fftSize = 2048;
+        const bufferLength = analyzer.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        
+        source.connect(analyzer);
+        
+        audioContextRef.current = audioCtx;
+        analyzerRef.current = analyzer;
+        dataArrayRef.current = dataArray;
+        sourceRef.current = source;
+        
+        drawVisualizer();
+
+      } catch (err) {
+        console.error("Error accessing microphone:", err);
+        setError(t.error_mic);
+      }
+    };
+
+    initAudio();
+
+    // Enhanced cleanup to ensure microphone is stopped
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      
+      // Stop recording if active
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+      }
+
+      // Disconnect nodes
+      if (sourceRef.current) sourceRef.current.disconnect();
+      if (audioContextRef.current) {
+         if (audioContextRef.current.state !== 'closed') {
+            audioContextRef.current.close();
+         }
+      }
+
+      // Stop all tracks to release microphone hardware
+      if (stream) {
+         stream.getTracks().forEach(track => {
+             track.stop();
+             track.enabled = false;
+         });
+      }
+    };
+  }, []);
+
+  const startRecording = () => {
+    if (!stream) return;
+    
+    try {
+        const recorder = new MediaRecorder(stream);
+        setMimeType(recorder.mimeType);
+        const chunks: Blob[] = [];
+
+        recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) chunks.push(e.data);
+        };
+
+        recorder.onstop = () => {
+            // Create blob with actual mime type from recorder
+            const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+            setAudioBlob(blob);
+            setAudioUrl(URL.createObjectURL(blob));
+            
+            // Format size
+            const sizeInKB = blob.size / 1024;
+            setFileSize(sizeInKB > 1024 ? `${(sizeInKB / 1024).toFixed(2)} MB` : `${sizeInKB.toFixed(2)} KB`);
+        };
+
+        recorder.start();
+        mediaRecorderRef.current = recorder;
+        setIsRecording(true);
+        setRecordingDuration(0);
+        setAudioBlob(null);
+        setAudioUrl(null);
+    } catch (e) {
+        console.error("Recorder error:", e);
+    }
+  };
+
+  const stopRecording = () => {
+      if (mediaRecorderRef.current && isRecording) {
+          mediaRecorderRef.current.stop();
+          setIsRecording(false);
+      }
+  };
+
+  const togglePlayback = () => {
+      if (audioPlayerRef.current) {
+          if (isPlaying) {
+              audioPlayerRef.current.pause();
+          } else {
+              audioPlayerRef.current.play();
+          }
+      }
+  };
+
+  const downloadAudio = () => {
+      if (audioUrl) {
+          const link = document.createElement('a');
+          link.href = audioUrl;
+          // Extract extension from mimeType if possible, default to webm
+          const ext = mimeType.includes('mp4') ? 'mp4' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+          link.download = `audio-recording-${Date.now()}.${ext}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+      }
+  };
+
+  const reset = () => {
+      setAudioBlob(null);
+      setAudioUrl(null);
+      setRecordingDuration(0);
+  };
+
+  const formatTime = (seconds: number) => {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm transition-all duration-300 ease-out ${
+      isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
+    }`}>
+      <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col transition-all duration-300 ease-out transform ${
+            isVisible && !isClosing 
+            ? 'opacity-100 scale-100 blur-0 translate-y-0' 
+            : 'opacity-0 scale-95 blur-sm translate-y-4'
+      }`}>
+        
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800">
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <Mic className="text-indigo-600 dark:text-indigo-400" />
+            {t.title}
+          </h2>
+          <button 
+            onClick={handleClose}
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500 dark:text-slate-400"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 bg-slate-50 dark:bg-slate-900 flex flex-col gap-6 items-center">
+            
+            {error ? (
+                <div className="text-red-500 font-medium text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg w-full">
+                    {error}
+                </div>
+            ) : (
+                <>
+                    {/* Visualizer Area */}
+                    <div className="w-full h-32 bg-slate-200 dark:bg-slate-800 rounded-xl overflow-hidden relative shadow-inner border border-slate-200 dark:border-slate-700">
+                        <canvas ref={canvasRef} width={500} height={128} className="w-full h-full" />
+                        
+                        {!audioUrl && (
+                             <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2 py-1 bg-black/10 dark:bg-white/10 rounded-full">
+                                <Activity size={12} className="text-slate-600 dark:text-slate-300" />
+                                <span className="text-[10px] font-medium text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+                                    {isRecording ? "Recording" : t.listening}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Timer */}
+                    <div className="font-mono text-4xl font-bold text-slate-700 dark:text-slate-200 tracking-wider">
+                        {formatTime(recordingDuration)}
+                    </div>
+
+                    {/* Controls */}
+                    <div className="flex gap-4 items-center">
+                        {!audioUrl ? (
+                            !isRecording ? (
+                                <button 
+                                    onClick={startRecording}
+                                    className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-red-200 dark:shadow-red-900/50 hover:bg-red-600 hover:scale-105 active:scale-95 transition-all"
+                                    title={t.start_record}
+                                >
+                                    <Mic size={32} />
+                                </button>
+                            ) : (
+                                <button 
+                                    onClick={stopRecording}
+                                    className="w-16 h-16 bg-slate-800 dark:bg-slate-600 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-slate-900 dark:hover:bg-slate-700 hover:scale-105 active:scale-95 transition-all"
+                                    title={t.stop_record}
+                                >
+                                    <Square size={28} fill="currentColor" />
+                                </button>
+                            )
+                        ) : (
+                            <div className="flex gap-3">
+                                <button 
+                                    onClick={reset}
+                                    className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-all"
+                                    title="Reset"
+                                >
+                                    <RefreshCw size={20} />
+                                </button>
+                                
+                                <button 
+                                    onClick={togglePlayback}
+                                    className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-indigo-200 dark:shadow-indigo-900/50 hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all"
+                                >
+                                    {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
+                                </button>
+                                
+                                <button 
+                                    onClick={downloadAudio}
+                                    className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-all"
+                                    title={t.download}
+                                >
+                                    <Download size={20} />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Info Stats (Shows after recording) */}
+                    {audioUrl && (
+                        <div className="grid grid-cols-3 gap-2 w-full mt-2">
+                             <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
+                                 <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">{t.details_size}</div>
+                                 <div className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{fileSize}</div>
+                             </div>
+                             <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
+                                 <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">{t.details_rate}</div>
+                                 <div className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{sampleRate} Hz</div>
+                             </div>
+                             <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
+                                 <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">{t.details_type}</div>
+                                 <div className="font-semibold text-slate-700 dark:text-slate-200 text-xs break-all pt-1" title={mimeType}>
+                                     {mimeType.split(';')[0]}
+                                 </div>
+                             </div>
+                        </div>
+                    )}
+                    
+                    {/* Hidden Audio Element */}
+                    {audioUrl && (
+                        <audio ref={audioPlayerRef} src={audioUrl} />
+                    )}
+                </>
+            )}
+
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex justify-end">
+             <button 
+                onClick={handleClose}
+                className="px-5 py-2 text-slate-500 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+             >
+                {t.close}
+             </button>
+        </div>
+      </div>
+    </div>
+  );
+};
