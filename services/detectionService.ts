@@ -1,4 +1,4 @@
-import { ExtendedNavigator, BrowserData, BatteryManager, FeatureItem, CodecInfo } from '../types';
+import { ExtendedNavigator, BrowserData, BatteryManager, FeatureItem, CodecInfo, FingerprintScore, ScoreFactor } from '../types';
 
 const nav = navigator as ExtendedNavigator;
 
@@ -196,6 +196,9 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'Compression Streams', key: 'compression', supported: 'CompressionStream' in window, description: 'Native GZIP/Deflate' },
     { name: 'Web Transport', key: 'webTransport', supported: 'WebTransport' in window, description: 'Low-latency bidirectional streaming' },
     { name: 'Eye Dropper', key: 'eyeDropper', supported: 'EyeDropper' in window, description: 'System color picker' },
+    { name: 'Accelerometer', key: 'accelerometer', supported: 'Accelerometer' in window, description: 'Motion sensor' },
+    { name: 'Gyroscope', key: 'gyroscope', supported: 'Gyroscope' in window, description: 'Orientation sensor' },
+    { name: 'Ambient Light', key: 'ambientLight', supported: 'AmbientLightSensor' in window, description: 'Light level sensor' },
   ];
   return features;
 };
@@ -268,18 +271,26 @@ const getMediaSupport = (): { video: CodecInfo[], audio: CodecInfo[] } => {
   };
 };
 
-const getStorageEstimate = async (): Promise<{ quota: string, usage: string }> => {
+const getStorageEstimate = async (): Promise<{ quota: string, usage: string, persisted: boolean }> => {
+  let quota = 'Unknown';
+  let usage = '0 MB';
+  let persisted = false;
+
   if (navigator.storage && navigator.storage.estimate) {
     try {
       const estimate = await navigator.storage.estimate();
-      const quota = estimate.quota ? (estimate.quota / 1024 / 1024 / 1024).toFixed(2) + ' GB' : 'Unknown';
-      const usage = estimate.usage ? (estimate.usage / 1024 / 1024).toFixed(2) + ' MB' : '0 MB';
-      return { quota, usage };
-    } catch {
-      return { quota: 'Unavailable', usage: 'Unavailable' };
-    }
+      quota = estimate.quota ? (estimate.quota / 1024 / 1024 / 1024).toFixed(2) + ' GB' : 'Unknown';
+      usage = estimate.usage ? (estimate.usage / 1024 / 1024).toFixed(2) + ' MB' : '0 MB';
+    } catch {}
   }
-  return { quota: 'Not Supported', usage: 'Not Supported' };
+
+  if (navigator.storage && navigator.storage.persisted) {
+    try {
+      persisted = await navigator.storage.persisted();
+    } catch {}
+  }
+
+  return { quota, usage, persisted };
 };
 
 const getAudioContextInfo = () => {
@@ -303,6 +314,71 @@ const getColorGamut = () => {
     return 'Unknown';
 };
 
+const calculateFingerprintScore = (
+    canvasHash: string, 
+    webglHash: string, 
+    userAgent: string, 
+    screenRes: string,
+    battery: string,
+    audioRate: string
+): FingerprintScore => {
+    const factors: ScoreFactor[] = [];
+    let score = 0;
+
+    // Canvas
+    if (canvasHash && canvasHash !== 'Error' && canvasHash !== 'Not Supported') {
+        score += 25;
+        factors.push({ id: 'canvas_hash', value: 'Unique', score: 25, maxScore: 25, description: 'desc_canvas' });
+    } else {
+        factors.push({ id: 'canvas_hash', value: 'Generic', score: 0, maxScore: 25, description: 'desc_canvas_fail' });
+    }
+
+    // WebGL
+    if (webglHash && webglHash !== 'Error' && webglHash !== 'Not Supported') {
+        score += 20;
+        factors.push({ id: 'webgl_hash', value: 'Unique', score: 20, maxScore: 20, description: 'desc_webgl' });
+    } else {
+        factors.push({ id: 'webgl_hash', value: 'Generic', score: 0, maxScore: 20, description: 'desc_webgl_fail' });
+    }
+
+    // User Agent
+    if (userAgent && userAgent.length > 50) {
+        score += 15;
+        factors.push({ id: 'user_agent', value: 'Specific', score: 15, maxScore: 15, description: 'desc_ua' });
+    }
+
+    // Screen
+    if (screenRes && screenRes !== 'Unknown') {
+        score += 10;
+        factors.push({ id: 'resolution', value: screenRes, score: 10, maxScore: 10, description: 'desc_res' });
+    }
+
+    // Audio
+    if (audioRate && audioRate !== 'Unknown' && audioRate !== 'Error') {
+        score += 10;
+        factors.push({ id: 'audio_context', value: audioRate, score: 10, maxScore: 10, description: 'desc_audio' });
+    }
+
+    // Battery (Highly tracking if available)
+    if (battery && battery !== 'Unknown' && battery !== 'Unavailable' && battery !== 'Not Supported') {
+        score += 15;
+        factors.push({ id: 'battery', value: 'Readable', score: 15, maxScore: 15, description: 'desc_battery' });
+    } else {
+        factors.push({ id: 'battery', value: 'Protected', score: 0, maxScore: 15, description: 'desc_battery_safe' });
+    }
+
+    // Timezone & Language (Combined)
+    score += 5;
+    factors.push({ id: 'locale_time', value: 'Readable', score: 5, maxScore: 5, description: 'desc_locale' });
+
+    let rating: 'Low' | 'Medium' | 'High' | 'Critical' = 'Low';
+    if (score > 80) rating = 'Critical';
+    else if (score > 60) rating = 'High';
+    else if (score > 30) rating = 'Medium';
+
+    return { totalScore: score, rating, factors };
+};
+
 export const getAllData = async (): Promise<BrowserData> => {
   const gpu = getGPUInfo();
   const battery = await getBatteryInfo();
@@ -314,6 +390,15 @@ export const getAllData = async (): Promise<BrowserData> => {
   const canvasInfo = getCanvasFingerprint();
   const webglHash = getWebGLFingerprint();
   const webglExtensions = getWebGLExtensions();
+  
+  const score = calculateFingerprintScore(
+      canvasInfo.hash, 
+      webglHash, 
+      navigator.userAgent, 
+      `${window.screen.width} x ${window.screen.height}`,
+      battery.level,
+      audioInfo.rate
+  );
 
   return {
     system: {
@@ -322,6 +407,7 @@ export const getAllData = async (): Promise<BrowserData> => {
       browserName: browser.name,
       browserVersion: browser.version,
       language: navigator.language,
+      preferredLanguages: [...(navigator.languages || [])],
       userAgent: navigator.userAgent,
       cookiesEnabled: navigator.cookieEnabled,
       doNotTrack: navigator.doNotTrack || 'Unspecified',
@@ -344,6 +430,7 @@ export const getAllData = async (): Promise<BrowserData> => {
       webglRenderer: gpu.renderer,
       webglExtensions: webglExtensions,
       audioLatency: audioInfo.latency,
+      score: score,
     },
     display: {
       resolution: `${window.screen.width} x ${window.screen.height}`,
@@ -365,7 +452,11 @@ export const getAllData = async (): Promise<BrowserData> => {
       saveData: connection ? connection.saveData || false : false,
     },
     media: mediaSupport,
-    storage: storage,
+    storage: {
+      quota: storage.quota,
+      usage: storage.usage,
+      persisted: storage.persisted,
+    },
     localization: {
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       locale: Intl.DateTimeFormat().resolvedOptions().locale,

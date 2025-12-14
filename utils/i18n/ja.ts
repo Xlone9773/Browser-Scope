@@ -26,6 +26,7 @@ export const ja: Translation = {
     platform: "プラットフォーム",
     browser: "ブラウザ",
     language: "言語",
+    pref_langs: "優先言語リスト",
     cookies: "Cookie 有効",
     dnt: "Do Not Track",
     
@@ -41,8 +42,10 @@ export const ja: Translation = {
     canvas_hash: "Canvas ハッシュ",
     webgl_hash: "WebGL ハッシュ",
     audio_latency: "音声レイテンシ",
+    fp_score: "独自性スコア",
     
     resolution: "画面解像度",
+    refresh_rate: "リフレッシュレート (推定)",
     avail_size: "利用可能サイズ",
     window_size: "ウィンドウサイズ",
     pixel_ratio: "ピクセル比 (DPR)",
@@ -64,6 +67,7 @@ export const ja: Translation = {
     calendar: "カレンダー",
     storage_quota: "ストレージ割り当て (推定)",
     storage_usage: "使用済みストレージ",
+    storage_persisted: "永続的ストレージ",
     
     video_codecs: "ビデオコーデック",
     audio_codecs: "オーディオコーデック",
@@ -95,6 +99,8 @@ export const ja: Translation = {
     export_json: "JSONをエクスポート",
     view_extensions: "拡張機能を表示",
     view_base64: "Base64",
+    view_details: "詳細を表示",
+    open_sensors: "センサーを開く",
     copy: "コピー",
     copied: "コピーしました",
     zoom: "拡大",
@@ -164,7 +170,24 @@ export const ja: Translation = {
     version: "バージョン",
     desc: "ブラウザ機能、ハードウェア情報、およびネットワークステータスをローカルでチェックする、軽量でプライバシーに配慮したツールです。",
     changelog: "更新履歴",
-    latest_update: "PWA機能検出、Canvas Base64ツール、UI改善を追加。",
+    latest_update: "リフレッシュレート検出、ストレージ永続性、センサーAPIステータスを追加。",
+    close: "閉じる"
+  },
+
+  sensorModal: {
+    sensor_title: "リアルタイムセンサーデータ",
+    accelerometer: "加速度センサー (Accelerometer)",
+    gyroscope: "ジャイロスコープ (Gyroscope)",
+    sensor_permission_desc: "この機能には、デバイスのモーションセンサーへのアクセス権限が必要です。続行するには許可してください。",
+    sensor_allow: "センサーへのアクセスを許可",
+    close: "閉じる"
+  },
+
+  scoreModal: {
+    score_details_title: "指紋スコアの詳細",
+    tracking_potential: "追跡の可能性",
+    score_explanation: "スコアが高いほど、Webサイトで利用可能な一意の識別データが多くなり、追跡される可能性が高くなります。",
+    contributing_factors: "寄与要因",
     close: "閉じる"
   },
 
@@ -198,6 +221,9 @@ export const ja: Translation = {
     compression: "Compression Streams",
     webTransport: "Web Transport",
     eyeDropper: "スポイトツール (EyeDropper)",
+    accelerometer: "加速度センサー (Accelerometer)",
+    gyroscope: "ジャイロスコープ (Gyroscope)",
+    ambientLight: "環境光センサー (Ambient Light)",
   },
   
   featureDescs: {
@@ -225,5 +251,8 @@ export const ja: Translation = {
     compression: "ネイティブ GZIP/Deflate 圧縮",
     webTransport: "低遅延双方向ストリーミング",
     eyeDropper: "システムカラーピッカー",
+    accelerometer: "モーションセンサー (API サポート)",
+    gyroscope: "方向センサー (API サポート)",
+    ambientLight: "光レベルセンサー (API サポート)",
   }
 };

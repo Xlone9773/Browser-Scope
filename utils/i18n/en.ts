@@ -26,6 +26,7 @@ export const en: Translation = {
     platform: "Platform",
     browser: "Browser",
     language: "Language",
+    pref_langs: "Preferred Languages",
     cookies: "Cookies Enabled",
     dnt: "Do Not Track",
     
@@ -41,8 +42,10 @@ export const en: Translation = {
     canvas_hash: "Canvas Hash",
     webgl_hash: "WebGL Hash",
     audio_latency: "Audio Latency",
+    fp_score: "Uniqueness Score",
     
     resolution: "Screen Resolution",
+    refresh_rate: "Refresh Rate (Est.)",
     avail_size: "Available Size",
     window_size: "Window Size",
     pixel_ratio: "Pixel Ratio",
@@ -64,6 +67,7 @@ export const en: Translation = {
     calendar: "Calendar",
     storage_quota: "Est. Storage Quota",
     storage_usage: "Used Storage",
+    storage_persisted: "Persistence",
     
     video_codecs: "Video Codecs",
     audio_codecs: "Audio Codecs",
@@ -95,6 +99,8 @@ export const en: Translation = {
     export_json: "Export JSON",
     view_extensions: "View Extensions",
     view_base64: "Base64",
+    view_details: "View Details",
+    open_sensors: "Open Sensors",
     copy: "Copy",
     copied: "Copied!",
     zoom: "Zoom",
@@ -164,7 +170,24 @@ export const en: Translation = {
     version: "Version",
     desc: "A lightweight, privacy-focused tool to check your browser capabilities, hardware info, and network status locally.",
     changelog: "Changelog",
-    latest_update: "Added PWA feature detection, Canvas Base64 tool, and UI improvements.",
+    latest_update: "Added real-time sensor monitor (accelerometer/gyro), fingerprint uniqueness scoring system, and improved UI details.",
+    close: "Close"
+  },
+
+  sensorModal: {
+    sensor_title: "Real-time Sensors",
+    accelerometer: "Accelerometer",
+    gyroscope: "Gyroscope",
+    sensor_permission_desc: "This feature requires access to device motion sensors. Please allow access to proceed.",
+    sensor_allow: "Allow Sensor Access",
+    close: "Close"
+  },
+
+  scoreModal: {
+    score_details_title: "Fingerprint Score Details",
+    tracking_potential: "Tracking Potential",
+    score_explanation: "Higher score indicates more unique identifying data is available to websites, increasing trackability.",
+    contributing_factors: "Contributing Factors",
     close: "Close"
   },
 
@@ -198,6 +221,9 @@ export const en: Translation = {
     compression: "Compression Streams",
     webTransport: "Web Transport",
     eyeDropper: "Eye Dropper",
+    accelerometer: "Accelerometer",
+    gyroscope: "Gyroscope",
+    ambientLight: "Ambient Light Sensor",
   },
   
   featureDescs: {
@@ -225,5 +251,8 @@ export const en: Translation = {
     compression: "Native GZIP/Deflate",
     webTransport: "Low-latency bidirectional streaming",
     eyeDropper: "System color picker",
+    accelerometer: "Motion sensor (API support)",
+    gyroscope: "Orientation sensor (API support)",
+    ambientLight: "Light level sensor (API support)",
   }
 };

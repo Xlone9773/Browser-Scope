@@ -26,6 +26,7 @@ export const zhCN: Translation = {
     platform: "系统平台",
     browser: "浏览器内核",
     language: "系统语言",
+    pref_langs: "首选语言列表",
     cookies: "Cookies 启用",
     dnt: "Do Not Track",
     
@@ -41,8 +42,10 @@ export const zhCN: Translation = {
     canvas_hash: "Canvas 指纹 (Hash)",
     webgl_hash: "WebGL 指纹 (Hash)",
     audio_latency: "音频延迟",
+    fp_score: "唯一性评分",
     
     resolution: "屏幕分辨率",
+    refresh_rate: "屏幕刷新率 (估算)",
     avail_size: "可用尺寸",
     window_size: "窗口尺寸",
     pixel_ratio: "像素密度 (DPR)",
@@ -64,6 +67,7 @@ export const zhCN: Translation = {
     calendar: "日历格式",
     storage_quota: "可用存储配额",
     storage_usage: "已用存储",
+    storage_persisted: "持久化存储",
     
     video_codecs: "视频编码支持",
     audio_codecs: "音频编码支持",
@@ -95,6 +99,8 @@ export const zhCN: Translation = {
     export_json: "导出 JSON",
     view_extensions: "查看扩展列表",
     view_base64: "Base64 源码",
+    view_details: "查看详情",
+    open_sensors: "打开传感器",
     copy: "复制",
     copied: "已复制",
     zoom: "放大",
@@ -164,7 +170,24 @@ export const zhCN: Translation = {
     version: "当前版本",
     desc: "一个轻量级、注重隐私的浏览器能力检测工具，可快速查看硬件信息、网络状态及 Web API 支持情况。",
     changelog: "更新日志",
-    latest_update: "新增 PWA 特性检测、Canvas Base64 工具及 UI 改进。",
+    latest_update: "新增实时传感器监测 (加速度计/陀螺仪)、指纹唯一性评分系统及界面细节优化。",
+    close: "关闭"
+  },
+
+  sensorModal: {
+    sensor_title: "实时传感器数据",
+    accelerometer: "加速度计 (Accelerometer)",
+    gyroscope: "陀螺仪 (Gyroscope)",
+    sensor_permission_desc: "该功能需要访问设备运动传感器权限。请允许以继续。",
+    sensor_allow: "允许访问传感器",
+    close: "关闭"
+  },
+
+  scoreModal: {
+    score_details_title: "指纹评分详情",
+    tracking_potential: "追踪风险",
+    score_explanation: "分数越高表示暴露给网站的唯一识别数据越多，被追踪的风险越大。",
+    contributing_factors: "影响因素",
     close: "关闭"
   },
 
@@ -198,6 +221,9 @@ export const zhCN: Translation = {
     compression: "原生压缩流",
     webTransport: "Web Transport",
     eyeDropper: "吸管工具 (EyeDropper)",
+    accelerometer: "加速计 (Accelerometer)",
+    gyroscope: "陀螺仪 (Gyroscope)",
+    ambientLight: "环境光传感器 (Ambient Light)",
   },
   
   featureDescs: {
@@ -225,5 +251,8 @@ export const zhCN: Translation = {
     compression: "原生 GZIP/Deflate 压缩",
     webTransport: "低延迟双向数据传输",
     eyeDropper: "系统级屏幕取色",
+    accelerometer: "运动检测传感器 (API 支持)",
+    gyroscope: "方向检测传感器 (API 支持)",
+    ambientLight: "环境亮度检测 (API 支持)",
   }
 };

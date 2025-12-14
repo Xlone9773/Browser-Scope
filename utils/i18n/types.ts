@@ -26,6 +26,7 @@ export interface Translation {
     platform: string;
     browser: string;
     language: string;
+    pref_langs: string; // New
     cookies: string;
     dnt: string;
     
@@ -41,8 +42,10 @@ export interface Translation {
     canvas_hash: string;
     webgl_hash: string;
     audio_latency: string;
+    fp_score: string; // New
     
     resolution: string;
+    refresh_rate: string; // New
     avail_size: string;
     window_size: string;
     pixel_ratio: string;
@@ -64,6 +67,7 @@ export interface Translation {
     calendar: string;
     storage_quota: string;
     storage_usage: string;
+    storage_persisted: string; // New
     
     video_codecs: string;
     audio_codecs: string;
@@ -95,6 +99,8 @@ export interface Translation {
     export_json: string;
     view_extensions: string; // for WebGL
     view_base64: string; // for Canvas
+    view_details: string; // New
+    open_sensors: string; // New
     copy: string;
     copied: string;
     zoom: string;
@@ -165,6 +171,25 @@ export interface Translation {
     desc: string;
     changelog: string;
     latest_update: string;
+    close: string;
+  };
+
+  // New Sensor Modal
+  sensorModal: {
+    sensor_title: string;
+    accelerometer: string;
+    gyroscope: string;
+    sensor_permission_desc: string;
+    sensor_allow: string;
+    close: string;
+  };
+
+  // New Score Modal
+  scoreModal: {
+    score_details_title: string;
+    tracking_potential: string;
+    score_explanation: string;
+    contributing_factors: string;
     close: string;
   };
 

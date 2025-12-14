@@ -49,6 +49,20 @@ export interface CodecInfo {
   supported: boolean;
 }
 
+export interface ScoreFactor {
+  id: string; // Translation key
+  value: string;
+  score: number; // 0-10 impact
+  maxScore: number;
+  description: string; // Translation key suffix
+}
+
+export interface FingerprintScore {
+  totalScore: number; // 0-100
+  rating: 'Low' | 'Medium' | 'High' | 'Critical';
+  factors: ScoreFactor[];
+}
+
 export interface BrowserData {
   system: {
     os: string;
@@ -56,6 +70,7 @@ export interface BrowserData {
     browserName: string;
     browserVersion: string;
     language: string;
+    preferredLanguages: string[]; // New
     userAgent: string;
     cookiesEnabled: boolean;
     doNotTrack: string | null;
@@ -78,10 +93,11 @@ export interface BrowserData {
     webglRenderer: string;
     webglExtensions: string[]; // List of WebGL extensions
     audioLatency: string;
+    score: FingerprintScore; // New
   };
   display: {
     resolution: string;
-    availableSize: string; // New: Available screen size
+    availableSize: string;
     windowSize: string;
     pixelRatio: number;
     colorDepth: number;
@@ -105,6 +121,7 @@ export interface BrowserData {
   storage: {
     quota: string;
     usage: string;
+    persisted: boolean; // New
   };
   localization: {
     timeZone: string;

@@ -26,6 +26,7 @@ export const ru: Translation = {
     platform: "Платформа",
     browser: "Браузер",
     language: "Язык",
+    pref_langs: "Список языков",
     cookies: "Cookies включены",
     dnt: "Do Not Track",
     
@@ -41,8 +42,10 @@ export const ru: Translation = {
     canvas_hash: "Canvas Hash",
     webgl_hash: "WebGL Hash",
     audio_latency: "Задержка аудио",
+    fp_score: "Оценка уникальности",
     
     resolution: "Разрешение экрана",
+    refresh_rate: "Частота обновления (Гц)",
     avail_size: "Доступный размер",
     window_size: "Размер окна",
     pixel_ratio: "Плотность пикселей (DPR)",
@@ -64,6 +67,7 @@ export const ru: Translation = {
     calendar: "Календарь",
     storage_quota: "Квота хранилища",
     storage_usage: "Использовано",
+    storage_persisted: "Постоянное хранилище",
     
     video_codecs: "Видеокодеки",
     audio_codecs: "Аудиокодеки",
@@ -95,6 +99,8 @@ export const ru: Translation = {
     export_json: "Экспорт JSON",
     view_extensions: "Список расширений",
     view_base64: "Base64",
+    view_details: "Подробнее",
+    open_sensors: "Открыть датчики",
     copy: "Копировать",
     copied: "Скопировано",
     zoom: "Увеличить",
@@ -164,7 +170,24 @@ export const ru: Translation = {
     version: "Версия",
     desc: "Легкий, ориентированный на конфиденциальность инструмент для быстрой проверки возможностей браузера, оборудования и состояния сети.",
     changelog: "Список изменений",
-    latest_update: "Добавлено обнаружение PWA, инструмент Canvas Base64 и улучшения UI.",
+    latest_update: "Добавлено обнаружение частоты обновления, статус постоянного хранилища и API датчиков.",
+    close: "Закрыть"
+  },
+
+  sensorModal: {
+    sensor_title: "Данные датчиков в реальном времени",
+    accelerometer: "Акселерометр",
+    gyroscope: "Гироскоп",
+    sensor_permission_desc: "Для этой функции требуется доступ к датчикам движения устройства. Пожалуйста, разрешите доступ для продолжения.",
+    sensor_allow: "Разрешить доступ",
+    close: "Закрыть"
+  },
+
+  scoreModal: {
+    score_details_title: "Детали оценки отпечатка",
+    tracking_potential: "Риск отслеживания",
+    score_explanation: "Более высокий балл означает, что сайтам доступно больше уникальных идентификационных данных, что повышает риск отслеживания.",
+    contributing_factors: "Влияющие факторы",
     close: "Закрыть"
   },
 
@@ -198,6 +221,9 @@ export const ru: Translation = {
     compression: "Сжатие потоков",
     webTransport: "Web Transport",
     eyeDropper: "Пипетка (EyeDropper)",
+    accelerometer: "Акселерометр",
+    gyroscope: "Гироскоп",
+    ambientLight: "Датчик освещенности",
   },
   
   featureDescs: {
@@ -225,5 +251,8 @@ export const ru: Translation = {
     compression: "Нативное сжатие GZIP/Deflate",
     webTransport: "Двунаправленная потоковая передача",
     eyeDropper: "Системный выбор цвета",
+    accelerometer: "Датчик движения (Поддержка API)",
+    gyroscope: "Датчик ориентации (Поддержка API)",
+    ambientLight: "Датчик уровня света (Поддержка API)",
   }
 };

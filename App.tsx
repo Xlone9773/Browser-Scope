@@ -29,7 +29,9 @@ import {
   Sun,
   FileCode,
   AppWindow,
-  Info
+  Info,
+  Activity,
+  ChevronRight
 } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { BrowserData } from './types';
@@ -40,6 +42,9 @@ import { WebGLExtensionsModal } from './components/WebGLExtensionsModal';
 import { CanvasModal } from './components/CanvasModal';
 import { Base64Modal } from './components/Base64Modal';
 import { AboutModal } from './components/AboutModal';
+import { SensorModal } from './components/SensorModal';
+import { ScoreModal } from './components/ScoreModal';
+import { RefreshRate } from './components/RefreshRate';
 import { translations, languageNames, Language } from './utils/i18n/index';
 import { applyTheme, getSavedTheme, Theme } from './appearance/theme';
 
@@ -64,6 +69,8 @@ const App: React.FC = () => {
   const [isCanvasModalOpen, setIsCanvasModalOpen] = useState(false);
   const [isBase64ModalOpen, setIsBase64ModalOpen] = useState(false);
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+  const [isSensorModalOpen, setIsSensorModalOpen] = useState(false);
+  const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
   const [uaCopied, setUaCopied] = useState(false);
   
   const [permStatus, setPermStatus] = useState<Record<PermissionKey, PermissionStatusType>>({
@@ -255,6 +262,13 @@ const App: React.FC = () => {
       }
   };
 
+  const getScoreColor = (score: number) => {
+      if (score > 80) return 'text-red-500';
+      if (score > 60) return 'text-orange-500';
+      if (score > 30) return 'text-yellow-500';
+      return 'text-green-600';
+  };
+
   if (loading || !data) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
@@ -302,6 +316,19 @@ const App: React.FC = () => {
           <AboutModal 
             onClose={() => setIsAboutModalOpen(false)}
             t={t.aboutModal}
+          />
+      )}
+      {isSensorModalOpen && (
+          <SensorModal 
+            onClose={() => setIsSensorModalOpen(false)}
+            t={t.sensorModal}
+          />
+      )}
+      {isScoreModalOpen && (
+          <ScoreModal 
+            scoreData={data.fingerprints.score}
+            onClose={() => setIsScoreModalOpen(false)}
+            t={t.scoreModal}
           />
       )}
 
@@ -386,6 +413,7 @@ const App: React.FC = () => {
             <InfoItem label={t.labels.platform} value={data.system.platform} />
             <InfoItem label={t.labels.browser} value={`${data.system.browserName} ${data.system.browserVersion}`} />
             <InfoItem label={t.labels.language} value={data.system.language} />
+            <InfoItem label={t.labels.pref_langs} value={data.system.preferredLanguages.join(', ')} />
             <InfoItem label={t.labels.cookies} value={trVal(data.system.cookiesEnabled)} />
             <InfoItem label={t.labels.dnt} value={data.system.doNotTrack || 'Off'} />
           </InfoCard>
@@ -399,11 +427,23 @@ const App: React.FC = () => {
             <InfoItem label={t.labels.max_texture} value={data.hardware.maxTextureSize} />
             <InfoItem label={t.labels.battery} value={data.hardware.batteryLevel} />
             <InfoItem label={t.labels.charging} value={trVal(data.hardware.isCharging)} />
+            
+            {/* Sensor Button */}
+            <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex justify-center">
+                <button 
+                    onClick={() => setIsSensorModalOpen(true)}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors w-full justify-center"
+                >
+                    <Activity size={16} />
+                    {t.actions.open_sensors}
+                </button>
+            </div>
           </InfoCard>
 
           {/* Display */}
           <InfoCard title={t.sections.display} icon={Layers}>
             <InfoItem label={t.labels.resolution} value={data.display.resolution} />
+            <RefreshRate label={t.labels.refresh_rate} />
             <InfoItem label={t.labels.avail_size} value={data.display.availableSize} />
             <InfoItem label={t.labels.pixel_ratio} value={`${data.display.pixelRatio}x`} />
             <InfoItem label={t.labels.color_depth} value={`${data.display.colorDepth}-bit`} />
@@ -415,6 +455,23 @@ const App: React.FC = () => {
 
           {/* Fingerprints */}
           <InfoCard title={t.sections.fingerprints} icon={Fingerprint}>
+             {/* Score Badge */}
+             <div className="flex items-center justify-between p-3 mb-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+                 <div className="flex flex-col">
+                     <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">{t.labels.fp_score}</span>
+                     <span className={`text-2xl font-bold ${getScoreColor(data.fingerprints.score.totalScore)}`}>
+                         {data.fingerprints.score.totalScore}/100
+                     </span>
+                 </div>
+                 <button 
+                    onClick={() => setIsScoreModalOpen(true)}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-600 rounded text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                 >
+                     {t.actions.view_details}
+                     <ChevronRight size={12} />
+                 </button>
+             </div>
+
              <InfoItem label={t.labels.canvas_hash} value={data.fingerprints.canvasHash} />
              <div className="relative group my-2 border border-slate-100 dark:border-slate-700 rounded p-1 bg-white flex justify-center cursor-pointer" onClick={() => setIsCanvasModalOpen(true)}>
                  <img src={data.fingerprints.canvasImage} alt="Canvas Fingerprint" className="h-10 object-contain opacity-80" />
@@ -465,6 +522,7 @@ const App: React.FC = () => {
            <InfoCard title={t.sections.storage_loc} icon={HardDrive}>
             <InfoItem label={t.labels.storage_quota} value={data.storage.quota} />
             <InfoItem label={t.labels.storage_usage} value={data.storage.usage} />
+            <InfoItem label={t.labels.storage_persisted} value={trVal(data.storage.persisted)} />
             <InfoItem label={t.labels.timezone} value={data.localization.timeZone} />
             <InfoItem label={t.labels.locale} value={data.localization.locale} />
             <InfoItem label={t.labels.calendar} value={data.localization.calendar} />

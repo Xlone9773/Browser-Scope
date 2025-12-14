@@ -26,6 +26,7 @@ export const zhTW: Translation = {
     platform: "系統平台",
     browser: "瀏覽器核心",
     language: "系統語言",
+    pref_langs: "首選語言列表",
     cookies: "Cookies 啟用",
     dnt: "Do Not Track",
     
@@ -41,8 +42,10 @@ export const zhTW: Translation = {
     canvas_hash: "Canvas 指紋 (Hash)",
     webgl_hash: "WebGL 指紋 (Hash)",
     audio_latency: "音訊延遲",
+    fp_score: "唯一性評分",
     
     resolution: "螢幕解析度",
+    refresh_rate: "螢幕更新率 (估算)",
     avail_size: "可用尺寸",
     window_size: "視窗尺寸",
     pixel_ratio: "像素密度 (DPR)",
@@ -64,6 +67,7 @@ export const zhTW: Translation = {
     calendar: "日曆格式",
     storage_quota: "可用儲存配額",
     storage_usage: "已用儲存",
+    storage_persisted: "持久化儲存",
     
     video_codecs: "影片編碼支援",
     audio_codecs: "音訊編碼支援",
@@ -95,6 +99,8 @@ export const zhTW: Translation = {
     export_json: "匯出 JSON",
     view_extensions: "檢視擴充功能",
     view_base64: "Base64 原始碼",
+    view_details: "檢視詳情",
+    open_sensors: "開啟感測器",
     copy: "複製",
     copied: "已複製",
     zoom: "放大",
@@ -164,7 +170,24 @@ export const zhTW: Translation = {
     version: "目前版本",
     desc: "一個輕量級、注重隱私的瀏覽器能力檢測工具，可快速檢視硬體資訊、網路狀態及 Web API 支援情況。",
     changelog: "更新日誌",
-    latest_update: "新增 PWA 特性檢測、Canvas Base64 工具及 UI 改進。",
+    latest_update: "新增螢幕更新率檢測、儲存持久化狀態及感測器 API 支援檢測。",
+    close: "關閉"
+  },
+
+  sensorModal: {
+    sensor_title: "即時感測器資料",
+    accelerometer: "加速計 (Accelerometer)",
+    gyroscope: "陀螺儀 (Gyroscope)",
+    sensor_permission_desc: "此功能需要存取裝置運動感測器權限。請允許以繼續。",
+    sensor_allow: "允許存取感測器",
+    close: "關閉"
+  },
+
+  scoreModal: {
+    score_details_title: "指紋評分詳情",
+    tracking_potential: "追蹤風險",
+    score_explanation: "分數越高表示暴露給網站的唯一識別資料越多，被追蹤的風險越大。",
+    contributing_factors: "影響因素",
     close: "關閉"
   },
 
@@ -179,7 +202,7 @@ export const zhTW: Translation = {
     pushApi: "推播通知 (Push API)",
     notification: "系統通知 (Notification)",
     appBadges: "應用程式標記 (App Badges)",
-    webgpu: "WebGPU 圖形引擎",
+    webgpu: "WebGPU",
     webxr: "WebXR (VR/AR)",
     webauthn: "WebAuthn 認證",
     bluetooth: "Web 藍牙",
@@ -198,6 +221,9 @@ export const zhTW: Translation = {
     compression: "原生壓縮流",
     webTransport: "Web Transport",
     eyeDropper: "滴管工具 (EyeDropper)",
+    accelerometer: "加速計 (Accelerometer)",
+    gyroscope: "陀螺儀 (Gyroscope)",
+    ambientLight: "環境光感測器 (Ambient Light)",
   },
   
   featureDescs: {
@@ -225,5 +251,8 @@ export const zhTW: Translation = {
     compression: "原生 GZIP/Deflate 壓縮",
     webTransport: "低延遲雙向資料傳輸",
     eyeDropper: "系統級螢幕取色",
+    accelerometer: "運動檢測感測器 (API 支援)",
+    gyroscope: "方向檢測感測器 (API 支援)",
+    ambientLight: "環境亮度檢測 (API 支援)",
   }
 };
