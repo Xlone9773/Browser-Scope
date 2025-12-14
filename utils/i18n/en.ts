@@ -1,3 +1,4 @@
+
 import { Translation } from './types';
 
 export const en: Translation = {
@@ -15,10 +16,11 @@ export const en: Translation = {
     storage_loc: "Storage & Localization",
     media_sup: "Media Capabilities",
     user_agent: "User Agent",
-    fingerprints: "Digital Fingerprints",
     features: "Web Capabilities & APIs",
-    pwa: "PWA & Offline Capabilities",
-    permissions: "Permissions"
+    permissions: "Permissions",
+    pwa: "PWA Features",
+    fingerprints: "Fingerprints & Tracking",
+    security: "Privacy & Security"
   },
   
   labels: {
@@ -36,16 +38,15 @@ export const en: Translation = {
     gpu_renderer: "GPU Renderer",
     max_texture: "Max Texture Size",
     audio_rate: "Audio Sample Rate",
+    audio_latency: "Audio Latency",
     battery: "Battery Level",
     charging: "Charging State",
     touch: "Max Touch Points",
-    canvas_hash: "Canvas Hash",
-    webgl_hash: "WebGL Hash",
-    audio_latency: "Audio Latency",
-    fp_score: "Uniqueness Score",
+    screen_extended: "Screen Extended",
+    gamepads: "Connected Gamepads",
     
     resolution: "Screen Resolution",
-    refresh_rate: "Refresh Rate (Est.)",
+    refresh_rate: "Refresh Rate",
     avail_size: "Available Size",
     window_size: "Window Size",
     pixel_ratio: "Pixel Ratio",
@@ -61,27 +62,39 @@ export const en: Translation = {
     downlink: "Downlink Speed",
     rtt: "Latency (RTT)",
     save_data: "Data Saver",
+    webrtc_ip: "WebRTC Local IP",
     
     timezone: "Time Zone",
     locale: "Locale",
     calendar: "Calendar",
     storage_quota: "Est. Storage Quota",
     storage_usage: "Used Storage",
-    storage_persisted: "Persistence",
+    storage_persisted: "Persisted Storage",
     
     video_codecs: "Video Codecs",
     audio_codecs: "Audio Codecs",
+    speech_voices: "TTS Voices",
 
+    camera_permission: "Camera Access",
+    
+    fp_score: "Fingerprint Score",
+    canvas_hash: "Canvas Hash",
+    webgl_hash: "WebGL Hash",
+
+    perm_notif: "Notifications",
+    perm_midi: "MIDI Access",
+    perm_geo: "Geolocation",
+    geo_lat: "Latitude",
+    geo_long: "Longitude",
+    geo_acc: "Accuracy",
     media_devices: "Media Devices",
     perm_camera: "Camera",
     perm_mic: "Microphone",
-    perm_geo: "Geolocation",
-    perm_notif: "Notifications",
-    perm_midi: "MIDI Devices",
 
-    geo_lat: "Latitude",
-    geo_long: "Longitude",
-    geo_acc: "Accuracy"
+    is_bot: "Bot / Automation",
+    gpc_enabled: "Global Privacy Control",
+    pdf_viewer: "PDF Viewer",
+    secure_context: "Secure Context"
   },
   
   values: {
@@ -91,109 +104,32 @@ export const en: Translation = {
     not_supported: "Not Supported",
     yes: "Yes",
     no: "No",
-    unknown: "Unknown"
+    unknown: "Unknown",
+    detected: "Detected",
+    none: "None",
+    hidden: "Hidden/Protected"
   },
 
   actions: {
     check: "Check Access",
+    theme_light: "Switch to Light Mode",
+    theme_dark: "Switch to Dark Mode",
+    about: "About",
     export_json: "Export JSON",
-    view_extensions: "View Extensions",
-    view_base64: "Base64",
-    view_details: "View Details",
-    open_sensors: "Open Sensors",
+    open_sensors: "Sensors",
+    view_details: "Details",
+    view_base64: "View Base64",
+    view_extensions: "Extensions",
     copy: "Copy",
-    copied: "Copied!",
-    zoom: "Zoom",
-    theme_dark: "Dark",
-    theme_light: "Light",
-    about: "About & Changelog"
+    copied: "Copied!"
   },
 
   status: {
     idle: "Not Checked",
     granted: "Access Granted",
     denied: "Access Denied",
-    prompt: "Prompt / Ask",
+    prompt: "Prompt",
     error: "Error / Unavailable"
-  },
-
-  cameraTool: {
-    title: "Camera Tool",
-    btn_open: "Open Camera",
-    select_device: "Select Device",
-    no_devices: "No video devices found",
-    take_photo: "Take Photo",
-    start_record: "Record Video",
-    stop_record: "Stop Record",
-    mirror: "Mirror",
-    retake: "Retake",
-    download_photo: "Download Photo",
-    download_video: "Download Video",
-    close: "Close",
-    current_res: "Current Resolution",
-    max_res: "Max Hardware Resolution",
-    permission_denied: "Camera permission denied",
-    error_hardware: "Camera in use or hardware error",
-    error_generic: "Error accessing camera"
-  },
-
-  audioTool: {
-    title: "Audio Recorder",
-    btn_open: "Open Recorder",
-    start_record: "Record Audio",
-    stop_record: "Stop Recording",
-    download: "Download Audio",
-    close: "Close",
-    listening: "Listening...",
-    error_mic: "Microphone access denied or error",
-    details_size: "File Size",
-    details_rate: "Sample Rate",
-    details_type: "Format"
-  },
-
-  webglTool: {
-    title: "WebGL Extensions",
-    count: "Extensions Found",
-    search_placeholder: "Search extensions...",
-    close: "Close"
-  },
-
-  base64Tool: {
-    title: "Canvas Base64 Data",
-    desc: "Raw data representation of the rendered canvas fingerprint.",
-    copy: "Copy Base64",
-    close: "Close"
-  },
-
-  aboutModal: {
-    title: "About BrowserScope",
-    version: "Version",
-    desc: "A lightweight, privacy-focused tool to check your browser capabilities, hardware info, and network status locally.",
-    changelog: "Changelog",
-    latest_update: "Added real-time sensor monitor (accelerometer/gyro), fingerprint uniqueness scoring system, and improved UI details.",
-    close: "Close"
-  },
-
-  sensorModal: {
-    sensor_title: "Real-time Sensors",
-    accelerometer: "Accelerometer",
-    gyroscope: "Gyroscope",
-    sensor_permission_desc: "This feature requires access to device motion sensors. Please allow access to proceed.",
-    sensor_allow: "Allow Sensor Access",
-    close: "Close"
-  },
-
-  scoreModal: {
-    score_details_title: "Fingerprint Score Details",
-    tracking_potential: "Tracking Potential",
-    score_explanation: "Higher score indicates more unique identifying data is available to websites, increasing trackability.",
-    contributing_factors: "Contributing Factors",
-    close: "Close"
-  },
-
-  imageDetails: {
-    dimensions: "Dimensions",
-    size: "File Size"
   },
 
   features: {
@@ -223,7 +159,7 @@ export const en: Translation = {
     eyeDropper: "Eye Dropper",
     accelerometer: "Accelerometer",
     gyroscope: "Gyroscope",
-    ambientLight: "Ambient Light Sensor",
+    ambientLight: "Ambient Light"
   },
   
   featureDescs: {
@@ -251,8 +187,120 @@ export const en: Translation = {
     compression: "Native GZIP/Deflate",
     webTransport: "Low-latency bidirectional streaming",
     eyeDropper: "System color picker",
-    accelerometer: "Motion sensor (API support)",
-    gyroscope: "Orientation sensor (API support)",
-    ambientLight: "Light level sensor (API support)",
+    accelerometer: "Motion sensor",
+    gyroscope: "Orientation sensor",
+    ambientLight: "Light level sensor"
+  },
+
+  cameraTool: {
+    title: "Camera Tool",
+    btn_open: "Open Camera",
+    no_devices: "No camera devices found",
+    permission_denied: "Camera permission denied",
+    error_hardware: "Hardware error accessing camera",
+    error_generic: "Error accessing camera",
+    error_mic: "Microphone error",
+    select_device: "Select Device",
+    current_res: "Current Res",
+    max_res: "Max Res",
+    mirror: "Mirror",
+    take_photo: "Take Photo",
+    start_record: "Start Record",
+    stop_record: "Stop Record",
+    retake: "Retake",
+    download_photo: "Download Photo",
+    download_video: "Download Video"
+  },
+
+  audioTool: {
+    title: "Audio Recorder",
+    btn_open: "Open Recorder",
+    listening: "Listening...",
+    start_record: "Start",
+    stop_record: "Stop",
+    download: "Download",
+    details_size: "Size",
+    details_rate: "Sample Rate",
+    details_type: "Format",
+    close: "Close",
+    error_mic: "Error accessing microphone"
+  },
+
+  webglTool: {
+    title: "WebGL Extensions",
+    count: "extensions supported",
+    search_placeholder: "Search extensions...",
+    close: "Close"
+  },
+
+  base64Tool: {
+    title: "Base64 Data",
+    desc: "Raw data representation of the generated fingerprint image",
+    copy: "Copy to Clipboard",
+    close: "Close"
+  },
+
+  imageDetails: {
+    dimensions: "Dimensions",
+    size: "Size"
+  },
+
+  aboutModal: {
+    title: "About BrowserScope",
+    desc: "BrowserScope is a comprehensive browser analysis tool designed to verify your system's capabilities and fingerprint uniqueness.",
+    version: "Version",
+    changelog: "Changelog",
+    latest_update: "Added Privacy & Security detection (WebRTC/Bot), multi-monitor & gamepad support, and richer network/media analysis.",
+    close: "Close"
+  },
+
+  sensorModal: {
+    sensor_title: "Device Sensors",
+    sensor_permission_desc: "Permission is required to access device motion sensors.",
+    sensor_allow: "Allow Access",
+    accelerometer: "Accelerometer",
+    gyroscope: "Gyroscope",
+    close: "Close"
+  },
+
+  scoreModal: {
+    score_details_title: "Fingerprint Score Details",
+    tracking_potential: "Tracking Potential",
+    score_explanation: "Higher score indicates more unique identifying data is available to websites, increasing trackability.",
+    contributing_factors: "Contributing Factors",
+    close: "Close",
+    
+    factors: {
+      canvas_hash: "Canvas Fingerprint",
+      webgl_hash: "WebGL Fingerprint",
+      hardware_concurrency: "Hardware Concurrency",
+      user_agent: "User Agent",
+      resolution: "Screen Resolution",
+      audio_context: "Audio Context",
+      battery_status: "Battery Status",
+      locale_time: "Locale & Time"
+    },
+    values: {
+      val_unique: "Unique",
+      val_generic: "Generic",
+      val_specific: "Specific",
+      val_readable: "Readable",
+      val_protected: "Protected",
+      val_unknown: "Unknown"
+    },
+    descriptions: {
+      desc_canvas_unique: "Canvas rendering differences reveal GPU/Driver stack.",
+      desc_canvas_generic: "Canvas fingerprinting failed or blocked.",
+      desc_webgl_unique: "WebGL report exposes specific graphics hardware.",
+      desc_webgl_generic: "WebGL fingerprinting failed or blocked.",
+      desc_hardware_unique: "CPU core count and device memory are identifying factors.",
+      desc_hardware_generic: "Hardware details partially hidden.",
+      desc_ua_unique: "Detailed User Agent string reveals browser and OS version.",
+      desc_res_unique: "Screen dimensions combined with window size create a unique footprint.",
+      desc_audio_unique: "Audio hardware sample rate and latency.",
+      desc_battery_unique: "Battery API allows tracking users across browsing sessions.",
+      desc_battery_generic: "Battery status is hidden or unsupported.",
+      desc_locale_unique: "Timezone and language settings narrow down location."
+    }
   }
 };

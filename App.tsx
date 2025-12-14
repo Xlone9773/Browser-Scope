@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { 
   Monitor, 
@@ -31,7 +32,10 @@ import {
   AppWindow,
   Info,
   Activity,
-  ChevronRight
+  ChevronRight,
+  Lock,
+  Gamepad2,
+  Mic2
 } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { BrowserData } from './types';
@@ -405,8 +409,20 @@ const App: React.FC = () => {
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* ... existing info cards ... */}
           
+          {/* Security (New Position: 1st row for importance) */}
+          <InfoCard title={t.sections.security} icon={Lock}>
+              <InfoItem 
+                  label={t.labels.is_bot} 
+                  value={data.security.isBot ? t.values.detected : t.values.none} 
+                  subValue={data.security.isBot ? "Navigator.webdriver" : undefined}
+              />
+              <InfoItem label={t.labels.webrtc_ip} value={data.network.webrtcIp || t.values.hidden} />
+              <InfoItem label={t.labels.gpc_enabled} value={trVal(data.security.gpcEnabled)} />
+              <InfoItem label={t.labels.pdf_viewer} value={trVal(data.security.pdfViewer)} />
+              <InfoItem label={t.labels.secure_context} value={trVal(data.security.secureContext)} />
+          </InfoCard>
+
           {/* System Info */}
           <InfoCard title={t.sections.system} icon={Smartphone}>
             <InfoItem label={t.labels.os} value={data.system.os} />
@@ -427,6 +443,12 @@ const App: React.FC = () => {
             <InfoItem label={t.labels.max_texture} value={data.hardware.maxTextureSize} />
             <InfoItem label={t.labels.battery} value={data.hardware.batteryLevel} />
             <InfoItem label={t.labels.charging} value={trVal(data.hardware.isCharging)} />
+            <InfoItem label={t.labels.touch} value={data.hardware.touchPoints} />
+            <div className="flex items-center gap-1.5 py-2.5 border-b border-slate-50 last:border-0 px-2 -mx-2">
+                <Gamepad2 size={16} className="text-slate-400" />
+                <span className="text-sm text-slate-500 font-medium">{t.labels.gamepads}</span>
+                <span className="ml-auto text-sm text-slate-800">{data.hardware.gamepads}</span>
+            </div>
             
             {/* Sensor Button */}
             <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex justify-center">
@@ -447,7 +469,7 @@ const App: React.FC = () => {
             <InfoItem label={t.labels.avail_size} value={data.display.availableSize} />
             <InfoItem label={t.labels.pixel_ratio} value={`${data.display.pixelRatio}x`} />
             <InfoItem label={t.labels.color_depth} value={`${data.display.colorDepth}-bit`} />
-            <InfoItem label={t.labels.color_gamut} value={data.display.colorGamut} />
+            <InfoItem label={t.labels.screen_extended} value={trVal(data.hardware.screenExtended)} />
             <InfoItem label={t.labels.hdr} value={trVal(data.display.hdr)} />
             <InfoItem label={t.labels.display_mode} value={data.display.displayMode} />
             <InfoItem label={t.labels.dark_mode} value={trVal(data.display.darkMode)} />
@@ -693,6 +715,13 @@ const App: React.FC = () => {
                         </div>
                     ))}
                   </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50 flex justify-between items-center">
+                  <div className="flex items-center gap-1.5">
+                      <Mic2 size={14} className="text-slate-400"/>
+                      <span className="text-xs font-medium text-slate-500">{t.labels.speech_voices}</span>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.media.speechVoices}</span>
               </div>
            </InfoCard>
 

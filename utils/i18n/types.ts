@@ -1,3 +1,4 @@
+
 export type Language = 'en' | 'zh-CN' | 'zh-TW' | 'zh-HK' | 'ja' | 'ru';
 
 export interface Translation {
@@ -15,140 +16,54 @@ export interface Translation {
     storage_loc: string;
     media_sup: string;
     user_agent: string;
-    fingerprints: string;
     features: string;
-    pwa: string;
     permissions: string;
+    pwa: string;
+    fingerprints: string;
+    security: string; // New
   };
   
-  labels: {
-    os: string;
-    platform: string;
-    browser: string;
-    language: string;
-    pref_langs: string; // New
-    cookies: string;
-    dnt: string;
-    
-    cpu: string;
-    memory: string;
-    gpu_vendor: string;
-    gpu_renderer: string;
-    max_texture: string;
-    audio_rate: string;
-    battery: string;
-    charging: string;
-    touch: string;
-    canvas_hash: string;
-    webgl_hash: string;
-    audio_latency: string;
-    fp_score: string; // New
-    
-    resolution: string;
-    refresh_rate: string; // New
-    avail_size: string;
-    window_size: string;
-    pixel_ratio: string;
-    color_depth: string;
-    orientation: string;
-    dark_mode: string;
-    color_gamut: string;
-    hdr: string;
-    display_mode: string;
-    
-    online: string;
-    conn_type: string;
-    downlink: string;
-    rtt: string;
-    save_data: string;
-    
-    timezone: string;
-    locale: string;
-    calendar: string;
-    storage_quota: string;
-    storage_usage: string;
-    storage_persisted: string; // New
-    
-    video_codecs: string;
-    audio_codecs: string;
-
-    media_devices: string; // Combined card title
-    perm_camera: string;
-    perm_mic: string;
-    perm_geo: string;
-    perm_notif: string;
-    perm_midi: string;
-
-    geo_lat: string;
-    geo_long: string;
-    geo_acc: string;
-  };
+  labels: Record<string, string>;
+  values: Record<string, string>;
+  actions: Record<string, string>;
+  status: Record<string, string>;
   
-  values: {
-    connected: string;
-    offline: string;
-    supported: string;
-    not_supported: string;
-    yes: string;
-    no: string;
-    unknown: string;
-  };
+  features: Record<string, string>;
+  featureDescs: Record<string, string>;
 
-  actions: {
-    check: string;
-    export_json: string;
-    view_extensions: string; // for WebGL
-    view_base64: string; // for Canvas
-    view_details: string; // New
-    open_sensors: string; // New
-    copy: string;
-    copied: string;
-    zoom: string;
-    theme_dark: string;
-    theme_light: string;
-    about: string;
-  };
-
-  status: {
-    idle: string;
-    granted: string;
-    denied: string;
-    prompt: string;
-    error: string;
-  };
-
+  // Tools & Modals
   cameraTool: {
     title: string;
     btn_open: string;
-    select_device: string;
     no_devices: string;
-    take_photo: string;
-    start_record: string;
-    stop_record: string;
-    mirror: string;
-    retake: string;
-    download_photo: string;
-    download_video: string;
-    close: string;
-    current_res: string;
-    max_res: string;
     permission_denied: string;
     error_hardware: string;
     error_generic: string;
+    error_mic: string;
+    select_device: string;
+    current_res: string;
+    max_res: string;
+    mirror: string;
+    take_photo: string;
+    start_record: string;
+    stop_record: string;
+    retake: string;
+    download_photo: string;
+    download_video: string;
   };
 
   audioTool: {
     title: string;
     btn_open: string;
+    listening: string;
     start_record: string;
     stop_record: string;
     download: string;
-    close: string;
-    listening: string;
-    error_mic: string;
     details_size: string;
     details_rate: string;
     details_type: string;
+    close: string;
+    error_mic: string;
   };
 
   webglTool: {
@@ -157,39 +72,11 @@ export interface Translation {
     search_placeholder: string;
     close: string;
   };
-
+  
   base64Tool: {
     title: string;
     desc: string;
     copy: string;
-    close: string;
-  };
-
-  aboutModal: {
-    title: string;
-    version: string;
-    desc: string;
-    changelog: string;
-    latest_update: string;
-    close: string;
-  };
-
-  // New Sensor Modal
-  sensorModal: {
-    sensor_title: string;
-    accelerometer: string;
-    gyroscope: string;
-    sensor_permission_desc: string;
-    sensor_allow: string;
-    close: string;
-  };
-
-  // New Score Modal
-  scoreModal: {
-    score_details_title: string;
-    tracking_potential: string;
-    score_explanation: string;
-    contributing_factors: string;
     close: string;
   };
 
@@ -198,6 +85,33 @@ export interface Translation {
     size: string;
   };
 
-  features: Record<string, string>;
-  featureDescs: Record<string, string>;
+  aboutModal: {
+    title: string;
+    desc: string;
+    version: string;
+    changelog: string;
+    latest_update: string;
+    close: string;
+  };
+
+  sensorModal: {
+    sensor_title: string;
+    sensor_permission_desc: string;
+    sensor_allow: string;
+    accelerometer: string;
+    gyroscope: string;
+    close: string;
+  };
+
+  scoreModal: {
+    score_details_title: string;
+    tracking_potential: string;
+    score_explanation: string;
+    contributing_factors: string;
+    close: string;
+    
+    factors: Record<string, string>;
+    values: Record<string, string>;
+    descriptions: Record<string, string>;
+  };
 }

@@ -1,54 +1,57 @@
+
 import { Translation } from './types';
+import { en } from './en';
 
 export const ja: Translation = {
+  ...en, // Fallback to EN for any missing keys
+
   loading: "システム機能をスキャン中...",
   title: "BrowserScope",
   subtitle: "ブラウザ環境、ハードウェア機能、およびサポートされているWeb APIの詳細な分析。",
-  refresh: "再スキャン",
-  footer: "データはブラウザ内でローカルに検出され、個人データは保存されません。",
-  
+  refresh: "分析を更新",
+  footer: "データはブラウザ内でローカルに検出されます。個人データは保存されません。",
+
   sections: {
     system: "システムとソフトウェア",
     hardware: "ハードウェアとグラフィックス",
     display: "ディスプレイと画面",
     network: "ネットワークと接続",
-    storage_loc: "ストレージと地域設定",
+    storage_loc: "ストレージとローカリゼーション",
     media_sup: "メディア機能",
     user_agent: "ユーザーエージェント",
-    fingerprints: "デジタル指紋と追跡",
-    features: "Web API 機能",
-    pwa: "PWAとオフライン",
-    permissions: "権限管理"
+    features: "Web API機能",
+    permissions: "権限",
+    pwa: "PWA機能",
+    fingerprints: "フィンガープリントと追跡",
+    security: "プライバシーとセキュリティ"
   },
-  
+
   labels: {
+    ...en.labels,
     os: "オペレーティングシステム",
     platform: "プラットフォーム",
     browser: "ブラウザ",
     language: "言語",
-    pref_langs: "優先言語リスト",
+    pref_langs: "優先言語",
     cookies: "Cookie 有効",
     dnt: "Do Not Track",
     
     cpu: "CPU コア数",
-    memory: "デバイスメモリ (推定)",
+    memory: "デバイスメモリ",
     gpu_vendor: "GPU ベンダー",
     gpu_renderer: "GPU レンダラー",
     max_texture: "最大テクスチャサイズ",
-    audio_rate: "音声サンプリングレート",
+    audio_rate: "オーディオサンプルレート",
+    audio_latency: "オーディオレイテンシ",
     battery: "バッテリーレベル",
     charging: "充電状態",
     touch: "最大タッチポイント",
-    canvas_hash: "Canvas ハッシュ",
-    webgl_hash: "WebGL ハッシュ",
-    audio_latency: "音声レイテンシ",
-    fp_score: "独自性スコア",
     
     resolution: "画面解像度",
-    refresh_rate: "リフレッシュレート (推定)",
+    refresh_rate: "リフレッシュレート",
     avail_size: "利用可能サイズ",
     window_size: "ウィンドウサイズ",
-    pixel_ratio: "ピクセル比 (DPR)",
+    pixel_ratio: "ピクセル比",
     color_depth: "色深度",
     orientation: "画面の向き",
     dark_mode: "ダークモード",
@@ -65,30 +68,35 @@ export const ja: Translation = {
     timezone: "タイムゾーン",
     locale: "ロケール",
     calendar: "カレンダー",
-    storage_quota: "ストレージ割り当て (推定)",
+    storage_quota: "ストレージクォータ",
     storage_usage: "使用済みストレージ",
-    storage_persisted: "永続的ストレージ",
+    storage_persisted: "永続ストレージ",
     
     video_codecs: "ビデオコーデック",
     audio_codecs: "オーディオコーデック",
 
-    media_devices: "メディアデバイス",
-    perm_camera: "カメラ",
-    perm_mic: "マイク",
-    perm_geo: "位置情報",
-    perm_notif: "通知",
-    perm_midi: "MIDI デバイス",
+    camera_permission: "カメラアクセス",
 
+    fp_score: "指紋スコア",
+    canvas_hash: "Canvas ハッシュ",
+    webgl_hash: "WebGL ハッシュ",
+
+    perm_notif: "通知",
+    perm_midi: "MIDI アクセス",
+    perm_geo: "位置情報",
     geo_lat: "緯度",
     geo_long: "経度",
-    geo_acc: "精度 (m)"
+    geo_acc: "精度",
+    media_devices: "メディアデバイス",
+    perm_camera: "カメラ",
+    perm_mic: "マイク"
   },
   
   values: {
     connected: "接続済み",
     offline: "オフライン",
     supported: "サポート",
-    not_supported: "非対応",
+    not_supported: "非サポート",
     yes: "はい",
     no: "いいえ",
     unknown: "不明"
@@ -96,104 +104,24 @@ export const ja: Translation = {
 
   actions: {
     check: "確認する",
+    theme_light: "ライトモードへ切り替え",
+    theme_dark: "ダークモードへ切り替え",
+    about: "アプリについて",
     export_json: "JSONをエクスポート",
-    view_extensions: "拡張機能を表示",
-    view_base64: "Base64",
+    open_sensors: "センサー",
     view_details: "詳細を表示",
-    open_sensors: "センサーを開く",
+    view_base64: "Base64を表示",
+    view_extensions: "拡張機能を表示",
     copy: "コピー",
-    copied: "コピーしました",
-    zoom: "拡大",
-    theme_dark: "ダーク",
-    theme_light: "ライト",
-    about: "アプリについて"
+    copied: "コピーしました!"
   },
 
   status: {
     idle: "未確認",
-    granted: "許可済み",
-    denied: "拒否済み",
+    granted: "許可",
+    denied: "拒否",
     prompt: "確認が必要",
-    error: "エラー"
-  },
-
-  cameraTool: {
-    title: "カメラツール",
-    btn_open: "カメラを開く",
-    select_device: "デバイスを選択",
-    no_devices: "ビデオデバイスが見つかりません",
-    take_photo: "写真を撮る",
-    start_record: "録画開始",
-    stop_record: "録画停止",
-    mirror: "左右反転",
-    retake: "再撮影",
-    download_photo: "写真をダウンロード",
-    download_video: "動画をダウンロード",
-    close: "閉じる",
-    current_res: "現在の解像度",
-    max_res: "ハードウェア最大解像度 (WebRTC)",
-    permission_denied: "カメラの権限が拒否されました",
-    error_hardware: "カメラが使用中かハードウェアエラーです",
-    error_generic: "カメラにアクセスできません"
-  },
-
-  audioTool: {
-    title: "オーディオレコーダー",
-    btn_open: "レコーダーを開く",
-    start_record: "録音開始",
-    stop_record: "録音停止",
-    download: "音声をダウンロード",
-    close: "閉じる",
-    listening: "聞き取り中...",
-    error_mic: "マイクへのアクセスが拒否されたかエラーが発生しました",
-    details_size: "ファイルサイズ",
-    details_rate: "サンプルレート",
-    details_type: "フォーマット"
-  },
-
-  webglTool: {
-    title: "WebGL 拡張機能",
-    count: "個の拡張機能",
-    search_placeholder: "検索...",
-    close: "閉じる"
-  },
-
-  base64Tool: {
-    title: "Canvas Base64 データ",
-    desc: "Canvas フィンガープリントの生データ表現。",
-    copy: "Base64をコピー",
-    close: "閉じる"
-  },
-
-  aboutModal: {
-    title: "BrowserScopeについて",
-    version: "バージョン",
-    desc: "ブラウザ機能、ハードウェア情報、およびネットワークステータスをローカルでチェックする、軽量でプライバシーに配慮したツールです。",
-    changelog: "更新履歴",
-    latest_update: "リフレッシュレート検出、ストレージ永続性、センサーAPIステータスを追加。",
-    close: "閉じる"
-  },
-
-  sensorModal: {
-    sensor_title: "リアルタイムセンサーデータ",
-    accelerometer: "加速度センサー (Accelerometer)",
-    gyroscope: "ジャイロスコープ (Gyroscope)",
-    sensor_permission_desc: "この機能には、デバイスのモーションセンサーへのアクセス権限が必要です。続行するには許可してください。",
-    sensor_allow: "センサーへのアクセスを許可",
-    close: "閉じる"
-  },
-
-  scoreModal: {
-    score_details_title: "指紋スコアの詳細",
-    tracking_potential: "追跡の可能性",
-    score_explanation: "スコアが高いほど、Webサイトで利用可能な一意の識別データが多くなり、追跡される可能性が高くなります。",
-    contributing_factors: "寄与要因",
-    close: "閉じる"
-  },
-
-  imageDetails: {
-    dimensions: "画像サイズ",
-    size: "ファイルサイズ"
+    error: "エラー / 利用不可"
   },
 
   features: {
@@ -209,9 +137,9 @@ export const ja: Translation = {
     usb: "Web USB",
     payment: "Payment Request",
     nfc: "Web NFC",
-    wakeLock: "画面ウェイクロック",
+    wakeLock: "画面常時点灯 (Wake Lock)",
     fsAccess: "ファイルシステムアクセス",
-    broadcast: "Broadcast Channel",
+    broadcast: "ブロードキャストチャンネル",
     webShare: "Web Share API",
     clipboard: "クリップボード API",
     pip: "ピクチャーインピクチャー",
@@ -221,25 +149,25 @@ export const ja: Translation = {
     compression: "Compression Streams",
     webTransport: "Web Transport",
     eyeDropper: "スポイトツール (EyeDropper)",
-    accelerometer: "加速度センサー (Accelerometer)",
-    gyroscope: "ジャイロスコープ (Gyroscope)",
-    ambientLight: "環境光センサー (Ambient Light)",
+    accelerometer: "加速度センサー",
+    gyroscope: "ジャイロスコープ",
+    ambientLight: "環境光センサー"
   },
   
   featureDescs: {
-    serviceWorker: "オフライン機能と PWA サポート",
-    bgSync: "接続回復時にアクションを同期",
+    serviceWorker: "オフライン機能とPWAサポート",
+    bgSync: "接続が回復するまでアクションを延期",
     pushApi: "サーバーからのプッシュ通知を受信",
     notification: "システムレベルの通知",
     appBadges: "アプリアイコンにバッジを設定",
-    webgpu: "次世代グラフィックス API",
-    webxr: "VR および AR 機能",
+    webgpu: "次世代グラフィックスAPI",
+    webxr: "VRおよびAR機能",
     webauthn: "パスワードレス認証",
-    bluetooth: "Bluetooth デバイスへの接続",
-    usb: "USB デバイスへの接続",
-    payment: "ネイティブ支払い処理",
+    bluetooth: "Bluetoothデバイスへの接続",
+    usb: "USBデバイスへの接続",
+    payment: "ネイティブ決済処理",
     nfc: "近距離無線通信",
-    wakeLock: "画面の自動消灯を防止",
+    wakeLock: "画面が暗くなるのを防ぐ",
     fsAccess: "ローカルファイルの読み書き",
     broadcast: "タブ間通信",
     webShare: "ネイティブ共有ダイアログ",
@@ -248,11 +176,123 @@ export const ja: Translation = {
     geo: "ユーザーの位置情報アクセス",
     wasm: "高性能バイナリコード",
     webCodecs: "低レベルメディア処理",
-    compression: "ネイティブ GZIP/Deflate 圧縮",
+    compression: "ネイティブ GZIP/Deflate",
     webTransport: "低遅延双方向ストリーミング",
     eyeDropper: "システムカラーピッカー",
-    accelerometer: "モーションセンサー (API サポート)",
-    gyroscope: "方向センサー (API サポート)",
-    ambientLight: "光レベルセンサー (API サポート)",
+    accelerometer: "モーションセンサー",
+    gyroscope: "オリエンテーションセンサー",
+    ambientLight: "照度センサー"
+  },
+
+  cameraTool: {
+    title: "カメラツール",
+    btn_open: "カメラを開く",
+    no_devices: "カメラデバイスが見つかりません",
+    permission_denied: "カメラの権限が拒否されました",
+    error_hardware: "カメラへのアクセス中にハードウェアエラーが発生しました",
+    error_generic: "カメラへのアクセスエラー",
+    error_mic: "マイクエラー",
+    select_device: "デバイスを選択",
+    current_res: "現在の解像度",
+    max_res: "最大解像度",
+    mirror: "ミラー",
+    take_photo: "写真を撮る",
+    start_record: "録画開始",
+    stop_record: "録画停止",
+    retake: "撮り直す",
+    download_photo: "写真を保存",
+    download_video: "動画を保存"
+  },
+
+  audioTool: {
+    title: "オーディオレコーダー",
+    btn_open: "レコーダーを開く",
+    listening: "待機中...",
+    start_record: "開始",
+    stop_record: "停止",
+    download: "保存",
+    details_size: "サイズ",
+    details_rate: "サンプルレート",
+    details_type: "形式",
+    close: "閉じる",
+    error_mic: "マイクへのアクセスエラー"
+  },
+
+  webglTool: {
+    title: "WebGL 拡張機能",
+    count: "個の拡張機能をサポート",
+    search_placeholder: "拡張機能を検索...",
+    close: "閉じる"
+  },
+
+  base64Tool: {
+    title: "Base64 データ",
+    desc: "生成された指紋画像の生データ表現",
+    copy: "クリップボードにコピー",
+    close: "閉じる"
+  },
+
+  imageDetails: {
+    dimensions: "寸法",
+    size: "サイズ"
+  },
+
+  aboutModal: {
+    title: "BrowserScope について",
+    desc: "BrowserScopeは、システムの機能と指紋の一意性を検証するために設計された包括的なブラウザ分析ツールです。",
+    version: "バージョン",
+    changelog: "変更履歴",
+    latest_update: "カメラとオーディオ機能の検出、詳細なWebGL拡張機能ビューア、およびセンサー診断を追加しました。",
+    close: "閉じる"
+  },
+
+  sensorModal: {
+    sensor_title: "デバイスセンサー",
+    sensor_permission_desc: "モーションセンサーにアクセスするには権限が必要です。",
+    sensor_allow: "アクセスを許可",
+    accelerometer: "加速度センサー",
+    gyroscope: "ジャイロスコープ",
+    close: "閉じる"
+  },
+  
+  scoreModal: {
+    score_details_title: "指紋スコアの詳細",
+    tracking_potential: "追跡の可能性",
+    score_explanation: "スコアが高いほど、Webサイトで利用可能な一意の識別データが多くなり、追跡される可能性が高くなります。",
+    contributing_factors: "寄与要因",
+    close: "閉じる",
+
+    factors: {
+      canvas_hash: "Canvas フィンガープリント",
+      webgl_hash: "WebGL フィンガープリント",
+      hardware_concurrency: "ハードウェア (CPU/RAM)",
+      user_agent: "ユーザーエージェント",
+      resolution: "画面解像度",
+      audio_context: "オーディオコンテキスト",
+      battery_status: "バッテリーステータス",
+      locale_time: "ロケールと時間"
+    },
+    values: {
+      val_unique: "一意 / 特定",
+      val_generic: "一般的",
+      val_specific: "詳細",
+      val_readable: "読み取り可能",
+      val_protected: "保護済み",
+      val_unknown: "不明"
+    },
+    descriptions: {
+      desc_canvas_unique: "Canvas描画の差異により、GPUやドライバの情報が明らかになります。",
+      desc_canvas_generic: "Canvasフィンガープリントは失敗したかブロックされました。",
+      desc_webgl_unique: "WebGLレポートにより、特定のグラフィックスハードウェアが公開されます。",
+      desc_webgl_generic: "WebGLフィンガープリントは失敗したかブロックされました。",
+      desc_hardware_unique: "CPUコア数とデバイスメモリは重要な識別要因です。",
+      desc_hardware_generic: "ハードウェアの詳細は部分的に隠されています。",
+      desc_ua_unique: "詳細なユーザーエージェント文字列により、ブラウザとOSのバージョンがわかります。",
+      desc_res_unique: "画面サイズとウィンドウサイズの組み合わせにより、一意のフットプリントが作成されます。",
+      desc_audio_unique: "オーディオハードウェアのサンプルレートとレイテンシ。",
+      desc_battery_unique: "バッテリーAPIにより、ブラウジングセッションを超えてユーザーを追跡できます。",
+      desc_battery_generic: "バッテリーステータスは非表示または非対応です。",
+      desc_locale_unique: "タイムゾーンと言語設定により、場所を絞り込むことができます。"
+    }
   }
 };

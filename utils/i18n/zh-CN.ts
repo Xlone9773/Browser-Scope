@@ -1,3 +1,4 @@
+
 import { Translation } from './types';
 
 export const zhCN: Translation = {
@@ -15,10 +16,11 @@ export const zhCN: Translation = {
     storage_loc: "存储与本地化",
     media_sup: "媒体与编码能力",
     user_agent: "用户代理 (User Agent)",
-    fingerprints: "数字指纹与追踪",
+    fingerprints: "指纹与追踪",
     features: "Web API 能力检测",
-    pwa: "PWA 与离线能力",
-    permissions: "权限管理"
+    permissions: "权限管理",
+    pwa: "PWA 能力",
+    security: "隐私与安全"
   },
   
   labels: {
@@ -26,7 +28,7 @@ export const zhCN: Translation = {
     platform: "系统平台",
     browser: "浏览器内核",
     language: "系统语言",
-    pref_langs: "首选语言列表",
+    pref_langs: "首选语言",
     cookies: "Cookies 启用",
     dnt: "Do Not Track",
     
@@ -36,16 +38,15 @@ export const zhCN: Translation = {
     gpu_renderer: "GPU 渲染器",
     max_texture: "最大纹理尺寸",
     audio_rate: "音频采样率",
+    audio_latency: "音频延迟",
     battery: "电池电量",
     charging: "充电状态",
     touch: "最大触控点数",
-    canvas_hash: "Canvas 指纹 (Hash)",
-    webgl_hash: "WebGL 指纹 (Hash)",
-    audio_latency: "音频延迟",
-    fp_score: "唯一性评分",
+    screen_extended: "多显示器扩展",
+    gamepads: "连接的手柄",
     
     resolution: "屏幕分辨率",
-    refresh_rate: "屏幕刷新率 (估算)",
+    refresh_rate: "刷新率",
     avail_size: "可用尺寸",
     window_size: "窗口尺寸",
     pixel_ratio: "像素密度 (DPR)",
@@ -61,6 +62,7 @@ export const zhCN: Translation = {
     downlink: "下行速度",
     rtt: "延迟 (RTT)",
     save_data: "流量节省模式",
+    webrtc_ip: "WebRTC 本地 IP",
     
     timezone: "当前时区",
     locale: "区域设置",
@@ -71,17 +73,28 @@ export const zhCN: Translation = {
     
     video_codecs: "视频编码支持",
     audio_codecs: "音频编码支持",
+    speech_voices: "TTS 语音包",
 
+    camera_permission: "摄像头权限",
+
+    fp_score: "指纹评分",
+    canvas_hash: "Canvas 哈希",
+    webgl_hash: "WebGL 哈希",
+
+    perm_notif: "通知权限",
+    perm_midi: "MIDI 访问",
+    perm_geo: "地理位置",
+    geo_lat: "纬度",
+    geo_long: "经度",
+    geo_acc: "精度",
     media_devices: "媒体设备",
     perm_camera: "摄像头",
     perm_mic: "麦克风",
-    perm_geo: "地理位置",
-    perm_notif: "系统通知",
-    perm_midi: "MIDI 设备",
 
-    geo_lat: "纬度",
-    geo_long: "经度",
-    geo_acc: "精度 (米)"
+    is_bot: "自动化控制",
+    gpc_enabled: "全球隐私控制 (GPC)",
+    pdf_viewer: "内置 PDF 查看器",
+    secure_context: "安全上下文 (HTTPS)"
   },
   
   values: {
@@ -91,22 +104,24 @@ export const zhCN: Translation = {
     not_supported: "不支持",
     yes: "是",
     no: "否",
-    unknown: "未知"
+    unknown: "未知",
+    detected: "已检测到",
+    none: "无",
+    hidden: "隐藏/保护"
   },
 
   actions: {
     check: "点击检查",
+    theme_light: "切换浅色模式",
+    theme_dark: "切换深色模式",
+    about: "关于",
     export_json: "导出 JSON",
-    view_extensions: "查看扩展列表",
-    view_base64: "Base64 源码",
-    view_details: "查看详情",
-    open_sensors: "打开传感器",
+    open_sensors: "传感器",
+    view_details: "详情",
+    view_base64: "查看 Base64",
+    view_extensions: "扩展列表",
     copy: "复制",
-    copied: "已复制",
-    zoom: "放大",
-    theme_dark: "深色",
-    theme_light: "浅色",
-    about: "关于 / 更新日志"
+    copied: "已复制!"
   },
 
   status: {
@@ -117,69 +132,134 @@ export const zhCN: Translation = {
     error: "检测错误"
   },
 
+  features: {
+    serviceWorker: "Service Worker",
+    bgSync: "后台同步",
+    pushApi: "推送 API",
+    notification: "通知 API",
+    appBadges: "应用角标",
+    webgpu: "WebGPU 图形引擎",
+    webxr: "WebXR (VR/AR)",
+    webauthn: "WebAuthn",
+    bluetooth: "Web 蓝牙",
+    usb: "Web USB",
+    payment: "支付请求",
+    nfc: "Web NFC",
+    wakeLock: "屏幕唤醒锁",
+    fsAccess: "文件系统访问",
+    broadcast: "广播频道",
+    webShare: "原生分享 API",
+    clipboard: "剪贴板 API",
+    pip: "画中画模式",
+    geo: "地理位置定位",
+    wasm: "Web Assembly",
+    webCodecs: "Web Codecs 编码",
+    compression: "压缩流",
+    webTransport: "Web Transport",
+    eyeDropper: "吸管工具 (EyeDropper)",
+    accelerometer: "加速度计",
+    gyroscope: "陀螺仪",
+    ambientLight: "环境光传感器"
+  },
+  
+  featureDescs: {
+    serviceWorker: "离线访问与 PWA 支持",
+    bgSync: "延迟到有网络时执行操作",
+    pushApi: "接收服务器推送通知",
+    notification: "系统级通知",
+    appBadges: "在应用图标上设置徽章",
+    webgpu: "新一代高性能图形 API",
+    webxr: "虚拟现实与增强现实能力",
+    webauthn: "无密码认证",
+    bluetooth: "连接附近的蓝牙设备",
+    usb: "连接 USB 硬件设备",
+    payment: "原生支付处理",
+    nfc: "近场通信能力",
+    wakeLock: "防止屏幕自动息屏",
+    fsAccess: "读写本地文件系统",
+    broadcast: "跨标签页通信",
+    webShare: "调用系统级分享面板",
+    clipboard: "异步读写剪贴板",
+    pip: "悬浮视频播放窗",
+    geo: "获取用户地理位置",
+    wasm: "高性能二进制代码执行",
+    webCodecs: "底层音视频编解码处理",
+    compression: "原生 GZIP/Deflate 支持",
+    webTransport: "低延迟双向数据传输",
+    eyeDropper: "系统级屏幕取色",
+    accelerometer: "运动传感器",
+    gyroscope: "方向传感器",
+    ambientLight: "光线强度传感器"
+  },
+
   cameraTool: {
     title: "摄像头工具",
     btn_open: "打开摄像头",
+    no_devices: "未找到摄像头设备",
+    permission_denied: "摄像头权限被拒绝",
+    error_hardware: "访问摄像头硬件错误",
+    error_generic: "访问摄像头出错",
+    error_mic: "麦克风错误",
     select_device: "选择设备",
-    no_devices: "未发现视频输入设备",
-    take_photo: "拍摄照片",
-    start_record: "录制视频",
-    stop_record: "停止录制",
-    mirror: "画面镜像",
-    retake: "重新拍摄",
+    current_res: "当前分辨率",
+    max_res: "最大分辨率",
+    mirror: "镜像",
+    take_photo: "拍照",
+    start_record: "开始录像",
+    stop_record: "停止录像",
+    retake: "重拍",
     download_photo: "下载照片",
-    download_video: "下载视频",
-    close: "关闭",
-    current_res: "当前输出分辨率",
-    max_res: "硬件最大分辨率 (WebRTC)",
-    permission_denied: "摄像头权限已被拒绝",
-    error_hardware: "摄像头被占用或硬件错误",
-    error_generic: "无法访问摄像头"
+    download_video: "下载视频"
   },
 
   audioTool: {
     title: "录音工具",
     btn_open: "打开录音机",
-    start_record: "开始录音",
-    stop_record: "停止录音",
-    download: "下载音频",
-    close: "关闭",
-    listening: "正在监听...",
-    error_mic: "麦克风访问被拒绝或出错",
-    details_size: "文件大小",
+    listening: "监听中...",
+    start_record: "开始",
+    stop_record: "停止",
+    download: "下载",
+    details_size: "大小",
     details_rate: "采样率",
-    details_type: "音频格式"
+    details_type: "格式",
+    close: "关闭",
+    error_mic: "无法访问麦克风"
   },
 
   webglTool: {
-    title: "WebGL 扩展支持",
-    count: "个扩展",
+    title: "WebGL 扩展",
+    count: "个支持的扩展",
     search_placeholder: "搜索扩展...",
     close: "关闭"
   },
-
+  
   base64Tool: {
-    title: "Canvas Base64 数据",
-    desc: "Canvas 指纹渲染结果的原始数据表示。",
-    copy: "复制 Base64",
+    title: "Base64 数据",
+    desc: "指纹图像的原始数据表示",
+    copy: "复制到剪贴板",
     close: "关闭"
+  },
+
+  imageDetails: {
+    dimensions: "尺寸",
+    size: "大小"
   },
 
   aboutModal: {
     title: "关于 BrowserScope",
-    version: "当前版本",
-    desc: "一个轻量级、注重隐私的浏览器能力检测工具，可快速查看硬件信息、网络状态及 Web API 支持情况。",
+    desc: "BrowserScope 是一款全面的浏览器分析工具，旨在验证您的系统能力和指纹唯一性。",
+    version: "版本",
     changelog: "更新日志",
-    latest_update: "新增实时传感器监测 (加速度计/陀螺仪)、指纹唯一性评分系统及界面细节优化。",
+    latest_update: "新增隐私与安全检测 (WebRTC/Bot)、多显示器与手柄支持、以及更丰富的网络和媒体能力分析。",
     close: "关闭"
   },
 
   sensorModal: {
-    sensor_title: "实时传感器数据",
-    accelerometer: "加速度计 (Accelerometer)",
-    gyroscope: "陀螺仪 (Gyroscope)",
-    sensor_permission_desc: "该功能需要访问设备运动传感器权限。请允许以继续。",
-    sensor_allow: "允许访问传感器",
+    sensor_title: "设备传感器",
+    sensor_permission_desc: "访问设备运动传感器需要权限。",
+    sensor_allow: "允许访问",
+    accelerometer: "加速度计",
+    gyroscope: "陀螺仪",
     close: "关闭"
   },
 
@@ -188,71 +268,39 @@ export const zhCN: Translation = {
     tracking_potential: "追踪风险",
     score_explanation: "分数越高表示暴露给网站的唯一识别数据越多，被追踪的风险越大。",
     contributing_factors: "影响因素",
-    close: "关闭"
-  },
+    close: "关闭",
 
-  imageDetails: {
-    dimensions: "图像尺寸",
-    size: "文件大小"
-  },
-
-  features: {
-    serviceWorker: "Service Worker",
-    bgSync: "后台同步 (Background Sync)",
-    pushApi: "推送通知 (Push API)",
-    notification: "系统通知 (Notification)",
-    appBadges: "应用角标 (App Badges)",
-    webgpu: "WebGPU 图形引擎",
-    webxr: "WebXR (VR/AR)",
-    webauthn: "WebAuthn 认证",
-    bluetooth: "Web 蓝牙",
-    usb: "Web USB",
-    payment: "支付请求 API",
-    nfc: "Web NFC",
-    wakeLock: "屏幕唤醒锁",
-    fsAccess: "文件系统访问",
-    broadcast: "广播频道 (Broadcast)",
-    webShare: "原生分享 API",
-    clipboard: "剪贴板 API",
-    pip: "画中画模式",
-    geo: "地理位置定位",
-    wasm: "Web Assembly",
-    webCodecs: "Web Codecs 编码",
-    compression: "原生压缩流",
-    webTransport: "Web Transport",
-    eyeDropper: "吸管工具 (EyeDropper)",
-    accelerometer: "加速计 (Accelerometer)",
-    gyroscope: "陀螺仪 (Gyroscope)",
-    ambientLight: "环境光传感器 (Ambient Light)",
-  },
-  
-  featureDescs: {
-    serviceWorker: "离线访问与 PWA 支持",
-    bgSync: "网络恢复时自动同步数据",
-    pushApi: "接收服务端推送消息",
-    notification: "系统级通知消息",
-    appBadges: "在应用图标上显示标记",
-    webgpu: "新一代高性能图形 API",
-    webxr: "虚拟现实与增强现实能力",
-    webauthn: "无密码安全认证标准",
-    bluetooth: "连接附近的蓝牙设备",
-    usb: "连接 USB 硬件设备",
-    payment: "浏览器原生支付流程",
-    nfc: "近场通信能力",
-    wakeLock: "防止屏幕自动息屏",
-    fsAccess: "读写本地文件系统",
-    broadcast: "跨标签页/窗口通信",
-    webShare: "调用系统级分享面板",
-    clipboard: "异步读写剪贴板",
-    pip: "悬浮视频播放窗",
-    geo: "获取用户地理位置",
-    wasm: "高性能二进制代码执行",
-    webCodecs: "底层音视频编解码处理",
-    compression: "原生 GZIP/Deflate 压缩",
-    webTransport: "低延迟双向数据传输",
-    eyeDropper: "系统级屏幕取色",
-    accelerometer: "运动检测传感器 (API 支持)",
-    gyroscope: "方向检测传感器 (API 支持)",
-    ambientLight: "环境亮度检测 (API 支持)",
+    factors: {
+      canvas_hash: "Canvas 指纹",
+      webgl_hash: "WebGL 指纹",
+      hardware_concurrency: "硬件并发 (CPU/内存)",
+      user_agent: "用户代理 (User Agent)",
+      resolution: "屏幕分辨率",
+      audio_context: "音频上下文",
+      battery_status: "电池状态 API",
+      locale_time: "区域与时间"
+    },
+    values: {
+      val_unique: "唯一 / 高辨识度",
+      val_generic: "通用 / 混淆",
+      val_specific: "特定",
+      val_readable: "可读取",
+      val_protected: "受保护",
+      val_unknown: "未知"
+    },
+    descriptions: {
+      desc_canvas_unique: "Canvas 渲染差异暴露了您的 GPU 和驱动程序特征。",
+      desc_canvas_generic: "Canvas 指纹提取失败或已被屏蔽。",
+      desc_webgl_unique: "WebGL 报告暴露了具体的显卡硬件型号。",
+      desc_webgl_generic: "WebGL 指纹提取失败或已被屏蔽。",
+      desc_hardware_unique: "CPU 核心数和设备内存大小是重要的识别特征。",
+      desc_hardware_generic: "硬件详细信息被部分隐藏。",
+      desc_ua_unique: "详细的 User Agent 字符串暴露了浏览器和操作系统版本。",
+      desc_res_unique: "屏幕尺寸结合窗口大小会产生独特的指纹。",
+      desc_audio_unique: "音频硬件的采样率和延迟参数。",
+      desc_battery_unique: "电池 API 允许网站跨浏览会话追踪用户。",
+      desc_battery_generic: "电池状态已被隐藏或不支持。",
+      desc_locale_unique: "时区和语言设置可缩小用户的位置范围。"
+    }
   }
 };

@@ -1,3 +1,4 @@
+
 import { ExtendedNavigator, BrowserData, BatteryManager, FeatureItem, CodecInfo, FingerprintScore, ScoreFactor } from '../types';
 
 const nav = navigator as ExtendedNavigator;
@@ -314,69 +315,130 @@ const getColorGamut = () => {
     return 'Unknown';
 };
 
+// WebRTC Local IP Detection
+const getWebRTCIP = async (): Promise<string> => {
+    return new Promise(resolve => {
+        try {
+            const pc = new RTCPeerConnection({ iceServers: [] });
+            pc.createDataChannel('');
+            pc.onicecandidate = (e) => {
+                if (!e.candidate) {
+                    pc.close();
+                    resolve('Hidden');
+                    return;
+                }
+                const ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/;
+                const match = e.candidate.candidate.match(ipRegex);
+                if (match) {
+                    pc.close();
+                    resolve(match[1]);
+                }
+            };
+            
+            // Timeout in case it hangs
+            setTimeout(() => {
+                pc.close();
+                resolve('Timeout/Hidden');
+            }, 1000);
+
+            pc.createOffer().then(sdp => pc.setLocalDescription(sdp));
+        } catch(e) {
+            resolve('Not Supported');
+        }
+    });
+};
+
+const getSpeechVoicesCount = (): Promise<number> => {
+    return new Promise(resolve => {
+        if (!window.speechSynthesis) {
+            resolve(0);
+            return;
+        }
+        let voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            resolve(voices.length);
+        } else {
+            // Voices load asynchronously in some browsers
+            window.speechSynthesis.onvoiceschanged = () => {
+                voices = window.speechSynthesis.getVoices();
+                resolve(voices.length);
+            };
+            // Fallback timeout
+            setTimeout(() => resolve(0), 500);
+        }
+    });
+};
+
 const calculateFingerprintScore = (
     canvasHash: string, 
     webglHash: string, 
     userAgent: string, 
     screenRes: string,
     battery: string,
-    audioRate: string
+    audioRate: string,
+    cpu: string | number,
+    memory: string | number,
+    webRTC: string
 ): FingerprintScore => {
     const factors: ScoreFactor[] = [];
     let score = 0;
 
-    // Canvas
+    // 1. Canvas Fingerprint (20 pts)
     if (canvasHash && canvasHash !== 'Error' && canvasHash !== 'Not Supported') {
-        score += 25;
-        factors.push({ id: 'canvas_hash', value: 'Unique', score: 25, maxScore: 25, description: 'desc_canvas' });
+        score += 20;
+        factors.push({ id: 'canvas_hash', value: 'val_unique', score: 20, maxScore: 20, description: 'desc_canvas_unique' });
     } else {
-        factors.push({ id: 'canvas_hash', value: 'Generic', score: 0, maxScore: 25, description: 'desc_canvas_fail' });
+        factors.push({ id: 'canvas_hash', value: 'val_generic', score: 0, maxScore: 20, description: 'desc_canvas_generic' });
     }
 
-    // WebGL
+    // 2. WebGL Fingerprint (20 pts)
     if (webglHash && webglHash !== 'Error' && webglHash !== 'Not Supported') {
         score += 20;
-        factors.push({ id: 'webgl_hash', value: 'Unique', score: 20, maxScore: 20, description: 'desc_webgl' });
+        factors.push({ id: 'webgl_hash', value: 'val_unique', score: 20, maxScore: 20, description: 'desc_webgl_unique' });
     } else {
-        factors.push({ id: 'webgl_hash', value: 'Generic', score: 0, maxScore: 20, description: 'desc_webgl_fail' });
+        factors.push({ id: 'webgl_hash', value: 'val_generic', score: 0, maxScore: 20, description: 'desc_webgl_generic' });
     }
 
-    // User Agent
-    if (userAgent && userAgent.length > 50) {
+    // 3. Hardware (CPU/Memory) (15 pts)
+    const hardwareVal = `${cpu} cores, ${memory}`;
+    if (cpu !== 'Unknown' && memory !== 'Unknown') {
         score += 15;
-        factors.push({ id: 'user_agent', value: 'Specific', score: 15, maxScore: 15, description: 'desc_ua' });
+        factors.push({ id: 'hardware_concurrency', value: hardwareVal, score: 15, maxScore: 15, description: 'desc_hardware_unique' });
+    } else {
+        factors.push({ id: 'hardware_concurrency', value: 'val_generic', score: 5, maxScore: 15, description: 'desc_hardware_generic' });
     }
 
-    // Screen
+    // 4. User Agent (10 pts)
+    if (userAgent && userAgent.length > 50) {
+        score += 10;
+        factors.push({ id: 'user_agent', value: 'val_specific', score: 10, maxScore: 10, description: 'desc_ua_unique' });
+    }
+
+    // 5. Screen Resolution (10 pts)
     if (screenRes && screenRes !== 'Unknown') {
         score += 10;
-        factors.push({ id: 'resolution', value: screenRes, score: 10, maxScore: 10, description: 'desc_res' });
+        factors.push({ id: 'resolution', value: screenRes, score: 10, maxScore: 10, description: 'desc_res_unique' });
     }
 
-    // Audio
+    // 6. Audio Context (10 pts)
     if (audioRate && audioRate !== 'Unknown' && audioRate !== 'Error') {
         score += 10;
-        factors.push({ id: 'audio_context', value: audioRate, score: 10, maxScore: 10, description: 'desc_audio' });
+        factors.push({ id: 'audio_context', value: audioRate, score: 10, maxScore: 10, description: 'desc_audio_unique' });
     }
 
-    // Battery (Highly tracking if available)
+    // 7. Battery API (10 pts) - Highly invasive if allowed
     if (battery && battery !== 'Unknown' && battery !== 'Unavailable' && battery !== 'Not Supported') {
-        score += 15;
-        factors.push({ id: 'battery', value: 'Readable', score: 15, maxScore: 15, description: 'desc_battery' });
+        score += 10;
+        factors.push({ id: 'battery_status', value: 'val_readable', score: 10, maxScore: 10, description: 'desc_battery_unique' });
     } else {
-        factors.push({ id: 'battery', value: 'Protected', score: 0, maxScore: 15, description: 'desc_battery_safe' });
+        factors.push({ id: 'battery_status', value: 'val_protected', score: 0, maxScore: 10, description: 'desc_battery_generic' });
     }
 
-    // Timezone & Language (Combined)
+    // 8. Timezone & Locale (5 pts)
     score += 5;
-    factors.push({ id: 'locale_time', value: 'Readable', score: 5, maxScore: 5, description: 'desc_locale' });
+    factors.push({ id: 'locale_time', value: 'val_readable', score: 5, maxScore: 5, description: 'desc_locale_unique' });
 
-    let rating: 'Low' | 'Medium' | 'High' | 'Critical' = 'Low';
-    if (score > 80) rating = 'Critical';
-    else if (score > 60) rating = 'High';
-    else if (score > 30) rating = 'Medium';
-
-    return { totalScore: score, rating, factors };
+    return { totalScore: score, rating: score > 80 ? 'Critical' : score > 60 ? 'High' : score > 30 ? 'Medium' : 'Low', factors };
 };
 
 export const getAllData = async (): Promise<BrowserData> => {
@@ -390,14 +452,34 @@ export const getAllData = async (): Promise<BrowserData> => {
   const canvasInfo = getCanvasFingerprint();
   const webglHash = getWebGLFingerprint();
   const webglExtensions = getWebGLExtensions();
+  const webrtcIp = await getWebRTCIP();
+  const speechVoices = await getSpeechVoicesCount();
   
+  const cpuCores = navigator.hardwareConcurrency || 'Unknown';
+  const deviceMemory = nav.deviceMemory ? `${nav.deviceMemory} GB` : 'Unknown';
+  
+  // Peripherals
+  // @ts-ignore
+  const screenExtended = window.screen.isExtended || false;
+  const gamepads = navigator.getGamepads ? navigator.getGamepads().filter(g => g !== null).length : 0;
+
+  // Security
+  const isBot = nav.webdriver || false;
+  const gpcEnabled = nav.globalPrivacyControl || false;
+  // @ts-ignore
+  const pdfViewer = nav.pdfViewerEnabled || false;
+  const secureContext = window.isSecureContext;
+
   const score = calculateFingerprintScore(
       canvasInfo.hash, 
       webglHash, 
       navigator.userAgent, 
       `${window.screen.width} x ${window.screen.height}`,
       battery.level,
-      audioInfo.rate
+      audioInfo.rate,
+      cpuCores,
+      deviceMemory,
+      webrtcIp
   );
 
   return {
@@ -413,8 +495,8 @@ export const getAllData = async (): Promise<BrowserData> => {
       doNotTrack: navigator.doNotTrack || 'Unspecified',
     },
     hardware: {
-      cpuCores: navigator.hardwareConcurrency || 'Unknown',
-      memory: nav.deviceMemory ? `${nav.deviceMemory} GB` : 'Unknown',
+      cpuCores: cpuCores,
+      memory: deviceMemory,
       gpuRenderer: gpu.renderer,
       gpuVendor: gpu.vendor,
       maxTextureSize: gpu.maxTextureSize,
@@ -422,6 +504,8 @@ export const getAllData = async (): Promise<BrowserData> => {
       isCharging: battery.charging,
       touchPoints: navigator.maxTouchPoints,
       audioSampleRate: audioInfo.rate,
+      screenExtended,
+      gamepads,
     },
     fingerprints: {
       canvasHash: canvasInfo.hash,
@@ -450,8 +534,19 @@ export const getAllData = async (): Promise<BrowserData> => {
       downlink: connection ? `${connection.downlink} Mbps` : 'Unknown',
       rtt: connection ? `${connection.rtt} ms` : 'Unknown',
       saveData: connection ? connection.saveData || false : false,
+      webrtcIp,
     },
-    media: mediaSupport,
+    security: {
+        isBot,
+        gpcEnabled,
+        pdfViewer,
+        secureContext
+    },
+    media: {
+      video: mediaSupport.video,
+      audio: mediaSupport.audio,
+      speechVoices,
+    },
     storage: {
       quota: storage.quota,
       usage: storage.usage,

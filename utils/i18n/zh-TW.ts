@@ -1,51 +1,52 @@
+
 import { Translation } from './types';
+import { zhCN } from './zh-CN';
 
 export const zhTW: Translation = {
+  ...zhCN, // Fallback to CN for missing keys
+  
   loading: "正在掃描系統能力...",
   title: "BrowserScope",
   subtitle: "全面檢測您的瀏覽器環境、硬體能力、網路狀態及前沿 Web API 支援情況。",
-  refresh: "重新整理",
+  refresh: "重新檢測",
   footer: "所有資料均在本地瀏覽器中檢測，不會上傳任何個人隱私資訊。",
   
   sections: {
+    ...zhCN.sections,
     system: "系統與軟體",
     hardware: "硬體與圖形",
     display: "顯示與螢幕",
     network: "網路與連線",
     storage_loc: "儲存與本地化",
     media_sup: "媒體與編碼能力",
-    user_agent: "使用者代理 (User Agent)",
-    fingerprints: "數位指紋與追蹤",
+    fingerprints: "指紋與追蹤",
     features: "Web API 能力檢測",
-    pwa: "PWA 與離線能力",
-    permissions: "權限管理"
+    permissions: "權限管理",
+    pwa: "PWA 能力"
   },
   
   labels: {
+    ...zhCN.labels,
     os: "作業系統",
     platform: "系統平台",
     browser: "瀏覽器核心",
     language: "系統語言",
-    pref_langs: "首選語言列表",
+    pref_langs: "偏好語言",
     cookies: "Cookies 啟用",
-    dnt: "Do Not Track",
     
     cpu: "CPU 邏輯核心",
     memory: "裝置記憶體 (估算)",
     gpu_vendor: "GPU 供應商",
     gpu_renderer: "GPU 渲染器",
     max_texture: "最大紋理尺寸",
-    audio_rate: "音訊採樣率",
+    audio_rate: "音訊取樣率",
+    audio_latency: "音訊延遲",
     battery: "電池電量",
     charging: "充電狀態",
     touch: "最大觸控點數",
-    canvas_hash: "Canvas 指紋 (Hash)",
-    webgl_hash: "WebGL 指紋 (Hash)",
-    audio_latency: "音訊延遲",
-    fp_score: "唯一性評分",
     
     resolution: "螢幕解析度",
-    refresh_rate: "螢幕更新率 (估算)",
+    refresh_rate: "更新率",
     avail_size: "可用尺寸",
     window_size: "視窗尺寸",
     pixel_ratio: "像素密度 (DPR)",
@@ -69,19 +70,24 @@ export const zhTW: Translation = {
     storage_usage: "已用儲存",
     storage_persisted: "持久化儲存",
     
-    video_codecs: "影片編碼支援",
+    video_codecs: "視訊編碼支援",
     audio_codecs: "音訊編碼支援",
 
-    media_devices: "媒體設備",
-    perm_camera: "相機",
-    perm_mic: "麥克風",
-    perm_geo: "地理位置",
-    perm_notif: "系統通知",
-    perm_midi: "MIDI 裝置",
+    camera_permission: "相機權限",
 
+    fp_score: "指紋評分",
+    canvas_hash: "Canvas 雜湊",
+    webgl_hash: "WebGL 雜湊",
+
+    perm_notif: "通知權限",
+    perm_midi: "MIDI 存取",
+    perm_geo: "地理位置",
     geo_lat: "緯度",
     geo_long: "經度",
-    geo_acc: "精度 (公尺)"
+    geo_acc: "精確度",
+    media_devices: "媒體裝置",
+    perm_camera: "相機",
+    perm_mic: "麥克風"
   },
   
   values: {
@@ -96,91 +102,111 @@ export const zhTW: Translation = {
 
   actions: {
     check: "點擊檢查",
+    theme_light: "切換淺色模式",
+    theme_dark: "切換深色模式",
+    about: "關於",
     export_json: "匯出 JSON",
-    view_extensions: "檢視擴充功能",
-    view_base64: "Base64 原始碼",
-    view_details: "檢視詳情",
-    open_sensors: "開啟感測器",
+    open_sensors: "感測器",
+    view_details: "詳情",
+    view_base64: "查看 Base64",
+    view_extensions: "擴充列表",
     copy: "複製",
-    copied: "已複製",
-    zoom: "放大",
-    theme_dark: "深色",
-    theme_light: "淺色",
-    about: "關於 / 更新日誌"
-  },
-
-  status: {
-    idle: "未檢查",
-    granted: "已授權",
-    denied: "已拒絕",
-    prompt: "需詢問",
-    error: "檢測錯誤"
-  },
-
-  cameraTool: {
-    title: "相機工具",
-    btn_open: "開啟相機",
-    select_device: "選擇設備",
-    no_devices: "未發現視訊輸入設備",
-    take_photo: "拍攝照片",
-    start_record: "錄製影片",
-    stop_record: "停止錄製",
-    mirror: "畫面鏡像",
-    retake: "重新拍攝",
-    download_photo: "下載照片",
-    download_video: "下載影片",
-    close: "關閉",
-    current_res: "目前輸出解析度",
-    max_res: "硬體最大解析度 (WebRTC)",
-    permission_denied: "相機權限已被拒絕",
-    error_hardware: "相機已被占用或硬體錯誤",
-    error_generic: "無法存取相機"
+    copied: "已複製!"
   },
 
   audioTool: {
+    ...zhCN.audioTool,
     title: "錄音工具",
     btn_open: "開啟錄音機",
-    start_record: "開始錄音",
-    stop_record: "停止錄音",
-    download: "下載音訊",
-    close: "關閉",
-    listening: "正在監聽...",
-    error_mic: "麥克風存取被拒絕或出錯",
-    details_size: "檔案大小",
+    listening: "監聽中...",
+    start_record: "開始",
+    stop_record: "停止",
+    download: "下載",
+    details_size: "大小",
     details_rate: "取樣率",
-    details_type: "音訊格式"
+    details_type: "格式",
+    close: "關閉",
+    error_mic: "無法存取麥克風"
   },
 
-  webglTool: {
-    title: "WebGL 擴充功能",
-    count: "個擴充",
-    search_placeholder: "搜尋擴充...",
-    close: "關閉"
+  cameraTool: {
+    ...zhCN.cameraTool,
+    title: "相機工具",
+    btn_open: "開啟相機",
+    no_devices: "未找到相機裝置",
+    permission_denied: "相機權限被拒絕",
+    error_hardware: "存取相機硬體錯誤",
+    error_generic: "存取相機出錯",
+    error_mic: "麥克風錯誤",
+    select_device: "選擇裝置",
+    current_res: "目前解析度",
+    max_res: "最大解析度",
+    mirror: "鏡像",
+    take_photo: "拍照",
+    start_record: "開始錄影",
+    stop_record: "停止錄影",
+    retake: "重拍",
+    download_photo: "下載照片",
+    download_video: "下載影片"
   },
 
-  base64Tool: {
-    title: "Canvas Base64 資料",
-    desc: "Canvas 指紋渲染結果的原始資料表示。",
-    copy: "複製 Base64",
-    close: "關閉"
+  features: {
+    ...zhCN.features,
+    serviceWorker: "Service Worker",
+    bgSync: "背景同步",
+    pushApi: "推播 API",
+    notification: "通知 API",
+    appBadges: "應用程式標記",
+    webgpu: "WebGPU 圖形引擎",
+    webauthn: "WebAuthn",
+    bluetooth: "Web 藍牙",
+    usb: "Web USB",
+    payment: "支付請求",
+    nfc: "Web NFC",
+    wakeLock: "螢幕喚醒鎖",
+    fsAccess: "檔案系統存取",
+    broadcast: "廣播頻道",
+    webShare: "原生分享 API",
+    clipboard: "剪貼簿 API",
+    pip: "畫中畫模式",
+    geo: "地理位置定位",
+    webCodecs: "Web Codecs 編碼",
+    compression: "壓縮流",
+    eyeDropper: "吸管工具 (EyeDropper)",
+    accelerometer: "加速度計",
+    gyroscope: "陀螺儀",
+    ambientLight: "環境光感測器"
   },
-
-  aboutModal: {
-    title: "關於 BrowserScope",
-    version: "目前版本",
-    desc: "一個輕量級、注重隱私的瀏覽器能力檢測工具，可快速檢視硬體資訊、網路狀態及 Web API 支援情況。",
-    changelog: "更新日誌",
-    latest_update: "新增螢幕更新率檢測、儲存持久化狀態及感測器 API 支援檢測。",
-    close: "關閉"
-  },
-
-  sensorModal: {
-    sensor_title: "即時感測器資料",
-    accelerometer: "加速計 (Accelerometer)",
-    gyroscope: "陀螺儀 (Gyroscope)",
-    sensor_permission_desc: "此功能需要存取裝置運動感測器權限。請允許以繼續。",
-    sensor_allow: "允許存取感測器",
-    close: "關閉"
+  
+  featureDescs: {
+    ...zhCN.featureDescs,
+    serviceWorker: "離線存取與 PWA 支援",
+    bgSync: "延遲到有網路時執行操作",
+    pushApi: "接收伺服器推播通知",
+    notification: "系統級通知",
+    appBadges: "在應用程式圖示上設定徽章",
+    webgpu: "新一代高效能圖形 API",
+    webxr: "虛擬實境與擴增實境能力",
+    webauthn: "無密碼認證",
+    bluetooth: "連接附近的藍牙裝置",
+    usb: "連接 USB 硬體裝置",
+    payment: "原生支付處理",
+    nfc: "近場通訊能力",
+    wakeLock: "防止螢幕自動關閉",
+    fsAccess: "讀寫本地檔案系統",
+    broadcast: "跨分頁通訊",
+    webShare: "調用系統級分享面板",
+    clipboard: "非同步讀寫剪貼簿",
+    pip: "懸浮影片播放視窗",
+    geo: "獲取使用者地理位置",
+    wasm: "高效能二進位程式碼執行",
+    webCodecs: "底層音視訊編解碼處理",
+    compression: "原生 GZIP/Deflate 支援",
+    webTransport: "低延遲雙向資料傳輸",
+    eyeDropper: "系統級螢幕取色",
+    accelerometer: "運動感測器",
+    gyroscope: "方向感測器",
+    ambientLight: "光線強度感測器"
   },
 
   scoreModal: {
@@ -188,71 +214,39 @@ export const zhTW: Translation = {
     tracking_potential: "追蹤風險",
     score_explanation: "分數越高表示暴露給網站的唯一識別資料越多，被追蹤的風險越大。",
     contributing_factors: "影響因素",
-    close: "關閉"
-  },
+    close: "關閉",
 
-  imageDetails: {
-    dimensions: "影像尺寸",
-    size: "檔案大小"
-  },
-
-  features: {
-    serviceWorker: "Service Worker",
-    bgSync: "後台同步 (Background Sync)",
-    pushApi: "推播通知 (Push API)",
-    notification: "系統通知 (Notification)",
-    appBadges: "應用程式標記 (App Badges)",
-    webgpu: "WebGPU",
-    webxr: "WebXR (VR/AR)",
-    webauthn: "WebAuthn 認證",
-    bluetooth: "Web 藍牙",
-    usb: "Web USB",
-    payment: "支付請求 API",
-    nfc: "Web NFC",
-    wakeLock: "螢幕喚醒鎖",
-    fsAccess: "檔案系統存取",
-    broadcast: "廣播頻道 (Broadcast)",
-    webShare: "原生分享 API",
-    clipboard: "剪貼簿 API",
-    pip: "子母畫面模式",
-    geo: "地理位置定位",
-    wasm: "Web Assembly",
-    webCodecs: "Web Codecs 編碼",
-    compression: "原生壓縮流",
-    webTransport: "Web Transport",
-    eyeDropper: "滴管工具 (EyeDropper)",
-    accelerometer: "加速計 (Accelerometer)",
-    gyroscope: "陀螺儀 (Gyroscope)",
-    ambientLight: "環境光感測器 (Ambient Light)",
-  },
-  
-  featureDescs: {
-    serviceWorker: "離線存取與 PWA 支援",
-    bgSync: "網路恢復時自動同步資料",
-    pushApi: "接收伺服器推播訊息",
-    notification: "系統級通知訊息",
-    appBadges: "在應用程式圖示上顯示標記",
-    webgpu: "新一代高效能圖形 API",
-    webxr: "虛擬實境與擴增實境能力",
-    webauthn: "無密碼安全認證標準",
-    bluetooth: "連接附近的藍牙裝置",
-    usb: "連接 USB 硬體裝置",
-    payment: "瀏覽器原生支付流程",
-    nfc: "近場通訊能力",
-    wakeLock: "防止螢幕自動關閉",
-    fsAccess: "讀寫本地檔案系統",
-    broadcast: "跨分頁/視窗通訊",
-    webShare: "呼叫系統級分享面板",
-    clipboard: "非同步讀寫剪貼簿",
-    pip: "懸浮影片播放視窗",
-    geo: "取得使用者地理位置",
-    wasm: "高效能二進位程式碼執行",
-    webCodecs: "底層音視訊編解碼處理",
-    compression: "原生 GZIP/Deflate 壓縮",
-    webTransport: "低延遲雙向資料傳輸",
-    eyeDropper: "系統級螢幕取色",
-    accelerometer: "運動檢測感測器 (API 支援)",
-    gyroscope: "方向檢測感測器 (API 支援)",
-    ambientLight: "環境亮度檢測 (API 支援)",
+    factors: {
+      canvas_hash: "Canvas 指紋",
+      webgl_hash: "WebGL 指紋",
+      hardware_concurrency: "硬體並發 (CPU/記憶體)",
+      user_agent: "使用者代理 (User Agent)",
+      resolution: "螢幕解析度",
+      audio_context: "音訊上下文",
+      battery_status: "電池狀態 API",
+      locale_time: "區域與時間"
+    },
+    values: {
+      val_unique: "唯一 / 高辨識度",
+      val_generic: "通用 / 混淆",
+      val_specific: "特定",
+      val_readable: "可讀取",
+      val_protected: "受保護",
+      val_unknown: "未知"
+    },
+    descriptions: {
+      desc_canvas_unique: "Canvas 渲染差異暴露了您的 GPU 和驅動程式特徵。",
+      desc_canvas_generic: "Canvas 指紋提取失敗或已被封鎖。",
+      desc_webgl_unique: "WebGL 報告暴露了具體的顯卡硬體型號。",
+      desc_webgl_generic: "WebGL 指紋提取失敗或已被封鎖。",
+      desc_hardware_unique: "CPU 核心數和裝置記憶體大小是重要的識別特徵。",
+      desc_hardware_generic: "硬體詳細資訊被部分隱藏。",
+      desc_ua_unique: "詳細的 User Agent 字串暴露了瀏覽器和作業系統版本。",
+      desc_res_unique: "螢幕尺寸結合視窗大小會產生獨特的指紋。",
+      desc_audio_unique: "音訊硬體的取樣率和延遲參數。",
+      desc_battery_unique: "電池 API 允許網站跨瀏覽工作階段追蹤使用者。",
+      desc_battery_generic: "電池狀態已被隱藏或不支援。",
+      desc_locale_unique: "時區和語言設定可縮小使用者的位置範圍。"
+    }
   }
 };

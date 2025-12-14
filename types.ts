@@ -21,6 +21,8 @@ export interface ExtendedNavigator extends Navigator {
   hid?: any;
   serial?: any;
   presentation?: any;
+  globalPrivacyControl?: boolean;
+  webdriver: boolean;
 }
 
 export interface NetworkInformation extends EventTarget {
@@ -70,7 +72,7 @@ export interface BrowserData {
     browserName: string;
     browserVersion: string;
     language: string;
-    preferredLanguages: string[]; // New
+    preferredLanguages: string[];
     userAgent: string;
     cookiesEnabled: boolean;
     doNotTrack: string | null;
@@ -85,15 +87,17 @@ export interface BrowserData {
     isCharging: string;
     touchPoints: number;
     audioSampleRate: string;
+    screenExtended: boolean; // New
+    gamepads: number; // New
   };
   fingerprints: {
     canvasHash: string;
-    canvasImage: string; // Data URI for display
+    canvasImage: string;
     webglHash: string;
     webglRenderer: string;
-    webglExtensions: string[]; // List of WebGL extensions
+    webglExtensions: string[];
     audioLatency: string;
-    score: FingerprintScore; // New
+    score: FingerprintScore;
   };
   display: {
     resolution: string;
@@ -113,15 +117,23 @@ export interface BrowserData {
     downlink: string;
     rtt: string;
     saveData: boolean;
+    webrtcIp: string; // New
+  };
+  security: { // New Section
+    isBot: boolean;
+    gpcEnabled: boolean;
+    pdfViewer: boolean;
+    secureContext: boolean;
   };
   media: {
     video: CodecInfo[];
     audio: CodecInfo[];
+    speechVoices: number; // New
   };
   storage: {
     quota: string;
     usage: string;
-    persisted: boolean; // New
+    persisted: boolean;
   };
   localization: {
     timeZone: string;
