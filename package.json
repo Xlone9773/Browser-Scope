@@ -11,7 +11,9 @@
   "dependencies": {
     "lucide-react": "^0.561.0",
     "react-dom": "^19.2.3",
-    "react": "^19.2.3"
+    "react": "^19.2.3",
+    "@fingerprintjs/fingerprintjs": "4.5.1",
+    "fingerprintjs2": "2.1.4"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

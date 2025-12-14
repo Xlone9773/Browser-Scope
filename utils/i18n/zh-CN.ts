@@ -240,6 +240,25 @@ export const zhCN: Translation = {
     close: "关闭"
   },
 
+  fingerprintModal: {
+    title: "浏览器指纹计算",
+    desc: "使用各种浏览器属性生成唯一的访客标识符。您可以调整以下参数来观察哈希值的变化。",
+    tab_v4: "FingerprintJS v4 (现代)",
+    tab_v2: "FingerprintJS v2 (传统)",
+    btn_run: "计算指纹",
+    generating: "生成中...",
+    visitor_id: "访客 ID",
+    time_taken: "耗时",
+    params_title: "计算参数配置",
+    salt_label: "自定义 Salt (种子)",
+    components_label: "包含的组件",
+    select_all: "全选",
+    deselect_all: "全不选",
+    close: "关闭",
+    copy: "复制 ID",
+    copied: "已复制!"
+  },
+
   imageDetails: {
     dimensions: "尺寸",
     size: "大小"

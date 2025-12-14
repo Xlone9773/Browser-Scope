@@ -35,7 +35,8 @@ import {
   ChevronRight,
   Lock,
   Gamepad2,
-  Mic2
+  Mic2,
+  Settings
 } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { BrowserData } from './types';
@@ -48,6 +49,7 @@ import { Base64Modal } from './components/Base64Modal';
 import { AboutModal } from './components/AboutModal';
 import { SensorModal } from './components/SensorModal';
 import { ScoreModal } from './components/ScoreModal';
+import { FingerprintModal } from './components/FingerprintModal';
 import { RefreshRate } from './components/RefreshRate';
 import { translations, languageNames, Language } from './utils/i18n/index';
 import { applyTheme, getSavedTheme, Theme } from './appearance/theme';
@@ -75,6 +77,7 @@ const App: React.FC = () => {
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
   const [isSensorModalOpen, setIsSensorModalOpen] = useState(false);
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
+  const [isFingerprintModalOpen, setIsFingerprintModalOpen] = useState(false);
   const [uaCopied, setUaCopied] = useState(false);
   
   const [permStatus, setPermStatus] = useState<Record<PermissionKey, PermissionStatusType>>({
@@ -335,6 +338,12 @@ const App: React.FC = () => {
             t={t.scoreModal}
           />
       )}
+      {isFingerprintModalOpen && (
+          <FingerprintModal
+            onClose={() => setIsFingerprintModalOpen(false)}
+            t={t.fingerprintModal}
+          />
+      )}
 
       <div className="max-w-7xl mx-auto space-y-8">
         
@@ -529,6 +538,17 @@ const App: React.FC = () => {
 
              <InfoItem label={t.labels.audio_rate} value={data.hardware.audioSampleRate} />
              <InfoItem label={t.labels.audio_latency} value={data.fingerprints.audioLatency} />
+
+             {/* Fingerprint Tool Button */}
+             <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex justify-center">
+                <button 
+                    onClick={() => setIsFingerprintModalOpen(true)}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors w-full justify-center"
+                >
+                    <Settings size={16} />
+                    {t.fingerprintModal.title}
+                </button>
+            </div>
           </InfoCard>
 
           {/* Network */}

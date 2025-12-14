@@ -240,6 +240,25 @@ export const en: Translation = {
     close: "Close"
   },
 
+  fingerprintModal: {
+    title: "Browser Fingerprinting",
+    desc: "Generate a unique visitor identifier using various browser attributes. You can adjust the parameters below to see how they affect the hash.",
+    tab_v4: "FingerprintJS v4 (Modern)",
+    tab_v2: "FingerprintJS v2 (Legacy)",
+    btn_run: "Calculate Fingerprint",
+    generating: "Generating...",
+    visitor_id: "Visitor ID",
+    time_taken: "Time Taken",
+    params_title: "Calculation Parameters",
+    salt_label: "Custom Salt (Seed)",
+    components_label: "Included Components",
+    select_all: "Select All",
+    deselect_all: "Deselect All",
+    close: "Close",
+    copy: "Copy ID",
+    copied: "Copied!"
+  },
+
   imageDetails: {
     dimensions: "Dimensions",
     size: "Size"

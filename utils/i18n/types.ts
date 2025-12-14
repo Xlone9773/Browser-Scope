@@ -79,6 +79,25 @@ export interface Translation {
     copy: string;
     close: string;
   };
+  
+  fingerprintModal: {
+    title: string;
+    desc: string;
+    tab_v4: string;
+    tab_v2: string;
+    btn_run: string;
+    generating: string;
+    visitor_id: string;
+    time_taken: string;
+    params_title: string;
+    salt_label: string;
+    components_label: string;
+    select_all: string;
+    deselect_all: string;
+    close: string;
+    copy: string;
+    copied: string;
+  };
 
   imageDetails: {
     dimensions: string;
