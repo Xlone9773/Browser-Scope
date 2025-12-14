@@ -1,5 +1,6 @@
 
 import { ExtendedNavigator, BrowserData, BatteryManager, FeatureItem, CodecInfo, FingerprintScore, ScoreFactor } from '../types';
+import { estimateCpuFromGpu } from '../utils/cpuMapping';
 
 const nav = navigator as ExtendedNavigator;
 
@@ -149,20 +150,31 @@ const getWebGLFingerprint = (): string => {
     }
 };
 
-export const getBatteryInfo = async (): Promise<{ level: string; charging: string }> => {
+export const getBatteryInfo = async (): Promise<{ level: string; charging: string; chargingTime: string; dischargingTime: string }> => {
   try {
     // @ts-ignore
     if (navigator.getBattery) {
       // @ts-ignore
       const battery: BatteryManager = await navigator.getBattery();
+      
+      const formatTime = (time: number) => {
+          if (time === Infinity || time === 0) return 'N/A';
+          const hrs = Math.floor(time / 3600);
+          const mins = Math.floor((time % 3600) / 60);
+          if (hrs > 0) return `${hrs}h ${mins}m`;
+          return `${mins}m`;
+      };
+
       return {
         level: `${Math.round(battery.level * 100)}%`,
         charging: battery.charging ? 'Yes' : 'No',
+        chargingTime: formatTime(battery.chargingTime),
+        dischargingTime: formatTime(battery.dischargingTime)
       };
     }
-    return { level: 'Not Supported', charging: 'Unknown' };
+    return { level: 'Not Supported', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' };
   } catch (e) {
-    return { level: 'Unavailable', charging: 'Unknown' };
+    return { level: 'Unavailable', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' };
   }
 };
 
@@ -241,7 +253,7 @@ export const detectBrowser = (): { name: string; version: string } => {
   return { name: M[0], version: M[1] };
 };
 
-const getMediaSupport = (): { video: CodecInfo[], audio: CodecInfo[] } => {
+const getMediaSupport = (): { video: CodecInfo[], audio: CodecInfo[], images: CodecInfo[] } => {
   const videoTypes = [
     { name: 'H.264 (AVC)', type: 'video/mp4; codecs="avc1.42E01E"' },
     { name: 'H.265 (HEVC)', type: 'video/mp4; codecs="hev1.1.6.L93.B0"' },
@@ -266,9 +278,28 @@ const getMediaSupport = (): { video: CodecInfo[], audio: CodecInfo[] } => {
     }));
   };
 
+  const imageTypes = [
+      { name: 'WebP', type: 'image/webp' },
+      { name: 'AVIF', type: 'image/avif' }, // Harder to sync detect, usually inferred
+      { name: 'PNG', type: 'image/png' },
+      { name: 'JPEG', type: 'image/jpeg' }
+  ];
+
+  // Canvas based detection for images
+  const checkImages = () => {
+      const canvas = document.createElement('canvas');
+      return imageTypes.map(item => {
+          // Basic canvas export check
+          const data = canvas.toDataURL(item.type);
+          const supported = data.indexOf(`data:${item.type}`) === 0;
+          return { name: item.name, supported };
+      });
+  }
+
   return {
     video: check(videoTypes),
-    audio: check(audioTypes)
+    audio: check(audioTypes),
+    images: checkImages()
   };
 };
 
@@ -296,15 +327,16 @@ const getStorageEstimate = async (): Promise<{ quota: string, usage: string, per
 
 const getAudioContextInfo = () => {
     const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioContext) return { rate: 'Not Supported', latency: 'Unknown' };
+    if (!AudioContext) return { rate: 'Not Supported', latency: 'Unknown', channels: 'Unknown' };
     try {
         const ctx = new AudioContext();
         const rate = ctx.sampleRate;
         const latency = ctx.outputLatency ? (ctx.outputLatency * 1000).toFixed(2) + ' ms' : 'Unknown';
+        const channels = ctx.destination.maxChannelCount || 2;
         ctx.close();
-        return { rate: `${rate} Hz`, latency };
+        return { rate: `${rate} Hz`, latency, channels };
     } catch(e) {
-        return { rate: 'Error', latency: 'Error' };
+        return { rate: 'Error', latency: 'Error', channels: 'Error' };
     }
 };
 
@@ -368,6 +400,15 @@ const getSpeechVoicesCount = (): Promise<number> => {
         }
     });
 };
+
+// Helper for WASM SIMD detection
+const checkWasmSimd = () => {
+    try {
+        // Minimal WASM with SIMD opcode
+        const buffer = new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11]);
+        return WebAssembly.validate(buffer);
+    } catch(e) { return false; }
+}
 
 const calculateFingerprintScore = (
     canvasHash: string, 
@@ -454,6 +495,7 @@ export const getAllData = async (): Promise<BrowserData> => {
   const webglExtensions = getWebGLExtensions();
   const webrtcIp = await getWebRTCIP();
   const speechVoices = await getSpeechVoicesCount();
+  const cpuModel = estimateCpuFromGpu(gpu.renderer);
   
   const cpuCores = navigator.hardwareConcurrency || 'Unknown';
   const deviceMemory = nav.deviceMemory ? `${nav.deviceMemory} GB` : 'Unknown';
@@ -469,6 +511,14 @@ export const getAllData = async (): Promise<BrowserData> => {
   // @ts-ignore
   const pdfViewer = nav.pdfViewerEnabled || false;
   const secureContext = window.isSecureContext;
+
+  // AI & Compute
+  const wasmSupport = typeof WebAssembly === 'object';
+  const wasmSimd = checkWasmSimd();
+  // @ts-ignore
+  const windowAi = !!(window.ai || window.model);
+  const webnn = !!nav.ml;
+  const webgpuCompute = !!nav.gpu; // Rough proxy, assumes if WebGPU exists, compute shader works
 
   const score = calculateFingerprintScore(
       canvasInfo.hash, 
@@ -496,12 +546,15 @@ export const getAllData = async (): Promise<BrowserData> => {
     },
     hardware: {
       cpuCores: cpuCores,
+      cpuModel: cpuModel || undefined,
       memory: deviceMemory,
       gpuRenderer: gpu.renderer,
       gpuVendor: gpu.vendor,
       maxTextureSize: gpu.maxTextureSize,
       batteryLevel: battery.level,
       isCharging: battery.charging,
+      chargingTime: battery.chargingTime,
+      dischargingTime: battery.dischargingTime,
       touchPoints: navigator.maxTouchPoints,
       audioSampleRate: audioInfo.rate,
       screenExtended,
@@ -523,6 +576,7 @@ export const getAllData = async (): Promise<BrowserData> => {
       pixelRatio: window.devicePixelRatio,
       colorDepth: window.screen.colorDepth,
       orientation: window.screen.orientation ? window.screen.orientation.type : 'Unknown',
+      orientationAngle: window.screen.orientation ? `${window.screen.orientation.angle}°` : '0°',
       darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
       colorGamut: getColorGamut(),
       hdr: window.matchMedia('(dynamic-range: high)').matches,
@@ -531,7 +585,9 @@ export const getAllData = async (): Promise<BrowserData> => {
     network: {
       online: navigator.onLine,
       effectiveType: connection ? connection.effectiveType || 'Unknown' : 'Unknown',
+      type: connection ? connection.type || 'Unknown' : 'Unknown',
       downlink: connection ? `${connection.downlink} Mbps` : 'Unknown',
+      downlinkMax: connection && connection.downlinkMax ? `${connection.downlinkMax} Mbps` : 'Unknown',
       rtt: connection ? `${connection.rtt} ms` : 'Unknown',
       saveData: connection ? connection.saveData || false : false,
       webrtcIp,
@@ -542,10 +598,19 @@ export const getAllData = async (): Promise<BrowserData> => {
         pdfViewer,
         secureContext
     },
+    ai: {
+        wasmSupport,
+        wasmSimd,
+        webnn,
+        windowAi,
+        webgpuCompute
+    },
     media: {
       video: mediaSupport.video,
       audio: mediaSupport.audio,
+      images: mediaSupport.images,
       speechVoices,
+      audioChannels: audioInfo.channels
     },
     storage: {
       quota: storage.quota,

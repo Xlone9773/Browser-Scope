@@ -20,7 +20,8 @@ export const en: Translation = {
     permissions: "Permissions",
     pwa: "PWA Features",
     fingerprints: "Fingerprints & Tracking",
-    security: "Privacy & Security"
+    security: "Privacy & Security",
+    ai_compute: "AI & Computing"
   },
   
   labels: {
@@ -33,6 +34,7 @@ export const en: Translation = {
     dnt: "Do Not Track",
     
     cpu: "CPU Cores",
+    cpu_model: "CPU Model (Est.)",
     memory: "Device Memory",
     gpu_vendor: "GPU Vendor",
     gpu_renderer: "GPU Renderer",
@@ -41,6 +43,8 @@ export const en: Translation = {
     audio_latency: "Audio Latency",
     battery: "Battery Level",
     charging: "Charging State",
+    charging_time: "Charging Time", // New
+    discharging_time: "Discharging Time", // New
     touch: "Max Touch Points",
     screen_extended: "Screen Extended",
     gamepads: "Connected Gamepads",
@@ -52,6 +56,7 @@ export const en: Translation = {
     pixel_ratio: "Pixel Ratio",
     color_depth: "Color Depth",
     orientation: "Orientation",
+    orientation_angle: "Angle", // New
     dark_mode: "Dark Mode",
     color_gamut: "Color Gamut",
     hdr: "HDR Support",
@@ -59,7 +64,9 @@ export const en: Translation = {
     
     online: "Online Status",
     conn_type: "Connection Type",
+    net_type: "Network Tech", // New
     downlink: "Downlink Speed",
+    downlink_max: "Max Downlink", // New
     rtt: "Latency (RTT)",
     save_data: "Data Saver",
     webrtc_ip: "WebRTC Local IP",
@@ -73,7 +80,9 @@ export const en: Translation = {
     
     video_codecs: "Video Codecs",
     audio_codecs: "Audio Codecs",
+    image_formats: "Image Formats", // New
     speech_voices: "TTS Voices",
+    audio_channels: "Channels", // New
 
     camera_permission: "Camera Access",
     
@@ -94,7 +103,14 @@ export const en: Translation = {
     is_bot: "Bot / Automation",
     gpc_enabled: "Global Privacy Control",
     pdf_viewer: "PDF Viewer",
-    secure_context: "Secure Context"
+    secure_context: "Secure Context",
+
+    // AI & Compute
+    wasm_support: "WebAssembly",
+    wasm_simd: "WASM SIMD",
+    webnn: "WebNN API",
+    window_ai: "Native AI (Gemini Nano)",
+    webgpu_compute: "WebGPU Compute"
   },
   
   values: {
@@ -121,7 +137,9 @@ export const en: Translation = {
     view_base64: "View Base64",
     view_extensions: "Extensions",
     copy: "Copy",
-    copied: "Copied!"
+    copied: "Copied!",
+    run_benchmark: "Run Benchmark",
+    open_tools: "Interactive Tools"
   },
 
   status: {
@@ -230,7 +248,9 @@ export const en: Translation = {
     title: "WebGL Extensions",
     count: "extensions supported",
     search_placeholder: "Search extensions...",
-    close: "Close"
+    close: "Close",
+    vendor: "Vendor",
+    spec_link: "Specification"
   },
 
   base64Tool: {
@@ -245,6 +265,7 @@ export const en: Translation = {
     desc: "Generate a unique visitor identifier using various browser attributes. You can adjust the parameters below to see how they affect the hash.",
     tab_v4: "FingerprintJS v4 (Modern)",
     tab_v2: "FingerprintJS v2 (Legacy)",
+    tab_fonts: "Font Detection",
     btn_run: "Calculate Fingerprint",
     generating: "Generating...",
     visitor_id: "Visitor ID",
@@ -256,7 +277,9 @@ export const en: Translation = {
     deselect_all: "Deselect All",
     close: "Close",
     copy: "Copy ID",
-    copied: "Copied!"
+    copied: "Copied!",
+    font_detect_desc: "Detects installed fonts by measuring text width. This is a common technique for fingerprinting.",
+    font_list_title: "Detected Fonts"
   },
 
   imageDetails: {
@@ -266,11 +289,43 @@ export const en: Translation = {
 
   aboutModal: {
     title: "About BrowserScope",
-    desc: "BrowserScope is a comprehensive browser analysis tool designed to verify your system's capabilities and fingerprint uniqueness.",
+    desc: "BrowserScope is a comprehensive browser analysis tool designed to verify your system's capabilities and fingerprint uniqueness. It runs entirely in your browser.",
     version: "Version",
     changelog: "Changelog",
-    latest_update: "Added network diagnostics (CDN/Connectivity), expanded sensor support (Magnetometer), and external resource analysis.",
-    close: "Close"
+    latest_update: "New Hardware Tools & Storage Benchmarking",
+    close: "Close",
+    history: "Update History",
+    updates: [
+        {
+            version: "1.2.0",
+            date: "2024-03-15",
+            changes: [
+                "Added Hardware Interaction Tools (Vibration & Multi-touch Test).",
+                "Added Storage I/O Benchmark (IndexedDB) to Performance Test.",
+                "Added Font Fingerprinting detection capability.",
+                "Improved WebGL Extensions viewer with vendor grouping and search.",
+                "Fixed UI animations and modal interactions."
+            ]
+        },
+        {
+            version: "1.1.0",
+            date: "2024-02-28",
+            changes: [
+                "Introduced AI & Computing capabilities section (WebNN, Gemini Nano).",
+                "Added Camera & Microphone diagnostic tools.",
+                "Enhanced device sensor visualization (Accelerometer, Gyroscope)."
+            ]
+        },
+        {
+            version: "1.0.0",
+            date: "2024-01-10",
+            changes: [
+                "Initial release with core system detection.",
+                "Fingerprinting analysis (Canvas, WebGL).",
+                "Network speed and latency estimation."
+            ]
+        }
+    ]
   },
 
   sensorModal: {
@@ -339,6 +394,37 @@ export const en: Translation = {
     res_name: "Resource URL",
     res_type: "Type",
     res_duration: "Duration",
+    close: "Close"
+  },
+
+  benchmarkModal: {
+    title: "System Benchmark",
+    start_btn: "Start Benchmark",
+    running: "Running Tests...",
+    score: "Benchmark Score",
+    cpu_test: "CPU Prime Search",
+    math_test: "Floating Point Math",
+    memory_test: "Memory Throughput",
+    dom_test: "DOM Operations",
+    gpu_test: "2D Rendering",
+    storage_test: "Storage I/O",
+    status_pending: "Pending",
+    status_running: "Computing...",
+    status_done: "Done",
+    results_title: "Test Results",
+    close: "Close"
+  },
+
+  hardwareToolsModal: {
+    title: "Interactive Hardware Tools",
+    tab_vibrate: "Vibration",
+    tab_touch: "Multi-Touch",
+    vibrate_not_supported: "Vibration API is not supported on this device.",
+    vibrate_short: "Short Pulse (200ms)",
+    vibrate_medium: "Medium Pulse (500ms)",
+    vibrate_pattern: "SOS Pattern",
+    touch_instruction: "Touch the screen with multiple fingers to test support.",
+    touch_count: "Active Touch Points",
     close: "Close"
   }
 };

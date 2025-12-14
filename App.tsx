@@ -37,7 +37,9 @@ import {
   Gamepad2,
   Mic2,
   Settings,
-  Network
+  Network,
+  Bot,
+  Hammer
 } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { BrowserData } from './types';
@@ -52,6 +54,8 @@ import { SensorModal } from './components/SensorModal';
 import { ScoreModal } from './components/ScoreModal';
 import { FingerprintModal } from './components/FingerprintModal';
 import { SettingsModal } from './components/SettingsModal';
+import { BenchmarkModal } from './components/BenchmarkModal';
+import { HardwareToolsModal } from './components/HardwareToolsModal';
 import { RefreshRate } from './components/RefreshRate';
 import { translations, languageNames, Language } from './utils/i18n/index';
 import { applyTheme, getSavedTheme, Theme } from './appearance/theme';
@@ -81,6 +85,8 @@ const App: React.FC = () => {
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
   const [isFingerprintModalOpen, setIsFingerprintModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isBenchmarkModalOpen, setIsBenchmarkModalOpen] = useState(false);
+  const [isHardwareToolsModalOpen, setIsHardwareToolsModalOpen] = useState(false);
   const [uaCopied, setUaCopied] = useState(false);
   
   const [permStatus, setPermStatus] = useState<Record<PermissionKey, PermissionStatusType>>({
@@ -353,6 +359,18 @@ const App: React.FC = () => {
             t={t.settingsModal}
           />
       )}
+      {isBenchmarkModalOpen && (
+          <BenchmarkModal
+            onClose={() => setIsBenchmarkModalOpen(false)}
+            t={t.benchmarkModal}
+          />
+      )}
+      {isHardwareToolsModalOpen && (
+          <HardwareToolsModal
+            onClose={() => setIsHardwareToolsModalOpen(false)}
+            t={t.hardwareToolsModal}
+          />
+      )}
 
       <div className="max-w-7xl mx-auto space-y-8">
         
@@ -368,6 +386,16 @@ const App: React.FC = () => {
             </p>
           </div>
           <div className="flex gap-3 relative z-40 flex-wrap">
+            
+            {/* Benchmark Trigger Button */}
+            <button
+                onClick={() => setIsBenchmarkModalOpen(true)}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-all shadow-sm active:scale-95"
+            >
+                <Activity size={16} />
+                <span className="hidden sm:inline">{t.actions.run_benchmark}</span>
+            </button>
+
             <button
                 onClick={toggleTheme}
                 className="flex items-center justify-center p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm active:scale-95"
@@ -379,7 +407,7 @@ const App: React.FC = () => {
             <button 
                 onClick={() => setIsSettingsModalOpen(true)}
                 className="flex items-center justify-center p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm active:scale-95"
-                title="Settings & Tools"
+                title="Network & Diagnostics"
             >
                 <Network size={16} />
             </button>
@@ -436,7 +464,7 @@ const App: React.FC = () => {
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           
-          {/* Security (New Position: 1st row for importance) */}
+          {/* Security */}
           <InfoCard title={t.sections.security} icon={Lock}>
               <InfoItem 
                   label={t.labels.is_bot} 
@@ -447,6 +475,15 @@ const App: React.FC = () => {
               <InfoItem label={t.labels.gpc_enabled} value={trVal(data.security.gpcEnabled)} />
               <InfoItem label={t.labels.pdf_viewer} value={trVal(data.security.pdfViewer)} />
               <InfoItem label={t.labels.secure_context} value={trVal(data.security.secureContext)} />
+          </InfoCard>
+
+          {/* AI & Compute (New) */}
+          <InfoCard title={t.sections.ai_compute} icon={Bot}>
+              <InfoItem label={t.labels.window_ai} value={trVal(data.ai.windowAi)} />
+              <InfoItem label={t.labels.webnn} value={trVal(data.ai.webnn)} />
+              <InfoItem label={t.labels.webgpu_compute} value={trVal(data.ai.webgpuCompute)} />
+              <InfoItem label={t.labels.wasm_support} value={trVal(data.ai.wasmSupport)} />
+              <InfoItem label={t.labels.wasm_simd} value={trVal(data.ai.wasmSimd)} />
           </InfoCard>
 
           {/* System Info */}
@@ -463,12 +500,26 @@ const App: React.FC = () => {
           {/* Hardware */}
           <InfoCard title={t.sections.hardware} icon={Cpu}>
             <InfoItem label={t.labels.cpu} value={data.hardware.cpuCores} />
+            {/* Show inferred CPU model if available */}
+            {data.hardware.cpuModel && (
+                <InfoItem label={t.labels.cpu_model} value={data.hardware.cpuModel} />
+            )}
             <InfoItem label={t.labels.memory} value={data.hardware.memory} />
             <InfoItem label={t.labels.gpu_vendor} value={data.hardware.gpuVendor} />
             <InfoItem label={t.labels.gpu_renderer} value={data.hardware.gpuRenderer} />
             <InfoItem label={t.labels.max_texture} value={data.hardware.maxTextureSize} />
-            <InfoItem label={t.labels.battery} value={data.hardware.batteryLevel} />
-            <InfoItem label={t.labels.charging} value={trVal(data.hardware.isCharging)} />
+            
+            <div className="py-2">
+                <InfoItem label={t.labels.battery} value={data.hardware.batteryLevel} />
+                <InfoItem label={t.labels.charging} value={trVal(data.hardware.isCharging)} />
+                {data.hardware.isCharging === 'Yes' && data.hardware.chargingTime !== '-' && (
+                    <InfoItem label={t.labels.charging_time} value={data.hardware.chargingTime} />
+                )}
+                {data.hardware.isCharging === 'No' && data.hardware.dischargingTime !== '-' && (
+                    <InfoItem label={t.labels.discharging_time} value={data.hardware.dischargingTime} />
+                )}
+            </div>
+
             <InfoItem label={t.labels.touch} value={data.hardware.touchPoints} />
             <div className="flex items-center gap-1.5 py-2.5 border-b border-slate-50 last:border-0 px-2 -mx-2">
                 <Gamepad2 size={16} className="text-slate-400" />
@@ -476,14 +527,21 @@ const App: React.FC = () => {
                 <span className="ml-auto text-sm text-slate-800">{data.hardware.gamepads}</span>
             </div>
             
-            {/* Sensor Button */}
-            <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex justify-center">
+            {/* Sensor & Hardware Tools Buttons */}
+            <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex gap-2">
                 <button 
                     onClick={() => setIsSensorModalOpen(true)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors w-full justify-center"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-xs font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
                 >
-                    <Activity size={16} />
+                    <Activity size={14} />
                     {t.actions.open_sensors}
+                </button>
+                <button 
+                    onClick={() => setIsHardwareToolsModalOpen(true)}
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                >
+                    <Hammer size={14} />
+                    {t.actions.open_tools}
                 </button>
             </div>
           </InfoCard>
@@ -496,6 +554,13 @@ const App: React.FC = () => {
             <InfoItem label={t.labels.pixel_ratio} value={`${data.display.pixelRatio}x`} />
             <InfoItem label={t.labels.color_depth} value={`${data.display.colorDepth}-bit`} />
             <InfoItem label={t.labels.screen_extended} value={trVal(data.hardware.screenExtended)} />
+            <div className="flex justify-between items-center py-2.5 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors px-2 -mx-2 rounded">
+                <span className="text-sm text-slate-500 font-medium">{t.labels.orientation}</span>
+                <div className="text-right flex items-center gap-2">
+                    <span className="text-sm text-slate-800">{data.display.orientation}</span>
+                    <span className="text-xs text-slate-400">({data.display.orientationAngle})</span>
+                </div>
+            </div>
             <InfoItem label={t.labels.hdr} value={trVal(data.display.hdr)} />
             <InfoItem label={t.labels.display_mode} value={data.display.displayMode} />
             <InfoItem label={t.labels.dark_mode} value={trVal(data.display.darkMode)} />
@@ -572,7 +637,9 @@ const App: React.FC = () => {
           <InfoCard title={t.sections.network} icon={Wifi}>
             <InfoItem label={t.labels.online} value={data.network.online ? t.values.connected : t.values.offline} isFeature />
             <InfoItem label={t.labels.conn_type} value={data.network.effectiveType} />
+            <InfoItem label={t.labels.net_type} value={data.network.type} />
             <InfoItem label={t.labels.downlink} value={data.network.downlink} />
+            <InfoItem label={t.labels.downlink_max} value={data.network.downlinkMax} />
             <InfoItem label={t.labels.rtt} value={data.network.rtt} />
             <InfoItem label={t.labels.save_data} value={trVal(data.network.saveData)} />
           </InfoCard>
@@ -743,7 +810,7 @@ const App: React.FC = () => {
                     ))}
                   </div>
               </div>
-              <div>
+              <div className="mb-3">
                   <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.audio_codecs}</span>
                   <div className="grid grid-cols-2 gap-2">
                     {data.media.audio.map(c => (
@@ -753,12 +820,30 @@ const App: React.FC = () => {
                     ))}
                   </div>
               </div>
+              <div className="mb-3">
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.image_formats}</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {data.media.images.map(c => (
+                        <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
+                            {c.name}
+                        </div>
+                    ))}
+                  </div>
+              </div>
+              
               <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50 flex justify-between items-center">
                   <div className="flex items-center gap-1.5">
                       <Mic2 size={14} className="text-slate-400"/>
                       <span className="text-xs font-medium text-slate-500">{t.labels.speech_voices}</span>
                   </div>
                   <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.media.speechVoices}</span>
+              </div>
+              <div className="mt-1 flex justify-between items-center">
+                  <div className="flex items-center gap-1.5">
+                      <Music size={14} className="text-slate-400"/>
+                      <span className="text-xs font-medium text-slate-500">{t.labels.audio_channels}</span>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.media.audioChannels}</span>
               </div>
            </InfoCard>
 

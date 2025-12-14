@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { X, Fingerprint, Settings, RefreshCw, Copy, Check, Info, Box, Cpu } from 'lucide-react';
+import { X, Fingerprint, Settings, RefreshCw, Copy, Check, Info, Box, Cpu, Type } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 
 // Simple MurmurHash3 implementation for custom component hashing
@@ -71,9 +71,10 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   
-  const [activeTab, setActiveTab] = useState<'v4' | 'v2'>('v4');
+  const [activeTab, setActiveTab] = useState<'v4' | 'v2' | 'fonts'>('v4');
   const [loading, setLoading] = useState(false);
   const [components, setComponents] = useState<Component[]>([]);
+  const [detectedFonts, setDetectedFonts] = useState<string[]>([]);
   const [visitorId, setVisitorId] = useState('');
   const [timeTaken, setTimeTaken] = useState(0);
   const [salt, setSalt] = useState('');
@@ -92,8 +93,68 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
     }, 300);
   };
 
+  // Font Detection Logic
+  const detectFonts = useCallback(() => {
+      setLoading(true);
+      const startTime = performance.now();
+      
+      const fontList = [
+          'Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Verdana', 'Georgia', 
+          'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', 'Impact',
+          'Microsoft YaHei', 'SimSun', 'SimHei', 'PingFang SC', 'Hiragino Sans GB'
+      ];
+      
+      const baseFonts = ['monospace', 'sans-serif', 'serif'];
+      const testString = "mmmmmmmmmmlli";
+      const testSize = "72px";
+      const h = document.getElementsByTagName("body")[0];
+      
+      const s = document.createElement("span");
+      s.style.fontSize = testSize;
+      s.innerHTML = testString;
+      s.style.visibility = "hidden";
+      s.style.position = "absolute";
+      s.style.left = "-9999px";
+      
+      const defaultWidths: Record<string, number> = {};
+      
+      // Get base widths
+      baseFonts.forEach(base => {
+          s.style.fontFamily = base;
+          h.appendChild(s);
+          defaultWidths[base] = s.offsetWidth;
+          h.removeChild(s);
+      });
+      
+      const detected: string[] = [];
+      
+      fontList.forEach(font => {
+          let matched = false;
+          for (const base of baseFonts) {
+              s.style.fontFamily = `'${font}', ${base}`;
+              h.appendChild(s);
+              const w = s.offsetWidth;
+              h.removeChild(s);
+              if (w !== defaultWidths[base]) {
+                  matched = true;
+                  break;
+              }
+          }
+          if (matched) detected.push(font);
+      });
+      
+      setDetectedFonts(detected);
+      setTimeTaken(Math.round(performance.now() - startTime));
+      setLoading(false);
+  }, []);
+
   // Run Fingerprint Logic
   const runFingerprint = useCallback(async () => {
+    if (activeTab === 'fonts') {
+        detectFonts();
+        return;
+    }
+
     setLoading(true);
     const startTime = performance.now();
     setComponents([]);
@@ -159,7 +220,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
       setVisitorId("Error loading library");
       setLoading(false);
     }
-  }, [activeTab, salt]);
+  }, [activeTab, salt, detectFonts]);
 
   // Recalculate hash based on enabled components and salt
   const calculateHash = (currentComponents: Component[], currentSalt: string, startTime?: number) => {
@@ -190,7 +251,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
   // Effect to run on tab change
   useEffect(() => {
       runFingerprint();
-  }, [activeTab]); // Removed runFingerprint from dep to avoid loop, dependent only on activeTab
+  }, [activeTab]); 
 
   // Handle Toggle Component
   const toggleComponent = (key: string) => {
@@ -257,7 +318,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
             <div className="md:col-span-4 flex bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
                 <button
                     onClick={() => setActiveTab('v4')}
-                    className={`flex-1 py-1.5 px-3 rounded-md text-sm font-medium transition-all ${
+                    className={`flex-1 py-1.5 px-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
                         activeTab === 'v4' 
                         ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm' 
                         : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
@@ -267,7 +328,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                 </button>
                 <button
                     onClick={() => setActiveTab('v2')}
-                    className={`flex-1 py-1.5 px-3 rounded-md text-sm font-medium transition-all ${
+                    className={`flex-1 py-1.5 px-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
                         activeTab === 'v2' 
                         ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm' 
                         : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
@@ -275,30 +336,51 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                 >
                     {t.tab_v2}
                 </button>
+                <button
+                    onClick={() => setActiveTab('fonts')}
+                    className={`flex-1 py-1.5 px-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
+                        activeTab === 'fonts' 
+                        ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm' 
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+                    }`}
+                >
+                    {t.tab_fonts}
+                </button>
             </div>
 
-            {/* Salt Input */}
-            <div className="md:col-span-4 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Settings size={14} className="text-slate-400" />
+            {/* Salt Input - Only for standard fingerprints */}
+            {activeTab !== 'fonts' ? (
+                <div className="md:col-span-4 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Settings size={14} className="text-slate-400" />
+                    </div>
+                    <input 
+                        type="text" 
+                        value={salt}
+                        onChange={handleSaltChange}
+                        placeholder={t.salt_label}
+                        className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-400"
+                    />
                 </div>
-                <input 
-                    type="text" 
-                    value={salt}
-                    onChange={handleSaltChange}
-                    placeholder={t.salt_label}
-                    className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-400"
-                />
-            </div>
+            ) : (
+                <div className="md:col-span-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                    <Info size={16} />
+                    <span>{t.font_detect_desc}</span>
+                </div>
+            )}
 
             {/* Result Box */}
             <div className="md:col-span-4 flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg px-4 py-2">
                 <div className="flex flex-col">
-                    <span className="text-[10px] text-indigo-400 uppercase font-semibold tracking-wider">{t.visitor_id}</span>
+                    <span className="text-[10px] text-indigo-400 uppercase font-semibold tracking-wider">
+                        {activeTab === 'fonts' ? 'Count' : t.visitor_id}
+                    </span>
                     {loading ? (
                         <span className="text-sm font-mono text-indigo-600 dark:text-indigo-400 animate-pulse">{t.generating}</span>
                     ) : (
-                        <span className="text-lg font-mono font-bold text-indigo-600 dark:text-indigo-300">{visitorId}</span>
+                        <span className="text-lg font-mono font-bold text-indigo-600 dark:text-indigo-300">
+                            {activeTab === 'fonts' ? detectedFonts.length : visitorId}
+                        </span>
                     )}
                 </div>
                 {!loading && (
@@ -313,80 +395,101 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         {/* Content Area */}
         <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
             
-            {/* Components List */}
-            <div className="w-full md:w-1/3 bg-white dark:bg-slate-800 border-r border-slate-100 dark:border-slate-700 flex flex-col">
-                <div className="p-3 bg-slate-50 dark:bg-slate-900/30 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.components_label}</span>
-                    <div className="flex gap-2">
-                         <button onClick={() => toggleAll(true)} className="text-[10px] px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">{t.select_all}</button>
-                         <button onClick={() => toggleAll(false)} className="text-[10px] px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">{t.deselect_all}</button>
+            {activeTab !== 'fonts' ? (
+                <>
+                    {/* Components List */}
+                    <div className="w-full md:w-1/3 bg-white dark:bg-slate-800 border-r border-slate-100 dark:border-slate-700 flex flex-col">
+                        <div className="p-3 bg-slate-50 dark:bg-slate-900/30 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.components_label}</span>
+                            <div className="flex gap-2">
+                                 <button onClick={() => toggleAll(true)} className="text-[10px] px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">{t.select_all}</button>
+                                 <button onClick={() => toggleAll(false)} className="text-[10px] px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">{t.deselect_all}</button>
+                            </div>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600">
+                            {components.map((comp) => (
+                                <label 
+                                    key={comp.key} 
+                                    className={`flex items-center gap-3 p-2 rounded cursor-pointer transition-colors ${
+                                        comp.enabled 
+                                        ? 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700' 
+                                        : 'bg-slate-50 dark:bg-slate-900/50 opacity-60'
+                                    }`}
+                                >
+                                    <input 
+                                        type="checkbox" 
+                                        checked={comp.enabled} 
+                                        onChange={() => toggleComponent(comp.key)}
+                                        className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 dark:bg-slate-700 dark:border-slate-600"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                        <div className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">{comp.key}</div>
+                                        <div className="text-[10px] text-slate-400 truncate">
+                                            {typeof comp.value === 'object' ? '[Complex Object]' : String(comp.value)}
+                                        </div>
+                                    </div>
+                                </label>
+                            ))}
+                            {components.length === 0 && !loading && (
+                                <div className="text-center p-8 text-slate-400 text-sm">No components loaded</div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* JSON Viewer */}
+                    <div className="flex-1 bg-slate-50 dark:bg-slate-900 overflow-hidden flex flex-col">
+                        <div className="p-3 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                             <div className="flex items-center gap-2">
+                                 <Box size={14} className="text-slate-500" />
+                                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Data Source</span>
+                             </div>
+                             <span className="text-[10px] text-slate-400">
+                                 {components.filter(c => c.enabled).length} items included
+                             </span>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4">
+                            <pre className="font-mono text-xs text-slate-600 dark:text-slate-300 whitespace-pre-wrap break-all">
+                                {JSON.stringify(
+                                    components.filter(c => c.enabled).reduce((acc, curr) => ({
+                                        ...acc,
+                                        [curr.key]: curr.value
+                                    }), {}), 
+                                    null, 
+                                    2
+                                )}
+                            </pre>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                // Font Viewer
+                <div className="flex-1 p-6 bg-slate-50 dark:bg-slate-900 overflow-y-auto">
+                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <Type size={16} />
+                        {t.font_list_title}
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {detectedFonts.map(font => (
+                            <div key={font} className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 flex items-center justify-center text-center shadow-sm">
+                                {font}
+                            </div>
+                        ))}
                     </div>
                 </div>
-                <div className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600">
-                    {components.map((comp) => (
-                        <label 
-                            key={comp.key} 
-                            className={`flex items-center gap-3 p-2 rounded cursor-pointer transition-colors ${
-                                comp.enabled 
-                                ? 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700' 
-                                : 'bg-slate-50 dark:bg-slate-900/50 opacity-60'
-                            }`}
-                        >
-                            <input 
-                                type="checkbox" 
-                                checked={comp.enabled} 
-                                onChange={() => toggleComponent(comp.key)}
-                                className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 dark:bg-slate-700 dark:border-slate-600"
-                            />
-                            <div className="flex-1 min-w-0">
-                                <div className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">{comp.key}</div>
-                                <div className="text-[10px] text-slate-400 truncate">
-                                    {typeof comp.value === 'object' ? '[Complex Object]' : String(comp.value)}
-                                </div>
-                            </div>
-                        </label>
-                    ))}
-                    {components.length === 0 && !loading && (
-                        <div className="text-center p-8 text-slate-400 text-sm">No components loaded</div>
-                    )}
-                </div>
-            </div>
-
-            {/* JSON Viewer */}
-            <div className="flex-1 bg-slate-50 dark:bg-slate-900 overflow-hidden flex flex-col">
-                <div className="p-3 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                     <div className="flex items-center gap-2">
-                         <Box size={14} className="text-slate-500" />
-                         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Data Source</span>
-                     </div>
-                     <span className="text-[10px] text-slate-400">
-                         {components.filter(c => c.enabled).length} items included
-                     </span>
-                </div>
-                <div className="flex-1 overflow-y-auto p-4">
-                    <pre className="font-mono text-xs text-slate-600 dark:text-slate-300 whitespace-pre-wrap break-all">
-                        {JSON.stringify(
-                            components.filter(c => c.enabled).reduce((acc, curr) => ({
-                                ...acc,
-                                [curr.key]: curr.value
-                            }), {}), 
-                            null, 
-                            2
-                        )}
-                    </pre>
-                </div>
-            </div>
+            )}
         </div>
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 flex justify-end gap-3">
-            <button 
-                onClick={handleCopy}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
-            >
-                {copied ? <Check size={16} /> : <Copy size={16} />}
-                {copied ? t.copied : t.copy}
-            </button>
+            {activeTab !== 'fonts' && (
+                <button 
+                    onClick={handleCopy}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
+                >
+                    {copied ? <Check size={16} /> : <Copy size={16} />}
+                    {copied ? t.copied : t.copy}
+                </button>
+            )}
             <button 
                 onClick={handleClose}
                 className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors"

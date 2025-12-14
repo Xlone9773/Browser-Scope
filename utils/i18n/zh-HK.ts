@@ -15,13 +15,21 @@ export const zhHK: Translation = {
     ...zhTW.labels,
     resolution: "螢幕解像度",
     audio_rate: "音訊採樣率",
+    charging_time: "充電時間", // New
+    discharging_time: "放電時間", // New
+    net_type: "網絡制式", // New
+    downlink_max: "最大下載", // New
+    image_formats: "圖片格式支援", // New
+    audio_channels: "聲道數", // New
   },
   
   fingerprintModal: {
+    ...zhTW.fingerprintModal,
     title: "瀏覽器指紋計算",
     desc: "使用各種瀏覽器屬性生成唯一的訪客識別碼。您可以調整以下參數來觀察雜湊值的變化。",
     tab_v4: "FingerprintJS v4 (現代)",
     tab_v2: "FingerprintJS v2 (傳統)",
+    tab_fonts: "字型檢測",
     btn_run: "計算指紋",
     generating: "生成中...",
     visitor_id: "訪客 ID",
@@ -33,7 +41,9 @@ export const zhHK: Translation = {
     deselect_all: "全不選",
     close: "關閉",
     copy: "複製 ID",
-    copied: "已複製!"
+    copied: "已複製!",
+    font_detect_desc: "通過測量特定文本的渲染寬度來檢測系統中安裝的字型。這是一種常見的指紋追蹤技術。",
+    font_list_title: "已檢測到的字型"
   },
   
   scoreModal: {

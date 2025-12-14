@@ -20,7 +20,8 @@ export const zhCN: Translation = {
     features: "Web API 能力检测",
     permissions: "权限管理",
     pwa: "PWA 能力",
-    security: "隐私与安全"
+    security: "隐私与安全",
+    ai_compute: "AI 与计算能力"
   },
   
   labels: {
@@ -33,6 +34,7 @@ export const zhCN: Translation = {
     dnt: "Do Not Track",
     
     cpu: "CPU 逻辑核心",
+    cpu_model: "CPU 型号 (估算)", 
     memory: "设备内存 (估算)",
     gpu_vendor: "GPU 供应商",
     gpu_renderer: "GPU 渲染器",
@@ -41,6 +43,8 @@ export const zhCN: Translation = {
     audio_latency: "音频延迟",
     battery: "电池电量",
     charging: "充电状态",
+    charging_time: "充电时间", // New
+    discharging_time: "放电时间", // New
     touch: "最大触控点数",
     screen_extended: "多显示器扩展",
     gamepads: "连接的手柄",
@@ -52,6 +56,7 @@ export const zhCN: Translation = {
     pixel_ratio: "像素密度 (DPR)",
     color_depth: "色彩深度",
     orientation: "屏幕方向",
+    orientation_angle: "旋转角度", // New
     dark_mode: "深色模式",
     color_gamut: "色域范围",
     hdr: "HDR 支持",
@@ -59,7 +64,9 @@ export const zhCN: Translation = {
     
     online: "在线状态",
     conn_type: "连接类型",
+    net_type: "网络制式", // New
     downlink: "下行速度",
+    downlink_max: "最大下行", // New
     rtt: "延迟 (RTT)",
     save_data: "流量节省模式",
     webrtc_ip: "WebRTC 本地 IP",
@@ -73,7 +80,9 @@ export const zhCN: Translation = {
     
     video_codecs: "视频编码支持",
     audio_codecs: "音频编码支持",
+    image_formats: "图片格式支持", // New
     speech_voices: "TTS 语音包",
+    audio_channels: "声道数", // New
 
     camera_permission: "摄像头权限",
 
@@ -94,7 +103,14 @@ export const zhCN: Translation = {
     is_bot: "自动化控制",
     gpc_enabled: "全球隐私控制 (GPC)",
     pdf_viewer: "内置 PDF 查看器",
-    secure_context: "安全上下文 (HTTPS)"
+    secure_context: "安全上下文 (HTTPS)",
+
+    // AI & Compute
+    wasm_support: "WebAssembly",
+    wasm_simd: "WASM SIMD 指令集",
+    webnn: "WebNN API",
+    window_ai: "原生 AI (Gemini Nano)",
+    webgpu_compute: "WebGPU 计算着色器"
   },
   
   values: {
@@ -121,7 +137,9 @@ export const zhCN: Translation = {
     view_base64: "查看 Base64",
     view_extensions: "扩展列表",
     copy: "复制",
-    copied: "已复制!"
+    copied: "已复制!",
+    run_benchmark: "运行跑分",
+    open_tools: "交互工具"
   },
 
   status: {
@@ -230,7 +248,9 @@ export const zhCN: Translation = {
     title: "WebGL 扩展",
     count: "个支持的扩展",
     search_placeholder: "搜索扩展...",
-    close: "关闭"
+    close: "关闭",
+    vendor: "供应商",
+    spec_link: "规范文档"
   },
   
   base64Tool: {
@@ -245,6 +265,7 @@ export const zhCN: Translation = {
     desc: "使用各种浏览器属性生成唯一的访客标识符。您可以调整以下参数来观察哈希值的变化。",
     tab_v4: "FingerprintJS v4 (现代)",
     tab_v2: "FingerprintJS v2 (传统)",
+    tab_fonts: "字体检测",
     btn_run: "计算指纹",
     generating: "生成中...",
     visitor_id: "访客 ID",
@@ -256,7 +277,9 @@ export const zhCN: Translation = {
     deselect_all: "全不选",
     close: "关闭",
     copy: "复制 ID",
-    copied: "已复制!"
+    copied: "已复制!",
+    font_detect_desc: "通过测量特定文本的渲染宽度来检测系统中安装的字体。这是一种常见的指纹追踪技术。",
+    font_list_title: "已检测到的字体"
   },
 
   imageDetails: {
@@ -266,11 +289,43 @@ export const zhCN: Translation = {
 
   aboutModal: {
     title: "关于 BrowserScope",
-    desc: "BrowserScope 是一款全面的浏览器分析工具，旨在验证您的系统能力和指纹唯一性。",
+    desc: "BrowserScope 是一款全面的浏览器分析工具，旨在验证您的系统能力和指纹唯一性，所有检测均在本地完成。",
     version: "版本",
     changelog: "更新日志",
-    latest_update: "新增网络诊断 (CDN/连通性测试)、扩展传感器支持 (磁力计) 及外部资源分析。",
-    close: "关闭"
+    latest_update: "新增硬件交互工具与存储跑分",
+    close: "关闭",
+    history: "更新历史",
+    updates: [
+        {
+            version: "1.2.0",
+            date: "2024-03-15",
+            changes: [
+                "新增硬件交互工具（振动模式与多点触控测试）。",
+                "性能跑分中新增存储 I/O 读写测试 (IndexedDB)。",
+                "新增字体指纹 (Font Fingerprinting) 检测能力。",
+                "优化 WebGL 扩展查看器，支持按供应商分组和搜索。",
+                "修复 UI 动画卡顿与模态框交互问题。"
+            ]
+        },
+        {
+            version: "1.1.0",
+            date: "2024-02-28",
+            changes: [
+                "引入 AI 与计算能力检测 (WebNN, Gemini Nano)。",
+                "新增摄像头与麦克风诊断工具。",
+                "增强设备传感器可视化效果 (加速度计, 陀螺仪)。"
+            ]
+        },
+        {
+            version: "1.0.0",
+            date: "2024-01-10",
+            changes: [
+                "初始发布，包含核心系统信息检测。",
+                "浏览器指纹分析 (Canvas, WebGL)。",
+                "网络速度与延迟估算功能。"
+            ]
+        }
+    ]
   },
 
   sensorModal: {
@@ -339,6 +394,37 @@ export const zhCN: Translation = {
     res_name: "资源 URL",
     res_type: "类型",
     res_duration: "加载耗时",
+    close: "关闭"
+  },
+
+  benchmarkModal: {
+    title: "系统性能跑分",
+    start_btn: "开始跑分",
+    running: "正在测试中...",
+    score: "性能得分",
+    cpu_test: "CPU 素数搜索",
+    math_test: "数学浮点运算",
+    memory_test: "内存读写吞吐",
+    dom_test: "DOM 操作性能",
+    gpu_test: "Canvas 渲染",
+    storage_test: "存储 I/O 读写",
+    status_pending: "等待中",
+    status_running: "计算中...",
+    status_done: "完成",
+    results_title: "测试结果",
+    close: "关闭"
+  },
+
+  hardwareToolsModal: {
+    title: "硬件交互工具",
+    tab_vibrate: "振动马达",
+    tab_touch: "多点触控",
+    vibrate_not_supported: "当前设备不支持振动 API。",
+    vibrate_short: "短震 (200ms)",
+    vibrate_medium: "中震 (500ms)",
+    vibrate_pattern: "SOS 模式",
+    touch_instruction: "请用多个手指触摸屏幕以测试支持情况。",
+    touch_count: "当前触控点数",
     close: "关闭"
   }
 };

@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { X, Search, Layers } from 'lucide-react';
+import { X, Search, Layers, ExternalLink, Info, Check, Box } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 
 interface WebGLExtensionsModalProps {
@@ -8,20 +9,41 @@ interface WebGLExtensionsModalProps {
   t: Translation['webglTool'];
 }
 
+// Map common extensions to friendly descriptions
+const EXTENSION_DESCRIPTIONS: Record<string, string> = {
+  'EXT_texture_filter_anisotropic': 'Improves quality of textures on surfaces viewed at oblique angles.',
+  'WEBGL_debug_renderer_info': 'Exposes the underlying graphics hardware and driver information.',
+  'OES_vertex_array_object': 'Encapsulates vertex array state into objects for faster switching.',
+  'WEBGL_compressed_texture_s3tc': 'Exposes S3TC (DXT) compressed texture formats.',
+  'WEBGL_compressed_texture_etc': 'Exposes ETC2 and EAC compressed texture formats.',
+  'WEBGL_compressed_texture_astc': 'Exposes ASTC compressed texture formats.',
+  'ANGLE_instanced_arrays': 'Allows drawing the same object multiple times with different data.',
+  'OES_texture_float': 'Allows using floating point numbers for texture data.',
+  'OES_texture_half_float': 'Allows using half-floating point numbers for texture data.',
+  'WEBGL_depth_texture': 'Allows using depth buffers as textures.',
+  'EXT_shader_texture_lod': 'Adds texture lookup functions with explicit LOD control in shaders.',
+  'OES_standard_derivatives': 'Adds standard derivative functions (dFdx, dFdy, fwidth) to shaders.',
+  'WEBGL_draw_buffers': 'Allows drawing to multiple color buffers at once (MRT).',
+  'EXT_frag_depth': 'Allows the fragment shader to set the depth value.',
+  'WEBGL_lose_context': 'Simulates losing and restoring the WebGL context for testing.',
+  'EXT_blend_minmax': 'Adds MIN and MAX blend equations.',
+  'OES_element_index_uint': 'Allows using unsigned int (32-bit) indices for drawing.',
+  'EXT_color_buffer_float': 'Allows rendering to 32-bit floating-point color buffers.',
+  'EXT_float_blend': 'Allows blending with 32-bit floating-point color buffers.',
+};
+
 export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ extensions, onClose, t }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    // Trigger fade in after mount
     const timer = setTimeout(() => setIsVisible(true), 10);
     return () => clearTimeout(timer);
   }, []);
 
   const handleClose = () => {
     setIsClosing(true);
-    // Wait for animation to finish before calling actual onClose
     setTimeout(() => {
       onClose();
     }, 300);
@@ -31,6 +53,32 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
     ext.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const getPrefix = (ext: string) => {
+      if (ext.startsWith('WEBGL_')) return 'WEBGL';
+      if (ext.startsWith('EXT_')) return 'EXT';
+      if (ext.startsWith('OES_')) return 'OES';
+      if (ext.startsWith('KHR_')) return 'KHR';
+      if (ext.startsWith('ANGLE_')) return 'ANGLE';
+      if (ext.startsWith('MOZ_')) return 'MOZ';
+      if (ext.startsWith('WEBKIT_')) return 'WEBKIT';
+      return 'OTHER';
+  };
+
+  const getBadgeColor = (prefix: string) => {
+      switch(prefix) {
+          case 'WEBGL': return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800';
+          case 'KHR': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800';
+          case 'OES': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800';
+          case 'EXT': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200 dark:border-purple-800';
+          case 'ANGLE': return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border-orange-200 dark:border-orange-800';
+          default: return 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600';
+      }
+  };
+
+  const getDocsLink = (name: string) => {
+      return `https://registry.khronos.org/webgl/extensions/${name}/`;
+  };
+
   return (
     <div 
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm transition-all duration-300 ease-out ${
@@ -38,7 +86,7 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
       }`}
     >
       <div 
-        className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh] transition-all duration-300 ease-out transform ${
+        className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[85vh] transition-all duration-300 ease-out transform ${
             isVisible && !isClosing 
             ? 'opacity-100 scale-100 blur-0 translate-y-0' 
             : 'opacity-0 scale-95 blur-sm translate-y-4'
@@ -76,20 +124,61 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
         </div>
 
         {/* List */}
-        <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 dark:bg-slate-900/30 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                 {filteredExtensions.map((ext, index) => (
-                     <div 
-                        key={ext} 
-                        className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-xs font-mono text-slate-600 dark:text-slate-300 hover:border-indigo-300 dark:hover:border-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-400 transition-colors select-all truncate"
-                        title={ext}
-                     >
-                         {ext}
-                     </div>
-                 ))}
+        <div className="flex-1 overflow-y-auto p-4 bg-slate-50/50 dark:bg-slate-900/30 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
+             <div className="grid grid-cols-1 gap-3">
+                 {filteredExtensions.map((ext, index) => {
+                     const prefix = getPrefix(ext);
+                     const desc = EXTENSION_DESCRIPTIONS[ext];
+                     return (
+                         <div 
+                            key={ext} 
+                            className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:shadow-md transition-all duration-200 flex flex-col gap-2 relative overflow-hidden"
+                         >
+                             {/* Header Line */}
+                             <div className="flex items-start justify-between gap-3">
+                                 <div className="flex items-center gap-2 flex-wrap">
+                                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${getBadgeColor(prefix)}`}>
+                                         {prefix}
+                                     </span>
+                                     <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 font-mono break-all">
+                                         {ext}
+                                     </h3>
+                                 </div>
+                                 <a 
+                                    href={getDocsLink(ext)} 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                    className="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-1"
+                                    title={t.spec_link}
+                                 >
+                                     <ExternalLink size={16} />
+                                 </a>
+                             </div>
+
+                             {/* Description if available */}
+                             {desc && (
+                                 <div className="flex gap-2 mt-1">
+                                     <Info size={14} className="text-slate-400 shrink-0 mt-0.5" />
+                                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-snug">
+                                         {desc}
+                                     </p>
+                                 </div>
+                             )}
+                             
+                             {/* Generic footer for supported items */}
+                             {!desc && (
+                                 <div className="flex items-center gap-1.5 mt-1">
+                                     <Check size={12} className="text-emerald-500" />
+                                     <span className="text-[10px] text-emerald-600 dark:text-emerald-500 font-medium uppercase tracking-wide">Supported</span>
+                                 </div>
+                             )}
+                         </div>
+                     );
+                 })}
                  {filteredExtensions.length === 0 && (
-                     <div className="col-span-full py-8 text-center text-slate-400 text-sm">
-                         No extensions match "{searchTerm}"
+                     <div className="col-span-full py-12 flex flex-col items-center justify-center text-slate-400 gap-3">
+                         <Box size={48} className="opacity-20" />
+                         <p className="text-sm">No extensions match "{searchTerm}"</p>
                      </div>
                  )}
              </div>
@@ -99,7 +188,7 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
         <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 flex justify-end">
             <button 
                 onClick={handleClose}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors"
+                className="px-5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors"
             >
                 {t.close}
             </button>

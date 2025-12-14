@@ -23,6 +23,7 @@ export interface ExtendedNavigator extends Navigator {
   presentation?: any;
   globalPrivacyControl?: boolean;
   webdriver: boolean;
+  ml?: any; // WebNN
 }
 
 export interface NetworkInformation extends EventTarget {
@@ -79,16 +80,19 @@ export interface BrowserData {
   };
   hardware: {
     cpuCores: number | string;
+    cpuModel?: string; 
     memory: number | string;
     gpuRenderer: string;
     gpuVendor: string;
     maxTextureSize: number | string;
     batteryLevel: string;
     isCharging: string;
+    chargingTime: string; // New
+    dischargingTime: string; // New
     touchPoints: number;
     audioSampleRate: string;
-    screenExtended: boolean; // New
-    gamepads: number; // New
+    screenExtended: boolean; 
+    gamepads: number; 
   };
   fingerprints: {
     canvasHash: string;
@@ -106,6 +110,7 @@ export interface BrowserData {
     pixelRatio: number;
     colorDepth: number;
     orientation: string;
+    orientationAngle: string; // New
     darkMode: boolean;
     colorGamut: string;
     hdr: boolean;
@@ -114,21 +119,32 @@ export interface BrowserData {
   network: {
     online: boolean;
     effectiveType: string;
+    type: string; // New (wifi, cellular, etc)
     downlink: string;
+    downlinkMax: string; // New
     rtt: string;
     saveData: boolean;
-    webrtcIp: string; // New
+    webrtcIp: string; 
   };
-  security: { // New Section
+  security: { 
     isBot: boolean;
     gpcEnabled: boolean;
     pdfViewer: boolean;
     secureContext: boolean;
   };
+  ai: { 
+    wasmSupport: boolean;
+    wasmSimd: boolean;
+    webnn: boolean;
+    windowAi: boolean;
+    webgpuCompute: boolean;
+  };
   media: {
     video: CodecInfo[];
     audio: CodecInfo[];
-    speechVoices: number; // New
+    images: CodecInfo[]; // New
+    speechVoices: number;
+    audioChannels: number | string; // New
   };
   storage: {
     quota: string;

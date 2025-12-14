@@ -3,7 +3,7 @@ import { Translation } from './types';
 import { zhCN } from './zh-CN';
 
 export const zhTW: Translation = {
-  ...zhCN, // Fallback to CN for missing keys
+  ...zhCN,
   
   loading: "正在掃描系統能力...",
   title: "BrowserScope",
@@ -11,6 +11,48 @@ export const zhTW: Translation = {
   refresh: "重新檢測",
   footer: "所有資料均在本地瀏覽器中檢測，不會上傳任何個人隱私資訊。",
   
+  aboutModal: {
+    ...zhCN.aboutModal,
+    title: "關於 BrowserScope",
+    desc: "BrowserScope 是一款全面的瀏覽器分析工具，旨在驗證您的系統能力和指紋唯一性，所有檢測均在本地完成。",
+    version: "版本",
+    changelog: "更新日誌",
+    latest_update: "新增硬體交互工具與儲存跑分",
+    close: "關閉",
+    history: "更新歷史",
+    updates: [
+        {
+            version: "1.2.0",
+            date: "2024-03-15",
+            changes: [
+                "新增硬體交互工具（振動模式與多點觸控測試）。",
+                "效能跑分中新增儲存 I/O 讀寫測試 (IndexedDB)。",
+                "新增字型指紋 (Font Fingerprinting) 檢測能力。",
+                "優化 WebGL 擴充檢視器，支援按供應商分組和搜尋。",
+                "修復 UI 動畫卡頓與模態框交互問題。"
+            ]
+        },
+        {
+            version: "1.1.0",
+            date: "2024-02-28",
+            changes: [
+                "引入 AI 與計算能力檢測 (WebNN, Gemini Nano)。",
+                "新增相機與麥克風診斷工具。",
+                "增強裝置感測器視覺化效果 (加速度計, 陀螺儀)。"
+            ]
+        },
+        {
+            version: "1.0.0",
+            date: "2024-01-10",
+            changes: [
+                "初始發布，包含核心系統資訊檢測。",
+                "瀏覽器指紋分析 (Canvas, WebGL)。",
+                "網路速度與延遲估算功能。"
+            ]
+        }
+    ]
+  },
+
   sections: {
     ...zhCN.sections,
     system: "系統與軟體",
@@ -43,6 +85,8 @@ export const zhTW: Translation = {
     audio_latency: "音訊延遲",
     battery: "電池電量",
     charging: "充電狀態",
+    charging_time: "充電時間", // New
+    discharging_time: "放電時間", // New
     touch: "最大觸控點數",
     
     resolution: "螢幕解析度",
@@ -52,6 +96,7 @@ export const zhTW: Translation = {
     pixel_ratio: "像素密度 (DPR)",
     color_depth: "色彩深度",
     orientation: "螢幕方向",
+    orientation_angle: "旋轉角度", // New
     dark_mode: "深色模式",
     color_gamut: "色域範圍",
     hdr: "HDR 支援",
@@ -59,7 +104,9 @@ export const zhTW: Translation = {
     
     online: "線上狀態",
     conn_type: "連線類型",
+    net_type: "網路制式", // New
     downlink: "下載速度",
+    downlink_max: "最大下載", // New
     rtt: "延遲 (RTT)",
     save_data: "流量節省模式",
     
@@ -72,6 +119,9 @@ export const zhTW: Translation = {
     
     video_codecs: "視訊編碼支援",
     audio_codecs: "音訊編碼支援",
+    image_formats: "圖片格式支援", // New
+    speech_voices: "TTS 語音包",
+    audio_channels: "聲道數", // New
 
     camera_permission: "相機權限",
 
@@ -151,10 +201,12 @@ export const zhTW: Translation = {
   },
 
   fingerprintModal: {
+    ...zhCN.fingerprintModal,
     title: "瀏覽器指紋計算",
     desc: "使用各種瀏覽器屬性生成唯一的訪客識別碼。您可以調整以下參數來觀察雜湊值的變化。",
     tab_v4: "FingerprintJS v4 (現代)",
     tab_v2: "FingerprintJS v2 (傳統)",
+    tab_fonts: "字型檢測",
     btn_run: "計算指紋",
     generating: "生成中...",
     visitor_id: "訪客 ID",
@@ -166,7 +218,9 @@ export const zhTW: Translation = {
     deselect_all: "全不選",
     close: "關閉",
     copy: "複製 ID",
-    copied: "已複製!"
+    copied: "已複製!",
+    font_detect_desc: "通過測量特定文本的渲染寬度來檢測系統中安裝的字型。這是一種常見的指紋追蹤技術。",
+    font_list_title: "已檢測到的字型"
   },
 
   features: {
@@ -187,7 +241,7 @@ export const zhTW: Translation = {
     broadcast: "廣播頻道",
     webShare: "原生分享 API",
     clipboard: "剪貼簿 API",
-    pip: "畫中畫模式",
+    pip: "畫中画模式",
     geo: "地理位置定位",
     webCodecs: "Web Codecs 編碼",
     compression: "壓縮流",

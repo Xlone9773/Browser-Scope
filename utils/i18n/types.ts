@@ -20,7 +20,8 @@ export interface Translation {
     permissions: string;
     pwa: string;
     fingerprints: string;
-    security: string; // New
+    security: string;
+    ai_compute: string; 
   };
   
   labels: Record<string, string>;
@@ -71,6 +72,8 @@ export interface Translation {
     count: string;
     search_placeholder: string;
     close: string;
+    vendor: string; 
+    spec_link: string; 
   };
   
   base64Tool: {
@@ -85,6 +88,7 @@ export interface Translation {
     desc: string;
     tab_v4: string;
     tab_v2: string;
+    tab_fonts: string; 
     btn_run: string;
     generating: string;
     visitor_id: string;
@@ -97,6 +101,8 @@ export interface Translation {
     close: string;
     copy: string;
     copied: string;
+    font_detect_desc: string; 
+    font_list_title: string; 
   };
 
   imageDetails: {
@@ -111,6 +117,12 @@ export interface Translation {
     changelog: string;
     latest_update: string;
     close: string;
+    history: string;
+    updates: Array<{
+        version: string;
+        date: string;
+        changes: string[];
+    }>;
   };
 
   sensorModal: {
@@ -150,6 +162,37 @@ export interface Translation {
     res_name: string;
     res_type: string;
     res_duration: string;
+    close: string;
+  };
+
+  benchmarkModal: {
+    title: string;
+    start_btn: string;
+    running: string;
+    score: string;
+    cpu_test: string;
+    math_test: string;
+    memory_test: string;
+    dom_test: string;
+    gpu_test: string;
+    storage_test: string;
+    status_pending: string;
+    status_running: string;
+    status_done: string;
+    results_title: string;
+    close: string;
+  };
+
+  hardwareToolsModal: {
+    title: string;
+    tab_vibrate: string;
+    tab_touch: string;
+    vibrate_not_supported: string;
+    vibrate_short: string;
+    vibrate_medium: string;
+    vibrate_pattern: string;
+    touch_instruction: string;
+    touch_count: string;
     close: string;
   };
 }

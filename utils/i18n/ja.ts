@@ -1,3 +1,4 @@
+
 import { Translation } from './types';
 import { en } from './en';
 
@@ -22,7 +23,8 @@ export const ja: Translation = {
     permissions: "権限",
     pwa: "PWA機能",
     fingerprints: "フィンガープリントと追跡",
-    security: "プライバシーとセキュリティ"
+    security: "プライバシーとセキュリティ",
+    ai_compute: "AIと計算能力"
   },
 
   labels: {
@@ -44,6 +46,8 @@ export const ja: Translation = {
     audio_latency: "オーディオレイテンシ",
     battery: "バッテリーレベル",
     charging: "充電状態",
+    charging_time: "充電時間", // New
+    discharging_time: "放電時間", // New
     touch: "最大タッチポイント",
     
     resolution: "画面解像度",
@@ -53,6 +57,7 @@ export const ja: Translation = {
     pixel_ratio: "ピクセル比",
     color_depth: "色深度",
     orientation: "画面の向き",
+    orientation_angle: "角度", // New
     dark_mode: "ダークモード",
     color_gamut: "色域",
     hdr: "HDR サポート",
@@ -60,7 +65,9 @@ export const ja: Translation = {
     
     online: "オンライン状態",
     conn_type: "接続タイプ",
+    net_type: "ネットワーク技術", // New
     downlink: "ダウンリンク速度",
+    downlink_max: "最大ダウンリンク", // New
     rtt: "レイテンシ (RTT)",
     save_data: "データセーバー",
     
@@ -73,6 +80,8 @@ export const ja: Translation = {
     
     video_codecs: "ビデオコーデック",
     audio_codecs: "オーディオコーデック",
+    image_formats: "画像フォーマット", // New
+    audio_channels: "チャンネル数", // New
 
     camera_permission: "カメラアクセス",
 
@@ -221,7 +230,9 @@ export const ja: Translation = {
     title: "WebGL 拡張機能",
     count: "個の拡張機能をサポート",
     search_placeholder: "拡張機能を検索...",
-    close: "閉じる"
+    close: "閉じる",
+    vendor: "ベンダー",
+    spec_link: "仕様書"
   },
 
   base64Tool: {
@@ -236,6 +247,7 @@ export const ja: Translation = {
     desc: "様々なブラウザ属性を使用して一意の訪問者IDを生成します。以下のパラメータを調整して、ハッシュへの影響を確認できます。",
     tab_v4: "FingerprintJS v4 (最新)",
     tab_v2: "FingerprintJS v2 (レガシー)",
+    tab_fonts: "フォント検出",
     btn_run: "フィンガープリントを計算",
     generating: "生成中...",
     visitor_id: "訪問者 ID",
@@ -247,7 +259,9 @@ export const ja: Translation = {
     deselect_all: "すべて解除",
     close: "閉じる",
     copy: "IDをコピー",
-    copied: "コピーしました!"
+    copied: "コピーしました!",
+    font_detect_desc: "特定のテキストのレンダリング幅を測定して、システムにインストールされているフォントを検出します。これは一般的なフィンガープリント手法です。",
+    font_list_title: "検出されたフォント"
   },
 
   imageDetails: {
@@ -260,8 +274,40 @@ export const ja: Translation = {
     desc: "BrowserScopeは、システムの機能と指紋の一意性を検証するために設計された包括的なブラウザ分析ツールです。",
     version: "バージョン",
     changelog: "変更履歴",
-    latest_update: "カメラとオーディオ機能の検出、詳細なWebGL拡張機能ビューア、およびセンサー診断を追加しました。",
-    close: "閉じる"
+    latest_update: "ハードウェアツールとストレージベンチマークを追加",
+    close: "閉じる",
+    history: "更新履歴",
+    updates: [
+        {
+            version: "1.2.0",
+            date: "2024-03-15",
+            changes: [
+                "ハードウェア対話ツール（振動およびマルチタッチテスト）を追加。",
+                "ストレージ I/O ベンチマーク (IndexedDB) を追加。",
+                "フォントフィンガープリント検出機能を追加。",
+                "WebGL拡張機能ビューアを改善（ベンダー別グループ化と検索）。",
+                "UIアニメーションとモーダルの対話を修正。"
+            ]
+        },
+        {
+            version: "1.1.0",
+            date: "2024-02-28",
+            changes: [
+                "AIおよびコンピューティング機能検出 (WebNN, Gemini Nano) を導入。",
+                "カメラおよびマイク診断ツールを追加。",
+                "デバイスセンサーの視覚化を強化 (加速度計, ジャイロスコープ)。"
+            ]
+        },
+        {
+            version: "1.0.0",
+            date: "2024-01-10",
+            changes: [
+                "コアシステム検出機能を備えた初期リリース。",
+                "フィンガープリント分析 (Canvas, WebGL)。",
+                "ネットワーク速度と遅延の推定。"
+            ]
+        }
+    ]
   },
 
   sensorModal: {
