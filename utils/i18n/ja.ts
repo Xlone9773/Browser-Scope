@@ -232,6 +232,25 @@ export const ja: Translation = {
     close: "閉じる"
   },
 
+  fingerprintModal: {
+    title: "ブラウザフィンガープリント計算",
+    desc: "様々なブラウザ属性を使用して一意の訪問者IDを生成します。以下のパラメータを調整して、ハッシュへの影響を確認できます。",
+    tab_v4: "FingerprintJS v4 (最新)",
+    tab_v2: "FingerprintJS v2 (レガシー)",
+    btn_run: "フィンガープリントを計算",
+    generating: "生成中...",
+    visitor_id: "訪問者 ID",
+    time_taken: "所要時間",
+    params_title: "計算パラメータ",
+    salt_label: "カスタムソルト (シード)",
+    components_label: "含まれるコンポーネント",
+    select_all: "すべて選択",
+    deselect_all: "すべて解除",
+    close: "閉じる",
+    copy: "IDをコピー",
+    copied: "コピーしました!"
+  },
+
   imageDetails: {
     dimensions: "寸法",
     size: "サイズ"

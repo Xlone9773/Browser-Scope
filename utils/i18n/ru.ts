@@ -232,6 +232,25 @@ export const ru: Translation = {
     close: "Закрыть"
   },
 
+  fingerprintModal: {
+    title: "Вычисление отпечатка браузера",
+    desc: "Генерация уникального идентификатора посетителя с использованием различных атрибутов браузера. Вы можете настроить параметры ниже, чтобы увидеть, как они влияют на хэш.",
+    tab_v4: "FingerprintJS v4 (Современный)",
+    tab_v2: "FingerprintJS v2 (Устаревший)",
+    btn_run: "Вычислить отпечаток",
+    generating: "Генерация...",
+    visitor_id: "ID Посетителя",
+    time_taken: "Время выполнения",
+    params_title: "Параметры вычисления",
+    salt_label: "Пользовательская соль (Seed)",
+    components_label: "Включенные компоненты",
+    select_all: "Выбрать все",
+    deselect_all: "Снять выделение",
+    close: "Закрыть",
+    copy: "Копировать ID",
+    copied: "Скопировано!"
+  },
+
   imageDetails: {
     dimensions: "Размеры",
     size: "Объем"

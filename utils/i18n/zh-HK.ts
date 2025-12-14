@@ -17,6 +17,25 @@ export const zhHK: Translation = {
     audio_rate: "音訊採樣率",
   },
   
+  fingerprintModal: {
+    title: "瀏覽器指紋計算",
+    desc: "使用各種瀏覽器屬性生成唯一的訪客識別碼。您可以調整以下參數來觀察雜湊值的變化。",
+    tab_v4: "FingerprintJS v4 (現代)",
+    tab_v2: "FingerprintJS v2 (傳統)",
+    btn_run: "計算指紋",
+    generating: "生成中...",
+    visitor_id: "訪客 ID",
+    time_taken: "耗時",
+    params_title: "計算參數配置",
+    salt_label: "自訂 Salt (種子)",
+    components_label: "包含的組件",
+    select_all: "全選",
+    deselect_all: "全不選",
+    close: "關閉",
+    copy: "複製 ID",
+    copied: "已複製!"
+  },
+  
   scoreModal: {
     score_details_title: "指紋評分詳情",
     tracking_potential: "追蹤風險",
