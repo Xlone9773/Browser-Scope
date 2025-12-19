@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wifi } from 'lucide-react';
+import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wifi, Copy, Check } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
 import { BackendDropdown } from '../ui/BackendDropdown';
 
@@ -45,11 +45,13 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
     const [ipInfo, setIpInfo] = useState<IpInfo | null>(null);
     const [loadingIp, setLoadingIp] = useState(false);
     const [activeIpv4Source, setActiveIpv4Source] = useState(() => localStorage.getItem('ipv4_source') || 'ipwhois');
+    const [ipv4Copied, setIpv4Copied] = useState(false);
 
     // IPv6 State
     const [ipv6Address, setIpv6Address] = useState<string | null>(null);
     const [checkingIpv6, setCheckingIpv6] = useState(false);
     const [activeIpv6Source, setActiveIpv6Source] = useState(() => localStorage.getItem('ipv6_source') || 'ipify');
+    const [ipv6Copied, setIpv6Copied] = useState(false);
 
     // Connectivity State
     const [testUrl, setTestUrl] = useState('');
@@ -176,6 +178,12 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
         setCheckingIpv6(false);
     };
 
+    const handleCopy = (text: string, setCopied: (val: boolean) => void) => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     const checkCDN = async (index: number) => {
         const cdn = cdns[index];
         const newCdns = [...cdns];
@@ -238,7 +246,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
 
                 <div className="flex flex-col divide-y divide-slate-100 dark:divide-slate-700">
                     {/* IPv4 Section */}
-                    <div className="p-6 transition-colors hover:bg-slate-50/30 dark:hover:bg-slate-800/50">
+                    <div className="p-6 transition-colors hover:bg-slate-50/30 dark:hover:bg-slate-800/50 group">
                         <div className="flex justify-between items-start md:items-center mb-4 flex-col md:flex-row gap-3">
                             <div className="flex items-center gap-2">
                                 <span className="px-2 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-md dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800">IPv4</span>
@@ -272,8 +280,17 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-4">
-                                    <div className="font-mono text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight break-all">
-                                        {ipInfo.ip}
+                                    <div className="flex items-center gap-3">
+                                        <div className="font-mono text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight break-all">
+                                            {ipInfo.ip}
+                                        </div>
+                                        <button
+                                            onClick={() => handleCopy(ipInfo.ip!, setIpv4Copied)}
+                                            className="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-indigo-100 hover:text-indigo-600 dark:hover:bg-indigo-900/50 dark:hover:text-indigo-400 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                                            title="Copy IPv4"
+                                        >
+                                            {ipv4Copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
+                                        </button>
                                     </div>
                                     
                                     <div className="flex flex-wrap gap-3">
@@ -331,8 +348,17 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
 
                         {ipv6Address && ipv6Address !== 'fail' ? (
                             <div className="flex flex-col gap-4">
-                                <div className="font-mono text-xl sm:text-2xl font-bold text-slate-800 dark:text-white tracking-tight break-all">
-                                    {ipv6Address}
+                                <div className="flex items-center gap-3">
+                                    <div className="font-mono text-xl sm:text-2xl font-bold text-slate-800 dark:text-white tracking-tight break-all">
+                                        {ipv6Address}
+                                    </div>
+                                    <button
+                                        onClick={() => handleCopy(ipv6Address!, setIpv6Copied)}
+                                        className="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-purple-100 hover:text-purple-600 dark:hover:bg-purple-900/50 dark:hover:text-purple-400 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                                        title="Copy IPv6"
+                                    >
+                                        {ipv6Copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
+                                    </button>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-900/30">

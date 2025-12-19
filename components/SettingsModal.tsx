@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Network, Globe, Database, Activity, Sliders, Monitor, Terminal } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { GeneralTab } from './settings/GeneralTab';
@@ -14,18 +14,32 @@ interface SettingsModalProps {
   t: Translation['settingsModal'];
   simpleMode: boolean;
   toggleSimpleMode: (value: boolean) => void;
+  isDevToolsFloating: boolean;
+  setDevToolsFloating: (val: boolean) => void;
 }
 
-export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t, simpleMode, toggleSimpleMode }) => {
+export const SettingsModal: React.FC<SettingsModalProps> = ({ 
+    onClose, 
+    t, 
+    simpleMode, 
+    toggleSimpleMode, 
+    isDevToolsFloating, 
+    setDevToolsFloating 
+}) => {
   const [activeTab, setActiveTab] = useState<'general' | 'network' | 'display' | 'storage' | 'res' | 'dev'>('general');
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
   
   // Display Test State (Lifted up as it overlays everything)
   const [fullScreenColor, setFullScreenColor] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 10);
+    // Initial focus to prevent background navigation issues
+    if (modalRef.current) {
+        modalRef.current.focus();
+    }
     return () => clearTimeout(timer);
   }, []);
 
@@ -58,7 +72,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t, simple
       }`}
     >
       <div 
-        className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col overflow-hidden transition-all duration-300 ease-out transform ${
+        ref={modalRef}
+        tabIndex={-1}
+        className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col overflow-hidden transition-all duration-300 ease-out transform outline-none ${
             isVisible && !isClosing 
             ? 'opacity-100 scale-100 blur-0 translate-y-0' 
             : 'opacity-0 scale-95 blur-sm translate-y-4'
@@ -195,7 +211,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t, simple
                 )}
 
                 {activeTab === 'dev' && (
-                    <DeveloperTab t={t} />
+                    <DeveloperTab 
+                        t={t} 
+                        isFloating={isDevToolsFloating}
+                        toggleFloat={() => setDevToolsFloating(!isDevToolsFloating)}
+                    />
                 )}
 
             </div>

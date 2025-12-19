@@ -2,6 +2,76 @@
 import { Translation } from './types';
 
 export const zhCN: Translation = {
+  // ... (existing translations)
+  settingsModal: {
+    // ... (existing settingsModal)
+    title: "设置与工具",
+    tab_general: "常规",
+    tab_network: "网络分析",
+    tab_display: "显示测试",
+    tab_storage: "存储管理",
+    tab_resources: "外部资源",
+    tab_developer: "开发者",
+    simple_mode_title: "简洁模式",
+    simple_mode_desc: "隐藏不必要的技术细节，仅显示核心系统信息。",
+    
+    public_ip: "公网 IP 地址",
+    fetch_ip: "检测 IP",
+    ipv6_title: "IPv6 连通性",
+    check_ipv6: "检测 IPv6",
+    ipv6_success: "支持 IPv6",
+    ipv6_fail: "未检测到 / 仅 IPv4",
+    ip_info: "IP 详细信息",
+    provider: "运营商 (ISP)",
+    location: "地理位置",
+    cdn_status: "CDN 状态",
+    latency: "延迟",
+    check_all: "检查所有",
+    url_placeholder: "输入 URL (如 https://google.com)",
+    test_conn: "测试连通性",
+    test_result: "测试结果",
+
+    display_test: "屏幕坏点/缺陷测试",
+    dead_pixel_title: "坏点检测",
+    dead_pixel_desc: "点击颜色进入全屏模式。检查屏幕上是否有不发光或颜色异常的像素点。",
+    color_red: "红",
+    color_green: "绿",
+    color_blue: "蓝",
+    color_white: "白",
+    color_black: "黑",
+    gamut_test_title: "广色域可视化 (P3)",
+    gamut_test_desc: "如果您的显示器支持广色域 (P3)，您将在色块中心隐约看到形状或文字。",
+    hdr_test_title: "色深与断层测试",
+    hdr_test_desc: "检查渐变是否平滑。如果出现明显条纹 (Banding)，说明可能是 8-bit 色深或受到压缩。",
+    unsupported_p3: "当前浏览器不支持 color(display-p3) 语法",
+
+    storage_title: "本地数据",
+    clear_data: "清除站点数据",
+    clear_btn: "清除存储",
+    sw_title: "Service Workers",
+    sw_desc: "注销活动的 Service Workers 以重置 PWA 状态。",
+    sw_btn: "注销 SW",
+
+    resource_list: "已加载资源",
+    res_name: "资源 URL",
+    res_type: "类型",
+    res_duration: "加载耗时",
+
+    dev_events: "事件监听器",
+    dev_inspector: "对象透视 (Inspector)",
+    dev_console: "JS 控制台",
+    dev_console_placeholder: "输入 JavaScript 代码...",
+    dev_run: "执行",
+    dev_clear: "清空日志",
+    dev_copy_log: "复制日志",
+    dev_float: "悬浮窗口",
+    dev_warning_title: "开发者模式风险提示",
+    dev_warning_desc: "此工具允许执行任意 JavaScript 代码并检查浏览器内部对象。执行恶意代码可能会危及您的安全。请确保您了解相关风险后再继续。",
+    dev_warning_agree: "我了解风险并继续",
+
+    close: "关闭"
+  },
+  // ... (rest of file)
   loading: "正在扫描系统能力...",
   title: "BrowserScope",
   subtitle: "全面检测您的浏览器环境、硬件能力、网络状态及前沿 Web API 支持情况。",
@@ -271,7 +341,7 @@ export const zhCN: Translation = {
 
   fingerprintModal: {
     title: "浏览器指纹计算",
-    desc: "使用各种浏览器属性生成唯一的访客标识符。您可以调整以下参数来观察哈希值的变化。",
+    desc: "使用各种浏览器属性生成唯一的訪客識別碼。您可以调整以下参数来观察哈希值的变化。",
     tab_v4: "FingerprintJS v4 (现代)",
     tab_v2: "FingerprintJS v2 (传统)",
     tab_fonts: "字体检测",
@@ -384,70 +454,6 @@ export const zhCN: Translation = {
       desc_battery_generic: "电池状态已被隐藏或不支持。",
       desc_locale_unique: "时区和语言设置可缩小用户的位置范围。"
     }
-  },
-
-  settingsModal: {
-    title: "设置与工具",
-    tab_general: "常规",
-    tab_network: "网络分析",
-    tab_display: "显示测试",
-    tab_storage: "存储管理",
-    tab_resources: "外部资源",
-    tab_developer: "开发者",
-    simple_mode_title: "简洁模式",
-    simple_mode_desc: "隐藏不必要的技术细节，仅显示核心系统信息。",
-    
-    public_ip: "公网 IP 地址",
-    fetch_ip: "检测 IP",
-    ipv6_title: "IPv6 连通性",
-    check_ipv6: "检测 IPv6",
-    ipv6_success: "支持 IPv6",
-    ipv6_fail: "未检测到 / 仅 IPv4",
-    ip_info: "IP 详细信息",
-    provider: "运营商 (ISP)",
-    location: "地理位置",
-    cdn_status: "CDN 状态",
-    latency: "延迟",
-    check_all: "检查所有",
-    url_placeholder: "输入 URL (如 https://google.com)",
-    test_conn: "测试连通性",
-    test_result: "测试结果",
-
-    display_test: "屏幕坏点/缺陷测试",
-    dead_pixel_title: "坏点检测",
-    dead_pixel_desc: "点击颜色进入全屏模式。检查屏幕上是否有不发光或颜色异常的像素点。",
-    color_red: "红",
-    color_green: "绿",
-    color_blue: "蓝",
-    color_white: "白",
-    color_black: "黑",
-    gamut_test_title: "广色域可视化 (P3)",
-    gamut_test_desc: "如果您的显示器支持广色域 (P3)，您将在色块中心隐约看到形状或文字。",
-    hdr_test_title: "色深与断层测试",
-    hdr_test_desc: "检查渐变是否平滑。如果出现明显条纹 (Banding)，说明可能是 8-bit 色深或受到压缩。",
-    unsupported_p3: "当前浏览器不支持 color(display-p3) 语法",
-
-    storage_title: "本地数据",
-    clear_data: "清除站点数据",
-    clear_btn: "清除存储",
-    sw_title: "Service Workers",
-    sw_desc: "注销活动的 Service Workers 以重置 PWA 状态。",
-    sw_btn: "注销 SW",
-
-    resource_list: "已加载资源",
-    res_name: "资源 URL",
-    res_type: "类型",
-    res_duration: "加载耗时",
-
-    dev_events: "事件监听器",
-    dev_inspector: "对象透视 (Inspector)",
-    dev_console: "JS 控制台",
-    dev_console_placeholder: "输入 JavaScript 代码...",
-    dev_run: "执行",
-    dev_clear: "清空日志",
-    dev_copy_log: "复制日志",
-
-    close: "关闭"
   },
 
   benchmarkModal: {

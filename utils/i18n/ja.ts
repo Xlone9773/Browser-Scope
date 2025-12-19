@@ -65,6 +65,10 @@ export const ja: Translation = {
     dev_run: "実行",
     dev_clear: "ログを消去",
     dev_copy_log: "ログをコピー",
+    dev_float: "フローティングウィンドウ",
+    dev_warning_title: "開発者モードの警告",
+    dev_warning_desc: "このツールを使用すると、任意のJavaScriptコードを実行し、ブラウザの内部オブジェクトを検査できます。悪意のあるコードの実行は、セキュリティを危険にさらす可能性があります。リスクを理解している場合のみ続行してください。",
+    dev_warning_agree: "リスクを理解して続行",
 
     close: "閉じる"
   },

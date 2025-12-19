@@ -2,6 +2,76 @@
 import { Translation } from './types';
 
 export const en: Translation = {
+  // ... (existing translations)
+  settingsModal: {
+    // ... (existing settingsModal)
+    title: "Settings & Tools",
+    tab_general: "General",
+    tab_network: "Network",
+    tab_display: "Display",
+    tab_storage: "Storage",
+    tab_resources: "Resources",
+    tab_developer: "Developer",
+    simple_mode_title: "Simple Mode",
+    simple_mode_desc: "Hide technical details and show only core information on the dashboard.",
+    
+    public_ip: "Public IP Address",
+    fetch_ip: "Detect IP",
+    ipv6_title: "IPv6 Connectivity",
+    check_ipv6: "Detect IPv6",
+    ipv6_success: "IPv6 Supported",
+    ipv6_fail: "Not Detected / IPv4 Only",
+    ip_info: "IP Information",
+    provider: "ISP / Provider",
+    location: "Location",
+    cdn_status: "CDN Status",
+    latency: "Latency",
+    check_all: "Check All",
+    url_placeholder: "Enter URL (e.g., https://google.com)",
+    test_conn: "Test Connectivity",
+    test_result: "Result",
+
+    display_test: "Screen Defects Test",
+    dead_pixel_title: "Dead Pixel Check",
+    dead_pixel_desc: "Click a color to enter full-screen mode. Look for pixels that do not change color.",
+    color_red: "Red",
+    color_green: "Green",
+    color_blue: "Blue",
+    color_white: "White",
+    color_black: "Black",
+    gamut_test_title: "Color Gamut Visualizer",
+    gamut_test_desc: "If your display supports wide color gamut (P3), you will see a shape or text inside the colored squares.",
+    hdr_test_title: "Bit Depth & Banding",
+    hdr_test_desc: "Check for smooth gradients. Banding indicates 8-bit color depth or compression.",
+    unsupported_p3: "Browser does not support color(display-p3) syntax",
+
+    storage_title: "Local Data",
+    clear_data: "Clear Site Data",
+    clear_btn: "Clear Storage",
+    sw_title: "Service Workers",
+    sw_desc: "Unregister active service workers to reset PWA state.",
+    sw_btn: "Unregister",
+
+    resource_list: "External Resources",
+    res_name: "Resource URL",
+    res_type: "Type",
+    res_duration: "Duration",
+
+    dev_events: "Event Monitor",
+    dev_inspector: "Object Inspector",
+    dev_console: "JS Playground",
+    dev_console_placeholder: "Enter JavaScript...",
+    dev_run: "Run",
+    dev_clear: "Clear Logs",
+    dev_copy_log: "Copy Log",
+    dev_float: "Float Window",
+    dev_warning_title: "Advanced Developer Tools",
+    dev_warning_desc: "These tools allow execution of raw JavaScript code and inspection of internal browser objects. Malicious code execution can compromise your security. Proceed only if you understand the risks.",
+    dev_warning_agree: "I Understand the Risks",
+
+    close: "Close"
+  },
+  // ... (rest of file)
   loading: "Scanning System Capabilities...",
   title: "BrowserScope",
   subtitle: "Detailed analysis of your browser environment, hardware capabilities, and supported web APIs.",
@@ -384,70 +454,6 @@ export const en: Translation = {
       desc_battery_generic: "Battery status is hidden or unsupported.",
       desc_locale_unique: "Timezone and language settings narrow down location."
     }
-  },
-
-  settingsModal: {
-    title: "Settings & Tools",
-    tab_general: "General",
-    tab_network: "Network",
-    tab_display: "Display",
-    tab_storage: "Storage",
-    tab_resources: "Resources",
-    tab_developer: "Developer",
-    simple_mode_title: "Simple Mode",
-    simple_mode_desc: "Hide technical details and show only core information on the dashboard.",
-    
-    public_ip: "Public IP Address",
-    fetch_ip: "Detect IP",
-    ipv6_title: "IPv6 Connectivity",
-    check_ipv6: "Detect IPv6",
-    ipv6_success: "IPv6 Supported",
-    ipv6_fail: "Not Detected / IPv4 Only",
-    ip_info: "IP Information",
-    provider: "ISP / Provider",
-    location: "Location",
-    cdn_status: "CDN Status",
-    latency: "Latency",
-    check_all: "Check All",
-    url_placeholder: "Enter URL (e.g., https://google.com)",
-    test_conn: "Test Connectivity",
-    test_result: "Result",
-
-    display_test: "Screen Defects Test",
-    dead_pixel_title: "Dead Pixel Check",
-    dead_pixel_desc: "Click a color to enter full-screen mode. Look for pixels that do not change color.",
-    color_red: "Red",
-    color_green: "Green",
-    color_blue: "Blue",
-    color_white: "White",
-    color_black: "Black",
-    gamut_test_title: "Color Gamut Visualizer",
-    gamut_test_desc: "If your display supports wide color gamut (P3), you will see a shape or text inside the colored squares.",
-    hdr_test_title: "Bit Depth & Banding",
-    hdr_test_desc: "Check for smooth gradients. Banding indicates 8-bit color depth or compression.",
-    unsupported_p3: "Browser does not support color(display-p3) syntax",
-
-    storage_title: "Local Data",
-    clear_data: "Clear Site Data",
-    clear_btn: "Clear Storage",
-    sw_title: "Service Workers",
-    sw_desc: "Unregister active service workers to reset PWA state.",
-    sw_btn: "Unregister",
-
-    resource_list: "External Resources",
-    res_name: "Resource URL",
-    res_type: "Type",
-    res_duration: "Duration",
-
-    dev_events: "Event Monitor",
-    dev_inspector: "Object Inspector",
-    dev_console: "JS Playground",
-    dev_console_placeholder: "Enter JavaScript...",
-    dev_run: "Run",
-    dev_clear: "Clear Logs",
-    dev_copy_log: "Copy Log",
-
-    close: "Close"
   },
 
   benchmarkModal: {

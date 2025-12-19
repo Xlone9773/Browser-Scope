@@ -21,6 +21,10 @@ export const zhHK: Translation = {
     dev_run: "執行",
     dev_clear: "清空日誌",
     dev_copy_log: "複製日誌",
+    dev_float: "懸浮視窗",
+    dev_warning_title: "開發者模式風險提示",
+    dev_warning_desc: "此工具允許執行任意 JavaScript 代碼並檢查瀏覽器內部對象。執行惡意代碼可能會危及您的安全。請確保您了解相關風險後再繼續。",
+    dev_warning_agree: "我了解風險並繼續",
   },
 
   labels: {

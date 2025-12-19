@@ -154,7 +154,7 @@ export interface Translation {
     tab_display: string;
     tab_storage: string;
     tab_resources: string;
-    tab_developer: string; // New
+    tab_developer: string; 
     simple_mode_title: string;
     simple_mode_desc: string;
     
@@ -211,6 +211,10 @@ export interface Translation {
     dev_run: string;
     dev_clear: string;
     dev_copy_log: string;
+    dev_float: string; 
+    dev_warning_title: string; // New
+    dev_warning_desc: string; // New
+    dev_warning_agree: string; // New
 
     close: string;
   };
