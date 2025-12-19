@@ -77,6 +77,7 @@ export const zhTW: Translation = {
     cookies: "Cookies 啟用",
     
     cpu: "CPU 邏輯核心",
+    cpu_model: "CPU 型號 (估算)",
     memory: "裝置記憶體 (估算)",
     gpu_vendor: "GPU 供應商",
     gpu_renderer: "GPU 渲染器",
@@ -85,8 +86,8 @@ export const zhTW: Translation = {
     audio_latency: "音訊延遲",
     battery: "電池電量",
     charging: "充電狀態",
-    charging_time: "充電時間", // New
-    discharging_time: "放電時間", // New
+    charging_time: "充電時間", 
+    discharging_time: "放電時間", 
     touch: "最大觸控點數",
     
     resolution: "螢幕解析度",
@@ -96,7 +97,7 @@ export const zhTW: Translation = {
     pixel_ratio: "像素密度 (DPR)",
     color_depth: "色彩深度",
     orientation: "螢幕方向",
-    orientation_angle: "旋轉角度", // New
+    orientation_angle: "旋轉角度", 
     dark_mode: "深色模式",
     color_gamut: "色域範圍",
     hdr: "HDR 支援",
@@ -104,9 +105,9 @@ export const zhTW: Translation = {
     
     online: "線上狀態",
     conn_type: "連線類型",
-    net_type: "網路制式", // New
+    net_type: "網路制式", 
     downlink: "下載速度",
-    downlink_max: "最大下載", // New
+    downlink_max: "最大下載", 
     rtt: "延遲 (RTT)",
     save_data: "流量節省模式",
     
@@ -119,9 +120,9 @@ export const zhTW: Translation = {
     
     video_codecs: "視訊編碼支援",
     audio_codecs: "音訊編碼支援",
-    image_formats: "圖片格式支援", // New
+    image_formats: "圖片格式支援", 
     speech_voices: "TTS 語音包",
-    audio_channels: "聲道數", // New
+    audio_channels: "聲道數", 
 
     camera_permission: "相機權限",
 
@@ -137,7 +138,9 @@ export const zhTW: Translation = {
     geo_acc: "精確度",
     media_devices: "媒體裝置",
     perm_camera: "相機",
-    perm_mic: "麥克風"
+    perm_mic: "麥克風",
+
+    pwa_install_status: "安裝狀態"
   },
   
   values: {
@@ -147,7 +150,9 @@ export const zhTW: Translation = {
     not_supported: "不支援",
     yes: "是",
     no: "否",
-    unknown: "未知"
+    unknown: "未知",
+    installed: "已安裝",
+    not_installed: "未安裝"
   },
 
   actions: {
@@ -321,5 +326,50 @@ export const zhTW: Translation = {
       desc_battery_generic: "電池狀態已被隱藏或不支援。",
       desc_locale_unique: "時區和語言設定可縮小使用者的位置範圍。"
     }
-  }
+  },
+
+  settingsModal: {
+    title: "設定與工具",
+    tab_general: "一般",
+    tab_network: "網路分析",
+    tab_display: "顯示測試",
+    tab_storage: "儲存管理",
+    tab_resources: "外部資源",
+    simple_mode_title: "簡潔模式",
+    simple_mode_desc: "隱藏不必要的技術細節，僅顯示核心系統資訊。",
+    
+    public_ip: "公網 IP 位址",
+    fetch_ip: "檢測 IP",
+    ip_info: "IP 詳細資訊",
+    provider: "運營商 (ISP)",
+    location: "地理位置",
+    cdn_status: "CDN 狀態",
+    latency: "延遲",
+    check_all: "檢查所有",
+    url_placeholder: "輸入 URL (如 https://google.com)",
+    test_conn: "測試連線",
+    test_result: "測試結果",
+
+    display_test: "螢幕壞點/缺陷測試",
+    dead_pixel_title: "壞點檢測",
+    dead_pixel_desc: "點擊顏色進入全螢幕模式。檢查螢幕上是否有不發光或顏色異常的像素點。",
+    color_red: "紅",
+    color_green: "綠",
+    color_blue: "藍",
+    color_white: "白",
+    color_black: "黑",
+
+    storage_title: "本地數據",
+    clear_data: "清除網站數據",
+    clear_btn: "清除儲存",
+    sw_title: "Service Workers",
+    sw_desc: "註銷活動的 Service Workers 以重置 PWA 狀態。",
+    sw_btn: "註銷 SW",
+
+    resource_list: "已加載資源",
+    res_name: "資源 URL",
+    res_type: "類型",
+    res_duration: "加載耗時",
+    close: "關閉"
+  },
 };

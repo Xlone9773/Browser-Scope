@@ -149,15 +149,45 @@ export interface Translation {
 
   settingsModal: {
     title: string;
-    tab_cdn: string;
-    tab_conn: string;
+    tab_general: string;
+    tab_network: string; // Combined Connectivity + CDN + IP
+    tab_display: string; // New
+    tab_storage: string; // New
     tab_resources: string;
+    simple_mode_title: string;
+    simple_mode_desc: string;
+    
+    // Network
+    public_ip: string;
+    fetch_ip: string;
+    ip_info: string;
+    provider: string;
+    location: string;
     cdn_status: string;
     latency: string;
     check_all: string;
     url_placeholder: string;
     test_conn: string;
     test_result: string;
+
+    // Display
+    display_test: string;
+    dead_pixel_title: string;
+    dead_pixel_desc: string;
+    color_red: string;
+    color_green: string;
+    color_blue: string;
+    color_white: string;
+    color_black: string;
+
+    // Storage
+    storage_title: string;
+    clear_data: string;
+    clear_btn: string;
+    sw_title: string;
+    sw_desc: string;
+    sw_btn: string;
+
     resource_list: string;
     res_name: string;
     res_type: string;

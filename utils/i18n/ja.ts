@@ -5,6 +5,51 @@ import { en } from './en';
 export const ja: Translation = {
   ...en, // Fallback to EN for any missing keys
 
+  settingsModal: {
+    title: "設定とツール",
+    tab_general: "一般",
+    tab_network: "ネットワーク",
+    tab_display: "ディスプレイ",
+    tab_storage: "ストレージ",
+    tab_resources: "リソース",
+    simple_mode_title: "シンプルモード",
+    simple_mode_desc: "不要な技術詳細を非表示にし、コアシステム情報のみを表示します。",
+    
+    public_ip: "パブリックIPアドレス",
+    fetch_ip: "IPを検出",
+    ip_info: "IP情報",
+    provider: "ISP / プロバイダー",
+    location: "ロケーション",
+    cdn_status: "CDN ステータス",
+    latency: "レイテンシ",
+    check_all: "すべて確認",
+    url_placeholder: "URLを入力 (例: https://google.com)",
+    test_conn: "接続テスト",
+    test_result: "結果",
+
+    display_test: "画面欠陥テスト",
+    dead_pixel_title: "ドット抜けチェック",
+    dead_pixel_desc: "色をクリックして全画面モードに入ります。色が変化しないピクセルがないか確認してください。",
+    color_red: "赤",
+    color_green: "緑",
+    color_blue: "青",
+    color_white: "白",
+    color_black: "黒",
+
+    storage_title: "ローカルデータ",
+    clear_data: "サイトデータを消去",
+    clear_btn: "ストレージを消去",
+    sw_title: "Service Workers",
+    sw_desc: "アクティブなService Workersを登録解除してPWAの状態をリセットします。",
+    sw_btn: "登録解除",
+
+    resource_list: "外部リソース",
+    res_name: "リソース URL",
+    res_type: "タイプ",
+    res_duration: "所要時間",
+    close: "閉じる"
+  },
+
   loading: "システム機能をスキャン中...",
   title: "BrowserScope",
   subtitle: "ブラウザ環境、ハードウェア機能、およびサポートされているWeb APIの詳細な分析。",
@@ -38,6 +83,7 @@ export const ja: Translation = {
     dnt: "Do Not Track",
     
     cpu: "CPU コア数",
+    cpu_model: "CPUモデル (推定)",
     memory: "デバイスメモリ",
     gpu_vendor: "GPU ベンダー",
     gpu_renderer: "GPU レンダラー",
@@ -46,8 +92,8 @@ export const ja: Translation = {
     audio_latency: "オーディオレイテンシ",
     battery: "バッテリーレベル",
     charging: "充電状態",
-    charging_time: "充電時間", // New
-    discharging_time: "放電時間", // New
+    charging_time: "充電時間", 
+    discharging_time: "放電時間", 
     touch: "最大タッチポイント",
     
     resolution: "画面解像度",
@@ -57,7 +103,7 @@ export const ja: Translation = {
     pixel_ratio: "ピクセル比",
     color_depth: "色深度",
     orientation: "画面の向き",
-    orientation_angle: "角度", // New
+    orientation_angle: "角度", 
     dark_mode: "ダークモード",
     color_gamut: "色域",
     hdr: "HDR サポート",
@@ -65,9 +111,9 @@ export const ja: Translation = {
     
     online: "オンライン状態",
     conn_type: "接続タイプ",
-    net_type: "ネットワーク技術", // New
+    net_type: "ネットワーク技術", 
     downlink: "ダウンリンク速度",
-    downlink_max: "最大ダウンリンク", // New
+    downlink_max: "最大ダウンリンク", 
     rtt: "レイテンシ (RTT)",
     save_data: "データセーバー",
     
@@ -80,8 +126,8 @@ export const ja: Translation = {
     
     video_codecs: "ビデオコーデック",
     audio_codecs: "オーディオコーデック",
-    image_formats: "画像フォーマット", // New
-    audio_channels: "チャンネル数", // New
+    image_formats: "画像フォーマット", 
+    audio_channels: "チャンネル数", 
 
     camera_permission: "カメラアクセス",
 
@@ -97,7 +143,9 @@ export const ja: Translation = {
     geo_acc: "精度",
     media_devices: "メディアデバイス",
     perm_camera: "カメラ",
-    perm_mic: "マイク"
+    perm_mic: "マイク",
+
+    pwa_install_status: "インストール状態"
   },
   
   values: {
@@ -107,7 +155,9 @@ export const ja: Translation = {
     not_supported: "非サポート",
     yes: "はい",
     no: "いいえ",
-    unknown: "不明"
+    unknown: "不明",
+    installed: "インストール済み",
+    not_installed: "未インストール"
   },
 
   actions: {

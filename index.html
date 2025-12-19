@@ -47,6 +47,15 @@
       .dark ::-webkit-scrollbar-thumb:hover {
         background: #64748b;
       }
+
+      /* Utility to hide scrollbar but allow scrolling */
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+      }
     </style>
   <script type="importmap">
 {

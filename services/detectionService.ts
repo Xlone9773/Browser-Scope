@@ -532,6 +532,8 @@ export const getAllData = async (): Promise<BrowserData> => {
       webrtcIp
   );
 
+  const isPwaInstalled = window.matchMedia('(display-mode: standalone)').matches;
+
   return {
     system: {
       os: detectOS(),
@@ -543,6 +545,7 @@ export const getAllData = async (): Promise<BrowserData> => {
       userAgent: navigator.userAgent,
       cookiesEnabled: navigator.cookieEnabled,
       doNotTrack: navigator.doNotTrack || 'Unspecified',
+      isPwaInstalled,
     },
     hardware: {
       cpuCores: cpuCores,

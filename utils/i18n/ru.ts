@@ -5,6 +5,51 @@ import { en } from './en';
 export const ru: Translation = {
   ...en, // Fallback to EN
 
+  settingsModal: {
+    title: "Настройки и инструменты",
+    tab_general: "Общие",
+    tab_network: "Сеть",
+    tab_display: "Дисплей",
+    tab_storage: "Хранилище",
+    tab_resources: "Ресурсы",
+    simple_mode_title: "Простой режим",
+    simple_mode_desc: "Скрыть технические детали и показать только основную системную информацию.",
+    
+    public_ip: "Публичный IP",
+    fetch_ip: "Определить IP",
+    ip_info: "Информация об IP",
+    provider: "Провайдер (ISP)",
+    location: "Местоположение",
+    cdn_status: "Статус CDN",
+    latency: "Задержка",
+    check_all: "Проверить все",
+    url_placeholder: "Введите URL (например, https://google.com)",
+    test_conn: "Тест соединения",
+    test_result: "Результат",
+
+    display_test: "Тест экрана",
+    dead_pixel_title: "Проверка битых пикселей",
+    dead_pixel_desc: "Нажмите на цвет, чтобы войти в полноэкранный режим. Ищите пиксели, которые не меняют цвет.",
+    color_red: "Красный",
+    color_green: "Зеленый",
+    color_blue: "Синий",
+    color_white: "Белый",
+    color_black: "Черный",
+
+    storage_title: "Локальные данные",
+    clear_data: "Очистить данные сайта",
+    clear_btn: "Очистить хранилище",
+    sw_title: "Service Workers",
+    sw_desc: "Отменить регистрацию активных Service Workers для сброса состояния PWA.",
+    sw_btn: "Отменить регистрацию",
+
+    resource_list: "Загруженные ресурсы",
+    res_name: "URL ресурса",
+    res_type: "Тип",
+    res_duration: "Время загрузки",
+    close: "Закрыть"
+  },
+
   loading: "Сканирование возможностей системы...",
   title: "BrowserScope",
   subtitle: "Подробный анализ среды вашего браузера, аппаратных возможностей и поддерживаемых веб-API.",
@@ -38,6 +83,7 @@ export const ru: Translation = {
     dnt: "Do Not Track",
     
     cpu: "Ядра CPU",
+    cpu_model: "Модель CPU (Оценка)",
     memory: "Память устройства",
     gpu_vendor: "Поставщик GPU",
     gpu_renderer: "Рендерер GPU",
@@ -46,8 +92,8 @@ export const ru: Translation = {
     audio_latency: "Задержка аудио",
     battery: "Уровень заряда",
     charging: "Зарядка",
-    charging_time: "Время зарядки", // New
-    discharging_time: "Время разрядки", // New
+    charging_time: "Время зарядки", 
+    discharging_time: "Время разрядки", 
     touch: "Точки касания",
     
     resolution: "Разрешение экрана",
@@ -57,7 +103,7 @@ export const ru: Translation = {
     pixel_ratio: "Плотность пикселей",
     color_depth: "Глубина цвета",
     orientation: "Ориентация",
-    orientation_angle: "Угол", // New
+    orientation_angle: "Угол", 
     dark_mode: "Темная тема",
     color_gamut: "Цветовой охват",
     hdr: "Поддержка HDR",
@@ -65,9 +111,9 @@ export const ru: Translation = {
     
     online: "Статус сети",
     conn_type: "Тип соединения",
-    net_type: "Технология сети", // New
+    net_type: "Технология сети", 
     downlink: "Скорость загрузки",
-    downlink_max: "Макс. скорость", // New
+    downlink_max: "Макс. скорость", 
     rtt: "Задержка (RTT)",
     save_data: "Экономия трафика",
     
@@ -80,8 +126,8 @@ export const ru: Translation = {
     
     video_codecs: "Видео кодеки",
     audio_codecs: "Аудио кодеки",
-    image_formats: "Форматы изображений", // New
-    audio_channels: "Каналы", // New
+    image_formats: "Форматы изображений", 
+    audio_channels: "Каналы", 
 
     camera_permission: "Доступ к камере",
 
@@ -97,7 +143,9 @@ export const ru: Translation = {
     geo_acc: "Точность",
     media_devices: "Медиа устройства",
     perm_camera: "Камера",
-    perm_mic: "Микрофон"
+    perm_mic: "Микрофон",
+
+    pwa_install_status: "Статус установки"
   },
   
   values: {
@@ -107,7 +155,9 @@ export const ru: Translation = {
     not_supported: "Не поддерживается",
     yes: "Да",
     no: "Нет",
-    unknown: "Неизвестно"
+    unknown: "Неизвестно",
+    installed: "Установлено",
+    not_installed: "Не установлено"
   },
 
   actions: {

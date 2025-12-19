@@ -39,7 +39,9 @@ import {
   Settings,
   Network,
   Bot,
-  Hammer
+  Hammer,
+  Sliders,
+  CheckCircle
 } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { BrowserData } from './types';
@@ -74,6 +76,11 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [lang, setLang] = useState<Language>('zh-CN');
   const [theme, setTheme] = useState<Theme>('system');
+  const [simpleMode, setSimpleMode] = useState<boolean>(() => {
+      const saved = localStorage.getItem('simpleMode');
+      return saved === 'true';
+  });
+
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
   const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
@@ -112,6 +119,11 @@ const App: React.FC = () => {
       const newTheme = theme === 'dark' ? 'light' : 'dark';
       setTheme(newTheme);
       applyTheme(newTheme);
+  };
+
+  const toggleSimpleMode = (value: boolean) => {
+      setSimpleMode(value);
+      localStorage.setItem('simpleMode', String(value));
   };
 
   const fetchData = async () => {
@@ -299,7 +311,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 py-10 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 py-10 px-4 sm:px-6 lg:px-8 transition-colors duration-300 scrollbar-hide">
       {/* Modals */}
       {isCameraModalOpen && (
           <CameraModal onClose={() => setIsCameraModalOpen(false)} t={t.cameraTool} />
@@ -357,6 +369,8 @@ const App: React.FC = () => {
           <SettingsModal
             onClose={() => setIsSettingsModalOpen(false)}
             t={t.settingsModal}
+            simpleMode={simpleMode}
+            toggleSimpleMode={toggleSimpleMode}
           />
       )}
       {isBenchmarkModalOpen && (
@@ -407,9 +421,9 @@ const App: React.FC = () => {
             <button 
                 onClick={() => setIsSettingsModalOpen(true)}
                 className="flex items-center justify-center p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm active:scale-95"
-                title="Network & Diagnostics"
+                title={t.settingsModal.title}
             >
-                <Network size={16} />
+                <Sliders size={16} />
             </button>
             
             <button 
@@ -471,10 +485,14 @@ const App: React.FC = () => {
                   value={data.security.isBot ? t.values.detected : t.values.none} 
                   subValue={data.security.isBot ? "Navigator.webdriver" : undefined}
               />
-              <InfoItem label={t.labels.webrtc_ip} value={data.network.webrtcIp || t.values.hidden} />
-              <InfoItem label={t.labels.gpc_enabled} value={trVal(data.security.gpcEnabled)} />
-              <InfoItem label={t.labels.pdf_viewer} value={trVal(data.security.pdfViewer)} />
               <InfoItem label={t.labels.secure_context} value={trVal(data.security.secureContext)} />
+              {!simpleMode && (
+                  <>
+                    <InfoItem label={t.labels.webrtc_ip} value={data.network.webrtcIp || t.values.hidden} />
+                    <InfoItem label={t.labels.gpc_enabled} value={trVal(data.security.gpcEnabled)} />
+                    <InfoItem label={t.labels.pdf_viewer} value={trVal(data.security.pdfViewer)} />
+                  </>
+              )}
           </InfoCard>
 
           {/* AI & Compute (New) */}
@@ -482,8 +500,12 @@ const App: React.FC = () => {
               <InfoItem label={t.labels.window_ai} value={trVal(data.ai.windowAi)} />
               <InfoItem label={t.labels.webnn} value={trVal(data.ai.webnn)} />
               <InfoItem label={t.labels.webgpu_compute} value={trVal(data.ai.webgpuCompute)} />
-              <InfoItem label={t.labels.wasm_support} value={trVal(data.ai.wasmSupport)} />
-              <InfoItem label={t.labels.wasm_simd} value={trVal(data.ai.wasmSimd)} />
+              {!simpleMode && (
+                  <>
+                    <InfoItem label={t.labels.wasm_support} value={trVal(data.ai.wasmSupport)} />
+                    <InfoItem label={t.labels.wasm_simd} value={trVal(data.ai.wasmSimd)} />
+                  </>
+              )}
           </InfoCard>
 
           {/* System Info */}
@@ -491,10 +513,14 @@ const App: React.FC = () => {
             <InfoItem label={t.labels.os} value={data.system.os} />
             <InfoItem label={t.labels.platform} value={data.system.platform} />
             <InfoItem label={t.labels.browser} value={`${data.system.browserName} ${data.system.browserVersion}`} />
-            <InfoItem label={t.labels.language} value={data.system.language} />
-            <InfoItem label={t.labels.pref_langs} value={data.system.preferredLanguages.join(', ')} />
-            <InfoItem label={t.labels.cookies} value={trVal(data.system.cookiesEnabled)} />
-            <InfoItem label={t.labels.dnt} value={data.system.doNotTrack || 'Off'} />
+            {!simpleMode && (
+                <>
+                    <InfoItem label={t.labels.language} value={data.system.language} />
+                    <InfoItem label={t.labels.pref_langs} value={data.system.preferredLanguages.join(', ')} />
+                    <InfoItem label={t.labels.cookies} value={trVal(data.system.cookiesEnabled)} />
+                    <InfoItem label={t.labels.dnt} value={data.system.doNotTrack || 'Off'} />
+                </>
+            )}
           </InfoCard>
 
           {/* Hardware */}
@@ -505,27 +531,31 @@ const App: React.FC = () => {
                 <InfoItem label={t.labels.cpu_model} value={data.hardware.cpuModel} />
             )}
             <InfoItem label={t.labels.memory} value={data.hardware.memory} />
-            <InfoItem label={t.labels.gpu_vendor} value={data.hardware.gpuVendor} />
             <InfoItem label={t.labels.gpu_renderer} value={data.hardware.gpuRenderer} />
-            <InfoItem label={t.labels.max_texture} value={data.hardware.maxTextureSize} />
             
             <div className="py-2">
                 <InfoItem label={t.labels.battery} value={data.hardware.batteryLevel} />
                 <InfoItem label={t.labels.charging} value={trVal(data.hardware.isCharging)} />
-                {data.hardware.isCharging === 'Yes' && data.hardware.chargingTime !== '-' && (
+                {!simpleMode && data.hardware.isCharging === 'Yes' && data.hardware.chargingTime !== '-' && (
                     <InfoItem label={t.labels.charging_time} value={data.hardware.chargingTime} />
                 )}
-                {data.hardware.isCharging === 'No' && data.hardware.dischargingTime !== '-' && (
+                {!simpleMode && data.hardware.isCharging === 'No' && data.hardware.dischargingTime !== '-' && (
                     <InfoItem label={t.labels.discharging_time} value={data.hardware.dischargingTime} />
                 )}
             </div>
 
-            <InfoItem label={t.labels.touch} value={data.hardware.touchPoints} />
-            <div className="flex items-center gap-1.5 py-2.5 border-b border-slate-50 last:border-0 px-2 -mx-2">
-                <Gamepad2 size={16} className="text-slate-400" />
-                <span className="text-sm text-slate-500 font-medium">{t.labels.gamepads}</span>
-                <span className="ml-auto text-sm text-slate-800">{data.hardware.gamepads}</span>
-            </div>
+            {!simpleMode && (
+                <>
+                    <InfoItem label={t.labels.gpu_vendor} value={data.hardware.gpuVendor} />
+                    <InfoItem label={t.labels.max_texture} value={data.hardware.maxTextureSize} />
+                    <InfoItem label={t.labels.touch} value={data.hardware.touchPoints} />
+                    <div className="flex items-center gap-1.5 py-2.5 border-b border-slate-50 last:border-0 px-2 -mx-2">
+                        <Gamepad2 size={16} className="text-slate-400" />
+                        <span className="text-sm text-slate-500 font-medium">{t.labels.gamepads}</span>
+                        <span className="ml-auto text-sm text-slate-800">{data.hardware.gamepads}</span>
+                    </div>
+                </>
+            )}
             
             {/* Sensor & Hardware Tools Buttons */}
             <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex gap-2">
@@ -550,20 +580,25 @@ const App: React.FC = () => {
           <InfoCard title={t.sections.display} icon={Layers}>
             <InfoItem label={t.labels.resolution} value={data.display.resolution} />
             <RefreshRate label={t.labels.refresh_rate} />
-            <InfoItem label={t.labels.avail_size} value={data.display.availableSize} />
-            <InfoItem label={t.labels.pixel_ratio} value={`${data.display.pixelRatio}x`} />
-            <InfoItem label={t.labels.color_depth} value={`${data.display.colorDepth}-bit`} />
-            <InfoItem label={t.labels.screen_extended} value={trVal(data.hardware.screenExtended)} />
-            <div className="flex justify-between items-center py-2.5 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors px-2 -mx-2 rounded">
-                <span className="text-sm text-slate-500 font-medium">{t.labels.orientation}</span>
-                <div className="text-right flex items-center gap-2">
-                    <span className="text-sm text-slate-800">{data.display.orientation}</span>
-                    <span className="text-xs text-slate-400">({data.display.orientationAngle})</span>
-                </div>
-            </div>
-            <InfoItem label={t.labels.hdr} value={trVal(data.display.hdr)} />
-            <InfoItem label={t.labels.display_mode} value={data.display.displayMode} />
-            <InfoItem label={t.labels.dark_mode} value={trVal(data.display.darkMode)} />
+            
+            {!simpleMode && (
+                <>
+                    <InfoItem label={t.labels.avail_size} value={data.display.availableSize} />
+                    <InfoItem label={t.labels.pixel_ratio} value={`${data.display.pixelRatio}x`} />
+                    <InfoItem label={t.labels.color_depth} value={`${data.display.colorDepth}-bit`} />
+                    <InfoItem label={t.labels.screen_extended} value={trVal(data.hardware.screenExtended)} />
+                    <div className="flex justify-between items-center py-2.5 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors px-2 -mx-2 rounded">
+                        <span className="text-sm text-slate-500 font-medium">{t.labels.orientation}</span>
+                        <div className="text-right flex items-center gap-2">
+                            <span className="text-sm text-slate-800">{data.display.orientation}</span>
+                            <span className="text-xs text-slate-400">({data.display.orientationAngle})</span>
+                        </div>
+                    </div>
+                    <InfoItem label={t.labels.hdr} value={trVal(data.display.hdr)} />
+                    <InfoItem label={t.labels.display_mode} value={data.display.displayMode} />
+                    <InfoItem label={t.labels.dark_mode} value={trVal(data.display.darkMode)} />
+                </>
+            )}
           </InfoCard>
 
           {/* Fingerprints */}
@@ -593,44 +628,48 @@ const App: React.FC = () => {
                  </div>
              </div>
              
-             {/* Base64 Button */}
-             <div className="flex justify-center mb-2">
-                 <button 
-                    onClick={() => setIsBase64ModalOpen(true)}
-                    className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
-                 >
-                     <FileCode size={12} />
-                     {t.actions.view_base64}
-                 </button>
-             </div>
+             {!simpleMode && (
+                 <>
+                    {/* Base64 Button */}
+                    <div className="flex justify-center mb-2">
+                        <button 
+                            onClick={() => setIsBase64ModalOpen(true)}
+                            className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                        >
+                            <FileCode size={12} />
+                            {t.actions.view_base64}
+                        </button>
+                    </div>
 
-             <InfoItem label={t.labels.webgl_hash} value={data.fingerprints.webglHash} />
-             
-             {/* WebGL Extensions Link */}
-             <div className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
-                 <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">WebGL</span>
-                 <button 
-                    onClick={() => setIsWebGLExtensionsOpen(true)}
-                    className="flex items-center gap-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-2 py-1 rounded transition-colors"
-                 >
-                    {t.actions.view_extensions}
-                    <ExternalLink size={10} />
-                 </button>
-             </div>
+                    <InfoItem label={t.labels.webgl_hash} value={data.fingerprints.webglHash} />
+                    
+                    {/* WebGL Extensions Link */}
+                    <div className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
+                        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">WebGL</span>
+                        <button 
+                            onClick={() => setIsWebGLExtensionsOpen(true)}
+                            className="flex items-center gap-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-2 py-1 rounded transition-colors"
+                        >
+                            {t.actions.view_extensions}
+                            <ExternalLink size={10} />
+                        </button>
+                    </div>
 
-             <InfoItem label={t.labels.audio_rate} value={data.hardware.audioSampleRate} />
-             <InfoItem label={t.labels.audio_latency} value={data.fingerprints.audioLatency} />
+                    <InfoItem label={t.labels.audio_rate} value={data.hardware.audioSampleRate} />
+                    <InfoItem label={t.labels.audio_latency} value={data.fingerprints.audioLatency} />
 
-             {/* Fingerprint Tool Button */}
-             <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex justify-center">
-                <button 
-                    onClick={() => setIsFingerprintModalOpen(true)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors w-full justify-center"
-                >
-                    <Settings size={16} />
-                    {t.fingerprintModal.title}
-                </button>
-            </div>
+                    {/* Fingerprint Tool Button */}
+                    <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex justify-center">
+                        <button 
+                            onClick={() => setIsFingerprintModalOpen(true)}
+                            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors w-full justify-center"
+                        >
+                            <Settings size={16} />
+                            {t.fingerprintModal.title}
+                        </button>
+                    </div>
+                 </>
+             )}
           </InfoCard>
 
           {/* Network */}
@@ -639,236 +678,250 @@ const App: React.FC = () => {
             <InfoItem label={t.labels.conn_type} value={data.network.effectiveType} />
             <InfoItem label={t.labels.net_type} value={data.network.type} />
             <InfoItem label={t.labels.downlink} value={data.network.downlink} />
-            <InfoItem label={t.labels.downlink_max} value={data.network.downlinkMax} />
-            <InfoItem label={t.labels.rtt} value={data.network.rtt} />
-            <InfoItem label={t.labels.save_data} value={trVal(data.network.saveData)} />
+            {!simpleMode && (
+                <>
+                    <InfoItem label={t.labels.downlink_max} value={data.network.downlinkMax} />
+                    <InfoItem label={t.labels.rtt} value={data.network.rtt} />
+                    <InfoItem label={t.labels.save_data} value={trVal(data.network.saveData)} />
+                </>
+            )}
           </InfoCard>
           
            {/* Storage & Localization */}
-           <InfoCard title={t.sections.storage_loc} icon={HardDrive}>
-            <InfoItem label={t.labels.storage_quota} value={data.storage.quota} />
-            <InfoItem label={t.labels.storage_usage} value={data.storage.usage} />
-            <InfoItem label={t.labels.storage_persisted} value={trVal(data.storage.persisted)} />
-            <InfoItem label={t.labels.timezone} value={data.localization.timeZone} />
-            <InfoItem label={t.labels.locale} value={data.localization.locale} />
-            <InfoItem label={t.labels.calendar} value={data.localization.calendar} />
-          </InfoCard>
+           {!simpleMode && (
+               <InfoCard title={t.sections.storage_loc} icon={HardDrive}>
+                <InfoItem label={t.labels.storage_quota} value={data.storage.quota} />
+                <InfoItem label={t.labels.storage_usage} value={data.storage.usage} />
+                <InfoItem label={t.labels.storage_persisted} value={trVal(data.storage.persisted)} />
+                <InfoItem label={t.labels.timezone} value={data.localization.timeZone} />
+                <InfoItem label={t.labels.locale} value={data.localization.locale} />
+                <InfoItem label={t.labels.calendar} value={data.localization.calendar} />
+              </InfoCard>
+           )}
           
            {/* Permissions List */}
-           <InfoCard title={t.sections.permissions} icon={Shield}>
-             {/* Notifications */}
-             <div className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
-                <div className="flex items-center gap-2">
-                    <Bell size={14} className="text-slate-400"/>
-                    <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t.labels.perm_notif}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                    <span className={`text-xs font-medium ${getPermColor(permStatus.notifications)}`}>
-                        {getPermLabel(permStatus.notifications)}
-                    </span>
-                    {(permStatus.notifications === 'prompt' || permStatus.notifications === 'idle') && (
-                        <button onClick={() => requestPermission('notifications')} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50">
-                            {t.actions.check}
-                        </button>
-                    )}
-                </div>
-             </div>
-             
-             {/* MIDI */}
-             <div className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
-                <div className="flex items-center gap-2">
-                    <Music size={14} className="text-slate-400"/>
-                    <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t.labels.perm_midi}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                    <span className={`text-xs font-medium ${getPermColor(permStatus.midi)}`}>
-                        {getPermLabel(permStatus.midi)}
-                    </span>
-                    {permStatus.midi !== 'granted' && (
-                        <button onClick={() => requestPermission('midi')} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50">
-                            {t.actions.check}
-                        </button>
-                    )}
-                </div>
-             </div>
-
-             {/* Geolocation */}
-             <div className="flex flex-col py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
-                <div className="flex justify-between items-center">
+           {!simpleMode && (
+               <InfoCard title={t.sections.permissions} icon={Shield}>
+                 {/* Notifications */}
+                 <div className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
                     <div className="flex items-center gap-2">
-                        <MapPin size={14} className="text-slate-400"/>
-                        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t.labels.perm_geo}</span>
+                        <Bell size={14} className="text-slate-400"/>
+                        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t.labels.perm_notif}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                        <span className={`text-xs font-medium ${getPermColor(permStatus.geolocation)}`}>
-                            {getPermLabel(permStatus.geolocation)}
+                        <span className={`text-xs font-medium ${getPermColor(permStatus.notifications)}`}>
+                            {getPermLabel(permStatus.notifications)}
                         </span>
-                        {permStatus.geolocation !== 'granted' && (
-                            <button onClick={() => requestPermission('geolocation')} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50">
+                        {(permStatus.notifications === 'prompt' || permStatus.notifications === 'idle') && (
+                            <button onClick={() => requestPermission('notifications')} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50">
                                 {t.actions.check}
                             </button>
                         )}
                     </div>
-                </div>
-                
-                {/* Geolocation Details */}
-                {permStatus.geolocation === 'granted' && geoData && (
-                    <div className="mt-2 pl-6 grid grid-cols-2 gap-y-1 gap-x-4 text-xs">
-                        <div className="flex flex-col">
-                            <span className="text-slate-400">{t.labels.geo_lat}</span>
-                            <span className="font-mono text-slate-700 dark:text-slate-300">{geoData.latitude.toFixed(6)}</span>
+                 </div>
+                 
+                 {/* MIDI */}
+                 <div className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
+                    <div className="flex items-center gap-2">
+                        <Music size={14} className="text-slate-400"/>
+                        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t.labels.perm_midi}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className={`text-xs font-medium ${getPermColor(permStatus.midi)}`}>
+                            {getPermLabel(permStatus.midi)}
+                        </span>
+                        {permStatus.midi !== 'granted' && (
+                            <button onClick={() => requestPermission('midi')} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50">
+                                {t.actions.check}
+                            </button>
+                        )}
+                    </div>
+                 </div>
+
+                 {/* Geolocation */}
+                 <div className="flex flex-col py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                            <MapPin size={14} className="text-slate-400"/>
+                            <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t.labels.perm_geo}</span>
                         </div>
-                        <div className="flex flex-col">
-                            <span className="text-slate-400">{t.labels.geo_long}</span>
-                            <span className="font-mono text-slate-700 dark:text-slate-300">{geoData.longitude.toFixed(6)}</span>
-                        </div>
-                        <div className="flex flex-col col-span-2 mt-1">
-                            <span className="text-slate-400">{t.labels.geo_acc}</span>
-                            <span className="font-mono text-slate-700 dark:text-slate-300">±{geoData.accuracy.toFixed(1)}m</span>
+                        <div className="flex items-center gap-3">
+                            <span className={`text-xs font-medium ${getPermColor(permStatus.geolocation)}`}>
+                                {getPermLabel(permStatus.geolocation)}
+                            </span>
+                            {permStatus.geolocation !== 'granted' && (
+                                <button onClick={() => requestPermission('geolocation')} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50">
+                                    {t.actions.check}
+                                </button>
+                            )}
                         </div>
                     </div>
-                )}
-             </div>
-          </InfoCard>
+                    
+                    {/* Geolocation Details */}
+                    {permStatus.geolocation === 'granted' && geoData && (
+                        <div className="mt-2 pl-6 grid grid-cols-2 gap-y-1 gap-x-4 text-xs">
+                            <div className="flex flex-col">
+                                <span className="text-slate-400">{t.labels.geo_lat}</span>
+                                <span className="font-mono text-slate-700 dark:text-slate-300">{geoData.latitude.toFixed(6)}</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-slate-400">{t.labels.geo_long}</span>
+                                <span className="font-mono text-slate-700 dark:text-slate-300">{geoData.longitude.toFixed(6)}</span>
+                            </div>
+                            <div className="flex flex-col col-span-2 mt-1">
+                                <span className="text-slate-400">{t.labels.geo_acc}</span>
+                                <span className="font-mono text-slate-700 dark:text-slate-300">±{geoData.accuracy.toFixed(1)}m</span>
+                            </div>
+                        </div>
+                    )}
+                 </div>
+              </InfoCard>
+           )}
 
            {/* Combined Media Devices Card */}
-           <InfoCard title={t.labels.media_devices} icon={Video}>
-               <div className="flex flex-col gap-4 py-1">
-                   {/* Camera Section */}
-                   <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-                       <div className={`p-2.5 rounded-full ${
-                            permStatus.camera === 'granted' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : 
-                            'bg-slate-200 dark:bg-slate-700 text-slate-400'
-                       }`}>
-                           <Camera size={20} />
+           {!simpleMode && (
+               <InfoCard title={t.labels.media_devices} icon={Video}>
+                   <div className="flex flex-col gap-4 py-1">
+                       {/* Camera Section */}
+                       <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
+                           <div className={`p-2.5 rounded-full ${
+                                permStatus.camera === 'granted' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : 
+                                'bg-slate-200 dark:bg-slate-700 text-slate-400'
+                           }`}>
+                               <Camera size={20} />
+                           </div>
+                           <div className="flex-1 min-w-0">
+                               <div className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{t.labels.perm_camera}</div>
+                               <div className={`text-xs ${getPermColor(permStatus.camera)}`}>{getPermLabel(permStatus.camera)}</div>
+                           </div>
+                           <div>
+                               {permStatus.camera !== 'granted' ? (
+                                    <button
+                                       onClick={() => requestPermission('camera')}
+                                       className="px-3 py-1.5 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors shadow-sm text-xs font-medium"
+                                    >
+                                       {t.actions.check}
+                                    </button>
+                                 ) : (
+                                    <button
+                                       onClick={() => setIsCameraModalOpen(true)}
+                                       className="px-3 py-1.5 bg-emerald-600 dark:bg-emerald-500 text-white rounded-md hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors shadow-sm text-xs font-medium"
+                                    >
+                                       {t.cameraTool.btn_open}
+                                    </button>
+                                 )}
+                           </div>
                        </div>
-                       <div className="flex-1 min-w-0">
-                           <div className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{t.labels.perm_camera}</div>
-                           <div className={`text-xs ${getPermColor(permStatus.camera)}`}>{getPermLabel(permStatus.camera)}</div>
-                       </div>
-                       <div>
-                           {permStatus.camera !== 'granted' ? (
-                                <button
-                                   onClick={() => requestPermission('camera')}
-                                   className="px-3 py-1.5 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors shadow-sm text-xs font-medium"
-                                >
-                                   {t.actions.check}
-                                </button>
-                             ) : (
-                                <button
-                                   onClick={() => setIsCameraModalOpen(true)}
-                                   className="px-3 py-1.5 bg-emerald-600 dark:bg-emerald-500 text-white rounded-md hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors shadow-sm text-xs font-medium"
-                                >
-                                   {t.cameraTool.btn_open}
-                                </button>
-                             )}
-                       </div>
-                   </div>
 
-                   {/* Microphone Section */}
-                   <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-                       <div className={`p-2.5 rounded-full ${
-                            permStatus.microphone === 'granted' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 
-                            'bg-slate-200 dark:bg-slate-700 text-slate-400'
-                       }`}>
-                           <Mic size={20} />
-                       </div>
-                       <div className="flex-1 min-w-0">
-                           <div className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{t.labels.perm_mic}</div>
-                           <div className={`text-xs ${getPermColor(permStatus.microphone)}`}>{getPermLabel(permStatus.microphone)}</div>
-                       </div>
-                       <div>
-                           {permStatus.microphone !== 'granted' ? (
-                                <button
-                                   onClick={() => requestPermission('microphone')}
-                                   className="px-3 py-1.5 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors shadow-sm text-xs font-medium"
-                                >
-                                   {t.actions.check}
-                                </button>
-                             ) : (
-                                <button
-                                   onClick={() => setIsAudioModalOpen(true)}
-                                   className="px-3 py-1.5 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-sm text-xs font-medium"
-                                >
-                                   {t.audioTool.btn_open}
-                                </button>
-                             )}
+                       {/* Microphone Section */}
+                       <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
+                           <div className={`p-2.5 rounded-full ${
+                                permStatus.microphone === 'granted' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 
+                                'bg-slate-200 dark:bg-slate-700 text-slate-400'
+                           }`}>
+                               <Mic size={20} />
+                           </div>
+                           <div className="flex-1 min-w-0">
+                               <div className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{t.labels.perm_mic}</div>
+                               <div className={`text-xs ${getPermColor(permStatus.microphone)}`}>{getPermLabel(permStatus.microphone)}</div>
+                           </div>
+                           <div>
+                               {permStatus.microphone !== 'granted' ? (
+                                    <button
+                                       onClick={() => requestPermission('microphone')}
+                                       className="px-3 py-1.5 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors shadow-sm text-xs font-medium"
+                                    >
+                                       {t.actions.check}
+                                    </button>
+                                 ) : (
+                                    <button
+                                       onClick={() => setIsAudioModalOpen(true)}
+                                       className="px-3 py-1.5 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-sm text-xs font-medium"
+                                    >
+                                       {t.audioTool.btn_open}
+                                    </button>
+                                 )}
+                           </div>
                        </div>
                    </div>
-               </div>
-           </InfoCard>
+               </InfoCard>
+           )}
 
            {/* Media Support - Custom Render */}
-           <InfoCard title={t.sections.media_sup} icon={Film}>
-              <div className="mb-3">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.video_codecs}</span>
-                  <div className="grid grid-cols-2 gap-2">
-                    {data.media.video.map(c => (
-                        <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
-                            {c.name}
-                        </div>
-                    ))}
+           {!simpleMode && (
+               <InfoCard title={t.sections.media_sup} icon={Film}>
+                  <div className="mb-3">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.video_codecs}</span>
+                      <div className="grid grid-cols-2 gap-2">
+                        {data.media.video.map(c => (
+                            <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
+                                {c.name}
+                            </div>
+                        ))}
+                      </div>
                   </div>
-              </div>
-              <div className="mb-3">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.audio_codecs}</span>
-                  <div className="grid grid-cols-2 gap-2">
-                    {data.media.audio.map(c => (
-                        <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
-                            {c.name}
-                        </div>
-                    ))}
+                  <div className="mb-3">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.audio_codecs}</span>
+                      <div className="grid grid-cols-2 gap-2">
+                        {data.media.audio.map(c => (
+                            <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
+                                {c.name}
+                            </div>
+                        ))}
+                      </div>
                   </div>
-              </div>
-              <div className="mb-3">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.image_formats}</span>
-                  <div className="grid grid-cols-2 gap-2">
-                    {data.media.images.map(c => (
-                        <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
-                            {c.name}
-                        </div>
-                    ))}
+                  <div className="mb-3">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.image_formats}</span>
+                      <div className="grid grid-cols-2 gap-2">
+                        {data.media.images.map(c => (
+                            <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
+                                {c.name}
+                            </div>
+                        ))}
+                      </div>
                   </div>
-              </div>
-              
-              <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50 flex justify-between items-center">
-                  <div className="flex items-center gap-1.5">
-                      <Mic2 size={14} className="text-slate-400"/>
-                      <span className="text-xs font-medium text-slate-500">{t.labels.speech_voices}</span>
+                  
+                  <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50 flex justify-between items-center">
+                      <div className="flex items-center gap-1.5">
+                          <Mic2 size={14} className="text-slate-400"/>
+                          <span className="text-xs font-medium text-slate-500">{t.labels.speech_voices}</span>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.media.speechVoices}</span>
                   </div>
-                  <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.media.speechVoices}</span>
-              </div>
-              <div className="mt-1 flex justify-between items-center">
-                  <div className="flex items-center gap-1.5">
-                      <Music size={14} className="text-slate-400"/>
-                      <span className="text-xs font-medium text-slate-500">{t.labels.audio_channels}</span>
+                  <div className="mt-1 flex justify-between items-center">
+                      <div className="flex items-center gap-1.5">
+                          <Music size={14} className="text-slate-400"/>
+                          <span className="text-xs font-medium text-slate-500">{t.labels.audio_channels}</span>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.media.audioChannels}</span>
                   </div>
-                  <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.media.audioChannels}</span>
-              </div>
-           </InfoCard>
+               </InfoCard>
+           )}
 
           {/* User Agent - Spans 2 cols on large */}
-          <div className="md:col-span-2 lg:col-span-3">
-            <InfoCard title={t.sections.user_agent} icon={Globe}>
-              <div className="relative group">
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded border border-slate-100 dark:border-slate-700 font-mono text-sm text-slate-600 dark:text-slate-300 break-all leading-relaxed pr-12">
-                    {data.system.userAgent}
-                  </div>
-                  <button 
-                    onClick={copyUserAgent}
-                    className="absolute top-2 right-2 p-2 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                    title={t.actions.copy}
-                  >
-                      {uaCopied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
-                  </button>
-                  {uaCopied && (
-                      <div className="absolute top-1 right-12 px-2 py-1 bg-black/75 text-white text-xs rounded shadow-sm animate-in fade-in slide-in-from-right-2">
-                          {t.actions.copied}
+          {!simpleMode && (
+              <div className="md:col-span-2 lg:col-span-3">
+                <InfoCard title={t.sections.user_agent} icon={Globe}>
+                  <div className="relative group">
+                      <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded border border-slate-100 dark:border-slate-700 font-mono text-sm text-slate-600 dark:text-slate-300 break-all leading-relaxed pr-12">
+                        {data.system.userAgent}
                       </div>
-                  )}
+                      <button 
+                        onClick={copyUserAgent}
+                        className="absolute top-2 right-2 p-2 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                        title={t.actions.copy}
+                      >
+                          {uaCopied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
+                      </button>
+                      {uaCopied && (
+                          <div className="absolute top-1 right-12 px-2 py-1 bg-black/75 text-white text-xs rounded shadow-sm animate-in fade-in slide-in-from-right-2">
+                              {t.actions.copied}
+                          </div>
+                      )}
+                  </div>
+                </InfoCard>
               </div>
-            </InfoCard>
-          </div>
+          )}
 
         </div>
 
@@ -879,6 +932,20 @@ const App: React.FC = () => {
                 {t.sections.pwa}
             </h2>
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                
+                {/* PWA Status Header */}
+                <div className="flex items-center gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
+                     <div className={`p-3 rounded-full ${data.system.isPwaInstalled ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}`}>
+                        {data.system.isPwaInstalled ? <CheckCircle size={24} /> : <Download size={24} />}
+                     </div>
+                     <div>
+                         <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">{t.labels.pwa_install_status}</div>
+                         <div className={`text-lg font-bold ${data.system.isPwaInstalled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                             {data.system.isPwaInstalled ? t.values.installed : t.values.not_installed}
+                         </div>
+                     </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {data.pwaFeatures.map((feature) => (
                         <div 

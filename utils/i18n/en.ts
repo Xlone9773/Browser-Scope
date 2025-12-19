@@ -43,8 +43,8 @@ export const en: Translation = {
     audio_latency: "Audio Latency",
     battery: "Battery Level",
     charging: "Charging State",
-    charging_time: "Charging Time", // New
-    discharging_time: "Discharging Time", // New
+    charging_time: "Charging Time",
+    discharging_time: "Discharging Time",
     touch: "Max Touch Points",
     screen_extended: "Screen Extended",
     gamepads: "Connected Gamepads",
@@ -56,7 +56,7 @@ export const en: Translation = {
     pixel_ratio: "Pixel Ratio",
     color_depth: "Color Depth",
     orientation: "Orientation",
-    orientation_angle: "Angle", // New
+    orientation_angle: "Angle",
     dark_mode: "Dark Mode",
     color_gamut: "Color Gamut",
     hdr: "HDR Support",
@@ -64,9 +64,9 @@ export const en: Translation = {
     
     online: "Online Status",
     conn_type: "Connection Type",
-    net_type: "Network Tech", // New
+    net_type: "Network Tech",
     downlink: "Downlink Speed",
-    downlink_max: "Max Downlink", // New
+    downlink_max: "Max Downlink",
     rtt: "Latency (RTT)",
     save_data: "Data Saver",
     webrtc_ip: "WebRTC Local IP",
@@ -80,9 +80,9 @@ export const en: Translation = {
     
     video_codecs: "Video Codecs",
     audio_codecs: "Audio Codecs",
-    image_formats: "Image Formats", // New
+    image_formats: "Image Formats",
     speech_voices: "TTS Voices",
-    audio_channels: "Channels", // New
+    audio_channels: "Channels",
 
     camera_permission: "Camera Access",
     
@@ -104,6 +104,7 @@ export const en: Translation = {
     gpc_enabled: "Global Privacy Control",
     pdf_viewer: "PDF Viewer",
     secure_context: "Secure Context",
+    pwa_install_status: "Installation Status",
 
     // AI & Compute
     wasm_support: "WebAssembly",
@@ -123,7 +124,9 @@ export const en: Translation = {
     unknown: "Unknown",
     detected: "Detected",
     none: "None",
-    hidden: "Hidden/Protected"
+    hidden: "Hidden/Protected",
+    installed: "Installed",
+    not_installed: "Not Installed"
   },
 
   actions: {
@@ -297,14 +300,23 @@ export const en: Translation = {
     history: "Update History",
     updates: [
         {
+            version: "1.3.0",
+            date: "2024-03-22",
+            changes: [
+                "Expanded Settings with Display Tests (Dead Pixels).",
+                "Added Public IP Detection and Network Analysis.",
+                "Added Storage Management tools.",
+                "Unified Connectivity and CDN testing."
+            ]
+        },
+        {
             version: "1.2.0",
             date: "2024-03-15",
             changes: [
                 "Added Hardware Interaction Tools (Vibration & Multi-touch Test).",
                 "Added Storage I/O Benchmark (IndexedDB) to Performance Test.",
                 "Added Font Fingerprinting detection capability.",
-                "Improved WebGL Extensions viewer with vendor grouping and search.",
-                "Fixed UI animations and modal interactions."
+                "Improved WebGL Extensions viewer with vendor grouping and search."
             ]
         },
         {
@@ -314,15 +326,6 @@ export const en: Translation = {
                 "Introduced AI & Computing capabilities section (WebNN, Gemini Nano).",
                 "Added Camera & Microphone diagnostic tools.",
                 "Enhanced device sensor visualization (Accelerometer, Gyroscope)."
-            ]
-        },
-        {
-            version: "1.0.0",
-            date: "2024-01-10",
-            changes: [
-                "Initial release with core system detection.",
-                "Fingerprinting analysis (Canvas, WebGL).",
-                "Network speed and latency estimation."
             ]
         }
     ]
@@ -380,16 +383,43 @@ export const en: Translation = {
   },
 
   settingsModal: {
-    title: "Network & Diagnostics",
-    tab_cdn: "CDN Status",
-    tab_conn: "Connectivity",
+    title: "Settings & Tools",
+    tab_general: "General",
+    tab_network: "Network",
+    tab_display: "Display",
+    tab_storage: "Storage",
     tab_resources: "Resources",
-    cdn_status: "Library Status",
+    simple_mode_title: "Simple Mode",
+    simple_mode_desc: "Hide technical details and show only core information on the dashboard.",
+    
+    public_ip: "Public IP Address",
+    fetch_ip: "Detect IP",
+    ip_info: "IP Information",
+    provider: "ISP / Provider",
+    location: "Location",
+    cdn_status: "CDN Status",
     latency: "Latency",
     check_all: "Check All",
     url_placeholder: "Enter URL (e.g., https://google.com)",
     test_conn: "Test Connectivity",
     test_result: "Result",
+
+    display_test: "Screen Defects Test",
+    dead_pixel_title: "Dead Pixel Check",
+    dead_pixel_desc: "Click a color to enter full-screen mode. Look for pixels that do not change color.",
+    color_red: "Red",
+    color_green: "Green",
+    color_blue: "Blue",
+    color_white: "White",
+    color_black: "Black",
+
+    storage_title: "Local Data",
+    clear_data: "Clear Site Data",
+    clear_btn: "Clear Storage",
+    sw_title: "Service Workers",
+    sw_desc: "Unregister active service workers to reset PWA state.",
+    sw_btn: "Unregister",
+
     resource_list: "External Resources",
     res_name: "Resource URL",
     res_type: "Type",

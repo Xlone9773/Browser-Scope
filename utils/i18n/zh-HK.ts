@@ -15,12 +15,19 @@ export const zhHK: Translation = {
     ...zhTW.labels,
     resolution: "螢幕解像度",
     audio_rate: "音訊採樣率",
-    charging_time: "充電時間", // New
-    discharging_time: "放電時間", // New
-    net_type: "網絡制式", // New
-    downlink_max: "最大下載", // New
-    image_formats: "圖片格式支援", // New
-    audio_channels: "聲道數", // New
+    charging_time: "充電時間",
+    discharging_time: "放電時間",
+    net_type: "網絡制式",
+    downlink_max: "最大下載",
+    image_formats: "圖片格式支援",
+    audio_channels: "聲道數",
+    pwa_install_status: "安裝狀態"
+  },
+  
+  values: {
+    ...zhTW.values,
+    installed: "已安裝",
+    not_installed: "未安裝"
   },
   
   fingerprintModal: {
@@ -85,5 +92,50 @@ export const zhHK: Translation = {
       desc_battery_generic: "電池狀態已被隱藏或不支援。",
       desc_locale_unique: "時區和語言設定可縮小用戶的位置範圍。"
     }
-  }
+  },
+
+  settingsModal: {
+    title: "設定與工具",
+    tab_general: "一般",
+    tab_network: "網絡分析",
+    tab_display: "顯示測試",
+    tab_storage: "儲存管理",
+    tab_resources: "外部資源",
+    simple_mode_title: "簡潔模式",
+    simple_mode_desc: "隱藏不必要的技術細節，僅顯示核心系統資訊。",
+    
+    public_ip: "公網 IP 位址",
+    fetch_ip: "檢測 IP",
+    ip_info: "IP 詳細資訊",
+    provider: "運營商 (ISP)",
+    location: "地理位置",
+    cdn_status: "CDN 狀態",
+    latency: "延遲",
+    check_all: "檢查所有",
+    url_placeholder: "輸入 URL (如 https://google.com)",
+    test_conn: "測試連線",
+    test_result: "測試結果",
+
+    display_test: "螢幕壞點/缺陷測試",
+    dead_pixel_title: "壞點檢測",
+    dead_pixel_desc: "點擊顏色進入全螢幕模式。檢查螢幕上是否有不發光或顏色異常的像素點。",
+    color_red: "紅",
+    color_green: "綠",
+    color_blue: "藍",
+    color_white: "白",
+    color_black: "黑",
+
+    storage_title: "本地數據",
+    clear_data: "清除網站數據",
+    clear_btn: "清除儲存",
+    sw_title: "Service Workers",
+    sw_desc: "註銷活動的 Service Workers 以重置 PWA 狀態。",
+    sw_btn: "註銷 SW",
+
+    resource_list: "已加載資源",
+    res_name: "資源 URL",
+    res_type: "類型",
+    res_duration: "加載耗時",
+    close: "關閉"
+  },
 };

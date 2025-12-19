@@ -1,11 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Network, Globe, Database, Activity, Wifi, CheckCircle, AlertCircle, Clock, RefreshCw } from 'lucide-react';
+import { X, Network, Globe, Database, Activity, Wifi, CheckCircle, AlertCircle, RefreshCw, Sliders, ToggleLeft, ToggleRight, Monitor, Trash2, MapPin } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 
 interface SettingsModalProps {
   onClose: () => void;
   t: Translation['settingsModal'];
+  simpleMode: boolean;
+  toggleSimpleMode: (value: boolean) => void;
 }
 
 interface CDNStatus {
@@ -21,12 +23,27 @@ interface ResourceItem {
   duration: number;
 }
 
-export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
-  const [activeTab, setActiveTab] = useState<'cdn' | 'conn' | 'res'>('cdn');
+interface IpInfo {
+    ip: string;
+    success: boolean;
+    type: string;
+    continent: string;
+    country: string;
+    region: string;
+    city: string;
+    isp: string;
+}
+
+export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t, simpleMode, toggleSimpleMode }) => {
+  const [activeTab, setActiveTab] = useState<'general' | 'network' | 'display' | 'storage' | 'res'>('general');
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
-  // CDN State
+  // Network: IP Info
+  const [ipInfo, setIpInfo] = useState<IpInfo | null>(null);
+  const [loadingIp, setLoadingIp] = useState(false);
+
+  // Network: CDN State
   const [cdns, setCdns] = useState<CDNStatus[]>([
     { name: 'Tailwind CSS', url: 'https://cdn.tailwindcss.com', status: 'idle', latency: 0 },
     { name: 'Lucide Icons', url: 'https://esm.sh/lucide-react@0.263.1', status: 'idle', latency: 0 },
@@ -34,10 +51,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
     { name: 'FingerprintJS', url: 'https://esm.sh/@fingerprintjs/fingerprintjs@4.5.1', status: 'idle', latency: 0 }
   ]);
 
-  // Connectivity State
+  // Network: Connectivity State
   const [testUrl, setTestUrl] = useState('');
   const [testResult, setTestResult] = useState<{status: string, latency?: number, code?: number} | null>(null);
   const [testingConn, setTestingConn] = useState(false);
+
+  // Display Test State
+  const [fullScreenColor, setFullScreenColor] = useState<string | null>(null);
+
+  // Storage State
+  const [localStorageCount, setLocalStorageCount] = useState(0);
+  const [sessionStorageCount, setSessionStorageCount] = useState(0);
+  const [swCount, setSwCount] = useState<number | null>(null);
 
   // Resources State
   const [resources, setResources] = useState<ResourceItem[]>([]);
@@ -54,7 +79,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
     }, 300);
   };
 
-  // --- CDN Logic ---
+  // --- Network Logic ---
+  const fetchIpInfo = async () => {
+      setLoadingIp(true);
+      try {
+          const res = await fetch('https://ipwho.is/');
+          const data = await res.json();
+          setIpInfo(data);
+      } catch (e) {
+          console.error("IP Fetch Error", e);
+      }
+      setLoadingIp(false);
+  };
+
   const checkCDN = async (index: number) => {
       const cdn = cdns[index];
       const newCdns = [...cdns];
@@ -68,8 +105,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
           newCdns[index].status = 'success';
           newCdns[index].latency = Math.round(end - start);
       } catch (e) {
-          // Note: mode: 'no-cors' usually allows opaque response which doesn't throw, 
-          // but network errors (offline, DNS) will throw.
           console.error(e);
           newCdns[index].status = 'error';
       }
@@ -80,13 +115,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
       cdns.forEach((_, idx) => checkCDN(idx));
   };
 
-  // --- Connectivity Logic ---
   const runConnectivityTest = async () => {
       if (!testUrl) return;
       setTestingConn(true);
       setTestResult(null);
 
-      // Add protocol if missing
       let urlToTest = testUrl;
       if (!/^https?:\/\//i.test(urlToTest)) {
           urlToTest = 'https://' + urlToTest;
@@ -94,14 +127,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
 
       const start = performance.now();
       try {
-          // We use no-cors to avoid CORS errors blocking the fetch entirely, 
-          // allowing us to measure time-to-first-byte roughly / connectivity.
           await fetch(urlToTest, { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
           const end = performance.now();
           setTestResult({
               status: 'Success',
               latency: Math.round(end - start),
-              code: 200 // Opaque response
+              code: 200
           });
       } catch (e) {
           setTestResult({
@@ -111,10 +142,39 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
       setTestingConn(false);
   };
 
+  // --- Storage Logic ---
+  useEffect(() => {
+      if (activeTab === 'storage') {
+          setLocalStorageCount(localStorage.length);
+          setSessionStorageCount(sessionStorage.length);
+          if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(regs => {
+                  setSwCount(regs.length);
+              });
+          }
+      }
+  }, [activeTab]);
+
+  const clearStorage = () => {
+      localStorage.clear();
+      sessionStorage.clear();
+      setLocalStorageCount(0);
+      setSessionStorageCount(0);
+  };
+
+  const unregisterSW = async () => {
+      if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          for (const reg of regs) {
+              await reg.unregister();
+          }
+          setSwCount(0);
+      }
+  };
+
   // --- Resources Logic ---
   useEffect(() => {
       if (activeTab === 'res') {
-          // Get performance entries
           const perfEntries = performance.getEntriesByType('resource');
           const resList: ResourceItem[] = perfEntries.map(entry => ({
               name: entry.name,
@@ -125,6 +185,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
       }
   }, [activeTab]);
 
+
+  // Full Screen Color Overlay
+  if (fullScreenColor) {
+      return (
+          <div 
+            className="fixed inset-0 z-[100] cursor-pointer flex items-center justify-center"
+            style={{ backgroundColor: fullScreenColor }}
+            onClick={() => setFullScreenColor(null)}
+          >
+              <div className="bg-black/50 text-white px-4 py-2 rounded-full text-xs pointer-events-none select-none backdrop-blur-sm opacity-50 hover:opacity-100 transition-opacity">
+                  Click anywhere to exit
+              </div>
+          </div>
+      );
+  }
 
   return (
     <div 
@@ -143,7 +218,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 shrink-0">
           <div className="flex flex-col">
               <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <Network className="text-indigo-600 dark:text-indigo-400" />
+                <Sliders className="text-indigo-600 dark:text-indigo-400" />
                 {t.title}
               </h2>
           </div>
@@ -158,35 +233,63 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
         {/* Layout Container */}
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
             
-            {/* Navigation Tabs (Top on mobile, Sidebar on Desktop) */}
+            {/* Navigation Tabs */}
             <div className="flex md:flex-col border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 md:w-56 overflow-x-auto md:overflow-visible">
                 <button 
-                    onClick={() => setActiveTab('cdn')}
+                    onClick={() => setActiveTab('general')}
                     className={`
                         flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                         flex-1 md:flex-none justify-center md:justify-start
                         border-b-2 md:border-b-0 md:border-l-[3px]
-                        ${activeTab === 'cdn' 
+                        ${activeTab === 'general' 
                             ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
                             : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
                     `}
                 >
-                    <Activity size={16} />
-                    {t.tab_cdn}
+                    <Sliders size={16} />
+                    {t.tab_general}
                 </button>
                 <button 
-                    onClick={() => setActiveTab('conn')}
+                    onClick={() => setActiveTab('network')}
                     className={`
                         flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                         flex-1 md:flex-none justify-center md:justify-start
                         border-b-2 md:border-b-0 md:border-l-[3px]
-                        ${activeTab === 'conn' 
+                        ${activeTab === 'network' 
                             ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
                             : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
                     `}
                 >
                     <Globe size={16} />
-                    {t.tab_conn}
+                    {t.tab_network}
+                </button>
+                <button 
+                    onClick={() => setActiveTab('display')}
+                    className={`
+                        flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                        flex-1 md:flex-none justify-center md:justify-start
+                        border-b-2 md:border-b-0 md:border-l-[3px]
+                        ${activeTab === 'display' 
+                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                    `}
+                >
+                    <Monitor size={16} />
+                    {t.tab_display}
+                </button>
+                <button 
+                    onClick={() => setActiveTab('storage')}
+                    className={`
+                        flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                        flex-1 md:flex-none justify-center md:justify-start
+                        border-b-2 md:border-b-0 md:border-l-[3px]
+                        ${activeTab === 'storage' 
+                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                    `}
+                >
+                    <Database size={16} />
+                    {t.tab_storage}
                 </button>
                 <button 
                     onClick={() => setActiveTab('res')}
@@ -199,7 +302,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
                             : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
                     `}
                 >
-                    <Database size={16} />
+                    <Activity size={16} />
                     {t.tab_resources}
                 </button>
             </div>
@@ -207,52 +310,74 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
             {/* Content Area */}
             <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900">
                 
-                {/* CDN Tab */}
-                {activeTab === 'cdn' && (
-                    <div className="max-w-3xl mx-auto space-y-4">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{t.cdn_status}</h3>
-                            <button onClick={checkAllCDNs} className="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded-md hover:bg-indigo-100 transition-colors font-medium flex items-center gap-1">
-                                <RefreshCw size={12} />
-                                {t.check_all}
+                {/* General Tab */}
+                {activeTab === 'general' && (
+                    <div className="max-w-2xl mx-auto">
+                        <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                            <div className="flex flex-col gap-1">
+                                <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                    {t.simple_mode_title}
+                                </h3>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm">
+                                    {t.simple_mode_desc}
+                                </p>
+                            </div>
+                            <button 
+                                onClick={() => toggleSimpleMode(!simpleMode)}
+                                className={`text-3xl transition-colors ${simpleMode ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-300 dark:text-slate-600'}`}
+                            >
+                                {simpleMode ? <ToggleRight size={40} fill="currentColor" className="opacity-20" /> : <ToggleLeft size={40} />}
                             </button>
-                        </div>
-                        <div className="grid grid-cols-1 gap-3">
-                            {cdns.map((cdn, idx) => (
-                                <div key={idx} className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center justify-between shadow-sm">
-                                    <div className="flex flex-col min-w-0 mr-4">
-                                        <span className="font-semibold text-slate-700 dark:text-slate-200">{cdn.name}</span>
-                                        <span className="text-xs text-slate-400 truncate">{cdn.url}</span>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        {cdn.status === 'idle' && (
-                                            <button onClick={() => checkCDN(idx)} className="text-xs bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded text-slate-500 hover:bg-slate-200 transition-colors">Check</button>
-                                        )}
-                                        {cdn.status === 'loading' && (
-                                            <Activity className="animate-spin text-indigo-500" size={18} />
-                                        )}
-                                        {cdn.status === 'success' && (
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xs font-mono text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded">{cdn.latency}ms</span>
-                                                <CheckCircle className="text-emerald-500" size={18} />
-                                            </div>
-                                        )}
-                                        {cdn.status === 'error' && (
-                                            <AlertCircle className="text-red-500" size={18} />
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
                         </div>
                     </div>
                 )}
 
-                {/* Connectivity Tab */}
-                {activeTab === 'conn' && (
-                    <div className="max-w-xl mx-auto space-y-6 pt-6">
-                        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Target URL</label>
-                            <div className="flex gap-2">
+                {/* Network Tab (Combined) */}
+                {activeTab === 'network' && (
+                    <div className="max-w-3xl mx-auto space-y-8">
+                        
+                        {/* Public IP Section */}
+                        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden">
+                            <div className="flex justify-between items-start mb-4">
+                                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{t.public_ip}</h3>
+                                <button 
+                                    onClick={fetchIpInfo}
+                                    disabled={loadingIp}
+                                    className="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded-md hover:bg-indigo-100 transition-colors font-medium flex items-center gap-1"
+                                >
+                                    {loadingIp ? <Activity size={12} className="animate-spin" /> : <Globe size={12} />}
+                                    {t.fetch_ip}
+                                </button>
+                            </div>
+                            
+                            {ipInfo ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="flex flex-col">
+                                        <span className="text-2xl font-bold text-slate-800 dark:text-slate-100 font-mono tracking-tight">{ipInfo.ip}</span>
+                                        <span className="text-xs text-slate-400 mt-1">{ipInfo.type}</span>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <Network size={14} className="text-indigo-500" />
+                                            <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">{ipInfo.isp}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <MapPin size={14} className="text-emerald-500" />
+                                            <span className="text-sm text-slate-600 dark:text-slate-300">{ipInfo.city}, {ipInfo.country}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-center py-6 text-slate-400 text-sm bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700">
+                                    Click to detect public IP information
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Connectivity Test */}
+                        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{t.test_conn}</h3>
+                            <div className="flex gap-2 mb-4">
                                 <input 
                                     type="text" 
                                     value={testUrl}
@@ -267,31 +392,128 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t }) => {
                                     className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors flex items-center gap-2 whitespace-nowrap"
                                 >
                                     {testingConn ? <Activity className="animate-spin" size={18} /> : <Wifi size={18} />}
-                                    {t.test_conn}
+                                    Test
                                 </button>
+                            </div>
+                            {testResult && (
+                                <div className={`p-4 rounded-lg flex items-center justify-between ${testResult.status.includes('Success') ? 'bg-emerald-50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-300'}`}>
+                                    <span className="font-medium">{testResult.status}</span>
+                                    {testResult.latency !== undefined && (
+                                        <span className="font-mono font-bold">{testResult.latency} ms</span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* CDN Status */}
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{t.cdn_status}</h3>
+                                <button onClick={checkAllCDNs} className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
+                                    {t.check_all}
+                                </button>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {cdns.map((cdn, idx) => (
+                                    <div key={idx} className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center justify-between shadow-sm">
+                                        <div className="flex flex-col min-w-0 mr-4">
+                                            <span className="font-semibold text-sm text-slate-700 dark:text-slate-200">{cdn.name}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {cdn.status === 'idle' && <span className="w-2 h-2 rounded-full bg-slate-300" />}
+                                            {cdn.status === 'loading' && <Activity className="animate-spin text-indigo-500" size={16} />}
+                                            {cdn.status === 'success' && <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-0.5 rounded">{cdn.latency}ms</span>}
+                                            {cdn.status === 'error' && <AlertCircle className="text-red-500" size={16} />}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Display Test Tab */}
+                {activeTab === 'display' && (
+                    <div className="max-w-2xl mx-auto">
+                        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm text-center mb-6">
+                            <Monitor size={48} className="mx-auto text-indigo-600 dark:text-indigo-400 mb-4" />
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">{t.dead_pixel_title}</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{t.dead_pixel_desc}</p>
+                            
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                                <button onClick={() => setFullScreenColor('#ff0000')} className="h-16 rounded-lg bg-red-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{t.color_red}</button>
+                                <button onClick={() => setFullScreenColor('#00ff00')} className="h-16 rounded-lg bg-green-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{t.color_green}</button>
+                                <button onClick={() => setFullScreenColor('#0000ff')} className="h-16 rounded-lg bg-blue-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{t.color_blue}</button>
+                                <button onClick={() => setFullScreenColor('#ffffff')} className="h-16 rounded-lg bg-white border border-slate-200 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-black font-bold text-xs">{t.color_white}</button>
+                                <button onClick={() => setFullScreenColor('#000000')} className="h-16 rounded-lg bg-black hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{t.color_black}</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Storage Tab */}
+                {activeTab === 'storage' && (
+                    <div className="max-w-2xl mx-auto space-y-6">
+                        
+                        {/* Local Data */}
+                        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
+                                        <Database size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.storage_title}</h3>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">{t.clear_data}</p>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={clearStorage}
+                                    className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                                >
+                                    <Trash2 size={16} />
+                                    {t.clear_btn}
+                                </button>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700">
+                                    <div className="text-xs text-slate-500 mb-1">Local Storage Items</div>
+                                    <div className="text-xl font-mono font-bold text-slate-700 dark:text-slate-200">{localStorageCount}</div>
+                                </div>
+                                <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700">
+                                    <div className="text-xs text-slate-500 mb-1">Session Storage Items</div>
+                                    <div className="text-xl font-mono font-bold text-slate-700 dark:text-slate-200">{sessionStorageCount}</div>
+                                </div>
                             </div>
                         </div>
 
-                        {testResult && (
-                            <div className={`p-6 rounded-xl border ${testResult.status.includes('Success') ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-800' : 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-800'}`}>
-                                <h4 className="text-sm font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    {t.test_result}
-                                    {testResult.status.includes('Success') ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
-                                </h4>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-white/50 dark:bg-slate-800/50 p-3 rounded">
-                                        <span className="text-xs text-slate-500 block mb-1">Status</span>
-                                        <span className="font-semibold">{testResult.status}</span>
+                        {/* Service Workers */}
+                        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                            <div className="flex items-start justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400">
+                                        <RefreshCw size={20} />
                                     </div>
-                                    {testResult.latency !== undefined && (
-                                        <div className="bg-white/50 dark:bg-slate-800/50 p-3 rounded">
-                                            <span className="text-xs text-slate-500 block mb-1">{t.latency}</span>
-                                            <span className="font-mono font-semibold text-lg">{testResult.latency} ms</span>
-                                        </div>
-                                    )}
+                                    <div>
+                                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.sw_title}</h3>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">{t.sw_desc}</p>
+                                    </div>
                                 </div>
+                                <button 
+                                    onClick={unregisterSW}
+                                    className="px-4 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 rounded-lg text-sm font-medium transition-colors"
+                                >
+                                    {t.sw_btn}
+                                </button>
                             </div>
-                        )}
+                            {swCount !== null && (
+                                <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                                    <span className="text-sm text-slate-600 dark:text-slate-400">Active Registrations</span>
+                                    <span className="font-mono font-bold text-slate-800 dark:text-slate-200">{swCount}</span>
+                                </div>
+                            )}
+                        </div>
+
                     </div>
                 )}
 

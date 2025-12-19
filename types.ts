@@ -77,6 +77,7 @@ export interface BrowserData {
     userAgent: string;
     cookiesEnabled: boolean;
     doNotTrack: string | null;
+    isPwaInstalled: boolean;
   };
   hardware: {
     cpuCores: number | string;

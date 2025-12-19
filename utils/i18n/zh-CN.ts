@@ -43,8 +43,8 @@ export const zhCN: Translation = {
     audio_latency: "音频延迟",
     battery: "电池电量",
     charging: "充电状态",
-    charging_time: "充电时间", // New
-    discharging_time: "放电时间", // New
+    charging_time: "充电时间",
+    discharging_time: "放电时间",
     touch: "最大触控点数",
     screen_extended: "多显示器扩展",
     gamepads: "连接的手柄",
@@ -56,7 +56,7 @@ export const zhCN: Translation = {
     pixel_ratio: "像素密度 (DPR)",
     color_depth: "色彩深度",
     orientation: "屏幕方向",
-    orientation_angle: "旋转角度", // New
+    orientation_angle: "旋转角度",
     dark_mode: "深色模式",
     color_gamut: "色域范围",
     hdr: "HDR 支持",
@@ -64,9 +64,9 @@ export const zhCN: Translation = {
     
     online: "在线状态",
     conn_type: "连接类型",
-    net_type: "网络制式", // New
+    net_type: "网络制式",
     downlink: "下行速度",
-    downlink_max: "最大下行", // New
+    downlink_max: "最大下行",
     rtt: "延迟 (RTT)",
     save_data: "流量节省模式",
     webrtc_ip: "WebRTC 本地 IP",
@@ -80,9 +80,9 @@ export const zhCN: Translation = {
     
     video_codecs: "视频编码支持",
     audio_codecs: "音频编码支持",
-    image_formats: "图片格式支持", // New
+    image_formats: "图片格式支持",
     speech_voices: "TTS 语音包",
-    audio_channels: "声道数", // New
+    audio_channels: "声道数",
 
     camera_permission: "摄像头权限",
 
@@ -104,6 +104,7 @@ export const zhCN: Translation = {
     gpc_enabled: "全球隐私控制 (GPC)",
     pdf_viewer: "内置 PDF 查看器",
     secure_context: "安全上下文 (HTTPS)",
+    pwa_install_status: "安装状态",
 
     // AI & Compute
     wasm_support: "WebAssembly",
@@ -123,7 +124,9 @@ export const zhCN: Translation = {
     unknown: "未知",
     detected: "已检测到",
     none: "无",
-    hidden: "隐藏/保护"
+    hidden: "隐藏/保护",
+    installed: "已安装",
+    not_installed: "未安装"
   },
 
   actions: {
@@ -297,14 +300,23 @@ export const zhCN: Translation = {
     history: "更新历史",
     updates: [
         {
+            version: "1.3.0",
+            date: "2024-03-22",
+            changes: [
+                "设置面板新增屏幕坏点检测与显示测试功能。",
+                "新增公网 IP 检测与网络详情分析。",
+                "新增存储管理与 Service Worker 清理工具。",
+                "整合网络连通性与 CDN 状态测试。"
+            ]
+        },
+        {
             version: "1.2.0",
             date: "2024-03-15",
             changes: [
                 "新增硬件交互工具（振动模式与多点触控测试）。",
                 "性能跑分中新增存储 I/O 读写测试 (IndexedDB)。",
                 "新增字体指纹 (Font Fingerprinting) 检测能力。",
-                "优化 WebGL 扩展查看器，支持按供应商分组和搜索。",
-                "修复 UI 动画卡顿与模态框交互问题。"
+                "优化 WebGL 扩展查看器，支持按供应商分组和搜索。"
             ]
         },
         {
@@ -380,16 +392,43 @@ export const zhCN: Translation = {
   },
 
   settingsModal: {
-    title: "网络与诊断",
-    tab_cdn: "CDN 状态",
-    tab_conn: "连通性测试",
+    title: "设置与工具",
+    tab_general: "常规",
+    tab_network: "网络分析",
+    tab_display: "显示测试",
+    tab_storage: "存储管理",
     tab_resources: "外部资源",
-    cdn_status: "依赖库状态",
+    simple_mode_title: "简洁模式",
+    simple_mode_desc: "隐藏不必要的技术细节，仅显示核心系统信息。",
+    
+    public_ip: "公网 IP 地址",
+    fetch_ip: "检测 IP",
+    ip_info: "IP 详细信息",
+    provider: "运营商 (ISP)",
+    location: "地理位置",
+    cdn_status: "CDN 状态",
     latency: "延迟",
     check_all: "检查所有",
     url_placeholder: "输入 URL (如 https://google.com)",
     test_conn: "测试连通性",
     test_result: "测试结果",
+
+    display_test: "屏幕坏点/缺陷测试",
+    dead_pixel_title: "坏点检测",
+    dead_pixel_desc: "点击颜色进入全屏模式。检查屏幕上是否有不发光或颜色异常的像素点。",
+    color_red: "红",
+    color_green: "绿",
+    color_blue: "蓝",
+    color_white: "白",
+    color_black: "黑",
+
+    storage_title: "本地数据",
+    clear_data: "清除站点数据",
+    clear_btn: "清除存储",
+    sw_title: "Service Workers",
+    sw_desc: "注销活动的 Service Workers 以重置 PWA 状态。",
+    sw_btn: "注销 SW",
+
     resource_list: "已加载资源",
     res_name: "资源 URL",
     res_type: "类型",
