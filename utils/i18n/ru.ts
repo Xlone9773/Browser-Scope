@@ -12,6 +12,7 @@ export const ru: Translation = {
     tab_display: "Дисплей",
     tab_storage: "Хранилище",
     tab_resources: "Ресурсы",
+    tab_developer: "Разработчик",
     simple_mode_title: "Простой режим",
     simple_mode_desc: "Скрыть технические детали и показать только основную системную информацию.",
     
@@ -39,6 +40,11 @@ export const ru: Translation = {
     color_blue: "Синий",
     color_white: "Белый",
     color_black: "Черный",
+    gamut_test_title: "Визуализация цветового охвата (P3)",
+    gamut_test_desc: "Если ваш дисплей поддерживает широкий цветовой охват (P3), вы увидите фигуру или текст внутри цветных квадратов.",
+    hdr_test_title: "Глубина цвета и бандинг",
+    hdr_test_desc: "Проверьте плавность градиентов. Полосы (бандинг) указывают на 8-битную глубину цвета или сжатие.",
+    unsupported_p3: "Браузер не поддерживает синтаксис color(display-p3)",
 
     storage_title: "Локальные данные",
     clear_data: "Очистить данные сайта",
@@ -51,6 +57,15 @@ export const ru: Translation = {
     res_name: "URL ресурса",
     res_type: "Тип",
     res_duration: "Время загрузки",
+
+    dev_events: "Монитор событий",
+    dev_inspector: "Инспектор объектов",
+    dev_console: "JS Консоль",
+    dev_console_placeholder: "Введите код JavaScript...",
+    dev_run: "Выполнить",
+    dev_clear: "Очистить",
+    dev_copy_log: "Копировать лог",
+
     close: "Закрыть"
   },
 
@@ -373,7 +388,7 @@ export const ru: Translation = {
     magnetometer: "Магнитометр",
     close: "Закрыть"
   },
-
+  
   scoreModal: {
     score_details_title: "Детали оценки отпечатка",
     tracking_potential: "Риск отслеживания",

@@ -14,7 +14,7 @@ export const en: Translation = {
     display: "Display & Screen",
     network: "Network & Connection",
     storage_loc: "Storage & Localization",
-    media_sup: "Media Capabilities",
+    media_sup: "Media & DRM",
     user_agent: "User Agent",
     features: "Web Capabilities & APIs",
     permissions: "Permissions",
@@ -81,6 +81,7 @@ export const en: Translation = {
     video_codecs: "Video Codecs",
     audio_codecs: "Audio Codecs",
     image_formats: "Image Formats",
+    drm_support: "DRM Support",
     speech_voices: "TTS Voices",
     audio_channels: "Channels",
 
@@ -102,6 +103,7 @@ export const en: Translation = {
 
     is_bot: "Bot / Automation",
     gpc_enabled: "Global Privacy Control",
+    ad_block: "AdBlock Detected",
     pdf_viewer: "PDF Viewer",
     secure_context: "Secure Context",
     pwa_install_status: "Installation Status",
@@ -111,7 +113,9 @@ export const en: Translation = {
     wasm_simd: "WASM SIMD",
     webnn: "WebNN API",
     window_ai: "Native AI (Gemini Nano)",
-    webgpu_compute: "WebGPU Compute"
+    webgpu_compute: "WebGPU Compute",
+    ai_readiness: "AI Readiness Score",
+    flops: "Estimated FLOPS"
   },
   
   values: {
@@ -126,7 +130,9 @@ export const en: Translation = {
     none: "None",
     hidden: "Hidden/Protected",
     installed: "Installed",
-    not_installed: "Not Installed"
+    not_installed: "Not Installed",
+    ready: "Ready",
+    not_ready: "Not Ready"
   },
 
   actions: {
@@ -295,18 +301,26 @@ export const en: Translation = {
     desc: "BrowserScope is a comprehensive browser analysis tool designed to verify your system's capabilities and fingerprint uniqueness. It runs entirely in your browser.",
     version: "Version",
     changelog: "Changelog",
-    latest_update: "New Hardware Tools & Storage Benchmarking",
+    latest_update: "DRM, Privacy & AI Readiness",
     close: "Close",
     history: "Update History",
     updates: [
+        {
+            version: "1.4.0",
+            date: "2024-03-30",
+            changes: [
+                "Added DRM (Widevine, FairPlay) detection.",
+                "Added AdBlock presence detection.",
+                "Added local AI Readiness benchmark (FLOPS estimation)."
+            ]
+        },
         {
             version: "1.3.0",
             date: "2024-03-22",
             changes: [
                 "Expanded Settings with Display Tests (Dead Pixels).",
                 "Added Public IP Detection and Network Analysis.",
-                "Added Storage Management tools.",
-                "Unified Connectivity and CDN testing."
+                "Added Storage Management tools."
             ]
         },
         {
@@ -315,17 +329,7 @@ export const en: Translation = {
             changes: [
                 "Added Hardware Interaction Tools (Vibration & Multi-touch Test).",
                 "Added Storage I/O Benchmark (IndexedDB) to Performance Test.",
-                "Added Font Fingerprinting detection capability.",
-                "Improved WebGL Extensions viewer with vendor grouping and search."
-            ]
-        },
-        {
-            version: "1.1.0",
-            date: "2024-02-28",
-            changes: [
-                "Introduced AI & Computing capabilities section (WebNN, Gemini Nano).",
-                "Added Camera & Microphone diagnostic tools.",
-                "Enhanced device sensor visualization (Accelerometer, Gyroscope)."
+                "Added Font Fingerprinting detection capability."
             ]
         }
     ]
@@ -389,6 +393,7 @@ export const en: Translation = {
     tab_display: "Display",
     tab_storage: "Storage",
     tab_resources: "Resources",
+    tab_developer: "Developer",
     simple_mode_title: "Simple Mode",
     simple_mode_desc: "Hide technical details and show only core information on the dashboard.",
     
@@ -416,6 +421,11 @@ export const en: Translation = {
     color_blue: "Blue",
     color_white: "White",
     color_black: "Black",
+    gamut_test_title: "Color Gamut Visualizer",
+    gamut_test_desc: "If your display supports wide color gamut (P3), you will see a shape or text inside the colored squares.",
+    hdr_test_title: "Bit Depth & Banding",
+    hdr_test_desc: "Check for smooth gradients. Banding indicates 8-bit color depth or compression.",
+    unsupported_p3: "Browser does not support color(display-p3) syntax",
 
     storage_title: "Local Data",
     clear_data: "Clear Site Data",
@@ -428,6 +438,15 @@ export const en: Translation = {
     res_name: "Resource URL",
     res_type: "Type",
     res_duration: "Duration",
+
+    dev_events: "Event Monitor",
+    dev_inspector: "Object Inspector",
+    dev_console: "JS Playground",
+    dev_console_placeholder: "Enter JavaScript...",
+    dev_run: "Run",
+    dev_clear: "Clear Logs",
+    dev_copy_log: "Copy Log",
+
     close: "Close"
   },
 

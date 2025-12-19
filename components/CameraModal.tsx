@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Camera as CameraIcon, Download, RefreshCw, Image as ImageIcon, Video, Square, FlipHorizontal, Activity } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
@@ -24,6 +25,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   
   const [image, setImage] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [recordingMimeType, setRecordingMimeType] = useState<string>('');
   const [isRecording, setIsRecording] = useState(false);
   const [isMirrored, setIsMirrored] = useState(false);
 
@@ -197,9 +199,31 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   const startRecording = () => {
       if (!stream) return;
       recordedChunks.current = [];
-      const options = { mimeType: 'video/webm' };
       
+      // Determine supported mime type
+      const mimeTypes = [
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm',
+        'video/mp4'
+      ];
+
+      let selectedType = '';
+      for (const type of mimeTypes) {
+        if (MediaRecorder.isTypeSupported(type)) {
+          selectedType = type;
+          break;
+        }
+      }
+      
+      if (!selectedType && MediaRecorder.isTypeSupported('video/mp4')) {
+          selectedType = 'video/mp4'; // Fallback check
+      }
+
+      setRecordingMimeType(selectedType);
+
       try {
+          const options = selectedType ? { mimeType: selectedType } : undefined;
           const recorder = new MediaRecorder(stream, options);
           
           recorder.ondataavailable = (event) => {
@@ -209,7 +233,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
           };
 
           recorder.onstop = () => {
-              const blob = new Blob(recordedChunks.current, { type: 'video/webm' });
+              const type = recorder.mimeType || selectedType || 'video/webm';
+              const blob = new Blob(recordedChunks.current, { type });
               const url = URL.createObjectURL(blob);
               setVideoUrl(url);
           };
@@ -223,7 +248,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   };
 
   const stopRecording = () => {
-      if (mediaRecorderRef.current) {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
           mediaRecorderRef.current.stop();
           setIsRecording(false);
       }
@@ -236,7 +261,11 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
       link.download = `camera-capture-${new Date().getTime()}.png`;
     } else if (type === 'video' && videoUrl) {
       link.href = videoUrl;
-      link.download = `video-record-${new Date().getTime()}.webm`;
+      let ext = 'webm';
+      if (recordingMimeType && recordingMimeType.includes('mp4')) {
+          ext = 'mp4';
+      }
+      link.download = `video-record-${new Date().getTime()}.${ext}`;
     }
     
     document.body.appendChild(link);
@@ -247,6 +276,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   const reset = () => {
       setImage(null);
       setVideoUrl(null);
+      setRecordingMimeType('');
       if (videoUrl) URL.revokeObjectURL(videoUrl);
   };
 
@@ -341,7 +371,12 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
             ) : image ? (
                <img src={image} alt="Capture" className="w-full h-full object-contain" />
             ) : videoUrl ? (
-               <video controls src={videoUrl} className="w-full h-full object-contain" />
+               <video 
+                 controls 
+                 playsInline 
+                 src={videoUrl} 
+                 className="w-full h-full object-contain" 
+               />
             ) : (
                <>
                    <video 

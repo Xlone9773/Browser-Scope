@@ -52,6 +52,19 @@ export interface CodecInfo {
   supported: boolean;
 }
 
+export interface DrmSystem {
+  name: string;
+  supported: boolean;
+  securityLevel?: string;
+}
+
+export interface AiReadiness {
+  score: number; // Raw benchmark score
+  flops: string; // Estimated GFLOPS string
+  level: 'Low' | 'Medium' | 'High' | 'Ultra';
+  description: string;
+}
+
 export interface ScoreFactor {
   id: string; // Translation key
   value: string;
@@ -132,6 +145,7 @@ export interface BrowserData {
     gpcEnabled: boolean;
     pdfViewer: boolean;
     secureContext: boolean;
+    adBlockEnabled: boolean; // New
   };
   ai: { 
     wasmSupport: boolean;
@@ -139,11 +153,13 @@ export interface BrowserData {
     webnn: boolean;
     windowAi: boolean;
     webgpuCompute: boolean;
+    readiness: AiReadiness; // New
   };
   media: {
     video: CodecInfo[];
     audio: CodecInfo[];
     images: CodecInfo[]; // New
+    drm: DrmSystem[]; // New
     speechVoices: number;
     audioChannels: number | string; // New
   };

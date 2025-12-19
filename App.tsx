@@ -41,7 +41,12 @@ import {
   Bot,
   Hammer,
   Sliders,
-  CheckCircle
+  CheckCircle,
+  Brain,
+  ShieldAlert,
+  Eye,
+  Key,
+  X
 } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { BrowserData } from './types';
@@ -478,13 +483,14 @@ const App: React.FC = () => {
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           
-          {/* Security */}
-          <InfoCard title={t.sections.security} icon={Lock}>
+          {/* Security & Privacy */}
+          <InfoCard title={t.sections.security} icon={ShieldAlert}>
               <InfoItem 
                   label={t.labels.is_bot} 
                   value={data.security.isBot ? t.values.detected : t.values.none} 
                   subValue={data.security.isBot ? "Navigator.webdriver" : undefined}
               />
+              <InfoItem label={t.labels.ad_block} value={data.security.adBlockEnabled ? t.values.detected : t.values.none} />
               <InfoItem label={t.labels.secure_context} value={trVal(data.security.secureContext)} />
               {!simpleMode && (
                   <>
@@ -496,7 +502,18 @@ const App: React.FC = () => {
           </InfoCard>
 
           {/* AI & Compute (New) */}
-          <InfoCard title={t.sections.ai_compute} icon={Bot}>
+          <InfoCard title={t.sections.ai_compute} icon={Brain}>
+              <div className="mb-4 p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-100 dark:border-indigo-800 flex flex-col gap-1">
+                  <div className="flex justify-between items-center">
+                      <span className="text-xs font-semibold text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">{t.labels.ai_readiness}</span>
+                      <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-indigo-100 dark:border-indigo-700">
+                          {data.ai.readiness.level}
+                      </span>
+                  </div>
+                  <div className="text-sm font-mono font-bold text-indigo-900 dark:text-indigo-100 mt-1">{data.ai.readiness.flops}</div>
+                  <div className="text-[10px] text-indigo-600 dark:text-indigo-400 mt-1 leading-tight opacity-90">{data.ai.readiness.description}</div>
+              </div>
+
               <InfoItem label={t.labels.window_ai} value={trVal(data.ai.windowAi)} />
               <InfoItem label={t.labels.webnn} value={trVal(data.ai.webnn)} />
               <InfoItem label={t.labels.webgpu_compute} value={trVal(data.ai.webgpuCompute)} />
@@ -860,22 +877,36 @@ const App: React.FC = () => {
                         ))}
                       </div>
                   </div>
+
                   <div className="mb-3">
                       <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.audio_codecs}</span>
                       <div className="grid grid-cols-2 gap-2">
                         {data.media.audio.map(c => (
-                            <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
+                            <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800 text-blue-700 dark:text-blue-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
                                 {c.name}
                             </div>
                         ))}
                       </div>
                   </div>
+
                   <div className="mb-3">
                       <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.image_formats}</span>
                       <div className="grid grid-cols-2 gap-2">
                         {data.media.images.map(c => (
-                            <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
+                            <div key={c.name} className={`text-xs px-2 py-1 rounded border ${c.supported ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-100 dark:border-purple-800 text-purple-700 dark:text-purple-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
                                 {c.name}
+                            </div>
+                        ))}
+                      </div>
+                  </div>
+
+                  <div className="mb-3">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.drm_support}</span>
+                      <div className="flex flex-col gap-2">
+                        {data.media.drm.map(d => (
+                            <div key={d.name} className={`text-xs px-2 py-1.5 rounded border flex justify-between items-center ${d.supported ? 'bg-sky-50 dark:bg-sky-900/20 border-sky-100 dark:border-sky-800 text-sky-700 dark:text-sky-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
+                                <span className="font-medium">{d.name}</span>
+                                {d.supported ? <Check size={12} /> : <X size={12} />}
                             </div>
                         ))}
                       </div>

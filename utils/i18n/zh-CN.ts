@@ -14,7 +14,7 @@ export const zhCN: Translation = {
     display: "显示与屏幕",
     network: "网络与连接",
     storage_loc: "存储与本地化",
-    media_sup: "媒体与编码能力",
+    media_sup: "媒体与 DRM",
     user_agent: "用户代理 (User Agent)",
     fingerprints: "指纹与追踪",
     features: "Web API 能力检测",
@@ -81,6 +81,7 @@ export const zhCN: Translation = {
     video_codecs: "视频编码支持",
     audio_codecs: "音频编码支持",
     image_formats: "图片格式支持",
+    drm_support: "DRM 支持",
     speech_voices: "TTS 语音包",
     audio_channels: "声道数",
 
@@ -102,6 +103,7 @@ export const zhCN: Translation = {
 
     is_bot: "自动化控制",
     gpc_enabled: "全球隐私控制 (GPC)",
+    ad_block: "广告拦截检测",
     pdf_viewer: "内置 PDF 查看器",
     secure_context: "安全上下文 (HTTPS)",
     pwa_install_status: "安装状态",
@@ -111,7 +113,9 @@ export const zhCN: Translation = {
     wasm_simd: "WASM SIMD 指令集",
     webnn: "WebNN API",
     window_ai: "原生 AI (Gemini Nano)",
-    webgpu_compute: "WebGPU 计算着色器"
+    webgpu_compute: "WebGPU 计算着色器",
+    ai_readiness: "AI 就绪度评分",
+    flops: "浮点运算 (FLOPS)"
   },
   
   values: {
@@ -126,7 +130,9 @@ export const zhCN: Translation = {
     none: "无",
     hidden: "隐藏/保护",
     installed: "已安装",
-    not_installed: "未安装"
+    not_installed: "未安装",
+    ready: "就绪",
+    not_ready: "未就绪"
   },
 
   actions: {
@@ -295,18 +301,26 @@ export const zhCN: Translation = {
     desc: "BrowserScope 是一款全面的浏览器分析工具，旨在验证您的系统能力和指纹唯一性，所有检测均在本地完成。",
     version: "版本",
     changelog: "更新日志",
-    latest_update: "新增硬件交互工具与存储跑分",
+    latest_update: "DRM 检测、隐私与 AI 评估",
     close: "关闭",
     history: "更新历史",
     updates: [
+        {
+            version: "1.4.0",
+            date: "2024-03-30",
+            changes: [
+                "新增 DRM (Widevine, FairPlay) 能力检测。",
+                "新增广告拦截插件 (AdBlock) 检测。",
+                "新增本地 AI 就绪度跑分 (FLOPS 估算)。"
+            ]
+        },
         {
             version: "1.3.0",
             date: "2024-03-22",
             changes: [
                 "设置面板新增屏幕坏点检测与显示测试功能。",
                 "新增公网 IP 检测与网络详情分析。",
-                "新增存储管理与 Service Worker 清理工具。",
-                "整合网络连通性与 CDN 状态测试。"
+                "新增存储管理与 Service Worker 清理工具。"
             ]
         },
         {
@@ -315,26 +329,7 @@ export const zhCN: Translation = {
             changes: [
                 "新增硬件交互工具（振动模式与多点触控测试）。",
                 "性能跑分中新增存储 I/O 读写测试 (IndexedDB)。",
-                "新增字体指纹 (Font Fingerprinting) 检测能力。",
-                "优化 WebGL 扩展查看器，支持按供应商分组和搜索。"
-            ]
-        },
-        {
-            version: "1.1.0",
-            date: "2024-02-28",
-            changes: [
-                "引入 AI 与计算能力检测 (WebNN, Gemini Nano)。",
-                "新增摄像头与麦克风诊断工具。",
-                "增强设备传感器可视化效果 (加速度计, 陀螺仪)。"
-            ]
-        },
-        {
-            version: "1.0.0",
-            date: "2024-01-10",
-            changes: [
-                "初始发布，包含核心系统信息检测。",
-                "浏览器指纹分析 (Canvas, WebGL)。",
-                "网络速度与延迟估算功能。"
+                "新增字体指纹 (Font Fingerprinting) 检测能力。"
             ]
         }
     ]
@@ -398,6 +393,7 @@ export const zhCN: Translation = {
     tab_display: "显示测试",
     tab_storage: "存储管理",
     tab_resources: "外部资源",
+    tab_developer: "开发者",
     simple_mode_title: "简洁模式",
     simple_mode_desc: "隐藏不必要的技术细节，仅显示核心系统信息。",
     
@@ -425,6 +421,11 @@ export const zhCN: Translation = {
     color_blue: "蓝",
     color_white: "白",
     color_black: "黑",
+    gamut_test_title: "广色域可视化 (P3)",
+    gamut_test_desc: "如果您的显示器支持广色域 (P3)，您将在色块中心隐约看到形状或文字。",
+    hdr_test_title: "色深与断层测试",
+    hdr_test_desc: "检查渐变是否平滑。如果出现明显条纹 (Banding)，说明可能是 8-bit 色深或受到压缩。",
+    unsupported_p3: "当前浏览器不支持 color(display-p3) 语法",
 
     storage_title: "本地数据",
     clear_data: "清除站点数据",
@@ -437,6 +438,15 @@ export const zhCN: Translation = {
     res_name: "资源 URL",
     res_type: "类型",
     res_duration: "加载耗时",
+
+    dev_events: "事件监听器",
+    dev_inspector: "对象透视 (Inspector)",
+    dev_console: "JS 控制台",
+    dev_console_placeholder: "输入 JavaScript 代码...",
+    dev_run: "执行",
+    dev_clear: "清空日志",
+    dev_copy_log: "复制日志",
+
     close: "关闭"
   },
 

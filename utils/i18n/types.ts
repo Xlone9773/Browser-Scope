@@ -150,10 +150,11 @@ export interface Translation {
   settingsModal: {
     title: string;
     tab_general: string;
-    tab_network: string; // Combined Connectivity + CDN + IP
-    tab_display: string; // New
-    tab_storage: string; // New
+    tab_network: string;
+    tab_display: string;
+    tab_storage: string;
     tab_resources: string;
+    tab_developer: string; // New
     simple_mode_title: string;
     simple_mode_desc: string;
     
@@ -183,6 +184,11 @@ export interface Translation {
     color_blue: string;
     color_white: string;
     color_black: string;
+    gamut_test_title: string;
+    gamut_test_desc: string;
+    hdr_test_title: string;
+    hdr_test_desc: string;
+    unsupported_p3: string;
 
     // Storage
     storage_title: string;
@@ -196,6 +202,16 @@ export interface Translation {
     res_name: string;
     res_type: string;
     res_duration: string;
+    
+    // Developer
+    dev_events: string;
+    dev_inspector: string;
+    dev_console: string;
+    dev_console_placeholder: string;
+    dev_run: string;
+    dev_clear: string;
+    dev_copy_log: string;
+
     close: string;
   };
 

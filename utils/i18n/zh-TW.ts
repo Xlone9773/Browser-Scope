@@ -5,6 +5,74 @@ import { zhCN } from './zh-CN';
 export const zhTW: Translation = {
   ...zhCN,
   
+  // ... (keeping existing settingsModal structure)
+  settingsModal: {
+    ...zhCN.settingsModal,
+    title: "設定與工具",
+    tab_general: "一般",
+    tab_network: "網絡分析",
+    tab_display: "顯示測試",
+    tab_storage: "儲存管理",
+    tab_resources: "外部資源",
+    tab_developer: "開發者",
+    simple_mode_title: "簡潔模式",
+    simple_mode_desc: "隱藏不必要的技術細節，僅顯示核心系統資訊。",
+    
+    // ... (rest of settingsModal)
+    public_ip: "公網 IP 位址",
+    fetch_ip: "檢測 IP",
+    ipv6_title: "IPv6 連線能力",
+    check_ipv6: "檢測 IPv6",
+    ipv6_success: "支援 IPv6",
+    ipv6_fail: "未檢測到 / 僅 IPv4",
+    ip_info: "IP 詳細資訊",
+    provider: "運營商 (ISP)",
+    location: "地理位置",
+    cdn_status: "CDN 狀態",
+    latency: "延遲",
+    check_all: "檢查所有",
+    url_placeholder: "輸入 URL (如 https://google.com)",
+    test_conn: "測試連線",
+    test_result: "測試結果",
+
+    display_test: "螢幕壞點/缺陷測試",
+    dead_pixel_title: "壞點檢測",
+    dead_pixel_desc: "點擊顏色進入全螢幕模式。檢查螢幕上是否有不發光或顏色異常的像素點。",
+    color_red: "紅",
+    color_green: "綠",
+    color_blue: "藍",
+    color_white: "白",
+    color_black: "黑",
+    gamut_test_title: "廣色域視覺化 (P3)",
+    gamut_test_desc: "如果您的顯示器支援廣色域 (P3)，您將在色塊中心隱約看到形狀或文字。",
+    hdr_test_title: "色深與斷層測試",
+    hdr_test_desc: "檢查漸層是否平滑。如果出現明顯條紋 (Banding)，說明可能是 8-bit 色深或受到壓縮。",
+    unsupported_p3: "目前瀏覽器不支援 color(display-p3) 語法",
+
+    storage_title: "本地數據",
+    clear_data: "清除網站數據",
+    clear_btn: "清除儲存",
+    sw_title: "Service Workers",
+    sw_desc: "註銷活動的 Service Workers 以重置 PWA 狀態。",
+    sw_btn: "註銷 SW",
+
+    resource_list: "已加載資源",
+    res_name: "資源 URL",
+    res_type: "類型",
+    res_duration: "加載耗時",
+
+    dev_events: "事件監聽器",
+    dev_inspector: "對象透視 (Inspector)",
+    dev_console: "JS 控制台",
+    dev_console_placeholder: "輸入 JavaScript 代碼...",
+    dev_run: "執行",
+    dev_clear: "清空日誌",
+    dev_copy_log: "複製日誌",
+
+    close: "關閉"
+  },
+  
+  // ... (rest of the file remains same, re-exporting to ensure valid TS)
   loading: "正在掃描系統能力...",
   title: "BrowserScope",
   subtitle: "全面檢測您的瀏覽器環境、硬體能力、網路狀態及前沿 Web API 支援情況。",
@@ -326,54 +394,5 @@ export const zhTW: Translation = {
       desc_battery_generic: "電池狀態已被隱藏或不支援。",
       desc_locale_unique: "時區和語言設定可縮小使用者的位置範圍。"
     }
-  },
-
-  settingsModal: {
-    title: "設定與工具",
-    tab_general: "一般",
-    tab_network: "網絡分析",
-    tab_display: "顯示測試",
-    tab_storage: "儲存管理",
-    tab_resources: "外部資源",
-    simple_mode_title: "簡潔模式",
-    simple_mode_desc: "隱藏不必要的技術細節，僅顯示核心系統資訊。",
-    
-    public_ip: "公網 IP 位址",
-    fetch_ip: "檢測 IP",
-    ipv6_title: "IPv6 連線能力",
-    check_ipv6: "檢測 IPv6",
-    ipv6_success: "支援 IPv6",
-    ipv6_fail: "未檢測到 / 僅 IPv4",
-    ip_info: "IP 詳細資訊",
-    provider: "運營商 (ISP)",
-    location: "地理位置",
-    cdn_status: "CDN 狀態",
-    latency: "延遲",
-    check_all: "檢查所有",
-    url_placeholder: "輸入 URL (如 https://google.com)",
-    test_conn: "測試連線",
-    test_result: "測試結果",
-
-    display_test: "螢幕壞點/缺陷測試",
-    dead_pixel_title: "壞點檢測",
-    dead_pixel_desc: "點擊顏色進入全螢幕模式。檢查螢幕上是否有不發光或顏色異常的像素點。",
-    color_red: "紅",
-    color_green: "綠",
-    color_blue: "藍",
-    color_white: "白",
-    color_black: "黑",
-
-    storage_title: "本地數據",
-    clear_data: "清除網站數據",
-    clear_btn: "清除儲存",
-    sw_title: "Service Workers",
-    sw_desc: "註銷活動的 Service Workers 以重置 PWA 狀態。",
-    sw_btn: "註銷 SW",
-
-    resource_list: "已加載資源",
-    res_name: "資源 URL",
-    res_type: "類型",
-    res_duration: "加載耗時",
-    close: "關閉"
   },
 };

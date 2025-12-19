@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Network, Globe, Database, Activity, Sliders, Monitor } from 'lucide-react';
+import { X, Network, Globe, Database, Activity, Sliders, Monitor, Terminal } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { GeneralTab } from './settings/GeneralTab';
 import { NetworkTab } from './settings/NetworkTab';
 import { DisplayTab } from './settings/DisplayTab';
 import { StorageTab } from './settings/StorageTab';
 import { ResourcesTab } from './settings/ResourcesTab';
+import { DeveloperTab } from './settings/DeveloperTab';
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -16,7 +17,7 @@ interface SettingsModalProps {
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t, simpleMode, toggleSimpleMode }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'network' | 'display' | 'storage' | 'res'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'network' | 'display' | 'storage' | 'res' | 'dev'>('general');
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   
@@ -154,6 +155,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t, simple
                     <Activity size={16} />
                     {t.tab_resources}
                 </button>
+                <button 
+                    onClick={() => setActiveTab('dev')}
+                    className={`
+                        flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                        flex-1 md:flex-none justify-center md:justify-start
+                        border-b-2 md:border-b-0 md:border-l-[3px]
+                        ${activeTab === 'dev' 
+                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                    `}
+                >
+                    <Terminal size={16} />
+                    {t.tab_developer}
+                </button>
             </div>
 
             {/* Content Area */}
@@ -177,6 +192,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, t, simple
 
                 {activeTab === 'res' && (
                     <ResourcesTab t={t} />
+                )}
+
+                {activeTab === 'dev' && (
+                    <DeveloperTab t={t} />
                 )}
 
             </div>

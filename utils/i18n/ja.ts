@@ -12,6 +12,7 @@ export const ja: Translation = {
     tab_display: "ディスプレイ",
     tab_storage: "ストレージ",
     tab_resources: "リソース",
+    tab_developer: "開発者",
     simple_mode_title: "シンプルモード",
     simple_mode_desc: "不要な技術詳細を非表示にし、コアシステム情報のみを表示します。",
     
@@ -39,6 +40,11 @@ export const ja: Translation = {
     color_blue: "青",
     color_white: "白",
     color_black: "黒",
+    gamut_test_title: "広色域ビジュアライザー (P3)",
+    gamut_test_desc: "ディスプレイが広色域 (P3) をサポートしている場合、色付きの正方形の中に形状やテキストがうっすらと見えます。",
+    hdr_test_title: "色深度とバンディング",
+    hdr_test_desc: "滑らかなグラデーションを確認してください。バンディング（縞模様）が見える場合、8ビットの色深度または圧縮を示しています。",
+    unsupported_p3: "ブラウザは color(display-p3) 構文をサポートしていません",
 
     storage_title: "ローカルデータ",
     clear_data: "サイトデータを消去",
@@ -51,6 +57,15 @@ export const ja: Translation = {
     res_name: "リソース URL",
     res_type: "タイプ",
     res_duration: "所要時間",
+
+    dev_events: "イベントモニター",
+    dev_inspector: "オブジェクトインスペクター",
+    dev_console: "JS コンソール",
+    dev_console_placeholder: "JavaScriptコードを入力...",
+    dev_run: "実行",
+    dev_clear: "ログを消去",
+    dev_copy_log: "ログをコピー",
+
     close: "閉じる"
   },
 

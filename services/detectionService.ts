@@ -1,5 +1,5 @@
 
-import { ExtendedNavigator, BrowserData, BatteryManager, FeatureItem, CodecInfo, FingerprintScore, ScoreFactor } from '../types';
+import { ExtendedNavigator, BrowserData, BatteryManager, FeatureItem, CodecInfo, FingerprintScore, ScoreFactor, DrmSystem, AiReadiness } from '../types';
 import { estimateCpuFromGpu } from '../utils/cpuMapping';
 
 const nav = navigator as ExtendedNavigator;
@@ -37,75 +37,144 @@ export const getGPUInfo = (): { renderer: string; vendor: string; maxTextureSize
   }
 };
 
-// Get list of supported WebGL extensions
+// ... (rest of imports/helpers)
+
+// --- DRM Detection ---
+const checkDrmSupport = async (): Promise<DrmSystem[]> => {
+    const systems = [
+        { name: 'Widevine', id: 'com.widevine.alpha' },
+        { name: 'PlayReady', id: 'com.microsoft.playready' },
+        { name: 'FairPlay', id: 'com.apple.fps' }
+    ];
+
+    const results: DrmSystem[] = [];
+
+    // Basic config to request
+    const config = [{
+        initDataTypes: ['cenc'],
+        audioCapabilities: [{ contentType: 'audio/mp4;codecs="mp4a.40.2"' }],
+        videoCapabilities: [{ contentType: 'video/mp4;codecs="avc1.42E01E"' }]
+    }];
+
+    for (const sys of systems) {
+        try {
+            // @ts-ignore
+            if (navigator.requestMediaKeySystemAccess) {
+                // @ts-ignore
+                const access = await navigator.requestMediaKeySystemAccess(sys.id, config);
+                let level = undefined;
+                
+                // Try to infer security level for Widevine if possible (often hidden, but we can try checking specific key systems strings)
+                // This is a basic availability check
+                results.push({ name: sys.name, supported: true });
+            } else {
+                results.push({ name: sys.name, supported: false });
+            }
+        } catch (e) {
+            results.push({ name: sys.name, supported: false });
+        }
+    }
+    return results;
+};
+
+// --- AdBlock Detection ---
+const detectAdBlocker = (): boolean => {
+    const bait = document.createElement('div');
+    // Using common ad-blocking class names and styles
+    bait.className = 'pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads text-ad-links ad-sponsor';
+    bait.style.cssText = 'height: 10px !important; width: 10px !important; position: absolute; left: -9999px; top: -100px;';
+    document.body.appendChild(bait);
+    
+    // Check if the element was hidden or collapsed by an ad blocker
+    const detected = bait.offsetParent === null || 
+                     bait.offsetHeight === 0 || 
+                     bait.offsetLeft === 0 || 
+                     bait.offsetTop === 0 || 
+                     bait.clientWidth === 0 || 
+                     bait.clientHeight === 0 ||
+                     window.getComputedStyle(bait).display === 'none';
+    
+    document.body.removeChild(bait);
+    return detected;
+};
+
+// --- AI Readiness Benchmark ---
+const runAiReadinessCheck = (): AiReadiness => {
+    const start = performance.now();
+    let ops = 0;
+    const durationLimit = 100; // Run for 100ms
+    
+    // Math intensive loop (floating point ops)
+    while (performance.now() - start < durationLimit) {
+        // Perform a mix of multiplication, division, and Math functions
+        const a = Math.random();
+        const b = Math.random();
+        const c = Math.sqrt(a * b + 0.1);
+        const d = Math.sin(c) * Math.cos(a);
+        ops += 10; // Approx operations per loop
+    }
+    
+    const duration = performance.now() - start;
+    const opsPerSec = (ops / duration) * 1000;
+    const gflops = opsPerSec / 1e9;
+    
+    // Heuristic scoring (JavaScript single thread is limited, so these thresholds are relative)
+    // M1 Max ~ 50-100 in simple JS benchmark? No, pure JS math is slower.
+    // Let's use a score 0-10000 based on ops count for the 100ms window
+    
+    const score = Math.round(ops / 1000); 
+    
+    let level: 'Low' | 'Medium' | 'High' | 'Ultra' = 'Low';
+    let desc = "Basic web tasks";
+    
+    if (score > 3000) { level = 'Ultra'; desc = "Capable of running local Small Language Models (SLM)."; }
+    else if (score > 1500) { level = 'High'; desc = "Good for heavy compute & basic ML inference."; }
+    else if (score > 500) { level = 'Medium'; desc = "Smooth for standard web apps."; }
+    
+    return {
+        score,
+        flops: gflops.toFixed(3) + " GFLOPS (Est. JS)",
+        level,
+        description: desc
+    };
+};
+
+// ... (rest of existing functions like getGPUInfo, getCanvasFingerprint etc. - NO CHANGE needed for them)
+// We need to keep getWebGLExtensions, getCanvasFingerprint, getWebGLFingerprint, getBatteryInfo, getPWAFeatures, getAdvancedFeatures, detectOS, detectBrowser, getMediaSupport, getStorageEstimate, getAudioContextInfo, getColorGamut, getWebRTCIP, getSpeechVoicesCount, checkWasmSimd, calculateFingerprintScore
+
+// Re-exporting necessary existing functions to maintain file integrity
 export const getWebGLExtensions = (): string[] => {
   try {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     if (!gl) return [];
-    
     // @ts-ignore
     const extensions = gl.getSupportedExtensions();
     return extensions ? extensions.sort() : [];
-  } catch (e) {
-    return [];
-  }
+  } catch (e) { return []; }
 };
 
-// Generate a robust canvas fingerprint with vectors and text
 const getCanvasFingerprint = (): { hash: string; dataUri: string } => {
   try {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return { hash: 'Not Supported', dataUri: '' };
-
-    canvas.width = 280;
-    canvas.height = 60;
-    
-    // Background
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Text with different baselines and blending
-    ctx.textBaseline = "alphabetic";
-    ctx.font = "16px 'Arial'";
-    ctx.fillStyle = "#f60";
-    ctx.fillRect(100, 5, 60, 20);
-    
-    ctx.fillStyle = "#069";
-    ctx.fillText("BrowserScope v1.0", 2, 20);
-    
-    ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
-    ctx.font = "18px 'Times New Roman'";
+    canvas.width = 280; canvas.height = 60;
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.textBaseline = "alphabetic"; ctx.font = "16px 'Arial'";
+    ctx.fillStyle = "#f60"; ctx.fillRect(100, 5, 60, 20);
+    ctx.fillStyle = "#069"; ctx.fillText("BrowserScope v1.0", 2, 20);
+    ctx.fillStyle = "rgba(102, 204, 0, 0.7)"; ctx.font = "18px 'Times New Roman'";
     ctx.fillText("Fingerprint", 5, 45);
-
-    // Vector Drawing: Winding Rule Test
-    ctx.beginPath();
-    ctx.arc(200, 30, 20, 0, Math.PI * 2, true);
+    ctx.beginPath(); ctx.arc(200, 30, 20, 0, Math.PI * 2, true);
     ctx.arc(200, 30, 10, 0, Math.PI * 2, true);
-    ctx.fillStyle = "rgba(200, 0, 200, 0.5)";
-    ctx.fill("evenodd"); // Important for fingerprinting
-    
-    // Vector Drawing: Complex Path
-    ctx.beginPath();
-    ctx.moveTo(240, 10);
-    ctx.lineTo(260, 50);
-    ctx.lineTo(220, 50);
-    ctx.closePath();
-    ctx.strokeStyle = "#f0f";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
+    ctx.fillStyle = "rgba(200, 0, 200, 0.5)"; ctx.fill("evenodd");
+    ctx.beginPath(); ctx.moveTo(240, 10); ctx.lineTo(260, 50); ctx.lineTo(220, 50);
+    ctx.closePath(); ctx.strokeStyle = "#f0f"; ctx.lineWidth = 3; ctx.stroke();
     const dataUri = canvas.toDataURL();
     const b64 = dataUri.replace("data:image/png;base64,", "");
-    
-    return {
-        hash: simpleHash(b64),
-        dataUri: dataUri
-    };
-  } catch (e) {
-    return { hash: 'Error', dataUri: '' };
-  }
+    return { hash: simpleHash(b64), dataUri: dataUri };
+  } catch (e) { return { hash: 'Error', dataUri: '' }; }
 };
 
 const getWebGLFingerprint = (): string => {
@@ -113,41 +182,25 @@ const getWebGLFingerprint = (): string => {
         const canvas = document.createElement('canvas');
         const gl = canvas.getContext('webgl');
         if (!gl) return 'Not Supported';
-        
-        // Simple render to detect differences
         const vShader = gl.createShader(gl.VERTEX_SHADER)!;
         gl.shaderSource(vShader, 'attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}');
         gl.compileShader(vShader);
-        
         const fShader = gl.createShader(gl.FRAGMENT_SHADER)!;
         gl.shaderSource(fShader, 'void main(){gl_FragColor=vec4(0.5,0.2,0.8,1.0);}');
         gl.compileShader(fShader);
-        
         const program = gl.createProgram()!;
-        gl.attachShader(program, vShader);
-        gl.attachShader(program, fShader);
-        gl.linkProgram(program);
-        gl.useProgram(program);
-        
+        gl.attachShader(program, vShader); gl.attachShader(program, fShader);
+        gl.linkProgram(program); gl.useProgram(program);
         const buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([1,1,-1,1,-1,-1,1,-1]), gl.STATIC_DRAW);
-        
         const loc = gl.getAttribLocation(program, "p");
-        gl.enableVertexAttribArray(loc);
-        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-        
-        gl.clearColor(0,0,0,1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-        
+        gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
         const pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
         gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-        
         return simpleHash(pixels.join(''));
-    } catch(e) {
-        return 'Error';
-    }
+    } catch(e) { return 'Error'; }
 };
 
 export const getBatteryInfo = async (): Promise<{ level: string; charging: string; chargingTime: string; dischargingTime: string }> => {
@@ -156,7 +209,6 @@ export const getBatteryInfo = async (): Promise<{ level: string; charging: strin
     if (navigator.getBattery) {
       // @ts-ignore
       const battery: BatteryManager = await navigator.getBattery();
-      
       const formatTime = (time: number) => {
           if (time === Infinity || time === 0) return 'N/A';
           const hrs = Math.floor(time / 3600);
@@ -164,7 +216,6 @@ export const getBatteryInfo = async (): Promise<{ level: string; charging: strin
           if (hrs > 0) return `${hrs}h ${mins}m`;
           return `${mins}m`;
       };
-
       return {
         level: `${Math.round(battery.level * 100)}%`,
         charging: battery.charging ? 'Yes' : 'No',
@@ -173,9 +224,7 @@ export const getBatteryInfo = async (): Promise<{ level: string; charging: strin
       };
     }
     return { level: 'Not Supported', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' };
-  } catch (e) {
-    return { level: 'Unavailable', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' };
-  }
+  } catch (e) { return { level: 'Unavailable', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' }; }
 };
 
 export const getPWAFeatures = (): FeatureItem[] => {
@@ -280,16 +329,14 @@ const getMediaSupport = (): { video: CodecInfo[], audio: CodecInfo[], images: Co
 
   const imageTypes = [
       { name: 'WebP', type: 'image/webp' },
-      { name: 'AVIF', type: 'image/avif' }, // Harder to sync detect, usually inferred
+      { name: 'AVIF', type: 'image/avif' }, 
       { name: 'PNG', type: 'image/png' },
       { name: 'JPEG', type: 'image/jpeg' }
   ];
 
-  // Canvas based detection for images
   const checkImages = () => {
       const canvas = document.createElement('canvas');
       return imageTypes.map(item => {
-          // Basic canvas export check
           const data = canvas.toDataURL(item.type);
           const supported = data.indexOf(`data:${item.type}`) === 0;
           return { name: item.name, supported };
@@ -317,9 +364,7 @@ const getStorageEstimate = async (): Promise<{ quota: string, usage: string, per
   }
 
   if (navigator.storage && navigator.storage.persisted) {
-    try {
-      persisted = await navigator.storage.persisted();
-    } catch {}
+    try { persisted = await navigator.storage.persisted(); } catch {}
   }
 
   return { quota, usage, persisted };
@@ -335,9 +380,7 @@ const getAudioContextInfo = () => {
         const channels = ctx.destination.maxChannelCount || 2;
         ctx.close();
         return { rate: `${rate} Hz`, latency, channels };
-    } catch(e) {
-        return { rate: 'Error', latency: 'Error', channels: 'Error' };
-    }
+    } catch(e) { return { rate: 'Error', latency: 'Error', channels: 'Error' }; }
 };
 
 const getColorGamut = () => {
@@ -347,64 +390,40 @@ const getColorGamut = () => {
     return 'Unknown';
 };
 
-// WebRTC Local IP Detection
 const getWebRTCIP = async (): Promise<string> => {
     return new Promise(resolve => {
         try {
             const pc = new RTCPeerConnection({ iceServers: [] });
             pc.createDataChannel('');
             pc.onicecandidate = (e) => {
-                if (!e.candidate) {
-                    pc.close();
-                    resolve('Hidden');
-                    return;
-                }
+                if (!e.candidate) { pc.close(); resolve('Hidden'); return; }
                 const ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/;
                 const match = e.candidate.candidate.match(ipRegex);
-                if (match) {
-                    pc.close();
-                    resolve(match[1]);
-                }
+                if (match) { pc.close(); resolve(match[1]); }
             };
-            
-            // Timeout in case it hangs
-            setTimeout(() => {
-                pc.close();
-                resolve('Timeout/Hidden');
-            }, 1000);
-
+            setTimeout(() => { pc.close(); resolve('Timeout/Hidden'); }, 1000);
             pc.createOffer().then(sdp => pc.setLocalDescription(sdp));
-        } catch(e) {
-            resolve('Not Supported');
-        }
+        } catch(e) { resolve('Not Supported'); }
     });
 };
 
 const getSpeechVoicesCount = (): Promise<number> => {
     return new Promise(resolve => {
-        if (!window.speechSynthesis) {
-            resolve(0);
-            return;
-        }
+        if (!window.speechSynthesis) { resolve(0); return; }
         let voices = window.speechSynthesis.getVoices();
-        if (voices.length > 0) {
-            resolve(voices.length);
-        } else {
-            // Voices load asynchronously in some browsers
+        if (voices.length > 0) { resolve(voices.length); } 
+        else {
             window.speechSynthesis.onvoiceschanged = () => {
                 voices = window.speechSynthesis.getVoices();
                 resolve(voices.length);
             };
-            // Fallback timeout
             setTimeout(() => resolve(0), 500);
         }
     });
 };
 
-// Helper for WASM SIMD detection
 const checkWasmSimd = () => {
     try {
-        // Minimal WASM with SIMD opcode
         const buffer = new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11]);
         return WebAssembly.validate(buffer);
     } catch(e) { return false; }
@@ -424,7 +443,6 @@ const calculateFingerprintScore = (
     const factors: ScoreFactor[] = [];
     let score = 0;
 
-    // 1. Canvas Fingerprint (20 pts)
     if (canvasHash && canvasHash !== 'Error' && canvasHash !== 'Not Supported') {
         score += 20;
         factors.push({ id: 'canvas_hash', value: 'val_unique', score: 20, maxScore: 20, description: 'desc_canvas_unique' });
@@ -432,7 +450,6 @@ const calculateFingerprintScore = (
         factors.push({ id: 'canvas_hash', value: 'val_generic', score: 0, maxScore: 20, description: 'desc_canvas_generic' });
     }
 
-    // 2. WebGL Fingerprint (20 pts)
     if (webglHash && webglHash !== 'Error' && webglHash !== 'Not Supported') {
         score += 20;
         factors.push({ id: 'webgl_hash', value: 'val_unique', score: 20, maxScore: 20, description: 'desc_webgl_unique' });
@@ -440,7 +457,6 @@ const calculateFingerprintScore = (
         factors.push({ id: 'webgl_hash', value: 'val_generic', score: 0, maxScore: 20, description: 'desc_webgl_generic' });
     }
 
-    // 3. Hardware (CPU/Memory) (15 pts)
     const hardwareVal = `${cpu} cores, ${memory}`;
     if (cpu !== 'Unknown' && memory !== 'Unknown') {
         score += 15;
@@ -449,25 +465,21 @@ const calculateFingerprintScore = (
         factors.push({ id: 'hardware_concurrency', value: 'val_generic', score: 5, maxScore: 15, description: 'desc_hardware_generic' });
     }
 
-    // 4. User Agent (10 pts)
     if (userAgent && userAgent.length > 50) {
         score += 10;
         factors.push({ id: 'user_agent', value: 'val_specific', score: 10, maxScore: 10, description: 'desc_ua_unique' });
     }
 
-    // 5. Screen Resolution (10 pts)
     if (screenRes && screenRes !== 'Unknown') {
         score += 10;
         factors.push({ id: 'resolution', value: screenRes, score: 10, maxScore: 10, description: 'desc_res_unique' });
     }
 
-    // 6. Audio Context (10 pts)
     if (audioRate && audioRate !== 'Unknown' && audioRate !== 'Error') {
         score += 10;
         factors.push({ id: 'audio_context', value: audioRate, score: 10, maxScore: 10, description: 'desc_audio_unique' });
     }
 
-    // 7. Battery API (10 pts) - Highly invasive if allowed
     if (battery && battery !== 'Unknown' && battery !== 'Unavailable' && battery !== 'Not Supported') {
         score += 10;
         factors.push({ id: 'battery_status', value: 'val_readable', score: 10, maxScore: 10, description: 'desc_battery_unique' });
@@ -475,7 +487,6 @@ const calculateFingerprintScore = (
         factors.push({ id: 'battery_status', value: 'val_protected', score: 0, maxScore: 10, description: 'desc_battery_generic' });
     }
 
-    // 8. Timezone & Locale (5 pts)
     score += 5;
     factors.push({ id: 'locale_time', value: 'val_readable', score: 5, maxScore: 5, description: 'desc_locale_unique' });
 
@@ -496,6 +507,9 @@ export const getAllData = async (): Promise<BrowserData> => {
   const webrtcIp = await getWebRTCIP();
   const speechVoices = await getSpeechVoicesCount();
   const cpuModel = estimateCpuFromGpu(gpu.renderer);
+  const drmSupport = await checkDrmSupport();
+  const adBlockEnabled = detectAdBlocker();
+  const aiReadiness = runAiReadinessCheck();
   
   const cpuCores = navigator.hardwareConcurrency || 'Unknown';
   const deviceMemory = nav.deviceMemory ? `${nav.deviceMemory} GB` : 'Unknown';
@@ -518,7 +532,7 @@ export const getAllData = async (): Promise<BrowserData> => {
   // @ts-ignore
   const windowAi = !!(window.ai || window.model);
   const webnn = !!nav.ml;
-  const webgpuCompute = !!nav.gpu; // Rough proxy, assumes if WebGPU exists, compute shader works
+  const webgpuCompute = !!nav.gpu; 
 
   const score = calculateFingerprintScore(
       canvasInfo.hash, 
@@ -599,19 +613,22 @@ export const getAllData = async (): Promise<BrowserData> => {
         isBot,
         gpcEnabled,
         pdfViewer,
-        secureContext
+        secureContext,
+        adBlockEnabled
     },
     ai: {
         wasmSupport,
         wasmSimd,
         webnn,
         windowAi,
-        webgpuCompute
+        webgpuCompute,
+        readiness: aiReadiness
     },
     media: {
       video: mediaSupport.video,
       audio: mediaSupport.audio,
       images: mediaSupport.images,
+      drm: drmSupport,
       speechVoices,
       audioChannels: audioInfo.channels
     },
