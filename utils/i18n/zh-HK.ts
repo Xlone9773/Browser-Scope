@@ -106,6 +106,10 @@ export const zhHK: Translation = {
     
     public_ip: "公網 IP 位址",
     fetch_ip: "檢測 IP",
+    ipv6_title: "IPv6 連線能力",
+    check_ipv6: "檢測 IPv6",
+    ipv6_success: "支援 IPv6",
+    ipv6_fail: "未檢測到 / 僅 IPv4",
     ip_info: "IP 詳細資訊",
     provider: "運營商 (ISP)",
     location: "地理位置",

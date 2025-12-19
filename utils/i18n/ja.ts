@@ -17,6 +17,10 @@ export const ja: Translation = {
     
     public_ip: "パブリックIPアドレス",
     fetch_ip: "IPを検出",
+    ipv6_title: "IPv6 接続",
+    check_ipv6: "IPv6を検出",
+    ipv6_success: "IPv6 対応",
+    ipv6_fail: "未検出 / IPv4のみ",
     ip_info: "IP情報",
     provider: "ISP / プロバイダー",
     location: "ロケーション",

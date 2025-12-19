@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
 
@@ -10,23 +11,25 @@ interface InfoItemProps {
 
 const InfoItem: React.FC<InfoItemProps> = ({ label, value, subValue, isFeature }) => {
   let displayValue = value;
-  let statusColor = 'text-slate-800';
+  let statusColor = 'text-slate-800 dark:text-slate-200';
 
   if (typeof value === 'boolean') {
     displayValue = value ? 'Supported' : 'Not Supported';
-    statusColor = value ? 'text-green-600 bg-green-50 px-2 py-0.5 rounded text-sm font-medium' : 'text-slate-400 bg-slate-50 px-2 py-0.5 rounded text-sm';
+    statusColor = value 
+      ? 'text-green-700 bg-green-50 border border-green-100 dark:border-green-900/30 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded text-xs font-medium' 
+      : 'text-slate-500 bg-slate-100 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 px-2 py-0.5 rounded text-xs';
   } else if (isFeature) {
       // If it's passed as a string but represents a boolean status conceptually (like "Yes" / "No")
-      if(value === 'Yes' || value === 'Supported') statusColor = 'text-green-600 font-medium';
-      if(value === 'No' || value === 'Not Supported') statusColor = 'text-slate-400';
+      if(value === 'Yes' || value === 'Supported') statusColor = 'text-green-600 dark:text-green-400 font-medium';
+      if(value === 'No' || value === 'Not Supported') statusColor = 'text-slate-400 dark:text-slate-500';
   }
 
   return (
-    <div className="flex justify-between items-center py-2.5 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors px-2 -mx-2 rounded">
-      <span className="text-sm text-slate-500 font-medium">{label}</span>
+    <div className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors px-2 -mx-2 rounded">
+      <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{label}</span>
       <div className="text-right">
         <span className={`text-sm ${statusColor} break-all`}>{displayValue}</span>
-        {subValue && <div className="text-xs text-slate-400 mt-0.5">{subValue}</div>}
+        {subValue && <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{subValue}</div>}
       </div>
     </div>
   );
@@ -40,12 +43,12 @@ interface InfoCardProps {
 
 export const InfoCard: React.FC<InfoCardProps> = ({ title, icon: Icon, children }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full transition-all hover:shadow-md duration-300">
-      <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-3 bg-white">
-        <div className="p-2 bg-slate-50 rounded-lg text-slate-600">
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-full transition-all hover:shadow-md duration-300">
+      <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3 bg-white dark:bg-slate-800">
+        <div className="p-2 bg-slate-50 dark:bg-slate-700/50 rounded-lg text-slate-600 dark:text-slate-300">
           <Icon size={20} strokeWidth={2} />
         </div>
-        <h3 className="font-semibold text-slate-800 tracking-tight">{title}</h3>
+        <h3 className="font-semibold text-slate-800 dark:text-slate-100 tracking-tight">{title}</h3>
       </div>
       <div className="p-5 flex-1 flex flex-col gap-1">
         {children}
@@ -62,17 +65,17 @@ export const FeatureGrid: React.FC<{ items: { name: string; supported: boolean; 
           key={item.name} 
           className={`p-3 rounded-lg border ${
             item.supported 
-              ? 'bg-green-50/50 border-green-100/50' 
-              : 'bg-slate-50 border-slate-100'
+              ? 'bg-green-50/50 border-green-100/50 dark:bg-green-900/10 dark:border-green-800/30' 
+              : 'bg-slate-50 border-slate-100 dark:bg-slate-800/50 dark:border-slate-700'
           } flex flex-col gap-1`}
         >
           <div className="flex items-center justify-between mb-1">
-             <span className={`text-sm font-semibold ${item.supported ? 'text-green-700' : 'text-slate-500'}`}>
+             <span className={`text-sm font-semibold ${item.supported ? 'text-green-700 dark:text-green-400' : 'text-slate-500 dark:text-slate-500'}`}>
               {item.name}
             </span>
-             <div className={`w-2 h-2 rounded-full ${item.supported ? 'bg-green-500' : 'bg-slate-300'}`}></div>
+             <div className={`w-2 h-2 rounded-full ${item.supported ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-600'}`}></div>
           </div>
-          <span className="text-xs text-slate-400 leading-tight">
+          <span className="text-xs text-slate-400 dark:text-slate-500 leading-tight">
             {item.description}
           </span>
         </div>

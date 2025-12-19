@@ -394,6 +394,10 @@ export const en: Translation = {
     
     public_ip: "Public IP Address",
     fetch_ip: "Detect IP",
+    ipv6_title: "IPv6 Connectivity",
+    check_ipv6: "Detect IPv6",
+    ipv6_success: "IPv6 Supported",
+    ipv6_fail: "Not Detected / IPv4 Only",
     ip_info: "IP Information",
     provider: "ISP / Provider",
     location: "Location",

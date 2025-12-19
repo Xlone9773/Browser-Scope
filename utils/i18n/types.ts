@@ -160,6 +160,10 @@ export interface Translation {
     // Network
     public_ip: string;
     fetch_ip: string;
+    ipv6_title: string;
+    check_ipv6: string;
+    ipv6_success: string;
+    ipv6_fail: string;
     ip_info: string;
     provider: string;
     location: string;

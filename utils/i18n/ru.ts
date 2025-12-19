@@ -17,6 +17,10 @@ export const ru: Translation = {
     
     public_ip: "Публичный IP",
     fetch_ip: "Определить IP",
+    ipv6_title: "IPv6 Подключение",
+    check_ipv6: "Проверить IPv6",
+    ipv6_success: "IPv6 Поддерживается",
+    ipv6_fail: "Не обнаружено / Только IPv4",
     ip_info: "Информация об IP",
     provider: "Провайдер (ISP)",
     location: "Местоположение",
