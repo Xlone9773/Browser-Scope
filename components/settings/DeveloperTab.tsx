@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, Activity, Eye, Play, Trash2, Copy, Check, Maximize2, TriangleAlert, Zap, Edit3, Globe, Database, Smartphone, Shield } from 'lucide-react';
+import { Terminal, Activity, Eye, Play, Trash2, Copy, Check, Maximize2, TriangleAlert, Zap, Edit3, Globe, Database, Smartphone, Shield, X, Download } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
 
 interface DeveloperTabProps {
@@ -39,6 +39,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     const [showPresets, setShowPresets] = useState(false);
     const logsEndRef = useRef<HTMLDivElement>(null);
     const [copied, setCopied] = useState(false);
+    const [outputCopied, setOutputCopied] = useState(false);
     
     // Risk Acceptance State - Initialize directly from localStorage to prevent flash
     const [hasAcceptedRisk, setHasAcceptedRisk] = useState(() => {
@@ -168,10 +169,35 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
         }
     };
 
+    const clearInput = () => {
+        setInputCmd('');
+        setShowPresets(false);
+    };
+
     const copyLogs = () => {
         navigator.clipboard.writeText(logs.join('\n'));
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    const copyConsoleOutput = () => {
+        if (!consoleOutput) return;
+        navigator.clipboard.writeText(consoleOutput);
+        setOutputCopied(true);
+        setTimeout(() => setOutputCopied(false), 2000);
+    };
+
+    const downloadConsoleOutput = () => {
+        if (!consoleOutput) return;
+        const blob = new Blob([consoleOutput], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `console-output-${Date.now()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     };
 
     // Content JSX
@@ -181,7 +207,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
             {subTab === 'events' && (
                 <>
                     <div className="flex-1 overflow-y-auto p-4 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-700">
-                        {logs.length === 0 && <div className="text-slate-500 italic">Listening for window events...</div>}
+                        {logs.length === 0 && <div className="text-slate-500 italic">{t.dev_events_placeholder}</div>}
                         {logs.map((log, idx) => (
                             <div key={idx} className="text-green-400 break-all border-b border-slate-800/50 pb-1">
                                 <span className="text-slate-500 mr-2 opacity-50">{idx + 1}</span>
@@ -234,13 +260,39 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
             {/* CONSOLE VIEW */}
             {subTab === 'console' && (
                 <div className="flex flex-col h-full relative">
-                    <div className="flex-1 overflow-y-auto p-4 bg-slate-900 border-b border-slate-700">
+                    <div className="flex-1 overflow-y-auto p-4 bg-slate-900 border-b border-slate-700 relative group">
                         {consoleOutput ? (
-                            <pre className={`${consoleOutput.startsWith('Error') ? 'text-red-400' : 'text-yellow-300'} whitespace-pre-wrap break-all`}>
-                                {consoleOutput}
-                            </pre>
+                            <>
+                                <pre className={`${consoleOutput.startsWith('Error') ? 'text-red-400' : 'text-yellow-300'} whitespace-pre-wrap break-all pb-4`}>
+                                    {consoleOutput}
+                                </pre>
+                                {/* Output Actions Toolbar */}
+                                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                    <button 
+                                        onClick={copyConsoleOutput} 
+                                        className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
+                                        title={t.dev_output_copy}
+                                    >
+                                        {outputCopied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
+                                    </button>
+                                    <button 
+                                        onClick={downloadConsoleOutput} 
+                                        className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
+                                        title={t.dev_output_download}
+                                    >
+                                        <Download size={12} />
+                                    </button>
+                                    <button 
+                                        onClick={() => setConsoleOutput(null)} 
+                                        className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-red-400 hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
+                                        title={t.dev_output_clear}
+                                    >
+                                        <Trash2 size={12} />
+                                    </button>
+                                </div>
+                            </>
                         ) : (
-                            <div className="text-slate-600 italic">Result will appear here...</div>
+                            <div className="text-slate-600 italic">{t.dev_result_placeholder}</div>
                         )}
                     </div>
                     
@@ -248,7 +300,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     {showPresets && (
                         <div className="absolute bottom-[50px] left-2 right-2 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-10 animate-in slide-in-from-bottom-2 fade-in duration-200 flex flex-col overflow-hidden max-h-60">
                             <div className="px-3 py-2 bg-slate-900/50 border-b border-slate-700 text-[10px] text-slate-400 font-medium uppercase tracking-wider backdrop-blur-sm shrink-0">
-                                Quick Commands
+                                {t.dev_quick_commands}
                             </div>
                             <div className="overflow-y-auto">
                                 {PRESET_COMMANDS.map((preset, idx) => (
@@ -269,7 +321,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); applyPreset(preset, true); }}
                                             className="p-1.5 text-slate-400 hover:text-green-400 hover:bg-slate-600 rounded transition-colors"
-                                            title="Run Immediately"
+                                            title={t.dev_run_now}
                                         >
                                             <Zap size={14} fill="currentColor" />
                                         </button>
@@ -279,20 +331,31 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                         </div>
                     )}
 
-                    <div className="p-2 bg-slate-800 flex gap-2 shrink-0 relative z-20">
+                    <div className="p-2 bg-slate-800 flex gap-2 shrink-0 relative z-20 items-center">
                         <div className="flex items-center text-slate-400 pl-2">
                             <span className="font-bold text-lg">&gt;</span>
                         </div>
-                        <input 
-                            type="text"
-                            value={inputCmd}
-                            onChange={handleInputChange}
-                            onKeyDown={(e) => e.key === 'Enter' && runConsole()}
-                            placeholder={t.dev_console_placeholder + " (Type '\\' for presets)"}
-                            className="flex-1 bg-transparent border-none outline-none text-white font-mono text-sm placeholder:text-slate-600"
-                            autoFocus
-                        />
-                        <button onClick={() => runConsole()} className="px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded flex items-center justify-center">
+                        <div className="flex-1 relative flex items-center">
+                            <input 
+                                type="text"
+                                value={inputCmd}
+                                onChange={handleInputChange}
+                                onKeyDown={(e) => e.key === 'Enter' && runConsole()}
+                                placeholder={t.dev_console_placeholder}
+                                className="w-full bg-transparent border-none outline-none text-white font-mono text-sm placeholder:text-slate-600 pr-8"
+                                autoFocus
+                            />
+                            {inputCmd && (
+                                <button 
+                                    onClick={clearInput}
+                                    className="absolute right-0 p-1 text-slate-500 hover:text-slate-300 transition-colors"
+                                    title={t.dev_input_clear}
+                                >
+                                    <X size={14} />
+                                </button>
+                            )}
+                        </div>
+                        <button onClick={() => runConsole()} className="px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded flex items-center justify-center self-stretch">
                             <Play size={14} fill="currentColor" />
                         </button>
                     </div>
@@ -390,7 +453,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                 <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 gap-2">
                     <Maximize2 size={32} className="opacity-20" />
                     <p className="text-sm">Tool is currently floating.</p>
-                    <button onClick={toggleFloat} className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">Dock Back</button>
+                    <button onClick={toggleFloat} className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">{t.dev_dock_back}</button>
                 </div>
             )}
         </div>

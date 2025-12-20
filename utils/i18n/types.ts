@@ -212,9 +212,20 @@ export interface Translation {
     dev_clear: string;
     dev_copy_log: string;
     dev_float: string; 
-    dev_warning_title: string; // New
-    dev_warning_desc: string; // New
-    dev_warning_agree: string; // New
+    dev_warning_title: string;
+    dev_warning_desc: string;
+    dev_warning_agree: string;
+    
+    // Developer New
+    dev_quick_commands: string;
+    dev_result_placeholder: string;
+    dev_events_placeholder: string;
+    dev_input_clear: string;
+    dev_output_copy: string;
+    dev_output_download: string;
+    dev_output_clear: string;
+    dev_dock_back: string;
+    dev_run_now: string;
 
     close: string;
   };
@@ -247,6 +258,37 @@ export interface Translation {
     vibrate_pattern: string;
     touch_instruction: string;
     touch_count: string;
+    close: string;
+  };
+
+  // New features
+  aiPlayground: {
+    title: string;
+    desc: string;
+    input_placeholder: string;
+    btn_analyze: string;
+    loading_model: string;
+    model_name: string;
+    task_type: string;
+    result_label: string;
+    confidence: string;
+    close: string;
+    download_progress: string;
+  };
+
+  gamepadTool: {
+    title: string;
+    tab_gamepad: string;
+    tab_bluetooth: string;
+    no_gamepad: string;
+    connect_instruction: string;
+    btn_scan_bt: string;
+    bt_scanning: string;
+    bt_devices: string;
+    bt_no_devices: string;
+    bt_not_supported: string;
+    axis_label: string;
+    button_label: string;
     close: string;
   };
 }

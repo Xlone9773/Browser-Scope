@@ -61,7 +61,7 @@ export const ja: Translation = {
     dev_events: "イベントモニター",
     dev_inspector: "オブジェクトインスペクター",
     dev_console: "JS コンソール",
-    dev_console_placeholder: "JavaScriptコードを入力...",
+    dev_console_placeholder: "JavaScriptコードを入力... ('\\' でプリセット)",
     dev_run: "実行",
     dev_clear: "ログを消去",
     dev_copy_log: "ログをコピー",
@@ -69,6 +69,17 @@ export const ja: Translation = {
     dev_warning_title: "開発者モードの警告",
     dev_warning_desc: "このツールを使用すると、任意のJavaScriptコードを実行し、ブラウザの内部オブジェクトを検査できます。悪意のあるコードの実行は、セキュリティを危険にさらす可能性があります。リスクを理解している場合のみ続行してください。",
     dev_warning_agree: "リスクを理解して続行",
+
+    // New Developer Keys
+    dev_quick_commands: "クイックコマンド",
+    dev_result_placeholder: "結果はここに表示されます...",
+    dev_events_placeholder: "ウィンドウイベントをリッスン中...",
+    dev_input_clear: "入力をクリア",
+    dev_output_copy: "結果をコピー",
+    dev_output_download: "結果をダウンロード",
+    dev_output_clear: "結果を消去",
+    dev_dock_back: "ドッキングに戻す",
+    dev_run_now: "即時実行",
 
     close: "閉じる"
   },

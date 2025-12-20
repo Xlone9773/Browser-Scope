@@ -23,6 +23,7 @@
       body {
         /* font-family set in tailwind config now */
         background-color: #f8fafc; /* Slate 50 */
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
       }
       .dark body {
         background-color: #0f172a; /* Slate 900 */
@@ -56,6 +57,13 @@
           -ms-overflow-style: none;  /* IE and Edge */
           scrollbar-width: none;  /* Firefox */
       }
+
+      /* View Transitions API Customization */
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation-duration: 0.4s;
+        mix-blend-mode: normal;
+      }
     </style>
   <script type="importmap">
 {
@@ -66,7 +74,10 @@
     "react": "https://esm.sh/react@^19.2.3",
     "@fingerprintjs/fingerprintjs": "https://esm.sh/@fingerprintjs/fingerprintjs@4.5.1",
     "fingerprintjs2": "https://esm.sh/fingerprintjs2@2.1.4",
-    "react-dom": "https://esm.sh/react-dom@^19.2.3"
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "@xenova/transformers": "https://esm.sh/@xenova/transformers@2.17.1",
+    "buffer": "https://esm.sh/buffer@6.0.3",
+    "long": "https://esm.sh/long@5.2.3"
   }
 }
 </script>

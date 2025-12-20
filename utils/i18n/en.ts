@@ -4,7 +4,7 @@ import { Translation } from './types';
 export const en: Translation = {
   // ... (existing translations)
   settingsModal: {
-    // ... (existing settingsModal)
+    // ... (existing keys)
     title: "Settings & Tools",
     tab_general: "General",
     tab_network: "Network",
@@ -60,7 +60,7 @@ export const en: Translation = {
     dev_events: "Event Monitor",
     dev_inspector: "Object Inspector",
     dev_console: "JS Playground",
-    dev_console_placeholder: "Enter JavaScript...",
+    dev_console_placeholder: "Enter JavaScript... (Type '\\' for presets)",
     dev_run: "Run",
     dev_clear: "Clear Logs",
     dev_copy_log: "Copy Log",
@@ -68,10 +68,20 @@ export const en: Translation = {
     dev_warning_title: "Advanced Developer Tools",
     dev_warning_desc: "These tools allow execution of raw JavaScript code and inspection of internal browser objects. Malicious code execution can compromise your security. Proceed only if you understand the risks.",
     dev_warning_agree: "I Understand the Risks",
+    
+    dev_quick_commands: "Quick Commands",
+    dev_result_placeholder: "Result will appear here...",
+    dev_events_placeholder: "Listening for window events...",
+    dev_input_clear: "Clear Input",
+    dev_output_copy: "Copy Output",
+    dev_output_download: "Download Output",
+    dev_output_clear: "Clear Output",
+    dev_dock_back: "Dock Back",
+    dev_run_now: "Run Immediately",
 
     close: "Close"
   },
-  // ... (rest of file)
+  // ... (rest of the file)
   loading: "Scanning System Capabilities...",
   title: "BrowserScope",
   subtitle: "Detailed analysis of your browser environment, hardware capabilities, and supported web APIs.",
@@ -484,6 +494,36 @@ export const en: Translation = {
     vibrate_pattern: "SOS Pattern",
     touch_instruction: "Touch the screen with multiple fingers to test support.",
     touch_count: "Active Touch Points",
+    close: "Close"
+  },
+
+  aiPlayground: {
+    title: "Local AI Lab",
+    desc: "Run AI models directly in your browser using WebAssembly. No data leaves your device.",
+    input_placeholder: "Enter text to analyze sentiment...",
+    btn_analyze: "Analyze Sentiment",
+    loading_model: "Loading Model...",
+    model_name: "Model",
+    task_type: "Task",
+    result_label: "Result",
+    confidence: "Confidence",
+    close: "Close",
+    download_progress: "Downloading Model"
+  },
+
+  gamepadTool: {
+    title: "Hardware Playground",
+    tab_gamepad: "Gamepad",
+    tab_bluetooth: "Bluetooth",
+    no_gamepad: "No gamepad detected. Press any button on your controller to connect.",
+    connect_instruction: "Connect a gamepad via USB or Bluetooth and press any button.",
+    btn_scan_bt: "Scan for Devices",
+    bt_scanning: "Scanning...",
+    bt_devices: "Nearby Devices",
+    bt_no_devices: "No devices found",
+    bt_not_supported: "Web Bluetooth is not supported in this browser.",
+    axis_label: "Axes",
+    button_label: "Buttons",
     close: "Close"
   }
 };

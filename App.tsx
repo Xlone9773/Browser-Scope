@@ -46,7 +46,8 @@ import {
   ShieldAlert,
   Eye,
   Key,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { BrowserData } from './types';
@@ -63,6 +64,8 @@ import { FingerprintModal } from './components/FingerprintModal';
 import { SettingsModal } from './components/SettingsModal';
 import { BenchmarkModal } from './components/BenchmarkModal';
 import { HardwareToolsModal } from './components/HardwareToolsModal';
+import { AiPlaygroundModal } from './components/AiPlaygroundModal';
+import { GamepadToolModal } from './components/GamepadToolModal';
 import { RefreshRate } from './components/RefreshRate';
 import { translations, languageNames, Language } from './utils/i18n/index';
 import { applyTheme, getSavedTheme, Theme } from './appearance/theme';
@@ -101,6 +104,8 @@ const App: React.FC = () => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isBenchmarkModalOpen, setIsBenchmarkModalOpen] = useState(false);
   const [isHardwareToolsModalOpen, setIsHardwareToolsModalOpen] = useState(false);
+  const [isAiPlaygroundOpen, setIsAiPlaygroundOpen] = useState(false);
+  const [isGamepadToolOpen, setIsGamepadToolOpen] = useState(false);
   
   // Developer Tools State (Lifted to App level)
   const [isDevToolsFloating, setIsDevToolsFloating] = useState(false);
@@ -343,7 +348,6 @@ const App: React.FC = () => {
             t={t.settingsModal}
             simpleMode={simpleMode}
             toggleSimpleMode={toggleSimpleMode}
-            // Pass down state controls for DevTools
             isDevToolsFloating={isDevToolsFloating}
             setDevToolsFloating={setIsDevToolsFloating}
           />
@@ -351,6 +355,10 @@ const App: React.FC = () => {
       
       {isBenchmarkModalOpen && <BenchmarkModal onClose={() => setIsBenchmarkModalOpen(false)} t={t.benchmarkModal} />}
       {isHardwareToolsModalOpen && <HardwareToolsModal onClose={() => setIsHardwareToolsModalOpen(false)} t={t.hardwareToolsModal} />}
+      
+      {/* New Feature Modals */}
+      {isAiPlaygroundOpen && <AiPlaygroundModal onClose={() => setIsAiPlaygroundOpen(false)} t={t.aiPlayground} />}
+      {isGamepadToolOpen && <GamepadToolModal onClose={() => setIsGamepadToolOpen(false)} t={t.gamepadTool} />}
 
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
@@ -401,7 +409,7 @@ const App: React.FC = () => {
           </div>
         </header>
 
-        {/* Main Grid Content ... (Keeping rest of the content exactly as is) */}
+        {/* Main Grid Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <InfoCard title={t.sections.security} icon={ShieldAlert}>
               <InfoItem label={t.labels.is_bot} value={data.security.isBot ? t.values.detected : t.values.none} subValue={data.security.isBot ? "Navigator.webdriver" : undefined} />
@@ -427,16 +435,17 @@ const App: React.FC = () => {
               </div>
               <InfoItem label={t.labels.window_ai} value={trVal(data.ai.windowAi)} />
               <InfoItem label={t.labels.webnn} value={trVal(data.ai.webnn)} />
-              <InfoItem label={t.labels.webgpu_compute} value={trVal(data.ai.webgpuCompute)} />
-              {!simpleMode && (
-                  <>
-                    <InfoItem label={t.labels.wasm_support} value={trVal(data.ai.wasmSupport)} />
-                    <InfoItem label={t.labels.wasm_simd} value={trVal(data.ai.wasmSimd)} />
-                  </>
-              )}
+              
+              <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50">
+                  <button onClick={() => setIsAiPlaygroundOpen(true)} className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-xs font-bold hover:shadow-lg hover:shadow-indigo-500/20 transition-all active:scale-95">
+                      <Sparkles size={14} />
+                      {t.aiPlayground.title}
+                  </button>
+              </div>
           </InfoCard>
 
           <InfoCard title={t.sections.system} icon={Smartphone}>
+            {/* ... same as before ... */}
             <InfoItem label={t.labels.os} value={data.system.os} />
             <InfoItem label={t.labels.platform} value={data.system.platform} />
             <InfoItem label={t.labels.browser} value={`${data.system.browserName} ${data.system.browserVersion}`} />
@@ -451,6 +460,7 @@ const App: React.FC = () => {
           </InfoCard>
 
           <InfoCard title={t.sections.hardware} icon={Cpu}>
+            {/* ... same as before ... */}
             <InfoItem label={t.labels.cpu} value={data.hardware.cpuCores} />
             {data.hardware.cpuModel && <InfoItem label={t.labels.cpu_model} value={data.hardware.cpuModel} />}
             <InfoItem label={t.labels.memory} value={data.hardware.memory} />
@@ -458,25 +468,17 @@ const App: React.FC = () => {
             <div className="py-2">
                 <InfoItem label={t.labels.battery} value={data.hardware.batteryLevel} />
                 <InfoItem label={t.labels.charging} value={trVal(data.hardware.isCharging)} />
-                {!simpleMode && data.hardware.isCharging === 'Yes' && data.hardware.chargingTime !== '-' && (
-                    <InfoItem label={t.labels.charging_time} value={data.hardware.chargingTime} />
-                )}
-                {!simpleMode && data.hardware.isCharging === 'No' && data.hardware.dischargingTime !== '-' && (
-                    <InfoItem label={t.labels.discharging_time} value={data.hardware.dischargingTime} />
-                )}
             </div>
-            {!simpleMode && (
-                <>
-                    <InfoItem label={t.labels.gpu_vendor} value={data.hardware.gpuVendor} />
-                    <InfoItem label={t.labels.max_texture} value={data.hardware.maxTextureSize} />
-                    <InfoItem label={t.labels.touch} value={data.hardware.touchPoints} />
-                    <div className="flex items-center gap-1.5 py-2.5 border-b border-slate-50 last:border-0 px-2 -mx-2">
-                        <Gamepad2 size={16} className="text-slate-400" />
-                        <span className="text-sm text-slate-500 font-medium">{t.labels.gamepads}</span>
-                        <span className="ml-auto text-sm text-slate-800">{data.hardware.gamepads}</span>
-                    </div>
-                </>
-            )}
+            
+            <div className="flex items-center gap-1.5 py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 px-2 -mx-2 group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded transition-colors" onClick={() => setIsGamepadToolOpen(true)}>
+                <Gamepad2 size={16} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />
+                <span className="text-sm text-slate-500 font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400">{t.labels.gamepads}</span>
+                <span className="ml-auto text-sm text-slate-800 dark:text-slate-200 flex items-center gap-1">
+                    {data.hardware.gamepads}
+                    <ChevronRight size={12} className="text-slate-400" />
+                </span>
+            </div>
+
             <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex gap-2">
                 <button onClick={() => setIsSensorModalOpen(true)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-xs font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
                     <Activity size={14} />
@@ -489,6 +491,8 @@ const App: React.FC = () => {
             </div>
           </InfoCard>
 
+          {/* ... Rest of InfoCards (Display, Fingerprints, Network, Storage, Permissions, Media, UA) - Keeping them as they were ... */}
+          
           <InfoCard title={t.sections.display} icon={Layers}>
             <InfoItem label={t.labels.resolution} value={data.display.resolution} />
             <RefreshRate label={t.labels.refresh_rate} />
@@ -597,6 +601,7 @@ const App: React.FC = () => {
                         )}
                     </div>
                  </div>
+                 {/* ... Midi and Geo ... */}
                  <div className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
                     <div className="flex items-center gap-2">
                         <Music size={14} className="text-slate-400"/>
@@ -644,6 +649,7 @@ const App: React.FC = () => {
 
            {!simpleMode && (
                <InfoCard title={t.labels.media_devices} icon={Video}>
+                   {/* ... Camera and Mic rows ... */}
                    <div className="flex flex-col gap-4 py-1">
                        <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
                            <div className={`p-2.5 rounded-full ${permStatus.camera === 'granted' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'}`}>
@@ -683,6 +689,7 @@ const App: React.FC = () => {
 
            {!simpleMode && (
                <InfoCard title={t.sections.media_sup} icon={Film}>
+                  {/* ... Media Support ... */}
                   <div className="mb-3">
                       <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{t.labels.video_codecs}</span>
                       <div className="grid grid-cols-2 gap-2">
@@ -750,6 +757,7 @@ const App: React.FC = () => {
           )}
         </div>
 
+        {/* ... PWA and Features (keeping existing) ... */}
         <div className="pt-4">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2"><AppWindow className="text-sky-500" size={24} />{t.sections.pwa}</h2>
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">

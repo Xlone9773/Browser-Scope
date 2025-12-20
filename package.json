@@ -13,7 +13,10 @@
     "react-dom": "^19.2.3",
     "react": "^19.2.3",
     "@fingerprintjs/fingerprintjs": "4.5.1",
-    "fingerprintjs2": "2.1.4"
+    "fingerprintjs2": "2.1.4",
+    "@xenova/transformers": "2.17.1",
+    "buffer": "6.0.3",
+    "long": "5.2.3"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

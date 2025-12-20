@@ -61,7 +61,7 @@ export const ru: Translation = {
     dev_events: "Монитор событий",
     dev_inspector: "Инспектор объектов",
     dev_console: "JS Консоль",
-    dev_console_placeholder: "Введите код JavaScript...",
+    dev_console_placeholder: "Введите код JavaScript... ('\\' для пресетов)",
     dev_run: "Выполнить",
     dev_clear: "Очистить",
     dev_copy_log: "Копировать лог",
@@ -69,6 +69,17 @@ export const ru: Translation = {
     dev_warning_title: "Предупреждение разработчика",
     dev_warning_desc: "Этот инструмент позволяет выполнять произвольный JavaScript-код и проверять внутренние объекты браузера. Выполнение вредоносного кода может поставить под угрозу вашу безопасность. Продолжайте только если понимаете риски.",
     dev_warning_agree: "Я понимаю риски",
+
+    // New Developer Keys
+    dev_quick_commands: "Быстрые команды",
+    dev_result_placeholder: "Результат появится здесь...",
+    dev_events_placeholder: "Прослушивание событий окна...",
+    dev_input_clear: "Очистить ввод",
+    dev_output_copy: "Копировать вывод",
+    dev_output_download: "Скачать вывод",
+    dev_output_clear: "Очистить вывод",
+    dev_dock_back: "Вернуть в окно",
+    dev_run_now: "Выполнить сейчас",
 
     close: "Закрыть"
   },

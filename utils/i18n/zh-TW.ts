@@ -62,7 +62,7 @@ export const zhTW: Translation = {
     dev_events: "事件監聽器",
     dev_inspector: "對象透視 (Inspector)",
     dev_console: "JS 控制台",
-    dev_console_placeholder: "輸入 JavaScript 代碼...",
+    dev_console_placeholder: "輸入 JavaScript 代碼... (輸入 '\\' 查看預設)",
     dev_run: "執行",
     dev_clear: "清空日誌",
     dev_copy_log: "複製日誌",
@@ -70,6 +70,17 @@ export const zhTW: Translation = {
     dev_warning_title: "開發者模式風險提示",
     dev_warning_desc: "此工具允許執行任意 JavaScript 代碼並檢查瀏覽器內部對象。執行惡意代碼可能會危及您的安全。請確保您了解相關風險後再繼續。",
     dev_warning_agree: "我了解風險並繼續",
+
+    // New Developer Keys
+    dev_quick_commands: "快速指令",
+    dev_result_placeholder: "執行結果將顯示在這裡...",
+    dev_events_placeholder: "正在監聽視窗事件...",
+    dev_input_clear: "清空輸入",
+    dev_output_copy: "複製結果",
+    dev_output_download: "匯出結果",
+    dev_output_clear: "清空結果",
+    dev_dock_back: "停靠回主視窗",
+    dev_run_now: "立即執行",
 
     close: "關閉"
   },

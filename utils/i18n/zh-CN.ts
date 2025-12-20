@@ -60,7 +60,7 @@ export const zhCN: Translation = {
     dev_events: "事件监听器",
     dev_inspector: "对象透视 (Inspector)",
     dev_console: "JS 控制台",
-    dev_console_placeholder: "输入 JavaScript 代码...",
+    dev_console_placeholder: "输入 JavaScript 代码... (输入 '\\' 查看预设)",
     dev_run: "执行",
     dev_clear: "清空日志",
     dev_copy_log: "复制日志",
@@ -68,6 +68,17 @@ export const zhCN: Translation = {
     dev_warning_title: "开发者模式风险提示",
     dev_warning_desc: "此工具允许执行任意 JavaScript 代码并检查浏览器内部对象。执行恶意代码可能会危及您的安全。请确保您了解相关风险后再继续。",
     dev_warning_agree: "我了解风险并继续",
+
+    // New Developer Keys
+    dev_quick_commands: "快捷指令",
+    dev_result_placeholder: "执行结果将显示在这里...",
+    dev_events_placeholder: "正在监听窗口事件...",
+    dev_input_clear: "清空输入",
+    dev_output_copy: "复制结果",
+    dev_output_download: "导出结果",
+    dev_output_clear: "清空结果",
+    dev_dock_back: "停靠回主窗口",
+    dev_run_now: "立即执行",
 
     close: "关闭"
   },
@@ -269,7 +280,7 @@ export const zhCN: Translation = {
     webxr: "虚拟现实与增强现实能力",
     webauthn: "无密码认证",
     bluetooth: "连接附近的蓝牙设备",
-    usb: "连接 USB 硬件设备",
+    usb: "连接 USB 硬体设备",
     payment: "原生支付处理",
     nfc: "近场通信能力",
     wakeLock: "防止屏幕自动息屏",
@@ -426,7 +437,7 @@ export const zhCN: Translation = {
       canvas_hash: "Canvas 指纹",
       webgl_hash: "WebGL 指纹",
       hardware_concurrency: "硬件并发 (CPU/内存)",
-      user_agent: "用户代理 (User Agent)",
+      user_agent: "User Agent",
       resolution: "屏幕分辨率",
       audio_context: "音频上下文",
       battery_status: "电池状态 API",
@@ -484,6 +495,36 @@ export const zhCN: Translation = {
     vibrate_pattern: "SOS 模式",
     touch_instruction: "请用多个手指触摸屏幕以测试支持情况。",
     touch_count: "当前触控点数",
+    close: "关闭"
+  },
+
+  aiPlayground: {
+    title: "本地 AI 实验室",
+    desc: "使用 WebAssembly 直接在浏览器中运行 AI 模型。所有数据均不会离开您的设备。",
+    input_placeholder: "输入文本以分析情感...",
+    btn_analyze: "分析情感",
+    loading_model: "正在加载模型...",
+    model_name: "模型名称",
+    task_type: "任务类型",
+    result_label: "分析结果",
+    confidence: "置信度",
+    close: "关闭",
+    download_progress: "下载模型中"
+  },
+
+  gamepadTool: {
+    title: "硬件游乐场",
+    tab_gamepad: "游戏手柄",
+    tab_bluetooth: "蓝牙扫描",
+    no_gamepad: "未检测到手柄。请按手柄上的任意键以连接。",
+    connect_instruction: "通过 USB 或蓝牙连接手柄，并按任意键。",
+    btn_scan_bt: "扫描设备",
+    bt_scanning: "扫描中...",
+    bt_devices: "附近的设备",
+    bt_no_devices: "未发现设备",
+    bt_not_supported: "当前浏览器不支持 Web Bluetooth。",
+    axis_label: "摇杆轴",
+    button_label: "按键",
     close: "关闭"
   }
 };
