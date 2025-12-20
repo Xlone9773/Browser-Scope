@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, Activity, Eye, Play, Trash2, Copy, Check, Maximize2, TriangleAlert, Zap, Edit3, Globe, Database, Smartphone, Shield, X, Download } from 'lucide-react';
+import { Terminal, Activity, Eye, Play, Trash2, Copy, Check, Maximize2, TriangleAlert, Zap, Edit3, Globe, Database, Smartphone, Shield, X, Download, Skull, Command, ChevronRight } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
 
 interface DeveloperTabProps {
@@ -10,6 +10,13 @@ interface DeveloperTabProps {
 }
 
 type SubTab = 'events' | 'inspector' | 'console';
+
+interface ConsoleEntry {
+    id: string;
+    type: 'input' | 'output' | 'error';
+    content: string;
+    timestamp: number;
+}
 
 interface PresetCommand {
     label: string;
@@ -33,13 +40,19 @@ const PRESET_COMMANDS: PresetCommand[] = [
 export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggleFloat }) => {
     const [subTab, setSubTab] = useState<SubTab>('events');
     const [logs, setLogs] = useState<string[]>([]);
-    const [consoleOutput, setConsoleOutput] = useState<string | null>(null);
+    
+    // Console History State
+    const [consoleHistory, setConsoleHistory] = useState<ConsoleEntry[]>([]);
+    
     const [inputCmd, setInputCmd] = useState('');
     const [inspectorObj, setInspectorObj] = useState('navigator');
     const [showPresets, setShowPresets] = useState(false);
+    
     const logsEndRef = useRef<HTMLDivElement>(null);
+    const consoleEndRef = useRef<HTMLDivElement>(null);
+    
     const [copied, setCopied] = useState(false);
-    const [outputCopied, setOutputCopied] = useState(false);
+    const [consoleCopied, setConsoleCopied] = useState(false);
     
     // Risk Acceptance State - Initialize directly from localStorage to prevent flash
     const [hasAcceptedRisk, setHasAcceptedRisk] = useState(() => {
@@ -54,6 +67,13 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
             localStorage.setItem('developer_risk_accepted', 'true');
         }, 300); // Match CSS transition duration
     };
+
+    // Auto-scroll console
+    useEffect(() => {
+        if (subTab === 'console') {
+            consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [consoleHistory, subTab]);
 
     // Event Monitor Logic
     useEffect(() => {
@@ -124,6 +144,15 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     };
 
     // Console Logic
+    const addToConsole = (type: ConsoleEntry['type'], content: string) => {
+        setConsoleHistory(prev => [...prev, {
+            id: Math.random().toString(36).substr(2, 9),
+            type,
+            content,
+            timestamp: Date.now()
+        }]);
+    };
+
     const runConsole = (cmdOverride?: string) => {
         const cmdToRun = cmdOverride || inputCmd;
         if (!cmdToRun.trim()) return;
@@ -131,20 +160,26 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
         // Hide presets if running
         setShowPresets(false);
         if (!cmdOverride) {
-            // Keep input if typed manually, maybe clear if desired? 
-            // For now let's keep it to allow editing
+            setInputCmd(''); // Clear input after running manual command
         }
+
+        // Add input to history
+        addToConsole('input', cmdToRun);
 
         try {
             // eslint-disable-next-line no-eval
             const res = eval(cmdToRun); 
             let output = String(res);
-            if (typeof res === 'object') {
-                try { output = JSON.stringify(res, null, 2); } catch(e) {}
+            if (typeof res === 'object' && res !== null) {
+                try { output = JSON.stringify(res, null, 2); } catch(e) {
+                    // Handle circular references or non-serializable objects simply
+                    output = Object.prototype.toString.call(res);
+                }
             }
-            setConsoleOutput(output);
+            if (output === undefined) output = 'undefined';
+            addToConsole('output', output);
         } catch (e: any) {
-            setConsoleOutput(`Error: ${e.message}`);
+            addToConsole('error', e.message || String(e));
         }
     };
 
@@ -161,7 +196,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
 
     const applyPreset = (preset: PresetCommand, runNow: boolean) => {
         if (runNow) {
-            setInputCmd(preset.cmd);
+            // If runNow, we don't change input value, we just run the command
             runConsole(preset.cmd);
         } else {
             setInputCmd(preset.cmd);
@@ -180,20 +215,26 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const copyConsoleOutput = () => {
-        if (!consoleOutput) return;
-        navigator.clipboard.writeText(consoleOutput);
-        setOutputCopied(true);
-        setTimeout(() => setOutputCopied(false), 2000);
+    const copyConsoleHistory = () => {
+        const text = consoleHistory.map(entry => 
+            `[${new Date(entry.timestamp).toLocaleTimeString()}] ${entry.type.toUpperCase()}: ${entry.content}`
+        ).join('\n');
+        
+        navigator.clipboard.writeText(text);
+        setConsoleCopied(true);
+        setTimeout(() => setConsoleCopied(false), 2000);
     };
 
     const downloadConsoleOutput = () => {
-        if (!consoleOutput) return;
-        const blob = new Blob([consoleOutput], { type: 'text/plain' });
+        const text = consoleHistory.map(entry => 
+            `[${new Date(entry.timestamp).toLocaleTimeString()}] ${entry.type.toUpperCase()}: ${entry.content}`
+        ).join('\n');
+        
+        const blob = new Blob([text], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `console-output-${Date.now()}.txt`;
+        a.download = `console-history-${Date.now()}.txt`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -260,40 +301,62 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
             {/* CONSOLE VIEW */}
             {subTab === 'console' && (
                 <div className="flex flex-col h-full relative">
-                    <div className="flex-1 overflow-y-auto p-4 bg-slate-900 border-b border-slate-700 relative group">
-                        {consoleOutput ? (
-                            <>
-                                <pre className={`${consoleOutput.startsWith('Error') ? 'text-red-400' : 'text-yellow-300'} whitespace-pre-wrap break-all pb-4`}>
-                                    {consoleOutput}
-                                </pre>
-                                {/* Output Actions Toolbar */}
-                                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                    <button 
-                                        onClick={copyConsoleOutput} 
-                                        className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
-                                        title={t.dev_output_copy}
-                                    >
-                                        {outputCopied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
-                                    </button>
-                                    <button 
-                                        onClick={downloadConsoleOutput} 
-                                        className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
-                                        title={t.dev_output_download}
-                                    >
-                                        <Download size={12} />
-                                    </button>
-                                    <button 
-                                        onClick={() => setConsoleOutput(null)} 
-                                        className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-red-400 hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
-                                        title={t.dev_output_clear}
-                                    >
-                                        <Trash2 size={12} />
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <div className="text-slate-600 italic">{t.dev_result_placeholder}</div>
+                    {/* Console Output History Area */}
+                    <div className="flex-1 overflow-y-auto p-4 bg-slate-900 custom-scrollbar flex flex-col gap-3">
+                        {consoleHistory.length === 0 && (
+                            <div className="text-slate-600 italic mt-2 opacity-50 select-none">
+                                {t.dev_result_placeholder}
+                            </div>
                         )}
+                        
+                        {consoleHistory.map((entry) => (
+                            <div key={entry.id} className="group animate-in fade-in slide-in-from-left-2 duration-200">
+                                {entry.type === 'input' ? (
+                                    <div className="flex gap-2 items-start text-indigo-400 font-bold">
+                                        <ChevronRight size={14} className="mt-0.5 shrink-0" />
+                                        <span className="whitespace-pre-wrap break-all">{entry.content}</span>
+                                    </div>
+                                ) : entry.type === 'error' ? (
+                                    <div className="pl-5 text-red-400 bg-red-900/10 p-2 rounded border-l-2 border-red-500 whitespace-pre-wrap break-all relative">
+                                        <TriangleAlert size={12} className="absolute left-1 top-2.5 opacity-50" />
+                                        {entry.content}
+                                    </div>
+                                ) : (
+                                    <div className="pl-5 text-slate-300 relative">
+                                        <span className="absolute left-0 top-1 text-slate-600 text-[10px] select-none">&lt;</span>
+                                        <pre className="whitespace-pre-wrap break-all font-mono text-emerald-400/90 selection:bg-emerald-900/50">
+                                            {entry.content}
+                                        </pre>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                        <div ref={consoleEndRef} />
+                    </div>
+
+                    {/* Console Actions Overlay (Top Right) */}
+                    <div className="absolute top-2 right-2 flex gap-1">
+                        <button 
+                            onClick={copyConsoleHistory} 
+                            className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
+                            title={t.dev_output_copy}
+                        >
+                            {consoleCopied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
+                        </button>
+                        <button 
+                            onClick={downloadConsoleOutput} 
+                            className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
+                            title={t.dev_output_download}
+                        >
+                            <Download size={12} />
+                        </button>
+                        <button 
+                            onClick={() => setConsoleHistory([])} 
+                            className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-red-400 hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
+                            title={t.dev_output_clear}
+                        >
+                            <Trash2 size={12} />
+                        </button>
                     </div>
                     
                     {/* Command Presets Popup */}
@@ -331,31 +394,43 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                         </div>
                     )}
 
-                    <div className="p-2 bg-slate-800 flex gap-2 shrink-0 relative z-20 items-center">
+                    {/* Input Bar */}
+                    <div className="p-2 bg-slate-800 flex gap-2 shrink-0 relative z-20 items-center border-t border-slate-700">
                         <div className="flex items-center text-slate-400 pl-2">
                             <span className="font-bold text-lg">&gt;</span>
                         </div>
-                        <div className="flex-1 relative flex items-center">
-                            <input 
-                                type="text"
-                                value={inputCmd}
-                                onChange={handleInputChange}
-                                onKeyDown={(e) => e.key === 'Enter' && runConsole()}
-                                placeholder={t.dev_console_placeholder}
-                                className="w-full bg-transparent border-none outline-none text-white font-mono text-sm placeholder:text-slate-600 pr-8"
-                                autoFocus
-                            />
-                            {inputCmd && (
-                                <button 
-                                    onClick={clearInput}
-                                    className="absolute right-0 p-1 text-slate-500 hover:text-slate-300 transition-colors"
-                                    title={t.dev_input_clear}
-                                >
-                                    <X size={14} />
-                                </button>
-                            )}
+                        <div className="flex-1 relative flex items-center gap-2">
+                            {/* Preset Trigger Button */}
+                            <button 
+                                onClick={() => setShowPresets(!showPresets)}
+                                className={`p-1.5 rounded hover:bg-slate-700 transition-colors ${showPresets ? 'text-indigo-400 bg-indigo-900/30' : 'text-slate-500'}`}
+                                title="Quick Commands"
+                            >
+                                <Command size={14} />
+                            </button>
+                            <div className="flex-1 relative flex items-center">
+                                <input 
+                                    type="text"
+                                    value={inputCmd}
+                                    onChange={handleInputChange}
+                                    onKeyDown={(e) => e.key === 'Enter' && runConsole()}
+                                    placeholder={t.dev_console_placeholder}
+                                    className="w-full bg-transparent border-none outline-none text-white font-mono text-sm placeholder:text-slate-600 pr-8"
+                                    autoFocus
+                                    autoComplete="off"
+                                />
+                                {inputCmd && (
+                                    <button 
+                                        onClick={clearInput}
+                                        className="absolute right-0 p-1 text-slate-500 hover:text-slate-300 transition-colors"
+                                        title={t.dev_input_clear}
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                        <button onClick={() => runConsole()} className="px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded flex items-center justify-center self-stretch">
+                        <button onClick={() => runConsole()} className="px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded flex items-center justify-center self-stretch shadow-sm active:scale-95 transition-transform">
                             <Play size={14} fill="currentColor" />
                         </button>
                     </div>
@@ -364,26 +439,28 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
         </div>
     );
 
-    // Warning Overlay JSX
+    // Warning Overlay JSX - Enhanced for severity
     const warningOverlay = (
         <div 
-            className={`absolute inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-sm transition-all duration-300 ease-out ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+            className={`absolute inset-0 z-50 flex items-center justify-center p-6 bg-red-950/95 backdrop-blur-xl transition-all duration-300 ease-out ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         >
             <div 
-                className={`bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-sm w-full p-6 border border-slate-200 dark:border-slate-700 flex flex-col items-center text-center transition-all duration-300 ease-out transform ${isOverlayFading ? 'scale-95 translate-y-4 opacity-0' : 'scale-100 translate-y-0 opacity-100'}`}
+                className={`bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-md w-full p-8 border-2 border-red-600 flex flex-col items-center text-center transition-all duration-300 ease-out transform ${isOverlayFading ? 'scale-95 translate-y-4 opacity-0' : 'scale-100 translate-y-0 opacity-100'}`}
             >
-                <div className="w-14 h-14 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-4 text-amber-600 dark:text-amber-500">
-                    <TriangleAlert size={28} strokeWidth={2.5} />
+                <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-6 text-red-600 dark:text-red-500 animate-bounce">
+                    <Skull size={40} strokeWidth={2} />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                <h3 className="text-2xl font-black text-red-600 dark:text-red-500 mb-4 uppercase tracking-tight">
                     {t.dev_warning_title}
                 </h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
-                    {t.dev_warning_desc}
-                </p>
+                <div className="bg-red-50 dark:bg-red-900/10 p-4 rounded-lg border border-red-100 dark:border-red-900/30 mb-6">
+                    <p className="text-sm font-medium text-slate-700 dark:text-red-200 leading-relaxed whitespace-pre-wrap">
+                        {t.dev_warning_desc}
+                    </p>
+                </div>
                 <button 
                     onClick={handleAcceptRisk}
-                    className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-all active:scale-95 text-sm"
+                    className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg shadow-red-500/20 transition-all active:scale-95 text-base tracking-wide"
                 >
                     {t.dev_warning_agree}
                 </button>
