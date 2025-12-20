@@ -4,6 +4,15 @@ import { zhCN } from './zh-CN';
 
 export const zhTW: Translation = {
   ...zhCN,
+  loading: "正在掃描系統能力...",
+  loading_steps: [
+    "正在初始化環境...",
+    "檢測硬體與 GPU...",
+    "分析網路狀態...",
+    "檢查安全與隱私...",
+    "評估 AI 效能...",
+    "即將完成報告..."
+  ],
   
   settingsModal: {
     ...zhCN.settingsModal,
@@ -86,7 +95,6 @@ export const zhTW: Translation = {
   },
   
   // ... (rest of the file remains same, re-exporting to ensure valid TS)
-  loading: "正在掃描系統能力...",
   title: "BrowserScope",
   subtitle: "全面檢測您的瀏覽器環境、硬體能力、網路狀態及前沿 Web API 支援情況。",
   refresh: "重新檢測",

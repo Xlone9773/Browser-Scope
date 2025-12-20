@@ -3,11 +3,20 @@ import { Translation } from './types';
 
 export const en: Translation = {
   loading: "Scanning system capabilities...",
+  loading_steps: [
+    "Initializing environment...",
+    "Detecting hardware & GPU...",
+    "Analyzing network status...",
+    "Checking security & privacy...",
+    "Benchmarking AI readiness...",
+    "Finalizing report..."
+  ],
   title: "BrowserScope",
   subtitle: "A comprehensive analysis of your browser environment, hardware capabilities, and supported Web APIs.",
   refresh: "Refresh Analysis",
   footer: "All data is detected locally within your browser. No personal data is uploaded.",
-
+  
+  // ... rest of file remains the same ...
   sections: {
     system: "System & Software",
     hardware: "Hardware & Graphics",
@@ -24,8 +33,6 @@ export const en: Translation = {
     security: "Privacy & Security",
     ai_compute: "AI & Compute"
   },
-
-  // ... (rest of file)
 
   settingsModal: {
     title: "Settings & Tools",
@@ -45,7 +52,6 @@ export const en: Translation = {
     
     public_ip: "Public IP Address",
     fetch_ip: "Detect IP",
-    // ... (rest of settings keys)
     ipv6_title: "IPv6 Connectivity",
     check_ipv6: "Check IPv6",
     ipv6_success: "IPv6 Supported",
@@ -143,7 +149,6 @@ export const en: Translation = {
     close: "Close"
   },
 
-  // ... (rest of file including cameraTool, etc. - keep existing)
   labels: {
     os: "Operating System",
     platform: "Platform",

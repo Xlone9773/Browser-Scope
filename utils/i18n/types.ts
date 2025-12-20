@@ -3,6 +3,7 @@ export type Language = 'en' | 'zh-CN' | 'zh-TW' | 'zh-HK' | 'ja' | 'ru';
 
 export interface Translation {
   loading: string;
+  loading_steps: string[]; // New
   title: string;
   subtitle: string;
   refresh: string;
@@ -13,8 +14,8 @@ export interface Translation {
     hardware: string;
     display: string;
     network: string;
-    storage: string; // Changed from storage_loc
-    location: string; // New section
+    storage: string;
+    location: string;
     media_sup: string;
     fingerprints: string;
     features: string;
@@ -74,7 +75,7 @@ export interface Translation {
     timezone: string;
     locale: string;
     calendar: string;
-    local_time: string; // New
+    local_time: string;
     storage_quota: string;
     storage_usage: string;
     storage_persisted: string;
@@ -145,7 +146,7 @@ export interface Translation {
     view_extensions: string;
     copy: string;
     copied: string;
-    open_map: string; // New
+    open_map: string;
   };
 
   status: {
@@ -203,8 +204,8 @@ export interface Translation {
     simple_mode_desc: string;
     scrollbar_title: string;
     scrollbar_desc: string;
-    time_format_title: string; // New
-    time_format_desc: string; // New
+    time_format_title: string;
+    time_format_desc: string;
     
     public_ip: string;
     fetch_ip: string;
@@ -231,7 +232,6 @@ export interface Translation {
     color_white: string;
     color_black: string;
     
-    // New Display Keys
     gamut_test_title: string;
     gamut_test_desc: string;
     hdr_test_title: string;
@@ -280,7 +280,6 @@ export interface Translation {
     dev_dock_back: string;
     dev_run_now: string;
 
-    // Advanced Network Keys
     network_adv_title: string;
     network_webrtc_title: string;
     network_webrtc_desc: string;

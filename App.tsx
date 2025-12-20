@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from 'react';
-import { RefreshCw } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { RefreshCw, Monitor, Zap } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { BrowserData } from './types';
 import { CameraModal } from './components/CameraModal';
@@ -52,7 +52,12 @@ interface GeoPosition {
 
 const App: React.FC = () => {
   const [data, setData] = useState<BrowserData | null>(null);
-  const [loading, setLoading] = useState(true);
+  
+  // Loading State
+  const [showLoader, setShowLoader] = useState(true);
+  const [fadeLoader, setFadeLoader] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
+  
   const [lang, setLang] = useState<Language>('zh-CN');
   const [theme, setTheme] = useState<Theme>('system');
   const [simpleMode, setSimpleMode] = useState<boolean>(() => {
@@ -136,12 +141,42 @@ const App: React.FC = () => {
   };
 
   const fetchData = async () => {
-    setLoading(true);
+    setShowLoader(true);
+    setFadeLoader(false);
+    
+    // Start simulating steps immediately
+    let stepIndex = 0;
+    const steps = t.loading_steps || [t.loading];
+    setLoadingText(steps[0]);
+
+    const interval = setInterval(() => {
+        stepIndex++;
+        if (stepIndex < steps.length) {
+            setLoadingText(steps[stepIndex]);
+        }
+    }, 250); // Fast cycle to look dynamic
+
+    // Delay actual fetch slightly to allow UI to settle
     setTimeout(async () => {
         const info = await getAllData();
+        clearInterval(interval);
+        
+        // Show final step briefly
+        if (steps.length > 0) {
+            setLoadingText(steps[steps.length - 1]);
+        }
+        
         setData(info);
-        setLoading(false);
-    }, 500);
+        
+        // Start fade out
+        setTimeout(() => {
+            setFadeLoader(true);
+            // Remove loader after fade animation
+            setTimeout(() => {
+                setShowLoader(false);
+            }, 500);
+        }, 400);
+    }, 100);
   };
 
   useEffect(() => {
@@ -248,21 +283,38 @@ const App: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  if (loading || !data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-        <div className="flex flex-col items-center gap-4">
-            <div className="animate-spin text-slate-400">
-                <RefreshCw size={32} />
-            </div>
-            <p className="text-slate-500 font-medium animate-pulse">{t.loading}</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 py-10 px-4 sm:px-6 lg:px-8 transition-colors duration-300 scrollbar-hide">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300 scrollbar-hide relative">
+      
+      {/* Loading Overlay */}
+      {showLoader && (
+          <div 
+            className={`fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 ease-out backdrop-blur-xl ${
+                fadeLoader ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
+            style={{
+                background: 'radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)',
+                backgroundColor: 'rgba(var(--bg-slate-50), 0.8)' // Fallback handled via classes usually, here inline for dynamic blend
+            }}
+          >
+              <div className="bg-white/80 dark:bg-slate-800/80 p-8 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex flex-col items-center gap-6 max-w-sm w-full mx-4 backdrop-blur-md">
+                  <div className="relative">
+                      <div className="w-16 h-16 rounded-full border-4 border-slate-200 dark:border-slate-700"></div>
+                      <div className="absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                          <Monitor className="text-indigo-500" size={24} />
+                      </div>
+                  </div>
+                  <div className="text-center">
+                      <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">BrowserScope</h3>
+                      <p className="text-sm font-medium text-slate-500 dark:text-slate-400 animate-pulse font-mono">
+                          {loadingText}
+                      </p>
+                  </div>
+              </div>
+          </div>
+      )}
+
       {/* Global Floating Dev Tools */}
       {isDevToolsFloating && (
           <FloatingWindow 
@@ -282,12 +334,12 @@ const App: React.FC = () => {
       {/* Modals */}
       {isCameraModalOpen && <CameraModal onClose={() => setIsCameraModalOpen(false)} t={t.cameraTool} />}
       {isAudioModalOpen && <AudioRecorderModal onClose={() => setIsAudioModalOpen(false)} t={t.audioTool} />}
-      {isWebGLExtensionsOpen && <WebGLExtensionsModal extensions={data.fingerprints.webglExtensions || []} onClose={() => setIsWebGLExtensionsOpen(false)} t={t.webglTool} />}
-      {isCanvasModalOpen && <CanvasModal imageSrc={data.fingerprints.canvasImage} onClose={() => setIsCanvasModalOpen(false)} t={t.imageDetails} />}
-      {isBase64ModalOpen && <Base64Modal data={data.fingerprints.canvasImage} onClose={() => setIsBase64ModalOpen(false)} t={t.base64Tool} />}
+      {isWebGLExtensionsOpen && <WebGLExtensionsModal extensions={data?.fingerprints.webglExtensions || []} onClose={() => setIsWebGLExtensionsOpen(false)} t={t.webglTool} />}
+      {isCanvasModalOpen && <CanvasModal imageSrc={data?.fingerprints.canvasImage || ''} onClose={() => setIsCanvasModalOpen(false)} t={t.imageDetails} />}
+      {isBase64ModalOpen && <Base64Modal data={data?.fingerprints.canvasImage || ''} onClose={() => setIsBase64ModalOpen(false)} t={t.base64Tool} />}
       {isAboutModalOpen && <AboutModal onClose={() => setIsAboutModalOpen(false)} t={t.aboutModal} />}
       {isSensorModalOpen && <SensorModal onClose={() => setIsSensorModalOpen(false)} t={t.sensorModal} />}
-      {isScoreModalOpen && <ScoreModal scoreData={data.fingerprints.score} onClose={() => setIsScoreModalOpen(false)} t={t.scoreModal} />}
+      {isScoreModalOpen && data && <ScoreModal scoreData={data.fingerprints.score} onClose={() => setIsScoreModalOpen(false)} t={t.scoreModal} />}
       {isFingerprintModalOpen && <FingerprintModal onClose={() => setIsFingerprintModalOpen(false)} t={t.fingerprintModal} />}
       
       {isSettingsModalOpen && (
@@ -312,7 +364,7 @@ const App: React.FC = () => {
       {isAiPlaygroundOpen && <AiPlaygroundModal onClose={() => setIsAiPlaygroundOpen(false)} t={t.aiPlayground} />}
       {isGamepadToolOpen && <GamepadToolModal onClose={() => setIsGamepadToolOpen(false)} t={t.gamepadTool} />}
 
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">
         
         <Header 
           t={t}
@@ -327,99 +379,107 @@ const App: React.FC = () => {
           onOpenBenchmark={() => setIsBenchmarkModalOpen(true)}
         />
 
-        {/* Main Grid Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          <SecurityCard 
-            data={data.security} 
-            webrtcIp={data.network.webrtcIp} 
-            t={t} 
-            simpleMode={simpleMode} 
-          />
-
-          <AiComputeCard 
-            data={data.ai} 
-            t={t} 
-            onOpenPlayground={() => setIsAiPlaygroundOpen(true)} 
-          />
-
-          <SystemCard 
-            data={data.system} 
-            t={t} 
-            simpleMode={simpleMode} 
-          />
-
-          <HardwareCard 
-            data={data.hardware} 
-            t={t} 
-            onOpenGamepad={() => setIsGamepadToolOpen(true)}
-            onOpenSensors={() => setIsSensorModalOpen(true)}
-            onOpenTools={() => setIsHardwareToolsModalOpen(true)}
-          />
-
-          <DisplayCard 
-            data={data.display} 
-            screenExtended={data.hardware.screenExtended} 
-            t={t} 
-            simpleMode={simpleMode} 
-          />
-
-          <FingerprintCard 
-            data={data.fingerprints}
-            audioSampleRate={data.hardware.audioSampleRate}
-            t={t}
-            simpleMode={simpleMode}
-            onOpenScore={() => setIsScoreModalOpen(true)}
-            onOpenCanvas={() => setIsCanvasModalOpen(true)}
-            onOpenBase64={() => setIsBase64ModalOpen(true)}
-            onOpenWebgl={() => setIsWebGLExtensionsOpen(true)}
-            onOpenFingerprintModal={() => setIsFingerprintModalOpen(true)}
-          />
-
-          <NetworkCard 
-            data={data.network} 
-            t={t} 
-            simpleMode={simpleMode} 
-          />
-          
-          {!simpleMode && (
-              <>
-                <LocationCard 
-                    data={data.localization}
-                    geoData={geoData}
-                    permStatus={permStatus.geolocation}
-                    t={t}
-                    onRequestPermission={() => requestPermission('geolocation')}
-                    timeFormat={timeFormat}
-                />
-
-                <StorageCard data={data.storage} t={t} />
+        {/* Main Grid Content - Only render if data exists */}
+        {data && (
+            <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-700 slide-in-from-bottom-4">
                 
-                <PermissionsCard 
-                    permStatus={permStatus} 
-                    geoData={geoData} 
+                <SecurityCard 
+                    data={data.security} 
+                    webrtcIp={data.network.webrtcIp} 
                     t={t} 
-                    onRequestPermission={requestPermission} 
+                    simpleMode={simpleMode} 
                 />
 
-                <MediaDevicesCard 
-                    permStatus={permStatus}
+                <AiComputeCard 
+                    data={data.ai} 
+                    t={t} 
+                    onOpenPlayground={() => setIsAiPlaygroundOpen(true)} 
+                />
+
+                <SystemCard 
+                    data={data.system} 
+                    t={t} 
+                    simpleMode={simpleMode} 
+                />
+
+                <HardwareCard 
+                    data={data.hardware} 
+                    t={t} 
+                    onOpenGamepad={() => setIsGamepadToolOpen(true)}
+                    onOpenSensors={() => setIsSensorModalOpen(true)}
+                    onOpenTools={() => setIsHardwareToolsModalOpen(true)}
+                />
+
+                <DisplayCard 
+                    data={data.display} 
+                    screenExtended={data.hardware.screenExtended} 
+                    t={t} 
+                    simpleMode={simpleMode} 
+                />
+
+                <FingerprintCard 
+                    data={data.fingerprints}
+                    audioSampleRate={data.hardware.audioSampleRate}
                     t={t}
-                    onRequestPermission={requestPermission}
-                    onOpenCamera={() => setIsCameraModalOpen(true)}
-                    onOpenMic={() => setIsAudioModalOpen(true)}
+                    simpleMode={simpleMode}
+                    onOpenScore={() => setIsScoreModalOpen(true)}
+                    onOpenCanvas={() => setIsCanvasModalOpen(true)}
+                    onOpenBase64={() => setIsBase64ModalOpen(true)}
+                    onOpenWebgl={() => setIsWebGLExtensionsOpen(true)}
+                    onOpenFingerprintModal={() => setIsFingerprintModalOpen(true)}
                 />
 
-                <MediaCapabilitiesCard data={data.media} t={t} />
+                <NetworkCard 
+                    data={data.network} 
+                    t={t} 
+                    simpleMode={simpleMode} 
+                />
+                
+                {!simpleMode && (
+                    <>
+                        <LocationCard 
+                            data={data.localization}
+                            geoData={geoData}
+                            permStatus={permStatus.geolocation}
+                            t={t}
+                            onRequestPermission={() => requestPermission('geolocation')}
+                            timeFormat={timeFormat}
+                        />
 
-                <UserAgentCard userAgent={data.system.userAgent} t={t} />
-              </>
-          )}
-        </div>
+                        <StorageCard data={data.storage} t={t} />
+                        
+                        <PermissionsCard 
+                            permStatus={permStatus} 
+                            geoData={geoData} 
+                            t={t} 
+                            onRequestPermission={requestPermission} 
+                        />
 
-        <PwaSection isPwaInstalled={data.system.isPwaInstalled} features={data.pwaFeatures} t={t} />
-        
-        <FeaturesSection features={data.features} t={t} />
+                        <MediaDevicesCard 
+                            permStatus={permStatus}
+                            t={t}
+                            onRequestPermission={requestPermission}
+                            onOpenCamera={() => setIsCameraModalOpen(true)}
+                            onOpenMic={() => setIsAudioModalOpen(true)}
+                        />
+
+                        <MediaCapabilitiesCard data={data.media} t={t} />
+
+                        <UserAgentCard userAgent={data.system.userAgent} t={t} />
+                    </>
+                )}
+                </div>
+
+                <div className="animate-in fade-in duration-700 slide-in-from-bottom-8 delay-100">
+                    <PwaSection isPwaInstalled={data.system.isPwaInstalled} features={data.pwaFeatures} t={t} />
+                </div>
+                
+                <div className="animate-in fade-in duration-700 slide-in-from-bottom-8 delay-200">
+                    <FeaturesSection features={data.features} t={t} />
+                </div>
+            </>
+        )}
 
         <Footer text={t.footer} />
       </div>

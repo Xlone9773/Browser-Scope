@@ -4,6 +4,15 @@ import { en } from './en';
 
 export const ja: Translation = {
   ...en, // Fallback to EN for any missing keys
+  loading: "システム機能をスキャン中...",
+  loading_steps: [
+    "環境を初期化中...",
+    "ハードウェアとGPUを検出中...",
+    "ネットワーク状態を分析中...",
+    "セキュリティとプライバシーを確認中...",
+    "AI準備状況をベンチマーク中...",
+    "レポートを作成中..."
+  ],
 
   settingsModal: {
     title: "設定とツール",
@@ -122,29 +131,8 @@ export const ja: Translation = {
     close: "閉じる"
   },
 
-  loading: "システム機能をスキャン中...",
-  title: "BrowserScope",
-  subtitle: "ブラウザ環境、ハードウェア機能、およびサポートされているWeb APIの詳細な分析。",
-  refresh: "分析を更新",
-  footer: "データはブラウザ内でローカルに検出されます。個人データは保存されません。",
-
-  sections: {
-    system: "システムとソフトウェア",
-    hardware: "ハードウェアとグラフィックス",
-    display: "ディスプレイと画面",
-    network: "ネットワークと接続",
-    storage: "ストレージ",
-    location: "位置情報と時間",
-    media_sup: "メディア機能",
-    user_agent: "ユーザーエージェント",
-    features: "Web API機能",
-    permissions: "権限",
-    pwa: "PWA機能",
-    fingerprints: "フィンガープリントと追跡",
-    security: "プライバシーとセキュリティ",
-    ai_compute: "AIと計算能力"
-  },
-
+  // ... (rest of file)
+  
   labels: {
     ...en.labels,
     os: "オペレーティングシステム",

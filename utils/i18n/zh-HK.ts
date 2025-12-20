@@ -4,6 +4,15 @@ import { zhTW } from './zh-TW';
 
 export const zhHK: Translation = {
   ...zhTW, // Fallback to TW
+  loading: "正在掃描系統能力...",
+  loading_steps: [
+    "正在初始化環境...",
+    "檢測硬件與 GPU...",
+    "分析網絡狀態...",
+    "檢查安全與私隱...",
+    "評估 AI 效能...",
+    "即將完成報告..."
+  ],
   
   sections: {
     ...zhTW.sections,

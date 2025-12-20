@@ -3,12 +3,20 @@ import { Translation } from './types';
 
 export const zhCN: Translation = {
   loading: "正在扫描系统能力...",
+  loading_steps: [
+    "正在初始化环境...",
+    "检测硬件与 GPU...",
+    "分析网络状态...",
+    "检查安全与隐私...",
+    "评估 AI 性能...",
+    "即将完成报告..."
+  ],
   title: "BrowserScope",
   subtitle: "全面检测您的浏览器环境、硬件能力、网络状态及前沿 Web API 支持情况。",
   refresh: "重新检测",
   footer: "所有数据均在本地浏览器中检测，不会上传任何个人隐私信息。",
 
-  // ... (rest of file)
+  // ... rest of file remains the same ...
   settingsModal: {
     title: "设置与工具",
     tab_general: "常规",
@@ -50,7 +58,6 @@ export const zhCN: Translation = {
     color_white: "白",
     color_black: "黑",
     
-    // New Display & HDR Keys
     gamut_test_title: "广色域可视化 (P3)",
     gamut_test_desc: "如果您的显示器支持广色域 (P3)，您将在色块中心隐约看到形状或文字。",
     hdr_test_title: "色深与断层测试",
@@ -99,7 +106,6 @@ export const zhCN: Translation = {
     dev_dock_back: "停靠回主窗口",
     dev_run_now: "立即执行",
 
-    // Advanced Network Keys
     network_adv_title: "高级网络诊断",
     network_webrtc_title: "WebRTC 泄露检测",
     network_webrtc_desc: "分析浏览器生成的 ICE 候选者，检测本地 IP 泄露和 STUN/TURN 连通性。",
