@@ -140,7 +140,8 @@ export const zhTW: Translation = {
     hardware: "硬體與圖形",
     display: "顯示與螢幕",
     network: "網路與連線",
-    storage_loc: "儲存與本地化",
+    storage: "儲存空間",
+    location: "位置與時間",
     media_sup: "媒體與編碼能力",
     fingerprints: "指紋與追蹤",
     features: "Web API 能力檢測",
@@ -179,6 +180,7 @@ export const zhTW: Translation = {
     color_depth: "色彩深度",
     orientation: "螢幕方向",
     orientation_angle: "旋轉角度", 
+    screen_extended: "延伸螢幕",
     dark_mode: "深色模式",
     color_gamut: "色域範圍",
     hdr: "HDR 支援",
@@ -233,7 +235,10 @@ export const zhTW: Translation = {
     no: "否",
     unknown: "未知",
     installed: "已安裝",
-    not_installed: "未安裝"
+    not_installed: "未安裝",
+    detected: "已檢測到",
+    none: "無",
+    hidden: "隱藏/受保護"
   },
 
   actions: {
@@ -243,11 +248,14 @@ export const zhTW: Translation = {
     about: "關於",
     export_json: "匯出 JSON",
     open_sensors: "感測器",
+    open_tools: "硬體工具",
+    run_benchmark: "效能跑分",
     view_details: "詳情",
     view_base64: "查看 Base64",
     view_extensions: "擴充列表",
     copy: "複製",
-    copied: "已複製!"
+    copied: "已複製!",
+    open_map: "開啟地圖"
   },
 
   audioTool: {

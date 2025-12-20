@@ -2,9 +2,14 @@
 import { Translation } from './types';
 
 export const zhCN: Translation = {
-  // ... (existing translations)
+  loading: "正在扫描系统能力...",
+  title: "BrowserScope",
+  subtitle: "全面检测您的浏览器环境、硬件能力、网络状态及前沿 Web API 支持情况。",
+  refresh: "重新检测",
+  footer: "所有数据均在本地浏览器中检测，不会上传任何个人隐私信息。",
+
+  // ... (rest of file)
   settingsModal: {
-    // ... (existing settingsModal)
     title: "设置与工具",
     tab_general: "常规",
     tab_network: "网络分析",
@@ -12,12 +17,17 @@ export const zhCN: Translation = {
     tab_storage: "存储管理",
     tab_resources: "外部资源",
     tab_developer: "开发者",
+    
     simple_mode_title: "简洁模式",
     simple_mode_desc: "隐藏不必要的技术细节，仅显示核心系统信息。",
+    scrollbar_title: "隐藏滚动条",
+    scrollbar_desc: "隐藏浏览器滚动条以最大化屏幕显示空间。",
+    time_format_title: "24 小时制",
+    time_format_desc: "切换 12 小时 (AM/PM) 与 24 小时时间格式。",
     
     public_ip: "公网 IP 地址",
     fetch_ip: "检测 IP",
-    ipv6_title: "IPv6 连通性",
+    ipv6_title: "IPv6 连接能力",
     check_ipv6: "检测 IPv6",
     ipv6_success: "支持 IPv6",
     ipv6_fail: "未检测到 / 仅 IPv4",
@@ -28,7 +38,7 @@ export const zhCN: Translation = {
     latency: "延迟",
     check_all: "检查所有",
     url_placeholder: "输入 URL (如 https://google.com)",
-    test_conn: "测试连通性",
+    test_conn: "测试连接",
     test_result: "测试结果",
 
     display_test: "屏幕坏点/缺陷测试",
@@ -39,14 +49,24 @@ export const zhCN: Translation = {
     color_blue: "蓝",
     color_white: "白",
     color_black: "黑",
+    
+    // New Display & HDR Keys
     gamut_test_title: "广色域可视化 (P3)",
     gamut_test_desc: "如果您的显示器支持广色域 (P3)，您将在色块中心隐约看到形状或文字。",
     hdr_test_title: "色深与断层测试",
     hdr_test_desc: "检查渐变是否平滑。如果出现明显条纹 (Banding)，说明可能是 8-bit 色深或受到压缩。",
     unsupported_p3: "当前浏览器不支持 color(display-p3) 语法",
+    hdr_status_title: "HDR 显示能力",
+    hdr_support: "HDR 支持状态",
+    hdr_dynamic_range: "动态范围 (UI)",
+    hdr_video_dynamic_range: "视频动态范围",
+    hdr_brightness_test: "峰值亮度 (EDR) 测试",
+    hdr_brightness_desc: "如果您的显示器支持扩展动态范围 (HDR)，中间的方块应比周围的“标准白色”明显更亮。",
+    hdr_sdr_white: "SDR 标准白",
+    hdr_edr_white: "HDR 高亮白",
 
     storage_title: "本地数据",
-    clear_data: "清除站点数据",
+    clear_data: "清除网站数据",
     clear_btn: "清除存储",
     sw_title: "Service Workers",
     sw_desc: "注销活动的 Service Workers 以重置 PWA 状态。",
@@ -69,8 +89,7 @@ export const zhCN: Translation = {
     dev_warning_desc: "此工具允许执行任意 JavaScript 代码并检查浏览器内部对象。执行恶意代码可能会危及您的安全。请确保您了解相关风险后再继续。",
     dev_warning_agree: "我了解风险并继续",
 
-    // New Developer Keys
-    dev_quick_commands: "快捷指令",
+    dev_quick_commands: "快速指令",
     dev_result_placeholder: "执行结果将显示在这里...",
     dev_events_placeholder: "正在监听窗口事件...",
     dev_input_clear: "清空输入",
@@ -80,42 +99,61 @@ export const zhCN: Translation = {
     dev_dock_back: "停靠回主窗口",
     dev_run_now: "立即执行",
 
+    // Advanced Network Keys
+    network_adv_title: "高级网络诊断",
+    network_webrtc_title: "WebRTC 泄露检测",
+    network_webrtc_desc: "分析浏览器生成的 ICE 候选者，检测本地 IP 泄露和 STUN/TURN 连通性。",
+    network_webrtc_btn: "开始 WebRTC 分析",
+    network_dns_title: "DNS 泄露测试",
+    network_dns_desc: "尝试识别您连接所使用的 DNS 解析服务器，以检查是否存在隐私泄露。",
+    network_dns_btn: "检测 DNS 解析器",
+    
+    col_type: "类型",
+    col_ip: "IP 地址",
+    col_protocol: "协议",
+    col_port: "端口",
+    
+    lbl_resolution: "解析结果",
+    lbl_dns_ip: "解析器 IP",
+    lbl_dns_geo: "地理位置",
+    
+    proto_title: "传输协议支持",
+    proto_desc: "检测浏览器对现代传输协议 (HTTP/2, HTTP/3 QUIC) 的支持情况。",
+    proto_check_btn: "检测协议",
+    proto_http2: "HTTP/2",
+    proto_http3: "HTTP/3 (QUIC)",
+
     close: "关闭"
   },
-  // ... (rest of file)
-  loading: "正在扫描系统能力...",
-  title: "BrowserScope",
-  subtitle: "全面检测您的浏览器环境、硬件能力、网络状态及前沿 Web API 支持情况。",
-  refresh: "刷新检测",
-  footer: "所有数据均在本地浏览器中检测，不会上传任何个人隐私信息。",
-  
+
   sections: {
     system: "系统与软件",
     hardware: "硬件与图形",
     display: "显示与屏幕",
     network: "网络与连接",
-    storage_loc: "存储与本地化",
-    media_sup: "媒体与 DRM",
-    user_agent: "用户代理 (User Agent)",
+    storage: "存储空间",
+    location: "位置与时间",
+    media_sup: "媒体与编码能力",
     fingerprints: "指纹与追踪",
     features: "Web API 能力检测",
     permissions: "权限管理",
     pwa: "PWA 能力",
+    user_agent: "用户代理 (User Agent)",
     security: "隐私与安全",
     ai_compute: "AI 与计算能力"
   },
-  
+
   labels: {
     os: "操作系统",
     platform: "系统平台",
     browser: "浏览器内核",
     language: "系统语言",
-    pref_langs: "首选语言",
+    pref_langs: "偏好语言",
     cookies: "Cookies 启用",
     dnt: "Do Not Track",
     
     cpu: "CPU 逻辑核心",
-    cpu_model: "CPU 型号 (估算)", 
+    cpu_model: "CPU 型号 (估算)",
     memory: "设备内存 (估算)",
     gpu_vendor: "GPU 供应商",
     gpu_renderer: "GPU 渲染器",
@@ -124,11 +162,9 @@ export const zhCN: Translation = {
     audio_latency: "音频延迟",
     battery: "电池电量",
     charging: "充电状态",
-    charging_time: "充电时间",
-    discharging_time: "放电时间",
+    charging_time: "充电时间", 
+    discharging_time: "放电时间", 
     touch: "最大触控点数",
-    screen_extended: "多显示器扩展",
-    gamepads: "连接的手柄",
     
     resolution: "屏幕分辨率",
     refresh_rate: "刷新率",
@@ -137,7 +173,8 @@ export const zhCN: Translation = {
     pixel_ratio: "像素密度 (DPR)",
     color_depth: "色彩深度",
     orientation: "屏幕方向",
-    orientation_angle: "旋转角度",
+    orientation_angle: "旋转角度", 
+    screen_extended: "扩展屏幕",
     dark_mode: "深色模式",
     color_gamut: "色域范围",
     hdr: "HDR 支持",
@@ -145,28 +182,39 @@ export const zhCN: Translation = {
     
     online: "在线状态",
     conn_type: "连接类型",
-    net_type: "网络制式",
-    downlink: "下行速度",
-    downlink_max: "最大下行",
+    net_type: "网络制式", 
+    downlink: "下载速度",
+    downlink_max: "最大下载", 
     rtt: "延迟 (RTT)",
     save_data: "流量节省模式",
-    webrtc_ip: "WebRTC 本地 IP",
+    webrtc_ip: "WebRTC 暴露 IP",
     
     timezone: "当前时区",
     locale: "区域设置",
     calendar: "日历格式",
+    local_time: "本地时间",
     storage_quota: "可用存储配额",
     storage_usage: "已用存储",
     storage_persisted: "持久化存储",
     
     video_codecs: "视频编码支持",
     audio_codecs: "音频编码支持",
-    image_formats: "图片格式支持",
-    drm_support: "DRM 支持",
+    image_formats: "图片格式支持", 
     speech_voices: "TTS 语音包",
-    audio_channels: "声道数",
+    audio_channels: "声道数", 
+    drm_support: "DRM 系统支持",
 
-    camera_permission: "摄像头权限",
+    is_bot: "自动化控制 (Bot)",
+    ad_block: "广告拦截器",
+    secure_context: "安全上下文 (HTTPS)",
+    gpc_enabled: "全球隐私控制 (GPC)",
+    pdf_viewer: "内置 PDF 查看器",
+
+    ai_readiness: "AI 就绪指数",
+    window_ai: "Chrome 内置 AI (window.ai)",
+    webnn: "Web 神经网络 API (WebNN)",
+
+    camera_permission: "相机权限",
 
     fp_score: "指纹评分",
     canvas_hash: "Canvas 哈希",
@@ -175,30 +223,17 @@ export const zhCN: Translation = {
     perm_notif: "通知权限",
     perm_midi: "MIDI 访问",
     perm_geo: "地理位置",
-    geo_lat: "緯度",
+    geo_lat: "纬度",
     geo_long: "经度",
-    geo_acc: "精度",
+    geo_acc: "精确度",
     media_devices: "媒体设备",
-    perm_camera: "摄像头",
+    perm_camera: "相机",
     perm_mic: "麦克风",
 
-    is_bot: "自动化控制",
-    gpc_enabled: "全球隐私控制 (GPC)",
-    ad_block: "广告拦截检测",
-    pdf_viewer: "内置 PDF 查看器",
-    secure_context: "安全上下文 (HTTPS)",
     pwa_install_status: "安装状态",
-
-    // AI & Compute
-    wasm_support: "WebAssembly",
-    wasm_simd: "WASM SIMD 指令集",
-    webnn: "WebNN API",
-    window_ai: "原生 AI (Gemini Nano)",
-    webgpu_compute: "WebGPU 计算着色器",
-    ai_readiness: "AI 就绪度评分",
-    flops: "浮点运算 (FLOPS)"
+    gamepads: "已连接手柄"
   },
-  
+
   values: {
     connected: "已连接",
     offline: "离线",
@@ -207,13 +242,11 @@ export const zhCN: Translation = {
     yes: "是",
     no: "否",
     unknown: "未知",
-    detected: "已检测到",
-    none: "无",
-    hidden: "隐藏/保护",
     installed: "已安装",
     not_installed: "未安装",
-    ready: "就绪",
-    not_ready: "未就绪"
+    detected: "已检测到",
+    none: "无",
+    hidden: "隐藏/受保护"
   },
 
   actions: {
@@ -223,21 +256,22 @@ export const zhCN: Translation = {
     about: "关于",
     export_json: "导出 JSON",
     open_sensors: "传感器",
+    open_tools: "硬件工具",
+    run_benchmark: "性能跑分",
     view_details: "详情",
     view_base64: "查看 Base64",
     view_extensions: "扩展列表",
     copy: "复制",
     copied: "已复制!",
-    run_benchmark: "运行跑分",
-    open_tools: "交互工具"
+    open_map: "打开地图"
   },
 
   status: {
     idle: "未检查",
-    granted: "已授权",
-    denied: "已拒绝",
-    prompt: "需询问",
-    error: "检测错误"
+    granted: "允许",
+    denied: "拒绝",
+    prompt: "需确认",
+    error: "错误 / 不可用"
   },
 
   features: {
@@ -245,13 +279,13 @@ export const zhCN: Translation = {
     bgSync: "后台同步",
     pushApi: "推送 API",
     notification: "通知 API",
-    appBadges: "应用角标",
+    appBadges: "应用图标标记",
     webgpu: "WebGPU 图形引擎",
     webxr: "WebXR (VR/AR)",
-    webauthn: "WebAuthn",
+    webauthn: "WebAuthn 无密码认证",
     bluetooth: "Web 蓝牙",
     usb: "Web USB",
-    payment: "支付请求",
+    payment: "支付请求 API",
     nfc: "Web NFC",
     wakeLock: "屏幕唤醒锁",
     fsAccess: "文件系统访问",
@@ -262,51 +296,51 @@ export const zhCN: Translation = {
     geo: "地理位置定位",
     wasm: "Web Assembly",
     webCodecs: "Web Codecs 编码",
-    compression: "压缩流",
+    compression: "压缩流 API",
     webTransport: "Web Transport",
     eyeDropper: "吸管工具 (EyeDropper)",
     accelerometer: "加速度计",
     gyroscope: "陀螺仪",
     ambientLight: "环境光传感器"
   },
-  
+
   featureDescs: {
-    serviceWorker: "离线访问与 PWA 支持",
+    serviceWorker: "离线访问与 PWA 支持核心",
     bgSync: "延迟到有网络时执行操作",
     pushApi: "接收服务器推送通知",
-    notification: "系统级通知",
-    appBadges: "在应用图标上设置徽章",
-    webgpu: "新一代高性能图形 API",
+    notification: "系统级通知消息",
+    appBadges: "在应用程序图标上设置徽章",
+    webgpu: "新一代高性能图形与计算 API",
     webxr: "虚拟现实与增强现实能力",
-    webauthn: "无密码认证",
-    bluetooth: "连接附近的蓝牙设备",
-    usb: "连接 USB 硬体设备",
-    payment: "原生支付处理",
-    nfc: "近场通信能力",
-    wakeLock: "防止屏幕自动息屏",
+    webauthn: "生物识别与无密码登录",
+    bluetooth: "连接附近的低功耗蓝牙设备",
+    usb: "连接 USB 硬件设备",
+    payment: "浏览器原生支付处理",
+    nfc: "近场通讯能力 (NFC 标签读写)",
+    wakeLock: "防止屏幕自动变暗或关闭",
     fsAccess: "读写本地文件系统",
     broadcast: "跨标签页通信",
     webShare: "调用系统级分享面板",
-    clipboard: "异步读写剪贴板",
-    pip: "悬浮视频播放窗",
-    geo: "获取用户地理位置",
+    clipboard: "异步读写剪贴板内容",
+    pip: "悬浮视频播放窗口",
+    geo: "获取用户地理经纬度",
     wasm: "高性能二进制代码执行",
     webCodecs: "底层音视频编解码处理",
-    compression: "原生 GZIP/Deflate 支持",
+    compression: "原生 GZIP/Deflate 压缩支持",
     webTransport: "低延迟双向数据传输",
-    eyeDropper: "系统级屏幕取色",
-    accelerometer: "运动传感器",
-    gyroscope: "方向传感器",
-    ambientLight: "光线强度传感器"
+    eyeDropper: "系统级屏幕取色工具",
+    accelerometer: "运动检测传感器",
+    gyroscope: "方向检测传感器",
+    ambientLight: "光线强度检测"
   },
 
   cameraTool: {
-    title: "摄像头工具",
-    btn_open: "打开摄像头",
-    no_devices: "未找到摄像头设备",
-    permission_denied: "摄像头权限被拒绝",
-    error_hardware: "访问摄像头硬件错误",
-    error_generic: "访问摄像头出错",
+    title: "相机工具",
+    btn_open: "开启相机",
+    no_devices: "未找到相机设备",
+    permission_denied: "相机权限被拒绝",
+    error_hardware: "访问相机硬件错误",
+    error_generic: "访问相机出错",
     error_mic: "麦克风错误",
     select_device: "选择设备",
     current_res: "当前分辨率",
@@ -322,7 +356,7 @@ export const zhCN: Translation = {
 
   audioTool: {
     title: "录音工具",
-    btn_open: "打开录音机",
+    btn_open: "开启录音机",
     listening: "监听中...",
     start_record: "开始",
     stop_record: "停止",
@@ -336,23 +370,23 @@ export const zhCN: Translation = {
 
   webglTool: {
     title: "WebGL 扩展",
-    count: "个支持的扩展",
+    count: "个扩展支持",
     search_placeholder: "搜索扩展...",
     close: "关闭",
     vendor: "供应商",
     spec_link: "规范文档"
   },
-  
+
   base64Tool: {
     title: "Base64 数据",
-    desc: "指纹图像的原始数据表示",
+    desc: "生成指纹图像的原始数据表示",
     copy: "复制到剪贴板",
     close: "关闭"
   },
 
   fingerprintModal: {
     title: "浏览器指纹计算",
-    desc: "使用各种浏览器属性生成唯一的訪客識別碼。您可以调整以下参数来观察哈希值的变化。",
+    desc: "使用各种浏览器属性生成唯一的访客标识符。您可以调整以下参数来观察哈希值的变化。",
     tab_v4: "FingerprintJS v4 (现代)",
     tab_v2: "FingerprintJS v2 (传统)",
     tab_fonts: "字体检测",
@@ -382,35 +416,37 @@ export const zhCN: Translation = {
     desc: "BrowserScope 是一款全面的浏览器分析工具，旨在验证您的系统能力和指纹唯一性，所有检测均在本地完成。",
     version: "版本",
     changelog: "更新日志",
-    latest_update: "DRM 检测、隐私与 AI 评估",
+    latest_update: "新增硬件交互工具与存储跑分",
     close: "关闭",
     history: "更新历史",
     updates: [
-        {
-            version: "1.4.0",
-            date: "2024-03-30",
-            changes: [
-                "新增 DRM (Widevine, FairPlay) 能力检测。",
-                "新增广告拦截插件 (AdBlock) 检测。",
-                "新增本地 AI 就绪度跑分 (FLOPS 估算)。"
-            ]
-        },
-        {
-            version: "1.3.0",
-            date: "2024-03-22",
-            changes: [
-                "设置面板新增屏幕坏点检测与显示测试功能。",
-                "新增公网 IP 检测与网络详情分析。",
-                "新增存储管理与 Service Worker 清理工具。"
-            ]
-        },
         {
             version: "1.2.0",
             date: "2024-03-15",
             changes: [
                 "新增硬件交互工具（振动模式与多点触控测试）。",
                 "性能跑分中新增存储 I/O 读写测试 (IndexedDB)。",
-                "新增字体指纹 (Font Fingerprinting) 检测能力。"
+                "新增字体指纹 (Font Fingerprinting) 检测能力。",
+                "优化 WebGL 扩展查看器，支持按供应商分组和搜索。",
+                "修复 UI 动画卡顿与模态框交互问题。"
+            ]
+        },
+        {
+            version: "1.1.0",
+            date: "2024-02-28",
+            changes: [
+                "引入 AI 与计算能力检测 (WebNN, Gemini Nano)。",
+                "新增相机与麦克风诊断工具。",
+                "增强设备传感器可视化效果 (加速度计, 陀螺仪)。"
+            ]
+        },
+        {
+            version: "1.0.0",
+            date: "2024-01-10",
+            changes: [
+                "初始发布，包含核心系统信息检测。",
+                "浏览器指纹分析 (Canvas, WebGL)。",
+                "网络速度与延迟估算功能。"
             ]
         }
     ]
@@ -418,7 +454,7 @@ export const zhCN: Translation = {
 
   sensorModal: {
     sensor_title: "设备传感器",
-    sensor_permission_desc: "访问设备运动传感器需要权限。",
+    sensor_permission_desc: "访问运动传感器需要授予权限。",
     sensor_allow: "允许访问",
     accelerometer: "加速度计",
     gyroscope: "陀螺仪",
@@ -437,7 +473,7 @@ export const zhCN: Translation = {
       canvas_hash: "Canvas 指纹",
       webgl_hash: "WebGL 指纹",
       hardware_concurrency: "硬件并发 (CPU/内存)",
-      user_agent: "User Agent",
+      user_agent: "用户代理 (User Agent)",
       resolution: "屏幕分辨率",
       audio_context: "音频上下文",
       battery_status: "电池状态 API",
@@ -468,63 +504,50 @@ export const zhCN: Translation = {
   },
 
   benchmarkModal: {
-    title: "系统性能跑分",
-    start_btn: "开始跑分",
-    running: "正在测试中...",
-    score: "性能得分",
-    cpu_test: "CPU 素数搜索",
-    math_test: "数学浮点运算",
+    title: "性能基准测试",
+    start_btn: "开始测试",
+    running: "运行中...",
+    score: "总分",
+    cpu_test: "CPU 质数计算",
+    math_test: "浮点运算 (Math)",
     memory_test: "内存读写吞吐",
     dom_test: "DOM 操作性能",
-    gpu_test: "Canvas 渲染",
-    storage_test: "存储 I/O 读写",
-    status_pending: "等待中",
-    status_running: "计算中...",
-    status_done: "完成",
-    results_title: "测试结果",
-    close: "关闭"
+    gpu_test: "Canvas 2D 渲染",
+    storage_test: "存储 I/O (IndexedDB)"
   },
 
   hardwareToolsModal: {
     title: "硬件交互工具",
-    tab_vibrate: "振动马达",
-    tab_touch: "多点触控",
-    vibrate_not_supported: "当前设备不支持振动 API。",
-    vibrate_short: "短震 (200ms)",
-    vibrate_medium: "中震 (500ms)",
-    vibrate_pattern: "SOS 模式",
-    touch_instruction: "请用多个手指触摸屏幕以测试支持情况。",
-    touch_count: "当前触控点数",
-    close: "关闭"
+    tab_vibrate: "振动",
+    tab_touch: "触控",
+    vibrate_not_supported: "您的设备不支持振动 API",
+    vibrate_short: "短振动 (200ms)",
+    vibrate_medium: "中振动 (500ms)",
+    vibrate_pattern: "脉冲模式",
+    touch_instruction: "请在屏幕上触摸或移动",
+    touch_count: "触控点数"
   },
 
   aiPlayground: {
-    title: "本地 AI 实验室",
-    desc: "使用 WebAssembly 直接在浏览器中运行 AI 模型。所有数据均不会离开您的设备。",
-    input_placeholder: "输入文本以分析情感...",
-    btn_analyze: "分析情感",
-    loading_model: "正在加载模型...",
-    model_name: "模型名称",
-    task_type: "任务类型",
+    title: "AI 游乐场",
+    desc: "在浏览器本地运行轻量级 AI 模型。无需服务器上传。",
+    model_name: "模型",
+    loading_model: "加载模型中...",
+    input_placeholder: "在此输入英文文本进行情感分析...",
     result_label: "分析结果",
-    confidence: "置信度",
-    close: "关闭",
-    download_progress: "下载模型中"
+    confidence: "置信度"
   },
 
   gamepadTool: {
-    title: "硬件游乐场",
-    tab_gamepad: "游戏手柄",
+    title: "游戏手柄测试",
+    tab_gamepad: "手柄",
     tab_bluetooth: "蓝牙扫描",
-    no_gamepad: "未检测到手柄。请按手柄上的任意键以连接。",
-    connect_instruction: "通过 USB 或蓝牙连接手柄，并按任意键。",
-    btn_scan_bt: "扫描设备",
+    no_gamepad: "未检测到手柄",
+    connect_instruction: "请连接手柄并按任意键激活",
+    bt_devices: "已发现设备",
     bt_scanning: "扫描中...",
-    bt_devices: "附近的设备",
-    bt_no_devices: "未发现设备",
-    bt_not_supported: "当前浏览器不支持 Web Bluetooth。",
-    axis_label: "摇杆轴",
-    button_label: "按键",
-    close: "关闭"
+    btn_scan_bt: "扫描蓝牙设备",
+    bt_not_supported: "不支持 Web Bluetooth",
+    bt_no_devices: "未发现设备"
   }
 };

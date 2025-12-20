@@ -15,6 +15,10 @@ export const ja: Translation = {
     tab_developer: "開発者",
     simple_mode_title: "シンプルモード",
     simple_mode_desc: "不要な技術詳細を非表示にし、コアシステム情報のみを表示します。",
+    scrollbar_title: "スクロールバーを隠す",
+    scrollbar_desc: "画面領域を最大化するためにブラウザのスクロールバーを非表示にします。",
+    time_format_title: "24時間表示",
+    time_format_desc: "12時間形式（AM/PM）と24時間形式を切り替えます。",
     
     public_ip: "パブリックIPアドレス",
     fetch_ip: "IPを検出",
@@ -81,6 +85,40 @@ export const ja: Translation = {
     dev_dock_back: "ドッキングに戻す",
     dev_run_now: "即時実行",
 
+    // Advanced Network
+    network_adv_title: "高度な診断",
+    network_webrtc_title: "WebRTC リークテスト",
+    network_webrtc_desc: "ICE候補を分析して、ローカルIPリークとSTUN/TURN接続を確認します。",
+    network_webrtc_btn: "WebRTC分析を開始",
+    network_dns_title: "DNS リークテスト",
+    network_dns_desc: "接続に使用されているDNSリゾルバーを特定して、潜在的なリークを確認します。",
+    network_dns_btn: "DNSリゾルバーを確認",
+    
+    col_type: "タイプ",
+    col_ip: "IPアドレス",
+    col_protocol: "プロトコル",
+    col_port: "ポート",
+    
+    lbl_resolution: "解決結果",
+    lbl_dns_ip: "リゾルバーIP",
+    lbl_dns_geo: "場所",
+    
+    proto_title: "プロトコルサポート",
+    proto_desc: "最新のトランスポートプロトコル（HTTP/2、HTTP/3 QUIC）のサポートを確認します。",
+    proto_check_btn: "プロトコルを確認",
+    proto_http2: "HTTP/2",
+    proto_http3: "HTTP/3 (QUIC)",
+
+    // HDR
+    hdr_status_title: "HDR 機能",
+    hdr_support: "HDR サポート",
+    hdr_dynamic_range: "ダイナミックレンジ",
+    hdr_video_dynamic_range: "ビデオダイナミックレンジ",
+    hdr_brightness_test: "ピーク輝度 (EDR) テスト",
+    hdr_brightness_desc: "ディスプレイが拡張ダイナミックレンジ（HDR）をサポートしている場合、中央の正方形は周囲の「標準的な白」よりも明るく表示されます。",
+    hdr_sdr_white: "SDR ホワイト (標準)",
+    hdr_edr_white: "HDR ホワイト (高輝度)",
+
     close: "閉じる"
   },
 
@@ -95,7 +133,8 @@ export const ja: Translation = {
     hardware: "ハードウェアとグラフィックス",
     display: "ディスプレイと画面",
     network: "ネットワークと接続",
-    storage_loc: "ストレージとローカリゼーション",
+    storage: "ストレージ",
+    location: "位置情報と時間",
     media_sup: "メディア機能",
     user_agent: "ユーザーエージェント",
     features: "Web API機能",
@@ -138,6 +177,7 @@ export const ja: Translation = {
     color_depth: "色深度",
     orientation: "画面の向き",
     orientation_angle: "角度", 
+    screen_extended: "拡張ディスプレイ",
     dark_mode: "ダークモード",
     color_gamut: "色域",
     hdr: "HDR サポート",
@@ -191,7 +231,10 @@ export const ja: Translation = {
     no: "いいえ",
     unknown: "不明",
     installed: "インストール済み",
-    not_installed: "未インストール"
+    not_installed: "未インストール",
+    detected: "検出",
+    none: "なし",
+    hidden: "非表示"
   },
 
   actions: {
@@ -201,11 +244,14 @@ export const ja: Translation = {
     about: "アプリについて",
     export_json: "JSONをエクスポート",
     open_sensors: "センサー",
+    open_tools: "ハードウェアツール",
+    run_benchmark: "ベンチマーク",
     view_details: "詳細を表示",
     view_base64: "Base64を表示",
     view_extensions: "拡張機能を表示",
     copy: "コピー",
-    copied: "コピーしました!"
+    copied: "コピーしました!",
+    open_map: "地図を開く"
   },
 
   status: {

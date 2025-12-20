@@ -15,6 +15,10 @@ export const ru: Translation = {
     tab_developer: "Разработчик",
     simple_mode_title: "Простой режим",
     simple_mode_desc: "Скрыть технические детали и показать только основную системную информацию.",
+    scrollbar_title: "Скрыть полосу прокрутки",
+    scrollbar_desc: "Скрыть полосу прокрутки браузера для увеличения полезной площади экрана.",
+    time_format_title: "24-часовой формат",
+    time_format_desc: "Переключение между 12-часовым (AM/PM) и 24-часовым форматом времени.",
     
     public_ip: "Публичный IP",
     fetch_ip: "Определить IP",
@@ -81,6 +85,37 @@ export const ru: Translation = {
     dev_dock_back: "Вернуть в окно",
     dev_run_now: "Выполнить сейчас",
 
+    // Advanced Network
+    network_adv_title: "Расширенная диагностика",
+    network_webrtc_title: "Тест утечки WebRTC",
+    network_webrtc_desc: "Анализ кандидатов ICE для обнаружения утечек локального IP и проверки STUN/TURN.",
+    network_webrtc_btn: "Начать анализ WebRTC",
+    network_dns_title: "Тест утечки DNS",
+    network_dns_desc: "Попытка определить DNS-резолвер для проверки потенциальных утечек.",
+    network_dns_btn: "Проверить DNS",
+    col_type: "Тип",
+    col_ip: "IP адрес",
+    col_protocol: "Протокол",
+    col_port: "Порт",
+    lbl_resolution: "Результат",
+    lbl_dns_ip: "IP резолвера",
+    lbl_dns_geo: "Локация",
+    proto_title: "Поддержка протоколов",
+    proto_desc: "Проверка поддержки современных протоколов (HTTP/2, HTTP/3 QUIC).",
+    proto_check_btn: "Проверить протоколы",
+    proto_http2: "HTTP/2",
+    proto_http3: "HTTP/3 (QUIC)",
+
+    // HDR
+    hdr_status_title: "Возможности HDR",
+    hdr_support: "Поддержка HDR",
+    hdr_dynamic_range: "Динамический диапазон",
+    hdr_video_dynamic_range: "Видео дин. диапазон",
+    hdr_brightness_test: "Тест пиковой яркости (EDR)",
+    hdr_brightness_desc: "Если дисплей поддерживает HDR, центральный квадрат должен быть значительно ярче окружающего белого.",
+    hdr_sdr_white: "SDR Белый (Стандарт)",
+    hdr_edr_white: "HDR Белый (Высокая яркость)",
+
     close: "Закрыть"
   },
 
@@ -95,7 +130,8 @@ export const ru: Translation = {
     hardware: "Оборудование и Графика",
     display: "Дисплей и Экран",
     network: "Сеть и Соединение",
-    storage_loc: "Память и Локализация",
+    storage: "Хранилище",
+    location: "Местоположение и Время",
     media_sup: "Медиа возможности",
     user_agent: "User Agent",
     features: "Веб-API",
@@ -138,6 +174,7 @@ export const ru: Translation = {
     color_depth: "Глубина цвета",
     orientation: "Ориентация",
     orientation_angle: "Угол", 
+    screen_extended: "Расширенный экран",
     dark_mode: "Темная тема",
     color_gamut: "Цветовой охват",
     hdr: "Поддержка HDR",
@@ -191,7 +228,10 @@ export const ru: Translation = {
     no: "Нет",
     unknown: "Неизвестно",
     installed: "Установлено",
-    not_installed: "Не установлено"
+    not_installed: "Не установлено",
+    detected: "Обнаружено",
+    none: "Нет",
+    hidden: "Скрыто"
   },
 
   actions: {
@@ -201,11 +241,14 @@ export const ru: Translation = {
     about: "О программе",
     export_json: "Экспорт JSON",
     open_sensors: "Датчики",
+    open_tools: "Инструменты",
+    run_benchmark: "Бенчмарк",
     view_details: "Подробнее",
     view_base64: "См. Base64",
     view_extensions: "Расширения",
     copy: "Копировать",
-    copied: "Скопировано!"
+    copied: "Скопировано!",
+    open_map: "Открыть карту"
   },
 
   status: {

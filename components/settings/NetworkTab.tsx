@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wifi, Copy, Check } from 'lucide-react';
+import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wifi, Copy, Check, Shield, Server, Radio } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
 import { BackendDropdown } from '../ui/BackendDropdown';
 
@@ -25,6 +25,15 @@ interface CDNStatus {
     url: string;
     status: 'idle' | 'loading' | 'success' | 'error';
     latency: number;
+}
+
+interface WebRTCCandidate {
+    id: string;
+    ip: string;
+    port: number;
+    protocol: string;
+    type: string;
+    raw: string;
 }
 
 const IPV4_SOURCES = [
@@ -57,6 +66,17 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
     const [testUrl, setTestUrl] = useState('');
     const [testResult, setTestResult] = useState<{status: string, latency?: number, code?: number} | null>(null);
     const [testingConn, setTestingConn] = useState(false);
+
+    // Advanced Diagnostics State
+    const [webrtcCandidates, setWebrtcCandidates] = useState<WebRTCCandidate[]>([]);
+    const [scanningWebrtc, setScanningWebrtc] = useState(false);
+    
+    const [dnsInfo, setDnsInfo] = useState<{ip: string, geo: string} | null>(null);
+    const [checkingDns, setCheckingDns] = useState(false);
+    const [dnsError, setDnsError] = useState<string | null>(null);
+
+    const [protocols, setProtocols] = useState<{h2: string, h3: string} | null>(null);
+    const [checkingProto, setCheckingProto] = useState(false);
 
     // CDN State
     const [cdns, setCdns] = useState<CDNStatus[]>([
@@ -234,6 +254,120 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
         setTestingConn(false);
     };
 
+    // --- Advanced Diagnostics Functions ---
+
+    const runWebRTCAnalysis = async () => {
+        setScanningWebrtc(true);
+        setWebrtcCandidates([]);
+        
+        try {
+            const pc = new RTCPeerConnection({
+                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+            });
+
+            pc.onicecandidate = (e) => {
+                if (e.candidate) {
+                    const c = e.candidate;
+                    // Simple parsing (modern browsers provide structured props on 'candidate' object, but let's parse string for robustness)
+                    const parts = c.candidate.split(' ');
+                    // Format: candidate:foundation 1 protocol priority ip port typ type ...
+                    
+                    const candidateObj: WebRTCCandidate = {
+                        id: Math.random().toString(36).substr(2, 9),
+                        ip: c.address || parts[4] || '?',
+                        port: c.port || parseInt(parts[5]) || 0,
+                        protocol: c.protocol || parts[2] || '?',
+                        type: c.type || parts[7] || '?',
+                        raw: c.candidate
+                    };
+
+                    setWebrtcCandidates(prev => {
+                        // Dedup based on IP/Port/Proto
+                        if (prev.some(x => x.ip === candidateObj.ip && x.port === candidateObj.port)) return prev;
+                        return [...prev, candidateObj];
+                    });
+                }
+            };
+
+            // Create data channel to trigger ICE gathering
+            pc.createDataChannel('test');
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+
+            // Stop after 5 seconds
+            setTimeout(() => {
+                pc.close();
+                setScanningWebrtc(false);
+            }, 5000);
+
+        } catch (e) {
+            console.error("WebRTC Error", e);
+            setScanningWebrtc(false);
+        }
+    };
+
+    const checkDnsResolver = async () => {
+        setCheckingDns(true);
+        setDnsInfo(null);
+        setDnsError(null);
+        try {
+            const res = await fetch('https://edns.ip-api.com/json');
+            if (!res.ok) throw new Error("API Unreachable");
+            const data = await res.json();
+            
+            if (data && data.dns) {
+                setDnsInfo({
+                    ip: data.dns.ip || 'Unknown',
+                    geo: data.dns.geo || 'Unknown'
+                });
+            } else {
+                throw new Error("Invalid response format");
+            }
+        } catch (e) {
+            setDnsError("Failed to detect resolver (Likely blocked by AdBlock or CORS)");
+        }
+        setCheckingDns(false);
+    };
+
+    const checkProtocols = async () => {
+        setCheckingProto(true);
+        setProtocols(null);
+        
+        try {
+            // We use standard resources that likely support these protocols
+            // Note: This relies on Resource Timing API
+            const testH2 = 'https://www.google.com/generate_204'; 
+            const testH3 = 'https://www.cloudflare.com/cdn-cgi/trace'; // Cloudflare supports h3
+
+            // Fire fetches
+            await Promise.allSettled([
+                fetch(testH2, { mode: 'no-cors', cache: 'no-store' }),
+                fetch(testH3, { mode: 'no-cors', cache: 'no-store' })
+            ]);
+
+            // Give a moment for entries to populate
+            await new Promise(r => setTimeout(r, 500));
+
+            const getProto = (url: string) => {
+                const entries = performance.getEntriesByName(url);
+                if (entries.length > 0) {
+                    // @ts-ignore
+                    return entries[entries.length - 1].nextHopProtocol || 'unknown';
+                }
+                return 'unknown';
+            };
+
+            setProtocols({
+                h2: getProto(testH2),
+                h3: getProto(testH3)
+            });
+
+        } catch (e) {
+            console.error(e);
+        }
+        setCheckingProto(false);
+    };
+
     return (
         <div className="max-w-3xl mx-auto space-y-8">
             
@@ -381,6 +515,153 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                             </div>
                         )}
                     </div>
+                </div>
+            </div>
+
+            {/* Advanced Diagnostics Grid */}
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 bg-slate-50/50 dark:bg-slate-800/50">
+                    <Server size={18} className="text-slate-400" />
+                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">{t.network_adv_title}</h3>
+                </div>
+                
+                <div className="p-6 space-y-8">
+                    
+                    {/* WebRTC */}
+                    <div>
+                        <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+                                    <Radio size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.network_webrtc_title}</h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.network_webrtc_desc}</p>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={runWebRTCAnalysis}
+                                disabled={scanningWebrtc}
+                                className="text-xs font-medium px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50"
+                            >
+                                {scanningWebrtc ? <Activity className="animate-spin" size={16} /> : t.network_webrtc_btn}
+                            </button>
+                        </div>
+                        
+                        {webrtcCandidates.length > 0 && (
+                            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                <table className="w-full text-xs text-left">
+                                    <thead className="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 font-semibold text-slate-600 dark:text-slate-300 uppercase">
+                                        <tr>
+                                            <th className="px-4 py-2">{t.col_type}</th>
+                                            <th className="px-4 py-2">{t.col_ip}</th>
+                                            <th className="px-4 py-2">{t.col_protocol}</th>
+                                            <th className="px-4 py-2">{t.col_port}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                                        {webrtcCandidates.map(c => (
+                                            <tr key={c.id} className="text-slate-700 dark:text-slate-300 font-mono">
+                                                <td className="px-4 py-2">
+                                                    <span className={`px-2 py-0.5 rounded ${c.type === 'host' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'}`}>
+                                                        {c.type}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-2">{c.ip}</td>
+                                                <td className="px-4 py-2 uppercase">{c.protocol}</td>
+                                                <td className="px-4 py-2">{c.port}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="h-px bg-slate-100 dark:bg-slate-700" />
+
+                    {/* DNS Leak */}
+                    <div>
+                        <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400">
+                                    <Shield size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.network_dns_title}</h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.network_dns_desc}</p>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={checkDnsResolver}
+                                disabled={checkingDns}
+                                className="text-xs font-medium px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors shadow-sm disabled:opacity-50"
+                            >
+                                {checkingDns ? <Activity className="animate-spin" size={16} /> : t.network_dns_btn}
+                            </button>
+                        </div>
+
+                        {dnsInfo && (
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                                    <div className="text-xs text-slate-400 mb-1">{t.lbl_dns_ip}</div>
+                                    <div className="font-mono font-bold text-slate-700 dark:text-slate-200">{dnsInfo.ip}</div>
+                                </div>
+                                <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                                    <div className="text-xs text-slate-400 mb-1">{t.lbl_dns_geo}</div>
+                                    <div className="font-bold text-slate-700 dark:text-slate-200">{dnsInfo.geo}</div>
+                                </div>
+                            </div>
+                        )}
+                        {dnsError && (
+                            <div className="text-xs text-red-500 flex items-center gap-2 mt-2">
+                                <AlertCircle size={14} />
+                                {dnsError}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="h-px bg-slate-100 dark:bg-slate-700" />
+
+                    {/* Protocol Support */}
+                    <div>
+                        <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400">
+                                    <Zap size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.proto_title}</h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.proto_desc}</p>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={checkProtocols}
+                                disabled={checkingProto}
+                                className="text-xs font-medium px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors shadow-sm disabled:opacity-50"
+                            >
+                                {checkingProto ? <Activity className="animate-spin" size={16} /> : t.proto_check_btn}
+                            </button>
+                        </div>
+
+                        {protocols && (
+                            <div className="flex gap-4">
+                                <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.proto_http2}</span>
+                                    <span className={`text-xs px-2 py-1 rounded font-mono font-bold ${protocols.h2 === 'h2' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
+                                        {protocols.h2 === 'h2' ? 'Supported' : protocols.h2}
+                                    </span>
+                                </div>
+                                <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.proto_http3}</span>
+                                    <span className={`text-xs px-2 py-1 rounded font-mono font-bold ${protocols.h3 === 'h3' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
+                                        {protocols.h3 === 'h3' ? 'Supported' : protocols.h3}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                 </div>
             </div>
 

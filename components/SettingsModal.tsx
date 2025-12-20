@@ -14,6 +14,10 @@ interface SettingsModalProps {
   t: Translation['settingsModal'];
   simpleMode: boolean;
   toggleSimpleMode: (value: boolean) => void;
+  hideScrollbar: boolean;
+  toggleHideScrollbar: (value: boolean) => void;
+  timeFormat: '12' | '24';
+  setTimeFormat: (format: '12' | '24') => void;
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
 }
@@ -23,6 +27,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     t, 
     simpleMode, 
     toggleSimpleMode, 
+    hideScrollbar,
+    toggleHideScrollbar,
+    timeFormat,
+    setTimeFormat,
     isDevToolsFloating, 
     setDevToolsFloating 
 }) => {
@@ -191,7 +199,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900">
                 
                 {activeTab === 'general' && (
-                    <GeneralTab t={t} simpleMode={simpleMode} toggleSimpleMode={toggleSimpleMode} />
+                    <GeneralTab 
+                        t={t} 
+                        simpleMode={simpleMode} 
+                        toggleSimpleMode={toggleSimpleMode} 
+                        hideScrollbar={hideScrollbar}
+                        toggleHideScrollbar={toggleHideScrollbar}
+                        timeFormat={timeFormat}
+                        setTimeFormat={setTimeFormat}
+                    />
                 )}
 
                 {activeTab === 'network' && (

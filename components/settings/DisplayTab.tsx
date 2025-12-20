@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Monitor, Eye, Layers } from 'lucide-react';
+import { Monitor, Eye, Layers, Sun } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
 
 interface DisplayTabProps {
@@ -11,6 +11,10 @@ interface DisplayTabProps {
 export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
     // Check support for color(display-p3) syntax
     const isP3Supported = typeof CSS !== 'undefined' && CSS.supports('color', 'color(display-p3 1 0 0)');
+    
+    // HDR Capabilities
+    const isHDR = typeof window !== 'undefined' && window.matchMedia('(dynamic-range: high)').matches;
+    const isVideoHDR = typeof window !== 'undefined' && window.matchMedia('(video-dynamic-range: high)').matches;
 
     return (
         <div className="max-w-2xl mx-auto space-y-8">
@@ -27,6 +31,53 @@ export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
                     <button onClick={() => onColorSelect('#0000ff')} className="h-12 rounded-lg bg-blue-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{t.color_blue}</button>
                     <button onClick={() => onColorSelect('#ffffff')} className="h-12 rounded-lg bg-white border border-slate-200 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-black font-bold text-xs">{t.color_white}</button>
                     <button onClick={() => onColorSelect('#000000')} className="h-12 rounded-lg bg-black hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{t.color_black}</button>
+                </div>
+            </div>
+
+            {/* HDR Capabilities */}
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-amber-50 dark:bg-amber-900/30 rounded-lg text-amber-600 dark:text-amber-400">
+                        <Sun size={20} />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.hdr_status_title}</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t.hdr_support}</p>
+                    </div>
+                </div>
+
+                <div className="flex gap-4 mb-6">
+                    <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                        <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.hdr_dynamic_range}</span>
+                        <span className={`text-xs px-2 py-1 rounded font-bold ${isHDR ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
+                            {isHDR ? 'High' : 'Standard'}
+                        </span>
+                    </div>
+                    <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                        <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.hdr_video_dynamic_range}</span>
+                        <span className={`text-xs px-2 py-1 rounded font-bold ${isVideoHDR ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
+                            {isVideoHDR ? 'High' : 'Standard'}
+                        </span>
+                    </div>
+                </div>
+
+                <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">{t.hdr_brightness_test}</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">{t.hdr_brightness_desc}</p>
+                
+                {/* EDR Brightness Test Box */}
+                <div className="relative w-full h-32 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 flex items-center justify-center">
+                    {/* Background is Standard White */}
+                    <div className="absolute inset-0 bg-white flex items-start justify-start p-2">
+                        <span className="text-[10px] font-mono text-black/50">{t.hdr_sdr_white} (sRGB 1.0)</span>
+                    </div>
+                    
+                    {/* Center is P3 White (Potential EDR) */}
+                    <div 
+                        className="w-1/2 h-1/2 rounded-lg flex items-center justify-center shadow-sm relative z-10"
+                        style={{ backgroundColor: 'color(display-p3 1 1 1)' }}
+                    >
+                        <span className="text-[10px] font-mono text-black/50 font-bold bg-white/20 px-2 py-1 rounded">{t.hdr_edr_white} (P3 1.0)</span>
+                    </div>
                 </div>
             </div>
 
@@ -87,7 +138,7 @@ export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
                 )}
             </div>
 
-            {/* HDR / Bit Depth Gradient */}
+            {/* Bit Depth Gradient */}
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 bg-cyan-50 dark:bg-cyan-900/30 rounded-lg text-cyan-600 dark:text-cyan-400">
