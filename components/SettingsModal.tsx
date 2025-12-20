@@ -18,6 +18,8 @@ interface SettingsModalProps {
   toggleHideScrollbar: (value: boolean) => void;
   timeFormat: '12' | '24';
   setTimeFormat: (format: '12' | '24') => void;
+  disableBlur: boolean;
+  toggleDisableBlur: (value: boolean) => void;
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
 }
@@ -27,10 +29,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     t, 
     simpleMode, 
     toggleSimpleMode, 
-    hideScrollbar,
+    hideScrollbar, 
     toggleHideScrollbar,
     timeFormat,
     setTimeFormat,
+    disableBlur,
+    toggleDisableBlur,
     isDevToolsFloating, 
     setDevToolsFloating 
 }) => {
@@ -207,6 +211,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         toggleHideScrollbar={toggleHideScrollbar}
                         timeFormat={timeFormat}
                         setTimeFormat={setTimeFormat}
+                        disableBlur={disableBlur}
+                        toggleDisableBlur={toggleDisableBlur}
                     />
                 )}
 

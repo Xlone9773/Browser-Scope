@@ -64,6 +64,38 @@
         animation-duration: 0.4s;
         mix-blend-mode: normal;
       }
+
+      /* High Performance Mode (No Blur) */
+      body.no-blur .backdrop-blur-sm,
+      body.no-blur .backdrop-blur-md,
+      body.no-blur .backdrop-blur-lg,
+      body.no-blur .backdrop-blur-xl,
+      body.no-blur .backdrop-blur-2xl,
+      body.no-blur .backdrop-blur-3xl {
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+      }
+      
+      /* Make backgrounds opaque in no-blur mode to maintain readability */
+      body.no-blur .bg-white\/75,
+      body.no-blur .bg-white\/80,
+      body.no-blur .bg-white\/90 {
+          background-color: #ffffff !important;
+          border-color: #e2e8f0 !important; /* slate-200 */
+      }
+
+      .dark body.no-blur .bg-slate-900\/75,
+      .dark body.no-blur .bg-slate-900\/80,
+      .dark body.no-blur .bg-slate-900\/90,
+      .dark body.no-blur .bg-slate-900\/95 {
+          background-color: #0f172a !important; /* slate-900 */
+          border-color: #334155 !important; /* slate-700 */
+      }
+      
+      /* Specific overrides for overlays to ensure they block content visually without blur */
+      body.no-blur .fixed.inset-0.bg-slate-900\/75 {
+          background-color: rgba(15, 23, 42, 0.95) !important;
+      }
     </style>
   <script type="importmap">
 {

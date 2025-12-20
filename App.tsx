@@ -55,7 +55,7 @@ const App: React.FC = () => {
   
   // Loading State
   const [showLoader, setShowLoader] = useState(true);
-  const [fadeLoader, setFadeLoader] = useState(false);
+  const [fadeLoader, setFadeLoader] = useState(true); // Start invisible for animation
   const [loadingText, setLoadingText] = useState('');
   
   const [lang, setLang] = useState<Language>('zh-CN');
@@ -71,6 +71,10 @@ const App: React.FC = () => {
   const [timeFormat, setTimeFormat] = useState<'12' | '24'>(() => {
       const saved = localStorage.getItem('timeFormat');
       return (saved === '12' || saved === '24') ? saved : '24';
+  });
+  const [disableBlur, setDisableBlur] = useState<boolean>(() => {
+      const saved = localStorage.getItem('disableBlur');
+      return saved === 'true';
   });
 
   const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
@@ -119,6 +123,15 @@ const App: React.FC = () => {
       }
   }, [hideScrollbar]);
 
+  // Initialize blur state
+  useEffect(() => {
+      if (disableBlur) {
+          document.body.classList.add('no-blur');
+      } else {
+          document.body.classList.remove('no-blur');
+      }
+  }, [disableBlur]);
+
   const toggleTheme = () => {
       const newTheme = theme === 'dark' ? 'light' : 'dark';
       setTheme(newTheme);
@@ -140,8 +153,19 @@ const App: React.FC = () => {
       localStorage.setItem('timeFormat', format);
   };
 
+  const toggleDisableBlur = (value: boolean) => {
+      setDisableBlur(value);
+      localStorage.setItem('disableBlur', String(value));
+  };
+
   const fetchData = async () => {
+    // Reset to hidden state first
+    setFadeLoader(true);
     setShowLoader(true);
+    
+    // Trigger entrance animation
+    // Small delay to ensure DOM is mounted with opacity-0 before transitioning
+    await new Promise(r => setTimeout(r, 50));
     setFadeLoader(false);
     
     // Start simulating steps immediately
@@ -297,7 +321,11 @@ const App: React.FC = () => {
                 backgroundColor: 'rgba(var(--bg-slate-50), 0.8)' // Fallback handled via classes usually, here inline for dynamic blend
             }}
           >
-              <div className="bg-white/80 dark:bg-slate-800/80 p-8 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex flex-col items-center gap-6 max-w-sm w-full mx-4 backdrop-blur-md">
+              <div 
+                className={`bg-white/80 dark:bg-slate-800/80 p-8 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex flex-col items-center gap-6 max-w-sm w-full mx-4 backdrop-blur-md transition-all duration-500 ease-out transform ${
+                    fadeLoader ? 'scale-95 translate-y-4' : 'scale-100 translate-y-0'
+                }`}
+              >
                   <div className="relative">
                       <div className="w-16 h-16 rounded-full border-4 border-slate-200 dark:border-slate-700"></div>
                       <div className="absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
@@ -352,6 +380,8 @@ const App: React.FC = () => {
             toggleHideScrollbar={toggleHideScrollbar}
             timeFormat={timeFormat}
             setTimeFormat={updateTimeFormat}
+            disableBlur={disableBlur}
+            toggleDisableBlur={toggleDisableBlur}
             isDevToolsFloating={isDevToolsFloating}
             setDevToolsFloating={setIsDevToolsFloating}
           />

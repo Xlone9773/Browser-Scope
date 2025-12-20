@@ -34,6 +34,11 @@ export const zhHK: Translation = {
     dev_warning_title: "開發者模式風險提示",
     dev_warning_desc: "此工具允許執行任意 JavaScript 代碼並檢查瀏覽器內部對象。執行惡意代碼可能會危及您的安全。請確保您了解相關風險後再繼續。",
     dev_warning_agree: "我了解風險並繼續",
+    
+    // Explicit override for the renamed key to ensure correct Traditional Chinese (HK) usage if needed
+    // Using TW fallback '停用模糊效果' is generally acceptable for HK too.
+    disable_blur_title: "停用模糊效果",
+    disable_blur_desc: "關閉介面中的毛玻璃特效，降低 GPU 佔用，適合低效能裝置。",
   },
 
   labels: {

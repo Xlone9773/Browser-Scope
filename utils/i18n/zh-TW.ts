@@ -25,6 +25,8 @@ export const zhTW: Translation = {
     tab_developer: "開發者",
     simple_mode_title: "簡潔模式",
     simple_mode_desc: "隱藏不必要的技術細節，僅顯示核心系統資訊。",
+    disable_blur_title: "停用模糊效果",
+    disable_blur_desc: "關閉介面中的毛玻璃特效，降低 GPU 佔用，適合低效能裝置。",
     
     public_ip: "公網 IP 位址",
     fetch_ip: "檢測 IP",

@@ -32,6 +32,8 @@ export const zhCN: Translation = {
     scrollbar_desc: "隐藏浏览器滚动条以最大化屏幕显示空间。",
     time_format_title: "24 小时制",
     time_format_desc: "切换 12 小时 (AM/PM) 与 24 小时时间格式。",
+    disable_blur_title: "禁用模糊效果",
+    disable_blur_desc: "关闭界面中的毛玻璃特效以降低 GPU 占用，适合低性能设备。",
     
     public_ip: "公网 IP 地址",
     fetch_ip: "检测 IP",

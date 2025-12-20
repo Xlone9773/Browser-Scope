@@ -49,6 +49,8 @@ export const en: Translation = {
     scrollbar_desc: "Hide the browser scrollbar to maximize screen real estate.",
     time_format_title: "24-Hour Clock",
     time_format_desc: "Switch between 12-hour (AM/PM) and 24-hour time formats.",
+    disable_blur_title: "Disable Blur Effects",
+    disable_blur_desc: "Turn off frosted glass effects to reduce GPU usage. Recommended for older devices.",
     
     public_ip: "Public IP Address",
     fetch_ip: "Detect IP",

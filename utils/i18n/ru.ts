@@ -28,6 +28,8 @@ export const ru: Translation = {
     scrollbar_desc: "Скрыть полосу прокрутки браузера для увеличения полезной площади экрана.",
     time_format_title: "24-часовой формат",
     time_format_desc: "Переключение между 12-часовым (AM/PM) и 24-часовым форматом времени.",
+    disable_blur_title: "Отключить размытие",
+    disable_blur_desc: "Отключите эффекты матового стекла для снижения нагрузки на GPU.",
     
     public_ip: "Публичный IP",
     fetch_ip: "Определить IP",

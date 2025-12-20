@@ -28,6 +28,8 @@ export const ja: Translation = {
     scrollbar_desc: "画面領域を最大化するためにブラウザのスクロールバーを非表示にします。",
     time_format_title: "24時間表示",
     time_format_desc: "12時間形式（AM/PM）と24時間形式を切り替えます。",
+    disable_blur_title: "ぼかし効果を無効化",
+    disable_blur_desc: "すりガラス効果をオフにしてGPU負荷を軽減します。古いデバイスに推奨されます。",
     
     public_ip: "パブリックIPアドレス",
     fetch_ip: "IPを検出",

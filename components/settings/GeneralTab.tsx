@@ -10,6 +10,8 @@ interface GeneralTabProps {
     toggleHideScrollbar: (value: boolean) => void;
     timeFormat: '12' | '24';
     setTimeFormat: (format: '12' | '24') => void;
+    disableBlur: boolean;
+    toggleDisableBlur: (value: boolean) => void;
 }
 
 // Custom Switch Component with Spring Animation
@@ -44,7 +46,9 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     hideScrollbar, 
     toggleHideScrollbar,
     timeFormat,
-    setTimeFormat
+    setTimeFormat,
+    disableBlur,
+    toggleDisableBlur
 }) => {
     return (
         <div className="max-w-2xl mx-auto space-y-4">
@@ -88,6 +92,28 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         checked={timeFormat === '24'} 
                         onChange={(val) => setTimeFormat(val ? '24' : '12')} 
                         label={t.time_format_title || 'Time Format'} 
+                    />
+                </div>
+            </div>
+
+            {/* High Performance (Disable Blur) Toggle */}
+            <div 
+                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
+                onClick={() => toggleDisableBlur(!disableBlur)}
+            >
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.disable_blur_title || "High Performance Mode"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {t.disable_blur_desc || "Disable blur effects and transparency to improve performance on older devices."}
+                    </p>
+                </div>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Switch 
+                        checked={disableBlur} 
+                        onChange={toggleDisableBlur} 
+                        label={t.disable_blur_title || "High Performance Mode"} 
                     />
                 </div>
             </div>

@@ -3,7 +3,7 @@ export type Language = 'en' | 'zh-CN' | 'zh-TW' | 'zh-HK' | 'ja' | 'ru';
 
 export interface Translation {
   loading: string;
-  loading_steps: string[]; // New
+  loading_steps: string[];
   title: string;
   subtitle: string;
   refresh: string;
@@ -206,6 +206,8 @@ export interface Translation {
     scrollbar_desc: string;
     time_format_title: string;
     time_format_desc: string;
+    disable_blur_title: string; // New
+    disable_blur_desc: string;  // New
     
     public_ip: string;
     fetch_ip: string;
