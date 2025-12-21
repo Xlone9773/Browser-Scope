@@ -12,9 +12,11 @@ import { VideoTab } from './hardware/VideoTab';
 interface HardwareToolsModalProps {
   onClose: () => void;
   t: Translation['hardwareToolsModal'];
+  values: Translation['values'];
+  labels: Translation['labels'];
 }
 
-export const HardwareToolsModal: React.FC<HardwareToolsModalProps> = ({ onClose, t }) => {
+export const HardwareToolsModal: React.FC<HardwareToolsModalProps> = ({ onClose, t, values, labels }) => {
   const [activeTab, setActiveTab] = useState<'vibrate' | 'touch' | 'keyboard' | 'mouse' | 'pointer' | 'video'>('vibrate');
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -91,7 +93,7 @@ export const HardwareToolsModal: React.FC<HardwareToolsModalProps> = ({ onClose,
             {activeTab === 'keyboard' && <KeyboardTab t={t} />}
             {activeTab === 'mouse' && <MouseTab t={t} />}
             {activeTab === 'pointer' && <PointerTab t={t} />}
-            {activeTab === 'video' && <VideoTab t={t} />}
+            {activeTab === 'video' && <VideoTab t={t} values={values} labels={labels} />}
         </div>
 
       </div>

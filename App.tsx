@@ -390,7 +390,14 @@ const App: React.FC = () => {
       )}
       
       {isBenchmarkModalOpen && <BenchmarkModal onClose={() => setIsBenchmarkModalOpen(false)} t={t.benchmarkModal} />}
-      {isHardwareToolsModalOpen && <HardwareToolsModal onClose={() => setIsHardwareToolsModalOpen(false)} t={t.hardwareToolsModal} />}
+      {isHardwareToolsModalOpen && (
+          <HardwareToolsModal 
+            onClose={() => setIsHardwareToolsModalOpen(false)} 
+            t={t.hardwareToolsModal} 
+            values={t.values} // Pass global values for better localization
+            labels={t.labels} // Pass global labels for section headers
+          />
+      )}
       
       {/* New Feature Modals */}
       {isAiPlaygroundOpen && <AiPlaygroundModal onClose={() => setIsAiPlaygroundOpen(false)} t={t.aiPlayground} />}
