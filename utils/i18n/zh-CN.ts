@@ -131,6 +131,7 @@ export const zhCN: Translation = {
     export_json: "导出 JSON",
     open_sensors: "传感器详情",
     open_tools: "硬件交互测试",
+    open_vision: "视觉识别 (Vision)",
     view_details: "查看详情",
     view_base64: "查看 Base64",
     view_extensions: "扩展列表",
@@ -260,6 +261,11 @@ export const zhCN: Translation = {
     latest_update: "最近更新",
     history: "更新历史",
     updates: [
+        {
+            version: "1.4.0",
+            date: "2024-03-25",
+            changes: ["新增视觉能力检测 (条形码/二维码)", "更新 CPU/GPU 映射数据库"]
+        },
         {
             version: "1.3.0",
             date: "2024-03-20",
@@ -510,6 +516,7 @@ export const zhCN: Translation = {
     key_instruction: "按下任意键进行测试...",
     key_last: "当前按键",
     key_history: "已检测按键",
+    key_input_placeholder: "在此处输入以测试键盘...",
     mouse_instruction: "在此区域内快速移动鼠标以测量事件回报率 (Polling Rate)。",
     mouse_rate: "当前回报率",
     mouse_peak: "峰值回报率",
@@ -522,5 +529,30 @@ export const zhCN: Translation = {
     video_res: "分辨率",
     video_efficient: "高效能 (硬件加速)",
     video_smooth: "流畅播放"
+  },
+
+  visionModal: {
+    title: "视觉能力 (Vision)",
+    unsupported_desc: "您的浏览器不支持原生的 BarcodeDetector API。您可以使用 Polyfill 模式（软件解码）来测试视觉识别能力。",
+    api_status: "API 支持状态",
+    detect_mode: "检测模式",
+    camera_source: "摄像头来源",
+    latency: "延迟",
+    hw_accel: "硬件加速",
+    sw_decode: "软件解码",
+    sw_warning: "软件解码占用 CPU 较高，速度可能较慢。",
+    native_api: "原生 API (硬解)",
+    polyfill: "Polyfill (软解)",
+    detecting: "检测中...",
+    formats: "支持格式",
+    perf: "性能指标",
+    fps: "帧率",
+    last_result: "最新检测",
+    start_cam: "启动摄像头",
+    stop_cam: "停止",
+    switch_cam: "切换摄像头",
+    no_cam_error: "未找到摄像头或权限被拒绝",
+    auto_scan: "自动连续扫描",
+    manual_capture: "手动拍摄识别"
   }
 };

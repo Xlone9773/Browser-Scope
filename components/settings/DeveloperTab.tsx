@@ -59,8 +59,19 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
         return localStorage.getItem('developer_risk_accepted') === 'true';
     });
     const [isOverlayFading, setIsOverlayFading] = useState(false);
+    
+    // Cooldown Timer
+    const [countdown, setCountdown] = useState(3);
+
+    useEffect(() => {
+        if (!hasAcceptedRisk && countdown > 0) {
+            const timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [hasAcceptedRisk, countdown]);
 
     const handleAcceptRisk = () => {
+        if (countdown > 0) return;
         setIsOverlayFading(true);
         setTimeout(() => {
             setHasAcceptedRisk(true);
@@ -439,7 +450,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
         </div>
     );
 
-    // Warning Overlay JSX - Enhanced for severity
+    // Warning Overlay JSX - Enhanced for severity with Cooldown
     const warningOverlay = (
         <div 
             className={`absolute inset-0 z-50 flex items-center justify-center p-6 bg-red-950/95 backdrop-blur-xl transition-all duration-300 ease-out ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
@@ -460,9 +471,14 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                 </div>
                 <button 
                     onClick={handleAcceptRisk}
-                    className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg shadow-red-500/20 transition-all active:scale-95 text-base tracking-wide"
+                    disabled={countdown > 0}
+                    className={`w-full py-4 font-bold rounded-lg shadow-lg transition-all text-base tracking-wide
+                        ${countdown > 0 
+                            ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed shadow-none' 
+                            : 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/20 active:scale-95'
+                        }`}
                 >
-                    {t.dev_warning_agree}
+                    {countdown > 0 ? `Wait ${countdown}s...` : t.dev_warning_agree}
                 </button>
             </div>
         </div>

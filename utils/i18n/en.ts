@@ -130,6 +130,7 @@ export const en: Translation = {
     export_json: "Export JSON",
     open_sensors: "Sensors",
     open_tools: "Hardware Tools",
+    open_vision: "Vision/QR",
     view_details: "View Details",
     view_base64: "View Base64",
     view_extensions: "Extensions",
@@ -259,6 +260,11 @@ export const en: Translation = {
     latest_update: "Latest Update",
     history: "History",
     updates: [
+        {
+            version: "1.4.0",
+            date: "2024-03-25",
+            changes: ["Added Vision Capabilities (Barcode/QR)", "Added CPU/GPU Mapping Update"]
+        },
         {
             version: "1.3.0",
             date: "2024-03-20",
@@ -509,6 +515,7 @@ export const en: Translation = {
     key_instruction: "Press any key to test input...",
     key_last: "Last Press",
     key_history: "Detected Keys",
+    key_input_placeholder: "Type here to test keyboard...",
     mouse_instruction: "Move your mouse cursor quickly inside this box to measure event polling rate.",
     mouse_rate: "Current Rate",
     mouse_peak: "Peak Rate",
@@ -521,5 +528,30 @@ export const en: Translation = {
     video_res: "Resolution",
     video_efficient: "Power Efficient (Hardware)",
     video_smooth: "Smooth Playback"
+  },
+
+  visionModal: {
+    title: "Vision Capabilities",
+    unsupported_desc: "Your browser does not support the native BarcodeDetector API. You can still use the Polyfill mode (software decoding) to test vision capabilities.",
+    api_status: "API Support Status",
+    detect_mode: "Detection Mode",
+    camera_source: "Camera Source",
+    latency: "Latency",
+    hw_accel: "Hardware Acceleration",
+    sw_decode: "Software Decoding",
+    sw_warning: "Software decoding is CPU intensive and may be slower.",
+    native_api: "Native API (HW)",
+    polyfill: "Polyfill (SW)",
+    detecting: "Detecting...",
+    formats: "Supported Formats",
+    perf: "Performance",
+    fps: "FPS",
+    last_result: "Last Detection",
+    start_cam: "Start Camera",
+    stop_cam: "Stop Camera",
+    switch_cam: "Switch Camera",
+    no_cam_error: "Camera not found or permission denied",
+    auto_scan: "Auto Scan",
+    manual_capture: "Capture & Detect"
   }
 };

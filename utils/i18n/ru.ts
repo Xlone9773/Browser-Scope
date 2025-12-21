@@ -131,6 +131,7 @@ export const ru: Translation = {
     export_json: "Экспорт JSON",
     open_sensors: "Детали датчиков",
     open_tools: "Аппаратные тесты",
+    open_vision: "Зрение (Vision)",
     view_details: "Подробнее",
     view_base64: "Показать Base64",
     view_extensions: "Список расширений",
@@ -510,6 +511,7 @@ export const ru: Translation = {
     key_instruction: "Нажмите любую клавишу для теста...",
     key_last: "Последняя клавиша",
     key_history: "Обнаруженные клавиши",
+    key_input_placeholder: "Введите текст для проверки клавиатуры...",
     mouse_instruction: "Быстро перемещайте курсор мыши внутри этой области для измерения частоты опроса событий (Polling Rate).",
     mouse_rate: "Текущая частота",
     mouse_peak: "Пиковая частота",
@@ -522,5 +524,30 @@ export const ru: Translation = {
     video_res: "Разрешение",
     video_efficient: "Эффективность (HW)",
     video_smooth: "Плавность"
+  },
+
+  visionModal: {
+    title: "Зрение (Vision)",
+    unsupported_desc: "Ваш браузер не поддерживает нативный BarcodeDetector API. Вы можете использовать режим Polyfill (программное декодирование) для проверки возможностей зрения.",
+    api_status: "Статус поддержки API",
+    detect_mode: "Режим обнаружения",
+    camera_source: "Источник камеры",
+    latency: "Задержка",
+    hw_accel: "Аппаратное ускорение",
+    sw_decode: "Программное декодирование",
+    sw_warning: "Программное декодирование нагружает CPU и может быть медленным.",
+    native_api: "Нативный API (Аппаратное)",
+    polyfill: "Polyfill (Программное)",
+    detecting: "Обнаружение...",
+    formats: "Поддерживаемые форматы",
+    perf: "Производительность",
+    fps: "FPS",
+    last_result: "Последний результат",
+    start_cam: "Запустить камеру",
+    stop_cam: "Остановить камеру",
+    switch_cam: "Переключить камеру",
+    no_cam_error: "Камера не найдена или доступ запрещен",
+    auto_scan: "Автосканирование",
+    manual_capture: "Ручная съемка"
   }
 };

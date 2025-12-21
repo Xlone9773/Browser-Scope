@@ -131,6 +131,7 @@ export const zhHK: Translation = {
     export_json: "匯出 JSON",
     open_sensors: "感測器詳情",
     open_tools: "硬件互動測試",
+    open_vision: "視覺識別 (Vision)",
     view_details: "查看詳情",
     view_base64: "查看 Base64",
     view_extensions: "擴充列表",
@@ -510,6 +511,7 @@ export const zhHK: Translation = {
     key_instruction: "按下任意鍵進行測試...",
     key_last: "目前按鍵",
     key_history: "已檢測按鍵",
+    key_input_placeholder: "在此處輸入以測試鍵盤...",
     mouse_instruction: "在此區域內快速移動滑鼠以測量事件回報率 (Polling Rate)。",
     mouse_rate: "目前回報率",
     mouse_peak: "峰值回報率",
@@ -522,5 +524,30 @@ export const zhHK: Translation = {
     video_res: "解析度",
     video_efficient: "高效能 (硬件加速)",
     video_smooth: "流暢播放"
+  },
+
+  visionModal: {
+    title: "視覺能力 (Vision)",
+    unsupported_desc: "您的瀏覽器不支援原生的 BarcodeDetector API。您可以使用 Polyfill 模式（軟件解碼）來測試視覺識別能力。",
+    api_status: "API 支援狀態",
+    detect_mode: "檢測模式",
+    camera_source: "相機來源",
+    latency: "延遲",
+    hw_accel: "硬件加速",
+    sw_decode: "軟件解碼",
+    sw_warning: "軟件解碼佔用 CPU 較高，速度可能較慢。",
+    native_api: "原生 API (硬件加速)",
+    polyfill: "Polyfill (軟件模擬)",
+    detecting: "檢測中...",
+    formats: "支持格式",
+    perf: "性能指標",
+    fps: "幀率",
+    last_result: "最新檢測",
+    start_cam: "啟動相機",
+    stop_cam: "停止",
+    switch_cam: "切換相機",
+    no_cam_error: "未找到相機或權限被拒絕",
+    auto_scan: "自動掃描",
+    manual_capture: "手動拍攝"
   }
 };

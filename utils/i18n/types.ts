@@ -124,6 +124,7 @@ export interface Translation {
     export_json: string;
     open_sensors: string;
     open_tools: string;
+    open_vision: string;
     view_details: string;
     view_base64: string;
     view_extensions: string;
@@ -403,6 +404,7 @@ export interface Translation {
     key_instruction: string;
     key_last: string;
     key_history: string;
+    key_input_placeholder: string;
     mouse_instruction: string;
     mouse_rate: string;
     mouse_peak: string;
@@ -415,5 +417,30 @@ export interface Translation {
     video_res: string;
     video_efficient: string;
     video_smooth: string;
+  };
+
+  visionModal: {
+    title: string;
+    unsupported_desc: string;
+    api_status: string;
+    detect_mode: string;
+    camera_source: string;
+    latency: string;
+    hw_accel: string;
+    sw_decode: string;
+    sw_warning: string;
+    native_api: string;
+    polyfill: string;
+    detecting: string;
+    formats: string;
+    perf: string;
+    fps: string;
+    last_result: string;
+    start_cam: string;
+    stop_cam: string;
+    switch_cam: string;
+    no_cam_error: string;
+    auto_scan: string;
+    manual_capture: string;
   };
 }

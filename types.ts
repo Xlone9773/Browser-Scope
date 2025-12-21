@@ -183,3 +183,29 @@ export interface FeatureItem {
   supported: boolean;
   description: string;
 }
+
+// Shape Detection API Types
+export interface DetectedBarcode {
+  boundingBox: DOMRectReadOnly;
+  rawValue: string;
+  format: string;
+  cornerPoints: {x: number, y: number}[];
+}
+
+export interface BarcodeDetectorOptions {
+  formats?: string[];
+}
+
+declare global {
+  class BarcodeDetector {
+    constructor(options?: BarcodeDetectorOptions);
+    static getSupportedFormats(): Promise<string[]>;
+    detect(image: ImageBitmapSource): Promise<DetectedBarcode[]>;
+  }
+  
+  interface Window {
+      BarcodeDetector: typeof BarcodeDetector;
+      FaceDetector: any;
+      TextDetector: any;
+  }
+}

@@ -131,6 +131,7 @@ export const ja: Translation = {
     export_json: "JSONエクスポート",
     open_sensors: "センサー詳細",
     open_tools: "ハードウェアテスト",
+    open_vision: "ビジョン機能 (Vision)",
     view_details: "詳細を表示",
     view_base64: "Base64を表示",
     view_extensions: "拡張機能一覧",
@@ -510,6 +511,7 @@ export const ja: Translation = {
     key_instruction: "任意のキーを押してテスト...",
     key_last: "現在のキー",
     key_history: "検出されたキー",
+    key_input_placeholder: "ここに入力してキーボードをテスト...",
     mouse_instruction: "このエリア内でマウスカーソルを素早く動かし、イベントレポート率(Polling Rate)を測定します。",
     mouse_rate: "現在のレート",
     mouse_peak: "ピークレート",
@@ -522,5 +524,30 @@ export const ja: Translation = {
     video_res: "解像度",
     video_efficient: "高効率 (ハードウェア)",
     video_smooth: "スムーズ再生"
+  },
+
+  visionModal: {
+    title: "ビジョン機能 (Vision)",
+    unsupported_desc: "お使いのブラウザはネイティブのBarcodeDetector APIをサポートしていません。Polyfillモード（ソフトウェアデコード）を使用してビジョン機能をテストできます。",
+    api_status: "APIサポート状況",
+    detect_mode: "検出モード",
+    camera_source: "カメラソース",
+    latency: "レイテンシ",
+    hw_accel: "ハードウェア加速",
+    sw_decode: "ソフトウェアデコード",
+    sw_warning: "ソフトウェアデコードはCPU負荷が高く、低速になる可能性があります。",
+    native_api: "ネイティブAPI (ハードウェア)",
+    polyfill: "Polyfill (ソフトウェア)",
+    detecting: "検出中...",
+    formats: "サポート形式",
+    perf: "パフォーマンス",
+    fps: "FPS",
+    last_result: "最新の検出結果",
+    start_cam: "カメラを起動",
+    stop_cam: "カメラを停止",
+    switch_cam: "カメラ切り替え",
+    no_cam_error: "カメラが見つからないか、権限が拒否されました",
+    auto_scan: "自動スキャン",
+    manual_capture: "手動キャプチャ"
   }
 };

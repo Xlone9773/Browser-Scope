@@ -17,6 +17,7 @@ import { BenchmarkModal } from './components/BenchmarkModal';
 import { HardwareToolsModal } from './components/HardwareToolsModal';
 import { AiPlaygroundModal } from './components/AiPlaygroundModal';
 import { GamepadToolModal } from './components/GamepadToolModal';
+import { VisionModal } from './components/VisionModal';
 import { translations, Language } from './utils/i18n/index';
 import { applyTheme, getSavedTheme, Theme } from './appearance/theme';
 import { DeveloperTab } from './components/settings/DeveloperTab';
@@ -91,6 +92,7 @@ const App: React.FC = () => {
   const [isHardwareToolsModalOpen, setIsHardwareToolsModalOpen] = useState(false);
   const [isAiPlaygroundOpen, setIsAiPlaygroundOpen] = useState(false);
   const [isGamepadToolOpen, setIsGamepadToolOpen] = useState(false);
+  const [isVisionModalOpen, setIsVisionModalOpen] = useState(false);
   
   // Developer Tools State
   const [isDevToolsFloating, setIsDevToolsFloating] = useState(false);
@@ -393,6 +395,7 @@ const App: React.FC = () => {
       {/* New Feature Modals */}
       {isAiPlaygroundOpen && <AiPlaygroundModal onClose={() => setIsAiPlaygroundOpen(false)} t={t.aiPlayground} />}
       {isGamepadToolOpen && <GamepadToolModal onClose={() => setIsGamepadToolOpen(false)} t={t.gamepadTool} />}
+      {isVisionModalOpen && <VisionModal onClose={() => setIsVisionModalOpen(false)} t={t.visionModal} />}
 
       <div className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">
         
@@ -439,6 +442,7 @@ const App: React.FC = () => {
                     onOpenGamepad={() => setIsGamepadToolOpen(true)}
                     onOpenSensors={() => setIsSensorModalOpen(true)}
                     onOpenTools={() => setIsHardwareToolsModalOpen(true)}
+                    onOpenVision={() => setIsVisionModalOpen(true)}
                 />
 
                 <DisplayCard 
