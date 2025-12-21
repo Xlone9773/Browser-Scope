@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Film, Battery, Zap, Check, X, MonitorPlay, Sun, Music, Speaker, Tv } from 'lucide-react';
+import { Film, Battery, Zap, Check, X, MonitorPlay, Sun, Music, Speaker, Tv, Filter } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
 
 interface VideoTabProps {
@@ -14,6 +14,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
     const [audioResults, setAudioResults] = useState<any[]>([]);
     const [progress, setProgress] = useState(0);
     const [isTesting, setIsTesting] = useState(false);
+    const [showSupportedOnly, setShowSupportedOnly] = useState(false);
 
     // --- Video Configuration ---
     const videoCodecs = [
@@ -268,6 +269,17 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
         }
     };
 
+    const getFilteredResults = (results: any[]) => {
+        if (!showSupportedOnly) return results;
+        return results.map(row => ({
+            ...row,
+            tests: row.tests.filter((t: any) => t.supported)
+        })).filter(row => row.tests.length > 0);
+    };
+
+    const filteredVideo = getFilteredResults(videoResults);
+    const filteredAudio = getFilteredResults(audioResults);
+
     return (
         <div className="h-full overflow-y-auto animate-in fade-in duration-300 custom-scrollbar pb-4">
             <div className="mb-6 flex items-center justify-between sticky top-0 bg-slate-50 dark:bg-slate-900 z-10 py-3 border-b border-slate-200 dark:border-slate-800">
@@ -283,117 +295,130 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                         <span className="text-xs font-mono text-indigo-600 dark:text-indigo-400">{progress}%</span>
                     </div>
                 ) : (
-                    <span className="text-xs font-bold text-emerald-500 flex items-center gap-1">
-                        <Check size={14} /> Done
-                    </span>
+                    <div className="flex items-center gap-3">
+                        <button 
+                            onClick={() => setShowSupportedOnly(!showSupportedOnly)}
+                            className={`text-xs font-medium px-2 py-1 rounded border transition-colors flex items-center gap-1 ${showSupportedOnly ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400' : 'bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400'}`}
+                        >
+                            <Filter size={12} />
+                            {t.filter_supported}
+                        </button>
+                        <span className="text-xs font-bold text-emerald-500 flex items-center gap-1">
+                            <Check size={14} /> Done
+                        </span>
+                    </div>
                 )}
             </div>
 
             {/* Video Section */}
-            <div className="mb-8">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2 px-1">
-                    <Film size={14} />
-                    {labels.video_codecs}
-                </h3>
-                <div className="space-y-3">
-                    {videoResults.map((row, rIdx) => (
-                        <div key={rIdx} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
-                            <div className="bg-slate-50 dark:bg-slate-900/50 px-4 py-2 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                                <div className="flex items-center gap-2 overflow-hidden">
-                                    <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 whitespace-nowrap">{row.codec}</h3>
-                                    <span className="text-xs text-slate-500 dark:text-slate-400 ml-1 truncate">({row.profile})</span>
-                                </div>
-                                <div className="flex gap-1.5">
-                                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${row.bitDepth === 10 ? 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800/50' : 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'}`}>
-                                        {row.bitDepth}-bit
-                                    </span>
-                                    <span className={`flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded border ${getTagColor(row.tag)}`}>
-                                        {row.tag === 'Dolby' ? 'Vision' : row.tag}
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
-                                {row.tests.map((test: any, idx: number) => (
-                                    <div key={idx} className={`p-3 flex flex-col gap-1.5 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
-                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
-                                        
-                                        {test.error ? (
-                                            <span className="text-xs text-red-400">API Error</span>
-                                        ) : !test.supported ? (
-                                            <span className="text-xs font-bold text-slate-300 dark:text-slate-600">{values.not_supported}</span>
-                                        ) : (
-                                            <div className="flex gap-2">
-                                                <div 
-                                                    className={`flex items-center gap-1 px-1.5 py-0.5 rounded ${test.efficient ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 border border-green-100 dark:border-green-800' : 'bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400 border border-orange-100 dark:border-orange-800'}`} 
-                                                    title={test.efficient ? 'Hardware Accelerated (Efficient)' : 'Software Decoding (Power Hungry)'}
-                                                >
-                                                    {test.efficient ? <Battery size={12} /> : <Zap size={12} />}
-                                                    <span className="text-[10px] font-medium hidden sm:inline">{test.efficient ? 'HW' : 'SW'}</span>
-                                                </div>
-                                                <div 
-                                                    className={`flex items-center gap-1 px-1.5 py-0.5 rounded ${test.smooth ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 border border-blue-100 dark:border-blue-800' : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400 border border-red-100 dark:border-red-800'}`} 
-                                                    title={test.smooth ? t.video_smooth : 'May Drop Frames'}
-                                                >
-                                                    {test.smooth ? <Check size={12} /> : <X size={12} />}
-                                                </div>
-                                            </div>
-                                        )}
+            {filteredVideo.length > 0 && (
+                <div className="mb-8">
+                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2 px-1">
+                        <Film size={14} />
+                        {labels.video_codecs}
+                    </h3>
+                    <div className="space-y-3">
+                        {filteredVideo.map((row, rIdx) => (
+                            <div key={rIdx} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+                                <div className="bg-slate-50 dark:bg-slate-900/50 px-4 py-2 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                                    <div className="flex items-center gap-2 overflow-hidden">
+                                        <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 whitespace-nowrap">{row.codec}</h3>
+                                        <span className="text-xs text-slate-500 dark:text-slate-400 ml-1 truncate">({row.profile})</span>
                                     </div>
-                                ))}
+                                    <div className="flex gap-1.5">
+                                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${row.bitDepth === 10 ? 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800/50' : 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'}`}>
+                                            {row.bitDepth}-bit
+                                        </span>
+                                        <span className={`flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded border ${getTagColor(row.tag)}`}>
+                                            {row.tag === 'Dolby' ? 'Vision' : row.tag}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
+                                    {row.tests.map((test: any, idx: number) => (
+                                        <div key={idx} className={`p-3 flex flex-col gap-1.5 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
+                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
+                                            
+                                            {test.error ? (
+                                                <span className="text-xs text-red-400">API Error</span>
+                                            ) : !test.supported ? (
+                                                <span className="text-xs font-bold text-slate-300 dark:text-slate-600">{values.not_supported}</span>
+                                            ) : (
+                                                <div className="flex gap-2">
+                                                    <div 
+                                                        className={`flex items-center gap-1 px-1.5 py-0.5 rounded ${test.efficient ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 border border-green-100 dark:border-green-800' : 'bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400 border border-orange-100 dark:border-orange-800'}`} 
+                                                        title={test.efficient ? 'Hardware Accelerated (Efficient)' : 'Software Decoding (Power Hungry)'}
+                                                    >
+                                                        {test.efficient ? <Battery size={12} /> : <Zap size={12} />}
+                                                        <span className="text-[10px] font-medium hidden sm:inline">{test.efficient ? 'HW' : 'SW'}</span>
+                                                    </div>
+                                                    <div 
+                                                        className={`flex items-center gap-1 px-1.5 py-0.5 rounded ${test.smooth ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 border border-blue-100 dark:border-blue-800' : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400 border border-red-100 dark:border-red-800'}`} 
+                                                        title={test.smooth ? t.video_smooth : 'May Drop Frames'}
+                                                    >
+                                                        {test.smooth ? <Check size={12} /> : <X size={12} />}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Audio Section */}
-            <div className="mb-6">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2 px-1">
-                    <Music size={14} />
-                    {labels.audio_codecs}
-                </h3>
-                <div className="space-y-3">
-                    {audioResults.map((row, rIdx) => (
-                        <div key={rIdx} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
-                            <div className="bg-slate-50 dark:bg-slate-900/50 px-4 py-2 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <Speaker size={14} className="text-slate-400" />
-                                    <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100">{row.codec}</h3>
-                                    <span className="text-xs text-slate-500 dark:text-slate-400 ml-1 hidden sm:inline">({row.label})</span>
-                                </div>
-                                <span className={`flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded border ${getTagColor(row.tag)}`}>
-                                    {row.tag === 'Dolby' && <Tv size={10} />}
-                                    {row.tag}
-                                </span>
-                            </div>
-                            
-                            <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
-                                {row.tests.map((test: any, idx: number) => (
-                                    <div key={idx} className={`p-3 flex flex-col gap-1 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
-                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
-                                        
-                                        {!test.supported ? (
-                                            <span className="text-xs font-bold text-slate-300 dark:text-slate-600">{values.not_supported}</span>
-                                        ) : (
-                                            <div className="flex items-center gap-1.5">
-                                                <div 
-                                                    className={`flex items-center justify-center w-6 h-6 rounded-full ${test.supported ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-red-100 text-red-600'}`}
-                                                >
-                                                    {test.supported ? <Check size={12} /> : <X size={12} />}
-                                                </div>
-                                                {test.efficient && (
-                                                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-500 border border-emerald-200 dark:border-emerald-800/50 px-1.5 rounded">HW</span>
-                                                )}
-                                            </div>
-                                        )}
+            {filteredAudio.length > 0 && (
+                <div className="mb-6">
+                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2 px-1">
+                        <Music size={14} />
+                        {labels.audio_codecs}
+                    </h3>
+                    <div className="space-y-3">
+                        {filteredAudio.map((row, rIdx) => (
+                            <div key={rIdx} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+                                <div className="bg-slate-50 dark:bg-slate-900/50 px-4 py-2 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Speaker size={14} className="text-slate-400" />
+                                        <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100">{row.codec}</h3>
+                                        <span className="text-xs text-slate-500 dark:text-slate-400 ml-1 hidden sm:inline">({row.label})</span>
                                     </div>
-                                ))}
+                                    <span className={`flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded border ${getTagColor(row.tag)}`}>
+                                        {row.tag === 'Dolby' && <Tv size={10} />}
+                                        {row.tag}
+                                    </span>
+                                </div>
+                                
+                                <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
+                                    {row.tests.map((test: any, idx: number) => (
+                                        <div key={idx} className={`p-3 flex flex-col gap-1 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
+                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
+                                            
+                                            {!test.supported ? (
+                                                <span className="text-xs font-bold text-slate-300 dark:text-slate-600">{values.not_supported}</span>
+                                            ) : (
+                                                <div className="flex items-center gap-1.5">
+                                                    <div 
+                                                        className={`flex items-center justify-center w-6 h-6 rounded-full ${test.supported ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-red-100 text-red-600'}`}
+                                                    >
+                                                        {test.supported ? <Check size={12} /> : <X size={12} />}
+                                                    </div>
+                                                    {test.efficient && (
+                                                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-500 border border-emerald-200 dark:border-emerald-800/50 px-1.5 rounded">HW</span>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
             
             {/* Legend */}
             <div className="mt-4 flex gap-4 text-[10px] text-slate-400 justify-center pb-2 flex-wrap">

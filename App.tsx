@@ -2,7 +2,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { RefreshCw, Monitor, Zap } from 'lucide-react';
 import { getAllData } from './services/detectionService';
-import { BrowserData } from './types';
+import { exportAsJson } from './services/exporter';
+import { BrowserData, GeoPosition } from './types';
 import { CameraModal } from './components/CameraModal';
 import { AudioRecorderModal } from './components/AudioRecorderModal';
 import { WebGLExtensionsModal } from './components/WebGLExtensionsModal';
@@ -44,12 +45,6 @@ import { FeaturesSection } from './components/sections/FeaturesSection';
 
 type PermissionStatusType = 'idle' | 'granted' | 'denied' | 'prompt' | 'error';
 type PermissionKey = 'camera' | 'microphone' | 'geolocation' | 'notifications' | 'midi';
-
-interface GeoPosition {
-    latitude: number;
-    longitude: number;
-    accuracy: number;
-}
 
 const App: React.FC = () => {
   const [data, setData] = useState<BrowserData | null>(null);
@@ -227,7 +222,15 @@ const App: React.FC = () => {
              
              if (key === 'geolocation' && result.state === 'granted') {
                  navigator.geolocation.getCurrentPosition(
-                     (pos) => setGeoData(pos.coords),
+                     (pos) => setGeoData({
+                         latitude: pos.coords.latitude,
+                         longitude: pos.coords.longitude,
+                         accuracy: pos.coords.accuracy,
+                         altitude: pos.coords.altitude,
+                         altitudeAccuracy: pos.coords.altitudeAccuracy,
+                         heading: pos.coords.heading,
+                         speed: pos.coords.speed
+                     }),
                      (err) => console.error(err)
                  );
              }
@@ -257,7 +260,15 @@ const App: React.FC = () => {
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
                     updatePermStatus('geolocation', 'granted');
-                    setGeoData(pos.coords);
+                    setGeoData({
+                         latitude: pos.coords.latitude,
+                         longitude: pos.coords.longitude,
+                         accuracy: pos.coords.accuracy,
+                         altitude: pos.coords.altitude,
+                         altitudeAccuracy: pos.coords.altitudeAccuracy,
+                         heading: pos.coords.heading,
+                         speed: pos.coords.speed
+                     });
                 },
                 (err) => {
                     console.error(err);
@@ -289,24 +300,7 @@ const App: React.FC = () => {
 
   const handleExportJSON = () => {
     if (!data) return;
-    const exportData = {
-        ...data,
-        geolocation: geoData || 'Permission not granted'
-    };
-    const jsonString = JSON.stringify(exportData, null, 2);
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    const now = new Date();
-    const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-    const timeStr = String(now.getHours()).padStart(2, '0') + '-' + String(now.getMinutes()).padStart(2, '0');
-    const filename = `browserscope-${dateStr}-${timeStr}.json`;
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    exportAsJson(data, permStatus, geoData);
   };
 
   return (

@@ -417,6 +417,7 @@ export interface Translation {
     video_res: string;
     video_efficient: string;
     video_smooth: string;
+    filter_supported: string;
   };
 
   visionModal: {

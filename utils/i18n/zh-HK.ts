@@ -262,6 +262,11 @@ export const zhHK: Translation = {
     history: "更新歷史",
     updates: [
         {
+            version: "1.5.0",
+            date: "2024-04-05",
+            changes: ["新增開發者工具箱 (控制台/檢查器)", "增強媒體解碼檢測 (HDR/杜比/色深)", "支援切換 IP 查詢來源", "支援懸浮視窗模式"]
+        },
+        {
             version: "1.3.0",
             date: "2024-03-20",
             changes: ["新增進階硬件互動工具 (壓感/視訊解碼)", "優化流動端佈局", "增加俄語支援"]
@@ -523,7 +528,8 @@ export const zhHK: Translation = {
     video_codec: "編碼格式",
     video_res: "解析度",
     video_efficient: "高效能 (硬件加速)",
-    video_smooth: "流暢播放"
+    video_smooth: "流暢播放",
+    filter_supported: "僅顯示支援項"
   },
 
   visionModal: {

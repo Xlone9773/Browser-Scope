@@ -261,6 +261,11 @@ export const en: Translation = {
     history: "History",
     updates: [
         {
+            version: "1.5.0",
+            date: "2024-04-05",
+            changes: ["Added Developer Tools (Console/Inspector)", "Enhanced Codec Matrix (HDR/Dolby/Bit-depth)", "Added IP Source Selection", "Floating Window Support"]
+        },
+        {
             version: "1.4.0",
             date: "2024-03-25",
             changes: ["Added Vision Capabilities (Barcode/QR)", "Added CPU/GPU Mapping Update"]
@@ -527,7 +532,8 @@ export const en: Translation = {
     video_codec: "Codec",
     video_res: "Resolution",
     video_efficient: "Power Efficient (Hardware)",
-    video_smooth: "Smooth Playback"
+    video_smooth: "Smooth Playback",
+    filter_supported: "Show Supported Only"
   },
 
   visionModal: {

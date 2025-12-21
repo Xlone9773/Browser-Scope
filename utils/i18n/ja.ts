@@ -262,6 +262,11 @@ export const ja: Translation = {
     history: "更新履歴",
     updates: [
         {
+            version: "1.5.0",
+            date: "2024-04-05",
+            changes: ["開発者ツールを追加 (コンソール/インスペクター)", "コーデック検出を強化 (HDR/Dolby/深度)", "IPソース選択機能を追加", "フローティングウィンドウ対応"]
+        },
+        {
             version: "1.3.0",
             date: "2024-03-20",
             changes: ["高度なハードウェア対話ツール(筆圧/動画デコード)を追加", "モバイルレイアウトを最適化", "ロシア語サポートを追加"]
@@ -523,7 +528,8 @@ export const ja: Translation = {
     video_codec: "コーデック",
     video_res: "解像度",
     video_efficient: "高効率 (ハードウェア)",
-    video_smooth: "スムーズ再生"
+    video_smooth: "スムーズ再生",
+    filter_supported: "対応済みのみ表示"
   },
 
   visionModal: {

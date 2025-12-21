@@ -184,6 +184,16 @@ export interface FeatureItem {
   description: string;
 }
 
+export interface GeoPosition {
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+    altitude: number | null;
+    altitudeAccuracy: number | null;
+    heading: number | null;
+    speed: number | null;
+}
+
 // Shape Detection API Types
 export interface DetectedBarcode {
   boundingBox: DOMRectReadOnly;

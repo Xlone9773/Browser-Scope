@@ -262,6 +262,11 @@ export const zhCN: Translation = {
     history: "更新历史",
     updates: [
         {
+            version: "1.5.0",
+            date: "2024-04-05",
+            changes: ["新增开发者工具箱 (控制台/检查器)", "增强媒体解码检测 (HDR/杜比/色深)", "支持切换 IP 查询数据源", "支持浮动窗口模式"]
+        },
+        {
             version: "1.4.0",
             date: "2024-03-25",
             changes: ["新增视觉能力检测 (条形码/二维码)", "更新 CPU/GPU 映射数据库"]
@@ -528,7 +533,8 @@ export const zhCN: Translation = {
     video_codec: "编码格式",
     video_res: "分辨率",
     video_efficient: "高效能 (硬件加速)",
-    video_smooth: "流畅播放"
+    video_smooth: "流畅播放",
+    filter_supported: "仅显示支持项"
   },
 
   visionModal: {
