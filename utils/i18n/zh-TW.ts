@@ -1,14 +1,16 @@
 
+// ... existing imports
 import { Translation } from './types';
 
 export const zhTW: Translation = {
+  // ... existing fields
   title: "BrowserScope",
   subtitle: "現代瀏覽器的深度指紋與能力檢測工具",
   loading: "正在掃描系統能力...",
   loading_steps: [
     "正在初始化環境...",
     "檢測圖形渲染能力...",
-    "評估網路連線狀態...",
+    "評估網絡連線狀態...",
     "檢查隱私與安全...",
     "評估 AI 效能...",
     "即將完成報告..."
@@ -20,7 +22,7 @@ export const zhTW: Translation = {
     system: "系統環境",
     hardware: "硬體資訊",
     display: "顯示與螢幕",
-    network: "網路連線",
+    network: "網絡連線",
     security: "隱私與安全",
     ai_compute: "AI 與運算",
     fingerprints: "裝置指紋",
@@ -59,7 +61,7 @@ export const zhTW: Translation = {
     dark_mode: "深色模式",
     online: "連線狀態",
     conn_type: "連線類型",
-    net_type: "網路類型",
+    net_type: "網絡類型",
     downlink: "下行速度",
     downlink_max: "最大下行",
     rtt: "延遲 (RTT)",
@@ -132,6 +134,7 @@ export const zhTW: Translation = {
     open_sensors: "感測器詳情",
     open_tools: "硬體互動測試",
     open_vision: "視覺識別 (Vision)",
+    open_speedtest: "網絡測速",
     view_details: "查看詳情",
     view_base64: "查看 Base64",
     view_extensions: "擴充列表",
@@ -139,6 +142,7 @@ export const zhTW: Translation = {
     copied: "已複製",
     check: "檢查",
     open_map: "打開地圖",
+    stress_test: "壓力測試",
   },
 
   features: {
@@ -173,7 +177,7 @@ export const zhTW: Translation = {
 
   featureDescs: {
     serviceWorker: "支援離線存取和 PWA 核心功能",
-    bgSync: "網路恢復後自動同步資料",
+    bgSync: "網絡恢復後自動同步資料",
     pushApi: "接收伺服器推播訊息",
     notification: "發送系統級通知",
     appBadges: "在應用程式圖示上顯示標記",
@@ -274,7 +278,7 @@ export const zhTW: Translation = {
         {
             version: "1.2.0",
             date: "2024-03-15",
-            changes: ["新增網路診斷工具 (WebRTC/DNS/協定檢測)", "新增螢幕色域與 HDR 測試", "優化指紋評分演算法"]
+            changes: ["新增網絡診斷工具 (WebRTC/DNS/協定檢測)", "新增螢幕色域與 HDR 測試", "優化指紋評分演算法"]
         },
         {
             version: "1.1.0",
@@ -358,7 +362,7 @@ export const zhTW: Translation = {
   settingsModal: {
     title: "設定",
     tab_general: "通用",
-    tab_network: "網路工具",
+    tab_network: "網絡工具",
     tab_display: "螢幕檢測",
     tab_storage: "儲存管理",
     tab_resources: "資源監控",
@@ -379,7 +383,7 @@ export const zhTW: Translation = {
     check_ipv6: "檢測 IPv6",
     ipv6_success: "支援 IPv6",
     ipv6_fail: "不支援 IPv6",
-    network_adv_title: "進階網路診斷",
+    network_adv_title: "進階網絡診斷",
     network_webrtc_title: "WebRTC 洩漏檢測",
     network_webrtc_desc: "通過 STUN 伺服器嘗試獲取真實的區域網路或公網 IP。",
     network_webrtc_btn: "開始檢測",
@@ -486,6 +490,25 @@ export const zhTW: Translation = {
     confidence: "置信度"
   },
 
+  computeStress: {
+    title: "前沿算力壓力測試",
+    warning: "警告：此測試將最大化 GPU 負載。可能會導致電池耗盡、發熱或系統暫時凍結。請謹慎使用。",
+    start: "開始神經壓測",
+    stop: "停止",
+    intensity: "張量大小",
+    status_active: "運算中",
+    status_idle: "閒置",
+    metric_gflops: "GFLOPS",
+    metric_usage: "運算次數/秒",
+    backend_webgpu: "後端: WebGPU (矩陣乘法)",
+    backend_fallback: "後端: WebGL (GPGPU 回退)",
+    error_webgpu: "目前瀏覽器不支援 WebGPU，將回退到傳統方法。",
+    use_fp16: "啟用 FP16 (半精度浮點)",
+    fp16_desc: "加速 AI Tensor Cores 運算",
+    stability: "穩定性",
+    peak: "峰值"
+  },
+
   gamepadTool: {
     title: "手把與藍牙",
     tab_gamepad: "遊戲手把",
@@ -555,5 +578,30 @@ export const zhTW: Translation = {
     no_cam_error: "未找到相機或權限被拒絕",
     auto_scan: "自動掃描",
     manual_capture: "手動拍攝"
+  },
+
+  speedTest: {
+    title: "網絡速度測試",
+    start: "開始測速",
+    stop: "停止",
+    ping: "延遲 (Ping)",
+    jitter: "抖動",
+    download: "下載速度",
+    upload: "上傳速度",
+    latency: "網絡延遲",
+    mbps: "Mbps",
+    status_idle: "準備就緒",
+    status_ping: "正在測試延遲...",
+    status_down: "正在測試下載...",
+    status_up: "正在測試上傳...",
+    status_done: "測試完成",
+    server: "Cloudflare",
+    test_size: "測試大小",
+    backend: "測速節點",
+    custom_url: "自定義下載連結",
+    custom_placeholder: "https://example.com/large-file.zip",
+    cors_note: "注意：URL 必須支援 CORS。上傳測試將被跳過。",
+    backend_cloudflare: "Cloudflare (全球)",
+    backend_custom: "自定義 URL"
   }
 };

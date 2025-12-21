@@ -1,7 +1,9 @@
 
+// ... existing imports
 import { Translation } from './types';
 
 export const ru: Translation = {
+  // ... existing fields
   title: "BrowserScope",
   subtitle: "Комплексный инструмент для глубокого анализа отпечатков и возможностей браузера",
   loading: "Сканирование возможностей системы...",
@@ -132,6 +134,7 @@ export const ru: Translation = {
     open_sensors: "Детали датчиков",
     open_tools: "Аппаратные тесты",
     open_vision: "Зрение (Vision)",
+    open_speedtest: "Тест скорости",
     view_details: "Подробнее",
     view_base64: "Показать Base64",
     view_extensions: "Список расширений",
@@ -139,6 +142,7 @@ export const ru: Translation = {
     copied: "Скопировано",
     check: "Проверить",
     open_map: "Открыть карту",
+    stress_test: "Стресс-тест",
   },
 
   features: {
@@ -262,29 +266,34 @@ export const ru: Translation = {
     history: "История обновлений",
     updates: [
         {
+            version: "1.6.0",
+            date: "2024-04-12",
+            changes: ["Added Real Network Speed Test (Cloudflare)", "Added I18n Dynamic Translations", "Enhanced Intl support"]
+        },
+        {
             version: "1.5.0",
             date: "2024-04-05",
-            changes: ["Добавлены Инструменты разработчика (Консоль/Инспектор)", "Улучшена матрица кодеков (HDR/Dolby/Глубина)", "Выбор источника IP", "Поддержка плавающих окон"]
+            changes: ["Added Developer Tools (Console/Inspector)", "Enhanced Codec Matrix (HDR/Dolby/Bit-depth)", "Added IP Source Selection", "Floating Window Support"]
         },
         {
             version: "1.4.0",
             date: "2024-03-25",
-            changes: ["Добавлены возможности зрения (Штрихкод/QR)", "Обновление маппинга CPU/GPU"]
+            changes: ["Added Vision Capabilities (Barcode/QR)", "Added CPU/GPU Mapping Update"]
         },
         {
             version: "1.3.0",
             date: "2024-03-20",
-            changes: ["Добавлены расширенные инструменты взаимодействия с оборудованием (Нажим/Видео)", "Оптимизация мобильной верстки", "Добавлена поддержка русского языка"]
+            changes: ["Added Hardware Tools (Pressure/Video)", "Optimized mobile layout", "Added Russian support"]
         },
         {
             version: "1.2.0",
             date: "2024-03-15",
-            changes: ["Добавлены инструменты сетевой диагностики (WebRTC/DNS/Протоколы)", "Добавлены тесты цветового охвата экрана и HDR", "Улучшен алгоритм оценки отпечатков"]
+            changes: ["Added Network Tools (WebRTC/DNS/Proto)", "Added Gamut & HDR tests", "Improved fingerprint scoring"]
         },
         {
             version: "1.1.0",
             date: "2024-03-10",
-            changes: ["Добавлена песочница оценки производительности AI", "Поддержка Bluetooth и геймпадов", "Добавлена панель настроек"]
+            changes: ["Added AI Playground", "Bluetooth & Gamepad support", "Added Settings panel"]
         }
     ],
     close: "Закрыть"
@@ -491,6 +500,25 @@ export const ru: Translation = {
     confidence: "Уверенность"
   },
 
+  computeStress: {
+    title: "Стресс-тест вычислений",
+    warning: "Внимание: Этот тест максимально нагружает GPU. Это может вызвать разряд батареи, нагрев или временное зависание системы. Используйте с осторожностью.",
+    start: "Запуск нейро-стресса",
+    stop: "Стоп",
+    intensity: "Размер тензора",
+    status_active: "ВЫЧИСЛЕНИЕ",
+    status_idle: "ОЖИДАНИЕ",
+    metric_gflops: "GFLOPS",
+    metric_usage: "Операций/сек",
+    backend_webgpu: "Backend: WebGPU (Умножение матриц)",
+    backend_fallback: "Backend: WebGL (GPGPU Fallback)",
+    error_webgpu: "WebGPU не поддерживается в этом браузере. Возврат к устаревшим методам.",
+    use_fp16: "Включить FP16 (Half Precision)",
+    fp16_desc: "Ускорение на тензорных ядрах AI",
+    stability: "Стабильность",
+    peak: "Пик"
+  },
+
   gamepadTool: {
     title: "Геймпад и Bluetooth",
     tab_gamepad: "Геймпад",
@@ -560,5 +588,30 @@ export const ru: Translation = {
     no_cam_error: "Камера не найдена или доступ запрещен",
     auto_scan: "Автосканирование",
     manual_capture: "Ручная съемка"
+  },
+
+  speedTest: {
+    title: "Тест скорости сети",
+    start: "Начать тест",
+    stop: "Стоп",
+    ping: "Пинг",
+    jitter: "Джиттер",
+    download: "Скачивание",
+    upload: "Загрузка",
+    latency: "Задержка",
+    mbps: "Мбит/с",
+    status_idle: "Готов к тесту",
+    status_ping: "Тестирование задержки...",
+    status_down: "Тестирование скачивания...",
+    status_up: "Тестирование загрузки...",
+    status_done: "Тест завершен",
+    server: "Cloudflare",
+    test_size: "Размер теста",
+    backend: "Бэкенд",
+    custom_url: "Свой URL скачивания",
+    custom_placeholder: "https://example.com/large-file.zip",
+    cors_note: "Примечание: URL должен поддерживать CORS. Тест загрузки будет пропущен.",
+    backend_cloudflare: "Cloudflare (Global)",
+    backend_custom: "Свой URL"
   }
 };

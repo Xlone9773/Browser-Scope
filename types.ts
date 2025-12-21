@@ -79,6 +79,15 @@ export interface FingerprintScore {
   factors: ScoreFactor[];
 }
 
+export interface IntlSupport {
+    listFormat: boolean;
+    relativeTimeFormat: boolean;
+    displayNames: boolean;
+    segmenter: boolean;
+    pluralRules: boolean;
+    collator: boolean;
+}
+
 export interface BrowserData {
   system: {
     os: string;
@@ -172,6 +181,8 @@ export interface BrowserData {
     timeZone: string;
     locale: string;
     calendar: string;
+    numberingSystem: string;
+    intlSupport: IntlSupport;
   };
   features: FeatureItem[];
   pwaFeatures: FeatureItem[];

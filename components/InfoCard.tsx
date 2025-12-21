@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { LucideIcon } from 'lucide-react';
 
 interface InfoItemProps {
@@ -9,7 +9,8 @@ interface InfoItemProps {
   isFeature?: boolean;
 }
 
-const InfoItem: React.FC<InfoItemProps> = ({ label, value, subValue, isFeature }) => {
+// Memoized InfoItem to prevent re-renders of list items
+const InfoItem = memo<InfoItemProps>(({ label, value, subValue, isFeature }) => {
   let displayValue = value;
   let statusColor = 'text-slate-800 dark:text-slate-200';
 
@@ -33,7 +34,7 @@ const InfoItem: React.FC<InfoItemProps> = ({ label, value, subValue, isFeature }
       </div>
     </div>
   );
-};
+});
 
 interface InfoCardProps {
   title: string;
@@ -41,7 +42,8 @@ interface InfoCardProps {
   children: React.ReactNode;
 }
 
-export const InfoCard: React.FC<InfoCardProps> = ({ title, icon: Icon, children }) => {
+// Memoized InfoCard shell
+export const InfoCard = memo<InfoCardProps>(({ title, icon: Icon, children }) => {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-full transition-all hover:shadow-md duration-300">
       <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3 bg-white dark:bg-slate-800">
@@ -55,7 +57,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({ title, icon: Icon, children 
       </div>
     </div>
   );
-};
+});
 
 export const FeatureGrid: React.FC<{ items: { name: string; supported: boolean; description: string }[] }> = ({ items }) => {
   return (

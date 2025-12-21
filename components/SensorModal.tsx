@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Activity, Compass, Move, Navigation, Sun } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
+import { formatNumber } from '../utils/formatters';
 
 interface SensorModalProps {
   onClose: () => void;
@@ -190,7 +191,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         <div className="space-y-1">
                             <div className="flex justify-between text-xs text-slate-500">
                                 <span>X-Axis</span>
-                                <span className="font-mono">{accel.x.toFixed(2)} m/s²</span>
+                                <span className="font-mono">{formatNumber(accel.x, 2, 2)} m/s²</span>
                             </div>
                             <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
                                 <div 
@@ -202,7 +203,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         <div className="space-y-1">
                             <div className="flex justify-between text-xs text-slate-500">
                                 <span>Y-Axis</span>
-                                <span className="font-mono">{accel.y.toFixed(2)} m/s²</span>
+                                <span className="font-mono">{formatNumber(accel.y, 2, 2)} m/s²</span>
                             </div>
                             <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
                                 <div 
@@ -214,7 +215,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         <div className="space-y-1">
                             <div className="flex justify-between text-xs text-slate-500">
                                 <span>Z-Axis</span>
-                                <span className="font-mono">{accel.z.toFixed(2)} m/s²</span>
+                                <span className="font-mono">{formatNumber(accel.z, 2, 2)} m/s²</span>
                             </div>
                             <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
                                 <div 
@@ -238,15 +239,15 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                     <div className="grid grid-cols-3 gap-3 text-center">
                         <div className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700/50">
                             <div className="text-[10px] text-slate-400 mb-1">Alpha</div>
-                            <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">{gyro.alpha.toFixed(0)}°</div>
+                            <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">{formatNumber(gyro.alpha, 0)}°</div>
                         </div>
                         <div className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700/50">
                             <div className="text-[10px] text-slate-400 mb-1">Beta</div>
-                            <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">{gyro.beta.toFixed(0)}°</div>
+                            <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">{formatNumber(gyro.beta, 0)}°</div>
                         </div>
                         <div className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700/50">
                             <div className="text-[10px] text-slate-400 mb-1">Gamma</div>
-                            <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">{gyro.gamma.toFixed(0)}°</div>
+                            <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">{formatNumber(gyro.gamma, 0)}°</div>
                         </div>
                     </div>
                     
@@ -277,15 +278,15 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                          <div className="grid grid-cols-3 gap-2">
                             <div className="text-center">
                                 <div className="text-[10px] text-slate-400 mb-1">X (µT)</div>
-                                <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{magnet.x.toFixed(1)}</div>
+                                <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{formatNumber(magnet.x, 1, 1)}</div>
                             </div>
                             <div className="text-center">
                                 <div className="text-[10px] text-slate-400 mb-1">Y (µT)</div>
-                                <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{magnet.y.toFixed(1)}</div>
+                                <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{formatNumber(magnet.y, 1, 1)}</div>
                             </div>
                             <div className="text-center">
                                 <div className="text-[10px] text-slate-400 mb-1">Z (µT)</div>
-                                <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{magnet.z.toFixed(1)}</div>
+                                <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{formatNumber(magnet.z, 1, 1)}</div>
                             </div>
                          </div>
                     ) : (
@@ -309,7 +310,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                     {lux !== null ? (
                         <div className="flex flex-col items-center justify-center">
                             <div className="text-3xl font-mono font-bold text-slate-800 dark:text-slate-100 mb-2">
-                                {lux.toFixed(0)} <span className="text-sm text-slate-400 font-sans font-normal">lux</span>
+                                {formatNumber(lux, 0)} <span className="text-sm text-slate-400 font-sans font-normal">lux</span>
                             </div>
                             {/* Visual Bar for Light Level (Logarithmic scale approx 0 to 50000) */}
                             <div className="w-full h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden relative">

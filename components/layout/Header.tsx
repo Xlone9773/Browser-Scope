@@ -13,8 +13,11 @@ import {
   ChevronDown 
 } from 'lucide-react';
 import { Translation, Language } from '../../utils/i18n/types';
-import { languageNames } from '../../utils/i18n/index';
 import { Theme } from '../../appearance/theme';
+import { useFormatter } from '../../hooks/useFormatter';
+
+// List of supported language codes
+const SUPPORTED_LANGUAGES: Language[] = ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'];
 
 interface HeaderProps {
   t: Translation;
@@ -42,6 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenBenchmark
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const { formatNativeLanguageName } = useFormatter(lang);
 
   return (
     <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800 relative">
@@ -69,13 +73,13 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="relative">
             <button onClick={() => setIsLangMenuOpen(!isLangMenuOpen)} className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-sm active:scale-95">
                 <Languages size={16} />
-                <span>{languageNames[lang]}</span>
+                <span className="capitalize">{formatNativeLanguageName(lang)}</span>
                 <ChevronDown size={14} className={`transition-transform duration-300 ${isLangMenuOpen ? 'rotate-180' : ''}`} />
             </button>
             <div className={`absolute right-0 top-full mt-2 w-48 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl py-1 z-50 transform transition-all duration-200 origin-top-right ${isLangMenuOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}>
-                {Object.entries(languageNames).map(([code, name]) => (
+                {SUPPORTED_LANGUAGES.map((code) => (
                     <button key={code} onClick={() => { setLang(code as Language); setIsLangMenuOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${lang === code ? 'text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20' : 'text-slate-700 dark:text-slate-300'}`}>
-                        {name}
+                        {formatNativeLanguageName(code)}
                     </button>
                 ))}
             </div>

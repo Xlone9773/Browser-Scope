@@ -1,7 +1,9 @@
 
+// ... existing imports
 import { Translation } from './types';
 
 export const en: Translation = {
+  // ... existing fields
   title: "BrowserScope",
   subtitle: "Comprehensive browser fingerprinting and capability detection tool.",
   loading: "Initializing...",
@@ -131,6 +133,7 @@ export const en: Translation = {
     open_sensors: "Sensors",
     open_tools: "Hardware Tools",
     open_vision: "Vision/QR",
+    open_speedtest: "Speed Test",
     view_details: "View Details",
     view_base64: "View Base64",
     view_extensions: "Extensions",
@@ -138,6 +141,7 @@ export const en: Translation = {
     copied: "Copied",
     check: "Check",
     open_map: "Open Map",
+    stress_test: "Stress Test",
   },
 
   features: {
@@ -260,6 +264,11 @@ export const en: Translation = {
     latest_update: "Latest Update",
     history: "History",
     updates: [
+        {
+            version: "1.6.0",
+            date: "2024-04-12",
+            changes: ["Added Real Network Speed Test (Cloudflare)", "Added I18n Dynamic Translations", "Enhanced Intl support"]
+        },
         {
             version: "1.5.0",
             date: "2024-04-05",
@@ -490,6 +499,25 @@ export const en: Translation = {
     confidence: "Confidence"
   },
 
+  computeStress: {
+    title: "Frontier Compute Stress Test",
+    warning: "Warning: This test maximizes GPU load. It may cause high battery drain, heating, or temporary system freeze. Use with caution.",
+    start: "Start Neural Stress",
+    stop: "Stop",
+    intensity: "Tensor Size",
+    status_active: "CRUNCHING",
+    status_idle: "IDLE",
+    metric_gflops: "GFLOPS",
+    metric_usage: "Operations/Sec",
+    backend_webgpu: "Backend: WebGPU (Matrix Multiply)",
+    backend_fallback: "Backend: WebGL (GPGPU Fallback)",
+    error_webgpu: "WebGPU is not supported on this browser. Falling back to legacy methods.",
+    use_fp16: "Use FP16 (Half Precision)",
+    fp16_desc: "Accelerate on AI Tensor Cores",
+    stability: "Stability",
+    peak: "Peak"
+  },
+
   gamepadTool: {
     title: "Gamepad & Bluetooth",
     tab_gamepad: "Gamepad",
@@ -559,5 +587,30 @@ export const en: Translation = {
     no_cam_error: "Camera not found or permission denied",
     auto_scan: "Auto Scan",
     manual_capture: "Capture & Detect"
+  },
+
+  speedTest: {
+    title: "Network Speed Test",
+    start: "Start Test",
+    stop: "Stop",
+    ping: "Ping",
+    jitter: "Jitter",
+    download: "Download",
+    upload: "Upload",
+    latency: "Latency",
+    mbps: "Mbps",
+    status_idle: "Ready to start",
+    status_ping: "Testing Latency...",
+    status_down: "Testing Download...",
+    status_up: "Testing Upload...",
+    status_done: "Test Complete",
+    server: "Cloudflare",
+    test_size: "Test Size",
+    backend: "Backend",
+    custom_url: "Custom Download URL",
+    custom_placeholder: "https://example.com/large-file.zip",
+    cors_note: "Note: URL must support CORS. Upload test will be skipped.",
+    backend_cloudflare: "Cloudflare (Global)",
+    backend_custom: "Custom URL"
   }
 };

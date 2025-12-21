@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Brain, Sparkles } from 'lucide-react';
+import { Brain, Sparkles, Zap } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
@@ -9,9 +9,10 @@ interface AiComputeCardProps {
   data: BrowserData['ai'];
   t: Translation;
   onOpenPlayground: () => void;
+  onOpenStress?: () => void; // New optional prop
 }
 
-export const AiComputeCard: React.FC<AiComputeCardProps> = ({ data, t, onOpenPlayground }) => {
+export const AiComputeCard: React.FC<AiComputeCardProps> = ({ data, t, onOpenPlayground, onOpenStress }) => {
   const trVal = (val: boolean) => val ? t.values.supported : t.values.not_supported;
 
   return (
@@ -27,11 +28,17 @@ export const AiComputeCard: React.FC<AiComputeCardProps> = ({ data, t, onOpenPla
         <InfoItem label={t.labels.window_ai} value={trVal(data.windowAi)} />
         <InfoItem label={t.labels.webnn} value={trVal(data.webnn)} />
         
-        <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50">
-            <button onClick={onOpenPlayground} className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-xs font-bold hover:shadow-lg hover:shadow-indigo-500/20 transition-all active:scale-95">
+        <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50 flex gap-2">
+            <button onClick={onOpenPlayground} className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-xs font-bold hover:shadow-lg hover:shadow-indigo-500/20 transition-all active:scale-95">
                 <Sparkles size={14} />
                 {t.aiPlayground.title}
             </button>
+            {onOpenStress && (
+                <button onClick={onOpenStress} className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition-all active:scale-95 border border-slate-200 dark:border-slate-600">
+                    <Zap size={14} className="text-amber-500" />
+                    {t.actions.stress_test}
+                </button>
+            )}
         </div>
     </InfoCard>
   );

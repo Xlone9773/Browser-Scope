@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Play, Cpu, Zap, Activity, Code, Box, Image as ImageIcon, Calculator, Database, RotateCw, Loader2 } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
+import { formatNumber } from '../utils/formatters';
 
 interface BenchmarkModalProps {
   onClose: () => void;
@@ -365,7 +366,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                         <div className="flex flex-col items-center animate-in fade-in zoom-in duration-300">
                             {/* Vertical text layout for score */}
                             <span className="text-5xl font-black text-slate-800 dark:text-white tracking-tighter" style={{writingMode: 'horizontal-tb'}}>
-                                {totalScore.toLocaleString()}
+                                {formatNumber(totalScore)}
                             </span>
                             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">{t.score}</div>
                         </div>
@@ -401,7 +402,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                             <div className="flex items-center gap-3">
                                 {test.score !== null && (
                                     <span className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">
-                                        {test.score.toLocaleString()}
+                                        {formatNumber(test.score)}
                                     </span>
                                 )}
                                 

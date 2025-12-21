@@ -1,7 +1,9 @@
 
+// ... existing imports
 import { Translation } from './types';
 
 export const ja: Translation = {
+  // ... existing fields
   title: "BrowserScope",
   subtitle: "現代のブラウザフィンガープリントと機能検出のための包括的ツール",
   loading: "システム機能をスキャン中...",
@@ -132,6 +134,7 @@ export const ja: Translation = {
     open_sensors: "センサー詳細",
     open_tools: "ハードウェアテスト",
     open_vision: "ビジョン機能 (Vision)",
+    open_speedtest: "スピードテスト",
     view_details: "詳細を表示",
     view_base64: "Base64を表示",
     view_extensions: "拡張機能一覧",
@@ -139,6 +142,7 @@ export const ja: Translation = {
     copied: "コピー完了",
     check: "確認",
     open_map: "地図を開く",
+    stress_test: "ストレステスト",
   },
 
   features: {
@@ -486,6 +490,25 @@ export const ja: Translation = {
     confidence: "信頼度"
   },
 
+  computeStress: {
+    title: "最先端計算ストレス・テスト",
+    warning: "警告：このテストはGPU負荷を最大化します。バッテリー消費、発熱、一時的なシステムフリーズを引き起こす可能性があります。注意して使用してください。",
+    start: "ニューラルストレス開始",
+    stop: "停止",
+    intensity: "テンソルサイズ",
+    status_active: "計算中",
+    status_idle: "アイドル",
+    metric_gflops: "GFLOPS",
+    metric_usage: "演算/秒",
+    backend_webgpu: "バックエンド: WebGPU (行列乗算)",
+    backend_fallback: "バックエンド: WebGL (GPGPUフォールバック)",
+    error_webgpu: "このブラウザはWebGPUをサポートしていません。従来の方法にフォールバックします。",
+    use_fp16: "FP16 (半精度浮動小数点) を使用",
+    fp16_desc: "AI Tensor Cores 演算を加速",
+    stability: "安定性",
+    peak: "ピーク"
+  },
+
   gamepadTool: {
     title: "ゲームパッドとBluetooth",
     tab_gamepad: "ゲームパッド",
@@ -555,5 +578,30 @@ export const ja: Translation = {
     no_cam_error: "カメラが見つからないか、権限が拒否されました",
     auto_scan: "自動スキャン",
     manual_capture: "手動キャプチャ"
+  },
+
+  speedTest: {
+    title: "ネットワーク速度テスト",
+    start: "テスト開始",
+    stop: "停止",
+    ping: "Ping",
+    jitter: "ジッター",
+    download: "ダウンロード",
+    upload: "アップロード",
+    latency: "レイテンシ",
+    mbps: "Mbps",
+    status_idle: "準備完了",
+    status_ping: "Ping測定中...",
+    status_down: "ダウンロード速度測定中...",
+    status_up: "アップロード速度測定中...",
+    status_done: "テスト完了",
+    server: "Cloudflare",
+    test_size: "テストサイズ",
+    backend: "測定サーバー",
+    custom_url: "カスタムダウンロードURL",
+    custom_placeholder: "https://example.com/large-file.zip",
+    cors_note: "注：URLはCORSをサポートする必要があります。アップロードテストはスキップされます。",
+    backend_cloudflare: "Cloudflare (グローバル)",
+    backend_custom: "カスタムURL"
   }
 };

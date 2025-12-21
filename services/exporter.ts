@@ -1,5 +1,6 @@
 
 import { BrowserData, GeoPosition } from '../types';
+import { generateFilenameTimestamp } from '../utils/formatters';
 
 export const exportAsJson = (
     data: BrowserData, 
@@ -29,10 +30,9 @@ export const exportAsJson = (
     
     // Create download link
     const link = document.createElement('a');
-    const now = new Date();
-    const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-    const timeStr = String(now.getHours()).padStart(2, '0') + '-' + String(now.getMinutes()).padStart(2, '0');
-    const filename = `browserscope-${dateStr}-${timeStr}.json`;
+    // Use Intl based formatter for consistent filename
+    const timestampStr = generateFilenameTimestamp();
+    const filename = `browserscope-${timestampStr}.json`;
     
     link.href = url;
     link.download = filename;

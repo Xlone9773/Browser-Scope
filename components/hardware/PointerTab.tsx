@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MousePointer2, RefreshCw, PenTool, Hand } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
+import { formatNumber } from '../../utils/formatters';
 
 interface PointerTabProps {
     t: Translation['hardwareToolsModal'];
@@ -146,7 +147,7 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
                         <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                             <div className="h-full bg-indigo-500 transition-all duration-75" style={{ width: `${pointerData.pressure * 100}%` }}></div>
                         </div>
-                        <span className="font-mono text-xs w-8 text-right">{pointerData.pressure.toFixed(2)}</span>
+                        <span className="font-mono text-xs w-8 text-right">{formatNumber(pointerData.pressure, 2, 2)}</span>
                     </div>
                 </div>
                 <div className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -158,7 +159,7 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
                 <div className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
                     <div>
                         <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Dimensions</div>
-                        <div className="font-mono text-xs text-slate-700 dark:text-slate-200">{pointerData.width.toFixed(0)}x{pointerData.height.toFixed(0)} px</div>
+                        <div className="font-mono text-xs text-slate-700 dark:text-slate-200">{formatNumber(pointerData.width, 0)}x{formatNumber(pointerData.height, 0)} px</div>
                     </div>
                     <button onClick={clear} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-500">
                         <RefreshCw size={14} />

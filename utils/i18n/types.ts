@@ -125,6 +125,7 @@ export interface Translation {
     open_sensors: string;
     open_tools: string;
     open_vision: string;
+    open_speedtest: string;
     view_details: string;
     view_base64: string;
     view_extensions: string;
@@ -132,6 +133,7 @@ export interface Translation {
     copied: string;
     check: string;
     open_map: string;
+    stress_test: string;
   };
 
   features: Record<string, string>;
@@ -374,6 +376,25 @@ export interface Translation {
     confidence: string;
   };
 
+  computeStress: {
+    title: string;
+    warning: string;
+    start: string;
+    stop: string;
+    intensity: string;
+    status_active: string;
+    status_idle: string;
+    metric_gflops: string;
+    metric_usage: string;
+    backend_webgpu: string;
+    backend_fallback: string;
+    error_webgpu: string;
+    use_fp16: string;
+    fp16_desc: string;
+    stability: string;
+    peak: string;
+  };
+
   gamepadTool: {
     title: string;
     tab_gamepad: string;
@@ -443,5 +464,31 @@ export interface Translation {
     no_cam_error: string;
     auto_scan: string;
     manual_capture: string;
+  };
+
+  speedTest: {
+    title: string;
+    start: string;
+    stop: string;
+    ping: string;
+    jitter: string;
+    download: string;
+    upload: string;
+    latency: string;
+    mbps: string;
+    status_idle: string;
+    status_ping: string;
+    status_down: string;
+    status_up: string;
+    status_done: string;
+    server: string;
+    // New fields
+    test_size: string;
+    backend: string;
+    custom_url: string;
+    custom_placeholder: string;
+    cors_note: string;
+    backend_cloudflare: string;
+    backend_custom: string;
   };
 }

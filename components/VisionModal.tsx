@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, ScanBarcode, Camera, RefreshCw, Cpu, Layers, Activity, Aperture, Settings, Video } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { DetectedBarcode } from '../types';
+import { Select } from './ui/Select';
 
 interface VisionModalProps {
   onClose: () => void;
@@ -88,25 +89,32 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
   // Enumerate Devices
   const getDevices = useCallback(async () => {
       try {
-          // Permissions might not be granted yet, usually need to request first or check
           const allDevices = await navigator.mediaDevices.enumerateDevices();
           const videoDevices = allDevices
               .filter(device => device.kind === 'videoinput')
-              .map(device => ({
+              .map((device, index) => ({
                   deviceId: device.deviceId,
-                  label: device.label || `Camera ${device.deviceId.slice(0, 5)}...`
+                  // If label is missing (permission not granted), provide a generic name
+                  label: device.label || `Camera ${index + 1}`
               }));
           
           setDevices(videoDevices);
+          
+          // If we have devices and no selection, pick the first one
           if (videoDevices.length > 0 && !selectedDeviceId) {
-              // Prefer back camera if available, or just first
-              // Simple logic: just pick first
               setSelectedDeviceId(videoDevices[0].deviceId);
           }
       } catch (err) {
           console.error("Error enumerating devices:", err);
       }
   }, [selectedDeviceId]);
+
+  // Listen for device changes
+  useEffect(() => {
+      navigator.mediaDevices.addEventListener('devicechange', getDevices);
+      getDevices(); // Initial check
+      return () => navigator.mediaDevices.removeEventListener('devicechange', getDevices);
+  }, [getDevices]);
 
   // Start Camera
   const startCamera = async () => {
@@ -128,8 +136,8 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
       setIsCameraActive(true);
       setCameraError(null);
       
-      // Update device list now that we have permissions
-      getDevices();
+      // Update device list now that we have permissions (labels will appear)
+      await getDevices();
 
     } catch (e: any) {
       console.error(e);
@@ -153,22 +161,13 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
     }
   };
 
-  const handleDeviceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const newId = e.target.value;
+  const handleDeviceChange = (newId: string) => {
       setSelectedDeviceId(newId);
       // If camera is running, restart it with new device
       if (isCameraActive) {
-          // Small timeout to allow state to settle
           stopCamera();
+          // Short delay to ensure clean stop before start
           setTimeout(() => {
-              // We need to call startCamera but using the new ID from state might be stale in this closure if not careful
-              // However, since we update state, the next render usually handles it or we pass it directly.
-              // To be safe, we'll let the effect trigger or manually call.
-              // Actually, better to just trigger a re-run logic.
-              // Let's refactor startCamera to use current ref or param, but relying on state in timeout is tricky.
-              // Simplest: just set state, and have an effect watch selectedDeviceId?
-              // No, user might just want to change selection without starting.
-              // Let's just manually restart.
               restartCameraWithId(newId);
           }, 100);
       }
@@ -322,6 +321,11 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
       setIsProcessing(false);
   };
 
+  // Convert devices to Select options
+  const deviceOptions = devices.length > 0 
+    ? devices.map(d => ({ id: d.deviceId, label: d.label }))
+    : [{ id: '', label: 'Default Camera' }];
+
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm transition-all duration-300 ease-out ${
       isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
@@ -397,19 +401,12 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                         {t.camera_source}
                     </h3>
                     <div className="relative">
-                        <select 
+                        <Select 
                             value={selectedDeviceId}
+                            options={deviceOptions}
                             onChange={handleDeviceChange}
-                            className="w-full p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none appearance-none"
-                        >
-                            {devices.length === 0 && <option value="">Default Camera</option>}
-                            {devices.map(d => (
-                                <option key={d.deviceId} value={d.deviceId}>{d.label}</option>
-                            ))}
-                        </select>
-                        <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                            <RefreshCw size={12} />
-                        </div>
+                            color="indigo"
+                        />
                     </div>
                 </div>
 

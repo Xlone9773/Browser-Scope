@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { MousePointer2, RefreshCw } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
+import { formatNumber } from '../../utils/formatters';
 
 interface MouseTabProps {
     t: Translation['hardwareToolsModal'];
@@ -53,11 +54,11 @@ export const MouseTab: React.FC<MouseTabProps> = ({ t }) => {
 
                 <div className="grid grid-cols-2 gap-8 w-full max-w-md pointer-events-none select-none relative z-10">
                     <div className="text-center">
-                        <div className="text-5xl font-bold text-indigo-600 dark:text-indigo-400 font-mono tabular-nums">{mouseRate}</div>
+                        <div className="text-5xl font-bold text-indigo-600 dark:text-indigo-400 font-mono tabular-nums">{formatNumber(mouseRate)}</div>
                         <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">{t.mouse_rate} (Hz)</div>
                     </div>
                     <div className="text-center">
-                        <div className="text-5xl font-bold text-slate-700 dark:text-slate-300 font-mono tabular-nums">{peakRate}</div>
+                        <div className="text-5xl font-bold text-slate-700 dark:text-slate-300 font-mono tabular-nums">{formatNumber(peakRate)}</div>
                         <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">{t.mouse_peak} (Hz)</div>
                     </div>
                 </div>

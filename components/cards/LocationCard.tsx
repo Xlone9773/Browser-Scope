@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { MapPin, ExternalLink, Navigation } from 'lucide-react';
+import { MapPin, ExternalLink, Navigation, Globe2, BookA } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
-import { Translation } from '../../utils/i18n/types';
+import { Translation, Language } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
+import { useFormatter } from '../../hooks/useFormatter';
 
 interface LocationCardProps {
   data: BrowserData['localization'];
@@ -12,9 +13,10 @@ interface LocationCardProps {
   t: Translation;
   onRequestPermission: () => void;
   timeFormat: '12' | '24';
+  lang?: Language;
 }
 
-const AnimatedClock = () => {
+const AnimatedClock = ({ timeFormat }: { timeFormat: '12' | '24' }) => {
     const [date, setDate] = useState(new Date());
 
     useEffect(() => {
@@ -43,28 +45,9 @@ const AnimatedClock = () => {
             className="text-blue-400 dark:text-blue-500/50"
         >
             <circle cx="12" cy="12" r="10" />
-            
-            {/* Hour Hand */}
-            <line 
-                x1="12" y1="12" x2="12" y2="7" 
-                transform={`rotate(${hourAngle} 12 12)`} 
-                className="transition-transform duration-300 ease-in-out"
-            />
-            
-            {/* Minute Hand */}
-            <line 
-                x1="12" y1="12" x2="12" y2="4" 
-                transform={`rotate(${minAngle} 12 12)`}
-                className="transition-transform duration-300 ease-in-out"
-            />
-            
-            {/* Second Hand (Thinner, maybe accent color in complex implementations, but keeping stroke color for consistency) */}
-            <line 
-                x1="12" y1="12" x2="12" y2="3" 
-                strokeWidth="1.5"
-                transform={`rotate(${secAngle} 12 12)`}
-                className="transition-transform duration-300 ease-linear opacity-60"
-            />
+            <line x1="12" y1="12" x2="12" y2="7" transform={`rotate(${hourAngle} 12 12)`} className="transition-transform duration-300 ease-in-out" />
+            <line x1="12" y1="12" x2="12" y2="4" transform={`rotate(${minAngle} 12 12)`} className="transition-transform duration-300 ease-in-out" />
+            <line x1="12" y1="12" x2="12" y2="3" strokeWidth="1.5" transform={`rotate(${secAngle} 12 12)`} className="transition-transform duration-300 ease-linear opacity-60" />
         </svg>
     );
 };
@@ -75,9 +58,11 @@ export const LocationCard: React.FC<LocationCardProps> = ({
     permStatus, 
     t, 
     onRequestPermission,
-    timeFormat 
+    timeFormat,
+    lang = 'en'
 }) => {
   const [time, setTime] = useState(new Date());
+  const { formatRegionName, formatLanguageName } = useFormatter(lang);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -90,23 +75,63 @@ export const LocationCard: React.FC<LocationCardProps> = ({
       }
   };
 
+  // Try to extract Region from locale (e.g., "en-US" -> "US")
+  let regionName = '';
+  if (data.locale && data.locale.includes('-')) {
+      const regionCode = data.locale.split('-')[1];
+      if (regionCode) {
+          regionName = formatRegionName(regionCode);
+      }
+  }
+
   return (
     <InfoCard title={t.sections.location} icon={MapPin}>
         
         {/* Real-time Clock */}
-        <div className="flex items-center justify-between p-3 mb-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-100 dark:border-blue-900/30">
+        <div className="flex items-center justify-between p-3 mb-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-100 dark:border-blue-900/30">
             <div className="flex flex-col">
                 <span className="text-[10px] text-blue-500 dark:text-blue-400 font-bold uppercase tracking-wider mb-0.5">{t.labels.local_time}</span>
                 <span className="text-2xl font-mono font-bold text-slate-800 dark:text-slate-100 tabular-nums tracking-tight">
                     {time.toLocaleTimeString([], { hour12: timeFormat === '12' })}
                 </span>
             </div>
-            <AnimatedClock />
+            <AnimatedClock timeFormat={timeFormat} />
         </div>
 
         <InfoItem label={t.labels.timezone} value={data.timeZone} />
-        <InfoItem label={t.labels.locale} value={data.locale} />
+        <InfoItem 
+            label={t.labels.locale} 
+            value={data.locale} 
+            subValue={regionName && regionName !== data.locale ? regionName : undefined} 
+        />
         <InfoItem label={t.labels.calendar} value={data.calendar} />
+        {data.numberingSystem && (
+            <InfoItem label="Number System" value={data.numberingSystem} />
+        )}
+
+        {/* Intl API Capabilities */}
+        {data.intlSupport && (
+            <div className="mt-3 mb-2">
+                <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <Globe2 size={12} />
+                    Intl API Support
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                    <div className={`text-xs px-2 py-1 rounded border flex justify-between items-center ${data.intlSupport.relativeTimeFormat ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
+                        <span>RelativeTime</span>
+                    </div>
+                    <div className={`text-xs px-2 py-1 rounded border flex justify-between items-center ${data.intlSupport.listFormat ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
+                        <span>ListFormat</span>
+                    </div>
+                    <div className={`text-xs px-2 py-1 rounded border flex justify-between items-center ${data.intlSupport.segmenter ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
+                        <span>Segmenter</span>
+                    </div>
+                    <div className={`text-xs px-2 py-1 rounded border flex justify-between items-center ${data.intlSupport.displayNames ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
+                        <span>DisplayNames</span>
+                    </div>
+                </div>
+            </div>
+        )}
 
         {/* Geolocation Section */}
         <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50">

@@ -1,7 +1,9 @@
 
+// ... existing imports
 import { Translation } from './types';
 
 export const zhHK: Translation = {
+  // ... existing fields
   title: "BrowserScope",
   subtitle: "現代瀏覽器的深度指紋與能力檢測工具",
   loading: "正在掃描系統能力...",
@@ -132,6 +134,7 @@ export const zhHK: Translation = {
     open_sensors: "感測器詳情",
     open_tools: "硬件互動測試",
     open_vision: "視覺識別 (Vision)",
+    open_speedtest: "網絡測速",
     view_details: "查看詳情",
     view_base64: "查看 Base64",
     view_extensions: "擴充列表",
@@ -139,6 +142,7 @@ export const zhHK: Translation = {
     copied: "已複製",
     check: "檢查",
     open_map: "打開地圖",
+    stress_test: "壓力測試",
   },
 
   features: {
@@ -486,6 +490,25 @@ export const zhHK: Translation = {
     confidence: "置信度"
   },
 
+  computeStress: {
+    title: "前沿算力壓力測試",
+    warning: "警告：此測試將最大化 GPU 負載。可能會導致電池耗盡、發熱或系統暫時凍結。請謹慎使用。",
+    start: "開始神經壓測",
+    stop: "停止",
+    intensity: "張量大小",
+    status_active: "運算中",
+    status_idle: "閒置",
+    metric_gflops: "GFLOPS",
+    metric_usage: "運算次數/秒",
+    backend_webgpu: "後端: WebGPU (矩陣乘法)",
+    backend_fallback: "後端: WebGL (GPGPU 回退)",
+    error_webgpu: "目前瀏覽器不支援 WebGPU，將回退到傳統方法。",
+    use_fp16: "啟用 FP16 (半精度浮點)",
+    fp16_desc: "加速 AI Tensor Cores 運算",
+    stability: "穩定性",
+    peak: "峰值"
+  },
+
   gamepadTool: {
     title: "手掣與藍牙",
     tab_gamepad: "遊戲手掣",
@@ -555,5 +578,30 @@ export const zhHK: Translation = {
     no_cam_error: "未找到相機或權限被拒絕",
     auto_scan: "自動掃描",
     manual_capture: "手動拍攝"
+  },
+
+  speedTest: {
+    title: "網絡速度測試",
+    start: "開始測速",
+    stop: "停止",
+    ping: "延遲 (Ping)",
+    jitter: "抖動",
+    download: "下載速度",
+    upload: "上傳速度",
+    latency: "網絡延遲",
+    mbps: "Mbps",
+    status_idle: "準備就緒",
+    status_ping: "正在測試延遲...",
+    status_down: "正在測試下載...",
+    status_up: "正在測試上傳...",
+    status_done: "測試完成",
+    server: "Cloudflare",
+    test_size: "測試大小",
+    backend: "測速節點",
+    custom_url: "自定義下載連結",
+    custom_placeholder: "https://example.com/large-file.zip",
+    cors_note: "注意：URL 必須支援 CORS。上載測試將被跳過。",
+    backend_cloudflare: "Cloudflare (全球)",
+    backend_custom: "自定義 URL"
   }
 };

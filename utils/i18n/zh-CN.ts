@@ -1,7 +1,9 @@
 
+// ... existing imports
 import { Translation } from './types';
 
 export const zhCN: Translation = {
+  // ... existing fields
   title: "BrowserScope",
   subtitle: "现代浏览器的深度指纹与能力检测工具",
   loading: "正在扫描系统能力...",
@@ -132,6 +134,7 @@ export const zhCN: Translation = {
     open_sensors: "传感器详情",
     open_tools: "硬件交互测试",
     open_vision: "视觉识别 (Vision)",
+    open_speedtest: "网速测试",
     view_details: "查看详情",
     view_base64: "查看 Base64",
     view_extensions: "扩展列表",
@@ -139,6 +142,7 @@ export const zhCN: Translation = {
     copied: "已复制",
     check: "检查",
     open_map: "打开地图",
+    stress_test: "压力测试",
   },
 
   features: {
@@ -261,6 +265,11 @@ export const zhCN: Translation = {
     latest_update: "最近更新",
     history: "更新历史",
     updates: [
+        {
+            version: "1.6.0",
+            date: "2024-04-12",
+            changes: ["新增真实网速测试 (Cloudflare)", "新增 I18n 动态国际化支持", "增强 Intl 本地化格式"]
+        },
         {
             version: "1.5.0",
             date: "2024-04-05",
@@ -491,6 +500,25 @@ export const zhCN: Translation = {
     confidence: "置信度"
   },
 
+  computeStress: {
+    title: "前沿算力压力测试",
+    warning: "警告：此测试将最大化 GPU 负载。可能会导致电池耗尽、发热或系统暂时冻结。请谨慎使用。",
+    start: "开始神经压测",
+    stop: "停止",
+    intensity: "张量大小",
+    status_active: "运算中",
+    status_idle: "空闲",
+    metric_gflops: "GFLOPS",
+    metric_usage: "运算次数/秒",
+    backend_webgpu: "后端: WebGPU (矩阵乘法)",
+    backend_fallback: "后端: WebGL (GPGPU 回退)",
+    error_webgpu: "当前浏览器不支持 WebGPU，将回退到传统方法。",
+    use_fp16: "启用 FP16 (半精度浮点)",
+    fp16_desc: "加速 AI Tensor Cores 运算",
+    stability: "稳定性",
+    peak: "峰值"
+  },
+
   gamepadTool: {
     title: "手柄与蓝牙",
     tab_gamepad: "游戏手柄",
@@ -560,5 +588,30 @@ export const zhCN: Translation = {
     no_cam_error: "未找到摄像头或权限被拒绝",
     auto_scan: "自动连续扫描",
     manual_capture: "手动拍摄识别"
+  },
+
+  speedTest: {
+    title: "网络速度测试",
+    start: "开始测速",
+    stop: "停止",
+    ping: "延迟 (Ping)",
+    jitter: "抖动",
+    download: "下载速度",
+    upload: "上传速度",
+    latency: "网络延迟",
+    mbps: "Mbps",
+    status_idle: "准备就绪",
+    status_ping: "正在测试延迟...",
+    status_down: "正在测试下载...",
+    status_up: "正在测试上传...",
+    status_done: "测试完成",
+    server: "Cloudflare",
+    test_size: "测试大小",
+    backend: "测速节点",
+    custom_url: "自定义下载链接",
+    custom_placeholder: "https://example.com/large-file.zip",
+    cors_note: "注意：URL 必须支持 CORS。上传测试将被跳过。",
+    backend_cloudflare: "Cloudflare (全球)",
+    backend_custom: "自定义 URL"
   }
 };

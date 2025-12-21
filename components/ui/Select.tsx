@@ -1,0 +1,180 @@
+
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { ChevronDown, Check } from 'lucide-react';
+
+export interface SelectOption {
+    id: string | number;
+    label: string;
+}
+
+interface SelectProps {
+    value: string | number;
+    options: SelectOption[];
+    onChange: (value: any) => void;
+    color?: 'indigo' | 'purple' | 'blue' | 'emerald';
+    disabled?: boolean;
+    className?: string;
+}
+
+export const Select: React.FC<SelectProps> = ({ 
+    value, 
+    options, 
+    onChange, 
+    color = 'indigo',
+    disabled = false,
+    className = ''
+}) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+    const [coords, setCoords] = useState({ top: 0, left: 0, minWidth: 0 });
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    const selectedLabel = options.find(o => o.id === value)?.label || value;
+
+    const toggleOpen = () => {
+        if (disabled) return;
+        if (isOpen) close();
+        else open();
+    };
+
+    const open = () => {
+        if (buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setCoords({
+                top: rect.bottom + 6,
+                left: rect.left,
+                minWidth: rect.width
+            });
+            setIsOpen(true);
+            // Slight delay to allow DOM render before transitioning in
+            requestAnimationFrame(() => {
+                setIsVisible(true);
+            });
+        }
+    };
+
+    const close = () => {
+        setIsVisible(false);
+        // Wait for animation to finish before unmounting
+        setTimeout(() => setIsOpen(false), 200);
+    };
+
+    // Handle clicks outside and window events
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleClickOutside = (event: MouseEvent) => {
+            // Check if click is on the button
+            if (buttonRef.current && buttonRef.current.contains(event.target as Node)) {
+                return;
+            }
+            // Check if click is inside the portal
+            const portalEl = document.getElementById('select-portal-container');
+            if (portalEl && portalEl.contains(event.target as Node)) {
+                return;
+            }
+            close();
+        };
+
+        const handleResizeOrScroll = () => {
+            if (isOpen) close();
+        };
+
+        window.addEventListener('mousedown', handleClickOutside);
+        window.addEventListener('resize', handleResizeOrScroll);
+        window.addEventListener('scroll', handleResizeOrScroll, true); 
+
+        return () => {
+            window.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('resize', handleResizeOrScroll);
+            window.removeEventListener('scroll', handleResizeOrScroll, true);
+        };
+    }, [isOpen]);
+
+    // Dynamic color maps
+    const colorStyles = {
+        indigo: { 
+            active: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300', 
+            ring: 'focus:ring-indigo-500/50' 
+        },
+        purple: { 
+            active: 'bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300', 
+            ring: 'focus:ring-purple-500/50' 
+        },
+        blue: { 
+            active: 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300', 
+            ring: 'focus:ring-blue-500/50' 
+        },
+        emerald: { 
+            active: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300', 
+            ring: 'focus:ring-emerald-500/50' 
+        },
+    };
+
+    const currentStyle = colorStyles[color] || colorStyles.indigo;
+
+    return (
+        <>
+            <button
+                ref={buttonRef}
+                onClick={toggleOpen}
+                disabled={disabled}
+                className={`
+                    relative flex items-center justify-between gap-2 px-3 py-2 w-full
+                    bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg
+                    text-sm text-slate-700 dark:text-slate-200
+                    hover:border-slate-300 dark:hover:border-slate-600 transition-all shadow-sm
+                    focus:outline-none focus:ring-2 ${currentStyle.ring}
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                    ${isOpen ? 'border-slate-300 dark:border-slate-500 bg-slate-50 dark:bg-slate-700' : ''}
+                    ${className}
+                `}
+                type="button"
+            >
+                <span className="truncate">{selectedLabel}</span>
+                <ChevronDown size={14} className={`text-slate-400 transition-transform duration-200 ${isVisible ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && createPortal(
+                <div 
+                    id="select-portal-container"
+                    className={`
+                        fixed z-[9999] py-1.5
+                        bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl
+                        border border-slate-200 dark:border-slate-700
+                        rounded-xl shadow-2xl ring-1 ring-black/5 dark:ring-white/10
+                        origin-top transition-all duration-200 ease-out
+                        ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-2'}
+                    `}
+                    style={{
+                        top: coords.top,
+                        left: coords.left,
+                        minWidth: coords.minWidth,
+                        maxWidth: Math.max(coords.minWidth, 300)
+                    }}
+                >
+                    <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                        {options.map((opt) => (
+                            <button
+                                key={opt.id}
+                                onClick={() => { onChange(opt.id); close(); }}
+                                className={`
+                                    w-full text-left px-3 py-2 text-sm flex items-center justify-between
+                                    transition-colors
+                                    ${value === opt.id 
+                                        ? currentStyle.active + ' font-medium' 
+                                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50/80 dark:hover:bg-slate-700/80'}
+                                `}
+                            >
+                                <span className="truncate">{opt.label}</span>
+                                {value === opt.id && <Check size={14} className="shrink-0 ml-2" />}
+                            </button>
+                        ))}
+                    </div>
+                </div>,
+                document.body
+            )}
+        </>
+    );
+};
