@@ -8,7 +8,7 @@ export interface ModalProps {
   onClose: () => void;
   title: string;
   icon?: React.ReactNode;
-  children: React.ReactNode;
+  children: React.ReactNode | ((args: { close: () => void }) => React.ReactNode);
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | 'full';
   className?: string;
   noPadding?: boolean; // If true, removes default padding from body (useful for custom layouts like Settings/Camera)
@@ -50,6 +50,7 @@ export const Modal: React.FC<ModalProps> = ({
   }, []);
 
   const handleClose = () => {
+    if (isClosing) return;
     setIsClosing(true);
     // Wait for animation to finish
     setTimeout(() => {
@@ -74,6 +75,9 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   const heightClass = fullHeight ? 'h-[85vh] md:h-[90vh]' : 'max-h-[85vh]';
+
+  // Support Render Props to pass the animated close function to children
+  const content = typeof children === 'function' ? children({ close: handleClose }) : children;
 
   return createPortal(
     <div 
@@ -121,7 +125,7 @@ export const Modal: React.FC<ModalProps> = ({
 
         {/* Content */}
         <div className={`flex-1 overflow-hidden flex flex-col relative ${noPadding ? '' : 'overflow-y-auto custom-scrollbar p-6 bg-slate-50 dark:bg-slate-900'}`}>
-            {children}
+            {content}
         </div>
       </div>
     </div>,

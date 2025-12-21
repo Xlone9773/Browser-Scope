@@ -68,150 +68,154 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         fullHeight={true}
         noPadding={true}
     >
-        {/* Layout Container */}
-        <div className="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
-            
-            {/* Navigation Tabs */}
-            <div className="flex md:flex-col border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 md:w-56 overflow-x-auto md:overflow-visible scrollbar-hide">
-                <button 
-                    onClick={() => setActiveTab('general')}
-                    className={`
-                        flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
-                        flex-1 md:flex-none justify-center md:justify-start
-                        border-b-2 md:border-b-0 md:border-l-[3px]
-                        ${activeTab === 'general' 
-                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
-                    `}
-                >
-                    <Sliders size={16} />
-                    {t.tab_general}
-                </button>
-                <button 
-                    onClick={() => setActiveTab('network')}
-                    className={`
-                        flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
-                        flex-1 md:flex-none justify-center md:justify-start
-                        border-b-2 md:border-b-0 md:border-l-[3px]
-                        ${activeTab === 'network' 
-                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
-                    `}
-                >
-                    <Globe size={16} />
-                    {t.tab_network}
-                </button>
-                <button 
-                    onClick={() => setActiveTab('display')}
-                    className={`
-                        flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
-                        flex-1 md:flex-none justify-center md:justify-start
-                        border-b-2 md:border-b-0 md:border-l-[3px]
-                        ${activeTab === 'display' 
-                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
-                    `}
-                >
-                    <Monitor size={16} />
-                    {t.tab_display}
-                </button>
-                <button 
-                    onClick={() => setActiveTab('storage')}
-                    className={`
-                        flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
-                        flex-1 md:flex-none justify-center md:justify-start
-                        border-b-2 md:border-b-0 md:border-l-[3px]
-                        ${activeTab === 'storage' 
-                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
-                    `}
-                >
-                    <Database size={16} />
-                    {t.tab_storage}
-                </button>
-                <button 
-                    onClick={() => setActiveTab('res')}
-                    className={`
-                        flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
-                        flex-1 md:flex-none justify-center md:justify-start
-                        border-b-2 md:border-b-0 md:border-l-[3px]
-                        ${activeTab === 'res' 
-                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
-                    `}
-                >
-                    <Activity size={16} />
-                    {t.tab_resources}
-                </button>
-                <button 
-                    onClick={() => setActiveTab('dev')}
-                    className={`
-                        flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
-                        flex-1 md:flex-none justify-center md:justify-start
-                        border-b-2 md:border-b-0 md:border-l-[3px]
-                        ${activeTab === 'dev' 
-                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
-                    `}
-                >
-                    <Terminal size={16} />
-                    {t.tab_developer}
-                </button>
-            </div>
+        {({ close }) => (
+            <>
+                {/* Layout Container */}
+                <div className="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
+                    
+                    {/* Navigation Tabs */}
+                    <div className="flex md:flex-col border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 md:w-56 overflow-x-auto md:overflow-visible scrollbar-hide">
+                        <button 
+                            onClick={() => setActiveTab('general')}
+                            className={`
+                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                                flex-1 md:flex-none justify-center md:justify-start
+                                border-b-2 md:border-b-0 md:border-l-[3px]
+                                ${activeTab === 'general' 
+                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                            `}
+                        >
+                            <Sliders size={16} />
+                            {t.tab_general}
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('network')}
+                            className={`
+                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                                flex-1 md:flex-none justify-center md:justify-start
+                                border-b-2 md:border-b-0 md:border-l-[3px]
+                                ${activeTab === 'network' 
+                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                            `}
+                        >
+                            <Globe size={16} />
+                            {t.tab_network}
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('display')}
+                            className={`
+                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                                flex-1 md:flex-none justify-center md:justify-start
+                                border-b-2 md:border-b-0 md:border-l-[3px]
+                                ${activeTab === 'display' 
+                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                            `}
+                        >
+                            <Monitor size={16} />
+                            {t.tab_display}
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('storage')}
+                            className={`
+                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                                flex-1 md:flex-none justify-center md:justify-start
+                                border-b-2 md:border-b-0 md:border-l-[3px]
+                                ${activeTab === 'storage' 
+                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                            `}
+                        >
+                            <Database size={16} />
+                            {t.tab_storage}
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('res')}
+                            className={`
+                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                                flex-1 md:flex-none justify-center md:justify-start
+                                border-b-2 md:border-b-0 md:border-l-[3px]
+                                ${activeTab === 'res' 
+                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                            `}
+                        >
+                            <Activity size={16} />
+                            {t.tab_resources}
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('dev')}
+                            className={`
+                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                                flex-1 md:flex-none justify-center md:justify-start
+                                border-b-2 md:border-b-0 md:border-l-[3px]
+                                ${activeTab === 'dev' 
+                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                            `}
+                        >
+                            <Terminal size={16} />
+                            {t.tab_developer}
+                        </button>
+                    </div>
 
-            {/* Content Area */}
-            <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar">
+                    {/* Content Area */}
+                    <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar">
+                        
+                        {activeTab === 'general' && (
+                            <GeneralTab 
+                                t={t} 
+                                simpleMode={simpleMode} 
+                                toggleSimpleMode={toggleSimpleMode} 
+                                hideScrollbar={hideScrollbar}
+                                toggleHideScrollbar={toggleHideScrollbar}
+                                timeFormat={timeFormat}
+                                setTimeFormat={setTimeFormat}
+                                disableBlur={disableBlur}
+                                toggleDisableBlur={toggleDisableBlur}
+                            />
+                        )}
+
+                        {activeTab === 'network' && (
+                            <NetworkTab t={t} />
+                        )}
+
+                        {activeTab === 'display' && (
+                            <DisplayTab t={t} onColorSelect={setFullScreenColor} />
+                        )}
+
+                        {activeTab === 'storage' && (
+                            <StorageTab t={t} />
+                        )}
+
+                        {activeTab === 'res' && (
+                            <ResourcesTab t={t} />
+                        )}
+
+                        {activeTab === 'dev' && (
+                            <DeveloperTab 
+                                t={t} 
+                                isFloating={isDevToolsFloating}
+                                toggleFloat={() => setDevToolsFloating(!isDevToolsFloating)}
+                            />
+                        )}
+
+                    </div>
+                </div>
                 
-                {activeTab === 'general' && (
-                    <GeneralTab 
-                        t={t} 
-                        simpleMode={simpleMode} 
-                        toggleSimpleMode={toggleSimpleMode} 
-                        hideScrollbar={hideScrollbar}
-                        toggleHideScrollbar={toggleHideScrollbar}
-                        timeFormat={timeFormat}
-                        setTimeFormat={setTimeFormat}
-                        disableBlur={disableBlur}
-                        toggleDisableBlur={toggleDisableBlur}
-                    />
-                )}
-
-                {activeTab === 'network' && (
-                    <NetworkTab t={t} />
-                )}
-
-                {activeTab === 'display' && (
-                    <DisplayTab t={t} onColorSelect={setFullScreenColor} />
-                )}
-
-                {activeTab === 'storage' && (
-                    <StorageTab t={t} />
-                )}
-
-                {activeTab === 'res' && (
-                    <ResourcesTab t={t} />
-                )}
-
-                {activeTab === 'dev' && (
-                    <DeveloperTab 
-                        t={t} 
-                        isFloating={isDevToolsFloating}
-                        toggleFloat={() => setDevToolsFloating(!isDevToolsFloating)}
-                    />
-                )}
-
-            </div>
-        </div>
-        
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 flex justify-end">
-            <button 
-                onClick={onClose}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors"
-            >
-                {t.close}
-            </button>
-        </div>
+                {/* Footer */}
+                <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 flex justify-end">
+                    <button 
+                        onClick={close}
+                        className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors"
+                    >
+                        {t.close}
+                    </button>
+                </div>
+            </>
+        )}
     </Modal>
   );
 };

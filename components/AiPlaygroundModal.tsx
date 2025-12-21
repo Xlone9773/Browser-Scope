@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Brain, Sparkles, Send, Download, Cpu, Activity } from 'lucide-react';
+import { Brain, Sparkles, Send, Cpu, Activity } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
+import { Modal } from './ui/Modal';
 
 interface AiPlaygroundModalProps {
   onClose: () => void;
@@ -9,8 +10,6 @@ interface AiPlaygroundModalProps {
 }
 
 export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -18,18 +17,6 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
   const [modelReady, setModelReady] = useState(false);
   
   const pipelineRef = useRef<any>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 10);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
-  };
 
   // Load Model
   useEffect(() => {
@@ -90,28 +77,13 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
   };
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm transition-all duration-300 ease-out ${
-      isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
-    }`}>
-      <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col transition-all duration-300 ease-out transform ${
-            isVisible && !isClosing 
-            ? 'opacity-100 scale-100 blur-0 translate-y-0' 
-            : 'opacity-0 scale-95 blur-sm translate-y-4'
-      }`}>
-        
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <Brain className="text-indigo-600 dark:text-indigo-400" />
-            {t.title}
-          </h2>
-          <button onClick={handleClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500">
-            <X size={24} />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 bg-slate-50 dark:bg-slate-900 min-h-[300px] flex flex-col">
+    <Modal
+        title={t.title}
+        icon={<Brain size={24} />}
+        onClose={onClose}
+        size="lg"
+    >
+        <div className="flex flex-col min-h-[300px]">
             
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
                 {t.desc}
@@ -190,7 +162,6 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
             )}
 
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 };

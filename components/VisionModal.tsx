@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { X, ScanBarcode, Camera, RefreshCw, Cpu, Layers, Activity, Aperture, Settings, Video } from 'lucide-react';
+import { ScanBarcode, Camera, RefreshCw, Layers, Activity, Settings, Video } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { DetectedBarcode } from '../types';
 import { Select } from './ui/Select';
+import { Modal } from './ui/Modal';
 
 interface VisionModalProps {
   onClose: () => void;
@@ -16,9 +17,6 @@ interface VideoDevice {
 }
 
 export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  
   // Capability State
   const [hasNativeBarcode, setHasNativeBarcode] = useState(false);
   const [hasNativeFace, setHasNativeFace] = useState(false);
@@ -48,11 +46,6 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
   const lastTime = useRef(0);
   const rafId = useRef<number | null>(null);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 10);
-    return () => clearTimeout(timer);
-  }, []);
-
   // Check Capabilities on Mount
   useEffect(() => {
     // @ts-ignore
@@ -75,10 +68,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
 
   const handleClose = () => {
     stopCamera();
-    setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
+    onClose();
   };
 
   // Cleanup on unmount
@@ -327,26 +317,14 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
     : [{ id: '', label: 'Default Camera' }];
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm transition-all duration-300 ease-out ${
-      isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
-    }`}>
-      <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden transition-all duration-300 ease-out transform ${
-            isVisible && !isClosing 
-            ? 'opacity-100 scale-100 blur-0 translate-y-0' 
-            : 'opacity-0 scale-95 blur-sm translate-y-4'
-      }`}>
-        
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 shrink-0">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <ScanBarcode className="text-indigo-600 dark:text-indigo-400" />
-            {t.title}
-          </h2>
-          <button onClick={handleClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500">
-            <X size={24} />
-          </button>
-        </div>
-
+    <Modal
+        title={t.title}
+        icon={<ScanBarcode size={24} />}
+        onClose={handleClose}
+        size="5xl"
+        fullHeight
+        noPadding
+    >
         {/* Content */}
         <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
             
@@ -534,7 +512,6 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
             </div>
 
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 };

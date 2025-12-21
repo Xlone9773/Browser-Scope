@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Play, Square, Wifi, ArrowDown, ArrowUp, Activity, Globe, AlertCircle, Settings2 } from 'lucide-react';
+import { Play, Square, Wifi, ArrowDown, ArrowUp, Activity, Globe, AlertCircle, Settings2 } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
 import { Select } from './ui/Select';
+import { Modal } from './ui/Modal';
 
 interface SpeedTestModalProps {
   onClose: () => void;
@@ -15,9 +16,6 @@ type TestState = 'idle' | 'ping' | 'download' | 'upload' | 'done' | 'error';
 const HISTORY_LENGTH = 60; // For graph
 
 export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  
   const [testState, setTestState] = useState<TestState>('idle');
   const [ping, setPing] = useState<number | null>(null);
   const [jitter, setJitter] = useState<number | null>(null);
@@ -36,11 +34,6 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
   const abortControllerRef = useRef<AbortController | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 10);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Animation Loop for Graph
   useEffect(() => {
@@ -297,10 +290,7 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
 
   const handleClose = () => {
     stopTest();
-    setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
+    onClose();
   };
 
   const getStatusText = () => {
@@ -316,34 +306,13 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
   };
 
   return (
-    <div 
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm transition-all duration-300 ease-out ${
-        isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
-      }`}
+    <Modal
+        title={t.title}
+        icon={<Activity size={24} />}
+        onClose={handleClose}
+        size="3xl"
     >
-      <div 
-        className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col transition-all duration-300 ease-out transform ${
-            isVisible && !isClosing 
-            ? 'opacity-100 scale-100 blur-0 translate-y-0' 
-            : 'opacity-0 scale-95 blur-sm translate-y-4'
-        }`}
-      >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <Activity className="text-indigo-600 dark:text-indigo-400" />
-            {t.title}
-          </h2>
-          <button 
-            onClick={handleClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500 dark:text-slate-400"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 bg-slate-50 dark:bg-slate-900 flex flex-col gap-6">
+        <div className="flex flex-col gap-6">
             
             {/* Settings Area (Visible when idle) */}
             {testState === 'idle' && (
@@ -503,7 +472,6 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
             </button>
 
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 };

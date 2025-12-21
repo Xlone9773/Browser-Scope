@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Cpu, Zap, Activity, AlertTriangle, Layers, Play, Square, TrendingUp, Microscope, Eye } from 'lucide-react';
+import { Cpu, Zap, Activity, AlertTriangle, Layers, Play, Square, TrendingUp, Microscope, Eye } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
 import { Select } from './ui/Select';
 import { MATMUL_SHADER_F32, MATMUL_SHADER_F16 } from './compute/shaders';
 import { ParticleSystem } from './compute/ParticleSystem';
+import { Modal } from './ui/Modal';
 
 interface ComputeStressModalProps {
   onClose: () => void;
@@ -15,9 +16,6 @@ interface ComputeStressModalProps {
 const HISTORY_LENGTH = 60;
 
 export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose, t }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  
   const [isWebGPUSupported, setIsWebGPUSupported] = useState<boolean | null>(null);
   const [hasFp16Support, setHasFp16Support] = useState(false);
   const [useFp16, setUseFp16] = useState(false);
@@ -50,17 +48,9 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   useEffect(() => { peakGflopsRef.current = peakGflops; }, [peakGflops]);
   useEffect(() => { graphDataRef.current = graphData; }, [graphData]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 10);
-    return () => clearTimeout(timer);
-  }, []);
-
   const handleClose = () => {
     stopTest();
-    setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
+    onClose();
   };
 
   // Init WebGPU & Check Features
@@ -315,31 +305,14 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const stability = peakGflops > 0 ? Math.round((gflops / peakGflops) * 100) : 100;
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm transition-all duration-300 ease-out ${
-      isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
-    }`}>
-      <div className={`bg-slate-950 border border-indigo-900/50 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col transition-all duration-300 ease-out transform ${
-            isVisible && !isClosing 
-            ? 'opacity-100 scale-100 blur-0 translate-y-0' 
-            : 'opacity-0 scale-95 blur-sm translate-y-4'
-      }`}>
-        
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-indigo-900/50 flex justify-between items-center bg-slate-900/50">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2 tracking-wider">
-            <Cpu className="text-indigo-400 animate-pulse" />
-            {t.title}
-          </h2>
-          <button 
-            onClick={handleClose}
-            className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 flex flex-col gap-6 relative">
+    <Modal
+        title={t.title}
+        icon={<Cpu size={24} />}
+        onClose={handleClose}
+        size="3xl"
+        className="bg-slate-950 border border-indigo-900/50" // Dark theme override
+    >
+        <div className="flex flex-col gap-6 relative">
             {/* Warning Banner */}
             {!isRunning && (
                 <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg flex items-start gap-3">
@@ -506,7 +479,6 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
             </button>
 
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 };

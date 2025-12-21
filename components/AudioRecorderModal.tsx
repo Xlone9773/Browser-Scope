@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Mic, Square, Download, Play, Pause, RefreshCw, Activity, Music } from 'lucide-react';
+import { Mic, Square, Download, Play, Pause, RefreshCw, Activity } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
+import { Modal } from './ui/Modal';
 
 interface AudioRecorderModalProps {
   onClose: () => void;
@@ -30,19 +32,8 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
   const [sampleRate, setSampleRate] = useState<number>(0);
   const [mimeType, setMimeType] = useState<string>('');
 
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 10);
-    return () => clearTimeout(timer);
-  }, []);
-
   const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
+    onClose();
   };
 
   // Timer for duration
@@ -91,7 +82,11 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
     analyzer.getByteFrequencyData(dataArray);
 
     ctx.fillStyle = 'rgb(248, 250, 252)'; // slate-50 (This needs to be dynamic or transparent for dark mode)
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Use clearRect for transparency
+    // Dark mode bg check (simple heuristic or use transparent clear)
+    const isDark = document.documentElement.classList.contains('dark');
+    if(isDark) ctx.fillStyle = 'rgb(15, 23, 42)'; // slate-900
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
 
     const barWidth = (canvas.width / bufferLength) * 2.5;
     let barHeight;
@@ -252,144 +247,130 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
   };
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm transition-all duration-300 ease-out ${
-      isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
-    }`}>
-      <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col transition-all duration-300 ease-out transform ${
-            isVisible && !isClosing 
-            ? 'opacity-100 scale-100 blur-0 translate-y-0' 
-            : 'opacity-0 scale-95 blur-sm translate-y-4'
-      }`}>
-        
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <Mic className="text-indigo-600 dark:text-indigo-400" />
-            {t.title}
-          </h2>
-          <button 
-            onClick={handleClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500 dark:text-slate-400"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 bg-slate-50 dark:bg-slate-900 flex flex-col gap-6 items-center">
-            
-            {error ? (
-                <div className="text-red-500 font-medium text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg w-full">
-                    {error}
-                </div>
-            ) : (
-                <>
-                    {/* Visualizer Area */}
-                    <div className="w-full h-32 bg-slate-200 dark:bg-slate-800 rounded-xl overflow-hidden relative shadow-inner border border-slate-200 dark:border-slate-700">
-                        <canvas ref={canvasRef} width={500} height={128} className="w-full h-full" />
-                        
-                        {!audioUrl && (
-                             <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2 py-1 bg-black/10 dark:bg-white/10 rounded-full">
-                                <Activity size={12} className="text-slate-600 dark:text-slate-300" />
-                                <span className="text-[10px] font-medium text-slate-600 dark:text-slate-300 uppercase tracking-wide">
-                                    {isRecording ? "Recording" : t.listening}
-                                </span>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Timer */}
-                    <div className="font-mono text-4xl font-bold text-slate-700 dark:text-slate-200 tracking-wider">
-                        {formatTime(recordingDuration)}
-                    </div>
-
-                    {/* Controls */}
-                    <div className="flex gap-4 items-center">
-                        {!audioUrl ? (
-                            !isRecording ? (
-                                <button 
-                                    onClick={startRecording}
-                                    className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-red-200 dark:shadow-red-900/50 hover:bg-red-600 hover:scale-105 active:scale-95 transition-all"
-                                    title={t.start_record}
-                                >
-                                    <Mic size={32} />
-                                </button>
-                            ) : (
-                                <button 
-                                    onClick={stopRecording}
-                                    className="w-16 h-16 bg-slate-800 dark:bg-slate-600 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-slate-900 dark:hover:bg-slate-700 hover:scale-105 active:scale-95 transition-all"
-                                    title={t.stop_record}
-                                >
-                                    <Square size={28} fill="currentColor" />
-                                </button>
-                            )
-                        ) : (
-                            <div className="flex gap-3">
-                                <button 
-                                    onClick={reset}
-                                    className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-all"
-                                    title="Reset"
-                                >
-                                    <RefreshCw size={20} />
-                                </button>
-                                
-                                <button 
-                                    onClick={togglePlayback}
-                                    className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-indigo-200 dark:shadow-indigo-900/50 hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all"
-                                >
-                                    {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
-                                </button>
-                                
-                                <button 
-                                    onClick={downloadAudio}
-                                    className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-all"
-                                    title={t.download}
-                                >
-                                    <Download size={20} />
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Info Stats (Shows after recording) */}
-                    {audioUrl && (
-                        <div className="grid grid-cols-3 gap-2 w-full mt-2">
-                             <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
-                                 <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">{t.details_size}</div>
-                                 <div className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{fileSize}</div>
-                             </div>
-                             <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
-                                 <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">{t.details_rate}</div>
-                                 <div className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{sampleRate} Hz</div>
-                             </div>
-                             <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
-                                 <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">{t.details_type}</div>
-                                 <div className="font-semibold text-slate-700 dark:text-slate-200 text-xs break-all pt-1" title={mimeType}>
-                                     {mimeType.split(';')[0]}
-                                 </div>
-                             </div>
-                        </div>
-                    )}
+    <Modal
+        title={t.title}
+        icon={<Mic size={24} />}
+        onClose={handleClose}
+        size="lg"
+    >
+        {({ close }) => (
+            <>
+                {/* Content */}
+                <div className="flex flex-col gap-6 items-center">
                     
-                    {/* Hidden Audio Element */}
-                    {audioUrl && (
-                        <audio ref={audioPlayerRef} src={audioUrl} />
+                    {error ? (
+                        <div className="text-red-500 font-medium text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg w-full">
+                            {error}
+                        </div>
+                    ) : (
+                        <>
+                            {/* Visualizer Area */}
+                            <div className="w-full h-32 bg-slate-200 dark:bg-slate-900 rounded-xl overflow-hidden relative shadow-inner border border-slate-200 dark:border-slate-700">
+                                <canvas ref={canvasRef} width={500} height={128} className="w-full h-full" />
+                                
+                                {!audioUrl && (
+                                    <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2 py-1 bg-black/10 dark:bg-white/10 rounded-full">
+                                        <Activity size={12} className="text-slate-600 dark:text-slate-300" />
+                                        <span className="text-[10px] font-medium text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+                                            {isRecording ? "Recording" : t.listening}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Timer */}
+                            <div className="font-mono text-4xl font-bold text-slate-700 dark:text-slate-200 tracking-wider">
+                                {formatTime(recordingDuration)}
+                            </div>
+
+                            {/* Controls */}
+                            <div className="flex gap-4 items-center">
+                                {!audioUrl ? (
+                                    !isRecording ? (
+                                        <button 
+                                            onClick={startRecording}
+                                            className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-red-200 dark:shadow-red-900/50 hover:bg-red-600 hover:scale-105 active:scale-95 transition-all"
+                                            title={t.start_record}
+                                        >
+                                            <Mic size={32} />
+                                        </button>
+                                    ) : (
+                                        <button 
+                                            onClick={stopRecording}
+                                            className="w-16 h-16 bg-slate-800 dark:bg-slate-600 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-slate-900 dark:hover:bg-slate-700 hover:scale-105 active:scale-95 transition-all"
+                                            title={t.stop_record}
+                                        >
+                                            <Square size={28} fill="currentColor" />
+                                        </button>
+                                    )
+                                ) : (
+                                    <div className="flex gap-3">
+                                        <button 
+                                            onClick={reset}
+                                            className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-all"
+                                            title="Reset"
+                                        >
+                                            <RefreshCw size={20} />
+                                        </button>
+                                        
+                                        <button 
+                                            onClick={togglePlayback}
+                                            className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-indigo-200 dark:shadow-indigo-900/50 hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all"
+                                        >
+                                            {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
+                                        </button>
+                                        
+                                        <button 
+                                            onClick={downloadAudio}
+                                            className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-all"
+                                            title={t.download}
+                                        >
+                                            <Download size={20} />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Info Stats (Shows after recording) */}
+                            {audioUrl && (
+                                <div className="grid grid-cols-3 gap-2 w-full mt-2">
+                                    <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
+                                        <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">{t.details_size}</div>
+                                        <div className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{fileSize}</div>
+                                    </div>
+                                    <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
+                                        <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">{t.details_rate}</div>
+                                        <div className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{sampleRate} Hz</div>
+                                    </div>
+                                    <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
+                                        <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">{t.details_type}</div>
+                                        <div className="font-semibold text-slate-700 dark:text-slate-200 text-xs break-all pt-1" title={mimeType}>
+                                            {mimeType.split(';')[0]}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Hidden Audio Element */}
+                            {audioUrl && (
+                                <audio ref={audioPlayerRef} src={audioUrl} />
+                            )}
+                        </>
                     )}
-                </>
-            )}
 
-        </div>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex justify-end">
-             <button 
-                onClick={handleClose}
-                className="px-5 py-2 text-slate-500 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-             >
-                {t.close}
-             </button>
-        </div>
-      </div>
-    </div>
+                </div>
+                
+                {/* Footer */}
+                <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                    <button 
+                        onClick={close}
+                        className="px-5 py-2 text-slate-500 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                    >
+                        {t.close}
+                    </button>
+                </div>
+            </>
+        )}
+    </Modal>
   );
 };

@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Play, Cpu, Zap, Activity, Code, Box, Image as ImageIcon, Calculator, Database, RotateCw, Loader2 } from 'lucide-react';
+import { Play, Cpu, Zap, Activity, Code, Box, Image as ImageIcon, Calculator, Database, RotateCw, Loader2 } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
+import { Modal } from './ui/Modal';
 
 interface BenchmarkModalProps {
   onClose: () => void;
@@ -32,9 +33,6 @@ const TEST_CONFIG = {
 };
 
 export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  
   // 'idle' | 'running' | 'done'
   const [globalStatus, setGlobalStatus] = useState<'idle' | 'running' | 'done'>('idle');
   // 'all' = running full suite, 'single' = running one specific test
@@ -53,17 +51,9 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
       { id: 'storage', name: t.storage_test, icon: Database, status: 'pending', score: null }
   ]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
-
   const handleClose = () => {
     if (isRunningRef.current) return; // Prevent closing while running
-    setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
+    onClose();
   };
 
   const updateTestState = (id: string, updates: Partial<TestItem>) => {
@@ -283,33 +273,13 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   };
 
   return (
-    <div 
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm transition-all duration-300 ease-out ${
-        isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
-      }`}
+    <Modal
+        title={t.title}
+        icon={<Activity size={24} />}
+        onClose={handleClose}
+        size="lg"
     >
-      <div 
-        className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col transition-all duration-300 ease-out transform ${
-            isVisible && !isClosing 
-            ? 'opacity-100 scale-100 blur-0 translate-y-0' 
-            : 'opacity-0 scale-95 blur-sm translate-y-4'
-        }`}
-      >
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <Activity className="text-indigo-600 dark:text-indigo-400" />
-            {t.title}
-          </h2>
-          <button 
-            onClick={handleClose}
-            className={`p-2 rounded-full transition-colors ${isRunningRef.current ? 'opacity-30 cursor-not-allowed text-slate-400' : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400'}`}
-            disabled={isRunningRef.current}
-          >
-            <X size={24} />
-          </button>
-        </div>
-
-        <div className="p-6 flex flex-col items-center max-h-[75vh] overflow-y-auto custom-scrollbar">
+        <div className="flex flex-col items-center">
             {/* Gauge / Score Circle */}
             <div className="relative w-52 h-52 mb-8 shrink-0">
                 {/* Rotated SVG for the ring */}
@@ -453,7 +423,6 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
             </button>
             
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
