@@ -3,6 +3,7 @@ import React from 'react';
 import { Video, Camera, Mic } from 'lucide-react';
 import { InfoCard } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
+import { Button } from '../ui/Button';
 
 type PermissionStatusType = 'idle' | 'granted' | 'denied' | 'prompt' | 'error';
 type MediaPermissionKey = 'camera' | 'microphone';
@@ -56,9 +57,13 @@ export const MediaDevicesCard: React.FC<MediaDevicesCardProps> = ({
                 </div>
                 <div>
                     {permStatus.camera !== 'granted' ? (
-                        <button onClick={() => onRequestPermission('camera')} className="px-3 py-1.5 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors shadow-sm text-xs font-medium">{t.actions.check}</button>
+                        <Button onClick={() => onRequestPermission('camera')} variant="primary" size="xs">
+                            {t.actions.check}
+                        </Button>
                         ) : (
-                        <button onClick={onOpenCamera} className="px-3 py-1.5 bg-emerald-600 dark:bg-emerald-500 text-white rounded-md hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors shadow-sm text-xs font-medium">{t.cameraTool.btn_open}</button>
+                        <Button onClick={onOpenCamera} variant="soft" size="xs" className="!bg-emerald-50 !text-emerald-600 dark:!bg-emerald-900/30 dark:!text-emerald-400 hover:!bg-emerald-100">
+                            {t.cameraTool.btn_open}
+                        </Button>
                         )}
                 </div>
             </div>
@@ -74,9 +79,13 @@ export const MediaDevicesCard: React.FC<MediaDevicesCardProps> = ({
                 </div>
                 <div>
                     {permStatus.microphone !== 'granted' ? (
-                        <button onClick={() => onRequestPermission('microphone')} className="px-3 py-1.5 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors shadow-sm text-xs font-medium">{t.actions.check}</button>
+                        <Button onClick={() => onRequestPermission('microphone')} variant="primary" size="xs">
+                            {t.actions.check}
+                        </Button>
                         ) : (
-                        <button onClick={onOpenMic} className="px-3 py-1.5 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-sm text-xs font-medium">{t.audioTool.btn_open}</button>
+                        <Button onClick={onOpenMic} variant="soft" size="xs" className="!bg-blue-50 !text-blue-600 dark:!bg-blue-900/30 dark:!text-blue-400 hover:!bg-blue-100">
+                            {t.audioTool.btn_open}
+                        </Button>
                         )}
                 </div>
             </div>

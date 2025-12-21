@@ -4,6 +4,7 @@ import { Cpu, Gamepad2, ChevronRight, Activity, Hammer, Battery, BatteryCharging
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
+import { Button } from '../ui/Button';
 
 interface HardwareCardProps {
   data: BrowserData['hardware'];
@@ -11,7 +12,7 @@ interface HardwareCardProps {
   onOpenGamepad: () => void;
   onOpenSensors: () => void;
   onOpenTools: () => void;
-  onOpenVision?: () => void; // New prop
+  onOpenVision?: () => void;
 }
 
 export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamepad, onOpenSensors, onOpenTools, onOpenVision }) => {
@@ -81,23 +82,20 @@ export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamep
           </span>
       </div>
 
-      <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex gap-2 flex-wrap">
-          <button onClick={onOpenSensors} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-xs font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors whitespace-nowrap">
-              <Activity size={14} />
+      <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 grid grid-cols-2 gap-2">
+          <Button variant="soft" size="xs" onClick={onOpenSensors} leftIcon={<Activity size={14} />}>
               {t.actions.open_sensors}
-          </button>
-          <button onClick={onOpenTools} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap">
-              <Hammer size={14} />
+          </Button>
+          <Button variant="secondary" size="xs" onClick={onOpenTools} leftIcon={<Hammer size={14} />}>
               {t.actions.open_tools}
-          </button>
+          </Button>
       </div>
       {/* New Vision Row */}
       {onOpenVision && (
           <div className="mt-2">
-              <button onClick={onOpenVision} className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors">
-                  <ScanBarcode size={14} />
+              <Button fullWidth variant="soft" size="xs" onClick={onOpenVision} className="!bg-emerald-50 !text-emerald-600 dark:!bg-emerald-900/30 dark:!text-emerald-400 hover:!bg-emerald-100" leftIcon={<ScanBarcode size={14} />}>
                   {t.actions.open_vision}
-              </button>
+              </Button>
           </div>
       )}
     </InfoCard>

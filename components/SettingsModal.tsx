@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Network, Globe, Database, Activity, Sliders, Monitor, Terminal } from 'lucide-react';
+import React, { useState } from 'react';
+import { Globe, Database, Activity, Sliders, Monitor, Terminal } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { GeneralTab } from './settings/GeneralTab';
 import { NetworkTab } from './settings/NetworkTab';
@@ -8,6 +8,7 @@ import { DisplayTab } from './settings/DisplayTab';
 import { StorageTab } from './settings/StorageTab';
 import { ResourcesTab } from './settings/ResourcesTab';
 import { DeveloperTab } from './settings/DeveloperTab';
+import { Modal } from './ui/Modal';
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -39,30 +40,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setDevToolsFloating 
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'network' | 'display' | 'storage' | 'res' | 'dev'>('general');
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  const modalRef = useRef<HTMLDivElement>(null);
   
   // Display Test State (Lifted up as it overlays everything)
   const [fullScreenColor, setFullScreenColor] = useState<string | null>(null);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 10);
-    // Initial focus to prevent background navigation issues
-    if (modalRef.current) {
-        modalRef.current.focus();
-    }
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
-  };
-
-  // Full Screen Color Overlay
+  // Full Screen Color Overlay (Special case that overrides the Modal)
   if (fullScreenColor) {
       return (
           <div 
@@ -78,41 +60,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   }
 
   return (
-    <div 
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm transition-all duration-300 ease-out ${
-        isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
-      }`}
+    <Modal
+        title={t.title}
+        icon={<Sliders size={24} />}
+        onClose={onClose}
+        size="3xl"
+        fullHeight={true}
+        noPadding={true}
     >
-      <div 
-        ref={modalRef}
-        tabIndex={-1}
-        className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col overflow-hidden transition-all duration-300 ease-out transform outline-none ${
-            isVisible && !isClosing 
-            ? 'opacity-100 scale-100 blur-0 translate-y-0' 
-            : 'opacity-0 scale-95 blur-sm translate-y-4'
-        }`}
-      >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 shrink-0">
-          <div className="flex flex-col">
-              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <Sliders className="text-indigo-600 dark:text-indigo-400" />
-                {t.title}
-              </h2>
-          </div>
-          <button 
-            onClick={handleClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500 dark:text-slate-400"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
         {/* Layout Container */}
-        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+        <div className="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
             
             {/* Navigation Tabs */}
-            <div className="flex md:flex-col border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 md:w-56 overflow-x-auto md:overflow-visible">
+            <div className="flex md:flex-col border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 md:w-56 overflow-x-auto md:overflow-visible scrollbar-hide">
                 <button 
                     onClick={() => setActiveTab('general')}
                     className={`
@@ -200,7 +160,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900">
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar">
                 
                 {activeTab === 'general' && (
                     <GeneralTab 
@@ -242,18 +202,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
             </div>
         </div>
-
+        
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 flex justify-end">
             <button 
-                onClick={handleClose}
+                onClick={onClose}
                 className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors"
             >
                 {t.close}
             </button>
         </div>
-
-      </div>
-    </div>
+    </Modal>
   );
 };

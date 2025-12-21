@@ -4,6 +4,7 @@ import { Fingerprint, ChevronRight, ZoomIn, FileCode, ExternalLink, Settings } f
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
+import { Button } from '../ui/Button';
 
 interface FingerprintCardProps {
   data: BrowserData['fingerprints'];
@@ -42,10 +43,9 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = ({
                 <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">{t.labels.fp_score}</span>
                 <span className={`text-2xl font-bold ${getScoreColor(data.score.totalScore)}`}>{data.score.totalScore}/100</span>
             </div>
-            <button onClick={onOpenScore} className="flex items-center gap-1 px-3 py-1.5 bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-600 rounded text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            <Button variant="secondary" size="xs" onClick={onOpenScore} rightIcon={<ChevronRight size={12} />}>
                 {t.actions.view_details}
-                <ChevronRight size={12} />
-            </button>
+            </Button>
         </div>
         <InfoItem label={t.labels.canvas_hash} value={data.canvasHash} />
         <div className="relative group my-2 border border-slate-100 dark:border-slate-700 rounded p-1 bg-white flex justify-center cursor-pointer" onClick={onOpenCanvas}>
@@ -57,7 +57,7 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = ({
         {!simpleMode && (
             <>
             <div className="flex justify-center mb-2">
-                <button onClick={onOpenBase64} className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                <button onClick={onOpenBase64} className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 font-medium">
                     <FileCode size={12} />
                     {t.actions.view_base64}
                 </button>
@@ -65,18 +65,16 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = ({
             <InfoItem label={t.labels.webgl_hash} value={data.webglHash} />
             <div className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
                 <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">WebGL</span>
-                <button onClick={onOpenWebgl} className="flex items-center gap-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-2 py-1 rounded transition-colors">
+                <Button variant="soft" size="xs" onClick={onOpenWebgl} rightIcon={<ExternalLink size={10} />} className="px-2 py-1 h-auto min-h-0">
                     {t.actions.view_extensions}
-                    <ExternalLink size={10} />
-                </button>
+                </Button>
             </div>
             <InfoItem label={t.labels.audio_rate} value={audioSampleRate} />
             <InfoItem label={t.labels.audio_latency} value={data.audioLatency} />
             <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex justify-center">
-                <button onClick={onOpenFingerprintModal} className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors w-full justify-center">
-                    <Settings size={16} />
+                <Button fullWidth variant="soft" size="sm" onClick={onOpenFingerprintModal} leftIcon={<Settings size={16} />}>
                     {t.fingerprintModal.title}
-                </button>
+                </Button>
             </div>
             </>
         )}

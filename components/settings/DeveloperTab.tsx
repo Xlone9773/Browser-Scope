@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Terminal, Activity, Eye, Play, Trash2, Copy, Check, Maximize2, TriangleAlert, Zap, Edit3, Globe, Database, Smartphone, Shield, X, Download, Skull, Command, ChevronRight } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
+import { Button } from '../ui/Button';
 
 interface DeveloperTabProps {
     t: Translation['settingsModal'];
@@ -503,36 +504,43 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     return (
         <div className="flex flex-col h-full space-y-4 relative">
             {/* Controls */}
-            <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-lg shrink-0 gap-1">
-                <button 
+            <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg shrink-0">
+                <Button 
                     onClick={() => setSubTab('events')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-medium rounded-md transition-all ${subTab === 'events' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+                    variant={subTab === 'events' ? 'secondary' : 'ghost'}
+                    size="xs"
+                    className="flex-1"
+                    leftIcon={<Activity size={14} />}
                 >
-                    <Activity size={14} />
                     {t.dev_events}
-                </button>
-                <button 
+                </Button>
+                <Button 
                     onClick={() => setSubTab('inspector')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-medium rounded-md transition-all ${subTab === 'inspector' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+                    variant={subTab === 'inspector' ? 'secondary' : 'ghost'}
+                    size="xs"
+                    className="flex-1"
+                    leftIcon={<Eye size={14} />}
                 >
-                    <Eye size={14} />
                     {t.dev_inspector}
-                </button>
-                <button 
+                </Button>
+                <Button 
                     onClick={() => setSubTab('console')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-medium rounded-md transition-all ${subTab === 'console' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+                    variant={subTab === 'console' ? 'secondary' : 'ghost'}
+                    size="xs"
+                    className="flex-1"
+                    leftIcon={<Terminal size={14} />}
                 >
-                    <Terminal size={14} />
                     {t.dev_console}
-                </button>
-                <div className="w-px bg-slate-300 dark:bg-slate-600 mx-1 self-center h-6"></div>
-                <button 
+                </Button>
+                <div className="w-px bg-slate-300 dark:bg-slate-600 mx-1 self-center h-4"></div>
+                <Button 
                     onClick={toggleFloat}
-                    className={`px-3 flex items-center justify-center rounded-md transition-all ${isFloating ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+                    variant={isFloating ? 'soft' : 'ghost'}
+                    size="xs"
                     title={t.dev_float}
                 >
                     <Maximize2 size={14} />
-                </button>
+                </Button>
             </div>
 
             {/* Docked Content Area */}
@@ -546,7 +554,9 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                 <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 gap-2">
                     <Maximize2 size={32} className="opacity-20" />
                     <p className="text-sm">Tool is currently floating.</p>
-                    <button onClick={toggleFloat} className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">{t.dev_dock_back}</button>
+                    <Button variant="ghost" size="xs" onClick={toggleFloat} className="text-indigo-600 dark:text-indigo-400 hover:underline">
+                        {t.dev_dock_back}
+                    </Button>
                 </div>
             )}
         </div>

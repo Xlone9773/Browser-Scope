@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { X, Camera as CameraIcon, Download, RefreshCw, Image as ImageIcon, Video, Square, FlipHorizontal, Activity } from 'lucide-react';
+import { Camera as CameraIcon, Download, RefreshCw, Video, Square, FlipHorizontal, Activity } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
+import { Modal } from './ui/Modal';
 
 interface CameraModalProps {
   onClose: () => void;
@@ -32,20 +33,17 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   const [resolution, setResolution] = useState<{width: number, height: number} | null>(null);
   const [maxResolution, setMaxResolution] = useState<{width: number, height: number} | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 10);
-    return () => clearTimeout(timer);
-  }, []);
+  // Stop camera function
+  const stopCameraStream = () => {
+      if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+      }
+  };
 
   const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
+      stopCameraStream();
       onClose();
-    }, 300);
   };
 
   // Get list of cameras
@@ -281,29 +279,13 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   };
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm transition-all duration-300 ease-out ${
-      isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
-    }`}>
-      <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh] transition-all duration-300 ease-out transform ${
-            isVisible && !isClosing 
-            ? 'opacity-100 scale-100 blur-0 translate-y-0' 
-            : 'opacity-0 scale-95 blur-sm translate-y-4'
-      }`}>
-        
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <CameraIcon className="text-indigo-600 dark:text-indigo-400" />
-            {t.title}
-          </h2>
-          <button 
-            onClick={handleClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500 dark:text-slate-400"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
+    <Modal
+        title={t.title}
+        icon={<CameraIcon size={24} />}
+        onClose={handleClose}
+        size="2xl"
+        noPadding={true}
+    >
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900">
           
@@ -470,7 +452,6 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
              </>
           )}
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 };

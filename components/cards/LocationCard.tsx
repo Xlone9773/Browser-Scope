@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { MapPin, ExternalLink, Navigation, Globe2, BookA } from 'lucide-react';
+import { MapPin, ExternalLink, Navigation, Globe2 } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation, Language } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
 import { useFormatter } from '../../hooks/useFormatter';
+import { Button } from '../ui/Button';
 
 interface LocationCardProps {
   data: BrowserData['localization'];
@@ -62,7 +63,7 @@ export const LocationCard: React.FC<LocationCardProps> = ({
     lang = 'en'
 }) => {
   const [time, setTime] = useState(new Date());
-  const { formatRegionName, formatLanguageName } = useFormatter(lang);
+  const { formatRegionName } = useFormatter(lang);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -141,12 +142,9 @@ export const LocationCard: React.FC<LocationCardProps> = ({
                     <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t.labels.perm_geo}</span>
                 </div>
                 {permStatus !== 'granted' && (
-                    <button 
-                        onClick={onRequestPermission} 
-                        className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
-                    >
+                    <Button onClick={onRequestPermission} variant="soft" size="xs">
                         {t.actions.check}
-                    </button>
+                    </Button>
                 )}
             </div>
 
@@ -166,13 +164,9 @@ export const LocationCard: React.FC<LocationCardProps> = ({
                             <span className="font-mono text-xs font-medium text-slate-700 dark:text-slate-300">±{geoData.accuracy.toFixed(1)} meters</span>
                         </div>
                     </div>
-                    <button 
-                        onClick={openMap}
-                        className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors shadow-sm"
-                    >
-                        <ExternalLink size={12} />
+                    <Button onClick={openMap} variant="secondary" size="xs" fullWidth leftIcon={<ExternalLink size={12} />}>
                         {t.actions.open_map}
-                    </button>
+                    </Button>
                 </div>
             ) : permStatus === 'denied' ? (
                 <div className="text-xs text-red-500 dark:text-red-400 px-2">

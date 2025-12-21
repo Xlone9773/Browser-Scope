@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wifi, Copy, Check, Shield, Server, Radio } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
-import { BackendDropdown } from '../ui/BackendDropdown';
+import { Select } from '../ui/Select';
+import { Button } from '../ui/Button';
 
 interface NetworkTabProps {
     t: Translation['settingsModal'];
@@ -37,16 +38,16 @@ interface WebRTCCandidate {
 }
 
 const IPV4_SOURCES = [
-    { id: 'ipwhois', name: 'ipwho.is (Detailed)' },
-    { id: 'ipapi', name: 'ipapi.co (Detailed)' },
-    { id: 'cloudflare', name: 'Cloudflare (Simple)' },
-    { id: 'ipify', name: 'ipify (Simple)' },
+    { id: 'ipwhois', label: 'ipwho.is (Detailed)' },
+    { id: 'ipapi', label: 'ipapi.co (Detailed)' },
+    { id: 'cloudflare', label: 'Cloudflare (Simple)' },
+    { id: 'ipify', label: 'ipify (Simple)' },
 ];
 
 const IPV6_SOURCES = [
-    { id: 'ipify', name: 'ipify (Global)' },
-    { id: 'seeip', name: 'seeip.org' },
-    { id: 'icanhazip', name: 'icanhazip' },
+    { id: 'ipify', label: 'ipify (Global)' },
+    { id: 'seeip', label: 'seeip.org' },
+    { id: 'icanhazip', label: 'icanhazip' },
 ];
 
 export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
@@ -268,9 +269,8 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
             pc.onicecandidate = (e) => {
                 if (e.candidate) {
                     const c = e.candidate;
-                    // Simple parsing (modern browsers provide structured props on 'candidate' object, but let's parse string for robustness)
+                    // Simple parsing
                     const parts = c.candidate.split(' ');
-                    // Format: candidate:foundation 1 protocol priority ip port typ type ...
                     
                     const candidateObj: WebRTCCandidate = {
                         id: Math.random().toString(36).substr(2, 9),
@@ -282,19 +282,16 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                     };
 
                     setWebrtcCandidates(prev => {
-                        // Dedup based on IP/Port/Proto
                         if (prev.some(x => x.ip === candidateObj.ip && x.port === candidateObj.port)) return prev;
                         return [...prev, candidateObj];
                     });
                 }
             };
 
-            // Create data channel to trigger ICE gathering
             pc.createDataChannel('test');
             const offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
 
-            // Stop after 5 seconds
             setTimeout(() => {
                 pc.close();
                 setScanningWebrtc(false);
@@ -334,18 +331,14 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
         setProtocols(null);
         
         try {
-            // We use standard resources that likely support these protocols
-            // Note: This relies on Resource Timing API
             const testH2 = 'https://www.google.com/generate_204'; 
-            const testH3 = 'https://www.cloudflare.com/cdn-cgi/trace'; // Cloudflare supports h3
+            const testH3 = 'https://www.cloudflare.com/cdn-cgi/trace';
 
-            // Fire fetches
             await Promise.allSettled([
                 fetch(testH2, { mode: 'no-cors', cache: 'no-store' }),
                 fetch(testH3, { mode: 'no-cors', cache: 'no-store' })
             ]);
 
-            // Give a moment for entries to populate
             await new Promise(r => setTimeout(r, 500));
 
             const getProto = (url: string) => {
@@ -388,21 +381,25 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                             </div>
                             
                             <div className="flex items-center gap-2 w-full md:w-auto">
-                                <BackendDropdown 
+                                <Select 
                                     value={activeIpv4Source}
                                     options={IPV4_SOURCES}
                                     onChange={setActiveIpv4Source}
-                                    colorClass="indigo"
+                                    color="indigo"
+                                    size="sm"
+                                    fullWidth={false}
+                                    className="min-w-[140px]"
                                 />
 
-                                <button 
+                                <Button 
                                     onClick={fetchIpInfo}
-                                    disabled={loadingIp}
-                                    className="text-xs font-medium px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-100 hover:text-indigo-700 dark:hover:bg-indigo-900/50 dark:hover:text-indigo-300 transition-all flex items-center gap-1.5 disabled:opacity-50 whitespace-nowrap"
+                                    isLoading={loadingIp}
+                                    variant="secondary"
+                                    size="xs"
+                                    leftIcon={<RefreshCw size={12} />}
                                 >
-                                    {loadingIp ? <Activity size={12} className="animate-spin" /> : <RefreshCw size={12} />}
                                     {t.fetch_ip}
-                                </button>
+                                </Button>
                             </div>
                         </div>
 
@@ -462,21 +459,25 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                             </div>
                             
                             <div className="flex items-center gap-2 w-full md:w-auto">
-                                <BackendDropdown 
+                                <Select 
                                     value={activeIpv6Source}
                                     options={IPV6_SOURCES}
                                     onChange={setActiveIpv6Source}
-                                    colorClass="purple"
+                                    color="purple"
+                                    size="sm"
+                                    fullWidth={false}
+                                    className="min-w-[140px]"
                                 />
 
-                                <button 
+                                <Button 
                                     onClick={checkIpv6}
-                                    disabled={checkingIpv6}
-                                    className="text-xs font-medium px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-purple-100 hover:text-purple-700 dark:hover:bg-purple-900/50 dark:hover:text-purple-300 transition-all flex items-center gap-1.5 disabled:opacity-50 whitespace-nowrap"
+                                    isLoading={checkingIpv6}
+                                    variant="secondary"
+                                    size="xs"
+                                    leftIcon={<Zap size={12} />}
                                 >
-                                    {checkingIpv6 ? <Activity size={12} className="animate-spin" /> : <Zap size={12} />}
                                     {t.check_ipv6}
-                                </button>
+                                </Button>
                             </div>
                         </div>
 
@@ -539,13 +540,14 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.network_webrtc_desc}</p>
                                 </div>
                             </div>
-                            <button 
+                            <Button 
                                 onClick={runWebRTCAnalysis}
-                                disabled={scanningWebrtc}
-                                className="text-xs font-medium px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50"
+                                isLoading={scanningWebrtc}
+                                variant="primary"
+                                size="xs"
                             >
-                                {scanningWebrtc ? <Activity className="animate-spin" size={16} /> : t.network_webrtc_btn}
-                            </button>
+                                {t.network_webrtc_btn}
+                            </Button>
                         </div>
                         
                         {webrtcCandidates.length > 0 && (
@@ -592,13 +594,14 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.network_dns_desc}</p>
                                 </div>
                             </div>
-                            <button 
+                            <Button 
                                 onClick={checkDnsResolver}
-                                disabled={checkingDns}
-                                className="text-xs font-medium px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors shadow-sm disabled:opacity-50"
+                                isLoading={checkingDns}
+                                variant="secondary"
+                                size="xs"
                             >
-                                {checkingDns ? <Activity className="animate-spin" size={16} /> : t.network_dns_btn}
-                            </button>
+                                {t.network_dns_btn}
+                            </Button>
                         </div>
 
                         {dnsInfo && (
@@ -635,13 +638,14 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.proto_desc}</p>
                                 </div>
                             </div>
-                            <button 
+                            <Button 
                                 onClick={checkProtocols}
-                                disabled={checkingProto}
-                                className="text-xs font-medium px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors shadow-sm disabled:opacity-50"
+                                isLoading={checkingProto}
+                                variant="secondary"
+                                size="xs"
                             >
-                                {checkingProto ? <Activity className="animate-spin" size={16} /> : t.proto_check_btn}
-                            </button>
+                                {t.proto_check_btn}
+                            </Button>
                         </div>
 
                         {protocols && (
@@ -677,14 +681,14 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                         className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none"
                         onKeyDown={(e) => e.key === 'Enter' && runConnectivityTest()}
                     />
-                    <button 
+                    <Button 
                         onClick={runConnectivityTest}
-                        disabled={testingConn || !testUrl}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors flex items-center gap-2 whitespace-nowrap"
+                        disabled={!testUrl}
+                        isLoading={testingConn}
+                        leftIcon={<Wifi size={18} />}
                     >
-                        {testingConn ? <Activity className="animate-spin" size={18} /> : <Wifi size={18} />}
                         Test
-                    </button>
+                    </Button>
                 </div>
                 {testResult && (
                     <div className={`p-4 rounded-lg flex items-center justify-between ${testResult.status.includes('Success') ? 'bg-emerald-50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-300'}`}>

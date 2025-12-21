@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Translation } from '../../utils/i18n/types';
+import { Switch } from '../ui/Switch';
 
 interface GeneralTabProps {
     t: Translation['settingsModal'];
@@ -10,32 +11,9 @@ interface GeneralTabProps {
     toggleHideScrollbar: (value: boolean) => void;
     timeFormat: '12' | '24';
     setTimeFormat: (format: '12' | '24') => void;
+    disableBlur: boolean;
+    toggleDisableBlur: (value: boolean) => void;
 }
-
-// Custom Switch Component with Spring Animation
-const Switch: React.FC<{ checked: boolean; onChange: (val: boolean) => void; label?: string }> = ({ checked, onChange, label }) => (
-    <button
-        role="switch"
-        aria-checked={checked}
-        aria-label={label}
-        onClick={() => onChange(!checked)}
-        className={`
-            relative inline-flex h-8 w-14 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent 
-            transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 dark:focus:ring-offset-slate-800
-            ${checked ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}
-        `}
-    >
-        <span className="sr-only">{label}</span>
-        <span
-            aria-hidden="true"
-            className={`
-                pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 
-                transition duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-                ${checked ? 'translate-x-6' : 'translate-x-0'}
-            `}
-        />
-    </button>
-);
 
 export const GeneralTab: React.FC<GeneralTabProps> = ({ 
     t, 
@@ -44,7 +22,9 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     hideScrollbar, 
     toggleHideScrollbar,
     timeFormat,
-    setTimeFormat
+    setTimeFormat,
+    disableBlur,
+    toggleDisableBlur
 }) => {
     return (
         <div className="max-w-2xl mx-auto space-y-4">
@@ -88,6 +68,28 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         checked={timeFormat === '24'} 
                         onChange={(val) => setTimeFormat(val ? '24' : '12')} 
                         label={t.time_format_title || 'Time Format'} 
+                    />
+                </div>
+            </div>
+
+            {/* High Performance (Disable Blur) Toggle */}
+            <div 
+                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
+                onClick={() => toggleDisableBlur(!disableBlur)}
+            >
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.disable_blur_title || "High Performance Mode"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {t.disable_blur_desc || "Disable blur effects and transparency to improve performance on older devices."}
+                    </p>
+                </div>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Switch 
+                        checked={disableBlur} 
+                        onChange={toggleDisableBlur} 
+                        label={t.disable_blur_title || "High Performance Mode"} 
                     />
                 </div>
             </div>

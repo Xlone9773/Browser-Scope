@@ -3,6 +3,7 @@ import React from 'react';
 import { Shield, Bell, Music, MapPin } from 'lucide-react';
 import { InfoCard } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
+import { Button } from '../ui/Button';
 
 type PermissionStatusType = 'idle' | 'granted' | 'denied' | 'prompt' | 'error';
 type PermissionKey = 'notifications' | 'midi' | 'geolocation';
@@ -46,7 +47,9 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
             <div className="flex items-center gap-3">
                 <span className={`text-xs font-medium ${getPermColor(permStatus.notifications)}`}>{getPermLabel(permStatus.notifications)}</span>
                 {(permStatus.notifications === 'prompt' || permStatus.notifications === 'idle') && (
-                    <button onClick={() => onRequestPermission('notifications')} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50">{t.actions.check}</button>
+                    <Button onClick={() => onRequestPermission('notifications')} variant="soft" size="xs">
+                        {t.actions.check}
+                    </Button>
                 )}
             </div>
         </div>
@@ -60,7 +63,9 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
             <div className="flex items-center gap-3">
                 <span className={`text-xs font-medium ${getPermColor(permStatus.midi)}`}>{getPermLabel(permStatus.midi)}</span>
                 {permStatus.midi !== 'granted' && (
-                    <button onClick={() => onRequestPermission('midi')} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50">{t.actions.check}</button>
+                    <Button onClick={() => onRequestPermission('midi')} variant="soft" size="xs">
+                        {t.actions.check}
+                    </Button>
                 )}
             </div>
         </div>
@@ -74,7 +79,9 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
             <div className="flex items-center gap-3">
                 <span className={`text-xs font-medium ${getPermColor(permStatus.geolocation)}`}>{getPermLabel(permStatus.geolocation)}</span>
                 {permStatus.geolocation !== 'granted' && (
-                    <button onClick={() => onRequestPermission('geolocation')} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50">{t.actions.check}</button>
+                    <Button onClick={() => onRequestPermission('geolocation')} variant="soft" size="xs">
+                        {t.actions.check}
+                    </Button>
                 )}
             </div>
         </div>

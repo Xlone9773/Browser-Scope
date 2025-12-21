@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { HardDrive, Database } from 'lucide-react';
+import { HardDrive, Trash2 } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
+import { Button } from '../ui/Button';
 
 interface StorageCardProps {
   data: BrowserData['storage'];
@@ -22,10 +23,7 @@ export const StorageCard: React.FC<StorageCardProps> = ({ data, t }) => {
   let usageBytes = 0;
   let quotaBytes = 0;
 
-  // Simple heuristic parsing (since we format it in the service as string "XX GB")
-  // Ideally, the service should return raw numbers, but for now we parse or assume
-  // Note: Real implementation would pass raw numbers. 
-  // Let's assume specific format "X.XX GB" or "X.XX MB"
+  // Simple heuristic parsing
   const parseSize = (str: string) => {
       const num = parseFloat(str);
       if (str.includes('GB')) return num * 1024 * 1024 * 1024;
@@ -40,6 +38,16 @@ export const StorageCard: React.FC<StorageCardProps> = ({ data, t }) => {
           percentage = Math.min((usageBytes / quotaBytes) * 100, 100);
       }
   }
+
+  // Handle clear
+  const clearStorage = () => {
+      // In a real app this might need confirmation or state update, 
+      // but here we just call the native API and reload/re-render happens via parent or refresh
+      localStorage.clear();
+      sessionStorage.clear();
+      // Force reload to reflect changes or just alert
+      window.location.reload();
+  };
 
   return (
     <InfoCard title={t.sections.storage} icon={HardDrive}>
@@ -66,6 +74,18 @@ export const StorageCard: React.FC<StorageCardProps> = ({ data, t }) => {
 
         <InfoItem label={t.labels.storage_quota} value={data.quota} />
         <InfoItem label={t.labels.storage_persisted} value={trVal(data.persisted)} />
+        
+        <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50">
+            <Button 
+                variant="danger-soft" 
+                size="xs" 
+                fullWidth 
+                onClick={clearStorage} 
+                leftIcon={<Trash2 size={14} />}
+            >
+                {t.settingsModal.clear_btn}
+            </Button>
+        </div>
     </InfoCard>
   );
 };

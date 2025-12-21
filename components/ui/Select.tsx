@@ -15,6 +15,8 @@ interface SelectProps {
     color?: 'indigo' | 'purple' | 'blue' | 'emerald';
     disabled?: boolean;
     className?: string;
+    fullWidth?: boolean;
+    size?: 'sm' | 'md';
 }
 
 export const Select: React.FC<SelectProps> = ({ 
@@ -23,7 +25,9 @@ export const Select: React.FC<SelectProps> = ({
     onChange, 
     color = 'indigo',
     disabled = false,
-    className = ''
+    className = '',
+    fullWidth = true,
+    size = 'md'
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
@@ -112,6 +116,11 @@ export const Select: React.FC<SelectProps> = ({
         },
     };
 
+    const sizeStyles = {
+        sm: 'px-2.5 py-1.5 text-xs',
+        md: 'px-3 py-2 text-sm'
+    };
+
     const currentStyle = colorStyles[color] || colorStyles.indigo;
 
     return (
@@ -121,19 +130,21 @@ export const Select: React.FC<SelectProps> = ({
                 onClick={toggleOpen}
                 disabled={disabled}
                 className={`
-                    relative flex items-center justify-between gap-2 px-3 py-2 w-full
-                    bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg
-                    text-sm text-slate-700 dark:text-slate-200
-                    hover:border-slate-300 dark:hover:border-slate-600 transition-all shadow-sm
+                    relative flex items-center justify-between gap-2
+                    bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg
+                    text-slate-700 dark:text-slate-200
+                    hover:border-slate-300 dark:hover:border-slate-500 transition-all shadow-sm
                     focus:outline-none focus:ring-2 ${currentStyle.ring}
                     disabled:opacity-50 disabled:cursor-not-allowed
                     ${isOpen ? 'border-slate-300 dark:border-slate-500 bg-slate-50 dark:bg-slate-700' : ''}
+                    ${fullWidth ? 'w-full' : ''}
+                    ${sizeStyles[size]}
                     ${className}
                 `}
                 type="button"
             >
-                <span className="truncate">{selectedLabel}</span>
-                <ChevronDown size={14} className={`text-slate-400 transition-transform duration-200 ${isVisible ? 'rotate-180' : ''}`} />
+                <span className="truncate font-medium">{selectedLabel}</span>
+                <ChevronDown size={size === 'sm' ? 12 : 14} className={`text-slate-400 transition-transform duration-200 ${isVisible ? 'rotate-180' : ''}`} />
             </button>
 
             {isOpen && createPortal(
@@ -141,7 +152,7 @@ export const Select: React.FC<SelectProps> = ({
                     id="select-portal-container"
                     className={`
                         fixed z-[9999] py-1.5
-                        bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl
+                        bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl
                         border border-slate-200 dark:border-slate-700
                         rounded-xl shadow-2xl ring-1 ring-black/5 dark:ring-white/10
                         origin-top transition-all duration-200 ease-out
@@ -160,15 +171,16 @@ export const Select: React.FC<SelectProps> = ({
                                 key={opt.id}
                                 onClick={() => { onChange(opt.id); close(); }}
                                 className={`
-                                    w-full text-left px-3 py-2 text-sm flex items-center justify-between
+                                    w-full text-left flex items-center justify-between
                                     transition-colors
+                                    ${sizeStyles[size]}
                                     ${value === opt.id 
                                         ? currentStyle.active + ' font-medium' 
                                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50/80 dark:hover:bg-slate-700/80'}
                                 `}
                             >
                                 <span className="truncate">{opt.label}</span>
-                                {value === opt.id && <Check size={14} className="shrink-0 ml-2" />}
+                                {value === opt.id && <Check size={size === 'sm' ? 12 : 14} className="shrink-0 ml-2" />}
                             </button>
                         ))}
                     </div>
