@@ -3,7 +3,7 @@ import React from 'react';
 import { Translation } from '../../utils/i18n/types';
 
 interface GeneralTabProps {
-    t: Translation['settingsModal'];
+    t: Translation['settings']['general'];
     simpleMode: boolean;
     toggleSimpleMode: (value: boolean) => void;
     hideScrollbar: boolean;
@@ -59,17 +59,17 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.simple_mode_title}
+                        {t.simpleMode.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.simple_mode_desc}
+                        {t.simpleMode.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={simpleMode} 
                         onChange={toggleSimpleMode} 
-                        label={t.simple_mode_title} 
+                        label={t.simpleMode.title} 
                     />
                 </div>
             </div>
@@ -81,17 +81,17 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.time_format_title || '24-Hour Clock'}
+                        {t.timeFormat.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.time_format_desc || 'Switch between 12-hour and 24-hour formats.'}
+                        {t.timeFormat.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={timeFormat === '24'} 
                         onChange={(val) => setTimeFormat(val ? '24' : '12')} 
-                        label={t.time_format_title || 'Time Format'} 
+                        label={t.timeFormat.title} 
                     />
                 </div>
             </div>
@@ -103,17 +103,17 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.disable_blur_title || "High Performance Mode"}
+                        {t.performance.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.disable_blur_desc || "Disable blur effects and transparency to improve performance on older devices."}
+                        {t.performance.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={disableBlur} 
                         onChange={toggleDisableBlur} 
-                        label={t.disable_blur_title || "High Performance Mode"} 
+                        label={t.performance.title} 
                     />
                 </div>
             </div>
@@ -125,17 +125,17 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.scrollbar_title}
+                        {t.scrollbar.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.scrollbar_desc}
+                        {t.scrollbar.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={hideScrollbar} 
                         onChange={toggleHideScrollbar} 
-                        label={t.scrollbar_title} 
+                        label={t.scrollbar.title} 
                     />
                 </div>
             </div>

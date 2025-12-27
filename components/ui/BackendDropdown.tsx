@@ -70,18 +70,28 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
             close();
         };
 
-        const handleResizeOrScroll = () => {
+        const handleResize = () => {
+            if (isOpen) close();
+        };
+
+        const handleScroll = (event: Event) => {
+            const portalEl = document.getElementById('dropdown-portal-container');
+            // If scrolling inside the dropdown content, do not close
+            if (portalEl && portalEl.contains(event.target as Node)) {
+                return;
+            }
+            // Close if scrolling anywhere else
             if (isOpen) close();
         };
 
         window.addEventListener('mousedown', handleClickOutside);
-        window.addEventListener('resize', handleResizeOrScroll);
-        window.addEventListener('scroll', handleResizeOrScroll, true); 
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('scroll', handleScroll, true); 
 
         return () => {
             window.removeEventListener('mousedown', handleClickOutside);
-            window.removeEventListener('resize', handleResizeOrScroll);
-            window.removeEventListener('scroll', handleResizeOrScroll, true);
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('scroll', handleScroll, true);
         };
     }, [isOpen]);
 
@@ -132,22 +142,24 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
                         maxWidth: '300px'
                     }}
                 >
-                    {options.map((opt) => (
-                        <button
-                            key={opt.id}
-                            onClick={() => { onChange(opt.id); close(); }}
-                            className={`
-                                w-full text-left px-3 py-2.5 text-xs flex items-center justify-between
-                                transition-colors group
-                                ${value === opt.id 
-                                    ? (activeBgMap[colorClass] || activeBgMap.indigo) + ' font-semibold' 
-                                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}
-                            `}
-                        >
-                            <span>{opt.name}</span>
-                            {value === opt.id && <Check size={12} className="shrink-0 ml-2" />}
-                        </button>
-                    ))}
+                    <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                        {options.map((opt) => (
+                            <button
+                                key={opt.id}
+                                onClick={() => { onChange(opt.id); close(); }}
+                                className={`
+                                    w-full text-left px-3 py-2.5 text-xs flex items-center justify-between
+                                    transition-colors group
+                                    ${value === opt.id 
+                                        ? (activeBgMap[colorClass] || activeBgMap.indigo) + ' font-semibold' 
+                                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}
+                                `}
+                            >
+                                <span>{opt.name}</span>
+                                {value === opt.id && <Check size={12} className="shrink-0 ml-2" />}
+                            </button>
+                        ))}
+                    </div>
                 </div>,
                 document.body
             )}

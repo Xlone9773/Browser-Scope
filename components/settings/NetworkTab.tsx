@@ -4,21 +4,18 @@ import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wi
 import { Translation } from '../../utils/i18n/types';
 import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
+import { 
+    fetchIpInfoFromSource, 
+    detectIpv6, 
+    runWebRTCScan, 
+    detectDns, 
+    detectProtocols, 
+    IpInfo, 
+    WebRTCCandidate 
+} from '../../services/detectors/networkDiagnostics';
 
 interface NetworkTabProps {
-    t: Translation['settingsModal'];
-}
-
-interface IpInfo {
-    ip?: string;
-    success?: boolean;
-    type?: string;
-    continent?: string;
-    country?: string;
-    region?: string;
-    city?: string;
-    isp?: string;
-    error?: string;
+    t: Translation['settings']['network'];
 }
 
 interface CDNStatus {
@@ -26,15 +23,6 @@ interface CDNStatus {
     url: string;
     status: 'idle' | 'loading' | 'success' | 'error';
     latency: number;
-}
-
-interface WebRTCCandidate {
-    id: string;
-    ip: string;
-    port: number;
-    protocol: string;
-    type: string;
-    raw: string;
 }
 
 const IPV4_SOURCES = [
@@ -88,114 +76,24 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
     ]);
 
     // Persist backend choices
-    useEffect(() => {
-        localStorage.setItem('ipv4_source', activeIpv4Source);
-    }, [activeIpv4Source]);
+    useEffect(() => { localStorage.setItem('ipv4_source', activeIpv4Source); }, [activeIpv4Source]);
+    useEffect(() => { localStorage.setItem('ipv6_source', activeIpv6Source); }, [activeIpv6Source]);
 
-    useEffect(() => {
-        localStorage.setItem('ipv6_source', activeIpv6Source);
-    }, [activeIpv6Source]);
+    // --- Actions ---
 
-    // Logic
-    const fetchIpInfo = async () => {
+    const handleFetchIp = async () => {
         setLoadingIp(true);
         setIpInfo(null);
-        
-        try {
-            let data: IpInfo;
-            
-            if (activeIpv4Source === 'ipwhois') {
-                const res = await fetch('https://ipwho.is/', { referrerPolicy: 'no-referrer' });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const json = await res.json();
-                if (!json.success && json.message) throw new Error(json.message);
-                data = json;
-            } 
-            else if (activeIpv4Source === 'ipapi') {
-                const res = await fetch('https://ipapi.co/json/', { referrerPolicy: 'no-referrer' });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const json = await res.json();
-                if (json.error) throw new Error(json.reason || 'API Error');
-                data = {
-                    ip: json.ip,
-                    success: true,
-                    type: json.version || 'IPv4',
-                    continent: json.continent_code,
-                    country: json.country_name,
-                    region: json.region,
-                    city: json.city,
-                    isp: json.org
-                };
-            }
-            else if (activeIpv4Source === 'cloudflare') {
-                const res = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const text = await res.text();
-                const lines = text.split('\n');
-                const ipLine = lines.find(l => l.startsWith('ip='));
-                const ip = ipLine ? ipLine.split('=')[1] : 'Unknown';
-                const locLine = lines.find(l => l.startsWith('loc='));
-                const loc = locLine ? locLine.split('=')[1] : '';
-                
-                data = {
-                    ip,
-                    success: true,
-                    type: 'IPv4',
-                    country: loc,
-                    isp: 'Cloudflare Trace'
-                };
-            }
-            else { // ipify
-                const res = await fetch('https://api.ipify.org?format=json');
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const json = await res.json();
-                data = {
-                    ip: json.ip,
-                    success: true,
-                    type: 'IPv4',
-                    isp: 'Ipify'
-                };
-            }
-
-            setIpInfo(data);
-        } catch (e) {
-            console.error("IP fetch failed", e);
-            setIpInfo({ error: "Detection failed. Check network or AdBlock." });
-        }
+        const data = await fetchIpInfoFromSource(activeIpv4Source);
+        setIpInfo(data);
         setLoadingIp(false);
     };
 
-    const checkIpv6 = async () => {
+    const handleCheckIpv6 = async () => {
         setCheckingIpv6(true);
         setIpv6Address(null);
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
-            
-            let url = 'https://api6.ipify.org?format=json';
-            if (activeIpv6Source === 'seeip') url = 'https://ip6.seeip.org/json';
-            if (activeIpv6Source === 'icanhazip') url = 'https://ipv6.icanhazip.com';
-
-            const res = await fetch(url, { 
-                signal: controller.signal,
-                mode: 'cors' 
-            });
-            clearTimeout(timeoutId);
-            
-            if (!res.ok) throw new Error('Failed');
-            
-            let ip = '';
-            if (activeIpv6Source === 'icanhazip') {
-                ip = (await res.text()).trim();
-            } else {
-                const data = await res.json();
-                ip = data.ip;
-            }
-            
-            setIpv6Address(ip);
-        } catch (e) {
-            setIpv6Address('fail');
-        }
+        const ip = await detectIpv6(activeIpv6Source);
+        setIpv6Address(ip);
         setCheckingIpv6(false);
     };
 
@@ -218,7 +116,6 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
             newCdns[index].status = 'success';
             newCdns[index].latency = Math.round(end - start);
         } catch (e) {
-            console.error(e);
             newCdns[index].status = 'error';
         }
         setCdns([...newCdns]);
@@ -248,116 +145,42 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                 code: 200
             });
         } catch (e) {
-            setTestResult({
-                status: 'Failed (Network Error)',
-            });
+            setTestResult({ status: 'Failed (Network Error)' });
         }
         setTestingConn(false);
     };
 
-    // --- Advanced Diagnostics Functions ---
-
-    const runWebRTCAnalysis = async () => {
+    const handleWebRTC = async () => {
         setScanningWebrtc(true);
         setWebrtcCandidates([]);
-        
-        try {
-            const pc = new RTCPeerConnection({
-                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+        await runWebRTCScan((candidate) => {
+            setWebrtcCandidates(prev => {
+                if (prev.some(x => x.ip === candidate.ip && x.port === candidate.port)) return prev;
+                return [...prev, candidate];
             });
-
-            pc.onicecandidate = (e) => {
-                if (e.candidate) {
-                    const c = e.candidate;
-                    // Simple parsing
-                    const parts = c.candidate.split(' ');
-                    
-                    const candidateObj: WebRTCCandidate = {
-                        id: Math.random().toString(36).substr(2, 9),
-                        ip: c.address || parts[4] || '?',
-                        port: c.port || parseInt(parts[5]) || 0,
-                        protocol: c.protocol || parts[2] || '?',
-                        type: c.type || parts[7] || '?',
-                        raw: c.candidate
-                    };
-
-                    setWebrtcCandidates(prev => {
-                        if (prev.some(x => x.ip === candidateObj.ip && x.port === candidateObj.port)) return prev;
-                        return [...prev, candidateObj];
-                    });
-                }
-            };
-
-            pc.createDataChannel('test');
-            const offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
-
-            setTimeout(() => {
-                pc.close();
-                setScanningWebrtc(false);
-            }, 5000);
-
-        } catch (e) {
-            console.error("WebRTC Error", e);
-            setScanningWebrtc(false);
-        }
+        });
+        setScanningWebrtc(false);
     };
 
-    const checkDnsResolver = async () => {
+    const handleDnsCheck = async () => {
         setCheckingDns(true);
         setDnsInfo(null);
         setDnsError(null);
         try {
-            const res = await fetch('https://edns.ip-api.com/json');
-            if (!res.ok) throw new Error("API Unreachable");
-            const data = await res.json();
-            
-            if (data && data.dns) {
-                setDnsInfo({
-                    ip: data.dns.ip || 'Unknown',
-                    geo: data.dns.geo || 'Unknown'
-                });
-            } else {
-                throw new Error("Invalid response format");
-            }
+            const info = await detectDns();
+            if (info) setDnsInfo(info);
+            else throw new Error('Unknown');
         } catch (e) {
             setDnsError("Failed to detect resolver (Likely blocked by AdBlock or CORS)");
         }
         setCheckingDns(false);
     };
 
-    const checkProtocols = async () => {
+    const handleProtoCheck = async () => {
         setCheckingProto(true);
         setProtocols(null);
-        
-        try {
-            const testH2 = 'https://www.google.com/generate_204'; 
-            const testH3 = 'https://www.cloudflare.com/cdn-cgi/trace';
-
-            await Promise.allSettled([
-                fetch(testH2, { mode: 'no-cors', cache: 'no-store' }),
-                fetch(testH3, { mode: 'no-cors', cache: 'no-store' })
-            ]);
-
-            await new Promise(r => setTimeout(r, 500));
-
-            const getProto = (url: string) => {
-                const entries = performance.getEntriesByName(url);
-                if (entries.length > 0) {
-                    // @ts-ignore
-                    return entries[entries.length - 1].nextHopProtocol || 'unknown';
-                }
-                return 'unknown';
-            };
-
-            setProtocols({
-                h2: getProto(testH2),
-                h3: getProto(testH3)
-            });
-
-        } catch (e) {
-            console.error(e);
-        }
+        const res = await detectProtocols();
+        setProtocols(res);
         setCheckingProto(false);
     };
 
@@ -368,7 +191,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 bg-slate-50/50 dark:bg-slate-800/50">
                     <Globe size={18} className="text-slate-400" />
-                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">IP Configuration</h3>
+                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">{t.ip.title}</h3>
                 </div>
 
                 <div className="flex flex-col divide-y divide-slate-100 dark:divide-slate-700">
@@ -376,8 +199,8 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                     <div className="p-6 transition-colors hover:bg-slate-50/30 dark:hover:bg-slate-800/50 group">
                         <div className="flex justify-between items-start md:items-center mb-4 flex-col md:flex-row gap-3">
                             <div className="flex items-center gap-2">
-                                <span className="px-2 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-md dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800">IPv4</span>
-                                <span className="text-xs text-slate-400 hidden sm:inline-block">Standard Internet Protocol</span>
+                                <span className="px-2 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-md dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800">{t.ip.ipv4}</span>
+                                <span className="text-xs text-slate-400 hidden sm:inline-block">{t.ip.ipv4_desc}</span>
                             </div>
                             
                             <div className="flex items-center gap-2 w-full md:w-auto">
@@ -392,13 +215,13 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                 />
 
                                 <Button 
-                                    onClick={fetchIpInfo}
+                                    onClick={handleFetchIp}
                                     isLoading={loadingIp}
                                     variant="secondary"
                                     size="xs"
                                     leftIcon={<RefreshCw size={12} />}
                                 >
-                                    {t.fetch_ip}
+                                    {t.ip.fetch}
                                 </Button>
                             </div>
                         </div>
@@ -454,8 +277,8 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                     <div className="p-6 transition-colors hover:bg-slate-50/30 dark:hover:bg-slate-800/50">
                         <div className="flex justify-between items-start md:items-center mb-4 flex-col md:flex-row gap-3">
                             <div className="flex items-center gap-2">
-                                <span className="px-2 py-1 text-xs font-bold text-purple-600 bg-purple-50 border border-purple-100 rounded-md dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800">IPv6</span>
-                                <span className="text-xs text-slate-400 hidden sm:inline-block">Next Generation Protocol</span>
+                                <span className="px-2 py-1 text-xs font-bold text-purple-600 bg-purple-50 border border-purple-100 rounded-md dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800">{t.ip.ipv6}</span>
+                                <span className="text-xs text-slate-400 hidden sm:inline-block">{t.ip.ipv6_desc}</span>
                             </div>
                             
                             <div className="flex items-center gap-2 w-full md:w-auto">
@@ -470,13 +293,13 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                 />
 
                                 <Button 
-                                    onClick={checkIpv6}
+                                    onClick={handleCheckIpv6}
                                     isLoading={checkingIpv6}
                                     variant="secondary"
                                     size="xs"
                                     leftIcon={<Zap size={12} />}
                                 >
-                                    {t.check_ipv6}
+                                    {t.ip.check_v6}
                                 </Button>
                             </div>
                         </div>
@@ -498,7 +321,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                 <div className="flex items-center gap-2">
                                     <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
                                         <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></div>
-                                        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">{t.ipv6_success}</span>
+                                        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">{t.ip.success_v6}</span>
                                     </div>
                                 </div>
                             </div>
@@ -506,7 +329,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-2 text-slate-400">
                                     <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
-                                    <span className="text-sm font-medium">{t.ipv6_fail}</span>
+                                    <span className="text-sm font-medium">{t.ip.fail_v6}</span>
                                 </div>
                             </div>
                         ) : (
@@ -523,7 +346,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 bg-slate-50/50 dark:bg-slate-800/50">
                     <Server size={18} className="text-slate-400" />
-                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">{t.network_adv_title}</h3>
+                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">{t.diagnostics.title}</h3>
                 </div>
                 
                 <div className="p-6 space-y-8">
@@ -536,17 +359,17 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     <Radio size={20} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.network_webrtc_title}</h4>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.network_webrtc_desc}</p>
+                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.diagnostics.webrtc.title}</h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.diagnostics.webrtc.desc}</p>
                                 </div>
                             </div>
                             <Button 
-                                onClick={runWebRTCAnalysis}
+                                onClick={handleWebRTC}
                                 isLoading={scanningWebrtc}
                                 variant="primary"
                                 size="xs"
                             >
-                                {t.network_webrtc_btn}
+                                {t.diagnostics.webrtc.btn}
                             </Button>
                         </div>
                         
@@ -555,10 +378,10 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                 <table className="w-full text-xs text-left">
                                     <thead className="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 font-semibold text-slate-600 dark:text-slate-300 uppercase">
                                         <tr>
-                                            <th className="px-4 py-2">{t.col_type}</th>
-                                            <th className="px-4 py-2">{t.col_ip}</th>
-                                            <th className="px-4 py-2">{t.col_protocol}</th>
-                                            <th className="px-4 py-2">{t.col_port}</th>
+                                            <th className="px-4 py-2">{t.diagnostics.webrtc.columns.type}</th>
+                                            <th className="px-4 py-2">{t.diagnostics.webrtc.columns.ip}</th>
+                                            <th className="px-4 py-2">{t.diagnostics.webrtc.columns.proto}</th>
+                                            <th className="px-4 py-2">{t.diagnostics.webrtc.columns.port}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -590,28 +413,28 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     <Shield size={20} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.network_dns_title}</h4>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.network_dns_desc}</p>
+                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.diagnostics.dns.title}</h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.diagnostics.dns.desc}</p>
                                 </div>
                             </div>
                             <Button 
-                                onClick={checkDnsResolver}
+                                onClick={handleDnsCheck}
                                 isLoading={checkingDns}
                                 variant="secondary"
                                 size="xs"
                             >
-                                {t.network_dns_btn}
+                                {t.diagnostics.dns.btn}
                             </Button>
                         </div>
 
                         {dnsInfo && (
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                                    <div className="text-xs text-slate-400 mb-1">{t.lbl_dns_ip}</div>
+                                    <div className="text-xs text-slate-400 mb-1">{t.diagnostics.dns.label_ip}</div>
                                     <div className="font-mono font-bold text-slate-700 dark:text-slate-200">{dnsInfo.ip}</div>
                                 </div>
                                 <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                                    <div className="text-xs text-slate-400 mb-1">{t.lbl_dns_geo}</div>
+                                    <div className="text-xs text-slate-400 mb-1">{t.diagnostics.dns.label_geo}</div>
                                     <div className="font-bold text-slate-700 dark:text-slate-200">{dnsInfo.geo}</div>
                                 </div>
                             </div>
@@ -634,30 +457,30 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     <Zap size={20} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.proto_title}</h4>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.proto_desc}</p>
+                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.diagnostics.proto.title}</h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.diagnostics.proto.desc}</p>
                                 </div>
                             </div>
                             <Button 
-                                onClick={checkProtocols}
+                                onClick={handleProtoCheck}
                                 isLoading={checkingProto}
                                 variant="secondary"
                                 size="xs"
                             >
-                                {t.proto_check_btn}
+                                {t.diagnostics.proto.btn}
                             </Button>
                         </div>
 
                         {protocols && (
                             <div className="flex gap-4">
                                 <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.proto_http2}</span>
+                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.diagnostics.proto.h2}</span>
                                     <span className={`text-xs px-2 py-1 rounded font-mono font-bold ${protocols.h2 === 'h2' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
                                         {protocols.h2 === 'h2' ? 'Supported' : protocols.h2}
                                     </span>
                                 </div>
                                 <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.proto_http3}</span>
+                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.diagnostics.proto.h3}</span>
                                     <span className={`text-xs px-2 py-1 rounded font-mono font-bold ${protocols.h3 === 'h3' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
                                         {protocols.h3 === 'h3' ? 'Supported' : protocols.h3}
                                     </span>
@@ -671,13 +494,13 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
 
             {/* Connectivity Test */}
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{t.test_conn}</h3>
+                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{t.connectivity.title}</h3>
                 <div className="flex gap-2 mb-4">
                     <input 
                         type="text" 
                         value={testUrl}
                         onChange={(e) => setTestUrl(e.target.value)}
-                        placeholder={t.url_placeholder}
+                        placeholder={t.connectivity.placeholder}
                         className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none"
                         onKeyDown={(e) => e.key === 'Enter' && runConnectivityTest()}
                     />
@@ -687,7 +510,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                         isLoading={testingConn}
                         leftIcon={<Wifi size={18} />}
                     >
-                        Test
+                        {t.connectivity.btn}
                     </Button>
                 </div>
                 {testResult && (
@@ -703,9 +526,9 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
             {/* CDN Status */}
             <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{t.cdn_status}</h3>
+                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{t.cdn.title}</h3>
                     <button onClick={checkAllCDNs} className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
-                        {t.check_all}
+                        {t.cdn.check_all}
                     </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

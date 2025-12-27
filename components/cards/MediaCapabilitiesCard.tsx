@@ -1,16 +1,18 @@
 
 import React from 'react';
-import { Film, Check, X, Mic2, Music } from 'lucide-react';
+import { Film, Check, X, Mic2, Music, MonitorPlay } from 'lucide-react';
 import { InfoCard } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
+import { Button } from '../ui/Button';
 
 interface MediaCapabilitiesCardProps {
   data: BrowserData['media'];
   t: Translation;
+  onOpenVideoTest?: () => void;
 }
 
-export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = ({ data, t }) => {
+export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = ({ data, t, onOpenVideoTest }) => {
   return (
     <InfoCard title={t.sections.media_sup} icon={Film}>
         <div className="mb-3">
@@ -62,6 +64,20 @@ export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = ({ da
             </div>
             <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.audioChannels}</span>
         </div>
+        
+        {onOpenVideoTest && (
+            <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50">
+                <Button 
+                    fullWidth 
+                    variant="soft" 
+                    size="xs" 
+                    onClick={onOpenVideoTest} 
+                    leftIcon={<MonitorPlay size={14} />}
+                >
+                    {t.actions.open_video_test}
+                </Button>
+            </div>
+        )}
     </InfoCard>
   );
 };

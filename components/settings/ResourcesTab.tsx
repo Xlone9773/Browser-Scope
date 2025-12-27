@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Translation } from '../../utils/i18n/types';
 
 interface ResourcesTabProps {
-    t: Translation['settingsModal'];
+    t: Translation['settings']['resources'];
 }
 
 interface ResourceItem {
@@ -28,15 +28,15 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{t.resource_list} ({resources.length})</h3>
+                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{t.title} ({resources.length})</h3>
             </div>
             <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
                 <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
                         <tr>
-                            <th className="px-4 py-3 font-medium text-slate-600 dark:text-slate-300">{t.res_name}</th>
-                            <th className="px-4 py-3 font-medium text-slate-600 dark:text-slate-300 w-32">{t.res_type}</th>
-                            <th className="px-4 py-3 font-medium text-slate-600 dark:text-slate-300 w-32 text-right">{t.res_duration}</th>
+                            <th className="px-4 py-3 font-medium text-slate-600 dark:text-slate-300">{t.columns.name}</th>
+                            <th className="px-4 py-3 font-medium text-slate-600 dark:text-slate-300 w-32">{t.columns.type}</th>
+                            <th className="px-4 py-3 font-medium text-slate-600 dark:text-slate-300 w-32 text-right">{t.columns.duration}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">

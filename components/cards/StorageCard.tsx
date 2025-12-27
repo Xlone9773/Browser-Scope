@@ -83,7 +83,7 @@ export const StorageCard: React.FC<StorageCardProps> = ({ data, t }) => {
                 onClick={clearStorage} 
                 leftIcon={<Trash2 size={14} />}
             >
-                {t.settingsModal.clear_btn}
+                {t.settings.storage.local.clearBtn}
             </Button>
         </div>
     </InfoCard>

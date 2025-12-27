@@ -81,18 +81,28 @@ export const Select: React.FC<SelectProps> = ({
             close();
         };
 
-        const handleResizeOrScroll = () => {
+        const handleResize = () => {
+            if (isOpen) close();
+        };
+
+        const handleScroll = (event: Event) => {
+            const portalEl = document.getElementById('select-portal-container');
+            // If scrolling inside the dropdown content, do not close
+            if (portalEl && portalEl.contains(event.target as Node)) {
+                return;
+            }
+            // Close if scrolling anywhere else (page scroll, modal scroll) as position will drift
             if (isOpen) close();
         };
 
         window.addEventListener('mousedown', handleClickOutside);
-        window.addEventListener('resize', handleResizeOrScroll);
-        window.addEventListener('scroll', handleResizeOrScroll, true); 
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('scroll', handleScroll, true); 
 
         return () => {
             window.removeEventListener('mousedown', handleClickOutside);
-            window.removeEventListener('resize', handleResizeOrScroll);
-            window.removeEventListener('scroll', handleResizeOrScroll, true);
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('scroll', handleScroll, true);
         };
     }, [isOpen]);
 

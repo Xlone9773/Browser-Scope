@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Globe, Database, Activity, Sliders, Monitor, Terminal } from 'lucide-react';
+import { Globe, Database, Activity, Sliders, Monitor, Terminal, Package } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { GeneralTab } from './settings/GeneralTab';
 import { NetworkTab } from './settings/NetworkTab';
@@ -8,11 +8,13 @@ import { DisplayTab } from './settings/DisplayTab';
 import { StorageTab } from './settings/StorageTab';
 import { ResourcesTab } from './settings/ResourcesTab';
 import { DeveloperTab } from './settings/DeveloperTab';
+import { ModulesTab, ModuleState } from './settings/ModulesTab';
 import { Modal } from './ui/Modal';
 
 interface SettingsModalProps {
   onClose: () => void;
-  t: Translation['settingsModal'];
+  // Now accepts the root translation object to distribute to children
+  t: Translation;
   simpleMode: boolean;
   toggleSimpleMode: (value: boolean) => void;
   hideScrollbar: boolean;
@@ -23,6 +25,7 @@ interface SettingsModalProps {
   toggleDisableBlur: (value: boolean) => void;
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
+  moduleStates?: ModuleState[];
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ 
@@ -37,12 +40,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     disableBlur,
     toggleDisableBlur,
     isDevToolsFloating, 
-    setDevToolsFloating 
+    setDevToolsFloating,
+    moduleStates = [] 
 }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'network' | 'display' | 'storage' | 'res' | 'dev'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'network' | 'display' | 'storage' | 'res' | 'dev' | 'mod'>('general');
   
   // Display Test State (Lifted up as it overlays everything)
   const [fullScreenColor, setFullScreenColor] = useState<string | null>(null);
+
+  // Access structured settings
+  const settings = t.settings;
+  
+  // Helper for Nav Titles
+  const getNavTitle = (key: keyof Translation['settings']['nav']) => {
+      return settings.nav[key];
+  };
 
   // Full Screen Color Overlay (Special case that overrides the Modal)
   if (fullScreenColor) {
@@ -61,7 +73,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <Modal
-        title={t.title}
+        title={settings.title}
         icon={<Sliders size={24} />}
         onClose={onClose}
         size="3xl"
@@ -87,7 +99,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             `}
                         >
                             <Sliders size={16} />
-                            {t.tab_general}
+                            {getNavTitle('general')}
                         </button>
                         <button 
                             onClick={() => setActiveTab('network')}
@@ -101,7 +113,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             `}
                         >
                             <Globe size={16} />
-                            {t.tab_network}
+                            {getNavTitle('network')}
                         </button>
                         <button 
                             onClick={() => setActiveTab('display')}
@@ -115,7 +127,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             `}
                         >
                             <Monitor size={16} />
-                            {t.tab_display}
+                            {getNavTitle('display')}
                         </button>
                         <button 
                             onClick={() => setActiveTab('storage')}
@@ -129,7 +141,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             `}
                         >
                             <Database size={16} />
-                            {t.tab_storage}
+                            {getNavTitle('storage')}
                         </button>
                         <button 
                             onClick={() => setActiveTab('res')}
@@ -143,7 +155,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             `}
                         >
                             <Activity size={16} />
-                            {t.tab_resources}
+                            {getNavTitle('resources')}
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('mod')}
+                            className={`
+                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                                flex-1 md:flex-none justify-center md:justify-start
+                                border-b-2 md:border-b-0 md:border-l-[3px]
+                                ${activeTab === 'mod' 
+                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                            `}
+                        >
+                            <Package size={16} />
+                            {getNavTitle('modules')}
                         </button>
                         <button 
                             onClick={() => setActiveTab('dev')}
@@ -157,7 +183,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             `}
                         >
                             <Terminal size={16} />
-                            {t.tab_developer}
+                            {getNavTitle('developer')}
                         </button>
                     </div>
 
@@ -166,7 +192,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         
                         {activeTab === 'general' && (
                             <GeneralTab 
-                                t={t} 
+                                t={settings.general} 
                                 simpleMode={simpleMode} 
                                 toggleSimpleMode={toggleSimpleMode} 
                                 hideScrollbar={hideScrollbar}
@@ -179,24 +205,28 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         )}
 
                         {activeTab === 'network' && (
-                            <NetworkTab t={t} />
+                            <NetworkTab t={settings.network} />
                         )}
 
                         {activeTab === 'display' && (
-                            <DisplayTab t={t} onColorSelect={setFullScreenColor} />
+                            <DisplayTab t={settings.display} onColorSelect={setFullScreenColor} />
                         )}
 
                         {activeTab === 'storage' && (
-                            <StorageTab t={t} />
+                            <StorageTab t={settings.storage} />
                         )}
 
                         {activeTab === 'res' && (
-                            <ResourcesTab t={t} />
+                            <ResourcesTab t={settings.resources} />
                         )}
 
-                        {activeTab === 'dev' && (
+                        {activeTab === 'mod' && settings.modules && (
+                            <ModulesTab t={settings.modules} modules={moduleStates} />
+                        )}
+
+                        {activeTab === 'dev' && settings.developer && (
                             <DeveloperTab 
-                                t={t} 
+                                t={settings.developer} 
                                 isFloating={isDevToolsFloating}
                                 toggleFloat={() => setDevToolsFloating(!isDevToolsFloating)}
                             />
@@ -211,7 +241,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         onClick={close}
                         className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors"
                     >
-                        {t.close}
+                        {t.common.actions.close}
                     </button>
                 </div>
             </>

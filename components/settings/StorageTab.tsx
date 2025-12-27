@@ -5,7 +5,7 @@ import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
 
 interface StorageTabProps {
-    t: Translation['settingsModal'];
+    t: Translation['settings']['storage'];
 }
 
 export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
@@ -33,6 +33,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
         sessionStorage.clear();
         setLocalStorageCount(0);
         setSessionStorageCount(0);
+        window.location.reload();
     };
   
     const unregisterSW = async () => {
@@ -49,6 +50,13 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
         }
     };
 
+    // Calculate heuristic usage percentage if possible (mocked data often in BrowserScope)
+    // In a real app this would come from the parent prop usually, but here we can't easily sync live
+    // so we skip the progress bar or keep it simple.
+    // However, since we don't pass `data.usage` prop here anymore, we'll focus on the actions.
+    // If you want the visualizer back, it needs `data` prop from App/SettingsModal.
+    // For now, let's keep it clean as a management tab.
+
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             {/* Local Data */}
@@ -59,8 +67,8 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
                             <Database size={20} />
                         </div>
                         <div>
-                            <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.storage_title}</h3>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">{t.clear_data}</p>
+                            <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.local.title}</h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{t.local.clearDesc}</p>
                         </div>
                     </div>
                     <Button 
@@ -69,7 +77,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
                         onClick={clearStorage} 
                         leftIcon={<Trash2 size={16} />}
                     >
-                        {t.clear_btn}
+                        {t.local.clearBtn}
                     </Button>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -92,8 +100,8 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
                             <RefreshCw size={20} />
                         </div>
                         <div>
-                            <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.sw_title}</h3>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">{t.sw_desc}</p>
+                            <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.sw.title}</h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{t.sw.desc}</p>
                         </div>
                     </div>
                     <Button 
@@ -101,7 +109,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
                         size="sm" 
                         onClick={unregisterSW}
                     >
-                        {t.sw_btn}
+                        {t.sw.unregisterBtn}
                     </Button>
                 </div>
                 {swCount !== null && (

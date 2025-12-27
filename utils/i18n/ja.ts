@@ -3,7 +3,263 @@
 import { Translation } from './types';
 
 export const ja: Translation = {
-  // ... existing fields
+  // ... existing code ...
+  meta: {
+    title: "BrowserScope",
+    subtitle: "現代のブラウザフィンガープリントと機能検出のための包括的ツール",
+    footer: "BrowserScope - ブラウザ能力検出ツール",
+  },
+  // ... existing common ...
+  common: {
+    loading: "システム機能をスキャン中...",
+    loading_steps: [
+        "環境を初期化中...",
+        "ハードウェアとGPUを検出中...",
+        "ネットワーク状態を分析中...",
+        "セキュリティとプライバシーを確認中...",
+        "AIパフォーマンスを評価中...",
+        "レポートを作成中..."
+    ],
+    refresh: "再検出",
+    actions: {
+        start: "開始",
+        stop: "停止",
+        close: "閉じる",
+        copy: "コピー",
+        copied: "コピー完了",
+        download: "ダウンロード",
+        view_details: "詳細を表示",
+        check: "確認",
+        open: "開く",
+        reset: "リセット",
+        export: "JSONエクスポート"
+    }
+  },
+  // ... existing settings ...
+  settings: {
+    title: "設定",
+    nav: {
+        general: "一般",
+        network: "ネットワークツール",
+        display: "画面テスト",
+        storage: "ストレージ管理",
+        resources: "リソース監視",
+        developer: "開発者",
+        modules: "モジュール管理"
+    },
+    general: {
+        simpleMode: {
+            title: "シンプルモード",
+            desc: "複雑な技術的詳細を隠し、核心情報のみを表示します。"
+        },
+        scrollbar: {
+            title: "スクロールバーを隠す",
+            desc: "システムのデフォルトスクロールバーを強制的に非表示にします。"
+        },
+        timeFormat: {
+            title: "時間形式",
+            desc: "12時間制と24時間制を切り替えます。"
+        },
+        performance: {
+            title: "高パフォーマンスモード",
+            desc: "背景のぼかしと透明効果を無効にしてGPU負荷を軽減します。"
+        }
+    },
+    network: {
+        ip: {
+            title: "IP 情報",
+            ipv4: "IPv4",
+            ipv4_desc: "標準インターネットプロトコル",
+            ipv6: "IPv6",
+            ipv6_desc: "次世代インターネットプロトコル",
+            fetch: "IPを取得",
+            check_v6: "IPv6を確認",
+            success_v6: "IPv6 対応",
+            fail_v6: "IPv6 非対応"
+        },
+        diagnostics: {
+            title: "高度なネットワーク診断",
+            webrtc: {
+                title: "WebRTC リーク検出",
+                desc: "STUNサーバーを通じて実際のLANまたはWAN IPの取得を試みます。",
+                btn: "検出開始",
+                columns: { type: "タイプ", ip: "IPアドレス", proto: "プロトコル", port: "ポート" }
+            },
+            dns: {
+                title: "DNS リーク検出",
+                desc: "現在使用しているDNSリゾルバサーバーの検出を試みます。",
+                btn: "DNSを検出",
+                label_ip: "DNSサーバー IP",
+                label_geo: "DNS 地理位置"
+            },
+            proto: {
+                title: "プロトコルサポート",
+                desc: "HTTP/2 および HTTP/3 (QUIC) のサポート状況を検出します。",
+                btn: "プロトコルを確認",
+                h2: "HTTP/2 サポート",
+                h3: "HTTP/3 サポート"
+            }
+        },
+        connectivity: {
+            title: "接続テスト",
+            placeholder: "URLを入力 (例: google.com)",
+            btn: "テスト"
+        },
+        cdn: {
+            title: "CDN ステータス",
+            check_all: "すべて確認"
+        }
+    },
+    display: {
+        deadPixel: {
+            title: "ドット抜け検出",
+            desc: "全画面で単色背景を表示し、画面上のドット抜けや輝点を探すのを助けます。クリックで終了。",
+            colors: { red: "赤", green: "緑", blue: "青", white: "白", black: "黒" }
+        },
+        hdr: {
+            title: "HDR ステータス",
+            desc: "現在のディスプレイとブラウザのハイダイナミックレンジ対応を検出します。",
+            rangeScreen: "画面ダイナミックレンジ",
+            rangeVideo: "動画ダイナミックレンジ",
+            brightnessTest: "EDR 輝度テスト",
+            brightnessDesc: "HDR/EDRが有効な場合、中央の四角形は白い背景よりも明るく表示されるはずです。",
+            labelSdr: "SDR 白",
+            labelEdr: "EDR 高輝度白"
+        },
+        gamut: {
+            title: "広色域テスト (P3)",
+            desc: "赤い四角形の中にロゴが見える場合、お使いのデバイスはP3広色域をサポートしています。",
+            unsupported: "お使いのブラウザはDisplay-P3色域検出をサポートしていません。"
+        },
+        gradient: {
+            title: "色深度と階調",
+            desc: "色の遷移が滑らかか（バンディングがないか）、暗部のディテールを確認します。"
+        }
+    },
+    storage: {
+        local: {
+            title: "ローカルデータ",
+            clearDesc: "すべてのサイトデータを消去",
+            clearBtn: "消去"
+        },
+        sw: {
+            title: "Service Workers",
+            desc: "バックグラウンドで実行中のService Workerスクリプトを管理します。",
+            unregisterBtn: "すべて登録解除"
+        },
+        usageLabel: "ストレージ使用率"
+    },
+    resources: {
+        title: "外部リソース読み込みリスト",
+        columns: { name: "リソース名", type: "タイプ", duration: "所要時間" }
+    },
+    developer: {
+        warning: {
+            title: "操作は極めて危険です！",
+            desc: "ここは開発者向けのデバッグエリアです。何をしているのか理解していない場合は、直ちにウィンドウを閉じてください！\n\nここでコードを貼り付けるよう誘導する人物は詐欺師です。不明なコードを実行すると、プライバシーの漏洩、アカウントの乗っ取り、またはデバイスが悪意を持って制御される可能性があります。",
+            agree: "リスクを理解して続行"
+        },
+        nav: {
+            events: "イベント",
+            inspector: "オブジェクト検査",
+            console: "コンソール"
+        },
+        actions: {
+            float: "フロート表示",
+            dock: "下部に戻す"
+        },
+        events: {
+            placeholder: "システムイベントを待機中...",
+            copy: "ログをコピー",
+            clear: "クリア"
+        },
+        console: {
+            placeholder: "JSコードを入力 (プリセットは '\\' を入力)...",
+            clearInput: "入力をクリア",
+            resultPlaceholder: "実行結果がここに表示されます...",
+            copy: "結果をコピー",
+            download: "結果をDL",
+            clear: "結果をクリア",
+            quickCommands: "クイックコマンド",
+            run: "即時実行"
+        }
+    },
+    modules: {
+        title: "モジュール管理",
+        desc: "ロードされたモーダルコンポーネントを監視および管理します。未使用のモジュールをアンロードすると、メモリとGPUリソースを解放できます。",
+        headers: {
+            name: "モジュール名",
+            status: "ステータス",
+            impact: "リソース影響",
+            action: "アクション"
+        },
+        status: {
+            active: "実行中",
+            inactive: "アイドル",
+            cached: "キャッシュ済み",
+            system: "システム"
+        },
+        impact: {
+            low: "低",
+            med: "中",
+            high: "高"
+        },
+        actions: {
+            unload: "強制終了",
+            unloadAll: "全モジュールをアンロード"
+        }
+    }
+  },
+  // ... existing speedTest ...
+  speedTest: {
+    title: "ネットワーク速度テスト",
+    action: {
+        start: "テスト開始",
+        stop: "停止"
+    },
+    metrics: {
+        ping: "Ping",
+        jitter: "ジッター",
+        download: "ダウンロード",
+        upload: "アップロード",
+        latency: "レイテンシ",
+        mbps: "Mbps"
+    },
+    status: {
+        idle: "準備完了",
+        ping: "Ping測定中...",
+        download: "ダウンロード速度測定中...",
+        upload: "アップロード速度測定中...",
+        done: "テスト完了",
+        error: "接続失敗"
+    },
+    settings: {
+        server: "サーバー",
+        test_size: "テストサイズ",
+        backend: "測定サーバー",
+        custom_url: "カスタムダウンロードURL",
+        custom_placeholder: "https://example.com/large-file.zip",
+        cors_note: "注：URLはCORSをサポートする必要があります。アップロードテストはスキップされます。"
+    },
+    preset_names: {
+        cloudflare: "Cloudflare (グローバル)",
+        cachefly: "CacheFly (グローバル CDN)",
+        ustc_cn: "USTC ミラー (中国/合肥)",
+        nju_cn: "NJU ミラー (中国/南京)",
+        selectel_ru: "Selectel (ロシア/サンクトペテルブルク)",
+        tele2_kz: "Tele2 (カザフスタン/アルマトイ)",
+        hetzner_de: "Hetzner (ドイツ/ファルケンシュタイン)",
+        hetzner_fi: "Hetzner (フィンランド/ヘルシンキ)",
+        scaleway_fr: "Scaleway (フランス/パリ)",
+        vultr_nj: "Vultr (米国東部/ニュージャージー)",
+        vultr_la: "Vultr (米国西部/ロサンゼルス)",
+        vultr_sg: "Vultr (シンガポール)",
+        vultr_tokyo: "Vultr (日本/東京)",
+        vultr_sydney: "Vultr (オーストラリア/シドニー)",
+        custom: "カスタムURL"
+    }
+  },
+  // ... existing legacy mappings ...
   title: "BrowserScope",
   subtitle: "現代のブラウザフィンガープリントと機能検出のための包括的ツール",
   loading: "システム機能をスキャン中...",
@@ -124,7 +380,16 @@ export const ja: Translation = {
     denied: "拒否",
     prompt: "確認中",
     error: "エラー",
-    idle: "未リクエスト"
+    idle: "未リクエスト",
+    running: "実行中",
+    supported: "対応",
+    not_supported: "非対応",
+    detected: "検出",
+    none: "なし",
+    hidden: "隠蔽",
+    yes: "はい",
+    no: "いいえ",
+    unknown: "不明"
   },
 
   actions: {
@@ -143,6 +408,7 @@ export const ja: Translation = {
     check: "確認",
     open_map: "地図を開く",
     stress_test: "ストレステスト",
+    open_video_test: "ビデオデコードテスト"
   },
 
   features: {
@@ -264,6 +530,27 @@ export const ja: Translation = {
     version: "現在のバージョン",
     latest_update: "最近の更新",
     history: "更新履歴",
+    features: {
+        privacy: {
+            title: "プライバシーファースト",
+            desc: "100%クライアントサイド実行。データ収集ゼロ。指紋情報はデバイス内に留まります。"
+        },
+        tech: {
+            title: "最先端技術",
+            desc: "WebGPU、WebNN、WASMを搭載し、ブラウザ能力の限界をテストします。"
+        },
+        deepScan: {
+            title: "ディープスキャン",
+            desc: "100以上のハードウェアおよびソフトウェア信号を分析し、高エントロピーな識別子を生成します。"
+        },
+        stack: {
+            title: "イノベーションスタック"
+        },
+        openSource: {
+            title: "オープンソース",
+            license: "MIT ライセンス"
+        }
+    },
     updates: [
         {
             version: "1.5.0",
@@ -359,114 +646,6 @@ export const ja: Translation = {
     close: "閉じる"
   },
 
-  settingsModal: {
-    title: "設定",
-    tab_general: "一般",
-    tab_network: "ネットワークツール",
-    tab_display: "画面テスト",
-    tab_storage: "ストレージ管理",
-    tab_resources: "リソース監視",
-    tab_developer: "開発者",
-    
-    // General
-    simple_mode_title: "シンプルモード",
-    simple_mode_desc: "複雑な技術的詳細を隠し、核心情報のみを表示します。",
-    scrollbar_title: "スクロールバーを隠す",
-    scrollbar_desc: "システムのデフォルトスクロールバーを強制的に非表示にします。",
-    time_format_title: "時間形式",
-    time_format_desc: "12時間制と24時間制を切り替えます。",
-    disable_blur_title: "ぼかし効果を無効化",
-    disable_blur_desc: "背景のぼかしと透明効果を完全に削除します。これによりGPU負荷が大幅に軽減されますが、UIの質感は低下します。",
-    
-    // Network
-    fetch_ip: "IP情報を取得",
-    check_ipv6: "IPv6を検出",
-    ipv6_success: "IPv6 対応",
-    ipv6_fail: "IPv6 非対応",
-    network_adv_title: "高度なネットワーク診断",
-    network_webrtc_title: "WebRTC リーク検出",
-    network_webrtc_desc: "STUNサーバーを通じて実際のLANまたはWAN IPの取得を試みます。",
-    network_webrtc_btn: "検出開始",
-    col_type: "タイプ",
-    col_ip: "IPアドレス",
-    col_protocol: "プロトコル",
-    col_port: "ポート",
-    network_dns_title: "DNS リーク検出",
-    network_dns_desc: "現在使用しているDNSリゾルバサーバーの検出を試みます。",
-    network_dns_btn: "DNSを検出",
-    lbl_dns_ip: "DNSサーバー IP",
-    lbl_dns_geo: "DNS 地理位置",
-    proto_title: "プロトコルサポート",
-    proto_desc: "HTTP/2 および HTTP/3 (QUIC) のサポート状況を検出します。",
-    proto_check_btn: "プロトコルを確認",
-    proto_http2: "HTTP/2 サポート",
-    proto_http3: "HTTP/3 サポート",
-    test_conn: "接続テスト",
-    url_placeholder: "URLを入力 (例: google.com)",
-    cdn_status: "主要CDNステータス",
-    check_all: "すべて確認",
-
-    // Display
-    dead_pixel_title: "ドット抜け検出",
-    dead_pixel_desc: "全画面で単色背景を表示し、画面上のドット抜けや輝点を探すのを助けます。クリックで終了。",
-    color_red: "赤",
-    color_green: "緑",
-    color_blue: "青",
-    color_white: "白",
-    color_black: "黒",
-    hdr_status_title: "HDR ステータス",
-    hdr_support: "現在のディスプレイとブラウザのハイダイナミックレンジ対応を検出します。",
-    hdr_dynamic_range: "画面ダイナミックレンジ",
-    hdr_video_dynamic_range: "動画ダイナミックレンジ",
-    hdr_brightness_test: "EDR 輝度テスト",
-    hdr_brightness_desc: "HDR/EDRが有効な場合、中央の四角形は白い背景よりも明るく表示されるはずです。",
-    hdr_sdr_white: "SDR 白",
-    hdr_edr_white: "EDR 高輝度白",
-    gamut_test_title: "広色域テスト (P3)",
-    gamut_test_desc: "赤い四角形の中にロゴが見える場合、お使いのデバイスはP3広色域をサポートしています。",
-    unsupported_p3: "お使いのブラウザはDisplay-P3色域検出をサポートしていません。",
-    hdr_test_title: "色深度と階調",
-    hdr_test_desc: "色の遷移が滑らかか（バンディングがないか）、暗部のディテールを確認します。",
-
-    // Storage
-    storage_title: "ローカルデータ",
-    clear_data: "すべてのサイトデータを消去",
-    clear_btn: "消去",
-    sw_title: "Service Workers",
-    sw_desc: "バックグラウンドで実行中のService Workerスクリプトを管理します。",
-    sw_btn: "すべて登録解除",
-    storage_usage: "ストレージ使用率",
-
-    // Resources
-    resource_list: "外部リソース読み込みリスト",
-    res_name: "リソース名",
-    res_type: "タイプ",
-    res_duration: "所要時間",
-
-    // Developer
-    dev_warning_title: "操作は極めて危険です！",
-    dev_warning_desc: "ここは開発者向けのデバッグエリアです。何をしているのか理解していない場合は、直ちにウィンドウを閉じてください！\n\nここでコードを貼り付けるよう誘導する人物は詐欺師です。不明なコードを実行すると、プライバシーの漏洩、アカウントの乗っ取り、またはデバイスが悪意を持って制御される可能性があります。",
-    dev_warning_agree: "リスクを理解して続行",
-    dev_events: "イベント",
-    dev_inspector: "オブジェクト検査",
-    dev_console: "コンソール",
-    dev_float: "フロート表示",
-    dev_dock_back: "下部に戻す",
-    dev_events_placeholder: "システムイベントを待機中...",
-    dev_copy_log: "ログをコピー",
-    dev_clear: "クリア",
-    dev_console_placeholder: "JSコードを入力 (プリセットは '\\' を入力)...",
-    dev_input_clear: "入力をクリア",
-    dev_result_placeholder: "実行結果がここに表示されます...",
-    dev_output_copy: "結果をコピー",
-    dev_output_download: "結果をDL",
-    dev_output_clear: "結果をクリア",
-    dev_quick_commands: "クイックコマンド",
-    dev_run_now: "即時実行",
-    
-    close: "閉じる"
-  },
-
   benchmarkModal: {
     title: "パフォーマンスベンチマーク",
     start_btn: "フルテスト開始",
@@ -552,7 +731,18 @@ export const ja: Translation = {
     video_res: "解像度",
     video_efficient: "高効率 (ハードウェア)",
     video_smooth: "スムーズ再生",
-    filter_supported: "対応済みのみ表示"
+    filter_supported: "対応済みのみ表示",
+    // New Keys
+    video_title: "動画・音声デコードマトリックス",
+    status_api_error: "API エラー",
+    status_api_na: "API 利用不可",
+    status_hw: "HW",
+    status_sw: "SW",
+    status_software: "ソフトウェア",
+    tooltip_hw: "ハードウェア加速 (高効率)",
+    tooltip_sw: "ソフトウェアデコード (高負荷)",
+    tooltip_drop: "フレームドロップの可能性",
+    status_done: "完了"
   },
 
   visionModal: {
@@ -578,30 +768,5 @@ export const ja: Translation = {
     no_cam_error: "カメラが見つからないか、権限が拒否されました",
     auto_scan: "自動スキャン",
     manual_capture: "手動キャプチャ"
-  },
-
-  speedTest: {
-    title: "ネットワーク速度テスト",
-    start: "テスト開始",
-    stop: "停止",
-    ping: "Ping",
-    jitter: "ジッター",
-    download: "ダウンロード",
-    upload: "アップロード",
-    latency: "レイテンシ",
-    mbps: "Mbps",
-    status_idle: "準備完了",
-    status_ping: "Ping測定中...",
-    status_down: "ダウンロード速度測定中...",
-    status_up: "アップロード速度測定中...",
-    status_done: "テスト完了",
-    server: "Cloudflare",
-    test_size: "テストサイズ",
-    backend: "測定サーバー",
-    custom_url: "カスタムダウンロードURL",
-    custom_placeholder: "https://example.com/large-file.zip",
-    cors_note: "注：URLはCORSをサポートする必要があります。アップロードテストはスキップされます。",
-    backend_cloudflare: "Cloudflare (グローバル)",
-    backend_custom: "カスタムURL"
   }
 };

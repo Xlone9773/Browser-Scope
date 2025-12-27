@@ -1,5 +1,6 @@
 
-import React, { useEffect, useState, Suspense, lazy } from 'react';
+// ... existing imports
+import React, { useEffect, useState, Suspense } from 'react';
 import { RefreshCw, Monitor } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { exportAsJson } from './services/exporter';
@@ -9,6 +10,7 @@ import { applyTheme, getSavedTheme, Theme } from './appearance/theme';
 import { FloatingWindow } from './components/ui/FloatingWindow';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { ModalLoading } from './components/ui/ModalLoading';
+import { useModalManager } from './hooks/useModalManager';
 
 // Components
 import { Header } from './components/layout/Header';
@@ -28,26 +30,7 @@ import { MediaCapabilitiesCard } from './components/cards/MediaCapabilitiesCard'
 import { UserAgentCard } from './components/cards/UserAgentCard';
 import { PwaSection } from './components/sections/PwaSection';
 import { FeaturesSection } from './components/sections/FeaturesSection';
-
-// Lazy Loaded Modals to reduce initial bundle size
-const CameraModal = lazy(() => import('./components/CameraModal').then(m => ({ default: m.CameraModal })));
-const AudioRecorderModal = lazy(() => import('./components/AudioRecorderModal').then(m => ({ default: m.AudioRecorderModal })));
-const WebGLExtensionsModal = lazy(() => import('./components/WebGLExtensionsModal').then(m => ({ default: m.WebGLExtensionsModal })));
-const CanvasModal = lazy(() => import('./components/CanvasModal').then(m => ({ default: m.CanvasModal })));
-const Base64Modal = lazy(() => import('./components/Base64Modal').then(m => ({ default: m.Base64Modal })));
-const AboutModal = lazy(() => import('./components/AboutModal').then(m => ({ default: m.AboutModal })));
-const SensorModal = lazy(() => import('./components/SensorModal').then(m => ({ default: m.SensorModal })));
-const ScoreModal = lazy(() => import('./components/ScoreModal').then(m => ({ default: m.ScoreModal })));
-const FingerprintModal = lazy(() => import('./components/FingerprintModal').then(m => ({ default: m.FingerprintModal })));
-const SettingsModal = lazy(() => import('./components/SettingsModal').then(m => ({ default: m.SettingsModal })));
-const BenchmarkModal = lazy(() => import('./components/BenchmarkModal').then(m => ({ default: m.BenchmarkModal })));
-const HardwareToolsModal = lazy(() => import('./components/HardwareToolsModal').then(m => ({ default: m.HardwareToolsModal })));
-const AiPlaygroundModal = lazy(() => import('./components/AiPlaygroundModal').then(m => ({ default: m.AiPlaygroundModal })));
-const GamepadToolModal = lazy(() => import('./components/GamepadToolModal').then(m => ({ default: m.GamepadToolModal })));
-const VisionModal = lazy(() => import('./components/VisionModal').then(m => ({ default: m.VisionModal })));
-const SpeedTestModal = lazy(() => import('./components/SpeedTestModal').then(m => ({ default: m.SpeedTestModal })));
-const ComputeStressModal = lazy(() => import('./components/ComputeStressModal').then(m => ({ default: m.ComputeStressModal })));
-const DeveloperTab = lazy(() => import('./components/settings/DeveloperTab').then(m => ({ default: m.DeveloperTab })));
+import { ModuleState } from './components/settings/ModulesTab';
 
 type PermissionStatusType = 'idle' | 'granted' | 'denied' | 'prompt' | 'error';
 type PermissionKey = 'camera' | 'microphone' | 'geolocation' | 'notifications' | 'midi';
@@ -57,46 +40,20 @@ const App: React.FC = () => {
   
   // Loading State
   const [showLoader, setShowLoader] = useState(true);
-  const [fadeLoader, setFadeLoader] = useState(true); // Start invisible for animation
+  const [fadeLoader, setFadeLoader] = useState(true);
   const [loadingText, setLoadingText] = useState('');
   
+  // Settings State
   const [lang, setLang] = useState<Language>('zh-CN');
   const [theme, setTheme] = useState<Theme>('system');
-  const [simpleMode, setSimpleMode] = useState<boolean>(() => {
-      const saved = localStorage.getItem('simpleMode');
-      return saved === 'true';
-  });
-  const [hideScrollbar, setHideScrollbar] = useState<boolean>(() => {
-      const saved = localStorage.getItem('hideScrollbar');
-      return saved === 'true';
-  });
+  const [simpleMode, setSimpleMode] = useState<boolean>(() => localStorage.getItem('simpleMode') === 'true');
+  const [hideScrollbar, setHideScrollbar] = useState<boolean>(() => localStorage.getItem('hideScrollbar') === 'true');
   const [timeFormat, setTimeFormat] = useState<'12' | '24'>(() => {
       const saved = localStorage.getItem('timeFormat');
       return (saved === '12' || saved === '24') ? saved : '24';
   });
-  const [disableBlur, setDisableBlur] = useState<boolean>(() => {
-      const saved = localStorage.getItem('disableBlur');
-      return saved === 'true';
-  });
+  const [disableBlur, setDisableBlur] = useState<boolean>(() => localStorage.getItem('disableBlur') === 'true');
 
-  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
-  const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
-  const [isWebGLExtensionsOpen, setIsWebGLExtensionsOpen] = useState(false);
-  const [isCanvasModalOpen, setIsCanvasModalOpen] = useState(false);
-  const [isBase64ModalOpen, setIsBase64ModalOpen] = useState(false);
-  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
-  const [isSensorModalOpen, setIsSensorModalOpen] = useState(false);
-  const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
-  const [isFingerprintModalOpen, setIsFingerprintModalOpen] = useState(false);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [isBenchmarkModalOpen, setIsBenchmarkModalOpen] = useState(false);
-  const [isHardwareToolsModalOpen, setIsHardwareToolsModalOpen] = useState(false);
-  const [isAiPlaygroundOpen, setIsAiPlaygroundOpen] = useState(false);
-  const [isGamepadToolOpen, setIsGamepadToolOpen] = useState(false);
-  const [isVisionModalOpen, setIsVisionModalOpen] = useState(false);
-  const [isSpeedTestModalOpen, setIsSpeedTestModalOpen] = useState(false);
-  const [isComputeStressModalOpen, setIsComputeStressModalOpen] = useState(false); 
-  
   // Developer Tools State
   const [isDevToolsFloating, setIsDevToolsFloating] = useState(false);
   
@@ -109,8 +66,36 @@ const App: React.FC = () => {
   });
 
   const [geoData, setGeoData] = useState<GeoPosition | null>(null);
+  
+  // Modal Manager Hook
+  const { visibility, open, close, unload, loadedModules, Components } = useModalManager();
 
   const t = translations[lang];
+
+  // Construct Module States for Settings Tab
+  const settingsTitle = t.settings?.title;
+  const developerTabTitle = t.settings?.nav?.developer;
+
+  const modalStates: ModuleState[] = [
+      { id: 'settings', name: settingsTitle, isOpen: visibility.settings, setOpen: (v) => v ? open('settings') : close('settings'), impact: 'Low', isSystem: true, isLoaded: true },
+      { id: 'camera', name: t.cameraTool.title, isOpen: visibility.camera, setOpen: (v) => v ? open('camera') : close('camera'), impact: 'High', onUnload: () => unload('camera'), isLoaded: loadedModules.has('camera') },
+      { id: 'audio', name: t.audioTool.title, isOpen: visibility.audio, setOpen: (v) => v ? open('audio') : close('audio'), impact: 'Medium', onUnload: () => unload('audio'), isLoaded: loadedModules.has('audio') },
+      { id: 'webgl', name: t.webglTool.title, isOpen: visibility.webgl, setOpen: (v) => v ? open('webgl') : close('webgl'), impact: 'Low', onUnload: () => unload('webgl'), isLoaded: loadedModules.has('webgl') },
+      { id: 'canvas', name: 'Canvas Detail', isOpen: visibility.canvas, setOpen: (v) => v ? open('canvas') : close('canvas'), impact: 'Low', onUnload: () => unload('canvas'), isLoaded: loadedModules.has('canvas') },
+      { id: 'base64', name: t.base64Tool.title, isOpen: visibility.base64, setOpen: (v) => v ? open('base64') : close('base64'), impact: 'Low', onUnload: () => unload('base64'), isLoaded: loadedModules.has('base64') },
+      { id: 'about', name: t.aboutModal.title, isOpen: visibility.about, setOpen: (v) => v ? open('about') : close('about'), impact: 'Low', onUnload: () => unload('about'), isLoaded: loadedModules.has('about') },
+      { id: 'sensor', name: t.sensorModal.sensor_title, isOpen: visibility.sensor, setOpen: (v) => v ? open('sensor') : close('sensor'), impact: 'Medium', onUnload: () => unload('sensor'), isLoaded: loadedModules.has('sensor') },
+      { id: 'score', name: t.scoreModal.score_details_title, isOpen: visibility.score, setOpen: (v) => v ? open('score') : close('score'), impact: 'Low', onUnload: () => unload('score'), isLoaded: loadedModules.has('score') },
+      { id: 'fingerprint', name: t.fingerprintModal.title, isOpen: visibility.fingerprint, setOpen: (v) => v ? open('fingerprint') : close('fingerprint'), impact: 'Medium', onUnload: () => unload('fingerprint'), isLoaded: loadedModules.has('fingerprint') },
+      { id: 'benchmark', name: t.benchmarkModal.title, isOpen: visibility.benchmark, setOpen: (v) => v ? open('benchmark') : close('benchmark'), impact: 'High', onUnload: () => unload('benchmark'), isLoaded: loadedModules.has('benchmark') },
+      { id: 'tools', name: t.hardwareToolsModal.title, isOpen: visibility.tools, setOpen: (v) => v ? open('tools') : close('tools'), impact: 'Medium', onUnload: () => unload('tools'), isLoaded: loadedModules.has('tools') },
+      { id: 'ai', name: t.aiPlayground.title, isOpen: visibility.ai, setOpen: (v) => v ? open('ai') : close('ai'), impact: 'High', onUnload: () => unload('ai'), isLoaded: loadedModules.has('ai') },
+      { id: 'gamepad', name: t.gamepadTool.title, isOpen: visibility.gamepad, setOpen: (v) => v ? open('gamepad') : close('gamepad'), impact: 'Medium', onUnload: () => unload('gamepad'), isLoaded: loadedModules.has('gamepad') },
+      { id: 'vision', name: t.visionModal.title, isOpen: visibility.vision, setOpen: (v) => v ? open('vision') : close('vision'), impact: 'High', onUnload: () => unload('vision'), isLoaded: loadedModules.has('vision') },
+      { id: 'speed', name: t.speedTest.title, isOpen: visibility.speed, setOpen: (v) => v ? open('speed') : close('speed'), impact: 'Medium', onUnload: () => unload('speed'), isLoaded: loadedModules.has('speed') },
+      { id: 'compute', name: t.computeStress.title, isOpen: visibility.compute, setOpen: (v) => v ? open('compute') : close('compute'), impact: 'High', onUnload: () => unload('compute'), isLoaded: loadedModules.has('compute') },
+      { id: 'video', name: t.actions.open_video_test, isOpen: visibility.video, setOpen: (v) => v ? open('video') : close('video'), impact: 'High', onUnload: () => unload('video'), isLoaded: loadedModules.has('video') },
+  ];
 
   // Initialize theme
   useEffect(() => {
@@ -174,7 +159,8 @@ const App: React.FC = () => {
     
     // Start simulating steps immediately
     let stepIndex = 0;
-    const steps = t.loading_steps || [t.loading];
+    // Fix: access loading_steps from common
+    const steps = t.common.loading_steps || [t.common.loading];
     setLoadingText(steps[0]);
 
     const interval = setInterval(() => {
@@ -254,12 +240,12 @@ const App: React.FC = () => {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             updatePermStatus('camera', 'granted');
             stream.getTracks().forEach(t => t.stop());
-            setIsCameraModalOpen(true);
+            open('camera');
         } else if (type === 'microphone') {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             updatePermStatus('microphone', 'granted');
             stream.getTracks().forEach(t => t.stop());
-            setIsAudioModalOpen(true);
+            open('audio');
         } else if (type === 'geolocation') {
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
@@ -348,35 +334,35 @@ const App: React.FC = () => {
         <Suspense fallback={<ModalLoading />}>
             {isDevToolsFloating && (
                 <FloatingWindow 
-                    title={t.settingsModal.tab_developer} 
+                    title={developerTabTitle} 
                     onClose={() => setIsDevToolsFloating(false)}
                     initialWidth={600}
                     initialHeight={400}
                 >
-                    <DeveloperTab 
-                        t={t.settingsModal} 
+                    <Components.developer 
+                        t={t.settings.developer} 
                         isFloating={true} 
                         toggleFloat={() => setIsDevToolsFloating(false)} 
                     />
                 </FloatingWindow>
             )}
 
-            {isCameraModalOpen && <CameraModal onClose={() => setIsCameraModalOpen(false)} t={t.cameraTool} />}
-            {isAudioModalOpen && <AudioRecorderModal onClose={() => setIsAudioModalOpen(false)} t={t.audioTool} />}
-            {isWebGLExtensionsOpen && <WebGLExtensionsModal extensions={data?.fingerprints.webglExtensions || []} onClose={() => setIsWebGLExtensionsOpen(false)} t={t.webglTool} />}
-            {isCanvasModalOpen && <CanvasModal imageSrc={data?.fingerprints.canvasImage || ''} onClose={() => setIsCanvasModalOpen(false)} t={t.imageDetails} />}
-            {isBase64ModalOpen && <Base64Modal data={data?.fingerprints.canvasImage || ''} onClose={() => setIsBase64ModalOpen(false)} t={t.base64Tool} />}
-            {isAboutModalOpen && <AboutModal onClose={() => setIsAboutModalOpen(false)} t={t.aboutModal} />}
-            {isSensorModalOpen && <SensorModal onClose={() => setIsSensorModalOpen(false)} t={t.sensorModal} />}
-            {isScoreModalOpen && data && <ScoreModal scoreData={data.fingerprints.score} onClose={() => setIsScoreModalOpen(false)} t={t.scoreModal} />}
-            {isFingerprintModalOpen && <FingerprintModal onClose={() => setIsFingerprintModalOpen(false)} t={t.fingerprintModal} />}
-            {isSpeedTestModalOpen && <SpeedTestModal onClose={() => setIsSpeedTestModalOpen(false)} t={t.speedTest} />}
-            {isComputeStressModalOpen && <ComputeStressModal onClose={() => setIsComputeStressModalOpen(false)} t={t.computeStress} />}
+            {visibility.camera && <Components.camera onClose={() => close('camera')} t={t.cameraTool} />}
+            {visibility.audio && <Components.audio onClose={() => close('audio')} t={t.audioTool} />}
+            {visibility.webgl && <Components.webgl extensions={data?.fingerprints.webglExtensions || []} onClose={() => close('webgl')} t={t.webglTool} />}
+            {visibility.canvas && <Components.canvas imageSrc={data?.fingerprints.canvasImage || ''} onClose={() => close('canvas')} t={t.imageDetails} />}
+            {visibility.base64 && <Components.base64 data={data?.fingerprints.canvasImage || ''} onClose={() => close('base64')} t={t.base64Tool} />}
+            {visibility.about && <Components.about onClose={() => close('about')} t={t.aboutModal} />}
+            {visibility.sensor && <Components.sensor onClose={() => close('sensor')} t={t.sensorModal} />}
+            {visibility.score && data && <Components.score scoreData={data.fingerprints.score} onClose={() => close('score')} t={t.scoreModal} />}
+            {visibility.fingerprint && <Components.fingerprint onClose={() => close('fingerprint')} t={t.fingerprintModal} />}
+            {visibility.speed && <Components.speed onClose={() => close('speed')} t={t.speedTest} />}
+            {visibility.compute && <Components.compute onClose={() => close('compute')} t={t.computeStress} />}
             
-            {isSettingsModalOpen && (
-                <SettingsModal
-                    onClose={() => setIsSettingsModalOpen(false)}
-                    t={t.settingsModal}
+            {visibility.settings && (
+                <Components.settings
+                    onClose={() => close('settings')}
+                    t={t} /* Pass root translation object to support modular settings */
                     simpleMode={simpleMode}
                     toggleSimpleMode={toggleSimpleMode}
                     hideScrollbar={hideScrollbar}
@@ -387,22 +373,31 @@ const App: React.FC = () => {
                     toggleDisableBlur={toggleDisableBlur}
                     isDevToolsFloating={isDevToolsFloating}
                     setDevToolsFloating={setIsDevToolsFloating}
+                    moduleStates={modalStates}
                 />
             )}
             
-            {isBenchmarkModalOpen && <BenchmarkModal onClose={() => setIsBenchmarkModalOpen(false)} t={t.benchmarkModal} />}
-            {isHardwareToolsModalOpen && (
-                <HardwareToolsModal 
-                    onClose={() => setIsHardwareToolsModalOpen(false)} 
+            {visibility.benchmark && <Components.benchmark onClose={() => close('benchmark')} t={t.benchmarkModal} />}
+            {visibility.tools && (
+                <Components.tools 
+                    onClose={() => close('tools')} 
                     t={t.hardwareToolsModal} 
                     values={t.values} 
                     labels={t.labels} 
                 />
             )}
             
-            {isAiPlaygroundOpen && <AiPlaygroundModal onClose={() => setIsAiPlaygroundOpen(false)} t={t.aiPlayground} />}
-            {isGamepadToolOpen && <GamepadToolModal onClose={() => setIsGamepadToolOpen(false)} t={t.gamepadTool} />}
-            {isVisionModalOpen && <VisionModal onClose={() => setIsVisionModalOpen(false)} t={t.visionModal} />}
+            {visibility.ai && <Components.ai onClose={() => close('ai')} t={t.aiPlayground} />}
+            {visibility.gamepad && <Components.gamepad onClose={() => close('gamepad')} t={t.gamepadTool} />}
+            {visibility.vision && <Components.vision onClose={() => close('vision')} t={t.visionModal} />}
+            {visibility.video && (
+                <Components.video 
+                    onClose={() => close('video')} 
+                    t={t.hardwareToolsModal}
+                    values={t.values}
+                    labels={t.labels}
+                />
+            )}
         </Suspense>
       </ErrorBoundary>
 
@@ -416,9 +411,9 @@ const App: React.FC = () => {
           toggleTheme={toggleTheme}
           onRefresh={fetchData}
           onExport={handleExportJSON}
-          onOpenSettings={() => setIsSettingsModalOpen(true)}
-          onOpenAbout={() => setIsAboutModalOpen(true)}
-          onOpenBenchmark={() => setIsBenchmarkModalOpen(true)}
+          onOpenSettings={() => open('settings')}
+          onOpenAbout={() => open('about')}
+          onOpenBenchmark={() => open('benchmark')}
         />
 
         {/* Main Grid Content - Only render if data exists */}
@@ -436,8 +431,8 @@ const App: React.FC = () => {
                 <AiComputeCard 
                     data={data.ai} 
                     t={t} 
-                    onOpenPlayground={() => setIsAiPlaygroundOpen(true)} 
-                    onOpenStress={() => setIsComputeStressModalOpen(true)}
+                    onOpenPlayground={() => open('ai')} 
+                    onOpenStress={() => open('compute')}
                 />
 
                 <SystemCard 
@@ -450,10 +445,10 @@ const App: React.FC = () => {
                 <HardwareCard 
                     data={data.hardware} 
                     t={t} 
-                    onOpenGamepad={() => setIsGamepadToolOpen(true)}
-                    onOpenSensors={() => setIsSensorModalOpen(true)}
-                    onOpenTools={() => setIsHardwareToolsModalOpen(true)}
-                    onOpenVision={() => setIsVisionModalOpen(true)}
+                    onOpenGamepad={() => open('gamepad')}
+                    onOpenSensors={() => open('sensor')}
+                    onOpenTools={() => open('tools')}
+                    onOpenVision={() => open('vision')}
                 />
 
                 <DisplayCard 
@@ -468,18 +463,18 @@ const App: React.FC = () => {
                     audioSampleRate={data.hardware.audioSampleRate}
                     t={t}
                     simpleMode={simpleMode}
-                    onOpenScore={() => setIsScoreModalOpen(true)}
-                    onOpenCanvas={() => setIsCanvasModalOpen(true)}
-                    onOpenBase64={() => setIsBase64ModalOpen(true)}
-                    onOpenWebgl={() => setIsWebGLExtensionsOpen(true)}
-                    onOpenFingerprintModal={() => setIsFingerprintModalOpen(true)}
+                    onOpenScore={() => open('score')}
+                    onOpenCanvas={() => open('canvas')}
+                    onOpenBase64={() => open('base64')}
+                    onOpenWebgl={() => open('webgl')}
+                    onOpenFingerprintModal={() => open('fingerprint')}
                 />
 
                 <NetworkCard 
                     data={data.network} 
                     t={t} 
                     simpleMode={simpleMode} 
-                    onOpenSpeedTest={() => setIsSpeedTestModalOpen(true)}
+                    onOpenSpeedTest={() => open('speed')}
                 />
                 
                 {!simpleMode && (
@@ -507,11 +502,15 @@ const App: React.FC = () => {
                             permStatus={permStatus}
                             t={t}
                             onRequestPermission={requestPermission}
-                            onOpenCamera={() => setIsCameraModalOpen(true)}
-                            onOpenMic={() => setIsAudioModalOpen(true)}
+                            onOpenCamera={() => open('camera')}
+                            onOpenMic={() => open('audio')}
                         />
 
-                        <MediaCapabilitiesCard data={data.media} t={t} />
+                        <MediaCapabilitiesCard 
+                            data={data.media} 
+                            t={t} 
+                            onOpenVideoTest={() => open('video')}
+                        />
 
                         <UserAgentCard userAgent={data.system.userAgent} t={t} />
                     </>
@@ -528,7 +527,7 @@ const App: React.FC = () => {
             </ErrorBoundary>
         )}
 
-        <Footer text={t.footer} />
+        <Footer text={t.meta.footer} />
       </div>
     </div>
   );

@@ -1,0 +1,536 @@
+
+export const modules = {
+  // Settings Module
+  settings: {
+    title: "Settings",
+    nav: {
+        general: "General",
+        network: "Network Tools",
+        display: "Display Tests",
+        storage: "Storage",
+        resources: "Resources",
+        developer: "Developer",
+        modules: "Module Manager"
+    },
+    general: {
+        simpleMode: {
+            title: "Simple Mode",
+            desc: "Hide complex technical details and show only core information."
+        },
+        scrollbar: {
+            title: "Hide Scrollbar",
+            desc: "Force hide the system's default scrollbar styles."
+        },
+        timeFormat: {
+            title: "Time Format",
+            desc: "Switch between 12-hour and 24-hour clock formats."
+        },
+        performance: {
+            title: "High Performance",
+            desc: "Disable blur effects and transparency to reduce GPU load."
+        }
+    },
+    network: {
+        ip: {
+            title: "IP Configuration",
+            ipv4: "IPv4",
+            ipv4_desc: "Standard Internet Protocol",
+            ipv6: "IPv6",
+            ipv6_desc: "Next Generation Protocol",
+            fetch: "Fetch Info",
+            check_v6: "Check IPv6",
+            success_v6: "IPv6 Supported",
+            fail_v6: "IPv6 Unsupported"
+        },
+        diagnostics: {
+            title: "Advanced Diagnostics",
+            webrtc: {
+                title: "WebRTC Leak Detect",
+                desc: "Attempt to gather real LAN/WAN IPs via STUN servers.",
+                btn: "Start Scan",
+                columns: { type: "Type", ip: "IP Address", proto: "Proto", port: "Port" }
+            },
+            dns: {
+                title: "DNS Leak Detect",
+                desc: "Attempt to identify your current DNS resolver.",
+                btn: "Check DNS",
+                label_ip: "DNS Server IP",
+                label_geo: "DNS Location"
+            },
+            proto: {
+                title: "Protocol Support",
+                desc: "Check browser support for HTTP/2 and HTTP/3 (QUIC).",
+                btn: "Check Protocols",
+                h2: "HTTP/2 Support",
+                h3: "HTTP/3 Support"
+            }
+        },
+        connectivity: {
+            title: "Connectivity Test",
+            placeholder: "Enter URL (e.g., google.com)",
+            btn: "Test"
+        },
+        cdn: {
+            title: "CDN Status",
+            check_all: "Check All"
+        }
+    },
+    display: {
+        deadPixel: {
+            title: "Dead Pixel Check",
+            desc: "Displays solid colors fullscreen to help find dead or stuck pixels. Click anywhere to exit.",
+            colors: { red: "Red", green: "Green", blue: "Blue", white: "White", black: "Black" }
+        },
+        hdr: {
+            title: "HDR Status",
+            desc: "Detects High Dynamic Range support on current display.",
+            rangeScreen: "Screen Dynamic Range",
+            rangeVideo: "Video Dynamic Range",
+            brightnessTest: "EDR Brightness Test",
+            brightnessDesc: "The center box should be brighter than the white background if EDR is active.",
+            labelSdr: "SDR White",
+            labelEdr: "EDR Highlight"
+        },
+        gamut: {
+            title: "Wide Gamut Test (P3)",
+            desc: "If you can see the logo inside the red box, your display supports P3 wide color gamut.",
+            unsupported: "Your browser does not support Display-P3 detection."
+        },
+        gradient: {
+            title: "Bit Depth & Banding",
+            desc: "Check for smooth color gradients (no banding) and dark details."
+        }
+    },
+    storage: {
+        local: {
+            title: "Local Data",
+            clearDesc: "Clear all site data",
+            clearBtn: "Clear"
+        },
+        sw: {
+            title: "Service Workers",
+            desc: "Manage background Service Worker scripts.",
+            unregisterBtn: "Unregister All"
+        },
+        usageLabel: "Storage Usage"
+    },
+    resources: {
+        title: "External Resources",
+        columns: { name: "Name", type: "Type", duration: "Duration" }
+    },
+    developer: {
+        warning: {
+            title: "EXTREME CAUTION!",
+            desc: "This area is for developers only. If you do not know what you are doing, CLOSE THIS WINDOW IMMEDIATELY!\n\nIf someone told you to copy-paste code here to unlock a 'hidden feature' or 'hack', it is a SCAM. Executing unknown code can allow attackers to steal your identity or take control of your device.",
+            agree: "I understand the risks, proceed"
+        },
+        nav: {
+            events: "Events",
+            inspector: "Inspector",
+            console: "Console"
+        },
+        actions: {
+            float: "Float Window",
+            dock: "Dock to Bottom"
+        },
+        events: {
+            placeholder: "Waiting for system events...",
+            copy: "Copy Log",
+            clear: "Clear"
+        },
+        console: {
+            placeholder: "Enter JS code (Type '\\' for presets)...",
+            clearInput: "Clear Input",
+            resultPlaceholder: "Results will appear here...",
+            copy: "Copy Result",
+            download: "Download Result",
+            clear: "Clear Result",
+            quickCommands: "Quick Commands",
+            run: "Run Now"
+        }
+    },
+    modules: {
+        title: "Module Manager",
+        desc: "Monitor and manage loaded modal components. Unloading unused modules can free up memory and GPU resources.",
+        headers: {
+            name: "Module Name",
+            status: "Status",
+            impact: "Resource Impact",
+            action: "Action"
+        },
+        status: {
+            active: "Active",
+            inactive: "Idle",
+            cached: "Cached",
+            system: "System"
+        },
+        impact: {
+            low: "Low",
+            med: "Medium",
+            high: "High"
+        },
+        actions: {
+            unload: "Force Close",
+            unloadAll: "Unload All Active Modules"
+        }
+    }
+  },
+
+  // Tool Modals
+  speedTest: {
+    title: "Network Speed Test",
+    action: {
+        start: "Start Test",
+        stop: "Stop"
+    },
+    metrics: {
+        ping: "Ping",
+        jitter: "Jitter",
+        download: "Download",
+        upload: "Upload",
+        latency: "Latency",
+        mbps: "Mbps"
+    },
+    status: {
+        idle: "Ready to start",
+        ping: "Testing Latency...",
+        download: "Testing Download...",
+        upload: "Testing Upload...",
+        done: "Test Complete",
+        error: "Connection Failed"
+    },
+    settings: {
+        server: "Server",
+        test_size: "Test Size",
+        backend: "Backend",
+        custom_url: "Custom Download URL",
+        custom_placeholder: "https://example.com/large-file.zip",
+        cors_note: "Note: URL must support CORS. Upload test will be skipped."
+    },
+    preset_names: {
+        cloudflare: "Cloudflare (Global)",
+        cachefly: "CacheFly (Global CDN)",
+        ustc_cn: "USTC Mirror (China/Hefei)",
+        nju_cn: "NJU Mirror (China/Nanjing)",
+        selectel_ru: "Selectel (Russia/St. Petersburg)",
+        tele2_kz: "Tele2 (Kazakhstan/Almaty)",
+        hetzner_de: "Hetzner (Germany/Falkenstein)",
+        hetzner_fi: "Hetzner (Finland/Helsinki)",
+        scaleway_fr: "Scaleway (France/Paris)",
+        vultr_nj: "Vultr (US East/New Jersey)",
+        vultr_la: "Vultr (US West/Los Angeles)",
+        vultr_sg: "Vultr (Singapore)",
+        vultr_tokyo: "Vultr (Japan/Tokyo)",
+        vultr_sydney: "Vultr (Australia/Sydney)",
+        custom: "Custom URL"
+    }
+  },
+
+  cameraTool: {
+    title: "Camera Test",
+    btn_open: "Open Camera",
+    select_device: "Select Device",
+    take_photo: "Take Photo",
+    start_record: "Record Video",
+    stop_record: "Stop Recording",
+    retake: "Retake",
+    download_photo: "Download Photo",
+    download_video: "Download Video",
+    current_res: "Current Res",
+    max_res: "Max Res",
+    mirror: "Mirror",
+    no_devices: "No video devices found",
+    permission_denied: "Camera permission denied",
+    error_hardware: "Hardware in use or unreadable",
+    error_generic: "Unknown error occurred"
+  },
+
+  audioTool: {
+    title: "Microphone Test",
+    btn_open: "Open Mic",
+    listening: "Listening...",
+    start_record: "Record",
+    stop_record: "Stop",
+    download: "Download",
+    details_size: "Size",
+    details_rate: "Rate",
+    details_type: "Format",
+    error_mic: "Cannot access microphone",
+    close: "Close"
+  },
+
+  webglTool: {
+    title: "WebGL Extensions",
+    count: "extensions",
+    search_placeholder: "Search extensions...",
+    spec_link: "View Spec",
+    close: "Close"
+  },
+
+  imageDetails: {
+    dimensions: "Dimensions",
+    size: "Size"
+  },
+
+  base64Tool: {
+    title: "Base64 Data",
+    desc: "Raw Fingerprint Data",
+    copy: "Copy All",
+    close: "Close"
+  },
+
+  aboutModal: {
+    title: "About BrowserScope",
+    desc: "BrowserScope is a comprehensive detection tool running entirely in your browser. It does not collect any private data to servers; all calculations are done locally.",
+    version: "Version",
+    latest_update: "Latest Update",
+    history: "History",
+    features: {
+        privacy: {
+            title: "Privacy First",
+            desc: "100% Client-side execution. Zero data collection. Your fingerprint stays on your device."
+        },
+        tech: {
+            title: "Frontier Tech",
+            desc: "Powered by WebGPU, WebNN, and WASM to test the bleeding edge of browser capabilities."
+        },
+        deepScan: {
+            title: "Deep Scan",
+            desc: "Analyzes 100+ hardware and software signals to generate high-entropy identifiers."
+        },
+        stack: {
+            title: "Innovation Stack"
+        },
+        openSource: {
+            title: "Open Source",
+            license: "MIT License"
+        }
+    },
+    updates: [
+        {
+            version: "1.6.0",
+            date: "2024-04-12",
+            changes: ["Added Real Network Speed Test (Cloudflare)", "Added I18n Dynamic Translations", "Enhanced Intl support"]
+        },
+        {
+            version: "1.5.0",
+            date: "2024-04-05",
+            changes: ["Added Developer Tools (Console/Inspector)", "Enhanced Codec Matrix (HDR/Dolby/Bit-depth)", "Added IP Source Selection", "Floating Window Support"]
+        },
+        {
+            version: "1.4.0",
+            date: "2024-03-25",
+            changes: ["Added Vision Capabilities (Barcode/QR)", "Added CPU/GPU Mapping Update"]
+        },
+        {
+            version: "1.3.0",
+            date: "2024-03-20",
+            changes: ["Added Hardware Tools (Pressure/Video)", "Optimized mobile layout", "Added Russian support"]
+        },
+        {
+            version: "1.2.0",
+            date: "2024-03-15",
+            changes: ["Added Network Tools (WebRTC/DNS/Proto)", "Added Gamut & HDR tests", "Improved fingerprint scoring"]
+        },
+        {
+            version: "1.1.0",
+            date: "2024-03-10",
+            changes: ["Added AI Playground", "Bluetooth & Gamepad support", "Added Settings panel"]
+        }
+    ],
+    close: "Close"
+  },
+
+  sensorModal: {
+    sensor_title: "Device Sensors",
+    sensor_permission_desc: "Permission is required to access device sensors like Gyroscope.",
+    sensor_allow: "Allow Access",
+    accelerometer: "Accelerometer",
+    gyroscope: "Gyroscope",
+    magnetometer: "Magnetometer",
+    ambient_light: "Ambient Light",
+    close: "Close"
+  },
+
+  scoreModal: {
+    score_details_title: "Fingerprint Score Details",
+    tracking_potential: "Tracking Potential",
+    score_explanation: "This score represents the likelihood of your browser being uniquely identified. Higher scores mean your device fingerprint is more unique.",
+    contributing_factors: "Contributing Factors",
+    close: "Close",
+    factors: {
+        canvas_hash: "Canvas Hash",
+        webgl_hash: "WebGL Hash",
+        hardware_concurrency: "Hardware Concurrency",
+        user_agent: "User Agent Complexity",
+        resolution: "Screen Resolution",
+        audio_context: "Audio Fingerprint",
+        battery_status: "Battery API",
+        locale_time: "Timezone & Locale"
+    },
+    values: {
+        val_unique: "Unique/Rare Value",
+        val_generic: "Generic/Common Value",
+        val_specific: "Too Specific",
+        val_readable: "Readable",
+        val_protected: "Protected/Masked"
+    },
+    descriptions: {
+        desc_canvas_unique: "Canvas rendering is highly unique.",
+        desc_canvas_generic: "Canvas returned generic or protected noise.",
+        desc_webgl_unique: "GPU rendering features are unique.",
+        desc_webgl_generic: "WebGL is protected or masked.",
+        desc_hardware_unique: "CPU/Memory combo is rare.",
+        desc_hardware_generic: "Common hardware config.",
+        desc_ua_unique: "UA string reveals too much info.",
+        desc_res_unique: "Non-standard screen resolution.",
+        desc_audio_unique: "Audio hardware characteristics identified.",
+        desc_battery_unique: "Battery API exposed specific levels.",
+        desc_battery_generic: "Battery API unavailable or generic.",
+        desc_locale_unique: "Timezone/Language combo aids ID."
+    }
+  },
+
+  fingerprintModal: {
+    title: "Fingerprint Generator",
+    desc: "Generate and analyze browser fingerprints",
+    tab_v4: "FingerprintJS v4",
+    tab_v2: "FingerprintJS v2",
+    tab_fonts: "Font Detection",
+    salt_label: "Custom Salt (Noise)",
+    font_detect_desc: "Detect installed system fonts",
+    visitor_id: "Visitor ID (Hash)",
+    time_taken: "Time Taken",
+    generating: "Generating...",
+    components_label: "Fingerprint Components",
+    select_all: "Select All",
+    deselect_all: "Deselect All",
+    font_list_title: "Detected Fonts",
+    copy: "Copy ID",
+    copied: "Copied",
+    close: "Close"
+  },
+
+  benchmarkModal: {
+    title: "Performance Benchmark",
+    start_btn: "Start Full Suite",
+    running: "Running...",
+    score: "Total Score",
+    cpu_test: "CPU Primes",
+    math_test: "Math Operations",
+    memory_test: "Memory Throughput",
+    dom_test: "DOM Manipulation",
+    gpu_test: "Canvas Rendering",
+    storage_test: "Database IOPS"
+  },
+
+  aiPlayground: {
+    title: "AI Playground",
+    desc: "Run lightweight AI models (DistilBERT) locally in your browser via WebAssembly. No data leaves your device.",
+    model_name: "Sentiment Analysis",
+    loading_model: "Loading Model Weights...",
+    input_placeholder: "Enter English text to analyze sentiment...",
+    result_label: "Analysis Result",
+    confidence: "Confidence"
+  },
+
+  computeStress: {
+    title: "Frontier Compute Stress Test",
+    warning: "Warning: This test maximizes GPU load. It may cause high battery drain, heating, or temporary system freeze. Use with caution.",
+    start: "Start Neural Stress",
+    stop: "Stop",
+    intensity: "Tensor Size",
+    status_active: "CRUNCHING",
+    status_idle: "IDLE",
+    metric_gflops: "GFLOPS",
+    metric_usage: "Operations/Sec",
+    backend_webgpu: "Backend: WebGPU (Matrix Multiply)",
+    backend_fallback: "Backend: WebGL (GPGPU Fallback)",
+    error_webgpu: "WebGPU is not supported on this browser. Falling back to legacy methods.",
+    use_fp16: "Use FP16 (Half Precision)",
+    fp16_desc: "Accelerate on AI Tensor Cores",
+    stability: "Stability",
+    peak: "Peak"
+  },
+
+  gamepadTool: {
+    title: "Gamepad & Bluetooth",
+    tab_gamepad: "Gamepad",
+    tab_bluetooth: "Bluetooth",
+    no_gamepad: "No Gamepad Detected",
+    connect_instruction: "Connect gamepad and press any button to activate",
+    btn_scan_bt: "Scan Bluetooth",
+    bt_scanning: "Scanning...",
+    bt_devices: "Discovered Devices",
+    bt_no_devices: "No devices found",
+    bt_not_supported: "Web Bluetooth API not supported"
+  },
+
+  hardwareToolsModal: {
+    title: "Hardware Tools",
+    tab_vibrate: "Vibration",
+    tab_touch: "Multi-Touch",
+    tab_keyboard: "Keyboard",
+    tab_mouse: "Mouse Hz",
+    tab_pointer: "Pointer/Pen",
+    tab_video: "Video Matrix",
+    vibrate_not_supported: "Vibration API not supported on this device",
+    vibrate_short: "Short (200ms)",
+    vibrate_medium: "Medium (500ms)",
+    vibrate_pattern: "Pulse Pattern",
+    touch_instruction: "Touch or move on the screen area below",
+    touch_count: "Touch Points",
+    key_instruction: "Press any key to test input...",
+    key_last: "Last Press",
+    key_history: "Detected Keys",
+    key_input_placeholder: "Type here to test keyboard...",
+    mouse_instruction: "Move your mouse cursor quickly inside this box to measure event polling rate.",
+    mouse_rate: "Current Rate",
+    mouse_peak: "Peak Rate",
+    pointer_instruction: "Draw here. Supports Pressure, Tilt & Pen inputs.",
+    pointer_pressure: "Pressure",
+    pointer_tilt: "Tilt (X/Y)",
+    pointer_type: "Input Type",
+    video_instruction: "Testing hardware decoding capabilities...",
+    video_codec: "Codec",
+    video_res: "Resolution",
+    video_efficient: "Power Efficient (Hardware)",
+    video_smooth: "Smooth Playback",
+    filter_supported: "Show Supported Only",
+    video_title: "Video & Audio Decoding Matrix",
+    status_api_error: "API Error",
+    status_api_na: "API N/A",
+    status_hw: "HW",
+    status_sw: "SW",
+    status_software: "Software",
+    tooltip_hw: "Hardware Accelerated (Efficient)",
+    tooltip_sw: "Software Decoding (Power Hungry)",
+    tooltip_drop: "May Drop Frames",
+    status_done: "Done"
+  },
+
+  visionModal: {
+    title: "Vision Capabilities",
+    unsupported_desc: "Your browser does not support the native BarcodeDetector API. You can still use the Polyfill mode (software decoding) to test vision capabilities.",
+    api_status: "API Support Status",
+    detect_mode: "Detection Mode",
+    camera_source: "Camera Source",
+    latency: "Latency",
+    hw_accel: "Hardware Acceleration",
+    sw_decode: "Software Decoding",
+    sw_warning: "Software decoding is CPU intensive and may be slower.",
+    native_api: "Native API (HW)",
+    polyfill: "Polyfill (SW)",
+    detecting: "Detecting...",
+    formats: "Supported Formats",
+    perf: "Performance",
+    fps: "FPS",
+    last_result: "Last Detection",
+    start_cam: "Start Camera",
+    stop_cam: "Stop Camera",
+    switch_cam: "Switch Camera",
+    no_cam_error: "Camera not found or permission denied",
+    auto_scan: "Auto Scan",
+    manual_capture: "Capture & Detect"
+  }
+};

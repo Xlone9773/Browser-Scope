@@ -310,24 +310,24 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
         icon={<Cpu size={24} />}
         onClose={handleClose}
         size="3xl"
-        className="bg-slate-950 border border-indigo-900/50" // Dark theme override
+        // Removed hardcoded bg-slate-950 to support light mode properly
     >
         <div className="flex flex-col gap-6 relative">
             {/* Warning Banner */}
             {!isRunning && (
-                <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg flex items-start gap-3">
-                    <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={18} />
-                    <p className="text-amber-200 text-xs leading-relaxed font-mono">
+                <div className="p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg flex items-start gap-3">
+                    <AlertTriangle className="text-amber-600 dark:text-amber-500 shrink-0 mt-0.5" size={18} />
+                    <p className="text-amber-800 dark:text-amber-200 text-xs leading-relaxed font-medium">
                         {t.warning}
                     </p>
                 </div>
             )}
 
             {/* Main Visualizer Area */}
-            <div className="h-64 bg-black rounded-xl border border-indigo-900/50 relative overflow-hidden shadow-inner flex flex-col">
+            <div className="h-64 bg-black rounded-xl border border-slate-200 dark:border-indigo-900/50 relative overflow-hidden shadow-inner flex flex-col group">
                 
                 {/* View Switcher Tabs (Overlay Top Right) */}
-                <div className="absolute top-2 right-2 z-30 flex gap-1 bg-black/50 p-1 rounded-lg backdrop-blur-md border border-white/10">
+                <div className="absolute top-2 right-2 z-30 flex gap-1 bg-black/50 p-1 rounded-lg backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button 
                         onClick={() => setViewMode('graph')}
                         className={`p-1.5 rounded transition-colors ${viewMode === 'graph' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
@@ -385,9 +385,9 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
             {/* Config & Controls */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Intensity & FP16 Toggle */}
-                <div className="bg-white/5 rounded-xl p-4 border border-white/5 space-y-4">
+                <div className="bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5 space-y-4">
                     <div>
-                        <div className="text-xs text-slate-400 mb-2 uppercase tracking-wider font-bold">{t.intensity}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">{t.intensity}</div>
                         <Select 
                             value={matrixSize}
                             options={[
@@ -403,14 +403,15 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                     </div>
                     
                     {/* FP16 Toggle */}
-                    <label className={`flex items-center justify-between p-2 rounded-lg border transition-colors ${useFp16 ? 'bg-indigo-900/30 border-indigo-500/50' : 'bg-slate-800/50 border-slate-700'} ${hasFp16Support ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}>
+                    <label className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${useFp16 ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-500/50' : 'bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'} ${hasFp16Support ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'}`}>
                         <div className="flex flex-col">
-                            <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                                <Microscope size={12} /> {t.use_fp16}
+                            <span className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                                <Microscope size={12} className={useFp16 ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'} /> 
+                                {t.use_fp16}
                             </span>
-                            <span className="text-[10px] text-slate-400">{t.fp16_desc}</span>
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{t.fp16_desc}</span>
                         </div>
-                        <div className={`w-10 h-5 rounded-full relative transition-colors ${useFp16 ? 'bg-indigo-500' : 'bg-slate-600'}`}>
+                        <div className={`w-10 h-5 rounded-full relative transition-colors ${useFp16 ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
                             <input 
                                 type="checkbox" 
                                 checked={useFp16} 
@@ -418,35 +419,35 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                 disabled={!hasFp16Support || isRunning}
                                 className="opacity-0 w-full h-full absolute cursor-pointer"
                             />
-                            <div className={`absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-transform ${useFp16 ? 'translate-x-5' : 'translate-x-0'}`} />
+                            <div className={`absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-transform shadow-sm ${useFp16 ? 'translate-x-5' : 'translate-x-0'}`} />
                         </div>
                     </label>
                 </div>
                 
                 {/* Backend Status */}
-                <div className="bg-white/5 rounded-xl p-4 border border-white/5 flex flex-col justify-center gap-2">
-                    <div className="text-xs text-slate-400 uppercase tracking-wider font-bold">Backend Status</div>
+                <div className="bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5 flex flex-col justify-center gap-2">
+                    <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Backend Status</div>
                     
-                    <div className="flex items-center gap-2 text-xs font-mono text-slate-300">
+                    <div className="flex items-center gap-2 text-xs font-mono text-slate-700 dark:text-slate-300">
                         {isWebGPUSupported === true && (
                             <>
-                                <Layers size={14} className="text-green-400" />
+                                <Layers size={14} className="text-emerald-600 dark:text-green-400" />
                                 {t.backend_webgpu}
                             </>
                         )}
                         {isWebGPUSupported === false && (
                             <>
-                                <AlertTriangle size={14} className="text-amber-400" />
+                                <AlertTriangle size={14} className="text-amber-500 dark:text-amber-400" />
                                 {t.error_webgpu}
                             </>
                         )}
                         {isWebGPUSupported === null && <Activity size={14} className="animate-spin text-slate-500" />}
                     </div>
 
-                    <div className="h-px bg-white/10 my-1" />
+                    <div className="h-px bg-slate-200 dark:bg-white/10 my-1" />
                     
                     {/* Device Info */}
-                    <div className="text-[10px] text-slate-500 font-mono break-all">
+                    <div className="text-[10px] text-slate-500 font-mono break-all leading-tight">
                         {adapterRef.current ? adapterRef.current.name : 'Checking GPU...'}
                     </div>
                 </div>
@@ -458,10 +459,10 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                 disabled={isWebGPUSupported === false}
                 className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 group ${
                     isRunning 
-                    ? 'bg-red-600 hover:bg-red-700 shadow-red-900/30' 
+                    ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20' 
                     : isWebGPUSupported === false 
-                        ? 'bg-slate-700 cursor-not-allowed opacity-50'
-                        : 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/30'
+                        ? 'bg-slate-400 dark:bg-slate-700 cursor-not-allowed opacity-50 shadow-none'
+                        : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/30'
                 }`}
             >
                 {isRunning ? (
@@ -473,7 +474,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                     <>
                         <Play size={20} fill="currentColor" className="group-hover:text-white" />
                         {t.start}
-                        <Zap size={16} className={`${isWebGPUSupported ? 'text-yellow-300' : 'text-slate-400'}`} />
+                        <Zap size={16} className={`${isWebGPUSupported ? 'text-yellow-300' : 'text-slate-200'}`} />
                     </>
                 )}
             </button>

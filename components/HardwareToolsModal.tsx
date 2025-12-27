@@ -1,13 +1,12 @@
 
 import React, { useState } from 'react';
-import { Smartphone, Hand, Keyboard, MousePointer2, PenTool, Film } from 'lucide-react';
+import { Smartphone, Hand, Keyboard, MousePointer2, PenTool } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { VibrateTab } from './hardware/VibrateTab';
 import { TouchTab } from './hardware/TouchTab';
 import { KeyboardTab } from './hardware/KeyboardTab';
 import { MouseTab } from './hardware/MouseTab';
 import { PointerTab } from './hardware/PointerTab';
-import { VideoTab } from './hardware/VideoTab';
 import { Modal } from './ui/Modal';
 
 interface HardwareToolsModalProps {
@@ -18,7 +17,7 @@ interface HardwareToolsModalProps {
 }
 
 export const HardwareToolsModal: React.FC<HardwareToolsModalProps> = ({ onClose, t, values, labels }) => {
-  const [activeTab, setActiveTab] = useState<'vibrate' | 'touch' | 'keyboard' | 'mouse' | 'pointer' | 'video'>('vibrate');
+  const [activeTab, setActiveTab] = useState<'vibrate' | 'touch' | 'keyboard' | 'mouse' | 'pointer'>('vibrate');
 
   return (
     <Modal
@@ -51,10 +50,6 @@ export const HardwareToolsModal: React.FC<HardwareToolsModalProps> = ({ onClose,
                 <PenTool size={16} />
                 <span className="hidden sm:inline">{t.tab_pointer}</span>
             </button>
-            <button onClick={() => setActiveTab('video')} className={`flex-1 min-w-[80px] py-3 font-medium text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 ${activeTab === 'video' ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white dark:bg-slate-800' : 'text-slate-500 hover:text-slate-700'}`}>
-                <Film size={16} />
-                <span className="hidden sm:inline">{t.tab_video}</span>
-            </button>
         </div>
 
         {/* Content */}
@@ -64,7 +59,6 @@ export const HardwareToolsModal: React.FC<HardwareToolsModalProps> = ({ onClose,
             {activeTab === 'keyboard' && <KeyboardTab t={t} />}
             {activeTab === 'mouse' && <MouseTab t={t} />}
             {activeTab === 'pointer' && <PointerTab t={t} />}
-            {activeTab === 'video' && <VideoTab t={t} values={values} labels={labels} />}
         </div>
     </Modal>
   );

@@ -1,306 +1,99 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Play, Square, Wifi, ArrowDown, ArrowUp, Activity, Globe, AlertCircle, Settings2 } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
-import { formatNumber } from '../utils/formatters';
+import { formatNumber, formatBytes } from '../utils/formatters';
 import { Select } from './ui/Select';
 import { Modal } from './ui/Modal';
+import { useSpeedTest, TestConfig, SPEED_TEST_PRESETS } from '../hooks/useSpeedTest';
+import { SpeedGraph } from './speedtest/SpeedGraph';
 
 interface SpeedTestModalProps {
   onClose: () => void;
+  // Updated type definition to point to the new modular structure
   t: Translation['speedTest'];
 }
 
-type TestState = 'idle' | 'ping' | 'download' | 'upload' | 'done' | 'error';
-
-const HISTORY_LENGTH = 60; // For graph
-
 export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) => {
-  const [testState, setTestState] = useState<TestState>('idle');
-  const [ping, setPing] = useState<number | null>(null);
-  const [jitter, setJitter] = useState<number | null>(null);
-  const [downloadSpeed, setDownloadSpeed] = useState<number | null>(null);
-  const [uploadSpeed, setUploadSpeed] = useState<number | null>(null);
-  const [currentSpeed, setCurrentSpeed] = useState<number>(0);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  
-  // Settings
+  // Config State (Local UI state)
   const [downloadSize, setDownloadSize] = useState(25000000); // Default 25MB
-  const [backend, setBackend] = useState<'cloudflare' | 'custom'>('cloudflare');
+  const [backend, setBackend] = useState<string>('cloudflare');
   const [customUrl, setCustomUrl] = useState('');
 
-  const [speedHistory, setSpeedHistory] = useState<number[]>(new Array(HISTORY_LENGTH).fill(0));
+  // Use the hook
+  const { testState, metrics, errorMsg, speedHistory, progress, start, stop } = useSpeedTest();
+
+  // Derived state
+  const selectedBackend = useMemo(() => SPEED_TEST_PRESETS.find(p => p.id === backend) || SPEED_TEST_PRESETS[0], [backend]);
   
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number | null>(null);
+  // Update available sizes when backend changes
+  const availableSizes = useMemo(() => {
+      if (selectedBackend.isDynamic) {
+          // Standard dynamic sizes
+          return [
+            { id: 10000000, label: '10 MB' },
+            { id: 25000000, label: '25 MB (Default)' },
+            { id: 50000000, label: '50 MB' },
+            { id: 100000000, label: '100 MB' },
+            { id: 200000000, label: '200 MB' },
+            { id: 500000000, label: '500 MB' },
+            { id: 1000000000, label: '1 GB' }
+          ];
+      } else if (selectedBackend.sizeMap) {
+          // Static sizes from map
+          return Object.keys(selectedBackend.sizeMap)
+            .map(k => Number(k))
+            .sort((a, b) => a - b)
+            .map(bytes => ({
+                id: bytes,
+                label: formatBytes(bytes) // Use our generic formatter
+            }));
+      }
+      return [];
+  }, [selectedBackend]);
 
-  // Animation Loop for Graph
+  // Reset download size if current size is invalid for new backend
   useEffect(() => {
-      const drawGraph = () => {
-          const canvas = canvasRef.current;
-          if (!canvas) return;
-          const ctx = canvas.getContext('2d');
-          if (!ctx) return;
-
-          const width = canvas.width;
-          const height = canvas.height;
-
-          // Clear
-          ctx.clearRect(0, 0, width, height);
-
-          // Grid Lines
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          for(let i=1; i<5; i++) {
-              const y = (height / 5) * i;
-              ctx.moveTo(0, y);
-              ctx.lineTo(width, y);
+      if (availableSizes.length > 0) {
+          const isValid = availableSizes.some(s => s.id === downloadSize);
+          if (!isValid) {
+              // Default to 100MB if available, else first option
+              const defaultOption = availableSizes.find(s => s.id === 100 * 1024 * 1024) || availableSizes[0];
+              setDownloadSize(defaultOption.id);
           }
-          ctx.stroke();
+      }
+  }, [availableSizes, downloadSize]);
 
-          // Draw Speed Line
-          if (speedHistory.some(s => s > 0)) {
-              const maxVal = Math.max(...speedHistory, 10) * 1.2; // 20% headroom
-              const stepX = width / (HISTORY_LENGTH - 1);
+  // Format presets for Select
+  const presetOptions = useMemo(() => SPEED_TEST_PRESETS.map(p => ({
+      id: p.id,
+      // Using new structure: preset_names is now inside speedTest object
+      // @ts-ignore
+      label: t.preset_names?.[p.id] || p.name 
+  })), [t]);
 
-              // Gradient
-              const gradient = ctx.createLinearGradient(0, 0, 0, height);
-              gradient.addColorStop(0, testState === 'upload' ? 'rgba(168, 85, 247, 0.5)' : 'rgba(16, 185, 129, 0.5)'); // Purple for UP, Green for Down
-              gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-              ctx.beginPath();
-              ctx.moveTo(0, height);
-              
-              speedHistory.forEach((val, i) => {
-                  const x = i * stepX;
-                  const y = height - (val / maxVal) * height;
-                  ctx.lineTo(x, y);
-              });
-
-              ctx.lineTo(width, height);
-              ctx.closePath();
-              ctx.fillStyle = gradient;
-              ctx.fill();
-
-              // Stroke Line
-              ctx.beginPath();
-              speedHistory.forEach((val, i) => {
-                  const x = i * stepX;
-                  const y = height - (val / maxVal) * height;
-                  if (i === 0) ctx.moveTo(x, y);
-                  else ctx.lineTo(x, y);
-              });
-              ctx.strokeStyle = testState === 'upload' ? '#a855f7' : '#10b981';
-              ctx.lineWidth = 2;
-              ctx.stroke();
-          }
-
-          animationRef.current = requestAnimationFrame(drawGraph);
+  const handleStart = () => {
+      const config: TestConfig = {
+          backend,
+          downloadSize,
+          customUrl
       };
-
-      animationRef.current = requestAnimationFrame(drawGraph);
-      return () => {
-          if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      };
-  }, [speedHistory, testState]);
-
-  const updateHistory = (speed: number) => {
-      setCurrentSpeed(speed);
-      setSpeedHistory(prev => [...prev.slice(1), speed]);
-  };
-
-  const stopTest = () => {
-      if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-      }
-      setTestState('idle');
-      setCurrentSpeed(0);
-  };
-
-  const startTest = async () => {
-      if (testState !== 'idle' && testState !== 'done' && testState !== 'error') return;
-      
-      // Validate Custom URL
-      if (backend === 'custom' && !customUrl) {
-          setErrorMsg("Please enter a valid Custom URL");
-          setTestState('error');
-          return;
-      }
-
-      setTestState('ping');
-      setPing(null);
-      setJitter(null);
-      setDownloadSpeed(null);
-      setUploadSpeed(null);
-      setCurrentSpeed(0);
-      setErrorMsg(null);
-      setSpeedHistory(new Array(HISTORY_LENGTH).fill(0));
-      
-      abortControllerRef.current = new AbortController();
-      const signal = abortControllerRef.current.signal;
-
-      try {
-          // --- Phase 1: Latency (Ping) ---
-          // Using Cloudflare Speed Test Endpoint (Small payload)
-          // Previously cdn-cgi/trace caused CORS issues on some networks
-          // If custom backend, try HEAD request to custom URL for latency
-          const pings: number[] = [];
-          const pingUrl = backend === 'custom' ? customUrl : 'https://speed.cloudflare.com/__down?bytes=0';
-          
-          for (let i = 0; i < 5; i++) {
-              if (signal.aborted) return;
-              const start = performance.now();
-              // For custom, use no-cors to avoid blocking if headers missing, but timing might be opaque?
-              // Actually for timing, we need CORS or we get opaque response which resolves but...
-              // Let's assume standard fetch behavior.
-              try {
-                  await fetch(pingUrl, { cache: 'no-store', signal, method: 'HEAD', mode: 'cors' });
-              } catch {
-                  // Fallback for custom if HEAD fails (maybe generic GET) or opaque
-                  await fetch(pingUrl, { cache: 'no-store', signal, mode: 'no-cors' }); 
-              }
-              const end = performance.now();
-              pings.push(end - start);
-              await new Promise(r => setTimeout(r, 200)); // Small delay between pings
-          }
-          
-          if (pings.length > 0) {
-              const avgPing = pings.reduce((a, b) => a + b, 0) / pings.length;
-              const variance = pings.reduce((a, b) => a + Math.pow(b - avgPing, 2), 0) / pings.length;
-              setPing(avgPing);
-              setJitter(Math.sqrt(variance));
-          }
-
-          // --- Phase 2: Download ---
-          if (signal.aborted) return;
-          setTestState('download');
-          
-          let dlUrl = '';
-          if (backend === 'cloudflare') {
-              dlUrl = `https://speed.cloudflare.com/__down?bytes=${downloadSize}`;
-          } else {
-              dlUrl = customUrl;
-          }
-
-          const dlResponse = await fetch(dlUrl, { signal });
-          
-          if (dlResponse.body) {
-              const reader = dlResponse.body.getReader();
-              let receivedLength = 0;
-              
-              const startTime = performance.now();
-              let lastUpdate = startTime;
-
-              while(true) {
-                  const { done, value } = await reader.read();
-                  if (done) break;
-                  
-                  receivedLength += value.length;
-                  
-                  const now = performance.now();
-                  // Update graph every ~100ms
-                  if (now - lastUpdate > 100) {
-                      const duration = (now - startTime) / 1000; // seconds
-                      const bits = receivedLength * 8;
-                      const mbps = (bits / duration) / 1000000;
-                      updateHistory(mbps);
-                      setDownloadSpeed(mbps); // Update live indicator
-                      lastUpdate = now;
-                  }
-              }
-              
-              // Final Calc
-              const totalDuration = (performance.now() - startTime) / 1000;
-              const finalMbps = ((receivedLength * 8) / totalDuration) / 1000000;
-              setDownloadSpeed(finalMbps);
-              updateHistory(0); // Reset line for next phase
-          }
-
-          // --- Phase 3: Upload ---
-          // Skip upload for custom backend unless we implement a specific way
-          if (backend === 'cloudflare') {
-              if (signal.aborted) return;
-              setTestState('upload');
-              
-              // Upload needs XHR for progress event
-              // Use smaller size for upload test generally (10MB)
-              const uploadSize = 10 * 1024 * 1024; 
-              const uploadData = new Uint8Array(uploadSize); 
-              for(let i=0; i<uploadSize; i+=1024) uploadData[i] = Math.floor(Math.random()*255);
-              
-              await new Promise<void>((resolve, reject) => {
-                  const xhr = new XMLHttpRequest();
-                  xhr.open('POST', 'https://speed.cloudflare.com/__up', true);
-                  
-                  const ulStartTime = performance.now();
-                  let lastUlUpdate = ulStartTime;
-
-                  xhr.upload.onprogress = (e) => {
-                      if (signal.aborted) {
-                          xhr.abort();
-                          reject(new Error("Aborted"));
-                          return;
-                      }
-                      if (e.lengthComputable) {
-                          const now = performance.now();
-                          if (now - lastUlUpdate > 100) {
-                              const duration = (now - ulStartTime) / 1000;
-                              const bits = e.loaded * 8;
-                              const mbps = (bits / duration) / 1000000;
-                              updateHistory(mbps);
-                              setUploadSpeed(mbps);
-                              lastUlUpdate = now;
-                          }
-                      }
-                  };
-
-                  xhr.onload = () => {
-                      const totalDuration = (performance.now() - ulStartTime) / 1000;
-                      const finalMbps = ((uploadSize * 8) / totalDuration) / 1000000;
-                      setUploadSpeed(finalMbps);
-                      resolve();
-                  };
-
-                  xhr.onerror = () => {
-                      console.warn("Upload test failed (likely CORS)");
-                      setUploadSpeed(0);
-                      resolve();
-                  };
-
-                  xhr.send(uploadData);
-              });
-          } else {
-              // Mark upload as skipped/NA for custom
-              setUploadSpeed(0);
-          }
-
-          setTestState('done');
-          setCurrentSpeed(0);
-
-      } catch (e: any) {
-          if (e.name !== 'AbortError') {
-              console.error("Speed test error", e);
-              setTestState('error');
-              setErrorMsg(e.message || "Network Error");
-          }
-      }
+      start(config);
   };
 
   const handleClose = () => {
-    stopTest();
+    stop();
     onClose();
   };
 
   const getStatusText = () => {
       switch(testState) {
-          case 'idle': return t.status_idle;
-          case 'ping': return t.status_ping;
-          case 'download': return t.status_down;
-          case 'upload': return t.status_up;
-          case 'done': return t.status_done;
-          case 'error': return "Error";
+          case 'idle': return t.status.idle;
+          case 'ping': return t.status.ping;
+          case 'download': return t.status.download;
+          case 'upload': return t.status.upload;
+          case 'done': return t.status.done;
+          case 'error': return t.status.error;
           default: return '';
       }
   };
@@ -322,37 +115,37 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                         <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Configuration</span>
                     </div>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Backend Selector */}
-                        <div>
-                            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t.backend}</label>
+                        <div className="md:col-span-2 lg:col-span-1">
+                            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t.settings.backend}</label>
                             <Select 
                                 value={backend} 
-                                options={[
-                                    { id: 'cloudflare', label: t.backend_cloudflare },
-                                    { id: 'custom', label: t.backend_custom }
-                                ]}
+                                options={presetOptions}
                                 onChange={(val) => setBackend(val)}
                                 color="indigo"
                             />
                         </div>
 
-                        {/* Size Selector (Only Cloudflare) */}
-                        {backend === 'cloudflare' && (
+                        {/* Size Selector */}
+                        {availableSizes.length > 0 && (
                             <div>
-                                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t.test_size}</label>
+                                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t.settings.test_size}</label>
                                 <Select 
                                     value={downloadSize} 
-                                    options={[
-                                        { id: 10000000, label: '10 MB' },
-                                        { id: 25000000, label: '25 MB (Default)' },
-                                        { id: 50000000, label: '50 MB' },
-                                        { id: 100000000, label: '100 MB' },
-                                        { id: 200000000, label: '200 MB' }
-                                    ]}
+                                    options={availableSizes}
                                     onChange={(val) => setDownloadSize(Number(val))}
                                     color="indigo"
                                 />
+                            </div>
+                        )}
+                        
+                        {/* Static File Note (If no sizes available) */}
+                        {availableSizes.length === 0 && backend !== 'custom' && (
+                            <div className="flex items-end pb-2">
+                                <div className="text-xs text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-3 py-2 rounded-lg w-full">
+                                    Fixed file size. Upload test disabled for this provider.
+                                </div>
                             </div>
                         )}
                     </div>
@@ -360,15 +153,15 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                     {/* Custom URL Input */}
                     {backend === 'custom' && (
                         <div>
-                            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t.custom_url}</label>
+                            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t.settings.custom_url}</label>
                             <input 
                                 type="text"
                                 value={customUrl}
                                 onChange={(e) => setCustomUrl(e.target.value)}
-                                placeholder={t.custom_placeholder}
+                                placeholder={t.settings.custom_placeholder}
                                 className="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500/50 outline-none transition-shadow"
                             />
-                            <p className="text-[10px] text-slate-400 mt-1">{t.cors_note}</p>
+                            <p className="text-[10px] text-slate-400 mt-1">{t.settings.cors_note}</p>
                         </div>
                     )}
                 </div>
@@ -387,39 +180,34 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                 <div className="flex-1 bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Wifi size={18} className="text-indigo-500" />
-                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{t.ping}</span>
+                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{t.metrics.ping}</span>
                     </div>
                     <div className="font-mono font-bold text-slate-800 dark:text-white">
-                        {ping !== null ? `${formatNumber(ping, 0)} ms` : '--'}
+                        {metrics.ping !== null ? `${formatNumber(metrics.ping, 0)} ms` : '--'}
                     </div>
                 </div>
                 <div className="flex-1 bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Activity size={18} className="text-indigo-500" />
-                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{t.jitter}</span>
+                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{t.metrics.jitter}</span>
                     </div>
                     <div className="font-mono font-bold text-slate-800 dark:text-white">
-                        {jitter !== null ? `${formatNumber(jitter, 0)} ms` : '--'}
+                        {metrics.jitter !== null ? `${formatNumber(metrics.jitter, 0)} ms` : '--'}
                     </div>
                 </div>
             </div>
 
             {/* Main Gauge Area */}
             <div className="relative h-64 bg-slate-900 rounded-2xl overflow-hidden shadow-inner border border-slate-700 flex items-center justify-center">
-                {/* Canvas Graph Background */}
-                <canvas 
-                    ref={canvasRef} 
-                    width={600} 
-                    height={256} 
-                    className="absolute inset-0 w-full h-full opacity-50" 
-                />
+                {/* Visual Graph Component */}
+                <SpeedGraph data={speedHistory} testState={testState} />
                 
                 {/* Central Speed Text */}
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="text-6xl sm:text-7xl font-black text-white tracking-tighter tabular-nums drop-shadow-lg">
-                        {formatNumber(currentSpeed, 1)}
+                        {formatNumber(metrics.current, 1)}
                     </div>
-                    <div className="text-sm font-bold text-indigo-400 uppercase tracking-widest mt-2">{t.mbps}</div>
+                    <div className="text-sm font-bold text-indigo-400 uppercase tracking-widest mt-2">{t.metrics.mbps}</div>
                     
                     <div className="mt-6 px-4 py-1.5 bg-black/40 rounded-full backdrop-blur-md text-xs font-medium text-slate-300 border border-white/10 flex items-center gap-2">
                         {testState === 'download' && <ArrowDown size={12} className="text-emerald-400 animate-bounce" />}
@@ -432,7 +220,18 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                 {/* Provider Tag */}
                 <div className="absolute top-4 left-4 flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                     <Globe size={12} />
-                    {backend === 'cloudflare' ? t.server : 'Custom'}
+                    <span className="max-w-[150px] truncate" title={selectedBackend.name}>
+                        {/* @ts-ignore: Safe access via key */}
+                        {t.preset_names?.[backend] || selectedBackend.name}
+                    </span>
+                </div>
+
+                {/* Progress Bar (Absolute Bottom) */}
+                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-slate-800">
+                    <div 
+                        className="h-full bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-300 ease-out shadow-[0_-2px_10px_rgba(129,140,248,0.5)]" 
+                        style={{ width: `${progress}%` }}
+                    />
                 </div>
             </div>
 
@@ -441,26 +240,30 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                 <div className={`p-4 rounded-xl border transition-all ${testState === 'download' ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 shadow-md ring-1 ring-emerald-500/20' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>
                     <div className="flex items-center gap-2 mb-2">
                         <ArrowDown size={18} className="text-emerald-500" />
-                        <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">{t.download}</span>
+                        <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">{t.metrics.download}</span>
                     </div>
                     <div className="text-2xl font-mono font-bold text-slate-800 dark:text-white">
-                        {downloadSpeed !== null ? formatNumber(downloadSpeed, 1) : '--'} <span className="text-xs font-normal text-slate-400">Mbps</span>
+                        {metrics.download !== null ? formatNumber(metrics.download, 1) : '--'} <span className="text-xs font-normal text-slate-400">Mbps</span>
                     </div>
                 </div>
                 <div className={`p-4 rounded-xl border transition-all ${testState === 'upload' ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-500 shadow-md ring-1 ring-purple-500/20' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>
                     <div className="flex items-center gap-2 mb-2">
                         <ArrowUp size={18} className="text-purple-500" />
-                        <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">{t.upload}</span>
+                        <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">{t.metrics.upload}</span>
                     </div>
                     <div className="text-2xl font-mono font-bold text-slate-800 dark:text-white">
-                        {uploadSpeed !== null ? formatNumber(uploadSpeed, 1) : '--'} <span className="text-xs font-normal text-slate-400">Mbps</span>
+                        {metrics.upload !== null 
+                            ? formatNumber(metrics.upload, 1) 
+                            : !selectedBackend.supportsUpload ? <span className="text-xs text-slate-400">N/A</span> : '--'
+                        } 
+                        {selectedBackend.supportsUpload && <span className="text-xs font-normal text-slate-400">Mbps</span>}
                     </div>
                 </div>
             </div>
 
             {/* Controls */}
             <button 
-                onClick={testState === 'idle' || testState === 'done' || testState === 'error' ? startTest : stopTest}
+                onClick={testState === 'idle' || testState === 'done' || testState === 'error' ? handleStart : stop}
                 className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 ${
                     testState === 'idle' || testState === 'done' || testState === 'error' 
                     ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20' 
@@ -468,7 +271,7 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                 }`}
             >
                 {testState === 'idle' || testState === 'done' || testState === 'error' ? <Play size={20} fill="currentColor" /> : <Square size={20} fill="currentColor" />}
-                {testState === 'idle' || testState === 'done' || testState === 'error' ? t.start : t.stop}
+                {testState === 'idle' || testState === 'done' || testState === 'error' ? t.action.start : t.action.stop}
             </button>
 
         </div>

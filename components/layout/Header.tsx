@@ -53,9 +53,9 @@ export const Header: React.FC<HeaderProps> = ({
       <div>
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
           <Monitor className="text-indigo-600 dark:text-indigo-400" size={32} />
-          {t.title}
+          {t.meta.title}
         </h1>
-        <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-2xl">{t.subtitle}</p>
+        <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-2xl">{t.meta.subtitle}</p>
       </div>
       <div className="flex gap-3 relative z-40 flex-wrap">
         <Button 
@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
         <Button 
             variant="secondary" 
             onClick={onOpenSettings} 
-            title={t.settingsModal.title}
+            title={t.settings.title}
         >
             <Sliders size={16} />
         </Button>
@@ -121,7 +121,7 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={onRefresh} 
             leftIcon={<RefreshCw size={16} />}
         >
-            {t.refresh}
+            {t.common.refresh}
         </Button>
       </div>
     </header>

@@ -5,7 +5,7 @@ import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
 
 interface DeveloperTabProps {
-    t: Translation['settingsModal'];
+    t: Translation['settings']['developer'];
     isFloating: boolean;
     toggleFloat: () => void;
 }
@@ -260,7 +260,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
             {subTab === 'events' && (
                 <>
                     <div className="flex-1 overflow-y-auto p-4 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-700">
-                        {logs.length === 0 && <div className="text-slate-500 italic">{t.dev_events_placeholder}</div>}
+                        {logs.length === 0 && <div className="text-slate-500 italic">{t.events.placeholder}</div>}
                         {logs.map((log, idx) => (
                             <div key={idx} className="text-green-400 break-all border-b border-slate-800/50 pb-1">
                                 <span className="text-slate-500 mr-2 opacity-50">{idx + 1}</span>
@@ -277,11 +277,11 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                         <div className="flex gap-2">
                             <button onClick={copyLogs} className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-[10px] flex items-center gap-1">
                                 {copied ? <Check size={10} /> : <Copy size={10} />}
-                                {t.dev_copy_log}
+                                {t.events.copy}
                             </button>
                             <button onClick={() => setLogs([])} className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-[10px] flex items-center gap-1">
                                 <Trash2 size={10} />
-                                {t.dev_clear}
+                                {t.events.clear}
                             </button>
                         </div>
                     </div>
@@ -317,7 +317,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     <div className="flex-1 overflow-y-auto p-4 bg-slate-900 custom-scrollbar flex flex-col gap-3">
                         {consoleHistory.length === 0 && (
                             <div className="text-slate-600 italic mt-2 opacity-50 select-none">
-                                {t.dev_result_placeholder}
+                                {t.console.resultPlaceholder}
                             </div>
                         )}
                         
@@ -351,21 +351,21 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                         <button 
                             onClick={copyConsoleHistory} 
                             className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
-                            title={t.dev_output_copy}
+                            title={t.console.copy}
                         >
                             {consoleCopied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
                         </button>
                         <button 
                             onClick={downloadConsoleOutput} 
                             className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
-                            title={t.dev_output_download}
+                            title={t.console.download}
                         >
                             <Download size={12} />
                         </button>
                         <button 
                             onClick={() => setConsoleHistory([])} 
                             className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-red-400 hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
-                            title={t.dev_output_clear}
+                            title={t.console.clear}
                         >
                             <Trash2 size={12} />
                         </button>
@@ -375,7 +375,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     {showPresets && (
                         <div className="absolute bottom-[50px] left-2 right-2 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-10 animate-in slide-in-from-bottom-2 fade-in duration-200 flex flex-col overflow-hidden max-h-60">
                             <div className="px-3 py-2 bg-slate-900/50 border-b border-slate-700 text-[10px] text-slate-400 font-medium uppercase tracking-wider backdrop-blur-sm shrink-0">
-                                {t.dev_quick_commands}
+                                {t.console.quickCommands}
                             </div>
                             <div className="overflow-y-auto">
                                 {PRESET_COMMANDS.map((preset, idx) => (
@@ -396,7 +396,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); applyPreset(preset, true); }}
                                             className="p-1.5 text-slate-400 hover:text-green-400 hover:bg-slate-600 rounded transition-colors"
-                                            title={t.dev_run_now}
+                                            title={t.console.run}
                                         >
                                             <Zap size={14} fill="currentColor" />
                                         </button>
@@ -426,7 +426,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                                     value={inputCmd}
                                     onChange={handleInputChange}
                                     onKeyDown={(e) => e.key === 'Enter' && runConsole()}
-                                    placeholder={t.dev_console_placeholder}
+                                    placeholder={t.console.placeholder}
                                     className="w-full bg-transparent border-none outline-none text-white font-mono text-sm placeholder:text-slate-600 pr-8"
                                     autoFocus
                                     autoComplete="off"
@@ -435,7 +435,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                                     <button 
                                         onClick={clearInput}
                                         className="absolute right-0 p-1 text-slate-500 hover:text-slate-300 transition-colors"
-                                        title={t.dev_input_clear}
+                                        title={t.console.clearInput}
                                     >
                                         <X size={14} />
                                     </button>
@@ -463,11 +463,11 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     <Skull size={40} strokeWidth={2} />
                 </div>
                 <h3 className="text-2xl font-black text-red-600 dark:text-red-500 mb-4 uppercase tracking-tight">
-                    {t.dev_warning_title}
+                    {t.warning.title}
                 </h3>
                 <div className="bg-red-50 dark:bg-red-900/10 p-4 rounded-lg border border-red-100 dark:border-red-900/30 mb-6">
                     <p className="text-sm font-medium text-slate-700 dark:text-red-200 leading-relaxed whitespace-pre-wrap">
-                        {t.dev_warning_desc}
+                        {t.warning.desc}
                     </p>
                 </div>
                 <button 
@@ -479,7 +479,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                             : 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/20 active:scale-95'
                         }`}
                 >
-                    {countdown > 0 ? `Wait ${countdown}s...` : t.dev_warning_agree}
+                    {countdown > 0 ? `Wait ${countdown}s...` : t.warning.agree}
                 </button>
             </div>
         </div>
@@ -490,9 +490,9 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
         return (
             <div className="relative h-full flex flex-col">
                 <div className="flex p-1 bg-slate-800 border-b border-slate-700 shrink-0 gap-1">
-                    <button onClick={() => setSubTab('events')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'events' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.dev_events}</button>
-                    <button onClick={() => setSubTab('inspector')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'inspector' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.dev_inspector}</button>
-                    <button onClick={() => setSubTab('console')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'console' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.dev_console}</button>
+                    <button onClick={() => setSubTab('events')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'events' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.nav.events}</button>
+                    <button onClick={() => setSubTab('inspector')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'inspector' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.nav.inspector}</button>
+                    <button onClick={() => setSubTab('console')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'console' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.nav.console}</button>
                 </div>
                 {content}
                 {!hasAcceptedRisk && warningOverlay}
@@ -512,7 +512,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     className="flex-1"
                     leftIcon={<Activity size={14} />}
                 >
-                    {t.dev_events}
+                    {t.nav.events}
                 </Button>
                 <Button 
                     onClick={() => setSubTab('inspector')}
@@ -521,7 +521,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     className="flex-1"
                     leftIcon={<Eye size={14} />}
                 >
-                    {t.dev_inspector}
+                    {t.nav.inspector}
                 </Button>
                 <Button 
                     onClick={() => setSubTab('console')}
@@ -530,14 +530,14 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     className="flex-1"
                     leftIcon={<Terminal size={14} />}
                 >
-                    {t.dev_console}
+                    {t.nav.console}
                 </Button>
                 <div className="w-px bg-slate-300 dark:bg-slate-600 mx-1 self-center h-4"></div>
                 <Button 
                     onClick={toggleFloat}
                     variant={isFloating ? 'soft' : 'ghost'}
                     size="xs"
-                    title={t.dev_float}
+                    title={t.actions.float}
                 >
                     <Maximize2 size={14} />
                 </Button>
@@ -555,7 +555,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     <Maximize2 size={32} className="opacity-20" />
                     <p className="text-sm">Tool is currently floating.</p>
                     <Button variant="ghost" size="xs" onClick={toggleFloat} className="text-indigo-600 dark:text-indigo-400 hover:underline">
-                        {t.dev_dock_back}
+                        {t.actions.dock}
                     </Button>
                 </div>
             )}

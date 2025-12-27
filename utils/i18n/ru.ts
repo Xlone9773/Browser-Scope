@@ -3,7 +3,263 @@
 import { Translation } from './types';
 
 export const ru: Translation = {
-  // ... existing fields
+  // ... existing code ...
+  meta: {
+    title: "BrowserScope",
+    subtitle: "Комплексный инструмент для глубокого анализа отпечатков и возможностей браузера",
+    footer: "BrowserScope - Инструмент анализа возможностей браузера",
+  },
+  // ... existing common ...
+  common: {
+    loading: "Сканирование возможностей системы...",
+    loading_steps: [
+        "Инициализация среды...",
+        "Определение возможностей графики и GPU...",
+        "Анализ состояния сети...",
+        "Проверка безопасности и конфиденциальности...",
+        "Оценка производительности AI...",
+        "Формирование отчета..."
+    ],
+    refresh: "Обновить данные",
+    actions: {
+        start: "Старт",
+        stop: "Стоп",
+        close: "Закрыть",
+        copy: "Копировать",
+        copied: "Скопировано",
+        download: "Скачать",
+        view_details: "Подробнее",
+        check: "Проверить",
+        open: "Открыть",
+        reset: "Сброс",
+        export: "Экспорт JSON"
+    }
+  },
+  // ... existing settings ...
+  settings: {
+    title: "Настройки",
+    nav: {
+        general: "Общие",
+        network: "Сетевые утилиты",
+        display: "Экран",
+        storage: "Хранилище",
+        resources: "Ресурсы",
+        developer: "Разработчик",
+        modules: "Модули"
+    },
+    general: {
+        simpleMode: {
+            title: "Упрощенный режим",
+            desc: "Скрыть сложные технические детали и отображать только основную информацию."
+        },
+        scrollbar: {
+            title: "Скрыть полосу прокрутки",
+            desc: "Принудительно скрывает системную полосу прокрутки на странице."
+        },
+        timeFormat: {
+            title: "Формат времени",
+            desc: "Переключение между 12-часовым и 24-часовым форматом."
+        },
+        performance: {
+            title: "Режим производительности",
+            desc: "Отключить размытие и прозрачность для снижения нагрузки на GPU."
+        }
+    },
+    network: {
+        ip: {
+            title: "IP Информация",
+            ipv4: "IPv4",
+            ipv4_desc: "Стандартный интернет-протокол",
+            ipv6: "IPv6",
+            ipv6_desc: "Интернет-протокол следующего поколения",
+            fetch: "Получить IP",
+            check_v6: "Проверить IPv6",
+            success_v6: "IPv6 Поддерживается",
+            fail_v6: "IPv6 Не поддерживается"
+        },
+        diagnostics: {
+            title: "Расширенная диагностика",
+            webrtc: {
+                title: "Детектор утечек WebRTC",
+                desc: "Попытка получить реальный IP локальной сети или WAN через STUN серверы.",
+                btn: "Начать сканирование",
+                columns: { type: "Тип", ip: "IP Адрес", proto: "Протокол", port: "Порт" }
+            },
+            dns: {
+                title: "Детектор утечек DNS",
+                desc: "Попытка определить ваш текущий DNS сервер.",
+                btn: "Проверить DNS",
+                label_ip: "IP DNS сервера",
+                label_geo: "Геолокация DNS"
+            },
+            proto: {
+                title: "Поддержка протоколов",
+                desc: "Проверка поддержки браузером HTTP/2 и HTTP/3 (QUIC).",
+                btn: "Проверить протоколы",
+                h2: "Поддержка HTTP/2",
+                h3: "Поддержка HTTP/3"
+            }
+        },
+        connectivity: {
+            title: "Тест соединения",
+            placeholder: "Введите URL (например, google.com)",
+            btn: "Тест"
+        },
+        cdn: {
+            title: "Статус CDN",
+            check_all: "Проверить все"
+        }
+    },
+    display: {
+        deadPixel: {
+            title: "Поиск битых пикселей",
+            desc: "Полноэкранное отображение сплошных цветов, помогающее найти битые или застрявшие пиксели. Нажмите в любом месте для выхода.",
+            colors: { red: "Красный", green: "Зеленый", blue: "Синий", white: "Белый", black: "Черный" }
+        },
+        hdr: {
+            title: "Статус HDR",
+            desc: "Определяет поддержку расширенного динамического диапазона (HDR) на текущем дисплее.",
+            rangeScreen: "Динамический диапазон экрана",
+            rangeVideo: "Видео диапазон",
+            brightnessTest: "Тест яркости EDR",
+            brightnessDesc: "Если HDR/EDR поддерживается, центральный квадрат должен быть ярче белого фона.",
+            labelSdr: "SDR Белый",
+            labelEdr: "EDR Яркий"
+        },
+        gamut: {
+            title: "Тест широкого цветового охвата (P3)",
+            desc: "Если вы видите логотип внутри красного квадрата, ваше устройство поддерживает цветовой охват P3.",
+            unsupported: "Ваш браузер не поддерживает определение цветового охвата Display-P3."
+        },
+        gradient: {
+            title: "Глубина цвета и градации",
+            desc: "Проверка плавности цветовых переходов (отсутствие бандинга) и деталей в тенях."
+        }
+    },
+    storage: {
+        local: {
+            title: "Локальные данные",
+            clearDesc: "Очистить все данные сайта",
+            clearBtn: "Очистить"
+        },
+        sw: {
+            title: "Service Workers",
+            desc: "Управление фоновыми скриптами Service Worker.",
+            unregisterBtn: "Удалить все"
+        },
+        usageLabel: "Использование хранилища"
+    },
+    resources: {
+        title: "Список загрузки внешних ресурсов",
+        columns: { name: "Имя ресурса", type: "Тип", duration: "Время" }
+    },
+    developer: {
+        warning: {
+            title: "КРАЙНЕ ОПАСНО!",
+            desc: "Это зона отладки для разработчиков. Если вы не понимаете, что делаете, немедленно закройте это окно!\n\nЛюбой, кто просит вас вставить сюда код — МОШЕННИК. Выполнение неизвестного кода может привести к утечке вашей личной информации, краже аккаунта или злонамеренному контролю над устройством.",
+            agree: "Я понимаю риски, продолжить"
+        },
+        nav: {
+            events: "Поток событий",
+            inspector: "Инспектор объектов",
+            console: "Консоль"
+        },
+        actions: {
+            float: "Плавающее окно",
+            dock: "Закрепить внизу"
+        },
+        events: {
+            placeholder: "Ожидание системных событий...",
+            copy: "Копировать лог",
+            clear: "Очистить"
+        },
+        console: {
+            placeholder: "Введите JS код (введите '\\' для пресетов)...",
+            clearInput: "Очистить ввод",
+            resultPlaceholder: "Результат выполнения появится здесь...",
+            copy: "Копировать результат",
+            download: "Скачать результат",
+            clear: "Очистить результат",
+            quickCommands: "Быстрые команды",
+            run: "Выполнить"
+        }
+    },
+    modules: {
+        title: "Менеджер модулей",
+        desc: "Мониторинг и управление загруженными модальными компонентами. Выгрузка неиспользуемых модулей может освободить память и ресурсы GPU.",
+        headers: {
+            name: "Имя модуля",
+            status: "Статус",
+            impact: "Влияние",
+            action: "Действие"
+        },
+        status: {
+            active: "Активен",
+            inactive: "Неактивен",
+            cached: "Кешировано",
+            system: "Система"
+        },
+        impact: {
+            low: "Низкое",
+            med: "Среднее",
+            high: "Высокое"
+        },
+        actions: {
+            unload: "Закрыть",
+            unloadAll: "Выгрузить все"
+        }
+    }
+  },
+  // ... existing speedTest ...
+  speedTest: {
+    title: "Тест скорости сети",
+    action: {
+        start: "Начать тест",
+        stop: "Стоп"
+    },
+    metrics: {
+        ping: "Пинг",
+        jitter: "Джиттер",
+        download: "Скачивание",
+        upload: "Загрузка",
+        latency: "Задержка",
+        mbps: "Мбит/с"
+    },
+    status: {
+        idle: "Готов к тесту",
+        ping: "Тестирование задержки...",
+        download: "Тестирование скачивания...",
+        upload: "Тестирование загрузки...",
+        done: "Тест завершен",
+        error: "Ошибка подключения"
+    },
+    settings: {
+        server: "Сервер",
+        test_size: "Размер теста",
+        backend: "Бэкенд",
+        custom_url: "Свой URL скачивания",
+        custom_placeholder: "https://example.com/large-file.zip",
+        cors_note: "Примечание: URL должен поддерживать CORS. Тест загрузки будет пропущен."
+    },
+    preset_names: {
+        cloudflare: "Cloudflare (Глобальный)",
+        cachefly: "CacheFly (Global CDN)",
+        ustc_cn: "Зеркало USTC (Китай/Хэфэй)",
+        nju_cn: "Зеркало NJU (Китай/Нанкин)",
+        selectel_ru: "Selectel (Россия/Санкт-Петербург)",
+        tele2_kz: "Tele2 (Казахстан/Алматы)",
+        hetzner_de: "Hetzner (Германия/Фалькенштейн)",
+        hetzner_fi: "Hetzner (Финляндия/Хельсинки)",
+        scaleway_fr: "Scaleway (Франция/Париж)",
+        vultr_nj: "Vultr (США Восток/Нью-Джерси)",
+        vultr_la: "Vultr (США Запад/Лос-Анджелес)",
+        vultr_sg: "Vultr (Сингапур)",
+        vultr_tokyo: "Vultr (Япония/Токио)",
+        vultr_sydney: "Vultr (Австралия/Сидней)",
+        custom: "Свой URL"
+    }
+  },
+  // ... existing legacy mappings ...
   title: "BrowserScope",
   subtitle: "Комплексный инструмент для глубокого анализа отпечатков и возможностей браузера",
   loading: "Сканирование возможностей системы...",
@@ -124,7 +380,16 @@ export const ru: Translation = {
     denied: "Запрещено",
     prompt: "Запрос",
     error: "Ошибка",
-    idle: "Не запрошено"
+    idle: "Не запрошено",
+    running: "Выполняется",
+    supported: "Поддерживается",
+    not_supported: "Не поддерживается",
+    detected: "Обнаружено",
+    none: "Нет",
+    hidden: "Скрыто",
+    yes: "Да",
+    no: "Нет",
+    unknown: "Неизвестно"
   },
 
   actions: {
@@ -143,6 +408,7 @@ export const ru: Translation = {
     check: "Проверить",
     open_map: "Открыть карту",
     stress_test: "Стресс-тест",
+    open_video_test: "Тест видео декодера"
   },
 
   features: {
@@ -264,6 +530,27 @@ export const ru: Translation = {
     version: "Текущая версия",
     latest_update: "Последнее обновление",
     history: "История обновлений",
+    features: {
+        privacy: {
+            title: "Приватность прежде всего",
+            desc: "100% выполнение на клиенте. Никакого сбора данных. Ваш отпечаток остается на устройстве."
+        },
+        tech: {
+            title: "Передовые технологии",
+            desc: "Работает на WebGPU, WebNN и WASM для тестирования новейших возможностей браузера."
+        },
+        deepScan: {
+            title: "Глубокое сканирование",
+            desc: "Анализирует 100+ аппаратных и программных сигналов для генерации высокоэнтропийных идентификаторов."
+        },
+        stack: {
+            title: "Стек инноваций"
+        },
+        openSource: {
+            title: "Открытый код",
+            license: "Лицензия MIT"
+        }
+    },
     updates: [
         {
             version: "1.6.0",
@@ -369,114 +656,6 @@ export const ru: Translation = {
     close: "Закрыть"
   },
 
-  settingsModal: {
-    title: "Настройки",
-    tab_general: "Общие",
-    tab_network: "Сетевые утилиты",
-    tab_display: "Экран",
-    tab_storage: "Хранилище",
-    tab_resources: "Ресурсы",
-    tab_developer: "Разработчик",
-    
-    // General
-    simple_mode_title: "Упрощенный режим",
-    simple_mode_desc: "Скрыть сложные технические детали и отображать только основную информацию.",
-    scrollbar_title: "Скрыть полосу прокрутки",
-    scrollbar_desc: "Принудительно скрывает системную полосу прокрутки на странице.",
-    time_format_title: "Формат времени",
-    time_format_desc: "Переключение между 12-часовым и 24-часовым форматом.",
-    disable_blur_title: "Отключить размытие",
-    disable_blur_desc: "Полностью убрать эффекты размытия фона и прозрачности. Это может значительно снизить нагрузку на GPU, но ухудшит визуальное качество интерфейса.",
-    
-    // Network
-    fetch_ip: "Запросить IP инфо",
-    check_ipv6: "Проверить IPv6",
-    ipv6_success: "IPv6 Поддерживается",
-    ipv6_fail: "IPv6 Не поддерживается",
-    network_adv_title: "Расширенная диагностика",
-    network_webrtc_title: "Детектор утечек WebRTC",
-    network_webrtc_desc: "Попытка получить реальный IP локальной сети или WAN через STUN серверы.",
-    network_webrtc_btn: "Начать сканирование",
-    col_type: "Тип",
-    col_ip: "IP Адрес",
-    col_protocol: "Протокол",
-    col_port: "Порт",
-    network_dns_title: "Детектор утечек DNS",
-    network_dns_desc: "Попытка определить ваш текущий DNS сервер.",
-    network_dns_btn: "Проверить DNS",
-    lbl_dns_ip: "IP DNS сервера",
-    lbl_dns_geo: "Геолокация DNS",
-    proto_title: "Поддержка протоколов",
-    proto_desc: "Проверка поддержки браузером HTTP/2 и HTTP/3 (QUIC).",
-    proto_check_btn: "Проверить протоколы",
-    proto_http2: "Поддержка HTTP/2",
-    proto_http3: "Поддержка HTTP/3",
-    test_conn: "Тест соединения",
-    url_placeholder: "Введите URL (например, google.com)",
-    cdn_status: "Статус популярных CDN",
-    check_all: "Проверить все",
-
-    // Display
-    dead_pixel_title: "Поиск битых пикселей",
-    dead_pixel_desc: "Полноэкранное отображение сплошных цветов, помогающее найти битые или застрявшие пиксели. Нажмите в любом месте для выхода.",
-    color_red: "Красный",
-    color_green: "Зеленый",
-    color_blue: "Синий",
-    color_white: "Белый",
-    color_black: "Черный",
-    hdr_status_title: "Статус HDR",
-    hdr_support: "Определяет поддержку расширенного динамического диапазона (HDR) на текущем дисплее.",
-    hdr_dynamic_range: "Динамический диапазон экрана",
-    hdr_video_dynamic_range: "Видео диапазон",
-    hdr_brightness_test: "Тест яркости EDR",
-    hdr_brightness_desc: "Если HDR/EDR поддерживается, центральный квадрат должен быть ярче белого фона.",
-    hdr_sdr_white: "SDR Белый",
-    hdr_edr_white: "EDR Яркий",
-    gamut_test_title: "Тест широкого цветового охвата (P3)",
-    gamut_test_desc: "Если вы видите логотип внутри красного квадрата, ваше устройство поддерживает цветовой охват P3.",
-    unsupported_p3: "Ваш браузер не поддерживает определение цветового охвата Display-P3.",
-    hdr_test_title: "Глубина цвета и градации",
-    hdr_test_desc: "Проверка плавности цветовых переходов (отсутствие бандинга) и деталей в тенях.",
-
-    // Storage
-    storage_title: "Локальные данные",
-    clear_data: "Очистить все данные сайта",
-    clear_btn: "Очистить",
-    sw_title: "Service Workers",
-    sw_desc: "Управление фоновыми скриптами Service Worker.",
-    sw_btn: "Удалить все",
-    storage_usage: "Использование хранилища",
-
-    // Resources
-    resource_list: "Список загрузки внешних ресурсов",
-    res_name: "Имя ресурса",
-    res_type: "Тип",
-    res_duration: "Время",
-
-    // Developer
-    dev_warning_title: "КРАЙНЕ ОПАСНО!",
-    dev_warning_desc: "Это зона отладки для разработчиков. Если вы не понимаете, что делаете, немедленно закройте это окно!\n\nЛюбой, кто просит вас вставить сюда код — МОШЕННИК. Выполнение неизвестного кода может привести к утечке вашей личной информации, краже аккаунта или злонамеренному контролю над устройством.",
-    dev_warning_agree: "Я понимаю риски, продолжить",
-    dev_events: "Поток событий",
-    dev_inspector: "Инспектор объектов",
-    dev_console: "Консоль",
-    dev_float: "Плавающее окно",
-    dev_dock_back: "Закрепить внизу",
-    dev_events_placeholder: "Ожидание системных событий...",
-    dev_copy_log: "Копировать лог",
-    dev_clear: "Очистить",
-    dev_console_placeholder: "Введите JS код (введите '\\' для пресетов)...",
-    dev_input_clear: "Очистить ввод",
-    dev_result_placeholder: "Результат выполнения появится здесь...",
-    dev_output_copy: "Копировать результат",
-    dev_output_download: "Скачать результат",
-    dev_output_clear: "Очистить результат",
-    dev_quick_commands: "Быстрые команды",
-    dev_run_now: "Выполнить",
-    
-    close: "Закрыть"
-  },
-
   benchmarkModal: {
     title: "Бенчмарк производительности",
     start_btn: "Запустить полный тест",
@@ -542,7 +721,7 @@ export const ru: Translation = {
     tab_video: "Декодирование",
     vibrate_not_supported: "Ваше устройство не поддерживает API вибрации",
     vibrate_short: "Короткая (200мс)",
-    vibrate_medium: "Средняя (500мс)",
+    vibrate_medium: "Средняя (500ms)",
     vibrate_pattern: "Импульс",
     touch_instruction: "Коснитесь или проведите по экрану ниже",
     touch_count: "Точки касания",
@@ -562,7 +741,18 @@ export const ru: Translation = {
     video_res: "Разрешение",
     video_efficient: "Эффективность (HW)",
     video_smooth: "Плавность",
-    filter_supported: "Только поддерживаемые"
+    filter_supported: "Только поддерживаемые",
+    // New Keys
+    video_title: "Матрица декодирования аудио/видео",
+    status_api_error: "Ошибка API",
+    status_api_na: "API Н/Д",
+    status_hw: "HW",
+    status_sw: "SW",
+    status_software: "Программное",
+    tooltip_hw: "Аппаратное ускорение (Эффективно)",
+    tooltip_sw: "Программное декодирование (Энергоемко)",
+    tooltip_drop: "Возможен пропуск кадров",
+    status_done: "Готово"
   },
 
   visionModal: {
@@ -588,30 +778,5 @@ export const ru: Translation = {
     no_cam_error: "Камера не найдена или доступ запрещен",
     auto_scan: "Автосканирование",
     manual_capture: "Ручная съемка"
-  },
-
-  speedTest: {
-    title: "Тест скорости сети",
-    start: "Начать тест",
-    stop: "Стоп",
-    ping: "Пинг",
-    jitter: "Джиттер",
-    download: "Скачивание",
-    upload: "Загрузка",
-    latency: "Задержка",
-    mbps: "Мбит/с",
-    status_idle: "Готов к тесту",
-    status_ping: "Тестирование задержки...",
-    status_down: "Тестирование скачивания...",
-    status_up: "Тестирование загрузки...",
-    status_done: "Тест завершен",
-    server: "Cloudflare",
-    test_size: "Размер теста",
-    backend: "Бэкенд",
-    custom_url: "Свой URL скачивания",
-    custom_placeholder: "https://example.com/large-file.zip",
-    cors_note: "Примечание: URL должен поддерживать CORS. Тест загрузки будет пропущен.",
-    backend_cloudflare: "Cloudflare (Global)",
-    backend_custom: "Свой URL"
   }
 };
