@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Film, Check, X, Mic2, Music, MonitorPlay } from 'lucide-react';
+import { Film, Check, X, Mic2, Music, MonitorPlay, ChevronRight } from 'lucide-react';
 import { InfoCard } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
@@ -10,9 +10,10 @@ interface MediaCapabilitiesCardProps {
   data: BrowserData['media'];
   t: Translation;
   onOpenVideoTest?: () => void;
+  onOpenSpeech?: () => void;
 }
 
-export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = ({ data, t, onOpenVideoTest }) => {
+export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = ({ data, t, onOpenVideoTest, onOpenSpeech }) => {
   return (
     <InfoCard title={t.sections.media_sup} icon={Film}>
         <div className="mb-3">
@@ -50,14 +51,20 @@ export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = ({ da
             ))}
             </div>
         </div>
-        <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50 flex justify-between items-center">
+        <div 
+            className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50 flex justify-between items-center group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded px-1 -mx-1 transition-colors"
+            onClick={onOpenSpeech}
+        >
             <div className="flex items-center gap-1.5">
                 <Mic2 size={14} className="text-slate-400"/>
                 <span className="text-xs font-medium text-slate-500">{t.labels.speech_voices}</span>
             </div>
-            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.speechVoices}</span>
+            <div className="flex items-center gap-1">
+                <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.speechVoices}</span>
+                {onOpenSpeech && <ChevronRight size={12} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />}
+            </div>
         </div>
-        <div className="mt-1 flex justify-between items-center">
+        <div className="mt-1 flex justify-between items-center px-1">
             <div className="flex items-center gap-1.5">
                 <Music size={14} className="text-slate-400"/>
                 <span className="text-xs font-medium text-slate-500">{t.labels.audio_channels}</span>

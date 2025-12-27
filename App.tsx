@@ -95,6 +95,8 @@ const App: React.FC = () => {
       { id: 'speed', name: t.speedTest.title, isOpen: visibility.speed, setOpen: (v) => v ? open('speed') : close('speed'), impact: 'Medium', onUnload: () => unload('speed'), isLoaded: loadedModules.has('speed') },
       { id: 'compute', name: t.computeStress.title, isOpen: visibility.compute, setOpen: (v) => v ? open('compute') : close('compute'), impact: 'High', onUnload: () => unload('compute'), isLoaded: loadedModules.has('compute') },
       { id: 'video', name: t.actions.open_video_test, isOpen: visibility.video, setOpen: (v) => v ? open('video') : close('video'), impact: 'High', onUnload: () => unload('video'), isLoaded: loadedModules.has('video') },
+      { id: 'graphics', name: t.graphicsModal.title, isOpen: visibility.graphics, setOpen: (v) => v ? open('graphics') : close('graphics'), impact: 'Medium', onUnload: () => unload('graphics'), isLoaded: loadedModules.has('graphics') },
+      { id: 'speech', name: t.speechModal.title, isOpen: visibility.speech, setOpen: (v) => v ? open('speech') : close('speech'), impact: 'Medium', onUnload: () => unload('speech'), isLoaded: loadedModules.has('speech') },
   ];
 
   // Initialize theme
@@ -398,6 +400,18 @@ const App: React.FC = () => {
                     labels={t.labels}
                 />
             )}
+            {visibility.graphics && (
+                <Components.graphics 
+                    onClose={() => close('graphics')} 
+                    t={t.graphicsModal} 
+                />
+            )}
+            {visibility.speech && (
+                <Components.speech 
+                    onClose={() => close('speech')} 
+                    t={t.speechModal} 
+                />
+            )}
         </Suspense>
       </ErrorBoundary>
 
@@ -449,6 +463,7 @@ const App: React.FC = () => {
                     onOpenSensors={() => open('sensor')}
                     onOpenTools={() => open('tools')}
                     onOpenVision={() => open('vision')}
+                    onOpenGraphics={() => open('graphics')}
                 />
 
                 <DisplayCard 
@@ -510,6 +525,7 @@ const App: React.FC = () => {
                             data={data.media} 
                             t={t} 
                             onOpenVideoTest={() => open('video')}
+                            onOpenSpeech={() => open('speech')}
                         />
 
                         <UserAgentCard userAgent={data.system.userAgent} t={t} />

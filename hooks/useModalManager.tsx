@@ -32,6 +32,8 @@ const MODULE_FACTORIES: Record<string, () => Promise<any>> = {
     compute: () => import('../components/ComputeStressModal').then(m => ({ default: m.ComputeStressModal })),
     developer: () => import('../components/settings/DeveloperTab').then(m => ({ default: m.DeveloperTab })),
     video: () => import('../components/VideoDecodeModal').then(m => ({ default: m.VideoDecodeModal })),
+    graphics: () => import('../components/GraphicsDebugModal').then(m => ({ default: m.GraphicsDebugModal })),
+    speech: () => import('../components/SpeechExplorerModal').then(m => ({ default: m.SpeechExplorerModal })),
 };
 
 export const useModalManager = () => {

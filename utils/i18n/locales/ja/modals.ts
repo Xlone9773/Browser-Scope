@@ -129,5 +129,25 @@ export const modals = {
     dom_test: "DOM操作性能",
     gpu_test: "Canvas描画性能",
     storage_test: "データベースIOPS"
+  },
+  graphicsModal: {
+    title: "グラフィックス詳細情報 & 制限",
+    tab_webgl: "WebGL 制限",
+    tab_webgpu: "WebGPU 制限",
+    tab_features: "機能サポート",
+    loading: "GPU機能を照会中...",
+    not_supported: "このブラウザはWebGPUをサポートしていません。",
+    copy: "レポートをコピー",
+    search: "パラメータを検索..."
+  },
+  speechModal: {
+    title: "音声合成エクスプローラー",
+    lang_filter: "言語でフィルタ",
+    play: "再生",
+    default: "デフォルト",
+    local: "ローカル",
+    remote: "リモート",
+    no_voices: "音声が見つかりません。システムがテキスト読み上げをサポートしているか確認してください。",
+    loading: "音声を読み込み中..."
   }
 };

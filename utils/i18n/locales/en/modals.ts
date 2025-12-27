@@ -139,5 +139,25 @@ export const modals = {
     dom_test: "DOM Manipulation",
     gpu_test: "Canvas Rendering",
     storage_test: "Database IOPS"
+  },
+  graphicsModal: {
+    title: "Graphics Limits & Features",
+    tab_webgl: "WebGL Limits",
+    tab_webgpu: "WebGPU Limits",
+    tab_features: "Features",
+    loading: "Querying GPU capabilities...",
+    not_supported: "WebGPU is not supported in this browser.",
+    copy: "Copy Report",
+    search: "Search parameters..."
+  },
+  speechModal: {
+    title: "Speech Synthesis Explorer",
+    lang_filter: "Filter by Language",
+    play: "Play",
+    default: "Default",
+    local: "Local",
+    remote: "Remote",
+    no_voices: "No voices found. Ensure your system supports Text-to-Speech.",
+    loading: "Loading voices..."
   }
 };

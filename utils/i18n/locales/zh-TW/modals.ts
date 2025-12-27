@@ -139,5 +139,25 @@ export const modals = {
     dom_test: "DOM 操作效能",
     gpu_test: "Canvas 渲染效能",
     storage_test: "資料庫 IOPS"
+  },
+  graphicsModal: {
+    title: "顯示卡深度資訊 & 極限參數",
+    tab_webgl: "WebGL 極限參數",
+    tab_webgpu: "WebGPU 極限參數",
+    tab_features: "特性支援",
+    loading: "正在查詢 GPU 能力...",
+    not_supported: "目前瀏覽器不支援 WebGPU。",
+    copy: "複製報告",
+    search: "搜尋參數..."
+  },
+  speechModal: {
+    title: "語音合成瀏覽器",
+    lang_filter: "按語言篩選",
+    play: "試聽",
+    default: "預設",
+    local: "本地",
+    remote: "線上",
+    no_voices: "未找到語音包。請檢查您的系統是否支援文字轉語音。",
+    loading: "載入語音庫..."
   }
 };

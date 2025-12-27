@@ -139,5 +139,25 @@ export const modals = {
     dom_test: "Операции с DOM",
     gpu_test: "Рендеринг Canvas",
     storage_test: "IOPS Базы данных"
+  },
+  graphicsModal: {
+    title: "Графические лимиты и функции",
+    tab_webgl: "Лимиты WebGL",
+    tab_webgpu: "Лимиты WebGPU",
+    tab_features: "Функции",
+    loading: "Запрос возможностей GPU...",
+    not_supported: "WebGPU не поддерживается в этом браузере.",
+    copy: "Копировать отчет",
+    search: "Поиск параметров..."
+  },
+  speechModal: {
+    title: "Исследование синтеза речи",
+    lang_filter: "Фильтр по языку",
+    play: "Играть",
+    default: "По умолчанию",
+    local: "Локальный",
+    remote: "Удаленный",
+    no_voices: "Голоса не найдены. Убедитесь, что ваша система поддерживает синтез речи.",
+    loading: "Загрузка голосов..."
   }
 };

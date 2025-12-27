@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Cpu, Gamepad2, ChevronRight, Activity, Hammer, Battery, BatteryCharging, Zap, ScanBarcode, Layers } from 'lucide-react';
+import { Cpu, Gamepad2, ChevronRight, Activity, Hammer, Battery, BatteryCharging, Zap, ScanBarcode, Layers, Eye } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
@@ -13,9 +13,10 @@ interface HardwareCardProps {
   onOpenSensors: () => void;
   onOpenTools: () => void;
   onOpenVision?: () => void;
+  onOpenGraphics?: () => void;
 }
 
-export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamepad, onOpenSensors, onOpenTools, onOpenVision }) => {
+export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamepad, onOpenSensors, onOpenTools, onOpenVision, onOpenGraphics }) => {
   
   // Parse battery level
   const batteryLevel = parseFloat(data.batteryLevel) || 0;
@@ -41,7 +42,18 @@ export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamep
       <InfoItem label={t.labels.cpu} value={data.cpuCores} />
       {data.cpuModel && <InfoItem label={t.labels.cpu_model} value={data.cpuModel} />}
       <InfoItem label={t.labels.memory} value={data.memory} />
-      <InfoItem label={t.labels.gpu_renderer} value={data.gpuRenderer} />
+      <div className="group relative">
+          <InfoItem label={t.labels.gpu_renderer} value={data.gpuRenderer} />
+          {onOpenGraphics && (
+              <button 
+                onClick={onOpenGraphics}
+                className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 p-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 shadow-sm"
+                title="View Graphics Limits"
+              >
+                  <Eye size={12} />
+              </button>
+          )}
+      </div>
       
       {/* GPU Precision Badge */}
       {data.gpuPrecision && (

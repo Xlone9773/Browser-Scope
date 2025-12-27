@@ -30,9 +30,9 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
       return t.factors?.[id] || id.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   };
 
-  const getFactorValue = (val: string) => {
+  const getFactorValue = (val: string | number) => {
       // Check if it's a translation key (starts with val_)
-      if (val && val.startsWith('val_') && t.values?.[val]) {
+      if (typeof val === 'string' && val.startsWith('val_') && t.values?.[val]) {
           return t.values[val];
       }
       return val;
