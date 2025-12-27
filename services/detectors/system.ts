@@ -83,6 +83,29 @@ export const getColorGamut = () => {
     return 'Unknown';
 };
 
+// New UA Client Hints Detector
+export const getHighEntropyClientHints = async () => {
+    if (!nav.userAgentData || !nav.userAgentData.getHighEntropyValues) {
+        return undefined;
+    }
+    
+    try {
+        // Request specific hints
+        const hints = ['architecture', 'model', 'platformVersion', 'bitness', 'fullVersionList'];
+        const values = await nav.userAgentData.getHighEntropyValues(hints);
+        return {
+            architecture: values.architecture,
+            model: values.model,
+            platformVersion: values.platformVersion,
+            bitness: values.bitness,
+            fullVersionList: values.fullVersionList
+        };
+    } catch (e) {
+        console.warn("UA-CH blocked or failed", e);
+        return undefined;
+    }
+};
+
 export const getPWAFeatures = (): FeatureItem[] => {
   return [
     { name: 'Service Worker', key: 'serviceWorker', supported: 'serviceWorker' in navigator, description: 'Offline capabilities & PWA support' },

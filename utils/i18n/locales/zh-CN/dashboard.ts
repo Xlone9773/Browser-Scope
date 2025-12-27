@@ -22,6 +22,7 @@ export const dashboard = {
     features: "高级特性",
     storage: "存储状态"
   },
+
   labels: {
     os: "操作系统",
     platform: "平台架构",
@@ -89,8 +90,15 @@ export const dashboard = {
     drm_support: "DRM 支持",
     speech_voices: "语音合成人声",
     audio_channels: "音频声道数",
-    pwa_install_status: "安装状态"
+    pwa_install_status: "安装状态",
+    // New Labels
+    arch: "CPU 架构",
+    model: "设备型号",
+    platform_ver: "系统版本",
+    bitness: "位宽 (Bitness)",
+    shader_precision: "着色器精度"
   },
+
   actions: {
     run_benchmark: "性能跑分",
     about: "关于",
@@ -109,6 +117,7 @@ export const dashboard = {
     stress_test: "压力测试",
     open_video_test: "视频解码测试"
   },
+
   features: {
     serviceWorker: "Service Worker",
     bgSync: "后台同步",
@@ -138,6 +147,7 @@ export const dashboard = {
     gyroscope: "陀螺仪",
     ambientLight: "环境光传感器"
   },
+
   featureDescs: {
     serviceWorker: "支持离线访问和 PWA 核心功能",
     bgSync: "网络恢复后自动同步数据",

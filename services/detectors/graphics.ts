@@ -47,6 +47,45 @@ export const getWebGLExtensions = (): string[] => {
   } catch (e) { return []; }
 };
 
+export const getShaderPrecisionFormat = (): { vertexHigh: string, fragmentHigh: string } | undefined => {
+    try {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (!gl) return undefined;
+        
+        const ctx = gl as WebGLRenderingContext;
+        
+        // Helper
+        const getFormat = (shaderType: number, precisionType: number) => {
+            const format = ctx.getShaderPrecisionFormat(shaderType, precisionType);
+            if (!format) return 'N/A';
+            return `${format.precision}-bit (range ${format.rangeMin}-${format.rangeMax})`;
+        };
+
+        const vHigh = getFormat(ctx.VERTEX_SHADER, ctx.HIGH_FLOAT);
+        const fHigh = getFormat(ctx.FRAGMENT_SHADER, ctx.HIGH_FLOAT);
+        
+        // Simpler string rep
+        const simple = (f: any) => {
+            if (!f) return 'Low';
+            if (f.precision >= 23) return 'High (23-bit+)';
+            if (f.precision >= 16) return 'Medium (16-bit+)';
+            return 'Low';
+        };
+
+        const vHighRaw = ctx.getShaderPrecisionFormat(ctx.VERTEX_SHADER, ctx.HIGH_FLOAT);
+        const fHighRaw = ctx.getShaderPrecisionFormat(ctx.FRAGMENT_SHADER, ctx.HIGH_FLOAT);
+
+        return {
+            vertexHigh: simple(vHighRaw),
+            fragmentHigh: simple(fHighRaw)
+        };
+
+    } catch(e) {
+        return undefined;
+    }
+}
+
 export const getCanvasFingerprint = (): { hash: string; dataUri: string } => {
   try {
     const canvas = document.createElement('canvas');

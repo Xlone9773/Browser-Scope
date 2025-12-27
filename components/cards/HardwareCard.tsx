@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Cpu, Gamepad2, ChevronRight, Activity, Hammer, Battery, BatteryCharging, Zap, ScanBarcode } from 'lucide-react';
+import { Cpu, Gamepad2, ChevronRight, Activity, Hammer, Battery, BatteryCharging, Zap, ScanBarcode, Layers } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
@@ -43,6 +43,19 @@ export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamep
       <InfoItem label={t.labels.memory} value={data.memory} />
       <InfoItem label={t.labels.gpu_renderer} value={data.gpuRenderer} />
       
+      {/* GPU Precision Badge */}
+      {data.gpuPrecision && (
+          <div className="flex items-center justify-between py-1.5 px-2 -mx-2">
+             <span className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5">
+                 <Layers size={14} className="text-slate-400" />
+                 {t.labels.shader_precision}
+             </span>
+             <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-600">
+                 {data.gpuPrecision.fragmentHigh}
+             </span>
+          </div>
+      )}
+
       {/* Visual Battery Section */}
       <div className="py-3 mt-1 mb-1 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700 px-3">
           <div className="flex items-center justify-between mb-2">

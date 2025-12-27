@@ -1,3 +1,22 @@
+export interface NetworkInformation extends EventTarget {
+  downlink?: number;
+  effectiveType?: 'slow-2g' | '2g' | '3g' | '4g';
+  rtt?: number;
+  saveData?: boolean;
+  type?: 'bluetooth' | 'cellular' | 'ethernet' | 'none' | 'wifi' | 'wimax' | 'other' | 'unknown';
+  downlinkMax?: number;
+}
+
+export interface BatteryManager extends EventTarget {
+    charging: boolean;
+    chargingTime: number;
+    dischargingTime: number;
+    level: number;
+    onchargingchange: ((this: BatteryManager, ev: Event) => any) | null;
+    onchargingtimechange: ((this: BatteryManager, ev: Event) => any) | null;
+    ondischargingtimechange: ((this: BatteryManager, ev: Event) => any) | null;
+    onlevelchange: ((this: BatteryManager, ev: Event) => any) | null;
+}
 
 // Extend the Navigator interface for non-standard or experimental APIs
 export interface ExtendedNavigator extends Navigator {
@@ -10,13 +29,13 @@ export interface ExtendedNavigator extends Navigator {
     brands: { brand: string; version: string }[];
     mobile: boolean;
     platform: string;
+    getHighEntropyValues: (hints: string[]) => Promise<any>;
   };
   gpu?: any;
   bluetooth?: any;
   usb?: any;
   xr?: any;
   nfc?: any;
-  // Fix: Removed 'share' property to avoid conflict with standard Navigator interface where it is required
   windowControlsOverlay?: any;
   hid?: any;
   serial?: any;
@@ -26,57 +45,14 @@ export interface ExtendedNavigator extends Navigator {
   ml?: any; // WebNN
 }
 
-export interface NetworkInformation extends EventTarget {
-  type?: string;
-  effectiveType?: string;
-  downlinkMax?: number;
-  downlink?: number;
-  rtt?: number;
-  saveData?: boolean;
-  onchange?: EventListener;
-}
-
-export interface BatteryManager extends EventTarget {
-  charging: boolean;
-  chargingTime: number;
-  dischargingTime: number;
-  level: number;
-  onchargingchange: EventListener;
-  onchargingtimechange: EventListener;
-  ondischargingtimechange: EventListener;
-  onlevelchange: EventListener;
-}
-
 export interface CodecInfo {
-  name: string;
-  supported: boolean;
+    name: string;
+    supported: boolean;
 }
 
 export interface DrmSystem {
-  name: string;
-  supported: boolean;
-  securityLevel?: string;
-}
-
-export interface AiReadiness {
-  score: number; // Raw benchmark score
-  flops: string; // Estimated GFLOPS string
-  level: 'Low' | 'Medium' | 'High' | 'Ultra';
-  description: string;
-}
-
-export interface ScoreFactor {
-  id: string; // Translation key
-  value: string;
-  score: number; // 0-10 impact
-  maxScore: number;
-  description: string; // Translation key suffix
-}
-
-export interface FingerprintScore {
-  totalScore: number; // 0-100
-  rating: 'Low' | 'Medium' | 'High' | 'Critical';
-  factors: ScoreFactor[];
+    name: string;
+    supported: boolean;
 }
 
 export interface IntlSupport {
@@ -86,6 +62,34 @@ export interface IntlSupport {
     segmenter: boolean;
     pluralRules: boolean;
     collator: boolean;
+}
+
+export interface AiReadiness {
+    score: number;
+    flops: string;
+    level: 'Low' | 'Medium' | 'High' | 'Ultra';
+    description: string;
+}
+
+export interface ScoreFactor {
+    id: string;
+    value: string | number;
+    score: number;
+    maxScore: number;
+    description?: string;
+}
+
+export interface FingerprintScore {
+    totalScore: number;
+    rating: string;
+    factors: ScoreFactor[];
+}
+
+export interface FeatureItem {
+  name: string;
+  key: string; // for translation lookup
+  supported: boolean;
+  description: string;
 }
 
 export interface BrowserData {
@@ -100,6 +104,13 @@ export interface BrowserData {
     cookiesEnabled: boolean;
     doNotTrack: string | null;
     isPwaInstalled: boolean;
+    clientHints?: {
+        architecture?: string;
+        bitness?: string;
+        model?: string;
+        platformVersion?: string;
+        fullVersionList?: { brand: string; version: string }[];
+    };
   };
   hardware: {
     cpuCores: number | string;
@@ -110,12 +121,16 @@ export interface BrowserData {
     maxTextureSize: number | string;
     batteryLevel: string;
     isCharging: string;
-    chargingTime: string; // New
-    dischargingTime: string; // New
+    chargingTime: string;
+    dischargingTime: string;
     touchPoints: number;
     audioSampleRate: string;
     screenExtended: boolean; 
-    gamepads: number; 
+    gamepads: number;
+    gpuPrecision?: {
+        vertexHigh: string;
+        fragmentHigh: string;
+    };
   };
   fingerprints: {
     canvasHash: string;
@@ -127,72 +142,65 @@ export interface BrowserData {
     score: FingerprintScore;
   };
   display: {
-    resolution: string;
-    availableSize: string;
-    windowSize: string;
-    pixelRatio: number;
-    colorDepth: number;
-    orientation: string;
-    orientationAngle: string; // New
-    darkMode: boolean;
-    colorGamut: string;
-    hdr: boolean;
-    displayMode: string;
+      resolution: string;
+      availableSize: string;
+      windowSize: string;
+      pixelRatio: number;
+      colorDepth: number;
+      orientation: string;
+      orientationAngle: string; 
+      darkMode: boolean;
+      colorGamut: string;
+      hdr: boolean;
+      displayMode: string;
   };
   network: {
-    online: boolean;
-    effectiveType: string;
-    type: string; // New (wifi, cellular, etc)
-    downlink: string;
-    downlinkMax: string; // New
-    rtt: string;
-    saveData: boolean;
-    webrtcIp: string; 
+      online: boolean;
+      effectiveType: string;
+      type: string;
+      downlink: string;
+      downlinkMax: string; 
+      rtt: string;
+      saveData: boolean;
+      webrtcIp: string; 
   };
   security: { 
-    isBot: boolean;
-    gpcEnabled: boolean;
-    pdfViewer: boolean;
-    secureContext: boolean;
-    adBlockEnabled: boolean; // New
+      isBot: boolean;
+      gpcEnabled: boolean;
+      pdfViewer: boolean;
+      secureContext: boolean;
+      adBlockEnabled: boolean; 
   };
   ai: { 
-    wasmSupport: boolean;
-    wasmSimd: boolean;
-    webnn: boolean;
-    windowAi: boolean;
-    webgpuCompute: boolean;
-    readiness: AiReadiness; // New
+      wasmSupport: boolean;
+      wasmSimd: boolean;
+      webnn: boolean;
+      windowAi: boolean;
+      webgpuCompute: boolean;
+      readiness: AiReadiness; 
   };
   media: {
-    video: CodecInfo[];
-    audio: CodecInfo[];
-    images: CodecInfo[]; // New
-    drm: DrmSystem[]; // New
-    speechVoices: number;
-    audioChannels: number | string; // New
+      video: CodecInfo[];
+      audio: CodecInfo[];
+      images: CodecInfo[]; 
+      drm: DrmSystem[]; 
+      speechVoices: number;
+      audioChannels: number | string; 
   };
   storage: {
-    quota: string;
-    usage: string;
-    persisted: boolean;
+      quota: string;
+      usage: string;
+      persisted: boolean;
   };
   localization: {
-    timeZone: string;
-    locale: string;
-    calendar: string;
-    numberingSystem: string;
-    intlSupport: IntlSupport;
+      timeZone: string;
+      locale: string;
+      calendar: string;
+      numberingSystem: string;
+      intlSupport: IntlSupport;
   };
   features: FeatureItem[];
   pwaFeatures: FeatureItem[];
-}
-
-export interface FeatureItem {
-  name: string;
-  key: string; // for translation lookup
-  supported: boolean;
-  description: string;
 }
 
 export interface GeoPosition {

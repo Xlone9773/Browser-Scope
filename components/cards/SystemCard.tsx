@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Smartphone } from 'lucide-react';
+import { Smartphone, ChevronDown, ChevronRight } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation, Language } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
@@ -24,11 +24,31 @@ export const SystemCard: React.FC<SystemCardProps> = ({ data, t, simpleMode, lan
       return name === code ? code : name;
   });
 
+  const hasClientHints = !!data.clientHints && Object.keys(data.clientHints).length > 0;
+
   return (
     <InfoCard title={t.sections.system} icon={Smartphone}>
       <InfoItem label={t.labels.os} value={data.os} />
-      <InfoItem label={t.labels.platform} value={data.platform} />
+      
+      {/* Platform / Bitness from Hints if available */}
+      {hasClientHints && data.clientHints?.platformVersion ? (
+          <InfoItem label={t.labels.platform_ver} value={data.clientHints.platformVersion} subValue={data.clientHints.bitness ? `${data.clientHints.bitness}-bit` : undefined} />
+      ) : (
+          <InfoItem label={t.labels.platform} value={data.platform} />
+      )}
+      
       <InfoItem label={t.labels.browser} value={`${data.browserName} ${data.browserVersion}`} />
+      
+      {/* Specific Client Hints */}
+      {hasClientHints && !simpleMode && (
+          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 my-1 border border-slate-100 dark:border-slate-700/50">
+             <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2 ml-1">Client Hints (Deep Scan)</div>
+             {data.clientHints?.model && <InfoItem label={t.labels.model} value={data.clientHints.model} />}
+             {data.clientHints?.architecture && <InfoItem label={t.labels.arch} value={data.clientHints.architecture} />}
+             {data.clientHints?.bitness && <InfoItem label={t.labels.bitness} value={data.clientHints.bitness} />}
+          </div>
+      )}
+
       {!simpleMode && (
           <>
               <InfoItem label={t.labels.language} value={formatLanguageName(data.language)} subValue={data.language} />

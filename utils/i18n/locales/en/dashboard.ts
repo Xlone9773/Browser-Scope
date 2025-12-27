@@ -90,7 +90,13 @@ export const dashboard = {
     drm_support: "DRM Support",
     speech_voices: "Speech Voices",
     audio_channels: "Audio Channels",
-    pwa_install_status: "Install Status"
+    pwa_install_status: "Install Status",
+    // New Labels
+    arch: "Architecture",
+    model: "Device Model",
+    platform_ver: "OS Version",
+    bitness: "Bitness",
+    shader_precision: "Shader Precision"
   },
   actions: {
     run_benchmark: "Run Benchmark",

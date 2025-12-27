@@ -4,10 +4,10 @@ import { estimateCpuFromGpu } from '../utils/cpuMapping';
 import { formatBytes, formatSpeed } from '../utils/formatters';
 
 // Import sub-detectors
-import { getGPUInfo, getCanvasFingerprint, getWebGLFingerprint, getWebGLExtensions } from './detectors/graphics';
+import { getGPUInfo, getCanvasFingerprint, getWebGLFingerprint, getWebGLExtensions, getShaderPrecisionFormat } from './detectors/graphics';
 import { checkDrmSupport, getMediaSupport, getAudioContextInfo, getSpeechVoicesCount } from './detectors/media';
 import { getBatteryInfo, getStorageEstimate, runAiReadinessCheck, checkWasmSimd } from './detectors/hardware';
-import { detectOS, detectBrowser, detectAdBlocker, getWebRTCIP, getColorGamut, getPWAFeatures, getAdvancedFeatures } from './detectors/system';
+import { detectOS, detectBrowser, detectAdBlocker, getWebRTCIP, getColorGamut, getPWAFeatures, getAdvancedFeatures, getHighEntropyClientHints } from './detectors/system';
 import { calculateFingerprintScore } from './score';
 
 const nav = navigator as ExtendedNavigator;
@@ -22,6 +22,7 @@ export const getAllData = async (): Promise<BrowserData> => {
   const canvasInfo = getCanvasFingerprint();
   const webglHash = getWebGLFingerprint();
   const webglExtensions = getWebGLExtensions();
+  const shaderPrecision = getShaderPrecisionFormat(); // New
   const cpuModel = estimateCpuFromGpu(gpu.renderer);
   const adBlockEnabled = detectAdBlocker();
   const aiReadiness = runAiReadinessCheck();
@@ -56,13 +57,15 @@ export const getAllData = async (): Promise<BrowserData> => {
       storage,
       webrtcIp,
       speechVoices,
-      drmSupport
+      drmSupport,
+      clientHints // New
   ] = await Promise.all([
       getBatteryInfo(),
       getStorageEstimate(),
       getWebRTCIP(),
       getSpeechVoicesCount(),
-      checkDrmSupport()
+      checkDrmSupport(),
+      getHighEntropyClientHints()
   ]);
 
   const score = calculateFingerprintScore(
@@ -103,6 +106,7 @@ export const getAllData = async (): Promise<BrowserData> => {
       cookiesEnabled: navigator.cookieEnabled,
       doNotTrack: navigator.doNotTrack || 'Unspecified',
       isPwaInstalled,
+      clientHints // New
     },
     hardware: {
       cpuCores: cpuCores,
@@ -119,6 +123,7 @@ export const getAllData = async (): Promise<BrowserData> => {
       audioSampleRate: audioInfo.rate,
       screenExtended,
       gamepads,
+      gpuPrecision: shaderPrecision // New
     },
     fingerprints: {
       canvasHash: canvasInfo.hash,
