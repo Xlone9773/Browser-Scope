@@ -95,7 +95,14 @@ export const dashboard = {
     model: "Модель устройства",
     platform_ver: "Версия ОС",
     bitness: "Разрядность",
-    shader_precision: "Точность шейдеров"
+    shader_precision: "Точность шейдеров",
+    est_js: "(JS Оценка)",
+    ai_levels: {
+        Ultra: "Способен запускать локальные малые языковые модели (SLM).",
+        High: "Подходит для тяжелых вычислений и базового ML.",
+        Medium: "Плавная работа стандартных веб-приложений.",
+        Low: "Базовые веб-задачи."
+    }
   },
 
   actions: {
@@ -114,7 +121,9 @@ export const dashboard = {
     check: "Проверить",
     open_map: "Открыть карту",
     stress_test: "Стресс-тест",
-    open_video_test: "Тест видео декодера"
+    open_video_test: "Тест видео декодера",
+    open_heatmap: "Карта задержек",
+    open_storage_bench: "Тест хранилища"
   },
 
   features: {

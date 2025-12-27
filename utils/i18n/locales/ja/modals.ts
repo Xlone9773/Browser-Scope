@@ -1,4 +1,11 @@
 
+
+
+
+
+
+
+
 export const modals = {
   aboutModal: {
     title: "BrowserScopeについて",
@@ -66,7 +73,15 @@ export const modals = {
     tracking_potential: "追跡リスク",
     score_explanation: "このスコアは、現在のブラウザ環境が一意に識別される可能性を表します。スコアが高いほど、デバイスの指紋がユニークであり、Webサイトによる追跡が容易になります。",
     contributing_factors: "スコア影響因子",
+    value_label: "値",
     close: "閉じる",
+    categories: {
+        hardware: "ハードウェア",
+        browser: "ブラウザ",
+        network: "ネットワーク",
+        media: "メディア",
+        screen: "画面"
+    },
     factors: {
         canvas_hash: "Canvas指紋",
         webgl_hash: "WebGL指紋",
@@ -75,7 +90,12 @@ export const modals = {
         resolution: "画面解像度",
         audio_context: "オーディオ指紋",
         battery_status: "バッテリーAPI",
-        locale_time: "タイムゾーンと言語"
+        locale_time: "タイムゾーンと言語",
+        gpu_renderer: "GPUレンダラー",
+        webrtc_leak: "WebRTCリーク",
+        screen_advanced: "高度な画面設定",
+        drm_support: "DRMサポート",
+        touch_support: "タッチサポート"
     },
     values: {
         val_unique: "ユニーク/希少な値",
@@ -92,11 +112,17 @@ export const modals = {
         desc_hardware_unique: "CPU/メモリの組み合わせが希少です。",
         desc_hardware_generic: "一般的なハードウェア構成です。",
         desc_ua_unique: "UA文字列に過剰な情報が含まれています。",
+        desc_ua_ch: "Client Hintsが具体的なデバイスモデルを暴露しています。",
         desc_res_unique: "標準的ではない画面解像度です。",
         desc_audio_unique: "オーディオハードウェアの特徴が識別可能です。",
         desc_battery_unique: "バッテリーAPIが具体的な残量を暴露しています。",
         desc_battery_generic: "バッテリーAPIは利用不可または一般的です。",
-        desc_locale_unique: "タイムゾーンと言語の組み合わせが識別に利用可能です。"
+        desc_locale_unique: "タイムゾーンと言語の組み合わせが識別に利用可能です。",
+        desc_gpu_unique: "正確なGPUモデル文字列が暴露されています。",
+        desc_webrtc_leak: "WebRTC経由で実際のローカルまたはパブリックIPが漏洩しています。",
+        desc_webrtc_safe: "WebRTCのIP処理は難読化または無効化されています。",
+        desc_screen_advanced: "色深度、HDR、DPRの組み合わせがユニークです。",
+        desc_drm_unique: "サポートされているDRMシステムによりOS/ブラウザの組み合わせが絞り込まれます。"
     }
   },
   fingerprintModal: {
@@ -149,5 +175,113 @@ export const modals = {
     remote: "リモート",
     no_voices: "音声が見つかりません。システムがテキスト読み上げをサポートしているか確認してください。",
     loading: "音声を読み込み中..."
+  },
+  storageBenchmark: {
+    title: "ストレージベンチマーク Pro",
+    start: "ベンチマーク開始",
+    stop: "停止",
+    target_label: "ストレージターゲット",
+    size_label: "ペイロードサイズ",
+    chunk_size: "チャンクサイズ",
+    opfs: "OPFS (ファイルシステム)",
+    idb: "IndexedDB (データベース)",
+    cache: "Cache API (キャッシュ)",
+    write: "書き込み",
+    read: "読み込み",
+    mbps: "MB/s",
+    iops: "IOPS",
+    results: "結果ログ",
+    warning: "このテストは一時データをディスクに書き込みます。データは自動的に削除されますが、十分な空き容量があることを確認してください。",
+    latency: "レイテンシ (平均/ピーク)",
+    export_csv: "CSVエクスポート",
+    clear_logs: "ログをクリア",
+    chunk_size_64: "64 KB (高IOPS)",
+    chunk_size_256: "256 KB",
+    chunk_size_1024: "1 MB (バランス)",
+    chunk_size_4096: "4 MB (高スループット)",
+    table_time: "時間",
+    table_target: "ターゲット",
+    table_op: "タイプ",
+    table_chunk: "チャンク",
+    table_speed: "スループット",
+    table_latency: "レイテンシ (平均/ピーク)",
+    op_read: "読み込み",
+    op_write: "書き込み"
+  },
+  heatmap: {
+    title: "グローバルネットワーク品質監視",
+    start: "クイックスキャン",
+    stop: "停止",
+    region: "リージョン",
+    latency: "レイテンシ (RTT)",
+    status: "ステータス",
+    status_pending: "待機中",
+    status_error: "タイムアウト/エラー",
+    desc: "ノードをクリックすると、詳細なリンク品質トレースモード(MTRシミュレーション)に入り、継続的な測定を行います。",
+    back: "マップに戻る",
+    mtr_title: "リンク品質トレース",
+    packet_loss: "パケットロス",
+    jitter: "ジッター",
+    avg_latency: "平均レイテンシ",
+    current: "現在",
+    samples: "サンプル数",
+    regions: {
+        us_east: "米国東部 (バージニア北部)",
+        us_west: "米国西部 (カリフォルニア)",
+        ca_central: "カナダ (モントリオール)",
+        sa_brazil: "ブラジル (サンパウロ)",
+        sa_chile: "チリ (サンティアゴ)",
+        eu_uk: "英国 (ロンドン)",
+        eu_ger: "ドイツ (フランクフルト)",
+        eu_fr: "フランス (パリ)",
+        eu_se: "スウェーデン (ストックホルム)",
+        ap_india: "インド (ムンバイ)",
+        ap_sg: "シンガポール",
+        ap_jp: "日本 (東京)",
+        ap_kr: "韓国 (ソウル)",
+        ap_au: "オーストラリア (シドニー)",
+        cn_sh: "中国 (上海)",
+        cn_hk: "中国 (香港)",
+        cn_tw: "中国 (台北)",
+        af_sa: "南アフリカ (ケープタウン)"
+    }
+  },
+  aiPlayground: {
+    title: "AI プレイグラウンド",
+    desc: "ブラウザローカルで軽量AIモデル(DistilBERT)を実行します。データはアップロードされません。",
+    tasks: {
+        sentiment: {
+            title: "感情分析",
+            desc: "テキストの感情を識別 (DistilBERT)",
+            input: "感情分析したい英文を入力してください...",
+            btn: "分析開始"
+        },
+        generation: {
+            title: "テキスト生成",
+            desc: "AIによるテキスト補完 (DistilGPT2)",
+            input: "開始文を入力...",
+            btn: "生成"
+        },
+        translation: {
+            title: "翻訳",
+            desc: "英日翻訳など (T5-Small)",
+            input: "翻訳したい英文を入力...",
+            btn: "翻訳"
+        }
+    },
+    status: {
+        loading_model: "モデルウェイトを読み込み中...",
+        ready: "準備完了",
+        computing: "計算中...",
+        idle: "アイドル"
+    },
+    metrics: {
+        time_load: "ロード時間",
+        time_inference: "推論時間",
+        device: "デバイス"
+    },
+    result_label: "分析結果",
+    confidence: "信頼度",
+    btn_load: "モデルを読み込む"
   }
 };

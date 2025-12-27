@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { HardDrive, Trash2 } from 'lucide-react';
+import { HardDrive, Trash2, Gauge, ChevronRight } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
 import { Button } from '../ui/Button';
+import { useModalManager } from '../../hooks/useModalManager';
 
 interface StorageCardProps {
   data: BrowserData['storage'];
@@ -12,6 +13,8 @@ interface StorageCardProps {
 }
 
 export const StorageCard: React.FC<StorageCardProps> = ({ data, t }) => {
+  const { open } = useModalManager();
+
   const trVal = (val: string | boolean | undefined | null) => {
     if (val === true) return t.values.supported;
     if (val === false) return t.values.not_supported;
@@ -41,11 +44,8 @@ export const StorageCard: React.FC<StorageCardProps> = ({ data, t }) => {
 
   // Handle clear
   const clearStorage = () => {
-      // In a real app this might need confirmation or state update, 
-      // but here we just call the native API and reload/re-render happens via parent or refresh
       localStorage.clear();
       sessionStorage.clear();
-      // Force reload to reflect changes or just alert
       window.location.reload();
   };
 
@@ -75,7 +75,29 @@ export const StorageCard: React.FC<StorageCardProps> = ({ data, t }) => {
         <InfoItem label={t.labels.storage_quota} value={data.quota} />
         <InfoItem label={t.labels.storage_persisted} value={trVal(data.persisted)} />
         
-        <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50">
+        <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50 flex gap-2">
+            <Button 
+                variant="soft" 
+                size="xs" 
+                fullWidth 
+                onClick={() => {
+                    // We need to trigger the modal opening via the parent or context. 
+                    // Since InfoCard is just a display component, we rely on props or a global context.
+                    // However, in this architecture, modals are managed in App.tsx.
+                    // But wait, I added useModalManager but it provides state, not global dispatch unless using Context.
+                    // The standard pattern here is passing an `onOpen` prop.
+                    // Since I cannot change App.tsx's props passed to StorageCard easily without changing App.tsx too,
+                    // I will dispatch a custom event which App.tsx can listen to, or ideally, update App.tsx.
+                    
+                    // Actually, the cleanest way is to use the global window event or just update App.tsx to pass the handler.
+                    // Let's assume App.tsx will be updated to pass `onOpenBenchmark` prop if I change the interface.
+                    // But I need to update App.tsx anyway to register the modal.
+                    window.dispatchEvent(new CustomEvent('open-storage-benchmark'));
+                }} 
+                leftIcon={<Gauge size={14} />}
+            >
+                {t.actions.open_storage_bench}
+            </Button>
             <Button 
                 variant="danger-soft" 
                 size="xs" 

@@ -1,4 +1,10 @@
 
+
+
+
+
+
+
 export const modals = {
   aboutModal: {
     title: "О BrowserScope",
@@ -76,7 +82,15 @@ export const modals = {
     tracking_potential: "Риск отслеживания",
     score_explanation: "Эта оценка представляет вероятность уникальной идентификации вашей текущей браузерной среды. Чем выше балл, тем уникальнее отпечаток вашего устройства и тем легче сайтам отслеживать вас.",
     contributing_factors: "Влияющие факторы",
+    value_label: "Значение",
     close: "Закрыть",
+    categories: {
+        hardware: "Аппаратное обеспечение",
+        browser: "Браузер",
+        network: "Сеть",
+        media: "Медиа",
+        screen: "Экран"
+    },
     factors: {
         canvas_hash: "Canvas Hash",
         webgl_hash: "WebGL Hash",
@@ -85,7 +99,12 @@ export const modals = {
         resolution: "Разрешение экрана",
         audio_context: "Аудио отпечаток",
         battery_status: "API Батареи",
-        locale_time: "Часовой пояс и Язык"
+        locale_time: "Часовой пояс и Язык",
+        gpu_renderer: "GPU Рендерер",
+        webrtc_leak: "Утечка WebRTC",
+        screen_advanced: "Расширенный экран",
+        drm_support: "Поддержка DRM",
+        touch_support: "Поддержка тача"
     },
     values: {
         val_unique: "Уникальное/Редкое",
@@ -102,11 +121,17 @@ export const modals = {
         desc_hardware_unique: "Редкое сочетание CPU/Памяти.",
         desc_hardware_generic: "Распространенная конфигурация оборудования.",
         desc_ua_unique: "Строка UA содержит слишком много специфичной информации.",
+        desc_ua_ch: "Client Hints раскрывают конкретную модель устройства.",
         desc_res_unique: "Нестандартное разрешение экрана.",
         desc_audio_unique: "Характеристики аудио оборудования могут быть идентифицированы.",
         desc_battery_unique: "API батареи раскрывает точный уровень заряда.",
         desc_battery_generic: "API батареи недоступен или возвращает общие значения.",
-        desc_locale_unique: "Комбинация часового пояса и языка помогает в идентификации."
+        desc_locale_unique: "Комбинация часового пояса и языка помогает в идентификации.",
+        desc_gpu_unique: "Раскрыта точная модель видеокарты.",
+        desc_webrtc_leak: "Реальный локальный или публичный IP утек через WebRTC.",
+        desc_webrtc_safe: "Обработка IP в WebRTC обфусцирована или отключена.",
+        desc_screen_advanced: "Комбинация глубины цвета, HDR и DPR уникальна.",
+        desc_drm_unique: "Поддерживаемые системы DRM сужают круг OS/Браузера."
     }
   },
   fingerprintModal: {
@@ -159,5 +184,113 @@ export const modals = {
     remote: "Удаленный",
     no_voices: "Голоса не найдены. Убедитесь, что ваша система поддерживает синтез речи.",
     loading: "Загрузка голосов..."
+  },
+  storageBenchmark: {
+    title: "Бенчмарк Хранилища Pro",
+    start: "Начать тест",
+    stop: "Стоп",
+    target_label: "Цель",
+    size_label: "Размер данных",
+    chunk_size: "Размер блока",
+    opfs: "OPFS (Файловая система)",
+    idb: "IndexedDB (База данных)",
+    cache: "Cache API (Кэш)",
+    write: "Запись",
+    read: "Чтение",
+    mbps: "МБ/с",
+    iops: "IOPS",
+    results: "Результаты",
+    warning: "Этот тест записывает временные данные на диск. Они будут удалены автоматически, но убедитесь в наличии свободного места.",
+    latency: "Задержка (Сред./Пик)",
+    export_csv: "Экспорт CSV",
+    clear_logs: "Очистить логи",
+    chunk_size_64: "64 КБ (Высокий IOPS)",
+    chunk_size_256: "256 КБ",
+    chunk_size_1024: "1 МБ (Сбалансировано)",
+    chunk_size_4096: "4 МБ (Высокая пропускная способность)",
+    table_time: "Время",
+    table_target: "Цель",
+    table_op: "Тип",
+    table_chunk: "Блок",
+    table_speed: "Скорость",
+    table_latency: "Задержка (Сред./Пик)",
+    op_read: "Чтение",
+    op_write: "Запись"
+  },
+  heatmap: {
+    title: "Мониторинг качества сети",
+    start: "Быстрое сканирование",
+    stop: "Стоп",
+    region: "Регион",
+    latency: "Задержка (RTT)",
+    status: "Статус",
+    status_pending: "Ожидание",
+    status_error: "Ошибка/Таймаут",
+    desc: "Нажмите на узел, чтобы войти в режим детального отслеживания качества связи (симуляция MTR).",
+    back: "Вернуться к карте",
+    mtr_title: "Трассировка качества",
+    packet_loss: "Потеря пакетов",
+    jitter: "Джиттер",
+    avg_latency: "Ср. Задержка",
+    current: "Текущая",
+    samples: "Семплы",
+    regions: {
+        us_east: "США Восток (С. Вирджиния)",
+        us_west: "США Запад (Калифорния)",
+        ca_central: "Канада (Монреаль)",
+        sa_brazil: "Бразилия (Сан-Паулу)",
+        sa_chile: "Чили (Сантьяго)",
+        eu_uk: "Великобритания (Лондон)",
+        eu_ger: "Германия (Франкфурт)",
+        eu_fr: "Франция (Париж)",
+        eu_se: "Швеция (Стокгольм)",
+        ap_india: "Индия (Мумбаи)",
+        ap_sg: "Сингапур",
+        ap_jp: "Япония (Токио)",
+        ap_kr: "Южная Корея (Сеул)",
+        ap_au: "Австралия (Сидней)",
+        cn_sh: "Китай (Шанхай)",
+        cn_hk: "Китай (Гонконг)",
+        cn_tw: "Китай (Тайбэй)",
+        af_sa: "Южная Африка (Кейптаун)"
+    }
+  },
+  aiPlayground: {
+    title: "AI Песочница",
+    desc: "Запуск легковесных AI моделей (DistilBERT) локально в браузере. Данные не отправляются на сервер.",
+    tasks: {
+        sentiment: {
+            title: "Анализ тональности",
+            desc: "Определение эмоций (DistilBERT)",
+            input: "Введите текст на английском...",
+            btn: "Анализ"
+        },
+        generation: {
+            title: "Генерация текста",
+            desc: "Автодополнение текста (DistilGPT2)",
+            input: "Начните предложение...",
+            btn: "Генерировать"
+        },
+        translation: {
+            title: "Перевод",
+            desc: "Англ -> Нем/Франц (T5-Small)",
+            input: "Введите текст для перевода...",
+            btn: "Перевести"
+        }
+    },
+    status: {
+        loading_model: "Загрузка весов модели...",
+        ready: "Модель готова",
+        computing: "Вычисление...",
+        idle: "Ожидание"
+    },
+    metrics: {
+        time_load: "Время загрузки",
+        time_inference: "Время инференса",
+        device: "Устройство"
+    },
+    result_label: "Результат анализа",
+    confidence: "Уверенность",
+    btn_load: "Загрузить модель"
   }
 };

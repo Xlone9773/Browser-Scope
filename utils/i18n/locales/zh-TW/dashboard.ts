@@ -95,7 +95,14 @@ export const dashboard = {
     model: "裝置型號",
     platform_ver: "系統版本",
     bitness: "位元寬度 (Bitness)",
-    shader_precision: "著色器精度"
+    shader_precision: "著色器精度",
+    est_js: "(JS 估算)",
+    ai_levels: {
+        Ultra: "能夠執行本地小型語言模型 (SLM)。",
+        High: "適合繁重運算及基礎機器學習推理。",
+        Medium: "流暢執行標準 Web 應用。",
+        Low: "僅限基礎網頁任務。"
+    }
   },
 
   actions: {
@@ -114,7 +121,9 @@ export const dashboard = {
     check: "檢查",
     open_map: "打開地圖",
     stress_test: "壓力測試",
-    open_video_test: "視訊解碼測試"
+    open_video_test: "視訊解碼測試",
+    open_heatmap: "全球延遲熱力圖",
+    open_storage_bench: "儲存效能測試"
   },
 
   features: {

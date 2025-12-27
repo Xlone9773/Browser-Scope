@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Cpu, Gamepad2, ChevronRight, Activity, Hammer, Battery, BatteryCharging, Zap, ScanBarcode, Layers, Eye } from 'lucide-react';
+import { Cpu, Gamepad2, ChevronRight, Activity, Hammer, Battery, BatteryCharging, Zap, ScanBarcode, Layers, Eye, Music } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
@@ -14,9 +14,10 @@ interface HardwareCardProps {
   onOpenTools: () => void;
   onOpenVision?: () => void;
   onOpenGraphics?: () => void;
+  onOpenMidi?: () => void;
 }
 
-export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamepad, onOpenSensors, onOpenTools, onOpenVision, onOpenGraphics }) => {
+export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamepad, onOpenSensors, onOpenTools, onOpenVision, onOpenGraphics, onOpenMidi }) => {
   
   // Parse battery level
   const batteryLevel = parseFloat(data.batteryLevel) || 0;
@@ -116,13 +117,18 @@ export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamep
           </Button>
       </div>
       {/* New Vision Row */}
-      {onOpenVision && (
-          <div className="mt-2">
+      <div className="mt-2 grid grid-cols-2 gap-2">
+          {onOpenVision && (
               <Button fullWidth variant="soft" size="xs" onClick={onOpenVision} className="!bg-emerald-50 !text-emerald-600 dark:!bg-emerald-900/30 dark:!text-emerald-400 hover:!bg-emerald-100" leftIcon={<ScanBarcode size={14} />}>
                   {t.actions.open_vision}
               </Button>
-          </div>
-      )}
+          )}
+          {onOpenMidi && (
+              <Button fullWidth variant="soft" size="xs" onClick={onOpenMidi} className="!bg-purple-50 !text-purple-600 dark:!bg-purple-900/30 dark:!text-purple-400 hover:!bg-purple-100" leftIcon={<Music size={14} />}>
+                  Web MIDI
+              </Button>
+          )}
+      </div>
     </InfoCard>
   );
 };

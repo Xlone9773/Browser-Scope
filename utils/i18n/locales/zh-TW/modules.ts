@@ -1,5 +1,180 @@
 
-export const tools = {
+export const modules = {
+  settings: {
+    title: "設定",
+    nav: {
+        general: "通用",
+        network: "網絡工具",
+        display: "螢幕檢測",
+        storage: "儲存管理",
+        resources: "資源監控",
+        developer: "開發者",
+        modules: "模組管理"
+    },
+    general: {
+        simpleMode: {
+            title: "極簡模式",
+            desc: "隱藏部分複雜的技術細節，僅顯示核心資訊。"
+        },
+        scrollbar: {
+            title: "隱藏捲軸",
+            desc: "強制隱藏系統預設的捲軸樣式。"
+        },
+        timeFormat: {
+            title: "時間格式",
+            desc: "在 12 小時制和 24 小時制之間切換。"
+        },
+        performance: {
+            title: "高性能模式",
+            desc: "禁用模糊特效與透明度以降低 GPU 負載。"
+        }
+    },
+    network: {
+        ip: {
+            title: "IP 配置資訊",
+            ipv4: "IPv4",
+            ipv4_desc: "標準網際網路協定",
+            ipv6: "IPv6",
+            ipv6_desc: "下一代網際網路協定",
+            fetch: "查詢 IP",
+            check_v6: "檢測 IPv6",
+            success_v6: "支援 IPv6",
+            fail_v6: "不支援 IPv6"
+        },
+        diagnostics: {
+            title: "進階網絡診斷",
+            webrtc: {
+                title: "WebRTC 洩漏檢測",
+                desc: "通過 STUN 伺服器嘗試獲取真實的區域網路或公網 IP。",
+                btn: "開始檢測",
+                columns: { type: "類型", ip: "IP 位址", proto: "協定", port: "連接埠" }
+            },
+            dns: {
+                title: "DNS 洩漏檢測",
+                desc: "嘗試檢測您目前使用的 DNS 解析伺服器。",
+                btn: "檢測 DNS",
+                label_ip: "DNS 伺服器 IP",
+                label_geo: "DNS 地理位置"
+            },
+            proto: {
+                title: "協定支援",
+                desc: "檢測瀏覽器對 HTTP/2 和 HTTP/3 (QUIC) 的支援情況。",
+                btn: "檢查協定",
+                h2: "HTTP/2 支援",
+                h3: "HTTP/3 支援"
+            }
+        },
+        connectivity: {
+            title: "連通性測試",
+            placeholder: "輸入網址 (例如 google.com)",
+            btn: "測試"
+        },
+        cdn: {
+            title: "CDN 狀態",
+            check_all: "檢查全部"
+        }
+    },
+    display: {
+        deadPixel: {
+            title: "壞點檢測",
+            desc: "全螢幕顯示純色背景，幫助您尋找螢幕上的壞點或亮點。點擊任意處退出。",
+            colors: { red: "紅", green: "綠", blue: "藍", white: "白", black: "黑" }
+        },
+        hdr: {
+            title: "HDR 狀態",
+            desc: "檢測目前顯示器和瀏覽器對高動態範圍內容的支援。",
+            rangeScreen: "螢幕動態範圍",
+            rangeVideo: "視訊動態範圍",
+            brightnessTest: "EDR 亮度測試",
+            brightnessDesc: "如果支援 HDR/EDR，中間的方塊應比白色背景更亮。",
+            labelSdr: "SDR 白色",
+            labelEdr: "EDR 高亮白"
+        },
+        gamut: {
+            title: "廣色域測試 (P3)",
+            desc: "如果在紅色方塊中能看到 Logo，說明您的裝置支援 P3 廣色域。",
+            unsupported: "您的瀏覽器不支援 Display-P3 色域檢測。"
+        },
+        gradient: {
+            title: "色深與灰階",
+            desc: "檢查色彩過渡是否平滑（無斷層）以及暗部細節。"
+        }
+    },
+    storage: {
+        local: {
+            title: "本地資料",
+            clearDesc: "清除所有網站資料",
+            clearBtn: "清除"
+        },
+        sw: {
+            title: "Service Workers",
+            desc: "管理後台運行的 Service Worker 腳本。",
+            unregisterBtn: "登出所有"
+        },
+        usageLabel: "儲存空間使用率"
+    },
+    resources: {
+        title: "外部資源載入列表",
+        columns: { name: "資源名稱", type: "類型", duration: "耗時" }
+    },
+    developer: {
+        warning: {
+            title: "操作極度危險！",
+            desc: "這裡是為開發者準備的偵錯區域。如果不清楚自己在做什麼，請立即關閉視窗！\n\n任何誘導你在此處貼上代碼的人都是詐騙。執行未知代碼可能導致你的隱私洩露、帳號被盜或裝置被惡意控制。",
+            agree: "我已知曉風險，繼續"
+        },
+        nav: {
+            events: "事件流",
+            inspector: "物件檢查",
+            console: "控制台"
+        },
+        actions: {
+            float: "浮動視窗",
+            dock: "恢復到底部"
+        },
+        events: {
+            placeholder: "等待系統事件...",
+            copy: "複製日誌",
+            clear: "清空"
+        },
+        console: {
+            placeholder: "輸入 JS 代碼 (輸入 '\\' 查看預設)...",
+            clearInput: "清除輸入",
+            resultPlaceholder: "運行結果將顯示在這裡...",
+            copy: "複製結果",
+            download: "下載結果",
+            clear: "清空結果",
+            quickCommands: "快捷指令",
+            run: "立即運行"
+        }
+    },
+    modules: {
+        title: "模組管理",
+        desc: "監控和管理已載入的模態框組件。卸載未使用的模組可以釋放記憶體和 GPU 資源。",
+        headers: {
+            name: "模組名稱",
+            status: "狀態",
+            impact: "資源佔用",
+            action: "操作"
+        },
+        status: {
+            active: "運行中",
+            inactive: "閒置",
+            cached: "已快取",
+            system: "系統核心"
+        },
+        impact: {
+            low: "低",
+            med: "中",
+            high: "高"
+        },
+        actions: {
+            unload: "強制關閉",
+            unloadAll: "卸載所有活動模組"
+        }
+    }
+  },
+
   speedTest: {
     title: "網絡速度測試",
     action: {
@@ -48,6 +223,7 @@ export const tools = {
         custom: "自定義 URL"
     }
   },
+
   cameraTool: {
     title: "相機測試",
     btn_open: "打開相機",
@@ -66,6 +242,7 @@ export const tools = {
     error_hardware: "硬體被佔用或無法讀取",
     error_generic: "發生未知錯誤"
   },
+
   audioTool: {
     title: "麥克風測試",
     btn_open: "打開麥克風",
@@ -79,6 +256,7 @@ export const tools = {
     error_mic: "無法存取麥克風",
     close: "關閉"
   },
+
   webglTool: {
     title: "WebGL 擴充",
     count: "個擴充",
@@ -86,16 +264,29 @@ export const tools = {
     spec_link: "查看規範文件",
     close: "關閉"
   },
+
   base64Tool: {
     title: "Base64 資料",
     desc: "指紋原始資料",
     copy: "複製全部",
     close: "關閉"
   },
+
   imageDetails: {
     dimensions: "尺寸",
     size: "大小"
   },
+
+  aiPlayground: {
+    title: "AI 遊樂場",
+    desc: "在瀏覽器本地運行輕量級 AI 模型 (DistilBERT)。無需上傳數據。",
+    model_name: "情感分析模型",
+    loading_model: "正在載入模型權重...",
+    input_placeholder: "輸入一段英文文本進行情感分析...",
+    result_label: "分析結果",
+    confidence: "置信度"
+  },
+
   computeStress: {
     title: "前沿算力壓力測試",
     warning: "警告：此測試將最大化 GPU 負載。可能會導致電池耗盡、發熱或系統暫時凍結。請謹慎使用。",
@@ -114,6 +305,7 @@ export const tools = {
     stability: "穩定性",
     peak: "峰值"
   },
+
   gamepadTool: {
     title: "手把與藍牙",
     tab_gamepad: "遊戲手把",
@@ -126,6 +318,7 @@ export const tools = {
     bt_no_devices: "暫無裝置",
     bt_not_supported: "目前瀏覽器不支援 Web Bluetooth API"
   },
+
   hardwareToolsModal: {
     title: "硬體互動工具",
     tab_vibrate: "振動",
@@ -168,6 +361,7 @@ export const tools = {
     tooltip_drop: "可能掉幀",
     status_done: "完成"
   },
+
   visionModal: {
     title: "視覺能力 (Vision)",
     unsupported_desc: "您的瀏覽器不支援原生的 BarcodeDetector API。您可以使用 Polyfill 模式（軟體解碼）來測試視覺識別能力。",
@@ -192,6 +386,7 @@ export const tools = {
     auto_scan: "自動掃描",
     manual_capture: "手動拍攝"
   },
+
   midiModal: {
     title: "Web MIDI 工作室",
     no_inputs: "未檢測到 MIDI 輸入裝置。請連接裝置。",

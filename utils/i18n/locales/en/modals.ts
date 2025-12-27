@@ -1,4 +1,6 @@
 
+
+
 export const modals = {
   aboutModal: {
     title: "About BrowserScope",
@@ -76,16 +78,29 @@ export const modals = {
     tracking_potential: "Tracking Potential",
     score_explanation: "This score represents the likelihood of your browser being uniquely identified. Higher scores mean your device fingerprint is more unique.",
     contributing_factors: "Contributing Factors",
+    value_label: "Value",
     close: "Close",
+    categories: {
+        hardware: "Hardware",
+        browser: "Browser",
+        network: "Network",
+        media: "Media",
+        screen: "Screen"
+    },
     factors: {
         canvas_hash: "Canvas Hash",
         webgl_hash: "WebGL Hash",
-        hardware_concurrency: "Hardware Concurrency",
-        user_agent: "User Agent Complexity",
-        resolution: "Screen Resolution",
-        audio_context: "Audio Fingerprint",
+        hardware_concurrency: "Concurrency",
+        user_agent: "User Agent",
+        resolution: "Resolution",
+        audio_context: "Audio Context",
         battery_status: "Battery API",
-        locale_time: "Timezone & Locale"
+        locale_time: "Timezone & Locale",
+        gpu_renderer: "GPU Renderer",
+        webrtc_leak: "WebRTC Leak",
+        screen_advanced: "Screen Advanced",
+        drm_support: "DRM Systems",
+        touch_support: "Touch Support"
     },
     values: {
         val_unique: "Unique/Rare Value",
@@ -102,11 +117,17 @@ export const modals = {
         desc_hardware_unique: "CPU/Memory combo is rare.",
         desc_hardware_generic: "Common hardware config.",
         desc_ua_unique: "UA string reveals too much info.",
+        desc_ua_ch: "Client Hints expose specific model data.",
         desc_res_unique: "Non-standard screen resolution.",
         desc_audio_unique: "Audio hardware characteristics identified.",
         desc_battery_unique: "Battery API exposed specific levels.",
         desc_battery_generic: "Battery API unavailable or generic.",
-        desc_locale_unique: "Timezone/Language combo aids ID."
+        desc_locale_unique: "Timezone/Language combo aids ID.",
+        desc_gpu_unique: "Exact GPU model string exposed.",
+        desc_webrtc_leak: "Real local or public IP leaked via WebRTC.",
+        desc_webrtc_safe: "WebRTC IP handling is obfuscated or disabled.",
+        desc_screen_advanced: "Combination of color depth, HDR and DPR is unique.",
+        desc_drm_unique: "Supported DRM systems narrow down OS/Browser combo."
     }
   },
   fingerprintModal: {
@@ -159,5 +180,113 @@ export const modals = {
     remote: "Remote",
     no_voices: "No voices found. Ensure your system supports Text-to-Speech.",
     loading: "Loading voices..."
+  },
+  storageBenchmark: {
+    title: "Storage Benchmark Pro",
+    start: "Start Benchmark",
+    stop: "Stop",
+    target_label: "Storage Target",
+    size_label: "Payload Size",
+    chunk_size: "Chunk Size",
+    opfs: "OPFS (File System)",
+    idb: "IndexedDB",
+    cache: "Cache API",
+    write: "Write",
+    read: "Read",
+    mbps: "MB/s",
+    iops: "IOPS",
+    results: "Results Log",
+    warning: "This test writes temporary data to your disk. It will be cleared automatically, but ensure you have free space.",
+    latency: "Avg/Peak Latency",
+    export_csv: "Export CSV",
+    clear_logs: "Clear Logs",
+    chunk_size_64: "64 KB (High IOPS)",
+    chunk_size_256: "256 KB",
+    chunk_size_1024: "1 MB (Balanced)",
+    chunk_size_4096: "4 MB (High Throughput)",
+    table_time: "Time",
+    table_target: "Target",
+    table_op: "Type",
+    table_chunk: "Chunk",
+    table_speed: "Throughput",
+    table_latency: "Latency (Avg/Peak)",
+    op_read: "Read",
+    op_write: "Write"
+  },
+  heatmap: {
+    title: "Global Network Quality",
+    start: "Quick Scan",
+    stop: "Stop",
+    region: "Region",
+    latency: "Latency",
+    status: "Status",
+    status_pending: "Pending",
+    status_error: "Timeout",
+    desc: "Click a node to run a continuous Link Quality Trace (MTR simulation).",
+    back: "Back to Map",
+    mtr_title: "Link Quality Trace",
+    packet_loss: "Packet Loss",
+    jitter: "Jitter",
+    avg_latency: "Avg Latency",
+    current: "Current",
+    samples: "Samples",
+    regions: {
+        us_east: "US East (N. Virginia)",
+        us_west: "US West (California)",
+        ca_central: "Canada (Montreal)",
+        sa_brazil: "Brazil (São Paulo)",
+        sa_chile: "Chile (Santiago)",
+        eu_uk: "UK (London)",
+        eu_ger: "Germany (Frankfurt)",
+        eu_fr: "France (Paris)",
+        eu_se: "Sweden (Stockholm)",
+        ap_india: "India (Mumbai)",
+        ap_sg: "Singapore",
+        ap_jp: "Japan (Tokyo)",
+        ap_kr: "South Korea (Seoul)",
+        ap_au: "Australia (Sydney)",
+        cn_sh: "China (Shanghai)",
+        cn_hk: "China (Hong Kong)",
+        cn_tw: "China (Taipei)",
+        af_sa: "South Africa (Cape Town)"
+    }
+  },
+  aiPlayground: {
+    title: "AI Playground",
+    desc: "Run lightweight AI models locally in your browser via WebAssembly. Privacy first - no data leaves your device.",
+    tasks: {
+        sentiment: {
+            title: "Sentiment Analysis",
+            desc: "Detect emotion in text (DistilBERT)",
+            input: "Enter English text to analyze sentiment...",
+            btn: "Analyze"
+        },
+        generation: {
+            title: "Text Generation",
+            desc: "AI Autocomplete (DistilGPT2)",
+            input: "Start typing a sentence...",
+            btn: "Generate"
+        },
+        translation: {
+            title: "Translation",
+            desc: "English to German/French (T5-Small)",
+            input: "Enter English text to translate...",
+            btn: "Translate"
+        }
+    },
+    status: {
+        loading_model: "Downloading Model",
+        ready: "Model Ready",
+        computing: "Computing...",
+        idle: "Idle"
+    },
+    metrics: {
+        time_load: "Load Time",
+        time_inference: "Inference",
+        device: "Device"
+    },
+    result_label: "Result",
+    confidence: "Confidence",
+    btn_load: "Load Model"
   }
 };

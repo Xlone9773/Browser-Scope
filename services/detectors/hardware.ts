@@ -70,17 +70,15 @@ export const runAiReadinessCheck = (): AiReadiness => {
     const score = Math.round(ops / 1000); 
     
     let level: 'Low' | 'Medium' | 'High' | 'Ultra' = 'Low';
-    let desc = "Basic web tasks";
     
-    if (score > 3000) { level = 'Ultra'; desc = "Capable of running local Small Language Models (SLM)."; }
-    else if (score > 1500) { level = 'High'; desc = "Good for heavy compute & basic ML inference."; }
-    else if (score > 500) { level = 'Medium'; desc = "Smooth for standard web apps."; }
+    if (score > 3000) { level = 'Ultra'; }
+    else if (score > 1500) { level = 'High'; }
+    else if (score > 500) { level = 'Medium'; }
     
     return {
         score,
-        flops: gflops.toFixed(3) + " GFLOPS (Est. JS)",
-        level,
-        description: desc
+        flops: gflops,
+        level
     };
 };
 

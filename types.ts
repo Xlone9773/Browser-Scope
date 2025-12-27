@@ -1,3 +1,4 @@
+
 export interface NetworkInformation extends EventTarget {
   downlink?: number;
   effectiveType?: 'slow-2g' | '2g' | '3g' | '4g';
@@ -42,7 +43,7 @@ export interface ExtendedNavigator extends Navigator {
   presentation?: any;
   globalPrivacyControl?: boolean;
   webdriver: boolean;
-  ml?: any; // WebNN
+  ml: any; // WebNN (Required to match Navigator interface)
 }
 
 export interface CodecInfo {
@@ -66,9 +67,8 @@ export interface IntlSupport {
 
 export interface AiReadiness {
     score: number;
-    flops: string;
+    flops: number;
     level: 'Low' | 'Medium' | 'High' | 'Ultra';
-    description: string;
 }
 
 export interface ScoreFactor {
@@ -77,12 +77,20 @@ export interface ScoreFactor {
     score: number;
     maxScore: number;
     description?: string;
+    category: 'hardware' | 'browser' | 'screen' | 'media' | 'network';
 }
 
 export interface FingerprintScore {
     totalScore: number;
     rating: string;
     factors: ScoreFactor[];
+    categoryScores: {
+        hardware: number;
+        browser: number;
+        screen: number;
+        media: number;
+        network: number;
+    };
 }
 
 export interface FeatureItem {

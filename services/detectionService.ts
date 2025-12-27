@@ -68,17 +68,24 @@ export const getAllData = async (): Promise<BrowserData> => {
       getHighEntropyClientHints()
   ]);
 
-  const score = calculateFingerprintScore(
-      canvasInfo.hash, 
-      webglHash, 
-      navigator.userAgent, 
-      `${window.screen.width} x ${window.screen.height}`,
-      battery.level,
-      audioInfo.rate,
-      cpuCores,
-      deviceMemory,
-      webrtcIp
-  );
+  const score = calculateFingerprintScore({
+      canvasHash: canvasInfo.hash, 
+      webglHash: webglHash, 
+      userAgent: navigator.userAgent, 
+      cpu: cpuCores,
+      memory: deviceMemory,
+      gpuRenderer: gpu.renderer,
+      battery: battery.level,
+      screenRes: `${window.screen.width} x ${window.screen.height}`,
+      pixelRatio: window.devicePixelRatio,
+      colorDepth: window.screen.colorDepth,
+      audioRate: audioInfo.rate,
+      webRTC: webrtcIp,
+      drmCount: drmSupport.filter(d => d.supported).length,
+      touchPoints: navigator.maxTouchPoints || 0,
+      clientHints: clientHints,
+      hdr: window.matchMedia('(dynamic-range: high)').matches
+  });
 
   const isPwaInstalled = window.matchMedia('(display-mode: standalone)').matches;
 

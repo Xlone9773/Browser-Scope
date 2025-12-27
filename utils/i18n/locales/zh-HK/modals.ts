@@ -1,4 +1,9 @@
 
+
+
+
+
+
 export const modals = {
   aboutModal: {
     title: "關於 BrowserScope",
@@ -51,7 +56,7 @@ export const modals = {
         {
             version: "1.2.0",
             date: "2024-03-15",
-            changes: ["新增網絡診斷工具 (WebRTC/DNS/協定檢測)", "新增屏幕色域與 HDR 測試", "優化指紋評分演算法"]
+            changes: ["新增網絡診斷工具 (WebRTC/DNS/協定檢測)", "新增屏幕色域與 HDR 测试", "優化指紋評分演算法"]
         },
         {
             version: "1.1.0",
@@ -76,7 +81,15 @@ export const modals = {
     tracking_potential: "追蹤風險",
     score_explanation: "此分數表示您目前的瀏覽器環境被唯一識別的可能性。分數越高，您的裝置指紋越獨特，越容易被網站追蹤。",
     contributing_factors: "評分影響因子",
+    value_label: "數值",
     close: "關閉",
+    categories: {
+        hardware: "硬件",
+        browser: "瀏覽器",
+        network: "網絡",
+        media: "多媒體",
+        screen: "屏幕"
+    },
     factors: {
         canvas_hash: "Canvas 指紋",
         webgl_hash: "WebGL 指紋",
@@ -85,7 +98,12 @@ export const modals = {
         resolution: "屏幕解像度",
         audio_context: "音訊指紋",
         battery_status: "電池 API",
-        locale_time: "時區與語言"
+        locale_time: "時區與語言",
+        gpu_renderer: "GPU 渲染器",
+        webrtc_leak: "WebRTC 洩漏",
+        screen_advanced: "進階屏幕參數",
+        drm_support: "DRM 支援",
+        touch_support: "觸控支援"
     },
     values: {
         val_unique: "獨特/罕見值",
@@ -102,11 +120,17 @@ export const modals = {
         desc_hardware_unique: "CPU/記憶體組合較為罕見。",
         desc_hardware_generic: "常見的硬件配置。",
         desc_ua_unique: "UA 字串包含過多特有資訊。",
+        desc_ua_ch: "Client Hints 暴露了具體的設備型號。",
         desc_res_unique: "非標準的屏幕解像度。",
         desc_audio_unique: "音訊硬件特徵可被識別。",
         desc_battery_unique: "電池狀態 API 暴露了具體電量。",
         desc_battery_generic: "電池 API 不可用或返回通用值。",
-        desc_locale_unique: "時區與語言組合可用於輔助識別。"
+        desc_locale_unique: "時區與語言組合可用於輔助識別。",
+        desc_gpu_unique: "完整的顯示卡型號字串被暴露。",
+        desc_webrtc_leak: "WebRTC 洩漏了真實的局域網或公網 IP。",
+        desc_webrtc_safe: "WebRTC IP 已被混淆或禁用。",
+        desc_screen_advanced: "色深、HDR 和像素比的組合較為獨特。",
+        desc_drm_unique: "支援的 DRM 系統組合縮小了識別範圍。"
     }
   },
   fingerprintModal: {
@@ -159,5 +183,113 @@ export const modals = {
     remote: "網上",
     no_voices: "未找到語音包。請檢查您的系統是否支援文字轉語音。",
     loading: "載入語音庫..."
+  },
+  storageBenchmark: {
+    title: "儲存效能基準測試 Pro",
+    start: "開始測試",
+    stop: "停止",
+    target_label: "儲存目標",
+    size_label: "測試規模",
+    chunk_size: "分塊大小",
+    opfs: "OPFS (私有檔案系統)",
+    idb: "IndexedDB (數據庫)",
+    cache: "Cache API (緩存)",
+    write: "寫入速度",
+    read: "讀取速度",
+    mbps: "MB/s",
+    iops: "次/秒",
+    results: "測試日誌",
+    warning: "此測試將在您的磁碟寫入臨時數據。數據會自動清除，但請確保有足夠的可用空間。",
+    latency: "延遲 (平均/峰值)",
+    export_csv: "匯出 CSV",
+    clear_logs: "清空日誌",
+    chunk_size_64: "64 KB (高 IOPS)",
+    chunk_size_256: "256 KB",
+    chunk_size_1024: "1 MB (均衡)",
+    chunk_size_4096: "4 MB (高吞吐量)",
+    table_time: "時間",
+    table_target: "目標",
+    table_op: "類型",
+    table_chunk: "分塊",
+    table_speed: "吞吐量",
+    table_latency: "延遲 (平均/峰值)",
+    op_read: "讀取",
+    op_write: "寫入"
+  },
+  heatmap: {
+    title: "全球網絡品質監測",
+    start: "快速掃描",
+    stop: "停止",
+    region: "區域節點",
+    latency: "延遲 (RTT)",
+    status: "狀態",
+    status_pending: "等待中",
+    status_error: "逾時/錯誤",
+    desc: "點擊節點可進入詳細的連線品質追蹤模式 (模擬 MTR) 進行持續檢測。",
+    back: "返回地圖",
+    mtr_title: "連線品質追蹤",
+    packet_loss: "封包遺失",
+    jitter: "抖動 (Jitter)",
+    avg_latency: "平均延遲",
+    current: "即時",
+    samples: "樣本數",
+    regions: {
+        us_east: "美東 (維珍尼亞)",
+        us_west: "美西 (加利福尼亞)",
+        ca_central: "加拿大 (蒙特利爾)",
+        sa_brazil: "巴西 (聖保羅)",
+        sa_chile: "智利 (聖地亞哥)",
+        eu_uk: "英國 (倫敦)",
+        eu_ger: "德國 (法蘭克福)",
+        eu_fr: "法國 (巴黎)",
+        eu_se: "瑞典 (斯德哥爾摩)",
+        ap_india: "印度 (孟買)",
+        ap_sg: "新加坡",
+        ap_jp: "日本 (東京)",
+        ap_kr: "韓國 (首爾)",
+        ap_au: "澳洲 (雪梨)",
+        cn_sh: "中國 (上海)",
+        cn_hk: "中國 (香港)",
+        cn_tw: "中國 (台北)",
+        af_sa: "南非 (開普敦)"
+    }
+  },
+  aiPlayground: {
+    title: "AI 遊樂場",
+    desc: "在瀏覽器本地運行輕量級 AI 模型 (DistilBERT)。無需上傳數據。",
+    tasks: {
+        sentiment: {
+            title: "情感分析",
+            desc: "識別文本情緒 (DistilBERT)",
+            input: "輸入英文文本進行情感分析...",
+            btn: "開始分析"
+        },
+        generation: {
+            title: "文本生成",
+            desc: "智能文本續寫 (DistilGPT2)",
+            input: "輸入開頭句子...",
+            btn: "生成續寫"
+        },
+        translation: {
+            title: "機器翻譯",
+            desc: "英譯德/法 (T5-Small)",
+            input: "輸入待翻譯的英文文本...",
+            btn: "翻譯"
+        }
+    },
+    status: {
+        loading_model: "正在載入模型權重...",
+        ready: "模型就緒",
+        computing: "計算中...",
+        idle: "閒置"
+    },
+    metrics: {
+        time_load: "加載耗時",
+        time_inference: "推理耗時",
+        device: "計算設備"
+    },
+    result_label: "分析結果",
+    confidence: "置信度",
+    btn_load: "載入模型"
   }
 };

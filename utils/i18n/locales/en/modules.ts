@@ -1,6 +1,5 @@
 
 export const modules = {
-  // Settings Module
   settings: {
     title: "Settings",
     nav: {
@@ -426,11 +425,39 @@ export const modules = {
 
   aiPlayground: {
     title: "AI Playground",
-    desc: "Run lightweight AI models (DistilBERT) locally in your browser via WebAssembly. No data leaves your device.",
-    model_name: "Sentiment Analysis",
-    loading_model: "Loading Model Weights...",
-    input_placeholder: "Enter English text to analyze sentiment...",
-    result_label: "Analysis Result",
+    desc: "Run lightweight AI models locally in your browser via WebAssembly. Privacy first - no data leaves your device.",
+    tasks: {
+        sentiment: {
+            title: "Sentiment Analysis",
+            desc: "Detect emotion in text (DistilBERT)",
+            input: "Enter English text to analyze sentiment...",
+            btn: "Analyze"
+        },
+        generation: {
+            title: "Text Generation",
+            desc: "AI Autocomplete (DistilGPT2)",
+            input: "Start typing a sentence...",
+            btn: "Generate"
+        },
+        translation: {
+            title: "Translation",
+            desc: "English to German/French (T5-Small)",
+            input: "Enter English text to translate...",
+            btn: "Translate"
+        }
+    },
+    status: {
+        loading_model: "Downloading Model",
+        ready: "Model Ready",
+        computing: "Computing...",
+        idle: "Idle"
+    },
+    metrics: {
+        time_load: "Load Time",
+        time_inference: "Inference",
+        device: "Device"
+    },
+    result_label: "Result",
     confidence: "Confidence"
   },
 
@@ -532,5 +559,93 @@ export const modules = {
     no_cam_error: "Camera not found or permission denied",
     auto_scan: "Auto Scan",
     manual_capture: "Capture & Detect"
+  },
+
+  midiModal: {
+    title: "Web MIDI Studio",
+    no_inputs: "No MIDI inputs found. Connect a device to play.",
+    inputs: "Input Devices",
+    outputs: "Output Devices",
+    log: "Signal Log",
+    clear: "Clear",
+    octave: "Octave",
+    waveform: "Waveform",
+    sine: "Sine",
+    square: "Square",
+    sawtooth: "Sawtooth",
+    triangle: "Triangle",
+    velocity: "Vel",
+    note: "Note"
+  },
+
+  storageBenchmark: {
+    title: "Storage Benchmark Pro",
+    start: "Start Benchmark",
+    stop: "Stop",
+    target_label: "Storage Target",
+    size_label: "Payload Size",
+    chunk_size: "Chunk Size",
+    opfs: "OPFS (File System)",
+    idb: "IndexedDB",
+    cache: "Cache API",
+    write: "Write",
+    read: "Read",
+    mbps: "MB/s",
+    iops: "IOPS",
+    results: "Results Log",
+    warning: "This test writes temporary data to your disk. It will be cleared automatically, but ensure you have free space.",
+    latency: "Avg/Peak Latency",
+    export_csv: "Export CSV",
+    clear_logs: "Clear Logs",
+    chunk_size_64: "64 KB (High IOPS)",
+    chunk_size_256: "256 KB",
+    chunk_size_1024: "1 MB (Balanced)",
+    chunk_size_4096: "4 MB (High Throughput)",
+    table_time: "Time",
+    table_target: "Target",
+    table_op: "Type",
+    table_chunk: "Chunk",
+    table_speed: "Throughput",
+    table_latency: "Latency (Avg/Peak)",
+    op_read: "Read",
+    op_write: "Write"
+  },
+  heatmap: {
+    title: "Global Network Quality",
+    start: "Quick Scan",
+    stop: "Stop",
+    region: "Region",
+    latency: "Latency",
+    status: "Status",
+    status_pending: "Pending",
+    status_error: "Timeout",
+    desc: "Click a node to run a continuous Link Quality Trace (MTR simulation).",
+    back: "Back to Map",
+    mtr_title: "Link Quality Trace",
+    packet_loss: "Packet Loss",
+    jitter: "Jitter",
+    avg_latency: "Avg Latency",
+    current: "Current",
+    samples: "Samples",
+    regions: {
+        us_east: "US East (N. Virginia)",
+        us_west: "US West (California)",
+        ca_central: "Canada (Montreal)",
+        sa_brazil: "Brazil (São Paulo)",
+        sa_chile: "Chile (Santiago)",
+        eu_uk: "UK (London)",
+        eu_ger: "Germany (Frankfurt)",
+        eu_fr: "France (Paris)",
+        eu_se: "Sweden (Stockholm)",
+        ap_india: "India (Mumbai)",
+        ap_sg: "Singapore",
+        ap_jp: "Japan (Tokyo)",
+        ap_kr: "South Korea (Seoul)",
+        ap_au: "Australia (Sydney)",
+        cn_sh: "China (Shanghai)",
+        cn_hk: "China (Hong Kong)",
+        cn_tw: "China (Taipei)",
+        af_sa: "South Africa (Cape Town)"
+    }
   }
 };

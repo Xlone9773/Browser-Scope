@@ -34,6 +34,9 @@ const MODULE_FACTORIES: Record<string, () => Promise<any>> = {
     video: () => import('../components/VideoDecodeModal').then(m => ({ default: m.VideoDecodeModal })),
     graphics: () => import('../components/GraphicsDebugModal').then(m => ({ default: m.GraphicsDebugModal })),
     speech: () => import('../components/SpeechExplorerModal').then(m => ({ default: m.SpeechExplorerModal })),
+    midi: () => import('../components/MidiModal').then(m => ({ default: m.MidiModal })),
+    storageBench: () => import('../components/StorageBenchmarkModal').then(m => ({ default: m.StorageBenchmarkModal })),
+    heatmap: () => import('../components/NetworkHeatmapModal').then(m => ({ default: m.NetworkHeatmapModal })),
 };
 
 export const useModalManager = () => {

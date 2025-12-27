@@ -96,15 +96,6 @@ export const tools = {
     dimensions: "Dimensions",
     size: "Size"
   },
-  aiPlayground: {
-    title: "AI Playground",
-    desc: "Run lightweight AI models (DistilBERT) locally in your browser via WebAssembly. No data leaves your device.",
-    model_name: "Sentiment Analysis",
-    loading_model: "Loading Model Weights...",
-    input_placeholder: "Enter English text to analyze sentiment...",
-    result_label: "Analysis Result",
-    confidence: "Confidence"
-  },
   computeStress: {
     title: "Frontier Compute Stress Test",
     warning: "Warning: This test maximizes GPU load. It may cause high battery drain, heating, or temporary system freeze. Use with caution.",
@@ -200,5 +191,21 @@ export const tools = {
     no_cam_error: "Camera not found or permission denied",
     auto_scan: "Auto Scan",
     manual_capture: "Capture & Detect"
+  },
+  midiModal: {
+    title: "Web MIDI Studio",
+    no_inputs: "No MIDI inputs found. Connect a device to play.",
+    inputs: "Input Devices",
+    outputs: "Output Devices",
+    log: "Signal Log",
+    clear: "Clear",
+    octave: "Octave",
+    waveform: "Waveform",
+    sine: "Sine",
+    square: "Square",
+    sawtooth: "Sawtooth",
+    triangle: "Triangle",
+    velocity: "Vel",
+    note: "Note"
   }
 };

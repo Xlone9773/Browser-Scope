@@ -95,7 +95,14 @@ export const dashboard = {
     model: "デバイスモデル",
     platform_ver: "OSバージョン",
     bitness: "ビット数",
-    shader_precision: "シェーダー精度"
+    shader_precision: "シェーダー精度",
+    est_js: "(JS 推定)",
+    ai_levels: {
+        Ultra: "ローカルSLM (小規模言語モデル) の実行が可能です。",
+        High: "高負荷な計算や基本的なML推論に適しています。",
+        Medium: "標準的なWebアプリがスムーズに動作します。",
+        Low: "基本的なWebタスク向けです。"
+    }
   },
 
   actions: {
@@ -114,7 +121,9 @@ export const dashboard = {
     check: "確認",
     open_map: "地図を開く",
     stress_test: "ストレステスト",
-    open_video_test: "ビデオデコードテスト"
+    open_video_test: "ビデオデコードテスト",
+    open_heatmap: "世界Pingマップ",
+    open_storage_bench: "ストレージ速度テスト"
   },
 
   features: {

@@ -96,7 +96,14 @@ export const dashboard = {
     model: "Device Model",
     platform_ver: "OS Version",
     bitness: "Bitness",
-    shader_precision: "Shader Precision"
+    shader_precision: "Shader Precision",
+    est_js: "(Est. JS)",
+    ai_levels: {
+        Ultra: "Capable of running local Small Language Models (SLM).",
+        High: "Good for heavy compute & basic ML inference.",
+        Medium: "Smooth for standard web apps.",
+        Low: "Basic web tasks"
+    }
   },
   actions: {
     run_benchmark: "Run Benchmark",
@@ -114,7 +121,9 @@ export const dashboard = {
     check: "Check",
     open_map: "Open Map",
     stress_test: "Stress Test",
-    open_video_test: "Video Decode Test"
+    open_video_test: "Video Decode Test",
+    open_heatmap: "Global Ping Map",
+    open_storage_bench: "Storage Benchmark"
   },
   features: {
     serviceWorker: "Service Worker",

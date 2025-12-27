@@ -1,8 +1,8 @@
 
-// ... existing imports
 import React, { useEffect, useState, Suspense } from 'react';
 import { RefreshCw, Monitor } from 'lucide-react';
 import { getAllData } from './services/detectionService';
+import { runAiReadinessCheck } from './services/detectors/hardware';
 import { exportAsJson } from './services/exporter';
 import { BrowserData, GeoPosition } from './types';
 import { translations, Language } from './utils/i18n/index';
@@ -97,6 +97,9 @@ const App: React.FC = () => {
       { id: 'video', name: t.actions.open_video_test, isOpen: visibility.video, setOpen: (v) => v ? open('video') : close('video'), impact: 'High', onUnload: () => unload('video'), isLoaded: loadedModules.has('video') },
       { id: 'graphics', name: t.graphicsModal.title, isOpen: visibility.graphics, setOpen: (v) => v ? open('graphics') : close('graphics'), impact: 'Medium', onUnload: () => unload('graphics'), isLoaded: loadedModules.has('graphics') },
       { id: 'speech', name: t.speechModal.title, isOpen: visibility.speech, setOpen: (v) => v ? open('speech') : close('speech'), impact: 'Medium', onUnload: () => unload('speech'), isLoaded: loadedModules.has('speech') },
+      { id: 'midi', name: t.midiModal.title, isOpen: visibility.midi, setOpen: (v) => v ? open('midi') : close('midi'), impact: 'Low', onUnload: () => unload('midi'), isLoaded: loadedModules.has('midi') },
+      { id: 'storageBench', name: t.storageBenchmark.title, isOpen: visibility.storageBench, setOpen: (v) => v ? open('storageBench') : close('storageBench'), impact: 'High', onUnload: () => unload('storageBench'), isLoaded: loadedModules.has('storageBench') },
+      { id: 'heatmap', name: t.heatmap.title, isOpen: visibility.heatmap, setOpen: (v) => v ? open('heatmap') : close('heatmap'), impact: 'Medium', onUnload: () => unload('heatmap'), isLoaded: loadedModules.has('heatmap') },
   ];
 
   // Initialize theme
@@ -105,6 +108,18 @@ const App: React.FC = () => {
       setTheme(savedTheme);
       applyTheme(savedTheme);
   }, []);
+
+  // Event listener for Storage Card custom event
+  useEffect(() => {
+      const handleStorageBench = () => open('storageBench');
+      const handleHeatmap = () => open('heatmap');
+      window.addEventListener('open-storage-benchmark', handleStorageBench);
+      window.addEventListener('open-heatmap', handleHeatmap);
+      return () => {
+          window.removeEventListener('open-storage-benchmark', handleStorageBench);
+          window.removeEventListener('open-heatmap', handleHeatmap);
+      };
+  }, [open]);
 
   // Initialize scrollbar state
   useEffect(() => {
@@ -168,7 +183,7 @@ const App: React.FC = () => {
     const interval = setInterval(() => {
         stepIndex++;
         if (stepIndex < steps.length) {
-            setLoadingText(steps[stepIndex]);
+            setLoadingText(steps[steps.length - 1]);
         }
     }, 250); 
 
@@ -276,6 +291,7 @@ const App: React.FC = () => {
                 // @ts-ignore
                 await navigator.requestMIDIAccess();
                 updatePermStatus('midi', 'granted');
+                open('midi');
             } else {
                 updatePermStatus('midi', 'error');
             }
@@ -293,6 +309,21 @@ const App: React.FC = () => {
   const handleExportJSON = () => {
     if (!data) return;
     exportAsJson(data, permStatus, geoData);
+  };
+
+  const handleAiRetest = () => {
+      if (!data) return;
+      const readiness = runAiReadinessCheck();
+      setData(prev => {
+          if (!prev) return null;
+          return {
+              ...prev,
+              ai: {
+                  ...prev.ai,
+                  readiness
+              }
+          };
+      });
   };
 
   return (
@@ -412,6 +443,24 @@ const App: React.FC = () => {
                     t={t.speechModal} 
                 />
             )}
+            {visibility.midi && (
+                <Components.midi 
+                    onClose={() => close('midi')} 
+                    t={t.midiModal} 
+                />
+            )}
+            {visibility.storageBench && (
+                <Components.storageBench 
+                    onClose={() => close('storageBench')} 
+                    t={t.storageBenchmark} 
+                />
+            )}
+            {visibility.heatmap && (
+                <Components.heatmap 
+                    onClose={() => close('heatmap')} 
+                    t={t.heatmap} 
+                />
+            )}
         </Suspense>
       </ErrorBoundary>
 
@@ -447,6 +496,7 @@ const App: React.FC = () => {
                     t={t} 
                     onOpenPlayground={() => open('ai')} 
                     onOpenStress={() => open('compute')}
+                    onRetest={handleAiRetest}
                 />
 
                 <SystemCard 
@@ -464,6 +514,7 @@ const App: React.FC = () => {
                     onOpenTools={() => open('tools')}
                     onOpenVision={() => open('vision')}
                     onOpenGraphics={() => open('graphics')}
+                    onOpenMidi={() => requestPermission('midi')}
                 />
 
                 <DisplayCard 

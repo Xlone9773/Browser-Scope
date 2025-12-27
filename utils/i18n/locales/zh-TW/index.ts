@@ -4,11 +4,13 @@ import { dashboard } from './dashboard';
 import { settings } from './settings';
 import { tools } from './tools';
 import { modals } from './modals';
+import { modules } from './modules';
 
 export const zhTW = {
   ...common,
   ...dashboard,
   ...settings,
   ...tools,
-  ...modals
+  ...modals,
+  ...modules
 };

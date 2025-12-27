@@ -41,7 +41,7 @@ export const tools = {
         hetzner_fi: "Hetzner (芬蘭/赫爾辛基)",
         scaleway_fr: "Scaleway (法国/巴黎)",
         vultr_nj: "Vultr (美东/新泽西)",
-        vultr_la: "Vultr (美西/洛杉矶)",
+        vultr_la: "Vultr (美西/洛杉磯)",
         vultr_sg: "Vultr (新加坡)",
         vultr_tokyo: "Vultr (日本/东京)",
         vultr_sydney: "Vultr (澳大利亚/悉尼)",
@@ -96,15 +96,6 @@ export const tools = {
     dimensions: "尺寸",
     size: "大小"
   },
-  aiPlayground: {
-    title: "AI 游乐场",
-    desc: "在浏览器本地运行轻量级 AI 模型 (DistilBERT)。无需上传数据。",
-    model_name: "情感分析模型",
-    loading_model: "正在加载模型权重...",
-    input_placeholder: "输入一段英文文本进行情感分析...",
-    result_label: "分析结果",
-    confidence: "置信度"
-  },
   computeStress: {
     title: "前沿算力压力测试",
     warning: "警告：此测试将最大化 GPU 负载。可能会导致电池耗尽、发热或系统暂时冻结。请谨慎使用。",
@@ -153,13 +144,13 @@ export const tools = {
     key_last: "当前按键",
     key_history: "已检测按键",
     key_input_placeholder: "在此处输入以测试键盘...",
-    mouse_instruction: "在此区域内快速移动鼠标以测量事件回报率 (Polling Rate)。",
-    mouse_rate: "当前回报率",
-    mouse_peak: "峰值回报率",
-    pointer_instruction: "在此绘图。支持压感、倾斜度及手写笔输入。",
-    pointer_pressure: "压力感应",
-    pointer_tilt: "倾斜角度 (X/Y)",
-    pointer_type: "输入类型",
+    mouse_instruction: "Move your mouse cursor quickly inside this box to measure event polling rate.",
+    mouse_rate: "Current Rate",
+    mouse_peak: "Peak Rate",
+    pointer_instruction: "Draw here. Supports Pressure, Tilt & Pen inputs.",
+    pointer_pressure: "Pressure",
+    pointer_tilt: "Tilt (X/Y)",
+    pointer_type: "Input Type",
     video_instruction: "正在检测硬件视频解码能力矩阵...",
     video_codec: "编码格式",
     video_res: "分辨率",
@@ -200,5 +191,21 @@ export const tools = {
     no_cam_error: "未找到摄像头或权限被拒绝",
     auto_scan: "自动连续扫描",
     manual_capture: "手动拍摄识别"
+  },
+  midiModal: {
+    title: "Web MIDI 工作室",
+    no_inputs: "未检测到 MIDI 输入设备。请连接设备。",
+    inputs: "输入设备",
+    outputs: "输出设备",
+    log: "信号日志",
+    clear: "清除",
+    octave: "八度",
+    waveform: "波形",
+    sine: "正弦波",
+    square: "方波",
+    sawtooth: "锯齿波",
+    triangle: "三角波",
+    velocity: "力度",
+    note: "音符"
   }
 };

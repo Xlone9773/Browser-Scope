@@ -1,4 +1,11 @@
 
+
+
+
+
+
+
+
 export const modals = {
   aboutModal: {
     title: "关于 BrowserScope",
@@ -76,16 +83,29 @@ export const modals = {
     tracking_potential: "追踪风险",
     score_explanation: "此分数表示您当前的浏览器环境被唯一识别的可能性。分数越高，您的设备指纹越独特，越容易被网站追踪。",
     contributing_factors: "评分影响因子",
+    value_label: "检测值",
     close: "关闭",
+    categories: {
+        hardware: "硬件特征",
+        browser: "浏览器",
+        network: "网络",
+        media: "多媒体",
+        screen: "屏幕"
+    },
     factors: {
         canvas_hash: "Canvas 指纹",
         webgl_hash: "WebGL 指纹",
-        hardware_concurrency: "硬件并发信息",
-        user_agent: "User Agent 复杂度",
-        resolution: "屏幕分辨率",
+        hardware_concurrency: "并发核心数",
+        user_agent: "User Agent",
+        resolution: "分辨率",
         audio_context: "音频指纹",
         battery_status: "电池 API",
-        locale_time: "时区与语言"
+        locale_time: "时区与语言",
+        gpu_renderer: "GPU 渲染器",
+        webrtc_leak: "WebRTC 泄露",
+        screen_advanced: "高级屏幕参数",
+        drm_support: "DRM 系统支持",
+        touch_support: "触控支持"
     },
     values: {
         val_unique: "独特/罕见值",
@@ -102,11 +122,17 @@ export const modals = {
         desc_hardware_unique: "CPU/内存组合较为罕见。",
         desc_hardware_generic: "常见的硬件配置。",
         desc_ua_unique: "UA 字符串包含过多特有信息。",
+        desc_ua_ch: "Client Hints 暴露了具体的设备型号。",
         desc_res_unique: "非标准的屏幕分辨率。",
         desc_audio_unique: "音频硬件特征可被识别。",
         desc_battery_unique: "电池状态 API 暴露了具体电量。",
         desc_battery_generic: "电池 API 不可用或返回通用值。",
-        desc_locale_unique: "时区与语言组合可用于辅助识别。"
+        desc_locale_unique: "时区与语言组合可用于辅助识别。",
+        desc_gpu_unique: "完整的显卡型号字符串被暴露。",
+        desc_webrtc_leak: "WebRTC 泄露了真实的局域网或公网 IP。",
+        desc_webrtc_safe: "WebRTC IP 已被混淆或禁用。",
+        desc_screen_advanced: "色深、HDR 和像素比的组合较为独特。",
+        desc_drm_unique: "支持的 DRM 系统组合缩小了识别范围。"
     }
   },
   fingerprintModal: {
@@ -159,5 +185,113 @@ export const modals = {
     remote: "在线",
     no_voices: "未找到语音包。请检查您的系统是否支持文本转语音。",
     loading: "加载语音库..."
+  },
+  storageBenchmark: {
+    title: "存储性能基准测试 Pro",
+    start: "开始测试",
+    stop: "停止",
+    target_label: "存储目标",
+    size_label: "测试规模",
+    chunk_size: "分块大小",
+    opfs: "OPFS (私有文件系统)",
+    idb: "IndexedDB (数据库)",
+    cache: "Cache API (缓存)",
+    write: "写入速度",
+    read: "读取速度",
+    mbps: "MB/s",
+    iops: "次/秒",
+    results: "测试日志",
+    warning: "此测试将在您的磁盘写入临时数据。数据会自动清除，但请确保有足够的可用空间。",
+    latency: "延迟 (平均/峰值)",
+    export_csv: "导出 CSV",
+    clear_logs: "清空日志",
+    chunk_size_64: "64 KB (高 IOPS)",
+    chunk_size_256: "256 KB",
+    chunk_size_1024: "1 MB (均衡)",
+    chunk_size_4096: "4 MB (高吞吐量)",
+    table_time: "时间",
+    table_target: "目标",
+    table_op: "类型",
+    table_chunk: "分块",
+    table_speed: "吞吐量",
+    table_latency: "延迟 (平均/峰值)",
+    op_read: "读取",
+    op_write: "写入"
+  },
+  heatmap: {
+    title: "全球网络质量监测",
+    start: "快速扫描",
+    stop: "停止",
+    region: "区域节点",
+    latency: "延迟 (RTT)",
+    status: "状态",
+    status_pending: "等待中",
+    status_error: "超时/错误",
+    desc: "点击节点可进入详细的链路追踪模式 (模拟 MTR) 进行持续检测。",
+    back: "返回地图",
+    mtr_title: "链路质量追踪",
+    packet_loss: "丢包率",
+    jitter: "抖动 (Jitter)",
+    avg_latency: "平均延迟",
+    current: "实时",
+    samples: "样本数",
+    regions: {
+        us_east: "美东 (弗吉尼亚)",
+        us_west: "美西 (加利福尼亚)",
+        ca_central: "加拿大 (蒙特利尔)",
+        sa_brazil: "巴西 (圣保罗)",
+        sa_chile: "智利 (圣地亚哥)",
+        eu_uk: "英国 (伦敦)",
+        eu_ger: "德国 (法兰克福)",
+        eu_fr: "法国 (巴黎)",
+        eu_se: "瑞典 (斯德哥尔摩)",
+        ap_india: "印度 (孟买)",
+        ap_sg: "新加坡",
+        ap_jp: "日本 (东京)",
+        ap_kr: "韩国 (首尔)",
+        ap_au: "澳大利亚 (悉尼)",
+        cn_sh: "中国 (上海)",
+        cn_hk: "中国 (香港)",
+        cn_tw: "中国 (台北)",
+        af_sa: "南非 (开普敦)"
+    }
+  },
+  aiPlayground: {
+    title: "AI 游乐场",
+    desc: "在浏览器本地运行轻量级 AI 模型 (DistilBERT)。无需上传数据。",
+    tasks: {
+        sentiment: {
+            title: "情感分析",
+            desc: "识别文本情绪 (DistilBERT)",
+            input: "输入英文文本进行情感分析...",
+            btn: "开始分析"
+        },
+        generation: {
+            title: "文本生成",
+            desc: "智能文本续写 (DistilGPT2)",
+            input: "输入开头句子...",
+            btn: "生成续写"
+        },
+        translation: {
+            title: "机器翻译",
+            desc: "英译德/法 (T5-Small)",
+            input: "输入待翻译的英文文本...",
+            btn: "翻译"
+        }
+    },
+    status: {
+        loading_model: "正在下载模型权重",
+        ready: "模型就绪",
+        computing: "计算中...",
+        idle: "空闲"
+    },
+    metrics: {
+        time_load: "加载耗时",
+        time_inference: "推理耗时",
+        device: "计算设备"
+    },
+    result_label: "分析结果",
+    confidence: "置信度",
+    btn_load: "加载模型"
   }
 };
