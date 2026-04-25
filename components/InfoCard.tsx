@@ -50,18 +50,22 @@ const InfoItem = memo<InfoItemProps>(({ label, value, subValue, isFeature }) => 
 interface InfoCardProps {
   title: string;
   icon: LucideIcon;
+  action?: React.ReactNode;
   children: React.ReactNode;
 }
 
 // Memoized InfoCard shell
-export const InfoCard = memo<InfoCardProps>(({ title, icon: Icon, children }) => {
+export const InfoCard = memo<InfoCardProps>(({ title, icon: Icon, action, children }) => {
   return (
     <Card noPadding className="h-full flex flex-col transition-all hover:shadow-md duration-300">
-      <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3 bg-white dark:bg-slate-800">
-        <div className="p-2 bg-slate-50 dark:bg-slate-700/50 rounded-lg text-slate-600 dark:text-slate-300">
-          <Icon size={20} strokeWidth={2} />
+      <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-white dark:bg-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-slate-50 dark:bg-slate-700/50 rounded-lg text-slate-600 dark:text-slate-300">
+            <Icon size={20} strokeWidth={2} />
+          </div>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100 tracking-tight">{title}</h3>
         </div>
-        <h3 className="font-semibold text-slate-800 dark:text-slate-100 tracking-tight">{title}</h3>
+        {action && <div>{action}</div>}
       </div>
       <div className="p-5 flex-1 flex flex-col gap-1">
         {children}

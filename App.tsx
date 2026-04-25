@@ -597,7 +597,7 @@ const App: React.FC = () => {
                             onOpenSpeech={() => open('speech')}
                         />
 
-                        <UserAgentCard userAgent={data.system.userAgent} t={t} />
+                        <UserAgentCard userAgent={data.system.userAgent} clientHints={data.system.clientHints} t={t} />
                     </>
                 )}
                 </div>

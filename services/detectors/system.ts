@@ -113,6 +113,9 @@ export const getPWAFeatures = (): FeatureItem[] => {
     { name: 'Push API', key: 'pushApi', supported: 'PushManager' in window, description: 'Receive push notifications from server' },
     { name: 'Notification API', key: 'notification', supported: 'Notification' in window, description: 'System level notifications' },
     { name: 'App Badges', key: 'appBadges', supported: 'setAppBadge' in navigator, description: 'Set badges on app icon' },
+    { name: 'Related Apps', key: 'relatedApps', supported: 'getInstalledRelatedApps' in navigator, description: 'Check installed related apps' },
+    { name: 'Periodic Sync', key: 'periodicSync', supported: 'PeriodicSyncManager' in window, description: 'Run tasks periodically in background' },
+    { name: 'Install Prompt', key: 'installPrompt', supported: 'BeforeInstallPromptEvent' in window, description: 'Custom install prompt support' },
   ];
 };
 
