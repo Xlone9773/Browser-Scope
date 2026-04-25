@@ -108,6 +108,8 @@ export const getHighEntropyClientHints = async () => {
 
 export const getPWAFeatures = (): FeatureItem[] => {
   return [
+    { name: 'Web App Manifest', key: 'manifest', supported: !!document.querySelector('link[rel="manifest"]'), description: 'Defines PWA branding and behavior' },
+    { name: 'Standalone Mode', key: 'standalone', supported: window.matchMedia && window.matchMedia('(display-mode: standalone)').matches, description: 'Running as installed app' },
     { name: 'Service Worker', key: 'serviceWorker', supported: 'serviceWorker' in navigator, description: 'Offline capabilities & PWA support' },
     { name: 'Background Sync', key: 'bgSync', supported: 'serviceWorker' in navigator && 'sync' in ((navigator as any).serviceWorker || {}), description: 'Defer actions until user has connectivity' },
     { name: 'Push API', key: 'pushApi', supported: 'PushManager' in window, description: 'Receive push notifications from server' },
@@ -116,6 +118,8 @@ export const getPWAFeatures = (): FeatureItem[] => {
     { name: 'Related Apps', key: 'relatedApps', supported: 'getInstalledRelatedApps' in navigator, description: 'Check installed related apps' },
     { name: 'Periodic Sync', key: 'periodicSync', supported: 'PeriodicSyncManager' in window, description: 'Run tasks periodically in background' },
     { name: 'Install Prompt', key: 'installPrompt', supported: 'BeforeInstallPromptEvent' in window, description: 'Custom install prompt support' },
+    { name: 'Content Index', key: 'contentIndex', supported: 'ContentIndexEvent' in window, description: 'Index offline content for browser list' },
+    { name: 'Protocol Handling', key: 'protocolHandling', supported: 'registerProtocolHandler' in navigator, description: 'Register custom URL schemes' },
   ];
 };
 
@@ -149,6 +153,25 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'Compression Streams', key: 'compression', supported: 'CompressionStream' in window, description: 'Native GZIP/Deflate' },
     { name: 'Web Transport', key: 'webTransport', supported: 'WebTransport' in window, description: 'Low-latency bidirectional streaming' },
     { name: 'Compute Pressure API', key: 'computePressure', supported: 'PressureObserver' in window, description: 'CPU/System load status' },
+    { name: 'Intersection Observer', key: 'intersectionObserver', supported: 'IntersectionObserver' in window, description: 'Detect element visibility' },
+    { name: 'Mutation Observer', key: 'mutationObserver', supported: 'MutationObserver' in window, description: 'Watch DOM changes' },
+    { name: 'Resize Observer', key: 'resizeObserver', supported: 'ResizeObserver' in window, description: 'Watch element size' },
+    { name: 'Web Components', key: 'webComponents', supported: 'customElements' in window && typeof Element !== 'undefined' && 'attachShadow' in Element.prototype, description: 'Custom reusable HTML elements' },
+    { name: 'Gamepad API', key: 'gamepad', supported: typeof navigator !== 'undefined' && 'getGamepads' in navigator, description: 'Controller support' },
+    { name: 'WebRTC', key: 'webrtc', supported: 'RTCPeerConnection' in window, description: 'Real-time communication' },
+    { name: 'Web Audio API', key: 'webAudio', supported: 'AudioContext' in window || 'webkitAudioContext' in window, description: 'Advanced audio processing' },
+    { name: 'Speech Synthesis', key: 'speechSynthesis', supported: 'speechSynthesis' in window, description: 'Text-to-speech' },
+    { name: 'Speech Recognition', key: 'speechRecognition', supported: 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window, description: 'Speech-to-text' },
+    { name: 'WebSocket', key: 'webSocket', supported: 'WebSocket' in window, description: 'Two-way socket connection' },
+    { name: 'Server-Sent Events', key: 'sse', supported: 'EventSource' in window, description: 'Server push notifications' },
+    { name: 'Pointer Lock', key: 'pointerLock', supported: typeof document !== 'undefined' && 'exitPointerLock' in document, description: 'Lock mouse cursor' },
+    { name: 'Fullscreen API', key: 'fullscreen', supported: typeof document !== 'undefined' && !!(document.fullscreenEnabled || (document as any).webkitFullscreenEnabled || (document as any).mozFullScreenEnabled), description: 'Native full screen' },
+    { name: 'Page Visibility', key: 'pageVisibility', supported: typeof document !== 'undefined' && 'hidden' in document, description: 'Detect tab backgrounding' },
+    { name: 'Drag and Drop', key: 'dragAndDrop', supported: typeof document !== 'undefined' && 'draggable' in document.createElement('span'), description: 'Native DND features' },
+    { name: 'Canvas API', key: 'canvas', supported: typeof document !== 'undefined' && !!document.createElement('canvas').getContext, description: '2D dynamic rendering' },
+    { name: 'MathML', key: 'mathML', supported: typeof document !== 'undefined' && document.createElement('math').namespaceURI === 'http://www.w3.org/1998/Math/MathML', description: 'Math formula markup' },
+    { name: 'Vibration API', key: 'vibration', supported: typeof navigator !== 'undefined' && 'vibrate' in navigator, description: 'Hardware haptics' },
+    { name: 'Battery Status', key: 'battery', supported: typeof navigator !== 'undefined' && 'getBattery' in navigator, description: 'Power level and charging' },
     { name: 'Eye Dropper', key: 'eyeDropper', supported: 'EyeDropper' in window, description: 'System color picker' },
     { name: 'Accelerometer', key: 'accelerometer', supported: 'Accelerometer' in window, description: 'Motion sensor' },
     { name: 'View Transitions API', key: 'viewTransitions', supported: 'startViewTransition' in document, description: 'Smooth DOM transitions' },

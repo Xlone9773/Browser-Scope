@@ -96,14 +96,14 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
             dragModeRef.current = null;
             document.body.style.userSelect = '';
             document.body.style.cursor = '';
-            target.removeEventListener('pointermove', handleMove as EventListener);
-            target.removeEventListener('pointerup', handleUp as EventListener);
-            target.removeEventListener('pointercancel', handleUp as EventListener);
+            window.removeEventListener('pointermove', handleMove as EventListener);
+            window.removeEventListener('pointerup', handleUp as EventListener);
+            window.removeEventListener('pointercancel', handleUp as EventListener);
         };
 
-        target.addEventListener('pointermove', handleMove as EventListener);
-        target.addEventListener('pointerup', handleUp as EventListener);
-        target.addEventListener('pointercancel', handleUp as EventListener);
+        window.addEventListener('pointermove', handleMove as EventListener, { passive: false });
+        window.addEventListener('pointerup', handleUp as EventListener);
+        window.addEventListener('pointercancel', handleUp as EventListener);
     };
 
     return createPortal(
