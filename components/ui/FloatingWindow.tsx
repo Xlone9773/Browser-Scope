@@ -120,7 +120,7 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
         >
             {/* Header / Drag Handle */}
             <div 
-                className="h-10 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-3 cursor-move select-none shrink-0 group"
+                className="h-10 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-3 cursor-move touch-none select-none shrink-0 group"
                 onPointerDown={(e) => handlePointerDown(e, 'move')}
             >
                 <div className="flex items-center gap-2 text-slate-300">
@@ -146,21 +146,21 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
             {/* Resize Handles */}
             {/* Corners */}
             <div 
-                className="absolute top-0 left-0 w-4 h-4 cursor-nwse-resize z-50 opacity-0 hover:opacity-100 bg-white/10 transition-opacity rounded-br"
+                className="absolute top-0 left-0 w-4 h-4 cursor-nwse-resize touch-none z-50 opacity-0 hover:opacity-100 bg-white/10 transition-opacity rounded-br"
                 onPointerDown={(e) => handlePointerDown(e, 'resize-nw')}
             />
             <div 
-                className="absolute top-0 right-0 w-4 h-4 cursor-nesw-resize z-50 opacity-0 hover:opacity-100 bg-white/10 transition-opacity rounded-bl"
+                className="absolute top-0 right-0 w-4 h-4 cursor-nesw-resize touch-none z-50 opacity-0 hover:opacity-100 bg-white/10 transition-opacity rounded-bl"
                 onPointerDown={(e) => handlePointerDown(e, 'resize-ne')}
             />
             <div 
-                className="absolute bottom-0 left-0 w-4 h-4 cursor-nesw-resize z-50 opacity-0 hover:opacity-100 bg-white/10 transition-opacity rounded-tr"
+                className="absolute bottom-0 left-0 w-4 h-4 cursor-nesw-resize touch-none z-50 opacity-0 hover:opacity-100 bg-white/10 transition-opacity rounded-tr"
                 onPointerDown={(e) => handlePointerDown(e, 'resize-sw')}
             />
             
             {/* Visible Resize Handle Bottom Right */}
             <div 
-                className="absolute bottom-0 right-0 w-5 h-5 cursor-nwse-resize z-50 flex items-end justify-end p-1 hover:bg-white/5"
+                className="absolute bottom-0 right-0 w-5 h-5 cursor-nwse-resize touch-none z-50 flex items-end justify-end p-1 hover:bg-white/5"
                 onPointerDown={(e) => handlePointerDown(e, 'resize-se')}
             >
                 <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="text-slate-500">
