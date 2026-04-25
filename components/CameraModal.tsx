@@ -23,6 +23,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   const [devices, setDevices] = useState<VideoDevice[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>('');
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const isUnmounted = useRef(false);
   
   const [image, setImage] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -35,16 +37,26 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   const [error, setError] = useState<string | null>(null);
 
   // Stop camera function
-  const stopCameraStream = () => {
-      if (stream) {
-          stream.getTracks().forEach(track => track.stop());
+  const stopCameraStream = useCallback(() => {
+      if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+          streamRef.current = null;
+          setStream(null);
       }
-  };
+  }, []);
 
   const handleClose = () => {
       stopCameraStream();
       onClose();
   };
+
+  useEffect(() => {
+     isUnmounted.current = false;
+     return () => {
+         isUnmounted.current = true;
+         stopCameraStream();
+     };
+  }, [stopCameraStream]);
 
   // Get list of cameras
   const getDevices = useCallback(async () => {
@@ -88,8 +100,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
       };
 
       try {
-        if (stream) {
-          stream.getTracks().forEach(track => track.stop());
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
         }
 
         // Request audio as well for recording
@@ -102,8 +114,14 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
           audio: true 
         });
 
+        if (isUnmounted.current) {
+            localStream.getTracks().forEach(track => track.stop());
+            return;
+        }
+
         if (videoRef.current) {
           videoRef.current.srcObject = localStream;
+          streamRef.current = localStream;
           setStream(localStream);
           setError(null);
           
@@ -138,8 +156,15 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                     },
                     audio: false
                  });
+
+                 if (isUnmounted.current) {
+                     localStream.getTracks().forEach(track => track.stop());
+                     return;
+                 }
+
                  if (videoRef.current) {
                     videoRef.current.srcObject = localStream;
+                    streamRef.current = localStream;
                     setStream(localStream);
                     setError(null);
                      const videoTrack = localStream.getVideoTracks()[0];
@@ -161,11 +186,9 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
     startCamera();
 
     return () => {
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-      }
+      stopCameraStream();
     };
-  }, [selectedDeviceId]);
+  }, [selectedDeviceId, stopCameraStream]);
 
   // Initial load
   useEffect(() => {

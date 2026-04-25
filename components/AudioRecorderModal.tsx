@@ -18,6 +18,8 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const animationRef = useRef<number | null>(null);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const isUnmounted = useRef(false);
 
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -32,9 +34,29 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
   const [sampleRate, setSampleRate] = useState<number>(0);
   const [mimeType, setMimeType] = useState<string>('');
 
+  const stopAudioTracks = () => {
+      if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => {
+              track.stop();
+              track.enabled = false;
+          });
+          streamRef.current = null;
+      }
+      setStream(null);
+  };
+
   const handleClose = () => {
+    stopAudioTracks();
     onClose();
   };
+
+  useEffect(() => {
+     isUnmounted.current = false;
+     return () => {
+         isUnmounted.current = true;
+         stopAudioTracks();
+     };
+  }, []);
 
   // Timer for duration
   useEffect(() => {
@@ -71,6 +93,8 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
   const drawVisualizer = () => {
     if (!canvasRef.current || !analyzerRef.current || !dataArrayRef.current) return;
 
+    if (isUnmounted.current) return;
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     const analyzer = analyzerRef.current;
@@ -104,110 +128,162 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
       x += barWidth + 1;
     }
 
+    // Schedule next frame
     animationRef.current = requestAnimationFrame(drawVisualizer);
   };
 
-  // Start Mic
+  // Start visualizer only when recording or playing
   useEffect(() => {
-    const initAudio = async () => {
-      try {
-        const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        setStream(localStream);
-        
-        // Setup Audio Context for Visualizer
-        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-        const audioCtx = new AudioContext();
-        setSampleRate(audioCtx.sampleRate);
-        
-        const analyzer = audioCtx.createAnalyser();
-        const source = audioCtx.createMediaStreamSource(localStream);
-        
-        analyzer.fftSize = 2048;
-        const bufferLength = analyzer.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-        
-        source.connect(analyzer);
-        
-        audioContextRef.current = audioCtx;
-        analyzerRef.current = analyzer;
-        dataArrayRef.current = dataArray;
-        sourceRef.current = source;
-        
-        drawVisualizer();
-
-      } catch (err) {
-        console.error("Error accessing microphone:", err);
-        setError(t.error_mic);
+      if (isRecording || isPlaying) {
+          if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+              audioContextRef.current.resume();
+          }
+          if (animationRef.current) cancelAnimationFrame(animationRef.current);
+          drawVisualizer();
+      } else {
+          if (animationRef.current) {
+              cancelAnimationFrame(animationRef.current);
+          }
       }
-    };
-
-    initAudio();
-
-    // Enhanced cleanup to ensure microphone is stopped
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
       
-      // Stop recording if active
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-        mediaRecorderRef.current.stop();
+      return () => {
+          if (animationRef.current) {
+              cancelAnimationFrame(animationRef.current);
+          }
       }
+  }, [isRecording, isPlaying]);
 
-      // Disconnect nodes
-      if (sourceRef.current) sourceRef.current.disconnect();
-      if (audioContextRef.current) {
-         if (audioContextRef.current.state !== 'closed') {
-            audioContextRef.current.close();
+  // Audio Playback Node setup
+  useEffect(() => {
+      if (audioUrl && audioPlayerRef.current && audioContextRef.current && analyzerRef.current) {
+          // Check to prevent creating MediaElementSource twice on the same element
+          if (!(audioPlayerRef.current as any).hasSourceConnected) {
+              const audioCtx = audioContextRef.current;
+              // Add a new track source
+              const source = audioCtx.createMediaElementSource(audioPlayerRef.current);
+              source.connect(analyzerRef.current);
+              // Important: We MUST connect it to destination to hear it, but we only create ONE analyzer!
+              // For microphone record, we didn't connect analyzer to destination.
+              // To hear playback, we can connect the element source straight to destination as well.
+              source.connect(audioCtx.destination);
+              (audioPlayerRef.current as any).hasSourceConnected = true;
+          }
+      }
+  }, [audioUrl]);
+
+  // Component cleanup
+  useEffect(() => {
+     let isAudioContextCleaned = false;
+
+     return () => {
+         if (animationRef.current) cancelAnimationFrame(animationRef.current);
+         
+         // Stop recording if active
+         if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            mediaRecorderRef.current.stop();
          }
-      }
 
-      // Stop all tracks to release microphone hardware
-      if (stream) {
-         stream.getTracks().forEach(track => {
-             track.stop();
-             track.enabled = false;
-         });
-      }
-    };
+         // Disconnect nodes
+         if (sourceRef.current) sourceRef.current.disconnect();
+         if (audioContextRef.current && !isAudioContextCleaned) {
+             isAudioContextCleaned = true;
+             if (audioContextRef.current.state !== 'closed') {
+                audioContextRef.current.close().catch(console.error);
+             }
+         }
+
+         // Stop all tracks to release microphone hardware
+         stopAudioTracks();
+     };
   }, []);
 
-  const startRecording = () => {
-    if (!stream) return;
-    
+  const initAudioAndRecord = async () => {
     try {
-        const recorder = new MediaRecorder(stream);
-        setMimeType(recorder.mimeType);
-        const chunks: Blob[] = [];
+      let localStream = streamRef.current;
+      
+      if (!localStream) {
+          localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          if (isUnmounted.current) {
+              localStream.getTracks().forEach(track => track.stop());
+              return;
+          }
+          streamRef.current = localStream;
+          setStream(localStream);
+      }
+      
+      // Setup Audio Context for Visualizer if not already setup
+      if (!audioContextRef.current) {
+          const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+          const audioCtx = new AudioContext();
+          setSampleRate(audioCtx.sampleRate);
+          
+          const analyzer = audioCtx.createAnalyser();
+          const source = audioCtx.createMediaStreamSource(localStream);
+          
+          analyzer.fftSize = 2048;
+          const bufferLength = analyzer.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+          
+          source.connect(analyzer);
+          
+          audioContextRef.current = audioCtx;
+          analyzerRef.current = analyzer;
+          dataArrayRef.current = dataArray;
+          sourceRef.current = source;
+      }
+      
+      // Try to start recording right away
+      try {
+          const recorder = new MediaRecorder(localStream);
+          setMimeType(recorder.mimeType);
+          const chunks: Blob[] = [];
 
-        recorder.ondataavailable = (e) => {
-            if (e.data.size > 0) chunks.push(e.data);
-        };
+          recorder.ondataavailable = (e) => {
+              if (e.data.size > 0) chunks.push(e.data);
+          };
 
-        recorder.onstop = () => {
-            // Create blob with actual mime type from recorder
-            const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
-            setAudioBlob(blob);
-            setAudioUrl(URL.createObjectURL(blob));
-            
-            // Format size
-            const sizeInKB = blob.size / 1024;
-            setFileSize(sizeInKB > 1024 ? `${(sizeInKB / 1024).toFixed(2)} MB` : `${sizeInKB.toFixed(2)} KB`);
-        };
+          recorder.onstop = () => {
+              // Create blob with actual mime type from recorder
+              const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+              setAudioBlob(blob);
+              setAudioUrl(URL.createObjectURL(blob));
+              
+              const sizeInKB = blob.size / 1024;
+              setFileSize(sizeInKB > 1024 ? `${(sizeInKB / 1024).toFixed(2)} MB` : `${sizeInKB.toFixed(2)} KB`);
+          };
 
-        recorder.start();
-        mediaRecorderRef.current = recorder;
-        setIsRecording(true);
-        setRecordingDuration(0);
-        setAudioBlob(null);
-        setAudioUrl(null);
-    } catch (e) {
-        console.error("Recorder error:", e);
+          recorder.start();
+          mediaRecorderRef.current = recorder;
+          setIsRecording(true);
+          setRecordingDuration(0);
+          setAudioBlob(null);
+          setAudioUrl(null);
+          
+      } catch (e) {
+          console.error("Recorder error:", e);
+      }
+
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      setError(t.error_mic);
     }
+  };
+
+  const startRecording = () => {
+    initAudioAndRecord();
   };
 
   const stopRecording = () => {
       if (mediaRecorderRef.current && isRecording) {
           mediaRecorderRef.current.stop();
           setIsRecording(false);
+          
+          if (animationRef.current) {
+              cancelAnimationFrame(animationRef.current);
+          }
+          
+          // Optionally release mic directly after stopping
+          stopAudioTracks();
       }
   };
 
@@ -268,11 +344,27 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
                             <div className="w-full h-32 bg-slate-200 dark:bg-slate-900 rounded-xl overflow-hidden relative shadow-inner border border-slate-200 dark:border-slate-700">
                                 <canvas ref={canvasRef} width={500} height={128} className="w-full h-full" />
                                 
-                                {!audioUrl && (
-                                    <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2 py-1 bg-black/10 dark:bg-white/10 rounded-full">
+                                {!isRecording && !isPlaying && !audioUrl && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-slate-200 dark:bg-slate-900 z-10">
+                                        <span className="text-slate-400 dark:text-slate-500 text-xs font-semibold tracking-wide">
+                                            {t.start_record}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {!isRecording && !isPlaying && audioUrl && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-transparent z-10">
+                                        <span className="text-slate-400/80 dark:text-slate-500/80 text-xs font-semibold tracking-wide">
+                                            {t.listening} {/* Or play text depending on localization */}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {!audioUrl && isRecording && (
+                                    <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2 py-1 bg-black/10 dark:bg-white/10 rounded-full z-20">
                                         <Activity size={12} className="text-slate-600 dark:text-slate-300" />
                                         <span className="text-[10px] font-medium text-slate-600 dark:text-slate-300 uppercase tracking-wide">
-                                            {isRecording ? "Recording" : t.listening}
+                                            Recording
                                         </span>
                                     </div>
                                 )}

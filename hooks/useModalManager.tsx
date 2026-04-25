@@ -1,14 +1,9 @@
 
 import React, { useState, lazy, useCallback } from 'react';
 
-// Dynamic Import Helper with artificial delay for smooth loading states
-const lazyWithDelay = (importFunc: () => Promise<any>, delay = 500) => {
-  return lazy(() => 
-    Promise.all([
-      importFunc(),
-      new Promise(resolve => setTimeout(resolve, delay))
-    ]).then(([moduleExports]) => moduleExports)
-  );
+// Dynamic Import Helper
+const lazyWithoutDelay = (importFunc: () => Promise<any>) => {
+  return lazy(() => importFunc());
 };
 
 // Module Factories Definition
@@ -90,7 +85,7 @@ export const useModalManager = () => {
         if (MODULE_FACTORIES[id]) {
             setComponents(prev => ({
                 ...prev,
-                [id]: lazyWithDelay(MODULE_FACTORIES[id])
+                [id]: lazyWithoutDelay(MODULE_FACTORIES[id])
             }));
         }
     }, [close]);

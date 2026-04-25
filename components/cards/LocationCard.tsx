@@ -18,20 +18,40 @@ interface LocationCardProps {
 }
 
 const AnimatedClock = ({ timeFormat }: { timeFormat: '12' | '24' }) => {
-    const [date, setDate] = useState(new Date());
+    const [angles, setAngles] = useState(() => {
+        const date = new Date();
+        const seconds = date.getSeconds();
+        const minutes = date.getMinutes();
+        const hours = date.getHours();
+        return {
+            sec: seconds * 6,
+            min: minutes * 6 + seconds * 0.1,
+            hour: (hours % 12) * 30 + minutes * 0.5
+        };
+    });
 
     useEffect(() => {
-        const timer = setInterval(() => setDate(new Date()), 1000);
+        const timer = setInterval(() => {
+            const date = new Date();
+            const seconds = date.getSeconds();
+            const minutes = date.getMinutes();
+            const hours = date.getHours();
+            
+            setAngles(prev => {
+                let newSec = seconds * 6;
+                let newMin = minutes * 6 + seconds * 0.1;
+                let newHour = (hours % 12) * 30 + minutes * 0.5;
+                
+                // Prevent transition backwards natively by enforcing increment
+                while (newSec < prev.sec) newSec += 360;
+                while (newMin < prev.min) newMin += 360;
+                while (newHour < prev.hour) newHour += 360;
+                
+                return { sec: newSec, min: newMin, hour: newHour };
+            });
+        }, 1000);
         return () => clearInterval(timer);
     }, []);
-
-    const seconds = date.getSeconds();
-    const minutes = date.getMinutes();
-    const hours = date.getHours();
-
-    const secAngle = seconds * 6;
-    const minAngle = minutes * 6 + seconds * 0.1;
-    const hourAngle = (hours % 12) * 30 + minutes * 0.5;
 
     return (
         <svg 
@@ -46,9 +66,9 @@ const AnimatedClock = ({ timeFormat }: { timeFormat: '12' | '24' }) => {
             className="text-blue-400 dark:text-blue-500/50"
         >
             <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="12" x2="12" y2="7" transform={`rotate(${hourAngle} 12 12)`} className="transition-transform duration-300 ease-in-out" />
-            <line x1="12" y1="12" x2="12" y2="4" transform={`rotate(${minAngle} 12 12)`} className="transition-transform duration-300 ease-in-out" />
-            <line x1="12" y1="12" x2="12" y2="3" strokeWidth="1.5" transform={`rotate(${secAngle} 12 12)`} className="transition-transform duration-300 ease-linear opacity-60" />
+            <line x1="12" y1="12" x2="12" y2="7" transform={`rotate(${angles.hour} 12 12)`} className="transition-transform duration-300 ease-in-out" />
+            <line x1="12" y1="12" x2="12" y2="4" transform={`rotate(${angles.min} 12 12)`} className="transition-transform duration-300 ease-in-out" />
+            <line x1="12" y1="12" x2="12" y2="3" strokeWidth="1.5" transform={`rotate(${angles.sec} 12 12)`} className="transition-transform duration-300 ease-linear opacity-60" />
         </svg>
     );
 };

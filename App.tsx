@@ -193,24 +193,21 @@ const App: React.FC = () => {
         }
     }, 250); 
 
-    setTimeout(async () => {
-        const info = await getAllData();
-        clearInterval(interval);
-        
-        if (steps.length > 0) {
-            setLoadingText(steps[steps.length - 1]);
-        }
-        
-        setData(info);
-        
-        // Start fade out
-        setTimeout(() => {
-            setFadeLoader(true);
-            setTimeout(() => {
-                setShowLoader(false);
-            }, 500);
-        }, 400);
-    }, 100);
+    // Fetch data immediately without extra delays
+    const info = await getAllData();
+    clearInterval(interval);
+    
+    if (steps.length > 0) {
+        setLoadingText(steps[steps.length - 1]);
+    }
+    
+    setData(info);
+    
+    // Start fade out instantly
+    setFadeLoader(true);
+    setTimeout(() => {
+        setShowLoader(false);
+    }, 500);
   };
 
   useEffect(() => {

@@ -37,6 +37,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   
   const animRef = useRef<number | null>(null); // For WebGPU loop
   const renderLoopRef = useRef<number | null>(null); // For UI render loop
+  const isRunningRef = useRef(false);
   
   const visualizerRef = useRef<ParticleSystem | null>(null);
   const gflopsRef = useRef(0);
@@ -47,6 +48,13 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   useEffect(() => { gflopsRef.current = gflops; }, [gflops]);
   useEffect(() => { peakGflopsRef.current = peakGflops; }, [peakGflops]);
   useEffect(() => { graphDataRef.current = graphData; }, [graphData]);
+
+  useEffect(() => {
+     // Cleanup on unmount
+     return () => {
+         stopTest();
+     };
+  }, []);
 
   const handleClose = () => {
     stopTest();
@@ -249,9 +257,10 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       // Compute Loop
       let startTime = performance.now();
       let frames = 0;
+      isRunningRef.current = true;
 
       const loop = async () => {
-          if (!animRef.current && frames > 0) return; // Stopped
+          if (!isRunningRef.current) return; // Stopped
 
           const commandEncoder = device.createCommandEncoder();
           const passEncoder = commandEncoder.beginComputePass();
@@ -294,6 +303,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   };
 
   const stopTest = () => {
+      isRunningRef.current = false;
       if (animRef.current) {
           cancelAnimationFrame(animRef.current);
           animRef.current = null;
