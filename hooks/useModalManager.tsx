@@ -37,6 +37,7 @@ const MODULE_FACTORIES: Record<string, () => Promise<any>> = {
     midi: () => import('../components/MidiModal').then(m => ({ default: m.MidiModal })),
     storageBench: () => import('../components/StorageBenchmarkModal').then(m => ({ default: m.StorageBenchmarkModal })),
     heatmap: () => import('../components/NetworkHeatmapModal').then(m => ({ default: m.NetworkHeatmapModal })),
+    rayTracing: () => import('../components/RayTracingModal').then(m => ({ default: m.RayTracingModal })),
 };
 
 export const useModalManager = () => {

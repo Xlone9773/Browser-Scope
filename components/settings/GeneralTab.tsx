@@ -96,7 +96,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 </div>
             </div>
 
-            {/* High Performance (Disable Blur) Toggle */}
+            {/* Disable Blur (Renamed from High Performance) */}
             <div 
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => toggleDisableBlur(!disableBlur)}

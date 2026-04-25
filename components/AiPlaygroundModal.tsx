@@ -176,7 +176,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
             {/* Sidebar / Tabs */}
             <div className="md:w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0">
                 <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Select Model Task</div>
+                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t.select_task || 'Select Model Task'}</div>
                     <div className="flex flex-col gap-2">
                         {(['sentiment', 'generation', 'translation'] as TaskType[]).map(task => (
                             <button
@@ -202,7 +202,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                 
                 {/* Stats Panel */}
                 <div className="mt-auto p-4 bg-slate-50 dark:bg-slate-900/50">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">Performance Metrics</div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">{t.perf_metrics || 'Performance Metrics'}</div>
                     <div className="space-y-3">
                         <div className="flex justify-between items-center">
                             <span className="text-xs text-slate-500">{t.metrics?.time_load}</span>
@@ -286,7 +286,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                                             className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-2 font-bold"
                                         >
                                             <CloudDownload size={20} />
-                                            {t.btn_load || 'Load Model'} ({getCurrentModelSize()})
+                                            {t.btn_load} ({getCurrentModelSize()})
                                         </button>
                                     </div>
                                 )}

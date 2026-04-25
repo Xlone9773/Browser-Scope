@@ -1,11 +1,4 @@
 
-
-
-
-
-
-
-
 export const modals = {
   aboutModal: {
     title: "关于 BrowserScope",
@@ -35,6 +28,11 @@ export const modals = {
         }
     },
     updates: [
+        {
+            version: "1.7.0",
+            date: "2024-05-01",
+            changes: ["新增 WebGPU 光线追踪基准测试", "增强 GPU 检测能力"]
+        },
         {
             version: "1.6.0",
             date: "2024-04-12",
@@ -259,6 +257,8 @@ export const modals = {
   aiPlayground: {
     title: "AI 游乐场",
     desc: "在浏览器本地运行轻量级 AI 模型 (DistilBERT)。无需上传数据。",
+    select_task: "选择模型任务",
+    perf_metrics: "性能指标",
     tasks: {
         sentiment: {
             title: "情感分析",
@@ -293,5 +293,21 @@ export const modals = {
     result_label: "分析结果",
     confidence: "置信度",
     btn_load: "加载模型"
+  },
+  rayTracing: {
+    title: "GPU 光线追踪",
+    start: "开始跑分",
+    stop: "停止",
+    fps: "帧率 (FPS)",
+    spp: "每像素采样 (SPP)",
+    bounces: "反弹次数",
+    resolution: "分辨率",
+    error_webgpu: "您的浏览器不支持 WebGPU。请使用 Chrome 113+ or Edge。",
+    desc: "基于 WebGPU 计算着色器 (Compute Shader) 的实时路径追踪基准测试。",
+    controls: "材质控制",
+    roughness: "粗糙度",
+    metalness: "金属度",
+    color: "球体颜色",
+    reset: "重置视角"
   }
 };

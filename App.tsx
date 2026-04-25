@@ -100,6 +100,7 @@ const App: React.FC = () => {
       { id: 'midi', name: t.midiModal.title, isOpen: visibility.midi, setOpen: (v) => v ? open('midi') : close('midi'), impact: 'Low', onUnload: () => unload('midi'), isLoaded: loadedModules.has('midi') },
       { id: 'storageBench', name: t.storageBenchmark.title, isOpen: visibility.storageBench, setOpen: (v) => v ? open('storageBench') : close('storageBench'), impact: 'High', onUnload: () => unload('storageBench'), isLoaded: loadedModules.has('storageBench') },
       { id: 'heatmap', name: t.heatmap.title, isOpen: visibility.heatmap, setOpen: (v) => v ? open('heatmap') : close('heatmap'), impact: 'Medium', onUnload: () => unload('heatmap'), isLoaded: loadedModules.has('heatmap') },
+      { id: 'rayTracing', name: t.rayTracing.title, isOpen: visibility.rayTracing, setOpen: (v) => v ? open('rayTracing') : close('rayTracing'), impact: 'High', onUnload: () => unload('rayTracing'), isLoaded: loadedModules.has('rayTracing') },
   ];
 
   // Initialize theme
@@ -113,11 +114,16 @@ const App: React.FC = () => {
   useEffect(() => {
       const handleStorageBench = () => open('storageBench');
       const handleHeatmap = () => open('heatmap');
+      const handleRayTracing = () => open('rayTracing');
+      
       window.addEventListener('open-storage-benchmark', handleStorageBench);
       window.addEventListener('open-heatmap', handleHeatmap);
+      window.addEventListener('open-ray-tracing', handleRayTracing);
+      
       return () => {
           window.removeEventListener('open-storage-benchmark', handleStorageBench);
           window.removeEventListener('open-heatmap', handleHeatmap);
+          window.removeEventListener('open-ray-tracing', handleRayTracing);
       };
   }, [open]);
 
@@ -459,6 +465,12 @@ const App: React.FC = () => {
                 <Components.heatmap 
                     onClose={() => close('heatmap')} 
                     t={t.heatmap} 
+                />
+            )}
+            {visibility.rayTracing && (
+                <Components.rayTracing 
+                    onClose={() => close('rayTracing')} 
+                    t={t.rayTracing} 
                 />
             )}
         </Suspense>

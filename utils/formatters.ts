@@ -9,11 +9,6 @@ declare global {
       type?: 'conjunction' | 'disjunction' | 'unit';
       style?: 'long' | 'short' | 'narrow';
     }
-
-    class ListFormat {
-      constructor(locales?: string | string[], options?: ListFormatOptions);
-      format(list: Iterable<string>): string;
-    }
   }
 }
 

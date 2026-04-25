@@ -1,4 +1,5 @@
 
+
 export const tools = {
   speedTest: {
     title: "網絡速度測試",
@@ -28,7 +29,7 @@ export const tools = {
         backend: "測速節點",
         custom_url: "自定義下載連結",
         custom_placeholder: "https://example.com/large-file.zip",
-        cors_note: "注意：URL 必須支援 CORS。上載測試將被跳過。"
+        cors_note: "注意：URL 必須支援 CORS。上傳測試將被跳過。"
     },
     preset_names: {
         cloudflare: "Cloudflare (全球)",

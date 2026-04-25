@@ -1,6 +1,4 @@
 
-
-
 export const modals = {
   aboutModal: {
     title: "About BrowserScope",
@@ -30,6 +28,11 @@ export const modals = {
         }
     },
     updates: [
+        {
+            version: "1.7.0",
+            date: "2024-05-01",
+            changes: ["Added WebGPU Ray Tracing Benchmark", "Enhanced GPU detection"]
+        },
         {
             version: "1.6.0",
             date: "2024-04-12",
@@ -288,5 +291,21 @@ export const modals = {
     result_label: "Result",
     confidence: "Confidence",
     btn_load: "Load Model"
+  },
+  rayTracing: {
+    title: "GPU Ray Tracing",
+    start: "Start Benchmark",
+    stop: "Stop",
+    fps: "FPS",
+    spp: "Samples Per Pixel",
+    bounces: "Bounces",
+    resolution: "Resolution",
+    error_webgpu: "WebGPU is not supported in this browser. Please use Chrome 113+ or Edge.",
+    desc: "Real-time Path Tracing Benchmark powered by WebGPU Compute Shaders.",
+    controls: "Material Controls",
+    roughness: "Roughness",
+    metalness: "Metalness",
+    color: "Sphere Color",
+    reset: "Reset Camera"
   }
 };

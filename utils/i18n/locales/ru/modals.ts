@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 export const modals = {
   aboutModal: {
     title: "О BrowserScope",
@@ -34,6 +28,11 @@ export const modals = {
         }
     },
     updates: [
+        {
+            version: "1.7.0",
+            date: "2024-05-01",
+            changes: ["Добавлен бенчмарк WebGPU Ray Tracing", "Улучшено обнаружение GPU"]
+        },
         {
             version: "1.6.0",
             date: "2024-04-12",
@@ -258,6 +257,8 @@ export const modals = {
   aiPlayground: {
     title: "AI Песочница",
     desc: "Запуск легковесных AI моделей (DistilBERT) локально в браузере. Данные не отправляются на сервер.",
+    select_task: "Выберите задачу",
+    perf_metrics: "Метрики",
     tasks: {
         sentiment: {
             title: "Анализ тональности",
@@ -292,5 +293,21 @@ export const modals = {
     result_label: "Результат анализа",
     confidence: "Уверенность",
     btn_load: "Загрузить модель"
+  },
+  rayTracing: {
+    title: "GPU Трассировка лучей",
+    start: "Начать тест",
+    stop: "Стоп",
+    fps: "FPS",
+    spp: "Сэмплов на пиксель",
+    bounces: "Отскоки",
+    resolution: "Разрешение",
+    error_webgpu: "WebGPU не поддерживается в этом браузере. Используйте Chrome 113+ или Edge.",
+    desc: "Бенчмарк трассировки путей в реальном времени на базе WebGPU Compute Shaders.",
+    controls: "Материалы",
+    roughness: "Шероховатость",
+    metalness: "Металличность",
+    color: "Цвет сферы",
+    reset: "Сброс камеры"
   }
 };

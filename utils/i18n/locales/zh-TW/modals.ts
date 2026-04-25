@@ -1,8 +1,4 @@
 
-
-
-
-
 export const modals = {
   aboutModal: {
     title: "關於 BrowserScope",
@@ -32,6 +28,11 @@ export const modals = {
         }
     },
     updates: [
+        {
+            version: "1.7.0",
+            date: "2024-05-01",
+            changes: ["新增 WebGPU 光線追蹤基準測試", "增強 GPU 檢測能力"]
+        },
         {
             version: "1.6.0",
             date: "2024-04-12",
@@ -233,7 +234,7 @@ export const modals = {
     current: "即時",
     samples: "樣本數",
     regions: {
-        us_east: "美東 (維吉尼亞)",
+        us_east: "美東 (維珍尼亞)",
         us_west: "美西 (加利福尼亞)",
         ca_central: "加拿大 (蒙特利爾)",
         sa_brazil: "巴西 (聖保羅)",
@@ -256,6 +257,8 @@ export const modals = {
   aiPlayground: {
     title: "AI 遊樂場",
     desc: "在瀏覽器本地運行輕量級 AI 模型 (DistilBERT)。無需上傳數據。",
+    select_task: "選擇模型任務",
+    perf_metrics: "效能指標",
     tasks: {
         sentiment: {
             title: "情感分析",
@@ -283,12 +286,28 @@ export const modals = {
         idle: "閒置"
     },
     metrics: {
-        time_load: "加載耗時",
+        time_load: "載入耗時",
         time_inference: "推理耗時",
-        device: "計算設備"
+        device: "計算裝置"
     },
     result_label: "分析結果",
     confidence: "置信度",
     btn_load: "載入模型"
+  },
+  rayTracing: {
+    title: "GPU 光線追蹤",
+    start: "開始測試",
+    stop: "停止",
+    fps: "幀率 (FPS)",
+    spp: "每像素採樣 (SPP)",
+    bounces: "反彈次數",
+    resolution: "解析度",
+    error_webgpu: "目前瀏覽器不支援 WebGPU。請使用 Chrome 113+ 或 Edge。",
+    desc: "基於 WebGPU 計算著色器 (Compute Shaders) 的即時路徑追蹤基準測試。",
+    controls: "材質控制",
+    roughness: "粗糙度",
+    metalness: "金屬度",
+    color: "球體顏色",
+    reset: "重置鏡頭"
   }
 };

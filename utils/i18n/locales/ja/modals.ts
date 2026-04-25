@@ -1,11 +1,4 @@
 
-
-
-
-
-
-
-
 export const modals = {
   aboutModal: {
     title: "BrowserScopeについて",
@@ -36,9 +29,24 @@ export const modals = {
     },
     updates: [
         {
+            version: "1.7.0",
+            date: "2024-05-01",
+            changes: ["WebGPUレイトレーシングベンチマークを追加", "GPU検出を強化"]
+        },
+        {
+            version: "1.6.0",
+            date: "2024-04-12",
+            changes: ["リアルネットワーク速度テスト (Cloudflare) を追加", "I18n動的翻訳を追加", "Intlサポートを強化"]
+        },
+        {
             version: "1.5.0",
             date: "2024-04-05",
             changes: ["開発者ツールを追加 (コンソール/インスペクター)", "コーデック検出を強化 (HDR/Dolby/深度)", "IPソース選択機能を追加", "フローティングウィンドウ対応"]
+        },
+        {
+            version: "1.4.0",
+            date: "2024-03-25",
+            changes: ["ビジョン機能 (バーコード/QR) を追加", "CPU/GPUマッピングデータベースを更新"]
         },
         {
             version: "1.3.0",
@@ -249,6 +257,8 @@ export const modals = {
   aiPlayground: {
     title: "AI プレイグラウンド",
     desc: "ブラウザローカルで軽量AIモデル(DistilBERT)を実行します。データはアップロードされません。",
+    select_task: "モデルタスクの選択",
+    perf_metrics: "パフォーマンス指標",
     tasks: {
         sentiment: {
             title: "感情分析",
@@ -283,5 +293,21 @@ export const modals = {
     result_label: "分析結果",
     confidence: "信頼度",
     btn_load: "モデルを読み込む"
+  },
+  rayTracing: {
+    title: "GPU レイトレーシング",
+    start: "テスト開始",
+    stop: "停止",
+    fps: "FPS",
+    spp: "サンプル/ピクセル",
+    bounces: "バウンス数",
+    resolution: "解像度",
+    error_webgpu: "このブラウザはWebGPUをサポートしていません。Chrome 113+ または Edgeを使用してください。",
+    desc: "WebGPUコンピュートシェーダーを使用したリアルタイムパストレーシングベンチマーク。",
+    controls: "マテリアル制御",
+    roughness: "粗さ",
+    metalness: "金属度",
+    color: "球の色",
+    reset: "カメラリセット"
   }
 };

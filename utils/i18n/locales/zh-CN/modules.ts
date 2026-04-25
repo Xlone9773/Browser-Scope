@@ -25,8 +25,8 @@ export const modules = {
             desc: "在 12 小时制和 24 小时制之间切换。"
         },
         performance: {
-            title: "高性能模式",
-            desc: "禁用模糊特效与透明度以降低 GPU 负载。"
+            title: "禁用视觉特效",
+            desc: "关闭模糊效果与透明度背景，降低低性能设备的 GPU 负载。"
         }
     },
     network: {
@@ -280,6 +280,8 @@ export const modules = {
   aiPlayground: {
     title: "AI 游乐场",
     desc: "在浏览器本地运行轻量级 AI 模型 (DistilBERT)。无需上传数据。",
+    select_task: "选择模型任务",
+    perf_metrics: "性能指标",
     tasks: {
         sentiment: {
             title: "情感分析",
@@ -312,7 +314,8 @@ export const modules = {
         device: "计算设备"
     },
     result_label: "分析结果",
-    confidence: "置信度"
+    confidence: "置信度",
+    btn_load: "加载模型"
   },
 
   computeStress: {
@@ -355,6 +358,11 @@ export const modules = {
     tab_mouse: "鼠标回报率",
     tab_pointer: "压感/手写笔",
     tab_video: "解码能力",
+    // Ray Tracing
+    gpu_title: "WebGPU 光线追踪",
+    gpu_desc: "直接在浏览器中运行实时路径追踪基准测试。此测试利用 WebGPU 计算着色器来模拟 GPU 上的光物理（反射、折射、阴影）。",
+    btn_launch: "启动基准测试",
+    // Existing
     vibrate_not_supported: "您的设备不支持振动 API",
     vibrate_short: "短振动 (200ms)",
     vibrate_medium: "中振动 (500ms)",
@@ -385,7 +393,7 @@ export const modules = {
     status_sw: "软解",
     status_software: "软件解码",
     tooltip_hw: "硬件加速 (高效)",
-    tooltip_sw: "软件解码 (高功耗)",
+    tooltip_sw: "软件解码 (高耗电)",
     tooltip_drop: "可能掉幀",
     status_done: "完成"
   },
@@ -430,5 +438,22 @@ export const modules = {
     triangle: "三角波",
     velocity: "力度",
     note: "音符"
+  },
+  
+  rayTracing: {
+    title: "GPU 光线追踪",
+    start: "开始跑分",
+    stop: "停止",
+    fps: "帧率 (FPS)",
+    spp: "每像素采样 (SPP)",
+    bounces: "反弹次数",
+    resolution: "分辨率",
+    error_webgpu: "您的浏览器不支持 WebGPU。请使用 Chrome 113+ or Edge。",
+    desc: "基于 WebGPU 计算着色器 (Compute Shader) 的实时路径追踪基准测试。",
+    controls: "材质控制",
+    roughness: "粗糙度",
+    metalness: "金属度",
+    color: "球体颜色",
+    reset: "重置视角"
   }
 };

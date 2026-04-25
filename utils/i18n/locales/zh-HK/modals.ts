@@ -1,9 +1,4 @@
 
-
-
-
-
-
 export const modals = {
   aboutModal: {
     title: "關於 BrowserScope",
@@ -33,6 +28,11 @@ export const modals = {
         }
     },
     updates: [
+        {
+            version: "1.7.0",
+            date: "2024-05-01",
+            changes: ["新增 WebGPU 光線追蹤基準測試", "增強 GPU 檢測能力"]
+        },
         {
             version: "1.6.0",
             date: "2024-04-12",
@@ -180,7 +180,7 @@ export const modals = {
     play: "試聽",
     default: "預設",
     local: "本地",
-    remote: "網上",
+    remote: "線上",
     no_voices: "未找到語音包。請檢查您的系統是否支援文字轉語音。",
     loading: "載入語音庫..."
   },
@@ -192,14 +192,14 @@ export const modals = {
     size_label: "測試規模",
     chunk_size: "分塊大小",
     opfs: "OPFS (私有檔案系統)",
-    idb: "IndexedDB (數據庫)",
+    idb: "IndexedDB (資料庫)",
     cache: "Cache API (緩存)",
     write: "寫入速度",
     read: "讀取速度",
     mbps: "MB/s",
     iops: "次/秒",
     results: "測試日誌",
-    warning: "此測試將在您的磁碟寫入臨時數據。數據會自動清除，但請確保有足夠的可用空間。",
+    warning: "此測試將在您的磁碟寫入臨時資料。資料會自動清除，但請確保有足夠的可用空間。",
     latency: "延遲 (平均/峰值)",
     export_csv: "匯出 CSV",
     clear_logs: "清空日誌",
@@ -257,6 +257,8 @@ export const modals = {
   aiPlayground: {
     title: "AI 遊樂場",
     desc: "在瀏覽器本地運行輕量級 AI 模型 (DistilBERT)。無需上傳數據。",
+    select_task: "選擇模型任務",
+    perf_metrics: "效能指標",
     tasks: {
         sentiment: {
             title: "情感分析",
@@ -284,12 +286,28 @@ export const modals = {
         idle: "閒置"
     },
     metrics: {
-        time_load: "加載耗時",
+        time_load: "載入耗時",
         time_inference: "推理耗時",
-        device: "計算設備"
+        device: "計算裝置"
     },
     result_label: "分析結果",
     confidence: "置信度",
     btn_load: "載入模型"
+  },
+  rayTracing: {
+    title: "GPU 光線追蹤",
+    start: "開始測試",
+    stop: "停止",
+    fps: "幀率 (FPS)",
+    spp: "每像素採樣 (SPP)",
+    bounces: "反彈次數",
+    resolution: "解像度",
+    error_webgpu: "目前瀏覽器不支援 WebGPU。請使用 Chrome 113+ 或 Edge。",
+    desc: "基於 WebGPU 計算著色器 (Compute Shaders) 的即時路徑追蹤基準測試。",
+    controls: "材質控制",
+    roughness: "粗糙度",
+    metalness: "金屬度",
+    color: "球體顏色",
+    reset: "重置鏡頭"
   }
 };

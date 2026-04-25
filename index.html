@@ -65,36 +65,52 @@
         mix-blend-mode: normal;
       }
 
-      /* High Performance Mode (No Blur) */
+      /* 
+         === DISABLE VISUAL EFFECTS MODE (Previously High Performance) ===
+         Forces opaque backgrounds and removes blur filters to reduce GPU load 
+      */
+      
+      /* 1. Remove all backdrop filters */
       body.no-blur .backdrop-blur-sm,
       body.no-blur .backdrop-blur-md,
       body.no-blur .backdrop-blur-lg,
       body.no-blur .backdrop-blur-xl,
       body.no-blur .backdrop-blur-2xl,
-      body.no-blur .backdrop-blur-3xl {
+      body.no-blur .backdrop-blur-3xl,
+      body.no-blur .backdrop-blur-\[2px\] {
           backdrop-filter: none !important;
           -webkit-backdrop-filter: none !important;
       }
       
-      /* Make backgrounds opaque in no-blur mode to maintain readability */
+      /* 2. Force Opaque Backgrounds in Light Mode */
+      body.no-blur .bg-white\/50,
+      body.no-blur .bg-white\/60,
       body.no-blur .bg-white\/75,
       body.no-blur .bg-white\/80,
-      body.no-blur .bg-white\/90 {
+      body.no-blur .bg-white\/90,
+      body.no-blur .bg-white\/95 {
           background-color: #ffffff !important;
           border-color: #e2e8f0 !important; /* slate-200 */
       }
 
+      /* 3. Force Opaque Backgrounds in Dark Mode */
+      .dark body.no-blur .bg-slate-900\/50,
+      .dark body.no-blur .bg-slate-900\/60,
       .dark body.no-blur .bg-slate-900\/75,
       .dark body.no-blur .bg-slate-900\/80,
       .dark body.no-blur .bg-slate-900\/90,
-      .dark body.no-blur .bg-slate-900\/95 {
+      .dark body.no-blur .bg-slate-900\/95,
+      .dark body.no-blur .bg-black\/40,
+      .dark body.no-blur .bg-black\/50,
+      .dark body.no-blur .bg-black\/60 {
           background-color: #0f172a !important; /* slate-900 */
           border-color: #334155 !important; /* slate-700 */
       }
       
-      /* Specific overrides for overlays to ensure they block content visually without blur */
-      body.no-blur .fixed.inset-0.bg-slate-900\/75 {
-          background-color: rgba(15, 23, 42, 0.95) !important;
+      /* 4. Specific Component Overrides */
+      /* Modal Overlay - make it solid dark to hide content behind */
+      body.no-blur .fixed.inset-0.bg-slate-900\/60 {
+          background-color: rgba(15, 23, 42, 0.98) !important;
       }
     </style>
   <script type="importmap">
@@ -113,8 +129,10 @@
   }
 }
 </script>
+<link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="root"></div>
-  </body>
+  <script type="module" src="/index.tsx"></script>
+</body>
 </html>

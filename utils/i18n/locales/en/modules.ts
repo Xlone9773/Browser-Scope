@@ -25,8 +25,8 @@ export const modules = {
             desc: "Switch between 12-hour and 24-hour clock formats."
         },
         performance: {
-            title: "High Performance",
-            desc: "Disable blur effects and transparency to reduce GPU load."
+            title: "Disable Visual Effects",
+            desc: "Reduces GPU load for low-end devices by disabling blur and transparency."
         }
     },
     network: {
@@ -307,6 +307,11 @@ export const modules = {
     },
     updates: [
         {
+            version: "1.7.0",
+            date: "2024-05-01",
+            changes: ["Added WebGPU Ray Tracing Benchmark", "Enhanced GPU detection"]
+        },
+        {
             version: "1.6.0",
             date: "2024-04-12",
             changes: ["Added Real Network Speed Test (Cloudflare)", "Added I18n Dynamic Translations", "Enhanced Intl support"]
@@ -426,6 +431,8 @@ export const modules = {
   aiPlayground: {
     title: "AI Playground",
     desc: "Run lightweight AI models locally in your browser via WebAssembly. Privacy first - no data leaves your device.",
+    select_task: "Select Model Task",
+    perf_metrics: "Performance Metrics",
     tasks: {
         sentiment: {
             title: "Sentiment Analysis",
@@ -458,7 +465,8 @@ export const modules = {
         device: "Device"
     },
     result_label: "Result",
-    confidence: "Confidence"
+    confidence: "Confidence",
+    btn_load: "Load Model"
   },
 
   computeStress: {
@@ -501,6 +509,11 @@ export const modules = {
     tab_mouse: "Mouse Hz",
     tab_pointer: "Pointer/Pen",
     tab_video: "Video Matrix",
+    // Ray Tracing Tab Translations
+    gpu_title: "WebGPU Ray Tracing",
+    gpu_desc: "Run a real-time Path Tracing benchmark directly in your browser. This test utilizes WebGPU Compute Shaders to simulate light physics (reflections, refractions, shadows) on your GPU.",
+    btn_launch: "Launch Benchmark",
+    // Existing keys
     vibrate_not_supported: "Vibration API not supported on this device",
     vibrate_short: "Short (200ms)",
     vibrate_medium: "Medium (500ms)",

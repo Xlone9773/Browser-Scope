@@ -9,14 +9,14 @@ import { Translation, Language } from './types';
 
 export type { Language };
 
-export const translations: Record<Language, Translation> = {
+export const translations = {
   en,
   'zh-CN': zhCN,
   'zh-TW': zhTW,
   'zh-HK': zhHK,
   ja,
   ru
-};
+} as unknown as Record<Language, Translation>;
 
 export const languageNames: Record<Language, string> = {
   en: 'English',

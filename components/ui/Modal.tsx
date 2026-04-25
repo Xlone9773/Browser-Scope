@@ -79,9 +79,21 @@ export const Modal: React.FC<ModalProps> = ({
   // Support Render Props to pass the animated close function to children
   const content = typeof children === 'function' ? children({ close: handleClose }) : children;
 
+  // Header Style Configuration
+  // For standard modals (noPadding=false), we use absolute positioning to let content scroll behind.
+  // For complex layout modals (noPadding=true), we use relative positioning to ensure layout stability, but still apply blur.
+  const headerPositionClass = noPadding ? 'relative' : 'absolute top-0 left-0 w-full';
+  
+  // Content Container Style
+  // If absolute header, we need padding-top on the scroll container.
+  // We use h-full to fill the modal.
+  const contentContainerClass = noPadding 
+    ? 'flex-1 overflow-hidden flex flex-col relative' // Complex layout: Flex based
+    : 'h-full overflow-y-auto custom-scrollbar pt-20 px-6 pb-6 bg-slate-50 dark:bg-slate-900'; // Standard: Scrollable with top padding for header
+
   return createPortal(
     <div 
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm transition-all duration-300 ease-out ${
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px] transition-all duration-300 ease-out ${
         isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
       }`}
       onClick={handleClose}
@@ -94,7 +106,7 @@ export const Modal: React.FC<ModalProps> = ({
         ref={modalRef}
         className={`
             bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full flex flex-col overflow-hidden 
-            transition-all duration-300 ease-out transform outline-none
+            transition-all duration-300 ease-out transform outline-none border border-white/10 relative
             ${sizes[size]} 
             ${heightClass}
             ${isVisible && !isClosing ? 'opacity-100 scale-100 blur-0 translate-y-0' : 'opacity-0 scale-95 blur-sm translate-y-4'}
@@ -102,29 +114,35 @@ export const Modal: React.FC<ModalProps> = ({
         `}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 shrink-0 relative z-10">
-          <div className="flex items-center gap-3">
+        {/* Blur Header */}
+        <div className={`
+            px-6 py-4 flex justify-between items-center z-30 shrink-0
+            bg-white/80 dark:bg-slate-800/80 backdrop-blur-md
+            border-b border-slate-200/60 dark:border-slate-700/60
+            supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:dark:bg-slate-800/60
+            ${headerPositionClass}
+        `}>
+          <div className="flex items-center gap-3 overflow-hidden">
              {icon && (
-                 <div className="text-indigo-600 dark:text-indigo-400">
+                 <div className="text-indigo-600 dark:text-indigo-400 shrink-0">
                     {icon}
                  </div>
              )}
-             <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 truncate">
+             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 truncate tracking-tight">
                 {title}
              </h2>
           </div>
           <button 
             onClick={handleClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+            className="p-2 ml-4 hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-full transition-colors text-slate-500 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shrink-0"
             aria-label="Close"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
 
-        {/* Content */}
-        <div className={`flex-1 overflow-hidden flex flex-col relative ${noPadding ? '' : 'overflow-y-auto custom-scrollbar p-6 bg-slate-50 dark:bg-slate-900'}`}>
+        {/* Content Area */}
+        <div className={contentContainerClass}>
             {content}
         </div>
       </div>

@@ -1,4 +1,5 @@
 
+
 export const tools = {
   speedTest: {
     title: "网络速度测试",
@@ -144,13 +145,13 @@ export const tools = {
     key_last: "当前按键",
     key_history: "已检测按键",
     key_input_placeholder: "在此处输入以测试键盘...",
-    mouse_instruction: "Move your mouse cursor quickly inside this box to measure event polling rate.",
-    mouse_rate: "Current Rate",
-    mouse_peak: "Peak Rate",
-    pointer_instruction: "Draw here. Supports Pressure, Tilt & Pen inputs.",
-    pointer_pressure: "Pressure",
-    pointer_tilt: "Tilt (X/Y)",
-    pointer_type: "Input Type",
+    mouse_instruction: "在此区域内快速移动鼠标以测量事件回报率 (Polling Rate)。",
+    mouse_rate: "当前回报率",
+    mouse_peak: "峰值回报率",
+    pointer_instruction: "在此绘图。支持压感、倾斜度及手写笔输入。",
+    pointer_pressure: "压力感应",
+    pointer_tilt: "倾斜角度 (X/Y)",
+    pointer_type: "输入类型",
     video_instruction: "正在检测硬件视频解码能力矩阵...",
     video_codec: "编码格式",
     video_res: "分辨率",
@@ -164,7 +165,7 @@ export const tools = {
     status_sw: "软解",
     status_software: "软件解码",
     tooltip_hw: "硬件加速 (高效)",
-    tooltip_sw: "软件解码 (高功耗)",
+    tooltip_sw: "软件解码 (高耗电)",
     tooltip_drop: "可能掉帧",
     status_done: "完成"
   },

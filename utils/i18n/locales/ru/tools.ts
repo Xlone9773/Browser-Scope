@@ -1,4 +1,5 @@
 
+
 export const tools = {
   speedTest: {
     title: "Тест скорости сети",
