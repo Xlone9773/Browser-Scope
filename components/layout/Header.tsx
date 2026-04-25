@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Monitor, 
   RefreshCw, 
@@ -10,7 +10,9 @@ import {
   Sliders, 
   Info, 
   Languages, 
-  ChevronDown 
+  ChevronDown,
+  Maximize,
+  Minimize
 } from 'lucide-react';
 import { Translation, Language } from '../../utils/i18n/types';
 import { Theme } from '../../appearance/theme';
@@ -46,7 +48,28 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenBenchmark
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { formatNativeLanguageName } = useFormatter(lang);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
 
   return (
     <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800 relative">
@@ -71,6 +94,14 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={toggleTheme}
         >
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+        </Button>
+        
+        <Button 
+            variant="secondary" 
+            onClick={toggleFullscreen}
+            title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+        >
+            {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
         </Button>
         
         <Button 

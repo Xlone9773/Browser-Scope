@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Play, Square, Layers, RefreshCw, Sliders, AlertTriangle } from 'lucide-react';
+import { Box, Play, Square, Layers, RefreshCw, Sliders, AlertTriangle, Maximize, Minimize } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 
@@ -176,10 +176,32 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
 
 export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fps, setFps] = useState(0);
   const [spp, setSpp] = useState(0); // Actually Frame Count here since we don't accumulate
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen().catch(err => {
+         console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
   
   // Scene Params
   const [roughness, setRoughness] = useState(0.5);
@@ -366,8 +388,16 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
         size="full"
         noPadding
     >
-        <div className="flex flex-col h-full bg-black relative overflow-hidden group">
+        <div ref={containerRef} className="flex flex-col h-full bg-black relative overflow-hidden group">
             
+            {/* Fullscreen Toggle */}
+            <button 
+                onClick={toggleFullscreen}
+                className="absolute top-4 right-4 z-50 p-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-lg text-white hover:bg-white/20 transition-colors opacity-0 group-hover:opacity-100"
+            >
+                {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+            </button>
+
             {/* Main Canvas */}
             <canvas 
                 ref={canvasRef}
