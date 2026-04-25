@@ -51,7 +51,7 @@ export const getStorageEstimate = async (): Promise<{ quota: string, usage: stri
 export const runAiReadinessCheck = (): AiReadiness => {
     const start = performance.now();
     let ops = 0;
-    const durationLimit = 100; // Run for 100ms
+    const durationLimit = 20; // Run for 20ms
     
     // Math intensive loop (floating point ops)
     while (performance.now() - start < durationLimit) {
@@ -67,7 +67,8 @@ export const runAiReadinessCheck = (): AiReadiness => {
     const opsPerSec = (ops / duration) * 1000;
     const gflops = opsPerSec / 1e9;
     
-    const score = Math.round(ops / 1000); 
+    // Scale score to match 100ms equivalent for consistency
+    const score = Math.round((ops / duration) * 100 / 1000); 
     
     let level: 'Low' | 'Medium' | 'High' | 'Ultra' = 'Low';
     

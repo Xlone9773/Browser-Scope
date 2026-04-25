@@ -70,7 +70,7 @@ export const getWebRTCIP = async (): Promise<string> => {
                 const match = e.candidate.candidate.match(ipRegex);
                 if (match) { pc.close(); resolve(match[1]); }
             };
-            setTimeout(() => { pc.close(); resolve('Timeout/Hidden'); }, 1000);
+            setTimeout(() => { pc.close(); resolve('Timeout/Hidden'); }, 200);
             pc.createOffer().then(sdp => pc.setLocalDescription(sdp));
         } catch(e) { resolve('Not Supported'); }
     });

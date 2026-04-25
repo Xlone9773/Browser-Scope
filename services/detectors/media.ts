@@ -111,7 +111,7 @@ export const getSpeechVoicesCount = (): Promise<number> => {
             setTimeout(() => {
                 resolve(0);
                 window.speechSynthesis.onvoiceschanged = null;
-            }, 300);
+            }, 50); // Reduced from 300ms to 50ms
         }
     });
 };

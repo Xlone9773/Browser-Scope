@@ -90,10 +90,12 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
   }, [audioUrl]);
 
   // Visualizer Loop
+  const isVisualizerActiveRef = useRef(false);
+
   const drawVisualizer = () => {
     if (!canvasRef.current || !analyzerRef.current || !dataArrayRef.current) return;
 
-    if (isUnmounted.current) return;
+    if (isUnmounted.current || !isVisualizerActiveRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -117,15 +119,15 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
     let x = 0;
 
     for (let i = 0; i < bufferLength; i++) {
-      barHeight = (dataArray[i] / 255) * canvas.height;
+        barHeight = (dataArray[i] / 255) * canvas.height;
 
-      // Gradient color based on height
-      const hue = 220 + (barHeight / canvas.height) * 40; // Blue/Indigo range
-      ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+        // Gradient color based on height
+        const hue = 220 + (barHeight / canvas.height) * 40; // Blue/Indigo range
+        ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
 
-      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
 
-      x += barWidth + 1;
+        x += barWidth + 1;
     }
 
     // Schedule next frame
@@ -134,6 +136,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
 
   // Start visualizer only when recording or playing
   useEffect(() => {
+      isVisualizerActiveRef.current = isRecording || isPlaying;
       if (isRecording || isPlaying) {
           if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
               audioContextRef.current.resume();

@@ -33,9 +33,13 @@ const PRESET_COMMANDS: PresetCommand[] = [
     { label: 'Cookies', cmd: 'document.cookie', desc: 'Show all cookies', icon: Shield, autoRun: true },
     { label: 'Clear LocalStorage', cmd: 'localStorage.clear(); "LocalStorage Cleared"', desc: 'Wipe local storage', icon: Trash2, autoRun: true },
     { label: 'Edit Page', cmd: 'document.body.contentEditable = document.body.contentEditable === "true" ? "false" : "true"', desc: 'Toggle contentEditable', icon: Edit3, autoRun: true },
+    { label: 'Disable Blur', cmd: 'document.body.classList.toggle("no-blur")', desc: 'Toggle global blur', icon: Eye, autoRun: true },
+    { label: 'Block Clicks', cmd: 'document.body.style.pointerEvents = document.body.style.pointerEvents === "none" ? "auto" : "none"', desc: 'Toggle pointer-events', icon: Shield, autoRun: true },
+    { label: 'Get All Keys', cmd: 'Object.keys(localStorage)', desc: 'List localStorage keys', icon: Database, autoRun: true },
+    { label: 'Reload Page', cmd: 'window.location.reload()', desc: 'Force refresh', icon: Activity, autoRun: true },
     { label: 'Performance', cmd: 'performance.now()', desc: 'Current timestamp (ms)', icon: Activity, autoRun: true },
     { label: 'Network Info', cmd: 'navigator.connection', desc: 'Connection details', icon: Activity, autoRun: true },
-    { label: 'Memory', cmd: 'performance.memory', desc: 'Heap size (Chrome only)', icon: Database, autoRun: true },
+    { label: 'Memory', cmd: 'performance.memory', desc: 'Heap size (Chrome)', icon: Database, autoRun: true },
 ];
 
 export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggleFloat }) => {

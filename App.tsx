@@ -44,7 +44,16 @@ const App: React.FC = () => {
   const [loadingText, setLoadingText] = useState('');
   
   // Settings State
-  const [lang, setLang] = useState<Language>('zh-CN');
+  const [lang, setLang] = useState<Language>(() => {
+      const saved = localStorage.getItem('language');
+      return (saved as Language) || 'zh-CN';
+  });
+
+  const changeLang = (newLang: Language) => {
+      setLang(newLang);
+      localStorage.setItem('language', newLang);
+      document.documentElement.lang = newLang; // Optional, also good for accessibility
+  };
   const [theme, setTheme] = useState<Theme>('system');
   const [simpleMode, setSimpleMode] = useState<boolean>(() => localStorage.getItem('simpleMode') === 'true');
   const [hideScrollbar, setHideScrollbar] = useState<boolean>(() => localStorage.getItem('hideScrollbar') === 'true');
@@ -478,7 +487,7 @@ const App: React.FC = () => {
         <Header 
           t={t}
           lang={lang}
-          setLang={setLang}
+          setLang={changeLang}
           theme={theme}
           toggleTheme={toggleTheme}
           onRefresh={fetchData}
