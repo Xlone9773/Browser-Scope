@@ -309,5 +309,51 @@ export const modals = {
     metalness: "金屬度",
     color: "球體顏色",
     reset: "重置鏡頭"
+  },
+  "extensionsModal": {
+    "title": "瀏覽器擴展檢測",
+    "note_strong": "注意：",
+    "note_text": "基於隱私和安全性考量，瀏覽器不提供原生 API 來列出已安裝的擴充功能。此檢測工具使用啟發式方法（如檢測注入的變數或 DOM 元素）來識別常見的擴展。這並非您安裝的所有擴展的完整清單。",
+    "no_extensions": "未檢測到已知的擴充功能。",
+    "detected": "已檢測到",
+    "categories": {
+      "Development": "開發工具",
+      "Crypto": "加密錢包",
+      "Shopping": "購物/優惠券",
+      "Productivity": "生產力",
+      "Utility": "實用工具"
+    },
+    "names": {
+      "react-devtools": "React 開發者工具",
+      "vue-devtools": "Vue.js 開發者工具",
+      "redux-devtools": "Redux 開發者工具",
+      "apollo-devtools": "Apollo 開發者工具",
+      "ember-inspector": "Ember 檢查器",
+      "metamask": "MetaMask",
+      "phantom": "Phantom",
+      "binance": "幣安錢包",
+      "coinbase": "Coinbase 錢包",
+      "brave-wallet": "Brave 錢包",
+      "sui-wallet": "Sui 錢包",
+      "honey": "Honey (優惠券)",
+      "grammarly": "Grammarly (寫作助手)",
+      "darkreader": "Dark Reader"
+    },
+    "descs": {
+      "react-devtools": "官方 React 偵錯擴充功能",
+      "vue-devtools": "官方 Vue.js 偵錯擴充功能",
+      "redux-devtools": "Redux 狀態偵錯",
+      "apollo-devtools": "GraphQL 偵錯工具",
+      "ember-inspector": "Ember 框架偵錯",
+      "metamask": "Web3 乙太坊錢包",
+      "phantom": "Web3 Solana 錢包",
+      "binance": "Web3 幣安智能鏈錢包",
+      "coinbase": "Web3 Coinbase 錢包",
+      "brave-wallet": "Brave 瀏覽器內建加密錢包",
+      "sui-wallet": "Web3 Sui 錢包",
+      "honey": "自動查找並應用優惠券",
+      "grammarly": "寫作助手與文法檢查",
+      "darkreader": "為所有網頁生成深色主題"
+    }
   }
 };

@@ -110,6 +110,7 @@ const App: React.FC = () => {
       { id: 'storageBench', name: t.storageBenchmark.title, isOpen: visibility.storageBench, setOpen: (v) => v ? open('storageBench') : close('storageBench'), impact: 'High', onUnload: () => unload('storageBench'), isLoaded: loadedModules.has('storageBench') },
       { id: 'heatmap', name: t.heatmap.title, isOpen: visibility.heatmap, setOpen: (v) => v ? open('heatmap') : close('heatmap'), impact: 'Medium', onUnload: () => unload('heatmap'), isLoaded: loadedModules.has('heatmap') },
       { id: 'rayTracing', name: t.rayTracing.title, isOpen: visibility.rayTracing, setOpen: (v) => v ? open('rayTracing') : close('rayTracing'), impact: 'High', onUnload: () => unload('rayTracing'), isLoaded: loadedModules.has('rayTracing') },
+      { id: 'extensions', name: 'Browser Extensions', isOpen: visibility.extensions, setOpen: (v) => v ? open('extensions') : close('extensions'), impact: 'Low', onUnload: () => unload('extensions'), isLoaded: loadedModules.has('extensions') },
   ];
 
   // Initialize theme
@@ -479,6 +480,12 @@ const App: React.FC = () => {
                     t={t.rayTracing} 
                 />
             )}
+            {visibility.extensions && (
+                <Components.extensions 
+                    onClose={() => close('extensions')} 
+                    t={(t as any).extensionsModal}
+                />
+            )}
         </Suspense>
       </ErrorBoundary>
 
@@ -502,21 +509,6 @@ const App: React.FC = () => {
             <ErrorBoundary name="MainGrid">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-700 slide-in-from-bottom-4">
                 
-                <SecurityCard 
-                    data={data.security} 
-                    webrtcIp={data.network.webrtcIp} 
-                    t={t} 
-                    simpleMode={simpleMode} 
-                />
-
-                <AiComputeCard 
-                    data={data.ai} 
-                    t={t} 
-                    onOpenPlayground={() => open('ai')} 
-                    onOpenStress={() => open('compute')}
-                    onRetest={handleAiRetest}
-                />
-
                 <SystemCard 
                     data={data.system} 
                     t={t} 
@@ -542,6 +534,29 @@ const App: React.FC = () => {
                     simpleMode={simpleMode} 
                 />
 
+                <NetworkCard 
+                    data={data.network} 
+                    t={t} 
+                    simpleMode={simpleMode} 
+                    onOpenSpeedTest={() => open('speed')}
+                />
+                
+                <SecurityCard 
+                    data={data.security} 
+                    webrtcIp={data.network.webrtcIp} 
+                    t={t} 
+                    simpleMode={simpleMode} 
+                    onOpenExtensions={() => open('extensions')}
+                />
+
+                <AiComputeCard 
+                    data={data.ai} 
+                    t={t} 
+                    onOpenPlayground={() => open('ai')} 
+                    onOpenStress={() => open('compute')}
+                    onRetest={handleAiRetest}
+                />
+
                 <FingerprintCard 
                     data={data.fingerprints}
                     audioSampleRate={data.hardware.audioSampleRate}
@@ -552,13 +567,6 @@ const App: React.FC = () => {
                     onOpenBase64={() => open('base64')}
                     onOpenWebgl={() => open('webgl')}
                     onOpenFingerprintModal={() => open('fingerprint')}
-                />
-
-                <NetworkCard 
-                    data={data.network} 
-                    t={t} 
-                    simpleMode={simpleMode} 
-                    onOpenSpeedTest={() => open('speed')}
                 />
                 
                 {!simpleMode && (

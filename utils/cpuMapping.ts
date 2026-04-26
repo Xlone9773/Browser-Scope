@@ -11,12 +11,22 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('virgl') || r.includes('virtio')) return 'VirtIO GPU (QEMU/KVM)';
   if (r.includes('microsoft basic render driver')) return 'Software / Remote Desktop';
   if (r.includes('lavapipe')) return 'Software Renderer (Vulkan)';
+  if (r.includes('zink')) return 'Zink (OpenGL over Vulkan)';
 
-  // --- Apple Silicon ---
-  // M-Series
+  // --- Apple Silicon (Mac) ---
+  if (r.includes('apple m4 max')) return 'Apple M4 Max';
+  if (r.includes('apple m4 pro')) return 'Apple M4 Pro';
   if (r.includes('apple m4')) return 'Apple M4 Series';
+  if (r.includes('apple m3 max')) return 'Apple M3 Max';
+  if (r.includes('apple m3 pro')) return 'Apple M3 Pro';
   if (r.includes('apple m3')) return 'Apple M3 Series';
+  if (r.includes('apple m2 ultra')) return 'Apple M2 Ultra';
+  if (r.includes('apple m2 max')) return 'Apple M2 Max';
+  if (r.includes('apple m2 pro')) return 'Apple M2 Pro';
   if (r.includes('apple m2')) return 'Apple M2 Series';
+  if (r.includes('apple m1 ultra')) return 'Apple M1 Ultra';
+  if (r.includes('apple m1 max')) return 'Apple M1 Max';
+  if (r.includes('apple m1 pro')) return 'Apple M1 Pro';
   if (r.includes('apple m1')) return 'Apple M1 Series';
   
   // A-Series (Mobile)
@@ -33,6 +43,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('apple a10')) return 'Apple A10 Fusion';
   if (r.includes('apple a9')) return 'Apple A9 / A9X';
   if (r.includes('apple a8')) return 'Apple A8 / A8X';
+  if (r.includes('apple a7')) return 'Apple A7';
   
   // Apple GPU generic fallback
   if (r.includes('apple gpu')) return 'Apple Silicon';
@@ -41,7 +52,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   // PC / Laptop / Tablet
   if (r.includes('adreno x1')) return 'Snapdragon X Elite / Plus';
   if (r.includes('adreno 8cx')) return 'Snapdragon 8cx Gen 3';
-  if (r.includes('adreno 690')) return 'Snapdragon 8cx Gen 3'; // Alternate ID
+  if (r.includes('adreno 690')) return 'Snapdragon 8cx Gen 3'; 
   if (r.includes('adreno 685')) return 'Snapdragon 8cx Gen 2';
   if (r.includes('adreno 680')) return 'Snapdragon 8cx';
   
@@ -63,6 +74,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('adreno 660')) return 'Snapdragon 888 / 888+';
   if (r.includes('adreno 650')) return 'Snapdragon 865 / 870';
   if (r.includes('adreno 642l')) return 'Snapdragon 778G / 780G';
+  if (r.includes('adreno 643')) return 'Snapdragon 7s Gen 2 (Modified)';
   if (r.includes('adreno 640')) return 'Snapdragon 855 / 860';
   if (r.includes('adreno 630')) return 'Snapdragon 845';
   
@@ -75,42 +87,53 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('adreno 616')) return 'Snapdragon 710 / 712';
   if (r.includes('adreno 612')) return 'Snapdragon 675 / 678';
   if (r.includes('adreno 610')) return 'Snapdragon 665 / 680';
+  if (r.includes('adreno 540')) return 'Snapdragon 835';
+  if (r.includes('adreno 530')) return 'Snapdragon 820 / 821';
   if (r.includes('adreno 512')) return 'Snapdragon 660';
   if (r.includes('adreno 509')) return 'Snapdragon 636';
   if (r.includes('adreno 506')) return 'Snapdragon 625 / 450';
   if (r.includes('adreno 505')) return 'Snapdragon 430 / 435';
   if (r.includes('adreno 504')) return 'Snapdragon 429';
+  if (r.includes('adreno 430')) return 'Snapdragon 810';
+  if (r.includes('adreno 420')) return 'Snapdragon 805';
+  if (r.includes('adreno 418')) return 'Snapdragon 808';
   if (r.includes('adreno 405')) return 'Snapdragon 615';
+  if (r.includes('adreno 330')) return 'Snapdragon 800 / 801';
+  if (r.includes('adreno 320')) return 'Snapdragon 600';
   if (r.includes('adreno 308')) return 'Snapdragon 425';
   if (r.includes('adreno 306')) return 'Snapdragon 410';
 
   // --- Samsung Exynos (Xclipse - AMD RDNA based) ---
   if (r.includes('xclipse 940')) return 'Exynos 2400';
+  if (r.includes('xclipse 930')) return 'Exynos 2300 (Prototype)';
   if (r.includes('xclipse 920')) return 'Exynos 2200';
+  if (r.includes('xclipse 540')) return 'Exynos 1580';
   if (r.includes('xclipse 530')) return 'Exynos 1480';
 
   // --- ARM Mali / Immortalis (Mediatek / Exynos / Tensor) ---
   
   // Google Tensor
-  if (r.includes('google') && r.includes('mali-g715')) return 'Google Tensor G3';
+  if (r.includes('google') && r.includes('mali-g715')) return 'Google Tensor G3 / G4';
   if (r.includes('google') && r.includes('mali-g710')) return 'Google Tensor G2'; 
   if (r.includes('google') && r.includes('mali-g78')) return 'Google Tensor';
 
   // Mediatek Dimensity / High-end Mali
   if (r.includes('mali-g925-immortalis mc12')) return 'Dimensity 9400+';
-  if (r.includes('immortalis-g925')) return 'Dimensity 9400';
-  if (r.includes('immortalis-g720')) return 'Dimensity 9300';
-  if (r.includes('immortalis-g715')) return 'Dimensity 9200';
+  if (r.includes('immortalis-g925')) return 'Dimensity 9400 / 9400+';
+  if (r.includes('immortalis-g720')) return 'Dimensity 9300 / 9300+';
+  if (r.includes('immortalis-g715')) return 'Dimensity 9200 / 9200+';
   
   // Mali G-series specific checks
+  if (r.includes('mali-g725')) return 'Dimensity 8400';
   if (r.includes('mali-g715') && !r.includes('google')) return 'Dimensity 9200 / 8300';
-  if (r.includes('mali-g710') && !r.includes('google')) return 'Dimensity 9000';
-  if (r.includes('mali-g615')) return 'Dimensity 8300';
+  if (r.includes('mali-g710') && !r.includes('google')) return 'Dimensity 9000 / 9000+';
+  if (r.includes('mali-g615')) return 'Dimensity 8300 / 7300';
   if (r.includes('mali-g610')) return 'Dimensity 8100 / 8200 / 1080 / 7050';
   if (r.includes('mali-g78')) return 'Exynos 2100 / Kirin 9000';
   if (r.includes('mali-g77')) return 'Dimensity 1000+ / Exynos 990';
-  if (r.includes('mali-g76')) return 'Kirin 980 / Exynos 9820 / Helio G90T';
+  if (r.includes('mali-g76')) return 'Kirin 980 / Kirin 990 / Exynos 9820 / Helio G90T';
   if (r.includes('mali-g72')) return 'Exynos 9810 / Kirin 970 / Helio P60';
+  if (r.includes('mali-g71')) return 'Exynos 8895 / Kirin 960';
   if (r.includes('mali-g68')) return 'Dimensity 900/920/1080 / Exynos 1380';
   if (r.includes('mali-g57')) return 'Dimensity 700/800/810 / Helio G96';
   if (r.includes('mali-g52')) return 'Helio G80/G85 / Kirin 710';
@@ -120,9 +143,12 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('mali-t860')) return 'Helio P10 / Exynos 7870';
   if (r.includes('mali-t830')) return 'Exynos 7880 / Kirin 650';
   if (r.includes('mali-t760')) return 'Exynos 7420';
+  if (r.includes('mali-t720')) return 'MT6753 / Exynos 7580';
+  if (r.includes('mali-450')) return 'Legacy ARM Cortex-A7 SoC';
   if (r.includes('mali-400')) return 'Legacy ARM Cortex-A9/A7 SoC';
 
   // --- PowerVR (Imagination Technologies) ---
+  if (r.includes('powervr bxm')) return 'MediaTek / Realtek SoC';
   if (r.includes('powervr gm9446')) return 'Helio P90';
   if (r.includes('powervr ge8320')) return 'Helio G22/G35 / A22';
   if (r.includes('powervr gt7600')) return 'Apple A9';
@@ -138,6 +164,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('intel arc graphics')) return 'Intel Core Ultra (Meteor Lake) / Arc Discrete';
 
   // Iris Xe / Plus
+  if (r.includes('iris xe max')) return 'Intel 11th Gen + Arc Discrete';
   if (r.includes('iris xe') || r.includes('iris® xe')) return 'Intel Core 11th/12th/13th Gen / Core Ultra Series 1';
   if (r.includes('iris plus')) return 'Intel Core 10th Gen (Ice Lake) / 8th Gen (Coffee Lake)';
   if (r.includes('iris pro') || r.includes('iris graphics')) return 'Intel Core 4th-8th Gen (High-end)';
@@ -193,31 +220,42 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('radeon graphics') && !r.includes('rx')) return 'AMD Ryzen APU';
 
   // --- Workstation / Server GPUs ---
+  if (r.includes('rtx 6000 ada') || r.includes('rtx 5000 ada') || r.includes('rtx 4000 ada')) return 'Workstation (Xeon / Threadripper / EPYC)';
   if (r.includes('quadro') || r.includes('rtx a')) return 'Workstation (Xeon / Threadripper)';
-  if (r.includes('tesla')) return 'Server (Xeon / EPYC)';
-  if (r.includes('firepro') || r.includes('radeon pro')) return 'Workstation (Xeon / Threadripper)';
+  if (r.includes('tesla') || r.includes('a100') || r.includes('h100') || r.includes('b200')) return 'Server (Xeon / EPYC)';
+  if (r.includes('firepro') || r.includes('radeon pro') || r.includes('instinct')) return 'Workstation/Server (Xeon / Threadripper / EPYC)';
 
   // --- Discrete GPUs (Inference) ---
   // NVIDIA Desktop/Laptop
-  if (r.includes('rtx 5090') || r.includes('rtx 5080')) return 'Intel 14th/15th Gen or Ryzen 9000 (Likely)'; // Future proofing
+  if (r.includes('rtx 50')) return 'Intel 14th/15th Gen or Ryzen 9000 (Likely)'; // 5090, 5080, 5070, etc.
   if (r.includes('rtx 4090') || r.includes('rtx 4080')) return 'Intel 13th/14th Gen or Ryzen 7000/9000 (Likely)';
   if (r.includes('rtx 40')) return 'Intel 13th/14th Gen or Ryzen 7000 (Likely)';
   if (r.includes('rtx 30')) return 'Intel 10th-12th Gen or Ryzen 5000 (Likely)';
   if (r.includes('rtx 20') || r.includes('gtx 16')) return 'Intel 9th/10th Gen or Ryzen 3000/4000 (Likely)';
+  if (r.includes('titan rtx') || r.includes('titan v') || r.includes('titan xp')) return 'HEDT / Workstation System';
   if (r.includes('gtx 10')) return 'Intel 6th-8th Gen or Ryzen 1000/2000 (Likely)';
   if (r.includes('gtx 9')) return 'Intel 4th-6th Gen or Ryzen 1000 (Likely)';
+  if (r.includes('gtx 8') && r.includes('m')) return 'Intel 4th-5th Gen Mobile (Likely)';
   if (r.includes('gtx 7')) return 'Intel 3rd-4th Gen or AMD FX (Likely)';
+  if (r.includes('gtx 6')) return 'Intel 2nd-3rd Gen (Likely)';
 
   // AMD Discrete
+  if (r.includes('radeon rx 8')) return 'AMD Ryzen 9000 or Intel 14th/15th Gen (Likely)';
   if (r.includes('radeon rx 7')) return 'AMD Ryzen 7000 or Intel 13th/14th Gen (Likely)';
   if (r.includes('radeon rx 6')) return 'AMD Ryzen 5000 or Intel 11th/12th Gen (Likely)';
   if (r.includes('radeon rx 5700') || r.includes('rx 5600') || r.includes('rx 5500')) return 'AMD Ryzen 3000 or Intel 9th/10th Gen (Likely)';
-  if (r.includes('radeon rx 5')) return 'AMD Ryzen 1000/2000 or Intel 7th-9th Gen (Likely)';
+  if (r.includes('radeon rx 5') || r.includes('rx 4')) return 'AMD Ryzen 1000/2000 or Intel 7th-9th Gen (Likely)';
+  if (r.includes('radeon r9') || r.includes('radeon r7')) return 'AMD FX or Intel 4th-6th Gen (Likely)';
 
-  // Fallback for generic NVIDIA
+  // Intel ARC Discrete
+  if (r.includes('arc a7') || r.includes('arc a5') || r.includes('arc a3')) return 'Intel 12th/13th Gen or Ryzen 5000/7000 (Likely)';
+  if (r.includes('arc b')) return 'Intel Core Ultra or Ryzen 9000 (Likely)';
+
+  // Fallback for generic
   if (r.includes('nvidia') && r.includes('geforce')) return 'Discrete NVIDIA GPU System';
-  // Fallback for generic AMD
   if (r.includes('amd') && r.includes('radeon')) return 'Discrete AMD GPU System';
+  if (r.includes('intel') && r.includes('arc')) return 'Discrete Intel GPU System';
 
   return null;
 };
+

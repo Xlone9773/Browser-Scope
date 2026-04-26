@@ -33,6 +33,7 @@ const MODULE_FACTORIES: Record<string, () => Promise<any>> = {
     storageBench: () => import('../components/StorageBenchmarkModal').then(m => ({ default: m.StorageBenchmarkModal })),
     heatmap: () => import('../components/NetworkHeatmapModal').then(m => ({ default: m.NetworkHeatmapModal })),
     rayTracing: () => import('../components/RayTracingModal').then(m => ({ default: m.RayTracingModal })),
+    extensions: () => import('../components/ExtensionsModal').then(m => ({ default: m.ExtensionsModal })),
 };
 
 export const useModalManager = () => {

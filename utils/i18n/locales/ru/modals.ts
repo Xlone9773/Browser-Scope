@@ -309,5 +309,51 @@ export const modals = {
     metalness: "Металличность",
     color: "Цвет сферы",
     reset: "Сброс камеры"
+  },
+  "extensionsModal": {
+    "title": "Инвентаризация расширений",
+    "note_strong": "Примечание:",
+    "note_text": "По соображениям конфиденциальности браузеры не предоставляют API для просмотра установленных расширений. Этот инструмент использует эвристику (например, обнаружение внедренных переменных или DOM) для поиска популярных расширений. Это не полный список ваших расширений.",
+    "no_extensions": "Известных расширений не найдено.",
+    "detected": "Обнаружено",
+    "categories": {
+      "Development": "Разработка",
+      "Crypto": "Криптовайты",
+      "Shopping": "Покупки",
+      "Productivity": "Продуктивность",
+      "Utility": "Утилиты"
+    },
+    "names": {
+      "react-devtools": "React DevTools",
+      "vue-devtools": "Vue.js devtools",
+      "redux-devtools": "Redux DevTools",
+      "apollo-devtools": "Apollo Client Devtools",
+      "ember-inspector": "Ember Inspector",
+      "metamask": "MetaMask",
+      "phantom": "Phantom",
+      "binance": "Binance Wallet",
+      "coinbase": "Coinbase Wallet",
+      "brave-wallet": "Brave Wallet",
+      "sui-wallet": "Sui Wallet",
+      "honey": "Honey",
+      "grammarly": "Grammarly",
+      "darkreader": "Dark Reader"
+    },
+    "descs": {
+      "react-devtools": "Официальное расширение отладки React",
+      "vue-devtools": "Официальное расширение отладки Vue",
+      "redux-devtools": "Отладка состояния Redux",
+      "apollo-devtools": "Отладка GraphQL",
+      "ember-inspector": "Отладка Ember",
+      "metamask": "Web3 кошелек Ethereum",
+      "phantom": "Web3 кошелек Solana",
+      "binance": "Web3 кошелек Binance",
+      "coinbase": "Web3 кошелек Coinbase",
+      "brave-wallet": "Встроенный кошелек Brave",
+      "sui-wallet": "Web3 кошелек Sui",
+      "honey": "Автоматические купоны",
+      "grammarly": "Помощник по написанию текстов",
+      "darkreader": "Темная тема для сайтов"
+    }
   }
 };

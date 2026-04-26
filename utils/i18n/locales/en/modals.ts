@@ -307,5 +307,51 @@ export const modals = {
     metalness: "Metalness",
     color: "Sphere Color",
     reset: "Reset Camera"
+  },
+  "extensionsModal": {
+    "title": "Browser Extension Inventory",
+    "note_strong": "Note:",
+    "note_text": "Browsers do not provide a native API for web pages to list installed extensions for privacy and security reasons. This inventory uses heuristics (e.g., detecting injected variables or DOM elements) to identify common extensions. It is not a complete list of your installed extensions.",
+    "no_extensions": "No well-known extensions detected.",
+    "detected": "Detected",
+    "categories": {
+      "Development": "Development",
+      "Crypto": "Crypto",
+      "Shopping": "Shopping",
+      "Productivity": "Productivity",
+      "Utility": "Utility"
+    },
+    "names": {
+      "react-devtools": "React Developer Tools",
+      "vue-devtools": "Vue.js devtools",
+      "redux-devtools": "Redux DevTools",
+      "apollo-devtools": "Apollo Client Devtools",
+      "ember-inspector": "Ember Inspector",
+      "metamask": "MetaMask",
+      "phantom": "Phantom",
+      "binance": "Binance Wallet",
+      "coinbase": "Coinbase Wallet",
+      "brave-wallet": "Brave Wallet",
+      "sui-wallet": "Sui Wallet",
+      "honey": "Honey",
+      "grammarly": "Grammarly",
+      "darkreader": "Dark Reader"
+    },
+    "descs": {
+      "react-devtools": "Official React debugging extension",
+      "vue-devtools": "Official Vue debugging extension",
+      "redux-devtools": "Redux state debugging",
+      "apollo-devtools": "GraphQL debugging",
+      "ember-inspector": "Ember debugging",
+      "metamask": "Web3 Ethereum wallet",
+      "phantom": "Web3 Solana wallet",
+      "binance": "Web3 Binance Chain wallet",
+      "coinbase": "Web3 Coinbase wallet",
+      "brave-wallet": "Built-in Brave crypto wallet",
+      "sui-wallet": "Web3 Sui wallet",
+      "honey": "Automatic Coupons",
+      "grammarly": "Writing Assistant",
+      "darkreader": "Dark mode for websites"
+    }
   }
 };

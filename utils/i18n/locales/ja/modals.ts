@@ -309,5 +309,51 @@ export const modals = {
     metalness: "金属度",
     color: "球の色",
     reset: "カメラリセット"
+  },
+  "extensionsModal": {
+    "title": "ブラウザ拡張機能の検出",
+    "note_strong": "注意:",
+    "note_text": "プライバシーとセキュリティの理由から、ブラウザはインストールされている拡張機能の一覧を取得するネイティブAPIを提供していません。このツールはヒューリスティック(注入された変数やDOM要素の検出等)を使用して、一般的な拡張機能を識別します。これはインストールされている全ての拡張機能の完全なリストではありません。",
+    "no_extensions": "既知の拡張機能は検出されませんでした。",
+    "detected": "検出済み",
+    "categories": {
+      "Development": "開発",
+      "Crypto": "仮想通貨",
+      "Shopping": "ショッピング",
+      "Productivity": "生産性",
+      "Utility": "ユーティリティ"
+    },
+    "names": {
+      "react-devtools": "React DevTools",
+      "vue-devtools": "Vue.js devtools",
+      "redux-devtools": "Redux DevTools",
+      "apollo-devtools": "Apollo Client Devtools",
+      "ember-inspector": "Ember Inspector",
+      "metamask": "MetaMask",
+      "phantom": "Phantom",
+      "binance": "Binance Wallet",
+      "coinbase": "Coinbase Wallet",
+      "brave-wallet": "Brave Wallet",
+      "sui-wallet": "Sui Wallet",
+      "honey": "Honey",
+      "grammarly": "Grammarly",
+      "darkreader": "Dark Reader"
+    },
+    "descs": {
+      "react-devtools": "公式 React デバッグ拡張機能",
+      "vue-devtools": "公式 Vue.js デバッグ拡張機能",
+      "redux-devtools": "Redux 状態デバッグ",
+      "apollo-devtools": "GraphQL デバッグ機能",
+      "ember-inspector": "Ember デバッグ機能",
+      "metamask": "Web3 Ethereum ウォレット",
+      "phantom": "Web3 Solana ウォレット",
+      "binance": "Web3 Binance Chain ウォレット",
+      "coinbase": "Web3 Coinbase ウォレット",
+      "brave-wallet": "Brave 内蔵仮想通貨ウォレット",
+      "sui-wallet": "Web3 Sui ウォレット",
+      "honey": "自動クーポン適用ツール",
+      "grammarly": "文章作成アシスタント",
+      "darkreader": "ウェブサイトのダークモード"
+    }
   }
 };

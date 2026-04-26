@@ -309,5 +309,51 @@ export const modals = {
     metalness: "金属度",
     color: "球体颜色",
     reset: "重置视角"
+  },
+  "extensionsModal": {
+    "title": "浏览器扩展检测",
+    "note_strong": "注意：",
+    "note_text": "由于隐私和安全原因，浏览器不提供原生 API 来列出已安装的扩展。此检测工具通过启发式方法（如检测注入的变量或 DOM 元素）来识别常见的护展程序。这并非您安装的所有扩展的完整列表。",
+    "no_extensions": "未检测到已知的扩展程序。",
+    "detected": "已检测到",
+    "categories": {
+      "Development": "开发工具",
+      "Crypto": "加密钱包",
+      "Shopping": "购物/优惠券",
+      "Productivity": "生产力",
+      "Utility": "实用工具"
+    },
+    "names": {
+      "react-devtools": "React 开发者工具",
+      "vue-devtools": "Vue.js 开发者工具",
+      "redux-devtools": "Redux 开发者工具",
+      "apollo-devtools": "Apollo 开发者工具",
+      "ember-inspector": "Ember 检查器",
+      "metamask": "MetaMask (小狐狸)",
+      "phantom": "Phantom (幻影)",
+      "binance": "币安钱包",
+      "coinbase": "Coinbase 钱包",
+      "brave-wallet": "Brave 钱包",
+      "sui-wallet": "Sui 钱包",
+      "honey": "Honey (自动优惠券)",
+      "grammarly": "Grammarly (语法检查)",
+      "darkreader": "Dark Reader (深色模式)"
+    },
+    "descs": {
+      "react-devtools": "官方 React 调试扩展",
+      "vue-devtools": "官方 Vue.js 调试扩展",
+      "redux-devtools": "Redux 状态调试",
+      "apollo-devtools": "GraphQL 调试工具",
+      "ember-inspector": "Ember 框架调试",
+      "metamask": "Web3 以太坊钱包",
+      "phantom": "Web3 Solana 钱包",
+      "binance": "Web3 币安智能链钱包",
+      "coinbase": "Web3 Coinbase 钱包",
+      "brave-wallet": "Brave 浏览器内置加密钱包",
+      "sui-wallet": "Web3 Sui 钱包",
+      "honey": "自动查找并应用优惠券",
+      "grammarly": "智能写作助手",
+      "darkreader": "为所有网页生成深色主题"
+    }
   }
 };
