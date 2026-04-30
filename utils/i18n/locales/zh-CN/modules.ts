@@ -169,7 +169,7 @@ export const modules = {
             high: "高"
         },
         actions: {
-            unload: "强制关闭",
+            unload: "卸载",
             unloadAll: "卸载所有活动模块"
         }
     }

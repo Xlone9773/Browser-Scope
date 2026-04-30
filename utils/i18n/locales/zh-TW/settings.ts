@@ -169,7 +169,7 @@ export const settings = {
             high: "高"
         },
         actions: {
-            unload: "強制關閉",
+            unload: "卸載",
             unloadAll: "卸載所有活動模組"
         }
     }

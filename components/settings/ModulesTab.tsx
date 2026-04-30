@@ -27,6 +27,8 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
     const cachedCount = modules.filter(m => !m.isOpen && m.isLoaded).length;
     const idleCount = modules.filter(m => !m.isOpen && !m.isLoaded).length;
     
+    const activeOrLoadedNonSystemCount = modules.filter(m => !m.isSystem && (m.isOpen || m.isLoaded)).length;
+    
     // Sorting: Active > Loaded > Inactive
     const sortedModules = [...modules].sort((a, b) => {
         if (a.isOpen && !b.isOpen) return -1;
@@ -38,7 +40,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
     
     const closeAll = () => {
         modules.forEach(m => {
-            if (!m.isSystem && m.isOpen) {
+            if (!m.isSystem && (m.isOpen || m.isLoaded)) {
                 // If onUnload is present, use it to fully reset
                 if (m.onUnload) m.onUnload();
                 else m.setOpen(false);
@@ -111,7 +113,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                         variant="danger-soft" 
                         size="sm" 
                         onClick={closeAll}
-                        disabled={activeCount <= 1} // Assuming Settings is always open
+                        disabled={activeOrLoadedNonSystemCount === 0}
                         leftIcon={<Power size={16} />}
                         className="whitespace-nowrap justify-center"
                     >
@@ -190,7 +192,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                                             leftIcon={mod.isOpen ? <Power size={14} /> : <Trash2 size={14} />}
                                             className={!mod.isOpen && !mod.isLoaded ? "opacity-0" : "transition-opacity"}
                                         >
-                                            {mod.isOpen ? t.actions.unload : "Clear"}
+                                            {t.actions.unload}
                                         </Button>
                                     )}
                                 </td>

@@ -169,7 +169,7 @@ export const modules = {
             high: "High"
         },
         actions: {
-            unload: "Force Close",
+            unload: "Unload",
             unloadAll: "Unload All Active Modules"
         }
     }
