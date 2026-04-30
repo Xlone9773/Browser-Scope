@@ -6,6 +6,12 @@ export const dashboard = {
   footer: "BrowserScope - 浏览器能力检测工具",
   refresh: "重新检测",
 
+  groups: {
+    system: "设备系统与硬件",
+    network: "网络与安全标识",
+    advanced: "高级能力与特色接口"
+  },
+
   sections: {
     system: "系统环境",
     hardware: "硬件信息",

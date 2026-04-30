@@ -7,6 +7,12 @@ export const dashboard = {
   footer: "BrowserScope - Device Intelligence Tool",
   refresh: "Refresh Data",
 
+  groups: {
+    system: "Device & System Core",
+    network: "Network & Security",
+    advanced: "Capabilities & APIs"
+  },
+
   sections: {
     system: "System Environment",
     hardware: "Hardware Info",

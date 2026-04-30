@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
-import { RefreshCw, Monitor } from 'lucide-react';
+import { RefreshCw, Monitor, Smartphone, ShieldAlert, Cpu } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { runAiReadinessCheck } from './services/detectors/hardware';
 import { exportAsJson } from './services/exporter';
@@ -10,6 +10,7 @@ import { applyTheme, getSavedTheme, Theme } from './appearance/theme';
 import { FloatingWindow } from './components/ui/FloatingWindow';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { ModalLoading } from './components/ui/ModalLoading';
+import { SectionGroup } from './components/ui/SectionGroup';
 import { useModalManager } from './hooks/useModalManager';
 
 // Components
@@ -504,118 +505,127 @@ const App: React.FC = () => {
           onOpenBenchmark={() => open('benchmark')}
         />
 
-        {/* Main Grid Content - Only render if data exists */}
+        {/* Main Content - Only render if data exists */}
         {data && (
-            <ErrorBoundary name="MainGrid">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-700 slide-in-from-bottom-4">
-                
-                <SystemCard 
-                    data={data.system} 
-                    t={t} 
-                    simpleMode={simpleMode}
-                    lang={lang}
-                />
-
-                <HardwareCard 
-                    data={data.hardware} 
-                    t={t} 
-                    onOpenGamepad={() => open('gamepad')}
-                    onOpenSensors={() => open('sensor')}
-                    onOpenTools={() => open('tools')}
-                    onOpenVision={() => open('vision')}
-                    onOpenGraphics={() => open('graphics')}
-                    onOpenMidi={() => requestPermission('midi')}
-                />
-
-                <DisplayCard 
-                    data={data.display} 
-                    screenExtended={data.hardware.screenExtended} 
-                    t={t} 
-                    simpleMode={simpleMode} 
-                />
-
-                <NetworkCard 
-                    data={data.network} 
-                    t={t} 
-                    simpleMode={simpleMode} 
-                    onOpenSpeedTest={() => open('speed')}
-                />
-                
-                <SecurityCard 
-                    data={data.security} 
-                    webrtcIp={data.network.webrtcIp} 
-                    t={t} 
-                    simpleMode={simpleMode} 
-                    onOpenExtensions={() => open('extensions')}
-                />
-
-                <AiComputeCard 
-                    data={data.ai} 
-                    t={t} 
-                    onOpenPlayground={() => open('ai')} 
-                    onOpenStress={() => open('compute')}
-                    onRetest={handleAiRetest}
-                />
-
-                <FingerprintCard 
-                    data={data.fingerprints}
-                    audioSampleRate={data.hardware.audioSampleRate}
-                    t={t}
-                    simpleMode={simpleMode}
-                    onOpenScore={() => open('score')}
-                    onOpenCanvas={() => open('canvas')}
-                    onOpenBase64={() => open('base64')}
-                    onOpenWebgl={() => open('webgl')}
-                    onOpenFingerprintModal={() => open('fingerprint')}
-                />
-                
-                {!simpleMode && (
-                    <>
-                        <LocationCard 
-                            data={data.localization}
-                            geoData={geoData}
-                            permStatus={permStatus.geolocation}
-                            t={t}
-                            onRequestPermission={() => requestPermission('geolocation')}
-                            timeFormat={timeFormat}
+            <ErrorBoundary name="MainContent">
+                <div className="space-y-6 animate-in fade-in duration-700 slide-in-from-bottom-4">
+                    
+                    {/* Group 1: Device & System */}
+                    <SectionGroup title={(t as any).groups?.system || 'Device & System Core'} icon={<Smartphone className="text-indigo-500" />}>
+                        <SystemCard 
+                            data={data.system} 
+                            t={t} 
+                            simpleMode={simpleMode}
                             lang={lang}
                         />
 
-                        <StorageCard data={data.storage} t={t} />
+                        <HardwareCard 
+                            data={data.hardware} 
+                            t={t} 
+                            onOpenGamepad={() => open('gamepad')}
+                            onOpenSensors={() => open('sensor')}
+                            onOpenTools={() => open('tools')}
+                            onOpenVision={() => open('vision')}
+                            onOpenGraphics={() => open('graphics')}
+                            onOpenMidi={() => requestPermission('midi')}
+                        />
+
+                        <DisplayCard 
+                            data={data.display} 
+                            screenExtended={data.hardware.screenExtended} 
+                            t={t} 
+                            simpleMode={simpleMode} 
+                        />
+                    </SectionGroup>
+
+                    {/* Group 2: Network & Security */}
+                    <SectionGroup title={(t as any).groups?.network || 'Network & Security'} icon={<ShieldAlert className="text-emerald-500" />}>
+                        <NetworkCard 
+                            data={data.network} 
+                            t={t} 
+                            simpleMode={simpleMode} 
+                            onOpenSpeedTest={() => open('speed')}
+                        />
                         
-                        <PermissionsCard 
-                            permStatus={permStatus} 
-                            geoData={geoData} 
+                        <SecurityCard 
+                            data={data.security} 
+                            webrtcIp={data.network.webrtcIp} 
                             t={t} 
-                            onRequestPermission={requestPermission} 
+                            simpleMode={simpleMode} 
+                            onOpenExtensions={() => open('extensions')}
                         />
 
-                        <MediaDevicesCard 
-                            permStatus={permStatus}
+                        <FingerprintCard 
+                            data={data.fingerprints}
+                            audioSampleRate={data.hardware.audioSampleRate}
                             t={t}
-                            onRequestPermission={requestPermission}
-                            onOpenCamera={() => open('camera')}
-                            onOpenMic={() => open('audio')}
+                            simpleMode={simpleMode}
+                            onOpenScore={() => open('score')}
+                            onOpenCanvas={() => open('canvas')}
+                            onOpenBase64={() => open('base64')}
+                            onOpenWebgl={() => open('webgl')}
+                            onOpenFingerprintModal={() => open('fingerprint')}
                         />
+                    </SectionGroup>
 
-                        <MediaCapabilitiesCard 
-                            data={data.media} 
-                            t={t} 
-                            onOpenVideoTest={() => open('video')}
-                            onOpenSpeech={() => open('speech')}
-                        />
+                    {/* Group 3: Advanced Capabilities & APIs */}
+                    {!simpleMode && (
+                        <>
+                            <SectionGroup title={(t as any).groups?.advanced || 'Capabilities & APIs'} icon={<Cpu className="text-amber-500" />}>
+                                <AiComputeCard 
+                                    data={data.ai} 
+                                    t={t} 
+                                    onOpenPlayground={() => open('ai')} 
+                                    onOpenStress={() => open('compute')}
+                                    onRetest={handleAiRetest}
+                                />
+                                
+                                <LocationCard 
+                                    data={data.localization}
+                                    geoData={geoData}
+                                    permStatus={permStatus.geolocation}
+                                    t={t}
+                                    onRequestPermission={() => requestPermission('geolocation')}
+                                    timeFormat={timeFormat}
+                                    lang={lang}
+                                />
 
-                        <UserAgentCard userAgent={data.system.userAgent} clientHints={data.system.clientHints} t={t} />
-                    </>
-                )}
-                </div>
+                                <StorageCard data={data.storage} t={t} />
+                                
+                                <PermissionsCard 
+                                    permStatus={permStatus} 
+                                    geoData={geoData} 
+                                    t={t} 
+                                    onRequestPermission={requestPermission} 
+                                />
 
-                <div className="animate-in fade-in duration-700 slide-in-from-bottom-8 delay-100">
-                    <PwaSection isPwaInstalled={data.system.isPwaInstalled} features={data.pwaFeatures} t={t} />
-                </div>
-                
-                <div className="animate-in fade-in duration-700 slide-in-from-bottom-8 delay-200">
-                    <FeaturesSection features={data.features} t={t} />
+                                <MediaDevicesCard 
+                                    permStatus={permStatus}
+                                    t={t}
+                                    onRequestPermission={requestPermission}
+                                    onOpenCamera={() => open('camera')}
+                                    onOpenMic={() => open('audio')}
+                                />
+
+                                <MediaCapabilitiesCard 
+                                    data={data.media} 
+                                    t={t} 
+                                    onOpenVideoTest={() => open('video')}
+                                    onOpenSpeech={() => open('speech')}
+                                />
+
+                                <UserAgentCard userAgent={data.system.userAgent} clientHints={data.system.clientHints} t={t} />
+                            </SectionGroup>
+
+                            <div className="animate-in fade-in duration-700 slide-in-from-bottom-8 delay-100">
+                                <PwaSection isPwaInstalled={data.system.isPwaInstalled} features={data.pwaFeatures} t={t} />
+                            </div>
+                            
+                            <div className="animate-in fade-in duration-700 slide-in-from-bottom-8 delay-200">
+                                <FeaturesSection features={data.features} t={t} />
+                            </div>
+                        </>
+                    )}
                 </div>
             </ErrorBoundary>
         )}

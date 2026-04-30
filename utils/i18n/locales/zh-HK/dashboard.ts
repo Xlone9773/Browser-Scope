@@ -5,6 +5,12 @@ export const dashboard = {
   loading: "正在掃描系統能力...",
   footer: "BrowserScope - 瀏覽器能力檢測工具",
   refresh: "重新檢測",
+
+  groups: {
+    system: "設備系統與硬件",
+    network: "網絡與安全標識",
+    advanced: "高級能力與特色介面"
+  },
   
   sections: {
     system: "系統環境",
