@@ -27,6 +27,14 @@ export const settings = {
         performance: {
             title: "High Performance",
             desc: "Disable blur effects and transparency to reduce GPU load."
+        },
+        animations: {
+            title: "Disable Animations",
+            desc: "Turn off all page transitions and card loading animations."
+        },
+        cardVisibility: {
+            title: "Custom Display Items",
+            desc: "Hide specific cards or groups from the main dashboard if you don't need them."
         }
     },
     network: {

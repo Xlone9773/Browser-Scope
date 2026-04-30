@@ -27,6 +27,14 @@ export const settings = {
         performance: {
             title: "高パフォーマンスモード",
             desc: "背景のぼかしと透明効果を無効にしてGPU負荷を軽減します。"
+        },
+        animations: {
+            title: "アニメーションを無効にする",
+            desc: "ページ遷移とカードの読み込みアニメーションをオフにします。"
+        },
+        cardVisibility: {
+            title: "表示項目をカスタマイズ",
+            desc: "必要のない特定のカードやグループをメイン画面から非表示にします。"
         }
     },
     network: {

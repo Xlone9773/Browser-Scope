@@ -27,6 +27,14 @@ export const settings = {
         performance: {
             title: "高性能模式",
             desc: "禁用模糊特效與透明度以降低 GPU 負載。"
+        },
+        animations: {
+            title: "禁用動畫",
+            desc: "關閉頁面切換和卡片下載等所有動畫效果。"
+        },
+        cardVisibility: {
+            title: "自訂顯示項目",
+            desc: "如果你不希望在主介面看到某些卡片或分組，可以在這裡按需隱藏。"
         }
     },
     network: {

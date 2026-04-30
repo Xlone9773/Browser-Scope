@@ -63,6 +63,13 @@ const App: React.FC = () => {
       return (saved === '12' || saved === '24') ? saved : '24';
   });
   const [disableBlur, setDisableBlur] = useState<boolean>(() => localStorage.getItem('disableBlur') === 'true');
+  const [disableAnimations, setDisableAnimations] = useState<boolean>(() => localStorage.getItem('disableAnimations') === 'true');
+  const [hiddenCards, setHiddenCards] = useState<string[]>(() => {
+      try {
+          const stored = localStorage.getItem('hiddenCards');
+          return stored ? JSON.parse(stored) : [];
+      } catch { return []; }
+  });
 
   // Developer Tools State
   const [isDevToolsFloating, setIsDevToolsFloating] = useState(false);
@@ -156,6 +163,32 @@ const App: React.FC = () => {
       }
   }, [disableBlur]);
 
+  // Initialize animations state
+  useEffect(() => {
+      if (disableAnimations) {
+          document.body.classList.add('disable-animations');
+          let style = document.getElementById('disable-animations-style');
+          if (!style) {
+              style = document.createElement('style');
+              style.id = 'disable-animations-style';
+              style.innerHTML = `
+                  *, *::before, *::after {
+                      transition: none !important;
+                      animation: none !important;
+                      scroll-behavior: auto !important;
+                  }
+              `;
+              document.head.appendChild(style);
+          }
+      } else {
+          document.body.classList.remove('disable-animations');
+          const style = document.getElementById('disable-animations-style');
+          if (style) {
+              style.remove();
+          }
+      }
+  }, [disableAnimations]);
+
   const toggleTheme = () => {
       const newTheme = theme === 'dark' ? 'light' : 'dark';
       setTheme(newTheme);
@@ -180,6 +213,11 @@ const App: React.FC = () => {
   const toggleDisableBlur = (value: boolean) => {
       setDisableBlur(value);
       localStorage.setItem('disableBlur', String(value));
+  };
+
+  const toggleDisableAnimations = (value: boolean) => {
+      setDisableAnimations(value);
+      localStorage.setItem('disableAnimations', String(value));
   };
 
   const fetchData = async () => {
@@ -418,6 +456,13 @@ const App: React.FC = () => {
                     setTimeFormat={updateTimeFormat}
                     disableBlur={disableBlur}
                     toggleDisableBlur={toggleDisableBlur}
+                    disableAnimations={disableAnimations}
+                    toggleDisableAnimations={toggleDisableAnimations}
+                    hiddenCards={hiddenCards}
+                    setHiddenCards={(cards: string[]) => {
+                        setHiddenCards(cards);
+                        localStorage.setItem('hiddenCards', JSON.stringify(cards));
+                    }}
                     isDevToolsFloating={isDevToolsFloating}
                     setDevToolsFloating={setIsDevToolsFloating}
                     moduleStates={modalStates}
@@ -511,14 +556,18 @@ const App: React.FC = () => {
                 <div className="space-y-6 animate-in fade-in duration-700 slide-in-from-bottom-4">
                     
                     {/* Group 1: Device & System */}
+                    {(!hiddenCards.includes('system') || !hiddenCards.includes('hardware') || !hiddenCards.includes('display')) && (
                     <SectionGroup title={(t as any).groups?.system || 'Device & System Core'} icon={<Smartphone className="text-indigo-500" />}>
+                        {!hiddenCards.includes('system') && (
                         <SystemCard 
                             data={data.system} 
                             t={t} 
                             simpleMode={simpleMode}
                             lang={lang}
                         />
+                        )}
 
+                        {!hiddenCards.includes('hardware') && (
                         <HardwareCard 
                             data={data.hardware} 
                             t={t} 
@@ -529,24 +578,32 @@ const App: React.FC = () => {
                             onOpenGraphics={() => open('graphics')}
                             onOpenMidi={() => requestPermission('midi')}
                         />
+                        )}
 
+                        {!hiddenCards.includes('display') && (
                         <DisplayCard 
                             data={data.display} 
                             screenExtended={data.hardware.screenExtended} 
                             t={t} 
                             simpleMode={simpleMode} 
                         />
+                        )}
                     </SectionGroup>
+                    )}
 
                     {/* Group 2: Network & Security */}
+                    {(!hiddenCards.includes('network') || !hiddenCards.includes('security') || !hiddenCards.includes('fingerprint')) && (
                     <SectionGroup title={(t as any).groups?.network || 'Network & Security'} icon={<ShieldAlert className="text-emerald-500" />}>
+                        {!hiddenCards.includes('network') && (
                         <NetworkCard 
                             data={data.network} 
                             t={t} 
                             simpleMode={simpleMode} 
                             onOpenSpeedTest={() => open('speed')}
                         />
+                        )}
                         
+                        {!hiddenCards.includes('security') && (
                         <SecurityCard 
                             data={data.security} 
                             webrtcIp={data.network.webrtcIp} 
@@ -554,7 +611,9 @@ const App: React.FC = () => {
                             simpleMode={simpleMode} 
                             onOpenExtensions={() => open('extensions')}
                         />
+                        )}
 
+                        {!hiddenCards.includes('fingerprint') && (
                         <FingerprintCard 
                             data={data.fingerprints}
                             audioSampleRate={data.hardware.audioSampleRate}
@@ -566,12 +625,16 @@ const App: React.FC = () => {
                             onOpenWebgl={() => open('webgl')}
                             onOpenFingerprintModal={() => open('fingerprint')}
                         />
+                        )}
                     </SectionGroup>
+                    )}
 
                     {/* Group 3: Advanced Capabilities & APIs */}
                     {!simpleMode && (
                         <>
+                            {(!hiddenCards.includes('ai') || !hiddenCards.includes('location') || !hiddenCards.includes('storage') || !hiddenCards.includes('permissions') || !hiddenCards.includes('media_devices') || !hiddenCards.includes('media_capabilities') || !hiddenCards.includes('user_agent')) && (
                             <SectionGroup title={(t as any).groups?.advanced || 'Capabilities & APIs'} icon={<Cpu className="text-amber-500" />}>
+                                {!hiddenCards.includes('ai') && (
                                 <AiComputeCard 
                                     data={data.ai} 
                                     t={t} 
@@ -579,7 +642,9 @@ const App: React.FC = () => {
                                     onOpenStress={() => open('compute')}
                                     onRetest={handleAiRetest}
                                 />
+                                )}
                                 
+                                {!hiddenCards.includes('location') && (
                                 <LocationCard 
                                     data={data.localization}
                                     geoData={geoData}
@@ -589,16 +654,22 @@ const App: React.FC = () => {
                                     timeFormat={timeFormat}
                                     lang={lang}
                                 />
+                                )}
 
+                                {!hiddenCards.includes('storage') && (
                                 <StorageCard data={data.storage} t={t} />
+                                )}
                                 
+                                {!hiddenCards.includes('permissions') && (
                                 <PermissionsCard 
                                     permStatus={permStatus} 
                                     geoData={geoData} 
                                     t={t} 
                                     onRequestPermission={requestPermission} 
                                 />
+                                )}
 
+                                {!hiddenCards.includes('media_devices') && (
                                 <MediaDevicesCard 
                                     permStatus={permStatus}
                                     t={t}
@@ -606,24 +677,34 @@ const App: React.FC = () => {
                                     onOpenCamera={() => open('camera')}
                                     onOpenMic={() => open('audio')}
                                 />
+                                )}
 
+                                {!hiddenCards.includes('media_capabilities') && (
                                 <MediaCapabilitiesCard 
                                     data={data.media} 
                                     t={t} 
                                     onOpenVideoTest={() => open('video')}
                                     onOpenSpeech={() => open('speech')}
                                 />
+                                )}
 
+                                {!hiddenCards.includes('user_agent') && (
                                 <UserAgentCard userAgent={data.system.userAgent} clientHints={data.system.clientHints} t={t} />
+                                )}
                             </SectionGroup>
+                            )}
 
+                            {!hiddenCards.includes('pwa') && (
                             <div className="animate-in fade-in duration-700 slide-in-from-bottom-8 delay-100">
                                 <PwaSection isPwaInstalled={data.system.isPwaInstalled} features={data.pwaFeatures} t={t} />
                             </div>
+                            )}
                             
+                            {!hiddenCards.includes('features') && (
                             <div className="animate-in fade-in duration-700 slide-in-from-bottom-8 delay-200">
                                 <FeaturesSection features={data.features} t={t} />
                             </div>
+                            )}
                         </>
                     )}
                 </div>

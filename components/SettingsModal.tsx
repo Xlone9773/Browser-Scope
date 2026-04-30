@@ -23,6 +23,10 @@ interface SettingsModalProps {
   setTimeFormat: (format: '12' | '24') => void;
   disableBlur: boolean;
   toggleDisableBlur: (value: boolean) => void;
+  disableAnimations: boolean;
+  toggleDisableAnimations: (value: boolean) => void;
+  hiddenCards: string[];
+  setHiddenCards: (cards: string[]) => void;
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
   moduleStates?: ModuleState[];
@@ -39,6 +43,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setTimeFormat,
     disableBlur,
     toggleDisableBlur,
+    disableAnimations,
+    toggleDisableAnimations,
+    hiddenCards,
+    setHiddenCards,
     isDevToolsFloating, 
     setDevToolsFloating,
     moduleStates = [] 
@@ -201,6 +209,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 setTimeFormat={setTimeFormat}
                                 disableBlur={disableBlur}
                                 toggleDisableBlur={toggleDisableBlur}
+                                disableAnimations={disableAnimations}
+                                toggleDisableAnimations={toggleDisableAnimations}
+                                hiddenCards={hiddenCards}
+                                setHiddenCards={setHiddenCards}
+                                translationDict={t}
                             />
                         )}
 
