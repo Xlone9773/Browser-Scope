@@ -6,6 +6,12 @@ export const dashboard = {
   footer: "BrowserScope - Инструмент анализа возможностей браузера",
   refresh: "Обновить данные",
   
+  groups: {
+    system: "Ядро Устройства и Системы",
+    network: "Сеть и Безопасность",
+    advanced: "Возможности и API"
+  },
+
   sections: {
     system: "Системная среда",
     hardware: "Аппаратное обеспечение",

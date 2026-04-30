@@ -6,6 +6,12 @@ export const dashboard = {
   footer: "BrowserScope - ブラウザ能力検出ツール",
   refresh: "再検出",
   
+  groups: {
+    system: "デバイスとシステムコア",
+    network: "ネットワークとセキュリティ",
+    advanced: "機能とAPI"
+  },
+
   sections: {
     system: "システム環境",
     hardware: "ハードウェア情報",
