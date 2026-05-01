@@ -454,16 +454,6 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
                     )}
 
                 </div>
-                
-                {/* Footer */}
-                <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                    <button 
-                        onClick={close}
-                        className="px-5 py-2 text-slate-500 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-                    >
-                        {t.close}
-                    </button>
-                </div>
             </>
         )}
     </Modal>

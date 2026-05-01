@@ -302,16 +302,6 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                 <div className="mt-4 text-center text-xs text-slate-400">
                     Data provided by DeviceMotion, DeviceOrientation & Generic Sensor APIs.
                 </div>
-                
-                {/* Footer */}
-                <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 flex justify-end">
-                    <button 
-                        onClick={close}
-                        className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors"
-                    >
-                        {t.close}
-                    </button>
-                </div>
             </>
         )}
     </Modal>

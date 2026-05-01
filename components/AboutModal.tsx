@@ -178,16 +178,6 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                         </div>
                     </div>
                 </div>
-                
-                {/* Fixed Footer */}
-                <div className="p-4 border-t border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shrink-0 flex justify-center z-20">
-                    <button 
-                        onClick={close}
-                        className="px-10 py-2.5 bg-slate-900 dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-slate-900/20 dark:shadow-indigo-900/20 active:scale-95"
-                    >
-                        {t.close}
-                    </button>
-                </div>
             </div>
         )}
     </Modal>

@@ -55,13 +55,6 @@ export const Base64Modal: React.FC<Base64ModalProps> = ({ data, onClose, t }) =>
                         {copied ? <Check size={16} /> : <Copy size={16} />}
                         {copied ? 'Copied' : t.copy}
                     </button>
-
-                    <button 
-                        onClick={close}
-                        className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors"
-                    >
-                        {t.close}
-                    </button>
                 </div>
             </>
         )}

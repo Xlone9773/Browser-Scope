@@ -82,6 +82,7 @@ export const tools = {
   },
   webglTool: {
     no_results: "没有找到匹配的扩展：",
+    supported_status: "已支持",
     descriptions: {
         "EXT_texture_filter_anisotropic": "提高斜视角观看表面时的纹理质量。",
         "WEBGL_debug_renderer_info": "暴露底层图形硬件和驱动程序信息。",

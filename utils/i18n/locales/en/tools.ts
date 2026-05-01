@@ -82,6 +82,7 @@ export const tools = {
   },
   webglTool: {
     no_results: "No extensions match",
+    supported_status: "Supported",
     descriptions: {
         "EXT_texture_filter_anisotropic": "Improves quality of textures on surfaces viewed at oblique angles.",
         "WEBGL_debug_renderer_info": "Exposes the underlying graphics hardware and driver information.",

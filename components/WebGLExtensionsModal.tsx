@@ -136,7 +136,9 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                                     {!desc && (
                                         <div className="flex items-center gap-1.5 mt-auto pt-2">
                                             <Check size={12} className="text-emerald-500" />
-                                            <span className="text-[10px] text-emerald-600 dark:text-emerald-500 font-medium uppercase tracking-wide">Supported</span>
+                                            <span className="text-[10px] text-emerald-600 dark:text-emerald-500 font-medium uppercase tracking-wide">
+                                                {(t as any).supported_status || 'Supported'}
+                                            </span>
                                         </div>
                                     )}
                                 </div>
@@ -150,17 +152,6 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                         )}
                     </div>
                 </div>
-                
-                {/* Footer */}
-                <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 flex justify-end">
-                    <button 
-                        onClick={close}
-                        className="px-5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors"
-                    >
-                        {t.close}
-                    </button>
-                </div>
-            </div>
         )}
     </Modal>
   );
