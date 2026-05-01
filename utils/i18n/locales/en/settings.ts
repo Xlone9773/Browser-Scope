@@ -33,8 +33,8 @@ export const settings = {
             desc: "Turn off all page transitions and card loading animations."
         },
         fastAnimations: {
-            title: "Fast Animations",
-            desc: "Speed up all loading and transition animations."
+            title: "Fast Transitions",
+            desc: "Speed up all transition animations (hover, expand, etc)."
         },
         collapseHeader: {
             title: "Collapse Header",

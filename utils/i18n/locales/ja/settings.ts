@@ -33,8 +33,8 @@ export const settings = {
             desc: "ページ遷移とカードの読み込みアニメーションをオフにします。"
         },
         fastAnimations: {
-            title: "高速アニメーション",
-            desc: "すべての読み込みと遷移アニメーションを高速化します。"
+            title: "トランジションを高速化",
+            desc: "ホバーや展開などのトランジション効果を高速化します。"
         },
         collapseHeader: {
             title: "ヘッダーの折りたたみ",

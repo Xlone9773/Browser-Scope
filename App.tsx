@@ -123,11 +123,26 @@ const App: React.FC = () => {
       { id: 'extensions', name: 'Browser Extensions', isOpen: visibility.extensions, setOpen: (v) => v ? open('extensions') : close('extensions'), impact: 'Low', onUnload: () => unload('extensions'), isLoaded: loadedModules.has('extensions') },
   ];
 
-  // Initialize theme
+  // Initialize and listen to theme changes
   useEffect(() => {
       const savedTheme = getSavedTheme();
       setTheme(savedTheme);
       applyTheme(savedTheme);
+
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleSystemThemeChange = () => {
+          if (getSavedTheme() === 'system') {
+              applyTheme('system');
+          }
+      };
+
+      if (mediaQuery.addEventListener) {
+          mediaQuery.addEventListener('change', handleSystemThemeChange);
+          return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
+      } else if (mediaQuery.addListener) { // Fallback for older browsers
+          mediaQuery.addListener(handleSystemThemeChange);
+          return () => mediaQuery.removeListener(handleSystemThemeChange);
+      }
   }, []);
 
   // Event listener for Storage Card custom event
@@ -199,7 +214,11 @@ const App: React.FC = () => {
   }, [disableAnimations, fastAnimations]);
 
   const toggleTheme = () => {
-      const newTheme = theme === 'dark' ? 'light' : 'dark';
+      let newTheme: Theme;
+      if (theme === 'system') newTheme = 'light';
+      else if (theme === 'light') newTheme = 'dark';
+      else newTheme = 'system';
+      
       setTheme(newTheme);
       applyTheme(newTheme);
   };

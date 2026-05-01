@@ -7,6 +7,7 @@ import {
   Activity, 
   Sun, 
   Moon, 
+  Laptop,
   Sliders, 
   Info, 
   Languages, 
@@ -134,9 +135,9 @@ export const Header: React.FC<HeaderProps> = ({
         <Button 
             variant="secondary" 
             onClick={toggleTheme}
-            title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            title={theme === 'dark' ? 'Light Mode' : theme === 'light' ? 'System Theme' : 'Dark Mode'}
         >
-            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            {theme === 'dark' ? <Sun size={16} /> : theme === 'light' ? <Laptop size={16} /> : <Moon size={16} />}
         </Button>
         
         <Button 

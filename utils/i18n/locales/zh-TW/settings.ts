@@ -33,8 +33,8 @@ export const settings = {
             desc: "關閉頁面切換和卡片下載等所有動畫效果。"
         },
         fastAnimations: {
-            title: "加快動畫",
-            desc: "加快頁面所有的加載內容和互動動畫的播放速度。"
+            title: "加快過渡動畫",
+            desc: "加快頁面元素的懸停、展開等互動過渡動畫的速度。"
         },
         collapseHeader: {
             title: "收納欄目",

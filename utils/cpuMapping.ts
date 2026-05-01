@@ -118,8 +118,9 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('google') && r.includes('mali-g78')) return 'Google Tensor';
 
   // Mediatek Dimensity / High-end Mali
-  if (r.includes('mali-g925-immortalis mc12')) return 'Dimensity 9400+';
-  if (r.includes('immortalis-g925')) return 'Dimensity 9400 / 9400+';
+  if (r.includes('mali-g925-immortalis mc12')) return 'Dimensity 9400+ / Dimensity 9400';
+  if (r.includes('immortalis-g925')) return 'Dimensity 9400+ / Dimensity 9400';
+  if (r.includes('mali-g925')) return 'Dimensity 9400+ / Dimensity 9400';
   if (r.includes('immortalis-g720')) return 'Dimensity 9300 / 9300+';
   if (r.includes('immortalis-g715')) return 'Dimensity 9200 / 9200+';
   

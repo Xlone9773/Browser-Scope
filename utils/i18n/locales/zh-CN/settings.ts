@@ -33,8 +33,8 @@ export const settings = {
             desc: "关闭页面切换和卡片加载等所有动画效果。"
         },
         fastAnimations: {
-            title: "加快动画",
-            desc: "加快页面所有的加载内容和交互动画的播放速度。"
+            title: "加快过渡动画",
+            desc: "加快页面元素的悬停、展开等交互过渡动画的速度。"
         },
         collapseHeader: {
             title: "收纳栏目",

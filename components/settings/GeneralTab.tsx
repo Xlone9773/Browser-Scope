@@ -216,10 +216,10 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.fastAnimations?.title || 'Fast Animations'}
+                        {t.fastAnimations?.title || 'Fast Transitions'}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.fastAnimations?.desc || 'Speed up all loading and transition animations.'}
+                        {t.fastAnimations?.desc || 'Speed up all transition animations (hover, expand, etc).'}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
