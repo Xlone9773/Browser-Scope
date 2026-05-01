@@ -81,6 +81,28 @@ export const tools = {
     close: "Close"
   },
   webglTool: {
+    no_results: "No extensions match",
+    descriptions: {
+        "EXT_texture_filter_anisotropic": "Improves quality of textures on surfaces viewed at oblique angles.",
+        "WEBGL_debug_renderer_info": "Exposes the underlying graphics hardware and driver information.",
+        "OES_vertex_array_object": "Encapsulates vertex array state into objects for faster switching.",
+        "WEBGL_compressed_texture_s3tc": "Exposes S3TC (DXT) compressed texture formats.",
+        "WEBGL_compressed_texture_etc": "Exposes ETC2 and EAC compressed texture formats.",
+        "WEBGL_compressed_texture_astc": "Exposes ASTC compressed texture formats.",
+        "ANGLE_instanced_arrays": "Allows drawing the same object multiple times with different data.",
+        "OES_texture_float": "Allows using floating point numbers for texture data.",
+        "OES_texture_half_float": "Allows using half-floating point numbers for texture data.",
+        "WEBGL_depth_texture": "Allows using depth buffers as textures.",
+        "EXT_shader_texture_lod": "Adds texture lookup functions with explicit LOD control in shaders.",
+        "OES_standard_derivatives": "Adds standard derivative functions (dFdx, dFdy, fwidth) to shaders.",
+        "WEBGL_draw_buffers": "Allows drawing to multiple color buffers at once (MRT).",
+        "EXT_frag_depth": "Allows the fragment shader to set the depth value.",
+        "WEBGL_lose_context": "Simulates losing and restoring the WebGL context for testing.",
+        "EXT_blend_minmax": "Adds MIN and MAX blend equations.",
+        "OES_element_index_uint": "Allows using unsigned int (32-bit) indices for drawing.",
+        "EXT_color_buffer_float": "Allows rendering to 32-bit floating-point color buffers.",
+        "EXT_float_blend": "Allows blending with 32-bit floating-point color buffers."
+    },
     title: "WebGL Extensions",
     count: "extensions",
     search_placeholder: "Search extensions...",

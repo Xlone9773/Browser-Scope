@@ -84,7 +84,9 @@ export const getAllData = async (): Promise<BrowserData> => {
       drmCount: drmSupport.filter(d => d.supported).length,
       touchPoints: navigator.maxTouchPoints || 0,
       clientHints: clientHints,
-      hdr: window.matchMedia('(dynamic-range: high)').matches
+      hdr: window.matchMedia('(dynamic-range: high)').matches,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      languages: navigator.languages ? navigator.languages.join(',') : navigator.language
   });
 
   const isPwaInstalled = window.matchMedia('(display-mode: standalone)').matches;

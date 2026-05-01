@@ -219,8 +219,18 @@ const App: React.FC = () => {
       else if (theme === 'light') newTheme = 'dark';
       else newTheme = 'system';
       
-      setTheme(newTheme);
-      applyTheme(newTheme);
+      const updateTheme = () => {
+          setTheme(newTheme);
+          applyTheme(newTheme);
+      };
+
+      if (!document.startViewTransition || disableAnimations) {
+          updateTheme();
+      } else {
+          document.startViewTransition(() => {
+              updateTheme();
+          });
+      }
   };
 
   const toggleSimpleMode = (value: boolean) => {
@@ -417,7 +427,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300 scrollbar-hide relative">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 scrollbar-hide relative">
       
       {/* Loading Overlay */}
       {showLoader && (

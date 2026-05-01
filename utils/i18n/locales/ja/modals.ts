@@ -165,6 +165,8 @@ export const modals = {
     storage_test: "データベースIOPS"
   },
   graphicsModal: {
+    supported_features: "サポートされている機能",
+    no_params_found: "一致するパラメーターが見つかりません：",
     title: "グラフィックス詳細情報 & 制限",
     tab_webgl: "WebGL 制限",
     tab_webgpu: "WebGPU 制限",

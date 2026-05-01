@@ -95,7 +95,7 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                         {filteredExtensions.map((ext, index) => {
                             const prefix = getPrefix(ext);
-                            const desc = EXTENSION_DESCRIPTIONS[ext];
+                            const desc = (t as any).descriptions?.[ext] || EXTENSION_DESCRIPTIONS[ext];
                             return (
                                 <div 
                                     key={ext} 
@@ -145,7 +145,7 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                         {filteredExtensions.length === 0 && (
                             <div className="col-span-full py-12 flex flex-col items-center justify-center text-slate-400 gap-3">
                                 <Box size={48} className="opacity-20" />
-                                <p className="text-sm">No extensions match "{searchTerm}"</p>
+                                <p className="text-sm">{(t as any).no_results || 'No extensions match'} "{searchTerm}"</p>
                             </div>
                         )}
                     </div>

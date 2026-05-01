@@ -81,6 +81,28 @@ export const tools = {
     close: "關閉"
   },
   webglTool: {
+    no_results: "沒有找到匹配的擴展：",
+    descriptions: {
+        "EXT_texture_filter_anisotropic": "提高斜視角觀看表面時的紋理品質。",
+        "WEBGL_debug_renderer_info": "暴露底層圖形硬件和驅動程式資訊。",
+        "OES_vertex_array_object": "將頂點陣列狀態封裝到物件中以實現更快的切換。",
+        "WEBGL_compressed_texture_s3tc": "暴露 S3TC (DXT) 壓縮紋理格式。",
+        "WEBGL_compressed_texture_etc": "暴露 ETC2 和 EAC 壓縮紋理格式。",
+        "WEBGL_compressed_texture_astc": "暴露 ASTC 壓縮紋理格式。",
+        "ANGLE_instanced_arrays": "允許使用不同的數據多次繪製相同物件。",
+        "OES_texture_float": "允許在紋理數據中使用單精度浮點數。",
+        "OES_texture_half_float": "允許在紋理數據中使用半精度浮點數。",
+        "WEBGL_depth_texture": "允許將深度緩衝用作紋理。",
+        "EXT_shader_texture_lod": "在著色器中添加具有顯式 LOD 控制的紋理查找函數。",
+        "OES_standard_derivatives": "在著色器中添加標準導數函數 (dFdx, dFdy, fwidth)。",
+        "WEBGL_draw_buffers": "允許一次繪製到多個顏色緩衝 (MRT)。",
+        "EXT_frag_depth": "允許片段著色器設置深度值。",
+        "WEBGL_lose_context": "模擬丟失和恢復 WebGL 上下文進行測試。",
+        "EXT_blend_minmax": "添加 MIN 和 MAX 混合方程。",
+        "OES_element_index_uint": "允許使用無符號整數 (32位) 索引進行繪製。",
+        "EXT_color_buffer_float": "允許渲染到 32位 浮點顏色緩衝。",
+        "EXT_float_blend": "允許與 32位 浮點顏色緩衝進行混合。"
+    },
     title: "WebGL 擴充",
     count: "個擴充",
     search_placeholder: "搜尋擴充名稱...",

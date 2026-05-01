@@ -165,6 +165,8 @@ export const modals = {
     storage_test: "Database IOPS"
   },
   graphicsModal: {
+    supported_features: "Supported Features",
+    no_params_found: "No parameters found matching",
     title: "Graphics Limits & Features",
     tab_webgl: "WebGL Limits",
     tab_webgpu: "WebGPU Limits",

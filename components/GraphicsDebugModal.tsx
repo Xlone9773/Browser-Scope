@@ -129,6 +129,11 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
       return {};
   };
 
+  const formatKey = (key: string) => {
+      if (key.startsWith('__')) return key;
+      return key.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+  };
+
   const filteredData = Object.entries(getCurrentData())
     .filter(([key]) => !key.startsWith('__') && key.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -202,7 +207,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {filteredData.map(([key, value]) => (
                             <div key={key} className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 flex flex-col hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors">
-                                <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1 break-all">{key}</span>
+                                <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1 break-all">{formatKey(key)}</span>
                                 <span className="text-sm font-mono font-medium text-slate-700 dark:text-slate-200 break-all">{String(value)}</span>
                             </div>
                         ))}
@@ -210,7 +215,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                         {/* Special Features Section for WebGPU */}
                         {activeTab === 'WebGPU' && webgpuInfo.__features__ && webgpuInfo.__features__.length > 0 && (
                             <div className="md:col-span-2 mt-4">
-                                <h3 className="text-sm font-bold text-slate-500 mb-3 px-1">Supported Features</h3>
+                                <h3 className="text-sm font-bold text-slate-500 mb-3 px-1">{(t as any).supported_features || 'Supported Features'}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {webgpuInfo.__features__.map((feat: string) => (
                                         <span key={feat} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-mono rounded border border-indigo-100 dark:border-indigo-800">
@@ -223,7 +228,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                         
                         {filteredData.length === 0 && (
                             <div className="md:col-span-2 text-center py-10 text-slate-400">
-                                No parameters found matching "{searchTerm}"
+                                {(t as any).no_params_found || 'No parameters found matching'} "{searchTerm}"
                             </div>
                         )}
                     </div>

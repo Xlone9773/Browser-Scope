@@ -165,6 +165,8 @@ export const modals = {
     storage_test: "資料庫 IOPS"
   },
   graphicsModal: {
+    supported_features: "支援的特性",
+    no_params_found: "未找到匹配的參數：",
     title: "顯示卡深度資訊 & 極限參數",
     tab_webgl: "WebGL 極限參數",
     tab_webgpu: "WebGPU 極限參數",

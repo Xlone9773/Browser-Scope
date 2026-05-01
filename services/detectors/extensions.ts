@@ -34,15 +34,38 @@ export const detectExtensions = (): DetectedExtension[] => {
   check('coinbase', 'Coinbase Wallet', 'Web3 Coinbase wallet', 'Crypto', () => !!w.ethereum?.isCoinbaseWallet);
   check('brave-wallet', 'Brave Wallet', 'Built-in Brave crypto wallet', 'Crypto', () => !!w.ethereum?.isBraveWallet);
   check('sui-wallet', 'Sui Wallet', 'Web3 Sui wallet', 'Crypto', () => !!w.suiWallet);
+  check('ronin', 'Ronin Wallet', 'Axie Infinity Wallet', 'Crypto', () => !!w.ronin);
+  check('keplr', 'Keplr', 'Cosmos Ecosystem Wallet', 'Crypto', () => !!w.keplr);
+  check('petra', 'Petra', 'Aptos Wallet', 'Crypto', () => !!w.aptos);
+  check('martian', 'Martian', 'Aptos/Sui Wallet', 'Crypto', () => !!w.martian);
+  check('okx', 'OKX Wallet', 'Multi-chain Wallet', 'Crypto', () => !!w.okxwallet);
+  check('trust', 'Trust Wallet', 'Multi-chain Wallet', 'Crypto', () => !!w.trustwallet);
+  check('tronlink', 'TronLink', 'Tron Wallet', 'Crypto', () => !!w.tronWeb);
+  check('tonkeeper', 'Tonkeeper', 'TON Wallet', 'Crypto', () => !!w.tonkeeper);
+  check('rabby', 'Rabby Wallet', 'EVM Wallet', 'Crypto', () => !!w.rabby);
+  check('uniswap', 'Uniswap Wallet', 'EVM Wallet', 'Crypto', () => !!w.uniswapWallet);
+  check('bitget', 'Bitkeep / Bitget', 'Web3 Wallet', 'Crypto', () => !!w.bitkeep);
 
   // Shopping / Coupons
   check('honey', 'Honey', 'Automatic Coupons', 'Shopping', () => !!document.getElementById('honey-container') || !!document.querySelector('div[id^="honey-"]'));
 
   // Grammar / Writing
   check('grammarly', 'Grammarly', 'Writing Assistant', 'Productivity', () => document.body.hasAttribute('data-gr-ext-installed'));
+  check('languagetool', 'LanguageTool', 'Writing Assistant', 'Productivity', () => document.body.hasAttribute('lt-installed'));
 
-  // Utility
+  // Password Managers
+  check('1password', '1Password', 'Password Manager', 'Utility', () => !!document.querySelector('com-1password-button'));
+  check('lastpass', 'LastPass', 'Password Manager', 'Utility', () => !!document.querySelector('[data-lp-type]'));
+  check('dashlane', 'Dashlane', 'Password Manager', 'Utility', () => !!document.querySelector('[data-dashlane-rid]'));
+
+  // Theme / UI
   check('darkreader', 'Dark Reader', 'Dark mode for websites', 'Utility', () => !!document.querySelector('meta[name="darkreader"]'));
+  check('stylus', 'Stylus', 'User styles manager', 'Utility', () => document.documentElement.hasAttribute('stylus'));
+  check('tampermonkey', 'Tampermonkey', 'Userscript manager', 'Utility', () => !!w.GM_info || !!w.GM);
+
+  // Privacy / Adblock (Heuristics without fetch)
+  check('brave-shields', 'Brave Shields', 'Built-in Brave Ad/Tracker Blocker', 'Privacy', () => !!(navigator as any).brave && typeof (navigator as any).brave.isBrave === 'function');
+  check('ghostery', 'Ghostery', 'Tracker Blocker', 'Privacy', () => !!w.Ghostery);
 
   return extensions;
 };

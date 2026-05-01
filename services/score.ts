@@ -18,6 +18,9 @@ interface ScoreInput {
     touchPoints: number;
     clientHints?: any;
     hdr: boolean;
+    timezone?: string;
+    languages?: string;
+    fontsCount?: number;
 }
 
 export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore => {
@@ -30,39 +33,55 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     let catMedia = 0;
     let catNetwork = 0;
 
-    // --- BROWSER CATEGORY (Canvas, WebGL, UA) ---
+    // --- BROWSER CATEGORY (Canvas, WebGL, UA, Fonts, Lang) ---
     // Canvas Hash (High entropy)
     if (input.canvasHash && input.canvasHash !== 'Error' && input.canvasHash !== 'Not Supported') {
-        catBrowser += 30;
-        factors.push({ id: 'canvas_hash', value: 'val_unique', score: 30, maxScore: 30, description: 'desc_canvas_unique', category: 'browser' });
+        catBrowser += 20;
+        factors.push({ id: 'canvas_hash', value: 'val_unique', score: 20, maxScore: 20, description: 'desc_canvas_unique', category: 'browser' });
     } else {
-        factors.push({ id: 'canvas_hash', value: 'val_generic', score: 0, maxScore: 30, description: 'desc_canvas_generic', category: 'browser' });
+        factors.push({ id: 'canvas_hash', value: 'val_generic', score: 0, maxScore: 20, description: 'desc_canvas_generic', category: 'browser' });
     }
 
     // WebGL Hash (High entropy)
     if (input.webglHash && input.webglHash !== 'Error' && input.webglHash !== 'Not Supported') {
-        catBrowser += 30;
-        factors.push({ id: 'webgl_hash', value: 'val_unique', score: 30, maxScore: 30, description: 'desc_webgl_unique', category: 'browser' });
+        catBrowser += 20;
+        factors.push({ id: 'webgl_hash', value: 'val_unique', score: 20, maxScore: 20, description: 'desc_webgl_unique', category: 'browser' });
+    }
+    
+    // Fonts
+    if (input.fontsCount && input.fontsCount > 0) {
+        let fontScore = Math.min(20, (input.fontsCount / 100) * 10); // up to 20
+        catBrowser += fontScore;
+        factors.push({ id: 'installed_fonts', value: `${input.fontsCount} Fonts`, score: Math.round(fontScore), maxScore: 20, description: 'desc_hardware_unique', category: 'browser' });
+    }
+
+    // Languages & Timezone (High uniqueness combined)
+    if (input.timezone) {
+        catBrowser += 10;
+        factors.push({ id: 'system_timezone', value: input.timezone, score: 10, maxScore: 10, description: 'desc_locale_unique', category: 'browser' });
+    }
+    if (input.languages && input.languages.includes(',')) {
+        catBrowser += 10;
+        factors.push({ id: 'language_preferences', value: 'val_specific', score: 10, maxScore: 10, description: 'desc_locale_unique', category: 'browser' });
     }
 
     // User Agent & Hints
     if (input.userAgent.length > 50) {
-        let uaScore = 20;
+        let uaScore = 10;
         let uaDesc = 'desc_ua_unique';
-        // If Client Hints are highly specific
         if (input.clientHints && input.clientHints.model) {
-            uaScore += 20; // Bonus for revealing model
+            uaScore += 10; 
             uaDesc = 'desc_ua_ch';
         }
         catBrowser += uaScore;
-        factors.push({ id: 'user_agent', value: 'val_specific', score: uaScore, maxScore: 40, description: uaDesc, category: 'browser' });
+        factors.push({ id: 'user_agent', value: 'val_specific', score: uaScore, maxScore: 20, description: uaDesc, category: 'browser' });
     }
 
     // --- HARDWARE CATEGORY (CPU, GPU, RAM, Battery) ---
     // Concurrency & Memory
     if (input.cpu !== 'Unknown' && input.memory !== 'Unknown') {
         catHardware += 30;
-        factors.push({ id: 'hardware_concurrency', value: `${input.cpu} Cores`, score: 30, maxScore: 30, description: 'desc_hardware_unique', category: 'hardware' });
+        factors.push({ id: 'hardware_concurrency', value: `${input.cpu} Cores, ${input.memory}GB RAM`, score: 30, maxScore: 30, description: 'desc_hardware_unique', category: 'hardware' });
     }
 
     // GPU Renderer (Very specific)

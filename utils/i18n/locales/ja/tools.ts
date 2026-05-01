@@ -81,6 +81,28 @@ export const tools = {
     close: "閉じる"
   },
   webglTool: {
+    no_results: "一致する拡張機能はありません：",
+    descriptions: {
+        "EXT_texture_filter_anisotropic": "斜めから見た面のテクスチャ品質を向上させます。",
+        "WEBGL_debug_renderer_info": "グラフィックハードウェアとドライバ情報を公開します。",
+        "OES_vertex_array_object": "頂点配列の状態をオブジェクトにカプセル化し、切り替えを高速化します。",
+        "WEBGL_compressed_texture_s3tc": "S3TC (DXT) 圧縮テクスチャフォーマットを公開します。",
+        "WEBGL_compressed_texture_etc": "ETC2 および EAC 圧縮テクスチャフォーマットを公開します。",
+        "WEBGL_compressed_texture_astc": "ASTC 圧縮テクスチャフォーマットを公開します。",
+        "ANGLE_instanced_arrays": "同じオブジェクトを異なるデータで複数回描画できるようにします。",
+        "OES_texture_float": "テクスチャデータに浮動小数点数を使用できるようにします。",
+        "OES_texture_half_float": "テクスチャデータに半精度浮点数を使用できるようにします。",
+        "WEBGL_depth_texture": "深度バッファをテクスチャとして使用できるようにします。",
+        "EXT_shader_texture_lod": "明示的な LOD 制御を持つテクスチャ検索関数をシェーダに追加します。",
+        "OES_standard_derivatives": "標準微分関数 (dFdx, dFdy, fwidth) をシェーダに追加します。",
+        "WEBGL_draw_buffers": "複数のカラーバッファに同時に描画できるようにします (MRT)。",
+        "EXT_frag_depth": "フラグメントシェーダで深度値を設定できるようにします。",
+        "WEBGL_lose_context": "テストのために WebGL コンテキストの喪失と復元をシミュレートします。",
+        "EXT_blend_minmax": "MIN および MAX ブレンド方程式を追加します。",
+        "OES_element_index_uint": "描画に符号なし整数 (32ビット) インデックスを使用できるようにします。",
+        "EXT_color_buffer_float": "32ビット浮動小数点カラーバッファへのレンダリングを許可します。",
+        "EXT_float_blend": "32ビット浮動小数点カラーバッファとのブレンドを許可します。"
+    },
     title: "WebGL 拡張機能",
     count: "個の拡張",
     search_placeholder: "拡張機能名を検索...",
