@@ -112,6 +112,19 @@
       body.no-blur .fixed.inset-0.bg-slate-900\/60 {
           background-color: rgba(15, 23, 42, 0.98) !important;
       }
+
+      /* === FAST ANIMATIONS MODE === */
+      body.fast-animations * {
+          animation-duration: 0.1s !important;
+          transition-duration: 0.1s !important;
+      }
+
+      /* === DISABLE ANIMATIONS MODE === */
+      body.disable-animations * {
+          animation-duration: 0s !important;
+          transition-duration: 0s !important;
+          animation: none !important;
+      }
     </style>
   <script type="importmap">
 {

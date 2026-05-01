@@ -7,21 +7,23 @@ export const exportAsJson = (
     permStatus: Record<string, string>, 
     geoData: GeoPosition | null
 ) => {
+    // Clone data to avoid mutating application state
+    const cleanData = JSON.parse(JSON.stringify(data));
+    
+    // Remove heavy/unnecessary raw image data from the export
+    if (cleanData.fingerprints && cleanData.fingerprints.canvasImage) {
+        delete cleanData.fingerprints.canvasImage;
+    }
+
     const exportPayload = {
         meta: {
             appName: "BrowserScope",
             version: "1.5.0",
-            exportTime: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-            platform: navigator.platform,
-            language: navigator.language,
-            screen: `${window.screen.width}x${window.screen.height}`,
-            window: `${window.innerWidth}x${window.innerHeight}`,
-            pixelRatio: window.devicePixelRatio
+            exportTime: new Date().toISOString()
         },
         permissions: permStatus,
         geolocation: geoData || 'Permission not granted or unavailable',
-        data: data
+        data: cleanData
     };
 
     const jsonString = JSON.stringify(exportPayload, null, 2);

@@ -25,12 +25,20 @@ export const settings = {
             desc: "在 12 小时制和 24 小时制之间切换。"
         },
         performance: {
-            title: "高性能模式",
-            desc: "禁用模糊特效与透明度以降低 GPU 负载。"
+            title: "禁用模糊",
+            desc: "禁用模糊特效与透明度以提升界面流畅度（减少 GPU 消耗）。"
         },
         animations: {
             title: "禁用动画",
             desc: "关闭页面切换和卡片加载等所有动画效果。"
+        },
+        fastAnimations: {
+            title: "加快动画",
+            desc: "加快页面所有的加载内容和交互动画的播放速度。"
+        },
+        collapseHeader: {
+            title: "收纳栏目",
+            desc: "在电脑端隐藏顶部导航条上比较生僻的各类功能按键。"
         },
         cardVisibility: {
             title: "自定义显示项",

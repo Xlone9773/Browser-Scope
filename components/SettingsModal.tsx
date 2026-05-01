@@ -25,6 +25,10 @@ interface SettingsModalProps {
   toggleDisableBlur: (value: boolean) => void;
   disableAnimations: boolean;
   toggleDisableAnimations: (value: boolean) => void;
+  fastAnimations: boolean;
+  toggleFastAnimations: (value: boolean) => void;
+  collapseHeader: boolean;
+  toggleCollapseHeader: (value: boolean) => void;
   hiddenCards: string[];
   setHiddenCards: (cards: string[]) => void;
   isDevToolsFloating: boolean;
@@ -45,6 +49,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     toggleDisableBlur,
     disableAnimations,
     toggleDisableAnimations,
+    fastAnimations,
+    toggleFastAnimations,
+    collapseHeader,
+    toggleCollapseHeader,
     hiddenCards,
     setHiddenCards,
     isDevToolsFloating, 
@@ -211,6 +219,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 toggleDisableBlur={toggleDisableBlur}
                                 disableAnimations={disableAnimations}
                                 toggleDisableAnimations={toggleDisableAnimations}
+                                fastAnimations={fastAnimations}
+                                toggleFastAnimations={toggleFastAnimations}
+                                collapseHeader={collapseHeader}
+                                toggleCollapseHeader={toggleCollapseHeader}
                                 hiddenCards={hiddenCards}
                                 setHiddenCards={setHiddenCards}
                                 translationDict={t}

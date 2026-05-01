@@ -14,22 +14,28 @@ interface GeneralTabProps {
     toggleDisableBlur: (value: boolean) => void;
     disableAnimations: boolean;
     toggleDisableAnimations: (value: boolean) => void;
+    fastAnimations: boolean;
+    toggleFastAnimations: (value: boolean) => void;
+    collapseHeader: boolean;
+    toggleCollapseHeader: (value: boolean) => void;
     hiddenCards: string[];
     setHiddenCards: (cards: string[]) => void;
     translationDict: any;
 }
 
 // Custom Switch Component with Spring Animation
-const Switch: React.FC<{ checked: boolean; onChange: (val: boolean) => void; label?: string }> = ({ checked, onChange, label }) => (
+const Switch: React.FC<{ checked: boolean; onChange: (val: boolean) => void; label?: string; disabled?: boolean }> = ({ checked, onChange, label, disabled = false }) => (
     <button
         role="switch"
         aria-checked={checked}
         aria-label={label}
-        onClick={() => onChange(!checked)}
+        onClick={() => !disabled && onChange(!checked)}
+        disabled={disabled}
         className={`
             relative inline-flex h-8 w-14 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent 
             transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 dark:focus:ring-offset-slate-800
             ${checked ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}
+            ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
         `}
     >
         <span className="sr-only">{label}</span>
@@ -56,6 +62,10 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     toggleDisableBlur,
     disableAnimations,
     toggleDisableAnimations,
+    fastAnimations,
+    toggleFastAnimations,
+    collapseHeader,
+    toggleCollapseHeader,
     hiddenCards,
     setHiddenCards,
     translationDict
@@ -195,6 +205,51 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         checked={disableAnimations} 
                         onChange={toggleDisableAnimations} 
                         label={t.animations?.title} 
+                    />
+                </div>
+            </div>
+
+            {/* Fast Animations */}
+            <div 
+                className={`bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800 ${disableAnimations ? 'opacity-50 pointer-events-none' : ''}`}
+                onClick={() => !disableAnimations && toggleFastAnimations(!fastAnimations)}
+            >
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.fastAnimations?.title || 'Fast Animations'}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {t.fastAnimations?.desc || 'Speed up all loading and transition animations.'}
+                    </p>
+                </div>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Switch 
+                        checked={fastAnimations} 
+                        onChange={toggleFastAnimations} 
+                        label={t.fastAnimations?.title}
+                        disabled={disableAnimations} 
+                    />
+                </div>
+            </div>
+
+            {/* Collapse Header Menu Desktop */}
+            <div 
+                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
+                onClick={() => toggleCollapseHeader(!collapseHeader)}
+            >
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.collapseHeader?.title || 'Collapse Header (Desktop)'}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {t.collapseHeader?.desc || 'Use a collapsed menu for header actions on desktop screens.'}
+                    </p>
+                </div>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Switch 
+                        checked={collapseHeader} 
+                        onChange={toggleCollapseHeader} 
+                        label={t.collapseHeader?.title} 
                     />
                 </div>
             </div>

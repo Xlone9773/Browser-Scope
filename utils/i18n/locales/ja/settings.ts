@@ -25,12 +25,20 @@ export const settings = {
             desc: "12時間制と24時間制を切り替えます。"
         },
         performance: {
-            title: "高パフォーマンスモード",
-            desc: "背景のぼかしと透明効果を無効にしてGPU負荷を軽減します。"
+            title: "ブラーを無効化",
+            desc: "ブラー効果と透明度を無効にし、UIの滑らかさを向上させます。"
         },
         animations: {
             title: "アニメーションを無効にする",
             desc: "ページ遷移とカードの読み込みアニメーションをオフにします。"
+        },
+        fastAnimations: {
+            title: "高速アニメーション",
+            desc: "すべての読み込みと遷移アニメーションを高速化します。"
+        },
+        collapseHeader: {
+            title: "ヘッダーの折りたたみ",
+            desc: "デスクトップ画面のヘッダーアクションをメニューに折りたたみます。"
         },
         cardVisibility: {
             title: "表示項目をカスタマイズ",

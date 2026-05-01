@@ -64,6 +64,8 @@ const App: React.FC = () => {
   });
   const [disableBlur, setDisableBlur] = useState<boolean>(() => localStorage.getItem('disableBlur') === 'true');
   const [disableAnimations, setDisableAnimations] = useState<boolean>(() => localStorage.getItem('disableAnimations') === 'true');
+  const [fastAnimations, setFastAnimations] = useState<boolean>(() => localStorage.getItem('fastAnimations') === 'true');
+  const [collapseHeader, setCollapseHeader] = useState<boolean>(() => localStorage.getItem('collapseHeader') === 'true');
   const [hiddenCards, setHiddenCards] = useState<string[]>(() => {
       try {
           const stored = localStorage.getItem('hiddenCards');
@@ -167,6 +169,7 @@ const App: React.FC = () => {
   useEffect(() => {
       if (disableAnimations) {
           document.body.classList.add('disable-animations');
+          document.body.classList.remove('fast-animations');
           let style = document.getElementById('disable-animations-style');
           if (!style) {
               style = document.createElement('style');
@@ -186,8 +189,14 @@ const App: React.FC = () => {
           if (style) {
               style.remove();
           }
+
+          if (fastAnimations) {
+               document.body.classList.add('fast-animations');
+          } else {
+               document.body.classList.remove('fast-animations');
+          }
       }
-  }, [disableAnimations]);
+  }, [disableAnimations, fastAnimations]);
 
   const toggleTheme = () => {
       const newTheme = theme === 'dark' ? 'light' : 'dark';
@@ -218,6 +227,16 @@ const App: React.FC = () => {
   const toggleDisableAnimations = (value: boolean) => {
       setDisableAnimations(value);
       localStorage.setItem('disableAnimations', String(value));
+  };
+
+  const toggleFastAnimations = (value: boolean) => {
+      setFastAnimations(value);
+      localStorage.setItem('fastAnimations', String(value));
+  };
+
+  const toggleCollapseHeader = (value: boolean) => {
+      setCollapseHeader(value);
+      localStorage.setItem('collapseHeader', String(value));
   };
 
   const fetchData = async () => {
@@ -458,6 +477,10 @@ const App: React.FC = () => {
                     toggleDisableBlur={toggleDisableBlur}
                     disableAnimations={disableAnimations}
                     toggleDisableAnimations={toggleDisableAnimations}
+                    fastAnimations={fastAnimations}
+                    toggleFastAnimations={toggleFastAnimations}
+                    collapseHeader={collapseHeader}
+                    toggleCollapseHeader={toggleCollapseHeader}
                     hiddenCards={hiddenCards}
                     setHiddenCards={(cards: string[]) => {
                         setHiddenCards(cards);
@@ -548,6 +571,7 @@ const App: React.FC = () => {
           onOpenSettings={() => open('settings')}
           onOpenAbout={() => open('about')}
           onOpenBenchmark={() => open('benchmark')}
+          collapseHeader={collapseHeader}
         />
 
         {/* Main Content - Only render if data exists */}

@@ -25,12 +25,20 @@ export const settings = {
             desc: "Switch between 12-hour and 24-hour clock formats."
         },
         performance: {
-            title: "High Performance",
-            desc: "Disable blur effects and transparency to reduce GPU load."
+            title: "Disable Blur",
+            desc: "Disable blur effects and transparency to improve UI fluidity."
         },
         animations: {
             title: "Disable Animations",
             desc: "Turn off all page transitions and card loading animations."
+        },
+        fastAnimations: {
+            title: "Fast Animations",
+            desc: "Speed up all loading and transition animations."
+        },
+        collapseHeader: {
+            title: "Collapse Header",
+            desc: "Use a collapsed menu for header actions (Desktop)."
         },
         cardVisibility: {
             title: "Custom Display Items",
