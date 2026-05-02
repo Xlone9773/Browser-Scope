@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { Cpu, Loader2 } from 'lucide-react';
 
-export const ModalLoading: React.FC = () => {
+export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: string }> = ({ 
+    initializingText = "Initializing", 
+    loadingText = "Loading Module Resource" 
+}) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -56,7 +59,7 @@ export const ModalLoading: React.FC = () => {
             {/* Text Content */}
             <div className="text-center space-y-2 relative z-10">
                 <h3 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight flex items-center justify-center gap-2">
-                    Initializing
+                    {initializingText}
                     <span className="flex gap-1">
                         <span className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                         <span className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
@@ -64,7 +67,7 @@ export const ModalLoading: React.FC = () => {
                     </span>
                 </h3>
                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400 font-mono uppercase tracking-widest">
-                    Loading Module Resource
+                    {loadingText}
                 </p>
             </div>
 

@@ -7,6 +7,10 @@ export const common = {
   },
   common: {
     loading: "システム機能をスキャン中...",
+    modal_loading: {
+        initializing: "初期化中",
+        loading_module: "モジュールリソースを読み込み中"
+    },
     loading_steps: [
         "環境を初期化中...",
         "ハードウェアとGPUを検出中...",

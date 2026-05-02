@@ -7,6 +7,10 @@ export const common = {
   },
   common: {
     loading: "正在扫描系统能力...",
+    modal_loading: {
+        initializing: "正在初始化",
+        loading_module: "正在加载模块资源"
+    },
     loading_steps: [
         "正在初始化环境...",
         "检测硬件与 GPU...",

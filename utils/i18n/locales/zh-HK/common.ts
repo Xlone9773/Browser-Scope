@@ -7,6 +7,10 @@ export const common = {
   },
   common: {
     loading: "正在掃描系統能力...",
+    modal_loading: {
+        initializing: "正在初始化",
+        loading_module: "正在載入模組資源"
+    },
     loading_steps: [
         "正在初始化環境...",
         "檢測圖形渲染能力...",

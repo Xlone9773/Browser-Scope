@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
-import { RefreshCw, Monitor, Smartphone, ShieldAlert, Cpu } from 'lucide-react';
+import { RefreshCw, Monitor, Smartphone, ShieldAlert, Cpu, Loader2 } from 'lucide-react';
 import { getAllData } from './services/detectionService';
 import { runAiReadinessCheck } from './services/detectors/hardware';
 import { exportAsJson } from './services/exporter';
@@ -16,22 +16,22 @@ import { useModalManager } from './hooks/useModalManager';
 // Components
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
-import { EnvironmentCard } from './components/cards/EnvironmentCard';
-import { SecurityCard } from './components/cards/SecurityCard';
-import { AiComputeCard } from './components/cards/AiComputeCard';
-import { SystemCard } from './components/cards/SystemCard';
-import { HardwareCard } from './components/cards/HardwareCard';
-import { DisplayCard } from './components/cards/DisplayCard';
-import { FingerprintCard } from './components/cards/FingerprintCard';
-import { NetworkCard } from './components/cards/NetworkCard';
-import { StorageCard } from './components/cards/StorageCard';
-import { LocationCard } from './components/cards/LocationCard'; 
-import { PermissionsCard } from './components/cards/PermissionsCard';
-import { MediaDevicesCard } from './components/cards/MediaDevicesCard';
-import { MediaCapabilitiesCard } from './components/cards/MediaCapabilitiesCard';
-import { UserAgentCard } from './components/cards/UserAgentCard';
-import { PwaSection } from './components/sections/PwaSection';
-import { FeaturesSection } from './components/sections/FeaturesSection';
+const EnvironmentCard = React.lazy(() => import('./components/cards/EnvironmentCard').then(m => ({ default: m.EnvironmentCard })));
+const SecurityCard = React.lazy(() => import('./components/cards/SecurityCard').then(m => ({ default: m.SecurityCard })));
+const AiComputeCard = React.lazy(() => import('./components/cards/AiComputeCard').then(m => ({ default: m.AiComputeCard })));
+const SystemCard = React.lazy(() => import('./components/cards/SystemCard').then(m => ({ default: m.SystemCard })));
+const HardwareCard = React.lazy(() => import('./components/cards/HardwareCard').then(m => ({ default: m.HardwareCard })));
+const DisplayCard = React.lazy(() => import('./components/cards/DisplayCard').then(m => ({ default: m.DisplayCard })));
+const FingerprintCard = React.lazy(() => import('./components/cards/FingerprintCard').then(m => ({ default: m.FingerprintCard })));
+const NetworkCard = React.lazy(() => import('./components/cards/NetworkCard').then(m => ({ default: m.NetworkCard })));
+const StorageCard = React.lazy(() => import('./components/cards/StorageCard').then(m => ({ default: m.StorageCard })));
+const LocationCard = React.lazy(() => import('./components/cards/LocationCard').then(m => ({ default: m.LocationCard })));
+const PermissionsCard = React.lazy(() => import('./components/cards/PermissionsCard').then(m => ({ default: m.PermissionsCard })));
+const MediaDevicesCard = React.lazy(() => import('./components/cards/MediaDevicesCard').then(m => ({ default: m.MediaDevicesCard })));
+const MediaCapabilitiesCard = React.lazy(() => import('./components/cards/MediaCapabilitiesCard').then(m => ({ default: m.MediaCapabilitiesCard })));
+const UserAgentCard = React.lazy(() => import('./components/cards/UserAgentCard').then(m => ({ default: m.UserAgentCard })));
+const PwaSection = React.lazy(() => import('./components/sections/PwaSection').then(m => ({ default: m.PwaSection })));
+const FeaturesSection = React.lazy(() => import('./components/sections/FeaturesSection').then(m => ({ default: m.FeaturesSection })));
 import { ModuleState } from './components/settings/ModulesTab';
 
 type PermissionStatusType = 'idle' | 'granted' | 'denied' | 'prompt' | 'error';
@@ -465,7 +465,7 @@ const App: React.FC = () => {
 
       {/* Lazy Loaded Modals wrapped in Suspense and ErrorBoundary */}
       <ErrorBoundary name="Modals">
-        <Suspense fallback={<ModalLoading />}>
+        <Suspense fallback={<ModalLoading initializingText={(t as any).common?.modal_loading?.initializing} loadingText={(t as any).common?.modal_loading?.loading_module} />}>
             {isDevToolsFloating && (
                 <FloatingWindow 
                     title={developerTabTitle} 
@@ -607,7 +607,8 @@ const App: React.FC = () => {
         {/* Main Content - Only render if data exists */}
         {data && (
             <ErrorBoundary name="MainContent">
-                <div className="space-y-6 animate-in fade-in duration-700 slide-in-from-bottom-4">
+                <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
+                    <div className="space-y-6 animate-in fade-in duration-700 slide-in-from-bottom-4">
                     
                     {/* Group 0: Environment & Trust (Cannot be hidden) */}
                     <SectionGroup title={(t as any).groups?.environment || 'Environment & Trust'} icon={<ShieldAlert className="text-emerald-500" />}>
@@ -769,6 +770,7 @@ const App: React.FC = () => {
                         </>
                     )}
                 </div>
+                </Suspense>
             </ErrorBoundary>
         )}
 

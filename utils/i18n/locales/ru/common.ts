@@ -7,6 +7,10 @@ export const common = {
   },
   common: {
     loading: "Сканирование возможностей системы...",
+    modal_loading: {
+        initializing: "Инициализация",
+        loading_module: "Загрузка ресурса модуля"
+    },
     loading_steps: [
         "Инициализация среды...",
         "Определение возможностей графики и GPU...",
