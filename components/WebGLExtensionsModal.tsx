@@ -152,6 +152,7 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                         )}
                     </div>
                 </div>
+            </div>
         )}
     </Modal>
   );

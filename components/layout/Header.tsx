@@ -135,9 +135,9 @@ export const Header: React.FC<HeaderProps> = ({
         <Button 
             variant="secondary" 
             onClick={toggleTheme}
-            title={theme === 'dark' ? 'Light Mode' : theme === 'light' ? 'System Theme' : 'Dark Mode'}
+            title={theme === 'dark' ? 'Current: Dark Mode' : theme === 'light' ? 'Current: Light Mode' : 'Current: System Theme'}
         >
-            {theme === 'dark' ? <Sun size={16} /> : theme === 'light' ? <Laptop size={16} /> : <Moon size={16} />}
+            {theme === 'dark' ? <Moon size={16} /> : theme === 'light' ? <Sun size={16} /> : <Laptop size={16} />}
         </Button>
         
         <Button 

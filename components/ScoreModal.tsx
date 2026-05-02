@@ -240,6 +240,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                             ))}
                         </div>
                     </div>
+                </div>
             </div>
         )}
     </Modal>
