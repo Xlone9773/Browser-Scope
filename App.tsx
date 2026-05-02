@@ -16,12 +16,13 @@ import { useModalManager } from './hooks/useModalManager';
 // Components
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
-const EnvironmentCard = React.lazy(() => import('./components/cards/EnvironmentCard').then(m => ({ default: m.EnvironmentCard })));
+import { EnvironmentCard } from './components/cards/EnvironmentCard';
+import { SystemCard } from './components/cards/SystemCard';
+import { HardwareCard } from './components/cards/HardwareCard';
+import { DisplayCard } from './components/cards/DisplayCard';
+
 const SecurityCard = React.lazy(() => import('./components/cards/SecurityCard').then(m => ({ default: m.SecurityCard })));
 const AiComputeCard = React.lazy(() => import('./components/cards/AiComputeCard').then(m => ({ default: m.AiComputeCard })));
-const SystemCard = React.lazy(() => import('./components/cards/SystemCard').then(m => ({ default: m.SystemCard })));
-const HardwareCard = React.lazy(() => import('./components/cards/HardwareCard').then(m => ({ default: m.HardwareCard })));
-const DisplayCard = React.lazy(() => import('./components/cards/DisplayCard').then(m => ({ default: m.DisplayCard })));
 const FingerprintCard = React.lazy(() => import('./components/cards/FingerprintCard').then(m => ({ default: m.FingerprintCard })));
 const NetworkCard = React.lazy(() => import('./components/cards/NetworkCard').then(m => ({ default: m.NetworkCard })));
 const StorageCard = React.lazy(() => import('./components/cards/StorageCard').then(m => ({ default: m.StorageCard })));

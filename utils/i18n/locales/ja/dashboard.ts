@@ -146,6 +146,15 @@ export const dashboard = {
     }
   },
 
+
+  notificationTest: {
+    titlePlaceholder: "通知タイトル",
+    bodyPlaceholder: "通知本文...",
+    btnLabelPlaceholder: "アクションボタン (オプション)",
+    sendTest: "テスト送信",
+    cancel: "キャンセル",
+    test: "テスト"
+  },
   actions: {
     run_benchmark: "ベンチマーク実行",
     about: "アプリについて",

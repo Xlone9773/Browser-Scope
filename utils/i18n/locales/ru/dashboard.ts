@@ -146,6 +146,15 @@ export const dashboard = {
     }
   },
 
+
+  notificationTest: {
+    titlePlaceholder: "Заголовок уведомления",
+    bodyPlaceholder: "Текст уведомления...",
+    btnLabelPlaceholder: "Текст кнопки (необязательно)",
+    sendTest: "Отправить тест",
+    cancel: "Отмена",
+    test: "Тест"
+  },
   actions: {
     run_benchmark: "Тест производительности",
     about: "О программе",

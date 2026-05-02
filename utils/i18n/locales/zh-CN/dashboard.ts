@@ -147,6 +147,15 @@ export const dashboard = {
     }
   },
 
+
+  notificationTest: {
+    titlePlaceholder: "通知标题",
+    bodyPlaceholder: "通知内容...",
+    btnLabelPlaceholder: "操作按钮名称 (可选)",
+    sendTest: "发送测试",
+    cancel: "取消",
+    test: "测试"
+  },
   actions: {
     run_benchmark: "性能跑分",
     about: "关于",

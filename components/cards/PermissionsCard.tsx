@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, Bell, Music, Send } from 'lucide-react';
 import { InfoCard } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
@@ -17,9 +17,26 @@ interface PermissionsCardProps {
 
 export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, geoData, t, onRequestPermission }) => {
   const [showNotifTest, setShowNotifTest] = useState(false);
-  const [notifTitle, setNotifTitle] = useState('Test Notification');
-  const [notifBody, setNotifBody] = useState('This is a test notification from BrowserScope!');
-  const [notifBtnText, setNotifBtnText] = useState('Acknowledge');
+  const [notifTitle, setNotifTitle] = useState('');
+  const [notifBody, setNotifBody] = useState('');
+  const [notifBtnText, setNotifBtnText] = useState('');
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(console.error);
+
+        const handleMessage = (event: MessageEvent) => {
+            if (event.data && event.data.type === 'NOTIFICATION_ACTION') {
+                alert(`Notification Action Triggered: ${event.data.action}\nButton Clicked!`);
+            } else if (event.data && event.data.type === 'NOTIFICATION_CLICK') {
+                window.focus();
+            }
+        };
+
+        navigator.serviceWorker.addEventListener('message', handleMessage);
+        return () => navigator.serviceWorker.removeEventListener('message', handleMessage);
+    }
+  }, []);
 
   const getPermColor = (status: PermissionStatusType) => {
       switch(status) {
@@ -41,25 +58,36 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
       }
   };
 
-  const handleTestNotification = () => {
+  const handleTestNotification = async () => {
     if (permStatus.notifications === 'granted') {
-      const swRegistration = navigator.serviceWorker.ready;
-      swRegistration.then((reg) => {
-        reg.showNotification(notifTitle || 'Test Notification', {
-          body: notifBody || 'This is a test notification from BrowserScope!',
-          icon: '/icon512_maskable.png',
-          badge: '/icon-192x192.png',
-          // @ts-ignore: TS doesn't have actions in NotificationOptions by default sometimes
-          actions: notifBtnText ? [
-              { action: 'ack', title: notifBtnText }
-          ] : []
-        });
-      }).catch(() => {
-        // Fallback if ServiceWorker is not available
-        new Notification(notifTitle || 'Test Notification', {
-            body: notifBody || 'This is a test notification from BrowserScope!',
-        });
-      });
+      const nt = (t as any).notificationTest || {};
+      const title = notifTitle || nt.titlePlaceholder || 'Test Notification';
+      const body = notifBody || nt.bodyPlaceholder || 'This is a test notification from BrowserScope!';
+      const btnText = notifBtnText;
+
+      try {
+          if ('serviceWorker' in navigator) {
+              const reg = await navigator.serviceWorker.getRegistration();
+              if (reg) {
+                  await reg.showNotification(title, {
+                      body,
+                      icon: '/icon512_maskable.png',
+                      badge: '/icon-192x192.png',
+                      data: { url: window.location.href },
+                      // @ts-ignore
+                      actions: btnText ? [ { action: 'alert', title: btnText } ] : []
+                  });
+                  return;
+              }
+          }
+          // Fallback if ServiceWorker is not available or getRegistration fails
+          const n = new Notification(title, { body, icon: '/icon512_maskable.png' });
+          n.onclick = () => { window.focus(); };
+      } catch (error) {
+          console.error('Notification error:', error);
+          const n = new Notification(title, { body, icon: '/icon512_maskable.png' });
+          n.onclick = () => { window.focus(); };
+      }
     } else {
         onRequestPermission('notifications');
     }
@@ -83,7 +111,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
                             onRequestPermission('notifications');
                         }
                     }} variant="soft" size="xs">
-                        {permStatus.notifications === 'granted' ? (showNotifTest ? 'Cancel' : 'Test') : t.actions.check}
+                        {permStatus.notifications === 'granted' ? (showNotifTest ? ((t as any).notificationTest?.cancel || 'Cancel') : ((t as any).notificationTest?.test || 'Test')) : t.actions.check}
                     </Button>
                 </div>
             </div>
@@ -94,13 +122,13 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
                         type="text" 
                         value={notifTitle}
                         onChange={(e) => setNotifTitle(e.target.value)}
-                        placeholder="Notification Title" 
+                        placeholder={(t as any).notificationTest?.titlePlaceholder || 'Notification Title'} 
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
                     />
                     <textarea 
                         value={notifBody}
                         onChange={(e) => setNotifBody(e.target.value)}
-                        placeholder="Notification Body text..." 
+                        placeholder={(t as any).notificationTest?.bodyPlaceholder || 'Notification Body text...'} 
                         rows={2}
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 resize-none"
                     ></textarea>
@@ -108,12 +136,12 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
                         type="text" 
                         value={notifBtnText}
                         onChange={(e) => setNotifBtnText(e.target.value)}
-                        placeholder="Action Button Label (Optional)" 
+                        placeholder={(t as any).notificationTest?.btnLabelPlaceholder || 'Action Button Label (Optional)'} 
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
                     />
                     <div className="flex justify-end mt-1">
                         <Button onClick={handleTestNotification} size="xs" variant="primary" leftIcon={<Send size={12}/>}>
-                            Send Test
+                            {(t as any).notificationTest?.sendTest || 'Send Test'}
                         </Button>
                     </div>
                 </div>
@@ -138,3 +166,4 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
     </InfoCard>
   );
 };
+

@@ -146,6 +146,15 @@ export const dashboard = {
         Low: "Basic web tasks"
     }
   },
+
+  notificationTest: {
+    titlePlaceholder: "Notification Title",
+    bodyPlaceholder: "Notification Body text...",
+    btnLabelPlaceholder: "Action Button Label (Optional)",
+    sendTest: "Send Test",
+    cancel: "Cancel",
+    test: "Test"
+  },
   actions: {
     run_benchmark: "Run Benchmark",
     about: "About",
