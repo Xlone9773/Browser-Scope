@@ -6,7 +6,42 @@ export const dashboard = {
   footer: "BrowserScope - 瀏覽器能力檢測工具",
   refresh: "重新檢測",
 
+  environment: {
+    safe: "環境安全",
+    suspicious: "環境可能被篡改",
+    danger: "高危：檢測到自動化工具或特徵篡改",
+    score: "信任分數",
+    normalcyScore: "正常度分數",
+    normalcy: {
+      normal: "配置正常",
+      abnormal: "配置異常衝突",
+      tooltipNormal: "設備和環境設置與普通用戶配置相符。",
+      tooltipAbnormal: "設備設置出現矛盾或異常配置（例如使用移動端晶片運行桌面級系統）。"
+    },
+    anomalies: "檢測到的異常:",
+    loading: "正在評估環境...",
+    tooltipSafe: "未檢測到明顯的瀏覽器指紋篡改或自動化工具痕跡。",
+    tooltipDanger: "高度疑似機器人、爬蟲或使用了指紋多開瀏覽器。",
+    bot: "可疑的腳本或自動化",
+    tampering: "指紋篡改",
+    inconsistency: "硬件/系統不匹配",
+    anomaliesList: {
+      webdriver: "檢測到WebDriver (自動化瀏覽器)",
+      headless_dims: "無頭瀏覽器尺寸異常 (寬/高為0)",
+      missing_chrome: "Chrome環境下丟失 window.chrome",
+      phantomjs: "檢測到 PhantomJS 運行環境",
+      dom_automation: "檢測到 DOM Automation 對象",
+      ua_override: "userAgent 屬性遭到篡改或覆蓋",
+      platform_override: "platform 屬性遭到篡改或覆蓋",
+      os_mismatch: "UA和Platform反應的操作系統不匹配",
+      no_languages: "語言列表為空 (navigator.languages)",
+      permission_mismatch: "Permissions API 與 Notification API 衝突",
+      engine_mismatch: "JS引擎堆棧格式與用戶代理不符"
+    }
+  },
+
   groups: {
+    environment: "環境評估與防篡改",
     system: "設備系統與硬體",
     network: "網路與安全標識",
     advanced: "高級能力與特色介面"

@@ -611,7 +611,9 @@ const App: React.FC = () => {
                     
                     {/* Group 0: Environment & Trust (Cannot be hidden) */}
                     <SectionGroup title={(t as any).groups?.environment || 'Environment & Trust'} icon={<ShieldAlert className="text-emerald-500" />}>
-                        <EnvironmentCard t={t.settings} />
+                        <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                            <EnvironmentCard t={t} />
+                        </div>
                     </SectionGroup>
 
                     {/* Group 1: Device & System */}

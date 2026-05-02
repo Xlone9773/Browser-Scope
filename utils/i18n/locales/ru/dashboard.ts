@@ -6,7 +6,42 @@ export const dashboard = {
   footer: "BrowserScope - Инструмент анализа возможностей браузера",
   refresh: "Обновить данные",
   
+  environment: {
+    safe: "Среда безопасна",
+    suspicious: "Подозрительная среда",
+    danger: "Опасно: Обнаружена автоматизация/подмена",
+    score: "Оценка доверия",
+    normalcyScore: "Оценка нормальности",
+    normalcy: {
+      normal: "Нормально",
+      abnormal: "Аномально",
+      tooltipNormal: "Настройки устройства и среды соответствуют типичным конфигурациям.",
+      tooltipAbnormal: "Обнаружены противоречия (например, мобильный чип с настольной ОС)."
+    },
+    anomalies: "Обнаруженные аномалии:",
+    loading: "Оценка среды...",
+    tooltipSafe: "Признаков подмены или автоматизации не обнаружено.",
+    tooltipDanger: "Обнаружены признаки бота, парсера или антидетект-браузера.",
+    bot: "Подозрительная автоматизация",
+    tampering: "Подмена отпечатков",
+    inconsistency: "Несоответствие оборудования/ОС",
+    anomaliesList: {
+      webdriver: "Обнаружен сигнал WebDriver (Автоматизированный браузер)",
+      headless_dims: "Нулевые размеры окна (Типично для скрытых браузеров)",
+      missing_chrome: "Отсутствует объект window.chrome в браузере Chrome",
+      phantomjs: "Обнаружена среда PhantomJS",
+      dom_automation: "Обнаружен объект DOM Automation",
+      ua_override: "Свойство UserAgent было изменено",
+      platform_override: "Свойство Platform было изменено",
+      os_mismatch: "Несоответствие ОС в UserAgent и Platform",
+      no_languages: "Отсутствуют языки в navigator",
+      permission_mismatch: "Ответ Permissions API противоречит Notification API",
+      engine_mismatch: "Стек ошибок JS противоречит UserAgent"
+    }
+  },
+
   groups: {
+    environment: "Среда и Доверие",
     system: "Ядро Устройства и Системы",
     network: "Сеть и Безопасность",
     advanced: "Возможности и API"

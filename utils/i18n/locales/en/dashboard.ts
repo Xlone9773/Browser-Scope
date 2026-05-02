@@ -7,6 +7,40 @@ export const dashboard = {
   footer: "BrowserScope - Device Intelligence Tool",
   refresh: "Refresh Data",
 
+  environment: {
+    safe: "Environment Trusted",
+    suspicious: "Suspicious Environment",
+    danger: "Danger: Automation / Tampering Detected",
+    score: "Trust Score",
+    normalcyScore: "Normalcy Score",
+    normalcy: {
+      normal: "Normal (Typical Config)",
+      abnormal: "Abnormal Config",
+      tooltipNormal: "Device and environment settings match typical user configurations.",
+      tooltipAbnormal: "Device settings have contradictions or unusual configurations (e.g. mobile chip running desktop OS)."
+    },
+    anomalies: "Anomalies Detected:",
+    loading: "Assessing environment...",
+    tooltipSafe: "No clear signs of tampering or automation tools were found.",
+    tooltipDanger: "High probability of being a bot, scraper, or anti-detect browser.",
+    bot: "Suspicious Automation",
+    tampering: "Fingerprint Tampering",
+    inconsistency: "Hardware/OS Inconsistency",
+    anomaliesList: {
+      webdriver: "WebDriver signal detected (Automated browser)",
+      headless_dims: "Window dimensions are zero (Typical of headless browsers)",
+      missing_chrome: "Missing window.chrome object in Chrome browser",
+      phantomjs: "PhantomJS runtime detected",
+      dom_automation: "DOM Automation object detected",
+      ua_override: "UserAgent property has been tampered with",
+      platform_override: "Platform property has been tampered with",
+      os_mismatch: "UserAgent vs Platform OS mismatch",
+      no_languages: "No languages specified in navigator",
+      permission_mismatch: "Permissions API response contradicts Notification API",
+      engine_mismatch: "JS Engine error stack format contradicts UserAgent claims"
+    }
+  },
+
   groups: {
     environment: "Environment & Trust",
     system: "Device & System Core",

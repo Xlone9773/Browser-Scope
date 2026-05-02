@@ -6,6 +6,40 @@ export const dashboard = {
   footer: "BrowserScope - 浏览器能力检测工具",
   refresh: "重新检测",
 
+  environment: {
+    safe: "环境安全",
+    suspicious: "环境可能被篡改",
+    danger: "高危：检测到自动化工具或特征篡改",
+    score: "信任分数",
+    normalcyScore: "正常度分数",
+    normalcy: {
+      normal: "配置正常",
+      abnormal: "配置异常冲突",
+      tooltipNormal: "设备和环境设置与普通用户配置相符。",
+      tooltipAbnormal: "设备设置出现矛盾或异常配置（例如使用移动端芯片运行桌面级系统）。"
+    },
+    anomalies: "检测到的异常:",
+    loading: "正在评估环境...",
+    tooltipSafe: "未检测到明显的浏览器指纹篡改或自动化工具痕迹。",
+    tooltipDanger: "高度疑似机器人、爬虫或使用了指纹多开浏览器。",
+    bot: "可疑的脚本或自动化",
+    tampering: "指纹篡改",
+    inconsistency: "硬件/系统不匹配",
+    anomaliesList: {
+      webdriver: "检测到WebDriver (自动化浏览器)",
+      headless_dims: "无头浏览器尺寸异常 (宽/高为0)",
+      missing_chrome: "Chrome环境下丢失 window.chrome",
+      phantomjs: "检测到 PhantomJS 运行环境",
+      dom_automation: "检测到 DOM Automation 对象",
+      ua_override: "userAgent 属性遭到篡改或覆盖",
+      platform_override: "platform 属性遭到篡改或覆盖",
+      os_mismatch: "UA和Platform反应的操作系统不匹配",
+      no_languages: "语言列表为空 (navigator.languages)",
+      permission_mismatch: "Permissions API 与 Notification API 冲突",
+      engine_mismatch: "JS引擎堆栈格式与用户代理不符"
+    }
+  },
+
   groups: {
     environment: "环境评估与防篡改",
     system: "设备系统与硬件",

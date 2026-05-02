@@ -162,6 +162,11 @@ export const settings = {
             clear: "結果をクリア",
             quickCommands: "クイックコマンド",
             run: "即時実行"
+        },
+        floating_state: {
+            title: "開発者ツールが別ウィンドウで開いています",
+            desc: "より良い体験のために、開発者ツールウィンドウは現在のモーダルから切り離されました。",
+            return: "モーダルに戻る"
         }
     },
     modules: {

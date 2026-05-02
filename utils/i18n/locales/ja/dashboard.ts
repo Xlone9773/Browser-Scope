@@ -6,7 +6,42 @@ export const dashboard = {
   footer: "BrowserScope - ブラウザ能力検出ツール",
   refresh: "再検出",
   
+  environment: {
+    safe: "安全な環境",
+    suspicious: "不審な環境",
+    danger: "危険: 自動化/改ざんを検出",
+    score: "信頼スコア",
+    normalcyScore: "正常性スコア",
+    normalcy: {
+      normal: "正常 (一般的な構成)",
+      abnormal: "異常な構成",
+      tooltipNormal: "デバイスと環境の設定は一般的なユーザー構成と一致します。",
+      tooltipAbnormal: "デバイス設定に矛盾または異常な構成があります (例: モバイルチップでデスクトップOSを実行)。"
+    },
+    anomalies: "検出された異常:",
+    loading: "環境を評価中...",
+    tooltipSafe: "改ざんや自動化ツールの明らかな兆候は検出されませんでした。",
+    tooltipDanger: "ボット、スクレイパー、またはアンチデテクトブラウザである可能性が高いです。",
+    bot: "不審な自動化",
+    tampering: "指紋の改ざん",
+    inconsistency: "ハードウェア/OSの不一致",
+    anomaliesList: {
+      webdriver: "WebDriverシグナル検出 (自動ブラウザ)",
+      headless_dims: "異常なウィンドウサイズ (幅/高さが0)",
+      missing_chrome: "Chrome環境に window.chrome がありません",
+      phantomjs: "PhantomJSランタイム検出",
+      dom_automation: "DOM Automationオブジェクト検出",
+      ua_override: "UserAgentプロパティが改ざんされています",
+      platform_override: "Platformプロパティが改ざんされています",
+      os_mismatch: "UserAgentとPlatformのOSが一致しません",
+      no_languages: "navigator.languagesが空です",
+      permission_mismatch: "Permissions APIとNotification APIが競合しています",
+      engine_mismatch: "JSエンジンスタックがUserAgentと矛盾しています"
+    }
+  },
+
   groups: {
+    environment: "環境評価と耐改ざん性",
     system: "デバイスとシステムコア",
     network: "ネットワークとセキュリティ",
     advanced: "機能とAPI"
