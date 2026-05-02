@@ -8,6 +8,7 @@ export const dashboard = {
   refresh: "Refresh Data",
 
   groups: {
+    environment: "Environment & Trust",
     system: "Device & System Core",
     network: "Network & Security",
     advanced: "Capabilities & APIs"

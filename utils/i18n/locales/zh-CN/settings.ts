@@ -162,6 +162,11 @@ export const settings = {
             clear: "清空结果",
             quickCommands: "快捷指令",
             run: "立即运行"
+        },
+        floating_state: {
+            title: "开发者工具处于悬浮窗模式",
+            desc: "开发者工具窗口已从当前模态框分离，以提供更好的体验。",
+            return: "返回模态框"
         }
     },
     modules: {

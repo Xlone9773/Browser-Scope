@@ -162,6 +162,11 @@ export const settings = {
             clear: "Clear Result",
             quickCommands: "Quick Commands",
             run: "Run Now"
+        },
+        floating_state: {
+            title: "Developer Tools is Floating",
+            desc: "The developer tools window has been detached from this modal for a better experience.",
+            return: "Return to Modal"
         }
     },
     modules: {

@@ -16,6 +16,7 @@ import { useModalManager } from './hooks/useModalManager';
 // Components
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
+import { EnvironmentCard } from './components/cards/EnvironmentCard';
 import { SecurityCard } from './components/cards/SecurityCard';
 import { AiComputeCard } from './components/cards/AiComputeCard';
 import { SystemCard } from './components/cards/SystemCard';
@@ -608,6 +609,11 @@ const App: React.FC = () => {
             <ErrorBoundary name="MainContent">
                 <div className="space-y-6 animate-in fade-in duration-700 slide-in-from-bottom-4">
                     
+                    {/* Group 0: Environment & Trust (Cannot be hidden) */}
+                    <SectionGroup title={(t as any).groups?.environment || 'Environment & Trust'} icon={<ShieldAlert className="text-emerald-500" />}>
+                        <EnvironmentCard t={t.settings} />
+                    </SectionGroup>
+
                     {/* Group 1: Device & System */}
                     {(!hiddenCards.includes('system') || !hiddenCards.includes('hardware') || !hiddenCards.includes('display')) && (
                     <SectionGroup title={(t as any).groups?.system || 'Device & System Core'} icon={<Smartphone className="text-indigo-500" />}>
