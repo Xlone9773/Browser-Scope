@@ -1,9 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Shield, Bell, Music, Send } from 'lucide-react';
+import { Shield, Bell, Music, Send, Plus, X } from 'lucide-react';
 import { InfoCard } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
+import { Select } from '../ui/Select';
+import { Modal } from '../ui/Modal';
 
 type PermissionStatusType = 'idle' | 'granted' | 'denied' | 'prompt' | 'error';
 type PermissionKey = 'notifications' | 'midi' | 'geolocation';
@@ -19,7 +21,9 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
   const [showNotifTest, setShowNotifTest] = useState(false);
   const [notifTitle, setNotifTitle] = useState('');
   const [notifBody, setNotifBody] = useState('');
-  const [notifBtnText, setNotifBtnText] = useState('');
+  const [notifIcon, setNotifIcon] = useState('');
+  const [notifActions, setNotifActions] = useState<{title: string, type: 'alert' | 'url' | 'close', payload: string}[]>([]);
+  const [actionAlert, setActionAlert] = useState<{title: string, message: string} | null>(null);
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -27,7 +31,10 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
 
         const handleMessage = (event: MessageEvent) => {
             if (event.data && event.data.type === 'NOTIFICATION_ACTION') {
-                alert(`Notification Action Triggered: ${event.data.action}\nButton Clicked!`);
+                setActionAlert({
+                    title: 'Action Triggered',
+                    message: `You clicked the action: ${event.data.title}`
+                });
             } else if (event.data && event.data.type === 'NOTIFICATION_CLICK') {
                 window.focus();
             }
@@ -60,32 +67,40 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
 
   const handleTestNotification = async () => {
     if (permStatus.notifications === 'granted') {
-      const nt = (t as any).notificationTest || {};
+      const nt = t.notificationTest;
       const title = notifTitle || nt.titlePlaceholder || 'Test Notification';
       const body = notifBody || nt.bodyPlaceholder || 'This is a test notification from BrowserScope!';
-      const btnText = notifBtnText;
 
       try {
           if ('serviceWorker' in navigator) {
               const reg = await navigator.serviceWorker.getRegistration();
               if (reg) {
+                  const actionsConfig: Record<string, any> = {};
+                  const mappedActions = notifActions.map((act, i) => {
+                      const actionId = `action-${i}`;
+                      actionsConfig[actionId] = { type: act.type, payload: act.payload, title: act.title };
+                      return {
+                          action: actionId,
+                          title: act.title || `Action ${i + 1}`
+                      };
+                  });
                   await reg.showNotification(title, {
                       body,
-                      icon: '/icon512_maskable.png',
+                      icon: notifIcon || '/icon512_maskable.png',
                       badge: '/icon-192x192.png',
-                      data: { url: window.location.href },
+                      data: { url: window.location.href, actions: actionsConfig },
                       // @ts-ignore
-                      actions: btnText ? [ { action: 'alert', title: btnText } ] : []
+                      actions: mappedActions
                   });
                   return;
               }
           }
           // Fallback if ServiceWorker is not available or getRegistration fails
-          const n = new Notification(title, { body, icon: '/icon512_maskable.png' });
+          const n = new Notification(title, { body, icon: notifIcon || '/icon512_maskable.png' });
           n.onclick = () => { window.focus(); };
       } catch (error) {
           console.error('Notification error:', error);
-          const n = new Notification(title, { body, icon: '/icon512_maskable.png' });
+          const n = new Notification(title, { body, icon: notifIcon || '/icon512_maskable.png' });
           n.onclick = () => { window.focus(); };
       }
     } else {
@@ -111,7 +126,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
                             onRequestPermission('notifications');
                         }
                     }} variant="soft" size="xs">
-                        {permStatus.notifications === 'granted' ? (showNotifTest ? ((t as any).notificationTest?.cancel || 'Cancel') : ((t as any).notificationTest?.test || 'Test')) : t.actions.check}
+                        {permStatus.notifications === 'granted' ? (showNotifTest ? (t.notificationTest?.cancel || 'Cancel') : (t.notificationTest?.test || 'Test')) : t.actions.check}
                     </Button>
                 </div>
             </div>
@@ -122,26 +137,105 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
                         type="text" 
                         value={notifTitle}
                         onChange={(e) => setNotifTitle(e.target.value)}
-                        placeholder={(t as any).notificationTest?.titlePlaceholder || 'Notification Title'} 
+                        placeholder={t.notificationTest?.titlePlaceholder || 'Notification Title'} 
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
                     />
                     <textarea 
                         value={notifBody}
                         onChange={(e) => setNotifBody(e.target.value)}
-                        placeholder={(t as any).notificationTest?.bodyPlaceholder || 'Notification Body text...'} 
+                        placeholder={t.notificationTest?.bodyPlaceholder || 'Notification Body text...'} 
                         rows={2}
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 resize-none"
                     ></textarea>
                     <input 
                         type="text" 
-                        value={notifBtnText}
-                        onChange={(e) => setNotifBtnText(e.target.value)}
-                        placeholder={(t as any).notificationTest?.btnLabelPlaceholder || 'Action Button Label (Optional)'} 
+                        value={notifIcon}
+                        onChange={(e) => setNotifIcon(e.target.value)}
+                        placeholder={t.notificationTest?.iconUrlPlaceholder || 'Icon URL (Optional)'} 
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
                     />
+                    
+                    {/* Actions List */}
+                    <div className="flex flex-col gap-2 mt-2 border-t border-slate-200 dark:border-slate-700 pt-2">
+                        <div className="flex justify-between items-center">
+                            <span className="text-xs font-medium text-slate-500">
+                                Actions ({notifActions.length}/{'Notification' in window ? ((Notification as any).maxActions || 2) : 2})
+                            </span>
+                            <Button 
+                                size="xs" 
+                                variant="ghost" 
+                                onClick={() => {
+                                    const maxAct = 'Notification' in window ? ((Notification as any).maxActions || 2) : 2;
+                                    if (notifActions.length < maxAct) {
+                                        setNotifActions([...notifActions, {title: '', type: 'alert', payload: ''}]);
+                                    }
+                                }}
+                                disabled={notifActions.length >= ('Notification' in window ? ((Notification as any).maxActions || 2) : 2)}
+                                leftIcon={<Plus size={12}/>}
+                            >
+                                {t.notificationTest?.addAction || 'Add Action'}
+                            </Button>
+                        </div>
+                        {notifActions.map((act, idx) => (
+                            <div key={idx} className="flex flex-col gap-1.5 bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                <div className="flex justify-between items-center gap-2">
+                                    <input 
+                                        type="text" 
+                                        value={act.title}
+                                        onChange={(e) => {
+                                            const newActions = [...notifActions];
+                                            newActions[idx] = { ...newActions[idx], title: e.target.value };
+                                            setNotifActions(newActions);
+                                        }}
+                                        placeholder={t.notificationTest?.actionTitlePlaceholder || 'Action Title'}
+                                        className="text-xs px-2 py-1 flex-1 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 min-w-0"
+                                    />
+                                    <button onClick={() => {
+                                        const newActions = [...notifActions];
+                                        newActions.splice(idx, 1);
+                                        setNotifActions(newActions);
+                                    }} className="text-slate-400 hover:text-rose-500 flex-shrink-0">
+                                        <X size={14} />
+                                    </button>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="w-32 min-w-[128px] shrink-0">
+                                        <Select 
+                                            value={act.type}
+                                            onChange={(val: any) => {
+                                                const newActions = [...notifActions];
+                                                newActions[idx] = { ...newActions[idx], type: val };
+                                                setNotifActions(newActions);
+                                            }}
+                                            options={[
+                                                { id: 'alert', label: t.notificationTest?.actionTypeAlert || 'Alert' },
+                                                { id: 'url', label: t.notificationTest?.actionTypeUrl || 'Open URL' },
+                                                { id: 'close', label: t.notificationTest?.actionTypeClose || 'Close' }
+                                            ]}
+                                            size="sm"
+                                        />
+                                    </div>
+                                    {act.type === 'url' && (
+                                        <input 
+                                            type="text" 
+                                            value={act.payload}
+                                            onChange={(e) => {
+                                                const newActions = [...notifActions];
+                                                newActions[idx] = { ...newActions[idx], payload: e.target.value };
+                                                setNotifActions(newActions);
+                                            }}
+                                            placeholder={t.notificationTest?.actionPayloadPlaceholder || 'URL'}
+                                            className="text-xs px-2 py-1 flex-1 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 min-w-0"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
                     <div className="flex justify-end mt-1">
                         <Button onClick={handleTestNotification} size="xs" variant="primary" leftIcon={<Send size={12}/>}>
-                            {(t as any).notificationTest?.sendTest || 'Send Test'}
+                            {t.notificationTest?.sendTest || 'Send Test'}
                         </Button>
                     </div>
                 </div>
@@ -163,6 +257,21 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
                 )}
             </div>
         </div>
+        
+        {/* Action Alert Modal */}
+        {actionAlert && (
+            <Modal title={actionAlert.title} onClose={() => setActionAlert(null)} size="sm">
+                <div className="flex flex-col items-center py-6 text-center">
+                    <Bell size={48} className="text-indigo-500 mb-4 opacity-80" />
+                    <p className="text-slate-700 dark:text-slate-300">
+                        {actionAlert.message}
+                    </p>
+                    <Button variant="primary" className="mt-6 w-full" onClick={() => setActionAlert(null)}>
+                        {t.notificationTest?.cancel || 'Close'}
+                    </Button>
+                </div>
+            </Modal>
+        )}
     </InfoCard>
   );
 };

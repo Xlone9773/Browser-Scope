@@ -152,6 +152,16 @@ export const dashboard = {
     bodyPlaceholder: "通知本文...",
     btnLabelPlaceholder: "アクションボタン (オプション)",
     sendTest: "テスト送信",
+    
+    iconUrlPlaceholder: "アイコン URL (オプション)",
+    addAction: "アクションを追加",
+    actionTitlePlaceholder: "アクションのタイトル",
+    actionType: "アクションの種類",
+    actionTypeAlert: "アラート",
+    actionTypeUrl: "URLを開く",
+    actionTypeClose: "通知を閉じる",
+    actionPayloadPlaceholder: "URL または データ",
+    removeAction: "削除",
     cancel: "キャンセル",
     test: "テスト"
   },

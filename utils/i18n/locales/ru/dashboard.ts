@@ -152,6 +152,16 @@ export const dashboard = {
     bodyPlaceholder: "Текст уведомления...",
     btnLabelPlaceholder: "Текст кнопки (необязательно)",
     sendTest: "Отправить тест",
+    
+    iconUrlPlaceholder: "URL значка (необязательно)",
+    addAction: "Добавить действие",
+    actionTitlePlaceholder: "Название действия",
+    actionType: "Тип действия",
+    actionTypeAlert: "Уведомление",
+    actionTypeUrl: "Открыть URL",
+    actionTypeClose: "Закрыть",
+    actionPayloadPlaceholder: "URL или данные",
+    removeAction: "Удалить",
     cancel: "Отмена",
     test: "Тест"
   },

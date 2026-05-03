@@ -152,6 +152,16 @@ export const dashboard = {
     bodyPlaceholder: "Notification Body text...",
     btnLabelPlaceholder: "Action Button Label (Optional)",
     sendTest: "Send Test",
+    
+    iconUrlPlaceholder: "Icon URL (Optional)",
+    addAction: "Add Action",
+    actionTitlePlaceholder: "Action Title",
+    actionType: "Action Type",
+    actionTypeAlert: "Alert",
+    actionTypeUrl: "Open URL",
+    actionTypeClose: "Close Notification",
+    actionPayloadPlaceholder: "URL or Data",
+    removeAction: "Remove",
     cancel: "Cancel",
     test: "Test"
   },

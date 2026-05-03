@@ -153,6 +153,16 @@ export const dashboard = {
     bodyPlaceholder: "通知内容...",
     btnLabelPlaceholder: "操作按钮名称 (可选)",
     sendTest: "发送测试",
+    
+    iconUrlPlaceholder: "图标 URL (可选)",
+    addAction: "添加操作按钮",
+    actionTitlePlaceholder: "按钮标题",
+    actionType: "接下后的操作",
+    actionTypeAlert: "弹出提示窗",
+    actionTypeUrl: "打开网页",
+    actionTypeClose: "关闭通知",
+    actionPayloadPlaceholder: "网址或数据",
+    removeAction: "移除",
     cancel: "取消",
     test: "测试"
   },
