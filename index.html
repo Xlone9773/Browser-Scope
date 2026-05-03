@@ -2,6 +2,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>
+      window.addEventListener('error', function(e) {
+        if (e.message && e.message.indexOf('VConsole') !== -1) { e.preventDefault(); e.stopImmediatePropagation(); }
+      }, true);
+      window.addEventListener('unhandledrejection', function(e) {
+        var msg = e.reason && e.reason.message ? e.reason.message : String(e.reason);
+        if (msg.indexOf('VConsole') !== -1) { e.preventDefault(); e.stopImmediatePropagation(); }
+      }, true);
+    </script>
     <meta charset="UTF-8" />
     <meta name="color-scheme" content="light dark" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
