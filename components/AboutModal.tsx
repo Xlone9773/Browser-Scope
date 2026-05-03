@@ -126,7 +126,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
 
                             {/* Card 5: Open Source */}
                             <a 
-                                href="https://github.com/your-repo/browserscope" 
+                                href="https://github.com/Xlone9773/Browser-Scope" 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
                                 className="bg-slate-900 dark:bg-black p-5 rounded-2xl border border-slate-800 shadow-lg hover:shadow-2xl transition-all flex flex-col justify-center items-center text-center group cursor-pointer hover:-translate-y-1 relative overflow-hidden"
