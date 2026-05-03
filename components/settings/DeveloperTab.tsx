@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, Activity, Eye, Play, Trash2, Copy, Check, Maximize2, TriangleAlert, Zap, Edit3, Globe, Database, Smartphone, Shield, X, Download, Skull, Command, ChevronRight } from 'lucide-react';
+import { Terminal, Activity, Eye, Play, Trash2, Copy, Check, Maximize2, TriangleAlert, Zap, Edit3, Globe, Database, Smartphone, Shield, X, Download, Skull, Command, ChevronRight, Bug } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
 
@@ -82,6 +82,47 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
             setHasAcceptedRisk(true);
             localStorage.setItem('developer_risk_accepted', 'true');
         }, 300); // Match CSS transition duration
+    };
+
+    const loadVConsole = async () => {
+        interface VConsoleWindow extends Window {
+            vConsole?: { show: () => void };
+        }
+        const win = window as unknown as VConsoleWindow;
+        if (win.vConsole) {
+            try { win.vConsole.show(); } catch (e) { /* ignore */ }
+            return;
+        }
+        try {
+            // Workaround for environments where window.fetch has only a getter on the prototype
+            if (!Object.getOwnPropertyDescriptor(window, 'fetch')) {
+                const originalFetch = window.fetch;
+                Object.defineProperty(window, 'fetch', {
+                    configurable: true,
+                    enumerable: true,
+                    writable: true,
+                    value: originalFetch
+                });
+            } else {
+                const fetchDesc = Object.getOwnPropertyDescriptor(window, 'fetch');
+                if (fetchDesc && !fetchDesc.set && fetchDesc.configurable) {
+                    const originalFetch = window.fetch;
+                    Object.defineProperty(window, 'fetch', {
+                        configurable: true,
+                        enumerable: fetchDesc.enumerable,
+                        writable: true,
+                        value: originalFetch
+                    });
+                }
+            }
+
+            const VConsole = (await import('vconsole')).default;
+            win.vConsole = new VConsole();
+            addToConsole('output', 'vConsole loaded successfully');
+        } catch (e: unknown) {
+            const errName = e instanceof Error ? e.message : String(e);
+            addToConsole('error', 'Failed to load vConsole: ' + errName);
+        }
     };
 
     // Auto-scroll console
@@ -493,10 +534,14 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     if (isFloating) {
         return (
             <div className="relative h-full flex flex-col">
-                <div className="flex p-1 bg-slate-800 border-b border-slate-700 shrink-0 gap-1">
+                <div className="flex p-1 bg-slate-800 border-b border-slate-700 shrink-0 gap-1 items-center">
                     <button onClick={() => setSubTab('events')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'events' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.nav.events}</button>
                     <button onClick={() => setSubTab('inspector')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'inspector' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.nav.inspector}</button>
                     <button onClick={() => setSubTab('console')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'console' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.nav.console}</button>
+                    <div className="w-px bg-slate-700 mx-1 self-center h-4"></div>
+                    <button onClick={loadVConsole} className="p-1.5 text-slate-400 hover:text-white rounded hover:bg-slate-700" title={'Load vConsole'}>
+                        <Bug size={14} />
+                    </button>
                 </div>
                 {content}
                 {!hasAcceptedRisk && warningOverlay}
@@ -537,6 +582,14 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     {t.nav.console}
                 </Button>
                 <div className="w-px bg-slate-300 dark:bg-slate-600 mx-1 self-center h-4"></div>
+                <Button 
+                    onClick={loadVConsole}
+                    variant="ghost"
+                    size="xs"
+                    title={'Load vConsole'}
+                >
+                    <Bug size={14} />
+                </Button>
                 <Button 
                     onClick={toggleFloat}
                     variant={isFloating ? 'soft' : 'ghost'}

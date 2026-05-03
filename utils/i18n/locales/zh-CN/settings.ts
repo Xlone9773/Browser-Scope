@@ -146,6 +146,7 @@ export const settings = {
         },
         actions: {
             float: "浮动窗口",
+            loadVConsole: "加载 vConsole",
             dock: "恢复到底部"
         },
         events: {

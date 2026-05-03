@@ -146,6 +146,7 @@ export const settings = {
         },
         actions: {
             float: "フロート表示",
+            loadVConsole: "vConsole を読み込む",
             dock: "下部に戻す"
         },
         events: {

@@ -29,6 +29,17 @@ export const modals = {
     },
     updates: [
         {
+            version: "2.0.0",
+            date: "2026-05-03",
+            changes: [
+                "🚀 全新架構與完整體驗升級",
+                "修復了 vConsole 載入報錯的問題（開發者工具完美運行）", 
+                "增強了原生元件彈出視窗體驗（重新設計 UI）",
+                "新增自訂通知動作按鈕 (Actions) 及圖示支援",
+                "改善並修復了各環境多項相容性 Bug"
+            ]
+        },
+        {
             version: "1.7.0",
             date: "2024-05-01",
             changes: ["新增 WebGPU 光線追蹤基準測試", "增強 GPU 檢測能力"]

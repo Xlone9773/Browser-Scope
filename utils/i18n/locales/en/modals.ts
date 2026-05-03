@@ -29,6 +29,17 @@ export const modals = {
     },
     updates: [
         {
+            version: "2.0.0",
+            date: "2026-05-03",
+            changes: [
+                "🚀 All-New Architecture & Experience Upgrade",
+                "Fixed vConsole loading crash (DevTools runs perfectly now)", 
+                "Enhanced UI by replacing native alerts with a modern system",
+                "Added customizable Notification Action buttons and Icon support",
+                "Improved and resolved multiple compatibility bugs across environments"
+            ]
+        },
+        {
             version: "1.7.0",
             date: "2024-05-01",
             changes: ["Added WebGPU Ray Tracing Benchmark", "Enhanced GPU detection"]

@@ -146,6 +146,7 @@ export const settings = {
         },
         actions: {
             float: "Float Window",
+            loadVConsole: "Load vConsole",
             dock: "Dock to Bottom"
         },
         events: {

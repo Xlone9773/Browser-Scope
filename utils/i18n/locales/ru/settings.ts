@@ -146,6 +146,7 @@ export const settings = {
         },
         actions: {
             float: "Плавающее окно",
+            loadVConsole: "Загрузить vConsole",
             dock: "Закрепить внизу"
         },
         events: {
