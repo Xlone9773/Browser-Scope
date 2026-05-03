@@ -17,8 +17,12 @@ export const settings = {
             desc: "Hide complex technical details and show only core information."
         },
         scrollbar: {
-            title: "Hide Scrollbar",
-            desc: "Force hide the system's default scrollbar styles."
+            title: "Hide Main Page Scrollbar",
+            desc: "Only hide the default scrollbar on the main page."
+        },
+        globalScrollbar: {
+            title: "Hide All Scrollbars",
+            desc: "Globally hide scrollbars for all elements, including inside modals."
         },
         timeFormat: {
             title: "Time Format",

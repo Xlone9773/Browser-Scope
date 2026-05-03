@@ -8,6 +8,8 @@ interface GeneralTabProps {
     toggleSimpleMode: (value: boolean) => void;
     hideScrollbar: boolean;
     toggleHideScrollbar: (value: boolean) => void;
+    globalHideScrollbar: boolean;
+    toggleGlobalHideScrollbar: (value: boolean) => void;
     timeFormat: '12' | '24';
     setTimeFormat: (format: '12' | '24') => void;
     disableBlur: boolean;
@@ -56,6 +58,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     toggleSimpleMode, 
     hideScrollbar, 
     toggleHideScrollbar,
+    globalHideScrollbar,
+    toggleGlobalHideScrollbar,
     timeFormat,
     setTimeFormat,
     disableBlur,
@@ -74,6 +78,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     // Note: If translations are added dynamically or missing in dict, we provide fallbacks.
     const sectionsObj = translationDict?.sections || {};
     const availableCards = [
+        { id: 'environment', name: sectionsObj.environment || '环境分析' },
         { id: 'system', name: sectionsObj.system || 'System Environment' },
         { id: 'hardware', name: sectionsObj.hardware || 'Hardware Info' },
         { id: 'display', name: sectionsObj.display || 'Display Info' },
@@ -84,8 +89,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
         { id: 'location', name: sectionsObj.location || 'Location & Sensors' },
         { id: 'storage', name: sectionsObj.storage || 'Storage Insights' },
         { id: 'permissions', name: sectionsObj.permissions || 'Permissions' },
-        { id: 'media_devices', name: sectionsObj.media_sup || 'Media Devices' },
-        { id: 'media_capabilities', name: sectionsObj.media_sup || 'Media Capabilities' },
+        { id: 'media_devices', name: sectionsObj.media_devices || (sectionsObj.media_sup ? sectionsObj.media_sup + ' - 设备' : 'Media Devices') },
+        { id: 'media_capabilities', name: sectionsObj.media_caps || (sectionsObj.media_sup ? sectionsObj.media_sup + ' - 解码' : 'Media Capabilities') },
         { id: 'user_agent', name: sectionsObj.user_agent || 'User Agent' },
         { id: 'pwa', name: sectionsObj.pwa || 'PWA Support' },
         { id: 'features', name: sectionsObj.features || 'Features' },
@@ -173,17 +178,39 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.scrollbar.title}
+                        {t.scrollbar?.title || "Hide Main Page Scrollbar"}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.scrollbar.desc}
+                        {t.scrollbar?.desc || "Only hide the default scrollbar on the main page."}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={hideScrollbar} 
                         onChange={toggleHideScrollbar} 
-                        label={t.scrollbar.title} 
+                        label={t.scrollbar?.title || "Hide Main Page Scrollbar"} 
+                    />
+                </div>
+            </div>
+
+            {/* Global Hide Scrollbar Toggle */}
+            <div 
+                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
+                onClick={() => toggleGlobalHideScrollbar(!globalHideScrollbar)}
+            >
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.globalScrollbar?.title || "Hide All Scrollbars"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {t.globalScrollbar?.desc || "Globally hide scrollbars for all elements, including inside modals."}
+                    </p>
+                </div>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Switch 
+                        checked={globalHideScrollbar} 
+                        onChange={toggleGlobalHideScrollbar} 
+                        label={t.globalScrollbar?.title || "Hide All Scrollbars"} 
                     />
                 </div>
             </div>

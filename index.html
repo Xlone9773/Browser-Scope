@@ -68,6 +68,17 @@
           scrollbar-width: none;  /* Firefox */
       }
 
+      /* Utility to hide ALL scrollbars globally */
+      html.global-scrollbar-hide *::-webkit-scrollbar,
+      html.global-scrollbar-hide::-webkit-scrollbar {
+          display: none !important;
+      }
+      html.global-scrollbar-hide *,
+      html.global-scrollbar-hide {
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+      }
+
       /* View Transitions API Customization */
       ::view-transition-old(root),
       ::view-transition-new(root) {

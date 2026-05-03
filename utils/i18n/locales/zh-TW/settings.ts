@@ -17,8 +17,12 @@ export const settings = {
             desc: "隱藏部分複雜的技術細節，僅顯示核心資訊。"
         },
         scrollbar: {
-            title: "隱藏捲軸",
-            desc: "強制隱藏系統預設的捲軸樣式。"
+            title: "隱藏主頁捲動條",
+            desc: "僅隱藏主頁面上的預設捲動條樣式。"
+        },
+        globalScrollbar: {
+            title: "全局隱藏捲動條",
+            desc: "禁止並隱藏頁面中所有元素的捲動條（包括對話方塊內）。"
         },
         timeFormat: {
             title: "時間格式",

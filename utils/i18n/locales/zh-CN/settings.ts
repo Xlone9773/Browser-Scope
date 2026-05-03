@@ -17,8 +17,12 @@ export const settings = {
             desc: "隐藏部分复杂的技术细节，仅显示核心信息。"
         },
         scrollbar: {
-            title: "隐藏滚动条",
-            desc: "强制隐藏系统默认的滚动条样式。"
+            title: "隐藏主页滚动条",
+            desc: "仅隐藏主页面上的默认滚动条样式。"
+        },
+        globalScrollbar: {
+            title: "全局隐藏滚动条",
+            desc: "禁止并隐藏页面中所有元素的滚动条（包括弹窗内）。"
         },
         timeFormat: {
             title: "时间格式",

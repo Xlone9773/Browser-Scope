@@ -60,6 +60,7 @@ const App: React.FC = () => {
   const [theme, setTheme] = useState<Theme>('system');
   const [simpleMode, setSimpleMode] = useState<boolean>(() => localStorage.getItem('simpleMode') === 'true');
   const [hideScrollbar, setHideScrollbar] = useState<boolean>(() => localStorage.getItem('hideScrollbar') === 'true');
+  const [globalHideScrollbar, setGlobalHideScrollbar] = useState<boolean>(() => localStorage.getItem('globalHideScrollbar') === 'true');
   const [timeFormat, setTimeFormat] = useState<'12' | '24'>(() => {
       const saved = localStorage.getItem('timeFormat');
       return (saved === '12' || saved === '24') ? saved : '24';
@@ -173,6 +174,14 @@ const App: React.FC = () => {
       }
   }, [hideScrollbar]);
 
+  useEffect(() => {
+      if (globalHideScrollbar) {
+          document.documentElement.classList.add('global-scrollbar-hide');
+      } else {
+          document.documentElement.classList.remove('global-scrollbar-hide');
+      }
+  }, [globalHideScrollbar]);
+
   // Initialize blur state
   useEffect(() => {
       if (disableBlur) {
@@ -238,11 +247,28 @@ const App: React.FC = () => {
   const toggleSimpleMode = (value: boolean) => {
       setSimpleMode(value);
       localStorage.setItem('simpleMode', String(value));
+      
+      // 当用户打开/关闭极简模式时同步卡片的启用状态
+      const advancedCards = ['hardware', 'fingerprint', 'ai', 'permissions', 'media_capabilities', 'pwa', 'features', 'user_agent'];
+      if (value) {
+          const newHidden = Array.from(new Set([...hiddenCards, ...advancedCards]));
+          setHiddenCards(newHidden);
+          localStorage.setItem('hiddenCards', JSON.stringify(newHidden));
+      } else {
+          const newHidden = hiddenCards.filter(c => !advancedCards.includes(c));
+          setHiddenCards(newHidden);
+          localStorage.setItem('hiddenCards', JSON.stringify(newHidden));
+      }
   };
 
   const toggleHideScrollbar = (value: boolean) => {
       setHideScrollbar(value);
       localStorage.setItem('hideScrollbar', String(value));
+  };
+
+  const toggleGlobalHideScrollbar = (value: boolean) => {
+      setGlobalHideScrollbar(value);
+      localStorage.setItem('globalHideScrollbar', String(value));
   };
 
   const updateTimeFormat = (format: '12' | '24') => {
@@ -502,6 +528,8 @@ const App: React.FC = () => {
                     toggleSimpleMode={toggleSimpleMode}
                     hideScrollbar={hideScrollbar}
                     toggleHideScrollbar={toggleHideScrollbar}
+                    globalHideScrollbar={globalHideScrollbar}
+                    toggleGlobalHideScrollbar={toggleGlobalHideScrollbar}
                     timeFormat={timeFormat}
                     setTimeFormat={updateTimeFormat}
                     disableBlur={disableBlur}
@@ -611,12 +639,14 @@ const App: React.FC = () => {
                 <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
                     <div className="space-y-6 animate-in fade-in duration-700 slide-in-from-bottom-4">
                     
-                    {/* Group 0: Environment & Trust (Cannot be hidden) */}
+                    {/* Group 0: Environment & Trust */}
+                    {!hiddenCards.includes('environment') && (
                     <SectionGroup title={(t as any).groups?.environment || 'Environment & Trust'} icon={<ShieldAlert className="text-emerald-500" />}>
                         <div className="col-span-1 md:col-span-2 lg:col-span-3">
                             <EnvironmentCard t={t} />
                         </div>
                     </SectionGroup>
+                    )}
 
                     {/* Group 1: Device & System */}
                     {(!hiddenCards.includes('system') || !hiddenCards.includes('hardware') || !hiddenCards.includes('display')) && (

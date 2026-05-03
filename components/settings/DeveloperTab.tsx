@@ -86,7 +86,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
 
     const loadVConsole = async () => {
         interface VConsoleWindow extends Window {
-            vConsole?: { show: () => void };
+            vConsole?: any;
         }
         const win = window as unknown as VConsoleWindow;
         if (win.vConsole) {
@@ -117,8 +117,23 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
             }
 
             const VConsole = (await import('vconsole')).default;
-            win.vConsole = new VConsole();
-            addToConsole('output', 'vConsole loaded successfully');
+            const isDark = document.documentElement.classList.contains('dark');
+            win.vConsole = new (VConsole as any)({ theme: isDark ? 'dark' : 'light' });
+            
+            // Sync vConsole theme with app theme using a MutationObserver
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'class') {
+                        const isCurrentlyDark = document.documentElement.classList.contains('dark');
+                        if (win.vConsole && typeof win.vConsole.setOption === 'function') {
+                            win.vConsole.setOption('theme', isCurrentlyDark ? 'dark' : 'light');
+                        }
+                    }
+                });
+            });
+            observer.observe(document.documentElement, { attributes: true });
+
+            addToConsole('output', 'vConsole mounted. Theme synced with app.');
         } catch (e: unknown) {
             const errName = e instanceof Error ? e.message : String(e);
             addToConsole('error', 'Failed to load vConsole: ' + errName);
