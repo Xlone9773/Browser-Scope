@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Cpu, Loader2 } from 'lucide-react';
 
 export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: string }> = ({ 
@@ -19,12 +20,8 @@ export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: s
     return () => cancelAnimationFrame(timer);
   }, []);
 
-  return (
-    <div 
-        className={`fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px] transition-opacity duration-300 ${
-            isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
-    >
+  return createPortal(
+    <div className={`fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px] transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-100'}`}>
         <div 
             className={`
                 relative bg-white/90 dark:bg-slate-900/90 p-8 rounded-2xl shadow-2xl 
@@ -76,6 +73,7 @@ export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: s
                 <div className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 w-[200%] animate-[shimmer_2s_infinite_linear]" />
             </div>
         </div>
-    </div>
+    </div>,
+    document.body
   );
 };

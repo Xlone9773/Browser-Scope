@@ -292,6 +292,13 @@
           transition-duration: 0s !important;
           animation: none !important;
       }
+
+      /* === VCONSOLE SCROLL PATCH === */
+      #__vconsole .vc-mask,
+      #__vconsole .vc-panel,
+      #__vconsole .vc-scroller {
+          overscroll-behavior: none !important;
+      }
     </style>
   <script type="importmap">
 {

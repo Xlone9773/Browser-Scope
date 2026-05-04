@@ -95,8 +95,8 @@ export const Modal: React.FC<ModalProps> = ({
 
   return createPortal(
     <div 
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px] transition-all duration-300 ease-out ${
-        isClosing ? 'opacity-0' : 'opacity-100'
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px] ${
+        isClosing ? 'opacity-0 transition-opacity duration-300 ease-out' : 'opacity-100'
       }`}
       onClick={handleClose}
       onKeyDown={handleKeyDown}

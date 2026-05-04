@@ -66,7 +66,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     const [isOverlayFading, setIsOverlayFading] = useState(false);
     
     // Cooldown Timer
-    const [countdown, setCountdown] = useState(3);
+    const [countdown, setCountdown] = useState(5);
 
     useEffect(() => {
         if (!hasAcceptedRisk && countdown > 0) {
@@ -514,7 +514,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     // Warning Overlay JSX - Enhanced for severity with Cooldown
     const warningOverlay = (
         <div 
-            className={`absolute inset-0 z-50 flex items-center justify-center p-6 bg-red-950/95 backdrop-blur-xl transition-all duration-300 ease-out ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+            className={`fixed inset-0 z-[100] flex items-center justify-center p-6 bg-red-950/95 backdrop-blur-xl transition-all duration-300 ease-out ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         >
             <div 
                 className={`bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-md w-full p-8 border-2 border-red-600 flex flex-col items-center text-center transition-all duration-300 ease-out transform ${isOverlayFading ? 'scale-95 translate-y-4 opacity-0' : 'scale-100 translate-y-0 opacity-100'}`}

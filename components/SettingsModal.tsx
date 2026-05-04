@@ -1,15 +1,17 @@
 
-import React, { useState } from 'react';
-import { Globe, Database, Activity, Sliders, Monitor, Terminal, Package } from 'lucide-react';
+import React, { useState, useTransition, Suspense, lazy } from 'react';
+import { Globe, Database, Activity, Sliders, Monitor, Terminal, Package, Loader2 } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
-import { GeneralTab } from './settings/GeneralTab';
-import { NetworkTab } from './settings/NetworkTab';
-import { DisplayTab } from './settings/DisplayTab';
-import { StorageTab } from './settings/StorageTab';
-import { ResourcesTab } from './settings/ResourcesTab';
-import { DeveloperTab } from './settings/DeveloperTab';
-import { ModulesTab, ModuleState } from './settings/ModulesTab';
+import { ModuleState } from './settings/ModulesTab';
 import { Modal } from './ui/Modal';
+
+const GeneralTab = lazy(() => import('./settings/GeneralTab').then(m => ({ default: m.GeneralTab })));
+const NetworkTab = lazy(() => import('./settings/NetworkTab').then(m => ({ default: m.NetworkTab })));
+const DisplayTab = lazy(() => import('./settings/DisplayTab').then(m => ({ default: m.DisplayTab })));
+const StorageTab = lazy(() => import('./settings/StorageTab').then(m => ({ default: m.StorageTab })));
+const ResourcesTab = lazy(() => import('./settings/ResourcesTab').then(m => ({ default: m.ResourcesTab })));
+const DeveloperTab = lazy(() => import('./settings/DeveloperTab').then(m => ({ default: m.DeveloperTab })));
+const ModulesTab = lazy(() => import('./settings/ModulesTab').then(m => ({ default: m.ModulesTab })));
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -72,7 +74,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     moduleStates = [] 
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'network' | 'display' | 'storage' | 'res' | 'dev' | 'mod'>('general');
-  
+  const [isPending, startTransition] = useTransition();
+
+  const handleTabChange = (tab: 'general' | 'network' | 'display' | 'storage' | 'res' | 'dev' | 'mod') => {
+      startTransition(() => {
+          setActiveTab(tab);
+      });
+  };
+
   // Display Test State (Lifted up as it overlays everything)
   const [fullScreenColor, setFullScreenColor] = useState<string | null>(null);
 
@@ -116,7 +125,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     {/* Navigation Tabs */}
                     <div className="flex md:flex-col border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 md:w-56 overflow-x-auto md:overflow-visible scrollbar-hide">
                         <button 
-                            onClick={() => setActiveTab('general')}
+                            onClick={() => handleTabChange('general')}
                             className={`
                                 flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                 flex-1 md:flex-none justify-center md:justify-start
@@ -130,7 +139,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             {getNavTitle('general')}
                         </button>
                         <button 
-                            onClick={() => setActiveTab('network')}
+                            onClick={() => handleTabChange('network')}
                             className={`
                                 flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                 flex-1 md:flex-none justify-center md:justify-start
@@ -144,7 +153,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             {getNavTitle('network')}
                         </button>
                         <button 
-                            onClick={() => setActiveTab('display')}
+                            onClick={() => handleTabChange('display')}
                             className={`
                                 flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                 flex-1 md:flex-none justify-center md:justify-start
@@ -158,7 +167,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             {getNavTitle('display')}
                         </button>
                         <button 
-                            onClick={() => setActiveTab('storage')}
+                            onClick={() => handleTabChange('storage')}
                             className={`
                                 flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                 flex-1 md:flex-none justify-center md:justify-start
@@ -172,7 +181,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             {getNavTitle('storage')}
                         </button>
                         <button 
-                            onClick={() => setActiveTab('res')}
+                            onClick={() => handleTabChange('res')}
                             className={`
                                 flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                 flex-1 md:flex-none justify-center md:justify-start
@@ -186,7 +195,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             {getNavTitle('resources')}
                         </button>
                         <button 
-                            onClick={() => setActiveTab('mod')}
+                            onClick={() => handleTabChange('mod')}
                             className={`
                                 flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                 flex-1 md:flex-none justify-center md:justify-start
@@ -200,7 +209,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             {getNavTitle('modules')}
                         </button>
                         <button 
-                            onClick={() => setActiveTab('dev')}
+                            onClick={() => handleTabChange('dev')}
                             className={`
                                 flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                 flex-1 md:flex-none justify-center md:justify-start
@@ -216,7 +225,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </div>
 
                     {/* Content Area */}
-                    <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
+                        {isPending && (
+                            <div className="absolute inset-0 z-10 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col justify-center items-center backdrop-blur-sm">
+                                <Loader2 className="animate-spin text-indigo-500 mb-2" size={24} />
+                            </div>
+                        )}
+                        <Suspense fallback={<div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
                         
                         {activeTab === 'general' && (
                             <GeneralTab 
@@ -293,6 +308,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 />
                             )
                         )}
+                        </Suspense>
 
                     </div>
                 </div>
