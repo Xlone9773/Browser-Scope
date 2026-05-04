@@ -24,6 +24,20 @@ export const settings = {
             title: "全局隱藏捲動條",
             desc: "禁止並隱藏頁面中所有元素的捲動條（包括對話方塊內）。"
         },
+        themeColor: {
+            title: "主題色彩",
+            desc: "選擇應用的主要交互色彩搭配。"
+        },
+        animationStyle: {
+            title: "動畫風格",
+            desc: "設定頁面元素載入時的動畫方式。",
+            options: {
+                slideUp: "向上滑入",
+                fade: "淡入",
+                flyIn: "向左飛入",
+                zoom: "縮放彈出"
+            }
+        },
         timeFormat: {
             title: "時間格式",
             desc: "在 12 小時制和 24 小時制之間切換。"

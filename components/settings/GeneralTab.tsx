@@ -2,6 +2,8 @@
 import React from 'react';
 import { Translation } from '../../utils/i18n/types';
 
+import { Select } from '../ui/Select';
+
 interface GeneralTabProps {
     t: any; // Using any for t because Translation type was getting complicated with extensions
     themeColor: string;
@@ -174,7 +176,10 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         { id: 'rose', hex: '#f43f5e' },
                         { id: 'amber', hex: '#f59e0b' },
                         { id: 'blue', hex: '#3b82f6' },
-                        { id: 'violet', hex: '#8b5cf6' }
+                        { id: 'violet', hex: '#8b5cf6' },
+                        { id: 'sky', hex: '#77bbee' },
+                        { id: 'ice', hex: '#a7c8ff' },
+                        { id: 'cherry', hex: '#efa7a8' }
                     ].map(theme => (
                         <button
                             key={theme.id}
@@ -199,16 +204,18 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         {translationDict.settings?.general?.animationStyle?.desc || 'Set entry component animation style.'}
                     </p>
                 </div>
-                <select 
+                <Select 
                     value={animationStyle}
-                    onChange={(e) => setAnimationStyle(e.target.value)}
-                    className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900 text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500/50 outline-none w-full sm:w-auto"
-                >
-                    <option value="slide-up">{translationDict.settings?.general?.animationStyle?.options?.slideUp || 'Slide Up'}</option>
-                    <option value="fade">{translationDict.settings?.general?.animationStyle?.options?.fade || 'Fade In'}</option>
-                    <option value="fly-in">{translationDict.settings?.general?.animationStyle?.options?.flyIn || 'Fly In'}</option>
-                    <option value="zoom">{translationDict.settings?.general?.animationStyle?.options?.zoom || 'Zoom In'}</option>
-                </select>
+                    onChange={setAnimationStyle}
+                    options={[
+                        { id: 'slide-up', label: translationDict.settings?.general?.animationStyle?.options?.slideUp || 'Slide Up' },
+                        { id: 'fade', label: translationDict.settings?.general?.animationStyle?.options?.fade || 'Fade In' },
+                        { id: 'fly-in', label: translationDict.settings?.general?.animationStyle?.options?.flyIn || 'Fly In' },
+                        { id: 'zoom', label: translationDict.settings?.general?.animationStyle?.options?.zoom || 'Zoom In' }
+                    ]}
+                    className="w-full sm:w-48"
+                    color={themeColor as any}
+                />
             </div>
 
             {/* Disable Blur (Renamed from High Performance) */}
@@ -235,8 +242,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
 
             {/* Hide Scrollbar Toggle */}
             <div 
-                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
-                onClick={() => toggleHideScrollbar(!hideScrollbar)}
+                className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${globalHideScrollbar ? 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800 opacity-50 cursor-not-allowed' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
+                onClick={() => { if (!globalHideScrollbar) toggleHideScrollbar(!hideScrollbar); }}
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -248,9 +255,10 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
-                        checked={hideScrollbar} 
-                        onChange={toggleHideScrollbar} 
+                        checked={hideScrollbar || globalHideScrollbar} 
+                        onChange={(val) => { if (!globalHideScrollbar) toggleHideScrollbar(val); }} 
                         label={t.scrollbar?.title || "Hide Main Page Scrollbar"} 
+                        disabled={globalHideScrollbar}
                     />
                 </div>
             </div>

@@ -24,6 +24,20 @@ export const settings = {
             title: "すべてのスクロールバーを非表示",
             desc: "モーダル内を含む、すべての要素のスクロールバーを非表示にします。"
         },
+        themeColor: {
+            title: "テーマカラー",
+            desc: "アプリケーションのメインカラーテーマを選択します。"
+        },
+        animationStyle: {
+            title: "アニメーションスタイル",
+            desc: "UI要素の入場アニメーションスタイルを選択します。",
+            options: {
+                slideUp: "スライドアップ",
+                fade: "フェードイン",
+                flyIn: "フライイン",
+                zoom: "ズームイン"
+            }
+        },
         timeFormat: {
             title: "時間形式",
             desc: "12時間制と24時間制を切り替えます。"

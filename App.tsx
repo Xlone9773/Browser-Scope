@@ -152,7 +152,7 @@ const App: React.FC = () => {
 
   // Theme color class sync
   useEffect(() => {
-      const colors = ['theme-indigo', 'theme-emerald', 'theme-rose', 'theme-amber', 'theme-blue', 'theme-violet'];
+      const colors = ['theme-indigo', 'theme-emerald', 'theme-rose', 'theme-amber', 'theme-blue', 'theme-violet', 'theme-sky', 'theme-cherry', 'theme-ice'];
       document.documentElement.classList.remove(...colors);
       if (themeColor !== 'indigo') {
           document.documentElement.classList.add(`theme-${themeColor}`);
@@ -255,12 +255,24 @@ const App: React.FC = () => {
       }
   };
 
+  const updateHiddenCards = (cards: string[]) => {
+      setHiddenCards(cards);
+      localStorage.setItem('hiddenCards', JSON.stringify(cards));
+      
+      const advancedCards = ['hardware', 'fingerprint', 'ai', 'location', 'storage', 'permissions', 'media_devices', 'media_capabilities', 'pwa', 'features', 'user_agent'];
+      const hasAllAdvanced = advancedCards.every(c => cards.includes(c));
+      if (simpleMode !== hasAllAdvanced) {
+          setSimpleMode(hasAllAdvanced);
+          localStorage.setItem('simpleMode', String(hasAllAdvanced));
+      }
+  };
+
   const toggleSimpleMode = (value: boolean) => {
       setSimpleMode(value);
       localStorage.setItem('simpleMode', String(value));
       
       // 当用户打开/关闭极简模式时同步卡片的启用状态
-      const advancedCards = ['hardware', 'fingerprint', 'ai', 'permissions', 'media_capabilities', 'pwa', 'features', 'user_agent'];
+      const advancedCards = ['hardware', 'fingerprint', 'ai', 'location', 'storage', 'permissions', 'media_devices', 'media_capabilities', 'pwa', 'features', 'user_agent'];
       if (value) {
           const newHidden = Array.from(new Set([...hiddenCards, ...advancedCards]));
           setHiddenCards(newHidden);
@@ -566,10 +578,7 @@ const App: React.FC = () => {
                     collapseHeader={collapseHeader}
                     toggleCollapseHeader={toggleCollapseHeader}
                     hiddenCards={hiddenCards}
-                    setHiddenCards={(cards: string[]) => {
-                        setHiddenCards(cards);
-                        localStorage.setItem('hiddenCards', JSON.stringify(cards));
-                    }}
+                    setHiddenCards={updateHiddenCards}
                     isDevToolsFloating={isDevToolsFloating}
                     setDevToolsFloating={setIsDevToolsFloating}
                     moduleStates={modalStates}
@@ -662,7 +671,7 @@ const App: React.FC = () => {
         {data && (
             <ErrorBoundary name="MainContent">
                 <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
-                    <div className={`space-y-6 animate-in fade-in duration-700 ${animationStyle === 'slide-up' ? 'slide-in-from-bottom-4' : animationStyle === 'fly-in' ? 'slide-in-from-right-8' : animationStyle === 'zoom' ? 'zoom-in-95' : ''}`}>
+                    <div key={animationStyle} className={`space-y-6 ${animationStyle === 'slide-up' ? 'anim-slide-up' : animationStyle === 'fade' ? 'anim-fade' : animationStyle === 'fly-in' ? 'anim-fly-in' : animationStyle === 'zoom' ? 'anim-zoom' : ''}`}>
                     
                     {/* Group 0: Environment & Trust */}
                     {!hiddenCards.includes('environment') && (
@@ -748,10 +757,8 @@ const App: React.FC = () => {
                     )}
 
                     {/* Group 3: Advanced Capabilities & APIs */}
-                    {!simpleMode && (
-                        <>
-                            {(!hiddenCards.includes('ai') || !hiddenCards.includes('location') || !hiddenCards.includes('storage') || !hiddenCards.includes('permissions') || !hiddenCards.includes('media_devices') || !hiddenCards.includes('media_capabilities') || !hiddenCards.includes('user_agent')) && (
-                            <SectionGroup title={(t as any).groups?.advanced || 'Capabilities & APIs'} icon={<Cpu className="text-amber-500" />}>
+                    {(!hiddenCards.includes('ai') || !hiddenCards.includes('location') || !hiddenCards.includes('storage') || !hiddenCards.includes('permissions') || !hiddenCards.includes('media_devices') || !hiddenCards.includes('media_capabilities') || !hiddenCards.includes('user_agent')) && (
+                    <SectionGroup title={(t as any).groups?.advanced || 'Capabilities & APIs'} icon={<Cpu className="text-amber-500" />}>
                                 {!hiddenCards.includes('ai') && (
                                 <AiComputeCard 
                                     data={data.ai} 
@@ -813,18 +820,16 @@ const App: React.FC = () => {
                             )}
 
                             {!hiddenCards.includes('pwa') && (
-                            <div className="animate-in fade-in duration-700 slide-in-from-bottom-8 delay-100">
+                            <div className="anim-slide-up delay-100">
                                 <PwaSection isPwaInstalled={data.system.isPwaInstalled} features={data.pwaFeatures} t={t} />
                             </div>
                             )}
                             
                             {!hiddenCards.includes('features') && (
-                            <div className="animate-in fade-in duration-700 slide-in-from-bottom-8 delay-200">
+                            <div className="anim-slide-up delay-200">
                                 <FeaturesSection features={data.features} t={t} />
                             </div>
                             )}
-                        </>
-                    )}
                 </div>
                 </Suspense>
             </ErrorBoundary>

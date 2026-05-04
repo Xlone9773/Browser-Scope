@@ -91,10 +91,12 @@ export const Modal: React.FC<ModalProps> = ({
     ? 'flex-1 overflow-hidden flex flex-col relative' // Complex layout: Flex based
     : 'h-full overflow-y-auto custom-scrollbar pt-20 px-6 pb-6 bg-slate-50 dark:bg-slate-900'; // Standard: Scrollable with top padding for header
 
+  const animationStyle = localStorage.getItem('animationStyle') || 'slide-up';
+
   return createPortal(
     <div 
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px] transition-all duration-300 ease-out ${
-        isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
+        isClosing ? 'opacity-0' : 'opacity-100'
       }`}
       onClick={handleClose}
       onKeyDown={handleKeyDown}
@@ -104,12 +106,19 @@ export const Modal: React.FC<ModalProps> = ({
     >
       <div 
         ref={modalRef}
+        key={animationStyle}
         className={`
             bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full flex flex-col overflow-hidden 
-            transition-all duration-300 ease-out transform outline-none border border-white/10 relative
+            outline-none border border-white/10 relative
             ${sizes[size]} 
             ${heightClass}
-            ${isVisible && !isClosing ? 'opacity-100 scale-100 blur-0 translate-y-0' : 'opacity-0 scale-95 blur-sm translate-y-4'}
+            ${isClosing ? 'opacity-0 scale-95 blur-sm translate-y-4 transition-all duration-300 ease-out' : ''}
+            ${!isClosing ? (
+                animationStyle === 'slide-up' ? 'anim-slide-up' : 
+                animationStyle === 'fade' ? 'anim-fade' : 
+                animationStyle === 'fly-in' ? 'anim-fly-in' : 
+                animationStyle === 'zoom' ? 'anim-zoom' : 'anim-slide-up'
+            ) : ''}
             ${className}
         `}
         onClick={(e) => e.stopPropagation()}

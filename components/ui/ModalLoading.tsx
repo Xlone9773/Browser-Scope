@@ -21,8 +21,8 @@ export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: s
 
   return (
     <div 
-        className={`fixed inset-0 z-[60] flex items-center justify-center p-4 transition-all duration-500 ease-out ${
-            isVisible ? 'bg-slate-900/60 backdrop-blur-sm opacity-100' : 'bg-slate-900/0 backdrop-blur-none opacity-0'
+        className={`fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px] transition-opacity duration-300 ${
+            isVisible ? 'opacity-100' : 'opacity-0'
         }`}
     >
         <div 
