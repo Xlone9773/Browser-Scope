@@ -24,6 +24,20 @@ export const settings = {
             title: "全局隐藏滚动条",
             desc: "禁止并隐藏页面中所有元素的滚动条（包括弹窗内）。"
         },
+        themeColor: {
+            title: "主题色彩",
+            desc: "选择应用的主要交互色彩配搭。"
+        },
+        animationStyle: {
+            title: "动画风格",
+            desc: "设置页面元素载入时的动画方式。",
+            options: {
+                slideUp: "向上滑入",
+                fade: "淡入",
+                flyIn: "向左飞入",
+                zoom: "缩放弹出"
+            }
+        },
         timeFormat: {
             title: "时间格式",
             desc: "在 12 小时制和 24 小时制之间切换。"

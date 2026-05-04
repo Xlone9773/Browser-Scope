@@ -58,6 +58,8 @@ const App: React.FC = () => {
       document.documentElement.lang = newLang; // Optional, also good for accessibility
   };
   const [theme, setTheme] = useState<Theme>('system');
+  const [themeColor, setThemeColor] = useState<string>(() => localStorage.getItem('themeColor') || 'indigo');
+  const [animationStyle, setAnimationStyle] = useState<string>(() => localStorage.getItem('animationStyle') || 'slide-up');
   const [simpleMode, setSimpleMode] = useState<boolean>(() => localStorage.getItem('simpleMode') === 'true');
   const [hideScrollbar, setHideScrollbar] = useState<boolean>(() => localStorage.getItem('hideScrollbar') === 'true');
   const [globalHideScrollbar, setGlobalHideScrollbar] = useState<boolean>(() => localStorage.getItem('globalHideScrollbar') === 'true');
@@ -147,6 +149,15 @@ const App: React.FC = () => {
           return () => mediaQuery.removeListener(handleSystemThemeChange);
       }
   }, []);
+
+  // Theme color class sync
+  useEffect(() => {
+      const colors = ['theme-indigo', 'theme-emerald', 'theme-rose', 'theme-amber', 'theme-blue', 'theme-violet'];
+      document.documentElement.classList.remove(...colors);
+      if (themeColor !== 'indigo') {
+          document.documentElement.classList.add(`theme-${themeColor}`);
+      }
+  }, [themeColor]);
 
   // Event listener for Storage Card custom event
   useEffect(() => {
@@ -259,6 +270,16 @@ const App: React.FC = () => {
           setHiddenCards(newHidden);
           localStorage.setItem('hiddenCards', JSON.stringify(newHidden));
       }
+  };
+
+  const updateThemeColor = (color: string) => {
+      setThemeColor(color);
+      localStorage.setItem('themeColor', color);
+  };
+
+  const updateAnimationStyle = (style: string) => {
+      setAnimationStyle(style);
+      localStorage.setItem('animationStyle', style);
   };
 
   const toggleHideScrollbar = (value: boolean) => {
@@ -524,6 +545,10 @@ const App: React.FC = () => {
                 <Components.settings
                     onClose={() => close('settings')}
                     t={t} /* Pass root translation object to support modular settings */
+                    themeColor={themeColor}
+                    setThemeColor={updateThemeColor}
+                    animationStyle={animationStyle}
+                    setAnimationStyle={updateAnimationStyle}
                     simpleMode={simpleMode}
                     toggleSimpleMode={toggleSimpleMode}
                     hideScrollbar={hideScrollbar}
@@ -637,7 +662,7 @@ const App: React.FC = () => {
         {data && (
             <ErrorBoundary name="MainContent">
                 <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
-                    <div className="space-y-6 animate-in fade-in duration-700 slide-in-from-bottom-4">
+                    <div className={`space-y-6 animate-in fade-in duration-700 ${animationStyle === 'slide-up' ? 'slide-in-from-bottom-4' : animationStyle === 'fly-in' ? 'slide-in-from-right-8' : animationStyle === 'zoom' ? 'zoom-in-95' : ''}`}>
                     
                     {/* Group 0: Environment & Trust */}
                     {!hiddenCards.includes('environment') && (

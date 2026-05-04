@@ -157,7 +157,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                         
                                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
                                             <span className={`text-lg font-bold tracking-tight ${idx === 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'}`}>
-                                                v{update.version}
+                                                v{update.version} {(update as any).title ? ` - ${(update as any).title}` : ''}
                                             </span>
                                             <span className="text-xs font-mono text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
                                                 {update.date}

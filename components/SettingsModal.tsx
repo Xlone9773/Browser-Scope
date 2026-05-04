@@ -15,6 +15,10 @@ interface SettingsModalProps {
   onClose: () => void;
   // Now accepts the root translation object to distribute to children
   t: Translation;
+  themeColor: string;
+  setThemeColor: (color: string) => void;
+  animationStyle: string;
+  setAnimationStyle: (style: string) => void;
   simpleMode: boolean;
   toggleSimpleMode: (value: boolean) => void;
   hideScrollbar: boolean;
@@ -41,6 +45,10 @@ interface SettingsModalProps {
 export const SettingsModal: React.FC<SettingsModalProps> = ({ 
     onClose, 
     t, 
+    themeColor,
+    setThemeColor,
+    animationStyle,
+    setAnimationStyle,
     simpleMode, 
     toggleSimpleMode, 
     hideScrollbar, 
@@ -213,6 +221,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         {activeTab === 'general' && (
                             <GeneralTab 
                                 t={settings.general} 
+                                themeColor={themeColor}
+                                setThemeColor={setThemeColor}
+                                animationStyle={animationStyle}
+                                setAnimationStyle={setAnimationStyle}
                                 simpleMode={simpleMode} 
                                 toggleSimpleMode={toggleSimpleMode} 
                                 hideScrollbar={hideScrollbar}

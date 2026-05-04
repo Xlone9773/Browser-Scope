@@ -29,6 +29,16 @@ export const modals = {
     },
     updates: [
         {
+            version: "2.1.0",
+            title: "Colors Update",
+            date: "2026-05-04",
+            changes: [
+                "🎨 Added Custom Theme Color selector (Settings -> General)",
+                "✨ Added Custom Entrance Animation styling",
+                "🐛 Fixed system command invocation bugs"
+            ]
+        },
+        {
             version: "2.0.0",
             date: "2026-05-03",
             changes: [

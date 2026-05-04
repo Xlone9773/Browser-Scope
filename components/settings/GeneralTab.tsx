@@ -4,6 +4,10 @@ import { Translation } from '../../utils/i18n/types';
 
 interface GeneralTabProps {
     t: any; // Using any for t because Translation type was getting complicated with extensions
+    themeColor: string;
+    setThemeColor: (color: string) => void;
+    animationStyle: string;
+    setAnimationStyle: (style: string) => void;
     simpleMode: boolean;
     toggleSimpleMode: (value: boolean) => void;
     hideScrollbar: boolean;
@@ -54,6 +58,10 @@ const Switch: React.FC<{ checked: boolean; onChange: (val: boolean) => void; lab
 
 export const GeneralTab: React.FC<GeneralTabProps> = ({ 
     t, 
+    themeColor,
+    setThemeColor,
+    animationStyle,
+    setAnimationStyle,
     simpleMode, 
     toggleSimpleMode, 
     hideScrollbar, 
@@ -147,6 +155,60 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         label={t.timeFormat.title} 
                     />
                 </div>
+            </div>
+
+            {/* Theme Color Selection */}
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {translationDict.settings?.general?.themeColor?.title || 'Theme Color'}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {translationDict.settings?.general?.themeColor?.desc || 'Select primary theme color for the application.'}
+                    </p>
+                </div>
+                <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg self-stretch sm:self-auto flex-wrap gap-1">
+                    {[
+                        { id: 'indigo', hex: '#6366f1' },
+                        { id: 'emerald', hex: '#10b981' },
+                        { id: 'rose', hex: '#f43f5e' },
+                        { id: 'amber', hex: '#f59e0b' },
+                        { id: 'blue', hex: '#3b82f6' },
+                        { id: 'violet', hex: '#8b5cf6' }
+                    ].map(theme => (
+                        <button
+                            key={theme.id}
+                            onClick={() => setThemeColor(theme.id)}
+                            className={`w-8 h-8 rounded-md transition-all flex items-center justify-center ${themeColor === theme.id ? 'ring-2 ring-slate-800 dark:ring-white scale-110 shadow-sm' : 'hover:scale-105'}`}
+                            style={{ backgroundColor: theme.hex }}
+                            title={theme.id}
+                        >
+                            {themeColor === theme.id && <div className="w-2 h-2 rounded-full bg-white dark:bg-slate-900" />}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Animation Style Selection */}
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {translationDict.settings?.general?.animationStyle?.title || 'Animation Style'}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {translationDict.settings?.general?.animationStyle?.desc || 'Set entry component animation style.'}
+                    </p>
+                </div>
+                <select 
+                    value={animationStyle}
+                    onChange={(e) => setAnimationStyle(e.target.value)}
+                    className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900 text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500/50 outline-none w-full sm:w-auto"
+                >
+                    <option value="slide-up">{translationDict.settings?.general?.animationStyle?.options?.slideUp || 'Slide Up'}</option>
+                    <option value="fade">{translationDict.settings?.general?.animationStyle?.options?.fade || 'Fade In'}</option>
+                    <option value="fly-in">{translationDict.settings?.general?.animationStyle?.options?.flyIn || 'Fly In'}</option>
+                    <option value="zoom">{translationDict.settings?.general?.animationStyle?.options?.zoom || 'Zoom In'}</option>
+                </select>
             </div>
 
             {/* Disable Blur (Renamed from High Performance) */}

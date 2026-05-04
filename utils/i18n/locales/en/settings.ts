@@ -24,6 +24,20 @@ export const settings = {
             title: "Hide All Scrollbars",
             desc: "Globally hide scrollbars for all elements, including inside modals."
         },
+        themeColor: {
+            title: "Theme Color",
+            desc: "Select the primary color theme for the application."
+        },
+        animationStyle: {
+            title: "Animation Style",
+            desc: "Select the entrance animation style for UI elements.",
+            options: {
+                slideUp: "Slide Up",
+                fade: "Fade In",
+                flyIn: "Fly In",
+                zoom: "Zoom In"
+            }
+        },
         timeFormat: {
             title: "Time Format",
             desc: "Switch between 12-hour and 24-hour clock formats."

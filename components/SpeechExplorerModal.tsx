@@ -65,46 +65,55 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
 
   const playSample = (voice: SpeechSynthesisVoice) => {
       window.speechSynthesis.cancel();
-      
-      // Adapt text based on language language code (e.g. 'zh-CN', 'ja-JP', etc.)
-      let text = `Hello, my name is ${voice.name}. This is a voice test.`;
-      if (voice.lang.startsWith('zh')) {
-          text = `你好，我的名字是 ${voice.name}。这是一次语音测试。`;
-      } else if (voice.lang.startsWith('ja')) {
-          text = `こんにちは、私の名前は ${voice.name} です。これは音声テストです。`;
-      } else if (voice.lang.startsWith('ru')) {
-          text = `Здравствуйте, меня зовут ${voice.name}. Это голосовой тест.`;
-      } else if (voice.lang.startsWith('ko')) {
-          text = `안녕하세요, 제 이름은 ${voice.name} 입니다. 이것은 음성 테스트입니다.`;
-      } else if (voice.lang.startsWith('es')) {
-          text = `Hola, mi nombre es ${voice.name}. Esta es una prueba de voz.`;
-      } else if (voice.lang.startsWith('fr')) {
-          text = `Bonjour, je m'appelle ${voice.name}. Ceci est un test vocal.`;
-      } else if (voice.lang.startsWith('de')) {
-          text = `Hallo, mein Name ist ${voice.name}. Dies ist ein Sprachtest.`;
+      setPlayingVoiceURI(null);
+      if (utteranceRef.current) {
+          utteranceRef.current.onend = null;
+          utteranceRef.current.onerror = null;
       }
+      utteranceRef.current = null;
       
-      const utterance = new SpeechSynthesisUtterance(text);
-      utteranceRef.current = utterance; // Prevent garbage collection
-      utterance.voice = voice;
-      
-      // Wait for start event
-      utterance.onstart = () => {
-          setPlayingVoiceURI(voice.voiceURI);
-      };
-      
-      utterance.onend = () => {
-          setPlayingVoiceURI(null);
-          utteranceRef.current = null;
-      };
-      
-      utterance.onerror = (e) => {
-          console.error("SpeechSynthesis error: ", e);
-          setPlayingVoiceURI(null);
-          utteranceRef.current = null;
-      };
-      
-      window.speechSynthesis.speak(utterance);
+      // Use setTimeout to prevent cancel() from squashing the next speak() call (common Safari/Chrome bug)
+      setTimeout(() => {
+          // Adapt text based on language language code (e.g. 'zh-CN', 'ja-JP', etc.)
+          let text = `Hello, my name is ${voice.name}. This is a voice test.`;
+          if (voice.lang.startsWith('zh')) {
+              text = `你好，我的名字是 ${voice.name}。这是一次语音测试。`;
+          } else if (voice.lang.startsWith('ja')) {
+              text = `こんにちは、私の名前は ${voice.name} です。これは音声テストです。`;
+          } else if (voice.lang.startsWith('ru')) {
+              text = `Здравствуйте, меня зовут ${voice.name}. Это голосовой тест.`;
+          } else if (voice.lang.startsWith('ko')) {
+              text = `안녕하세요, 제 이름은 ${voice.name} 입니다. 이것은 음성 테스트입니다.`;
+          } else if (voice.lang.startsWith('es')) {
+              text = `Hola, mi nombre es ${voice.name}. Esta es una prueba de voz.`;
+          } else if (voice.lang.startsWith('fr')) {
+              text = `Bonjour, je m'appelle ${voice.name}. Ceci est un test vocal.`;
+          } else if (voice.lang.startsWith('de')) {
+              text = `Hallo, mein Name ist ${voice.name}. Dies ist ein Sprachtest.`;
+          }
+          
+          const utterance = new SpeechSynthesisUtterance(text);
+          utteranceRef.current = utterance; // Prevent garbage collection
+          utterance.voice = voice;
+          
+          // Wait for start event
+          utterance.onstart = () => {
+              setPlayingVoiceURI(voice.voiceURI);
+          };
+          
+          utterance.onend = () => {
+              setPlayingVoiceURI(null);
+              utteranceRef.current = null;
+          };
+          
+          utterance.onerror = (e) => {
+              console.error("SpeechSynthesis error: ", e);
+              setPlayingVoiceURI(null);
+              utteranceRef.current = null;
+          };
+          
+          window.speechSynthesis.speak(utterance);
+      }, 50);
   };
 
   return (
