@@ -22,6 +22,7 @@ const MODULE_FACTORIES: Record<string, () => Promise<any>> = {
     tools: () => import('../components/HardwareToolsModal').then(m => ({ default: m.HardwareToolsModal })),
     ai: () => import('../components/AiPlaygroundModal').then(m => ({ default: m.AiPlaygroundModal })),
     gamepad: () => import('../components/GamepadToolModal').then(m => ({ default: m.GamepadToolModal })),
+    webDevice: () => import('../components/WebDeviceModal').then(m => ({ default: m.WebDeviceModal })),
     vision: () => import('../components/VisionModal').then(m => ({ default: m.VisionModal })),
     speed: () => import('../components/SpeedTestModal').then(m => ({ default: m.SpeedTestModal })),
     compute: () => import('../components/ComputeStressModal').then(m => ({ default: m.ComputeStressModal })),

@@ -139,7 +139,7 @@ export const tools = {
     peak: "Peak"
   },
   gamepadTool: {
-    title: "Gamepad & Bluetooth",
+    title: "Gamepad",
     tab_gamepad: "Gamepad",
     tab_bluetooth: "Bluetooth",
     no_gamepad: "No Gamepad Detected",
@@ -149,6 +149,21 @@ export const tools = {
     bt_devices: "Discovered Devices",
     bt_no_devices: "No devices found",
     bt_not_supported: "Web Bluetooth API not supported"
+  },
+  webDevice: {
+    title: "Web Devices",
+    tab_usb: "WebUSB",
+    tab_bluetooth: "WebBluetooth",
+    tab_serial: "WebSerial",
+    btn_req_usb: "Request USB Device",
+    btn_req_bt: "Request BT Device",
+    btn_req_serial: "Request Serial Port",
+    btn_scanning: "Scanning...",
+    auth_devices: "Authorized Devices / Discovered",
+    auth_required: "Authorization required / No devices",
+    usb_not_supported: "WebUSB API not supported in this browser",
+    bt_not_supported: "Web Bluetooth API not supported",
+    serial_not_supported: "WebSerial API not supported in this browser"
   },
   hardwareToolsModal: {
     title: "Hardware Tools",

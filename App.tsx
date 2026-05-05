@@ -115,6 +115,7 @@ const App: React.FC = () => {
       { id: 'tools', name: t.hardwareToolsModal.title, isOpen: visibility.tools, setOpen: (v) => v ? open('tools') : close('tools'), impact: 'Medium', onUnload: () => unload('tools'), isLoaded: loadedModules.has('tools') },
       { id: 'ai', name: t.aiPlayground.title, isOpen: visibility.ai, setOpen: (v) => v ? open('ai') : close('ai'), impact: 'High', onUnload: () => unload('ai'), isLoaded: loadedModules.has('ai') },
       { id: 'gamepad', name: t.gamepadTool.title, isOpen: visibility.gamepad, setOpen: (v) => v ? open('gamepad') : close('gamepad'), impact: 'Medium', onUnload: () => unload('gamepad'), isLoaded: loadedModules.has('gamepad') },
+      { id: 'webDevice', name: t.webDevice.title, isOpen: visibility.webDevice, setOpen: (v) => v ? open('webDevice') : close('webDevice'), impact: 'Medium', onUnload: () => unload('webDevice'), isLoaded: loadedModules.has('webDevice') },
       { id: 'vision', name: t.visionModal.title, isOpen: visibility.vision, setOpen: (v) => v ? open('vision') : close('vision'), impact: 'High', onUnload: () => unload('vision'), isLoaded: loadedModules.has('vision') },
       { id: 'speed', name: t.speedTest.title, isOpen: visibility.speed, setOpen: (v) => v ? open('speed') : close('speed'), impact: 'Medium', onUnload: () => unload('speed'), isLoaded: loadedModules.has('speed') },
       { id: 'compute', name: t.computeStress.title, isOpen: visibility.compute, setOpen: (v) => v ? open('compute') : close('compute'), impact: 'High', onUnload: () => unload('compute'), isLoaded: loadedModules.has('compute') },
@@ -597,6 +598,7 @@ const App: React.FC = () => {
             
             {visibility.ai && <Components.ai onClose={() => close('ai')} t={t.aiPlayground} />}
             {visibility.gamepad && <Components.gamepad onClose={() => close('gamepad')} t={t.gamepadTool} />}
+            {visibility.webDevice && <Components.webDevice onClose={() => close('webDevice')} t={t.webDevice} />}
             {visibility.vision && <Components.vision onClose={() => close('vision')} t={t.visionModal} />}
             {visibility.video && (
                 <Components.video 
@@ -699,6 +701,7 @@ const App: React.FC = () => {
                             data={data.hardware} 
                             t={t} 
                             onOpenGamepad={() => open('gamepad')}
+                            onOpenWebDevice={() => open('webDevice')}
                             onOpenSensors={() => open('sensor')}
                             onOpenTools={() => open('tools')}
                             onOpenVision={() => open('vision')}

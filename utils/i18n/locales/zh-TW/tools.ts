@@ -149,6 +149,21 @@ export const tools = {
     bt_no_devices: "暫無裝置",
     bt_not_supported: "目前瀏覽器不支援 Web Bluetooth API"
   },
+  webDevice: {
+    title: "Web 通用裝置",
+    tab_usb: "WebUSB",
+    tab_bluetooth: "藍牙(WebBluetooth)",
+    tab_serial: "序列埠(WebSerial)",
+    btn_req_usb: "請求連接 USB 裝置",
+    btn_req_bt: "請求連接藍牙裝置",
+    btn_req_serial: "請求連接序列埠",
+    btn_scanning: "掃描中...",
+    auth_devices: "已授權/發現的裝置",
+    auth_required: "需要授權或無裝置",
+    usb_not_supported: "目前瀏覽器不支援 WebUSB API",
+    bt_not_supported: "目前瀏覽器不支援 Web Bluetooth API",
+    serial_not_supported: "目前瀏覽器不支援 WebSerial API"
+  },
   hardwareToolsModal: {
     title: "硬體互動工具",
     tab_vibrate: "振動",

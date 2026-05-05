@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Cpu, Gamepad2, ChevronRight, Activity, Hammer, Battery, BatteryCharging, Zap, ScanBarcode, Layers, Eye, Music } from 'lucide-react';
+import { Cpu, Gamepad2, ChevronRight, Activity, Hammer, Battery, BatteryCharging, Zap, ScanBarcode, Layers, Eye, Music, Usb } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
@@ -10,6 +10,7 @@ interface HardwareCardProps {
   data: BrowserData['hardware'];
   t: Translation;
   onOpenGamepad: () => void;
+  onOpenWebDevice?: () => void;
   onOpenSensors: () => void;
   onOpenTools: () => void;
   onOpenVision?: () => void;
@@ -17,7 +18,7 @@ interface HardwareCardProps {
   onOpenMidi?: () => void;
 }
 
-export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamepad, onOpenSensors, onOpenTools, onOpenVision, onOpenGraphics, onOpenMidi }) => {
+export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamepad, onOpenWebDevice, onOpenSensors, onOpenTools, onOpenVision, onOpenGraphics, onOpenMidi }) => {
   
   // Parse battery level
   const batteryLevel = parseFloat(data.batteryLevel) || 0;
@@ -129,6 +130,13 @@ export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamep
               </Button>
           )}
       </div>
+      {onOpenWebDevice && (
+          <div className="mt-2 text-center">
+             <Button fullWidth variant="soft" size="xs" onClick={onOpenWebDevice} className="!bg-blue-50 !text-blue-600 dark:!bg-blue-900/30 dark:!text-blue-400 hover:!bg-blue-100" leftIcon={<Usb size={14} />}>
+                 {t.webDevice.title}
+             </Button>
+          </div>
+      )}
     </InfoCard>
   );
 };

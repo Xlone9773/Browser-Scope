@@ -149,6 +149,21 @@ export const tools = {
     bt_no_devices: "Устройства не найдены",
     bt_not_supported: "Текущий браузер не поддерживает Web Bluetooth API"
   },
+  webDevice: {
+    title: "Web Устройства",
+    tab_usb: "WebUSB",
+    tab_bluetooth: "WebBluetooth",
+    tab_serial: "WebSerial",
+    btn_req_usb: "Запросить USB-устройство",
+    btn_req_bt: "Запросить Bluetooth-устройство",
+    btn_req_serial: "Запросить последовательный порт",
+    btn_scanning: "Сканирование...",
+    auth_devices: "Авторизованные / Найденные устройства",
+    auth_required: "Требуется авторизация / Нет устройств",
+    usb_not_supported: "WebUSB API не поддерживается",
+    bt_not_supported: "Web Bluetooth API не поддерживается",
+    serial_not_supported: "WebSerial API не поддерживается"
+  },
   hardwareToolsModal: {
     title: "Аппаратные инструменты",
     tab_vibrate: "Вибрация",

@@ -150,6 +150,21 @@ export const tools = {
     bt_no_devices: "暂无设备",
     bt_not_supported: "当前浏览器不支持 Web Bluetooth API"
   },
+  webDevice: {
+    title: "Web 通用设备",
+    tab_usb: "WebUSB",
+    tab_bluetooth: "蓝牙(WebBluetooth)",
+    tab_serial: "串口(WebSerial)",
+    btn_req_usb: "请求连接 USB 设备",
+    btn_req_bt: "请求连接蓝牙设备",
+    btn_req_serial: "请求连接串口",
+    btn_scanning: "扫描中...",
+    auth_devices: "已授权/发现的设备",
+    auth_required: "需要授权或无设备",
+    usb_not_supported: "当前浏览器不支持 WebUSB API",
+    bt_not_supported: "当前浏览器不支持 Web Bluetooth API",
+    serial_not_supported: "当前浏览器不支持 WebSerial API"
+  },
   hardwareToolsModal: {
     title: "硬件交互工具",
     tab_vibrate: "振动",

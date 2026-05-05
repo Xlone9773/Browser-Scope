@@ -149,6 +149,21 @@ export const tools = {
     bt_no_devices: "機器なし",
     bt_not_supported: "現在のブラウザはWeb Bluetooth APIをサポートしていません"
   },
+  webDevice: {
+    title: "Web デバイス",
+    tab_usb: "WebUSB",
+    tab_bluetooth: "WebBluetooth",
+    tab_serial: "WebSerial",
+    btn_req_usb: "USBデバイスをリクエスト",
+    btn_req_bt: "Bluetoothデバイスをリクエスト",
+    btn_req_serial: "シリアルポートをリクエスト",
+    btn_scanning: "スキャン中...",
+    auth_devices: "許可済み・検出されたデバイス",
+    auth_required: "許可が必要・デバイスなし",
+    usb_not_supported: "WebUSB APIはサポートされていません",
+    bt_not_supported: "Web Bluetooth APIはサポートされていません",
+    serial_not_supported: "WebSerial APIはサポートされていません"
+  },
   hardwareToolsModal: {
     title: "ハードウェア対話ツール",
     tab_vibrate: "振動",
