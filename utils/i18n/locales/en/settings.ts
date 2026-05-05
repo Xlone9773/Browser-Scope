@@ -155,7 +155,11 @@ export const settings = {
         warning: {
             title: "EXTREME CAUTION!",
             desc: "This area is for developers only. If you do not know what you are doing, CLOSE THIS WINDOW IMMEDIATELY!\n\nIf someone told you to copy-paste code here to unlock a 'hidden feature' or 'hack', it is a SCAM. Executing unknown code can allow attackers to steal your identity or take control of your device.",
-            agree: "I understand the risks, proceed"
+            agree: "I understand the risks, proceed",
+            cancel: "Nevermind, I don't need this",
+            disabled_title: "Developer Mode Disabled",
+            disabled_desc: "You have chosen not to use this feature. If you really need to debug the app, you can re-enable it at any time.",
+            reenable: "Re-enable & Accept Risk"
         },
         nav: {
             events: "Events",

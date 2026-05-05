@@ -63,17 +63,20 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     const [hasAcceptedRisk, setHasAcceptedRisk] = useState(() => {
         return localStorage.getItem('developer_risk_accepted') === 'true';
     });
+    const [hasRejectedRisk, setHasRejectedRisk] = useState(() => {
+        return localStorage.getItem('developer_risk_accepted') === 'false';
+    });
     const [isOverlayFading, setIsOverlayFading] = useState(false);
     
     // Cooldown Timer
     const [countdown, setCountdown] = useState(5);
 
     useEffect(() => {
-        if (!hasAcceptedRisk && countdown > 0) {
+        if (!hasAcceptedRisk && !hasRejectedRisk && countdown > 0) {
             const timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
             return () => clearTimeout(timer);
         }
-    }, [hasAcceptedRisk, countdown]);
+    }, [hasAcceptedRisk, hasRejectedRisk, countdown]);
 
     const handleAcceptRisk = () => {
         if (countdown > 0) return;
@@ -82,6 +85,17 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
             setHasAcceptedRisk(true);
             localStorage.setItem('developer_risk_accepted', 'true');
         }, 300); // Match CSS transition duration
+    };
+
+    const handleCancelRisk = () => {
+        setHasRejectedRisk(true);
+        localStorage.setItem('developer_risk_accepted', 'false');
+    };
+
+    const handleReenable = () => {
+        setHasRejectedRisk(false);
+        setCountdown(5);
+        setIsOverlayFading(false);
     };
 
     const loadVConsole = async () => {
@@ -514,7 +528,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     // Warning Overlay JSX - Enhanced for severity with Cooldown
     const warningOverlay = (
         <div 
-            className={`fixed inset-0 z-[100] flex items-center justify-center p-6 bg-red-950/95 backdrop-blur-xl transition-all duration-300 ease-out ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+            className={`absolute inset-0 z-50 flex items-center justify-center p-6 bg-red-950/95 backdrop-blur-xl transition-all duration-300 ease-out ${isOverlayFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         >
             <div 
                 className={`bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-md w-full p-8 border-2 border-red-600 flex flex-col items-center text-center transition-all duration-300 ease-out transform ${isOverlayFading ? 'scale-95 translate-y-4 opacity-0' : 'scale-100 translate-y-0 opacity-100'}`}
@@ -530,20 +544,66 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                         {t.warning.desc}
                     </p>
                 </div>
-                <button 
-                    onClick={handleAcceptRisk}
-                    disabled={countdown > 0}
-                    className={`w-full py-4 font-bold rounded-lg shadow-lg transition-all text-base tracking-wide
-                        ${countdown > 0 
-                            ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed shadow-none' 
-                            : 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/20 active:scale-95'
-                        }`}
-                >
-                    {countdown > 0 ? `Wait ${countdown}s...` : t.warning.agree}
-                </button>
+                <div className="flex flex-col gap-3 w-full">
+                    <button 
+                        onClick={handleCancelRisk}
+                        className="w-full py-4 font-bold rounded-lg transition-all text-base tracking-wide bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"
+                    >
+                        {t.warning.cancel || '算了，不用这个功能了'}
+                    </button>
+                    <button 
+                        onClick={handleAcceptRisk}
+                        disabled={countdown > 0}
+                        className={`w-full py-4 font-bold rounded-lg shadow-lg transition-all text-base tracking-wide
+                            ${countdown > 0 
+                                ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed shadow-none' 
+                                : 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/20 active:scale-95'
+                            }`}
+                    >
+                        {countdown > 0 ? `Wait ${countdown}s...` : t.warning.agree}
+                    </button>
+                </div>
             </div>
         </div>
     );
+
+    if (hasRejectedRisk) {
+        const disabledContent = (
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center h-full">
+                <div className="w-20 h-20 bg-slate-200 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6 text-slate-500">
+                    <Terminal size={40} strokeWidth={1.5} />
+                </div>
+                <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">
+                    {t.warning?.disabled_title || '开发者选项已禁用'}
+                </h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 max-w-sm">
+                    {t.warning?.disabled_desc || '您已选择不使用此功能。如果真的需要调试应用，您可以随时重新启用它。'}
+                </p>
+                <button 
+                    onClick={handleReenable}
+                    className="px-6 py-3 font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20 active:scale-95 transition-all text-sm"
+                >
+                    {t.warning?.reenable || '重新启用并接受风险'}
+                </button>
+            </div>
+        );
+
+        if (isFloating) {
+            return (
+                <div className="relative h-full flex flex-col bg-slate-50 dark:bg-slate-900">
+                    {disabledContent}
+                </div>
+            );
+        }
+
+        return (
+            <div className="flex flex-col h-full space-y-4 relative">
+                <div className="flex-1 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-700 overflow-hidden shadow-inner relative">
+                    {disabledContent}
+                </div>
+            </div>
+        );
+    }
 
     // If currently floating, we render the header + content directly, wrapper is handled by App.tsx
     if (isFloating) {
