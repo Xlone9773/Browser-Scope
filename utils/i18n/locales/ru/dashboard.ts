@@ -48,6 +48,7 @@ export const dashboard = {
   },
 
   sections: {
+    environment: "Анализ среды",
     system: "Системная среда",
     hardware: "Аппаратное обеспечение",
     display: "Дисплей и Экран",
@@ -58,6 +59,8 @@ export const dashboard = {
     location: "Геолокация",
     permissions: "Статус разрешений",
     media_sup: "Мультимедиа возможности",
+    media_devices: "Медиа-устройства",
+    media_caps: "Декодирование медиа",
     user_agent: "User Agent",
     pwa: "Поддержка PWA",
     features: "Расширенные функции",

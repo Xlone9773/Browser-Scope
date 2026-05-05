@@ -48,6 +48,7 @@ export const dashboard = {
   },
   
   sections: {
+    environment: "環境分析",
     system: "系統環境",
     hardware: "硬件資訊",
     display: "顯示與屏幕",
@@ -58,6 +59,8 @@ export const dashboard = {
     location: "地理位置",
     permissions: "權限狀態",
     media_sup: "多媒體能力",
+    media_devices: "媒體設備",
+    media_caps: "媒體解碼能力",
     user_agent: "User Agent",
     pwa: "PWA 支援",
     features: "進階特性",

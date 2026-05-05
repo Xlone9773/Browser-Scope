@@ -88,7 +88,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     // Note: If translations are added dynamically or missing in dict, we provide fallbacks.
     const sectionsObj = translationDict?.sections || {};
     const availableCards = [
-        { id: 'environment', name: sectionsObj.environment || '环境分析' },
+        { id: 'environment', name: sectionsObj.environment || 'Analysis Environment' },
         { id: 'system', name: sectionsObj.system || 'System Environment' },
         { id: 'hardware', name: sectionsObj.hardware || 'Hardware Info' },
         { id: 'display', name: sectionsObj.display || 'Display Info' },
@@ -99,8 +99,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
         { id: 'location', name: sectionsObj.location || 'Location & Sensors' },
         { id: 'storage', name: sectionsObj.storage || 'Storage Insights' },
         { id: 'permissions', name: sectionsObj.permissions || 'Permissions' },
-        { id: 'media_devices', name: sectionsObj.media_devices || (sectionsObj.media_sup ? sectionsObj.media_sup + ' - 设备' : 'Media Devices') },
-        { id: 'media_capabilities', name: sectionsObj.media_caps || (sectionsObj.media_sup ? sectionsObj.media_sup + ' - 解码' : 'Media Capabilities') },
+        { id: 'media_devices', name: sectionsObj.media_devices || 'Media Devices' },
+        { id: 'media_capabilities', name: sectionsObj.media_caps || 'Media Capabilities' },
         { id: 'user_agent', name: sectionsObj.user_agent || 'User Agent' },
         { id: 'pwa', name: sectionsObj.pwa || 'PWA Support' },
         { id: 'features', name: sectionsObj.features || 'Features' },

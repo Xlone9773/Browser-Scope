@@ -49,6 +49,7 @@ export const dashboard = {
   },
 
   sections: {
+    environment: "Analysis Environment",
     system: "System Environment",
     hardware: "Hardware Info",
     display: "Display & Screen",
@@ -59,6 +60,8 @@ export const dashboard = {
     location: "Location",
     permissions: "Permissions",
     media_sup: "Media Capabilities",
+    media_devices: "Media Devices",
+    media_caps: "Media Parsing",
     user_agent: "User Agent",
     pwa: "PWA Support",
     features: "Advanced Features",

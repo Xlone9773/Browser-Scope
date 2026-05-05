@@ -7,6 +7,12 @@ export const common = {
   },
   common: {
     loading: "Сканирование возможностей системы...",
+    error_boundary: {
+        title: "Сбой компонента",
+        message: "Произошла непредвиденная ошибка.",
+        retry: "Повторить попытку",
+        unknown_component: "Неизвестный компонент"
+    },
     modal_loading: {
         initializing: "Инициализация",
         loading_module: "Загрузка ресурса модуля"

@@ -7,6 +7,12 @@ export const common = {
   },
   common: {
     loading: "Initializing...",
+    error_boundary: {
+        title: "Component Crashed",
+        message: "An unexpected error occurred.",
+        retry: "Try Again",
+        unknown_component: "Unknown Component"
+    },
     modal_loading: {
         initializing: "Initializing",
         loading_module: "Loading Module Resource"

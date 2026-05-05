@@ -7,6 +7,12 @@ export const common = {
   },
   common: {
     loading: "システム機能をスキャン中...",
+    error_boundary: {
+        title: "コンポーネントのクラッシュ",
+        message: "予期しないエラーが発生しました。",
+        retry: "再試行",
+        unknown_component: "不明なコンポーネント"
+    },
     modal_loading: {
         initializing: "初期化中",
         loading_module: "モジュールリソースを読み込み中"

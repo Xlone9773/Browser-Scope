@@ -48,6 +48,7 @@ export const dashboard = {
   },
 
   sections: {
+    environment: "環境分析",
     system: "システム環境",
     hardware: "ハードウェア情報",
     display: "ディスプレイと画面",
@@ -58,6 +59,8 @@ export const dashboard = {
     location: "位置情報",
     permissions: "権限ステータス",
     media_sup: "メディア機能",
+    media_devices: "メディアデバイス",
+    media_caps: "メディアデコード",
     user_agent: "User Agent",
     pwa: "PWAサポート",
     features: "高度な機能",

@@ -7,6 +7,12 @@ export const common = {
   },
   common: {
     loading: "正在掃描系統能力...",
+    error_boundary: {
+        title: "組件崩潰",
+        message: "發生未知的渲染錯誤。",
+        retry: "重試",
+        unknown_component: "未知組件"
+    },
     modal_loading: {
         initializing: "正在初始化",
         loading_module: "正在載入模組資源"
