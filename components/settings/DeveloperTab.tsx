@@ -549,7 +549,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                         onClick={handleCancelRisk}
                         className="w-full py-4 font-bold rounded-lg transition-all text-base tracking-wide bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"
                     >
-                        {t.warning.cancel || '算了，不用这个功能了'}
+                        {t.warning.cancel}
                     </button>
                     <button 
                         onClick={handleAcceptRisk}
@@ -574,16 +574,16 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     <Terminal size={40} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">
-                    {t.warning?.disabled_title || '开发者选项已禁用'}
+                    {t.warning?.disabled_title}
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 max-w-sm">
-                    {t.warning?.disabled_desc || '您已选择不使用此功能。如果真的需要调试应用，您可以随时重新启用它。'}
+                    {t.warning?.disabled_desc}
                 </p>
                 <button 
                     onClick={handleReenable}
                     className="px-6 py-3 font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20 active:scale-95 transition-all text-sm"
                 >
-                    {t.warning?.reenable || '重新启用并接受风险'}
+                    {t.warning?.reenable}
                 </button>
             </div>
         );
