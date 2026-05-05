@@ -14,7 +14,9 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
   const [permissionStatus, setPermissionStatus] = useState<'granted' | 'denied' | 'prompt'>('prompt');
   
   const [accel, setAccel] = useState({ x: 0, y: 0, z: 0 });
-  const [gyro, setGyro] = useState({ alpha: 0, beta: 0, gamma: 0 });
+  const prevAlphaRef = React.useRef(0);
+  const displayAlphaRef = React.useRef(0);
+  const [gyro, setGyro] = useState({ alpha: 0, beta: 0, gamma: 0, displayAlpha: 0 });
   const [magnet, setMagnet] = useState<{ x: number, y: number, z: number } | null>(null);
   const [lux, setLux] = useState<number | null>(null);
 
@@ -30,10 +32,24 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
   };
 
   const handleOrientation = (event: DeviceOrientationEvent) => {
+      const currentAlpha = event.alpha || 0;
+      let delta = currentAlpha - prevAlphaRef.current;
+      
+      // Calculate continuous rotation
+      if (delta > 180) {
+          delta -= 360;
+      } else if (delta < -180) {
+          delta += 360;
+      }
+      
+      displayAlphaRef.current += delta;
+      prevAlphaRef.current = currentAlpha;
+
       setGyro({
-          alpha: event.alpha || 0,
+          alpha: currentAlpha,
           beta: event.beta || 0,
-          gamma: event.gamma || 0
+          gamma: event.gamma || 0,
+          displayAlpha: displayAlphaRef.current
       });
   };
 
@@ -221,7 +237,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         <div className="mt-6 flex justify-center">
                             <div 
                                 className="w-16 h-16 rounded-full border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center transition-transform duration-200 ease-out"
-                                style={{ transform: `rotate(${gyro.alpha}deg)` }}
+                                style={{ transform: `rotate(${gyro.displayAlpha}deg)` }}
                             >
                                 <div className="w-1 h-8 bg-red-500 rounded-full absolute -top-1"></div>
                                 <div className="w-2 h-2 bg-slate-800 dark:bg-slate-200 rounded-full z-10"></div>
