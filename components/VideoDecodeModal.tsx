@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Film, Battery, Zap, Check, X, MonitorPlay, Filter, Music, Speaker, Tv } from 'lucide-react';
+import { Film, Battery, Zap, Check, X, MonitorPlay, Filter, Music, Speaker, Tv, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { videoCodecs, videoResolutions, audioCodecs, audioConfigs } from '../data/codecs';
 import { Modal } from './ui/Modal';
@@ -17,6 +17,7 @@ interface VideoDecodeModalProps {
 export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, values, labels }) => {
     const [videoResults, setVideoResults] = useState<any[]>([]);
     const [audioResults, setAudioResults] = useState<any[]>([]);
+    const [drmResults, setDrmResults] = useState<any[]>([]);
     const [progress, setProgress] = useState(0);
     const [isTesting, setIsTesting] = useState(false);
     const [showSupportedOnly, setShowSupportedOnly] = useState(false);
@@ -28,7 +29,37 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
             const tempAudioResults: any[] = [];
             
             let done = 0;
-            const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length);
+            const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length) + 3; // 3 DRM systems
+
+            // --- Run DRM Tests ---
+            const drms = [
+                { id: 'com.widevine.alpha', name: 'Widevine' },
+                { id: 'com.apple.fps.1_0', name: 'FairPlay' },
+                { id: 'com.apple.fps.2_0', name: 'FairPlay v2' },
+                { id: 'com.apple.fps.3_0', name: 'FairPlay v3' },
+                { id: 'com.microsoft.playready', name: 'PlayReady' }
+            ];
+            
+            const tempDrmResults = await Promise.all(drms.map(async (sys) => {
+                try {
+                    // @ts-ignore
+                    if (navigator.requestMediaKeySystemAccess) {
+                        const config = [{
+                            initDataTypes: ['cenc'],
+                            videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }],
+                            audioCapabilities: [{ contentType: 'audio/mp4; codecs="mp4a.40.2"' }]
+                        }];
+                        // @ts-ignore
+                        await navigator.requestMediaKeySystemAccess(sys.id, config);
+                        return { ...sys, supported: true };
+                    }
+                    return { ...sys, supported: false, error: true };
+                } catch (e) {
+                    return { ...sys, supported: false };
+                }
+            }));
+            setDrmResults(tempDrmResults);
+            done += 3;
 
             // --- Run Video Tests ---
             for (const codec of videoCodecs) {
@@ -204,6 +235,27 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar pb-4">
                     
+                    {/* DRM Section */}
+                    {drmResults.length > 0 && (
+                        <div className="mb-8 p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <ShieldCheck size={14} />
+                                {t.drm_title || "DRM Capabilities"}
+                            </h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {drmResults.map((sys, idx) => (
+                                    <div key={idx} className={`p-3 rounded-lg border flex items-center gap-3 ${sys.supported ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800/50' : 'border-slate-100 bg-slate-50 text-slate-400 dark:bg-slate-800/50 dark:border-slate-700'}`}>
+                                        {sys.supported ? <ShieldCheck size={18} className="text-emerald-500" /> : <ShieldAlert size={18} className="opacity-50" />}
+                                        <div>
+                                            <div className="text-sm font-bold">{sys.name}</div>
+                                            <div className="text-[10px] font-mono opacity-70">{sys.id.split('.').pop()}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Video Section */}
                     {filteredVideo.length > 0 && (
                         <div className="mb-8">

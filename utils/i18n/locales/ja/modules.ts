@@ -145,6 +145,10 @@ export const modules = {
   },
 
   hardwareToolsModal: {
+
+    tab_drm: "DRM",
+    drm_title: "DRM と EME の検出",
+    btn_test_drm: "DRMテストを実行する",
     title: "ハードウェア対話ツール",
     tab_vibrate: "振動",
     tab_touch: "タッチ",

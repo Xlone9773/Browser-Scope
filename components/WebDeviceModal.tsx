@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bluetooth, Usb, Search, AlertCircle, Radio, Settings2, ShieldCheck, ShieldAlert, Key, Fingerprint } from 'lucide-react';
+import { Bluetooth, Usb, Search, AlertCircle, Radio, Settings2, ShieldCheck, ShieldAlert, Key, Fingerprint, Nfc } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 
@@ -10,22 +10,54 @@ interface WebDeviceModalProps {
 }
 
 export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) => {
-  const [activeTab, setActiveTab] = useState<'bluetooth' | 'usb' | 'serial' | 'webauthn'>('usb');
+  const [activeTab, setActiveTab] = useState<'bluetooth' | 'usb' | 'serial' | 'webauthn' | 'nfc'>('usb');
   const [btRegex, setBtRegex] = useState<string>('');
 
   // Universal Device State
-  const [devices, setDevices] = useState<any[]>([]);
+  const [usbDevices, setUsbDevices] = useState<any[]>([]);
+  const [btDevices, setBtDevices] = useState<any[]>([]);
+  const [serialDevices, setSerialDevices] = useState<any[]>([]);
+  const [webAuthnDevices, setWebAuthnDevices] = useState<any[]>([]);
+  const [nfcDevices, setNfcDevices] = useState<any[]>([]);
+
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const clearState = () => {
-      setDevices([]);
+  const currentDevices = activeTab === 'usb' ? usbDevices : 
+                         activeTab === 'bluetooth' ? btDevices : 
+                         activeTab === 'serial' ? serialDevices : 
+                         activeTab === 'webauthn' ? webAuthnDevices :
+                         nfcDevices;
+
+  const handleTabChange = (tab: 'bluetooth' | 'usb' | 'serial' | 'webauthn' | 'nfc') => {
+      setActiveTab(tab);
       setError(null);
   };
 
-  const handleTabChange = (tab: 'bluetooth' | 'usb' | 'serial' | 'webauthn') => {
-      setActiveTab(tab);
-      clearState();
+  const handleError = (e: any, defaultMsg: string) => {
+    console.error(e);
+    if (!e || typeof e !== 'object') {
+        setError(defaultMsg);
+        return;
+    }
+    const msgLower = (e.message || '').toLowerCase();
+    
+    if (e.name === 'NotFoundError') {
+        setError(t.err_not_found || '未发现设备或用户取消');
+        return;
+    }
+    
+    let msg = e.message || defaultMsg;
+    if (e.name === 'NotAllowedError') {
+        msg = t.err_not_allowed || '被拒绝：受限于跨域/沙箱策略或用户未授权';
+    } else if (e.name === 'NotSupportedError' || msgLower.includes('not supported') || msgLower.includes('not implement')) {
+        msg = t.err_not_supported || '不支持：您的浏览器或设备不支持该接口';
+    } else if (e.name === 'SecurityError') {
+        msg = t.err_security || '安全限制：当前上下文被禁止访问';
+    } else if (msgLower.includes('user gesture')) {
+        msg = t.err_user_gesture || '需用户真实点击操作';
+    }
+    setError(msg);
   };
 
   // Web Bluetooth
@@ -62,13 +94,13 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               }
           }
 
-          setDevices(prev => prev.find(d => d.id === device.id) ? prev : [...prev, {
+          setBtDevices(prev => prev.find(d => d.id === device.id) ? prev : [...prev, {
               id: device.id,
               name: device.name || 'Unnamed BT Device',
               raw: device
           }]);
       } catch (e: any) {
-          if (e.name !== 'NotFoundError') setError(e.message || 'Scan failed');
+          handleError(e, 'Scan failed');
       }
       setScanning(false);
   };
@@ -85,14 +117,14 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
       try {
           // @ts-ignore
           const device = await navigator.usb.requestDevice({ filters: [] });
-          setDevices(prev => prev.find(d => d.id === (device.serialNumber || `${device.vendorId}-${device.productId}`)) ? prev : [...prev, {
+          setUsbDevices(prev => prev.find(d => d.id === (device.serialNumber || `${device.vendorId}-${device.productId}`)) ? prev : [...prev, {
               id: device.serialNumber || `${device.vendorId}-${device.productId}`,
               name: device.productName || 'Unknown USB Device',
               details: `Vendor: ${device.vendorId}, Product: ${device.productId}`,
               raw: device
           }]);
       } catch (e: any) {
-          if (e.name !== 'NotFoundError') setError(e.message || 'USB request failed');
+          handleError(e, 'USB request failed');
       }
       setScanning(false);
   };
@@ -110,14 +142,14 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           // @ts-ignore
           const port = await navigator.serial.requestPort();
           const info = port.getInfo();
-          setDevices(prev => prev.find(d => d.id === `${info.usbVendorId}-${info.usbProductId}`) ? prev : [...prev, {
+          setSerialDevices(prev => prev.find(d => d.id === `${info.usbVendorId}-${info.usbProductId}`) ? prev : [...prev, {
               id: `${info.usbVendorId}-${info.usbProductId}`,
               name: 'Serial Port',
               details: `Vendor: ${info.usbVendorId}, Product: ${info.usbProductId}`,
               raw: port
           }]);
       } catch (e: any) {
-          if (e.name !== 'NotFoundError') setError(e.message || 'Serial port request failed');
+          handleError(e, 'Serial port request failed');
       }
       setScanning(false);
   };
@@ -146,7 +178,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           });
           
           if (credential) {
-              setDevices(prev => [...prev, {
+              setWebAuthnDevices(prev => [...prev, {
                   id: credential.id,
                   name: 'Registered Passkey (New)',
                   details: `Type: ${credential.type}`,
@@ -154,7 +186,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               }]);
           }
       } catch (e: any) {
-          setError(e.message || "Registration failed");
+          handleError(e, 'Registration failed');
       }
       setScanning(false);
   };
@@ -186,7 +218,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           const credential = await navigator.credentials.get(options);
           
           if (credential) {
-              setDevices(prev => [...prev, {
+              setWebAuthnDevices(prev => [...prev, {
                   id: credential.id + '-auth',
                   name: 'Authenticated Passkey',
                   details: `Type: ${credential.type}`,
@@ -194,7 +226,71 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               }]);
           }
       } catch (e: any) {
-          setError(e.message || "Authentication failed");
+          handleError(e, 'Authentication failed');
+      }
+      setScanning(false);
+  };
+
+  // Web NFC
+  const scanNfc = async () => {
+      if (!('NDEFReader' in window)) {
+          setError(t.nfc_not_supported || "Web NFC not supported");
+          return;
+      }
+      setScanning(true);
+      setError(null);
+      try {
+          // @ts-ignore
+          const ndef = new NDEFReader();
+          await ndef.scan();
+          // @ts-ignore
+          ndef.addEventListener("reading", ({ message, serialNumber }: any) => {
+              setNfcDevices(prev => {
+                  const existing = prev.find(d => d.id === serialNumber);
+                  const newRecs = message.records.length;
+                  if (existing) {
+                      return prev.map(d => d.id === serialNumber ? { ...d, details: `${newRecs} records read at ${new Date().toLocaleTimeString()}` } : d);
+                  }
+                  return [...prev, {
+                      id: serialNumber,
+                      name: `NFC Tag (${serialNumber || 'Unknown'})`,
+                      details: `Read ${newRecs} records`,
+                      raw: message
+                  }];
+              });
+              setScanning(false);
+          });
+          // @ts-ignore
+          ndef.addEventListener("error", (e: any) => {
+              handleError(e, "NFC scan error");
+              setScanning(false);
+          });
+      } catch(e: any) {
+          handleError(e, "NFC scan failed");
+          setScanning(false);
+      }
+  };
+
+  const writeNfc = async () => {
+      if (!('NDEFReader' in window)) {
+          setError(t.nfc_not_supported || "Web NFC not supported");
+          return;
+      }
+      setScanning(true);
+      setError(null);
+      try {
+          // @ts-ignore
+          const ndef = new NDEFReader();
+          await ndef.write("Hello from BrowserScope!");
+          
+          setNfcDevices(prev => [...prev, {
+                id: 'write-' + Date.now(),
+                name: `NFC Tag Written`,
+                details: `Successfully wrote test message`,
+                raw: null
+          }]);
+      } catch(e: any) {
+          handleError(e, "NFC write failed");
       }
       setScanning(false);
   };
@@ -222,6 +318,9 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
             <button onClick={() => handleTabChange('webauthn')} className={`flex-1 py-3 font-medium text-sm transition-colors flex items-center justify-center gap-2 ${activeTab === 'webauthn' ? 'text-purple-600 border-b-2 border-purple-600 bg-white dark:bg-slate-800' : 'text-slate-500 hover:text-slate-700'}`}>
                 <Key size={16} /> {t.tab_webauthn}
             </button>
+            <button onClick={() => handleTabChange('nfc')} className={`flex-1 py-3 font-medium text-sm transition-colors flex items-center justify-center gap-2 ${activeTab === 'nfc' ? 'text-rose-600 border-b-2 border-rose-600 bg-white dark:bg-slate-800' : 'text-slate-500 hover:text-slate-700'}`}>
+                <Nfc size={16} /> {t.tab_nfc || 'NFC'}
+            </button>
         </div>
 
         {/* Content */}
@@ -230,7 +329,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                 <div className="mb-6 mx-auto max-w-md p-4 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-xl flex items-start gap-3 text-sm border border-orange-100 dark:border-orange-900/50">
                     <AlertCircle size={20} className="shrink-0 mt-0.5" />
                     <div>
-                        (Sandbox) WebAuthn may be blocked in embedded environments. Open the app in a new tab if it fails. / iframe 嵌入环境可能会屏蔽通行密钥功能，若失败请在新标签页中打开本页面重试。
+                        {t.msg_sandbox_webauthn || "(Sandbox) WebAuthn may be blocked in embedded environments. Open the app in a new tab if it fails."}
                     </div>
                 </div>
             )}
@@ -247,7 +346,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                 </div>
             )}
 
-            <div className={`flex justify-center mb-6 ${activeTab === 'webauthn' ? 'gap-4 max-w-md mx-auto w-full flex-col sm:flex-row' : ''}`}>
+            <div className={`flex justify-center mb-6 ${activeTab === 'webauthn' || activeTab === 'nfc' ? 'gap-4 max-w-md mx-auto w-full flex-col sm:flex-row' : ''}`}>
                 {activeTab === 'webauthn' ? (
                     <>
                         <button 
@@ -265,6 +364,25 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                         >
                             {scanning ? <Radio className="animate-pulse" /> : <Key />}
                             {t.btn_req_webauthn_auth}
+                        </button>
+                    </>
+                ) : activeTab === 'nfc' ? (
+                    <>
+                        <button 
+                            onClick={scanNfc}
+                            disabled={scanning}
+                            className="flex-1 px-6 py-3 bg-rose-600 hover:bg-rose-700 shadow-lg shadow-rose-200 dark:shadow-rose-900/30 text-white rounded-xl transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            {scanning ? <Radio className="animate-pulse" /> : <Search />}
+                            {t.btn_req_nfc_scan || 'Scan NFC'}
+                        </button>
+                        <button 
+                            onClick={writeNfc}
+                            disabled={scanning}
+                            className="flex-1 px-6 py-3 bg-pink-600 hover:bg-pink-700 shadow-lg shadow-pink-200 dark:shadow-pink-900/30 text-white rounded-xl transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            {scanning ? <Radio className="animate-pulse" /> : <Nfc />}
+                            {t.btn_req_nfc_write || 'Write NFC'}
                         </button>
                     </>
                 ) : (
@@ -299,14 +417,14 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                     {t.auth_devices}
                 </div>
                 <div className="flex-1 overflow-y-auto p-2">
-                    {devices.length === 0 ? (
+                    {currentDevices.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-slate-400 text-sm gap-2">
                             <ShieldAlert size={32} className="opacity-20" />
                             {t.auth_required}
                         </div>
                     ) : (
                         <div className="space-y-2">
-                            {devices.map((dev, idx) => (
+                            {currentDevices.map((dev, idx) => (
                                 <div 
                                     key={dev.id || idx} 
                                     className={`p-3 rounded-lg flex items-center justify-between border transition-all ${activeTab === 'webauthn' && dev.raw?.rawId ? 'hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-purple-200 dark:border-purple-800' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 border-slate-100 dark:border-slate-700'}`}
@@ -321,12 +439,14 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                                             activeTab === 'usb' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500' :
                                             activeTab === 'bluetooth' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-500' :
                                             activeTab === 'webauthn' ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-500' :
+                                            activeTab === 'nfc' ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-500' :
                                             'bg-amber-50 dark:bg-amber-900/20 text-amber-500'
                                         }`}>
                                             {activeTab === 'usb' && <Usb size={16} />}
                                             {activeTab === 'bluetooth' && <Bluetooth size={16} />}
                                             {activeTab === 'serial' && <Settings2 size={16} />}
                                             {activeTab === 'webauthn' && <Key size={16} />}
+                                            {activeTab === 'nfc' && <Nfc size={16} />}
                                         </div>
                                         <div>
                                             <div className="font-bold text-slate-700 dark:text-slate-200 text-sm">{dev.name}</div>

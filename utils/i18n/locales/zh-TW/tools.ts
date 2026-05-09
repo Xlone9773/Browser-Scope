@@ -150,6 +150,18 @@ export const tools = {
     bt_not_supported: "目前瀏覽器不支援 Web Bluetooth API"
   },
   webDevice: {
+
+    tab_nfc: "NFC (WebNFC)",
+    nfc_not_supported: "目前瀏覽器或裝置不支援 Web NFC API",
+    btn_req_nfc_scan: "掃描 NFC 標籤",
+    btn_req_nfc_write: "寫入 NFC 標籤",
+    err_not_found: "未發現裝置或用戶取消",
+    err_not_allowed: "被拒絕：受限於跨域/沙箱策略或用戶未授權",
+    err_not_supported: "不支援：您的瀏覽器或裝置不支援該介面",
+    err_security: "安全限制：當前上下文被禁止訪問",
+    err_user_gesture: "需用戶真實點擊操作",
+    err_default: "操作失敗",
+    msg_sandbox_webauthn: "iframe 嵌入環境可能會屏蔽此功能，若失敗請在新標籤頁中打開本頁面重試。",
     tab_webauthn: "通行密鑰",
     btn_req_webauthn_reg: "註冊通行密鑰",
     btn_req_webauthn_auth: "驗證通行密鑰",
@@ -169,6 +181,10 @@ export const tools = {
     serial_not_supported: "目前瀏覽器不支援 WebSerial API"
   },
   hardwareToolsModal: {
+
+    tab_drm: "數位版權 (DRM)",
+    drm_title: "DRM 及 EME 檢測",
+    btn_test_drm: "運行 DRM 測試",
     title: "硬體互動工具",
     tab_vibrate: "振動",
     tab_touch: "觸控",

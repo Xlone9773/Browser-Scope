@@ -150,6 +150,18 @@ export const tools = {
     bt_not_supported: "Текущий браузер не поддерживает Web Bluetooth API"
   },
   webDevice: {
+
+    tab_nfc: "Web NFC",
+    nfc_not_supported: "Ваш браузер/устройство не поддерживает Web NFC",
+    btn_req_nfc_scan: "Сканировать NFC",
+    btn_req_nfc_write: "Записать метку NFC",
+    err_not_found: "Устройство не найдено или отменено пользователем",
+    err_not_allowed: "Отклонено песочницей/политикой или пользователем",
+    err_not_supported: "Не поддерживается браузером или оборудованием",
+    err_security: "Ошибка безопасности - контекст ограничен",
+    err_user_gesture: "Требуется действие пользователя",
+    err_default: "Действие не удалось",
+    msg_sandbox_webauthn: "В iframe окружении функция может быть заблокирована. Если не работает, откройте в новой вкладке.",
     tab_webauthn: "WebAuthn",
     btn_req_webauthn_reg: "Регистрация Passkey",
     btn_req_webauthn_auth: "Аутентификация Passkey",
@@ -169,6 +181,10 @@ export const tools = {
     serial_not_supported: "WebSerial API не поддерживается"
   },
   hardwareToolsModal: {
+
+    tab_drm: "DRM",
+    drm_title: "Возможности DRM (EME)",
+    btn_test_drm: "Тест DRM",
     title: "Аппаратные инструменты",
     tab_vibrate: "Вибрация",
     tab_touch: "Мультитач",

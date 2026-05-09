@@ -145,6 +145,10 @@ export const modules = {
   },
 
   hardwareToolsModal: {
+
+    tab_drm: "DRM",
+    drm_title: "Возможности DRM (EME)",
+    btn_test_drm: "Тест DRM",
     title: "Аппаратные инструменты",
     tab_vibrate: "Вибрация",
     tab_touch: "Мультитач",

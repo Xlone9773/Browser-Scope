@@ -145,6 +145,10 @@ export const modules = {
   },
 
   hardwareToolsModal: {
+
+    tab_drm: "數位版權 (DRM)",
+    drm_title: "DRM 及 EME 檢測",
+    btn_test_drm: "運行 DRM 測試",
     title: "硬體互動工具",
     tab_vibrate: "振動",
     tab_touch: "觸控",

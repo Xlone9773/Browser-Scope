@@ -176,6 +176,10 @@ export const modules = {
   },
 
   hardwareToolsModal: {
+
+    tab_drm: "数字版权 (DRM)",
+    drm_title: "DRM 及 EME 检测",
+    btn_test_drm: "运行 DRM 测试",
     title: "硬件交互工具",
     tab_vibrate: "振动",
     tab_touch: "触控",

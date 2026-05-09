@@ -150,6 +150,18 @@ export const tools = {
     bt_not_supported: "現在のブラウザはWeb Bluetooth APIをサポートしていません"
   },
   webDevice: {
+
+    tab_nfc: "Web NFC",
+    nfc_not_supported: "このブラウザ/デバイスはWeb NFCをサポートしていません",
+    btn_req_nfc_scan: "NFCスキャンを開始",
+    btn_req_nfc_write: "NFCタグに書き込む",
+    err_not_found: "デバイスが見つからないか、キャンセルされました",
+    err_not_allowed: "サンドボックス/ポリシー、またはユーザーによって拒否されました",
+    err_not_supported: "ブラウザまたはハードウェアでサポートされていません",
+    err_security: "セキュリティエラー - コンテキストが制限されています",
+    err_user_gesture: "ジェスチャーが必要です",
+    err_default: "操作が失敗しました",
+    msg_sandbox_webauthn: "iframe環境ではブロックされる可能性があります。失敗した場合は新しいタブで開いてください。",
     tab_webauthn: "WebAuthn",
     btn_req_webauthn_reg: "パスキーを登録",
     btn_req_webauthn_auth: "パスキーを認証",
@@ -169,6 +181,10 @@ export const tools = {
     serial_not_supported: "WebSerial APIはサポートされていません"
   },
   hardwareToolsModal: {
+
+    tab_drm: "DRM",
+    drm_title: "DRM と EME の検出",
+    btn_test_drm: "DRMテストを実行する",
     title: "ハードウェア対話ツール",
     tab_vibrate: "振動",
     tab_touch: "タッチ",

@@ -151,6 +151,18 @@ export const tools = {
     bt_not_supported: "Web Bluetooth API not supported"
   },
   webDevice: {
+
+    tab_nfc: "Web NFC",
+    nfc_not_supported: "Web NFC is not supported on this browser/device",
+    btn_req_nfc_scan: "Start NFC Scan",
+    btn_req_nfc_write: "Write to NFC Tag",
+    err_not_found: "No device found or user cancelled",
+    err_not_allowed: "Denied by sandbox/policy or user",
+    err_not_supported: "Not supported by browser or hardware",
+    err_security: "Security Error - context restricted",
+    err_user_gesture: "Requires user gesture",
+    err_default: "Action failed",
+    msg_sandbox_webauthn: "(Sandbox) Feature may be blocked in embedded environments. Open the app in a new tab if it fails.",
     tab_webauthn: "WebAuthn",
     btn_req_webauthn_reg: "Register Passkey",
     btn_req_webauthn_auth: "Authenticate Passkey",
@@ -170,6 +182,10 @@ export const tools = {
     serial_not_supported: "WebSerial API not supported in this browser"
   },
   hardwareToolsModal: {
+
+    tab_drm: "DRM",
+    drm_title: "DRM Capabilities (EME)",
+    btn_test_drm: "Run DRM Test",
     title: "Hardware Tools",
     tab_vibrate: "Vibration",
     tab_touch: "Multi-Touch",
