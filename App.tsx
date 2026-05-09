@@ -673,7 +673,7 @@ const App: React.FC = () => {
         {data && (
             <ErrorBoundary name="MainContent">
                 <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
-                    <div key={animationStyle} className={`space-y-6 ${animationStyle === 'slide-up' ? 'anim-slide-up' : animationStyle === 'fade' ? 'anim-fade' : animationStyle === 'fly-in' ? 'anim-fly-in' : animationStyle === 'zoom' ? 'anim-zoom' : ''}`}>
+                    <div className={`space-y-6 ${animationStyle === 'slide-up' ? 'anim-slide-up' : animationStyle === 'fade' ? 'anim-fade' : animationStyle === 'fly-in' ? 'anim-fly-in' : animationStyle === 'zoom' ? 'anim-zoom' : ''}`}>
                     
                     {/* Group 0: Environment & Trust */}
                     {!hiddenCards.includes('environment') && (
