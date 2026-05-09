@@ -150,6 +150,10 @@ export const tools = {
     bt_not_supported: "目前瀏覽器不支援 Web Bluetooth API"
   },
   webDevice: {
+    tab_webauthn: "通行密鑰",
+    btn_req_webauthn_reg: "註冊通行密鑰",
+    btn_req_webauthn_auth: "驗證通行密鑰",
+    regex_placeholder: "正規過濾 (如: ^MI.*)",
     title: "Web 通用裝置",
     tab_usb: "WebUSB",
     tab_bluetooth: "藍牙(WebBluetooth)",

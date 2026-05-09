@@ -150,6 +150,10 @@ export const tools = {
     bt_not_supported: "現在のブラウザはWeb Bluetooth APIをサポートしていません"
   },
   webDevice: {
+    tab_webauthn: "WebAuthn",
+    btn_req_webauthn_reg: "パスキーを登録",
+    btn_req_webauthn_auth: "パスキーを認証",
+    regex_placeholder: "正規表現 (例: ^MI.*)",
     title: "Web デバイス",
     tab_usb: "WebUSB",
     tab_bluetooth: "WebBluetooth",

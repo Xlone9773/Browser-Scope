@@ -151,6 +151,10 @@ export const tools = {
     bt_not_supported: "Web Bluetooth API not supported"
   },
   webDevice: {
+    tab_webauthn: "WebAuthn",
+    btn_req_webauthn_reg: "Register Passkey",
+    btn_req_webauthn_auth: "Authenticate Passkey",
+    regex_placeholder: "Regex Filter (e.g. ^MI.*)",
     title: "Web Devices",
     tab_usb: "WebUSB",
     tab_bluetooth: "WebBluetooth",
