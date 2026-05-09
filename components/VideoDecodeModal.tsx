@@ -191,6 +191,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
 
     const filteredVideo = getFilteredResults(videoResults);
     const filteredAudio = getFilteredResults(audioResults);
+    const filteredDrm = showSupportedOnly ? drmResults.filter(Sys => Sys.supported) : drmResults;
 
     return (
         <Modal
@@ -236,14 +237,14 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar pb-4">
                     
                     {/* DRM Section */}
-                    {drmResults.length > 0 && (
+                    {filteredDrm.length > 0 && (
                         <div className="mb-8 p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
                              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                                 <ShieldCheck size={14} />
                                 {t.drm_title || "DRM Capabilities"}
                             </h3>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                {drmResults.map((sys, idx) => (
+                                {filteredDrm.map((sys, idx) => (
                                     <div key={idx} className={`p-3 rounded-lg border flex items-center gap-3 ${sys.supported ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800/50' : 'border-slate-100 bg-slate-50 text-slate-400 dark:bg-slate-800/50 dark:border-slate-700'}`}>
                                         {sys.supported ? <ShieldCheck size={18} className="text-emerald-500" /> : <ShieldAlert size={18} className="opacity-50" />}
                                         <div>

@@ -223,26 +223,36 @@
       }
       
       /* 2. Force Opaque Backgrounds in Light Mode */
-      body.no-blur .bg-white\/50,
-      body.no-blur .bg-white\/60,
-      body.no-blur .bg-white\/75,
-      body.no-blur .bg-white\/80,
-      body.no-blur .bg-white\/90,
-      body.no-blur .bg-white\/95 {
+      html:not(.dark) body.no-blur .bg-white\/50,
+      html:not(.dark) body.no-blur .bg-white\/60,
+      html:not(.dark) body.no-blur .bg-white\/75,
+      html:not(.dark) body.no-blur .bg-white\/80,
+      html:not(.dark) body.no-blur .bg-white\/90,
+      html:not(.dark) body.no-blur .bg-white\/95 {
           background-color: #ffffff !important;
           border-color: #e2e8f0 !important; /* slate-200 */
       }
 
       /* 3. Force Opaque Backgrounds in Dark Mode */
-      .dark body.no-blur .bg-slate-900\/50,
-      .dark body.no-blur .bg-slate-900\/60,
-      .dark body.no-blur .bg-slate-900\/75,
-      .dark body.no-blur .bg-slate-900\/80,
-      .dark body.no-blur .bg-slate-900\/90,
-      .dark body.no-blur .bg-slate-900\/95,
-      .dark body.no-blur .bg-black\/40,
-      .dark body.no-blur .bg-black\/50,
-      .dark body.no-blur .bg-black\/60 {
+      html.dark body.no-blur .bg-slate-800\/50,
+      html.dark body.no-blur .bg-slate-800\/60,
+      html.dark body.no-blur .bg-slate-800\/70,
+      html.dark body.no-blur .bg-slate-800\/80,
+      html.dark body.no-blur .bg-slate-800\/90,
+      html.dark body.no-blur .bg-slate-800\/95 {
+          background-color: #1e293b !important; /* slate-800 */
+          border-color: #334155 !important; /* slate-700 */
+      }
+      
+      html.dark body.no-blur .bg-slate-900\/50,
+      html.dark body.no-blur .bg-slate-900\/60,
+      html.dark body.no-blur .bg-slate-900\/75,
+      html.dark body.no-blur .bg-slate-900\/80,
+      html.dark body.no-blur .bg-slate-900\/90,
+      html.dark body.no-blur .bg-slate-900\/95,
+      html.dark body.no-blur .bg-black\/40,
+      html.dark body.no-blur .bg-black\/50,
+      html.dark body.no-blur .bg-black\/60 {
           background-color: #0f172a !important; /* slate-900 */
           border-color: #334155 !important; /* slate-700 */
       }
