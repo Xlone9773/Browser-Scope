@@ -35,7 +35,11 @@ export const Modal: React.FC<ModalProps> = ({
         setIsVisible(true);
     });
     
-    // Lock body scroll
+    // Lock body scroll and compensate for scrollbar to avoid CLS
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
     document.body.style.overflow = 'hidden';
     
     // Focus management
@@ -46,6 +50,7 @@ export const Modal: React.FC<ModalProps> = ({
     return () => {
         cancelAnimationFrame(timer);
         document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
     };
   }, []);
 

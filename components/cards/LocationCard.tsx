@@ -90,12 +90,6 @@ export const LocationCard: React.FC<LocationCardProps> = ({
     return () => clearInterval(timer);
   }, []);
 
-  const openMap = () => {
-      if (geoData) {
-          window.open(`https://www.google.com/maps/search/?api=1&query=${geoData.latitude},${geoData.longitude}`, '_blank');
-      }
-  };
-
   // Try to extract Region from locale (e.g., "en-US" -> "US")
   let regionName = '';
   if (data.locale && data.locale.includes('-')) {
@@ -184,9 +178,15 @@ export const LocationCard: React.FC<LocationCardProps> = ({
                             <span className="font-mono text-xs font-medium text-slate-700 dark:text-slate-300">±{geoData.accuracy.toFixed(1)} meters</span>
                         </div>
                     </div>
-                    <Button onClick={openMap} variant="secondary" size="xs" fullWidth leftIcon={<ExternalLink size={12} />}>
+                    <a 
+                        href={`https://www.google.com/maps/search/?api=1&query=${geoData.latitude},${geoData.longitude}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex w-full items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-95 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:ring-slate-500 shadow-sm px-2.5 py-1.5 text-xs gap-1.5"
+                    >
+                        <ExternalLink size={12} />
                         {t.actions.open_map}
-                    </Button>
+                    </a>
                 </div>
             ) : permStatus === 'denied' ? (
                 <div className="text-xs text-red-500 dark:text-red-400 px-2">

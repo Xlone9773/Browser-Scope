@@ -60,6 +60,7 @@ const App: React.FC = () => {
   const [theme, setTheme] = useState<Theme>('system');
   const [themeColor, setThemeColor] = useState<string>(() => localStorage.getItem('themeColor') || 'indigo');
   const [animationStyle, setAnimationStyle] = useState<string>(() => localStorage.getItem('animationStyle') || 'slide-up');
+  const [initialAnimationStyle] = useState<string>(() => localStorage.getItem('animationStyle') || 'slide-up');
   const [simpleMode, setSimpleMode] = useState<boolean>(() => localStorage.getItem('simpleMode') === 'true');
   const [hideScrollbar, setHideScrollbar] = useState<boolean>(() => localStorage.getItem('hideScrollbar') === 'true');
   const [globalHideScrollbar, setGlobalHideScrollbar] = useState<boolean>(() => localStorage.getItem('globalHideScrollbar') === 'true');
@@ -673,7 +674,7 @@ const App: React.FC = () => {
         {data && (
             <ErrorBoundary name="MainContent">
                 <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
-                    <div className={`space-y-6 ${animationStyle === 'slide-up' ? 'anim-slide-up' : animationStyle === 'fade' ? 'anim-fade' : animationStyle === 'fly-in' ? 'anim-fly-in' : animationStyle === 'zoom' ? 'anim-zoom' : ''}`}>
+                    <div className={`space-y-6 ${initialAnimationStyle === 'slide-up' ? 'anim-slide-up' : initialAnimationStyle === 'fade' ? 'anim-fade' : initialAnimationStyle === 'fly-in' ? 'anim-fly-in' : initialAnimationStyle === 'zoom' ? 'anim-zoom' : ''}`}>
                     
                     {/* Group 0: Environment & Trust */}
                     {!hiddenCards.includes('environment') && (
