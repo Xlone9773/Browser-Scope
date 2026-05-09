@@ -159,7 +159,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
       setScanning(false);
   };
 
-  const testWebAuthnAuth = async () => {
+  const testWebAuthnAuth = async (allowedId?: ArrayBuffer) => {
       try {
           if (!window.PublicKeyCredential) throw new Error("WebAuthn not supported in this browser.");
           setScanning(true);
@@ -167,18 +167,27 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           const challenge = new Uint8Array(32);
           window.crypto.getRandomValues(challenge);
           
-          const credential = await navigator.credentials.get({
+          const options: any = {
               publicKey: {
                   challenge,
                   rpId: window.location.hostname,
                   userVerification: "preferred",
                   timeout: 60000
               }
-          });
+          };
+
+          if (allowedId) {
+              options.publicKey.allowCredentials = [{
+                  id: allowedId,
+                  type: "public-key"
+              }];
+          }
+          
+          const credential = await navigator.credentials.get(options);
           
           if (credential) {
               setDevices(prev => [...prev, {
-                  id: credential.id,
+                  id: credential.id + '-auth',
                   name: 'Authenticated Passkey',
                   details: `Type: ${credential.type}`,
                   raw: credential
@@ -217,6 +226,15 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
 
         {/* Content */}
         <div className="flex-1 p-6 bg-slate-50 dark:bg-slate-900 overflow-y-auto flex flex-col h-full">
+            {activeTab === 'webauthn' && window.self !== window.top && (
+                <div className="mb-6 mx-auto max-w-md p-4 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-xl flex items-start gap-3 text-sm border border-orange-100 dark:border-orange-900/50">
+                    <AlertCircle size={20} className="shrink-0 mt-0.5" />
+                    <div>
+                        (Sandbox) WebAuthn may be blocked in embedded environments. Open the app in a new tab if it fails. / iframe 嵌入环境可能会屏蔽通行密钥功能，若失败请在新标签页中打开本页面重试。
+                    </div>
+                </div>
+            )}
+
             {activeTab === 'bluetooth' && (
                 <div className="max-w-md mx-auto w-full mb-6">
                     <input 
@@ -241,7 +259,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                             {t.btn_req_webauthn_reg}
                         </button>
                         <button 
-                            onClick={testWebAuthnAuth}
+                            onClick={() => testWebAuthnAuth()}
                             disabled={scanning}
                             className="flex-1 px-6 py-3 bg-fuchsia-600 hover:bg-fuchsia-700 shadow-lg shadow-fuchsia-200 dark:shadow-fuchsia-900/30 text-white rounded-xl transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed"
                         >
@@ -289,7 +307,15 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                     ) : (
                         <div className="space-y-2">
                             {devices.map((dev, idx) => (
-                                <div key={dev.id || idx} className="p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg flex items-center justify-between border border-slate-100 dark:border-slate-700 transition-all">
+                                <div 
+                                    key={dev.id || idx} 
+                                    className={`p-3 rounded-lg flex items-center justify-between border transition-all ${activeTab === 'webauthn' && dev.raw?.rawId ? 'hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-purple-200 dark:border-purple-800' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 border-slate-100 dark:border-slate-700'}`}
+                                    onClick={() => {
+                                        if (activeTab === 'webauthn' && dev.raw?.rawId && dev.name === 'Registered Passkey (New)') {
+                                            testWebAuthnAuth(dev.raw.rawId);
+                                        }
+                                    }}
+                                >
                                     <div className="flex items-center gap-3">
                                         <div className={`p-2 rounded-full ${
                                             activeTab === 'usb' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500' :
