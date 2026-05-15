@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, Activity, Eye, Play, Trash2, Copy, Check, Maximize2, TriangleAlert, Zap, Edit3, Globe, Database, Smartphone, Shield, X, Download, Skull, Command, ChevronRight, Bug } from 'lucide-react';
+import { Terminal, Activity, Eye, Play, Trash2, Copy, Check, Maximize2, TriangleAlert, Zap, Edit3, Globe, Database, Smartphone, Shield, X, Download, Skull, Command, ChevronRight, Bug, Settings as SettingsIcon } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
+import { loggerStore, useLoggerStore, ConsoleEntry } from '../../utils/loggerStore';
 
 interface DeveloperTabProps {
     t: Translation['settings']['developer'];
@@ -11,13 +12,6 @@ interface DeveloperTabProps {
 }
 
 type SubTab = 'events' | 'inspector' | 'console';
-
-interface ConsoleEntry {
-    id: string;
-    type: 'input' | 'output' | 'error';
-    content: string;
-    timestamp: number;
-}
 
 interface PresetCommand {
     label: string;
@@ -44,14 +38,12 @@ const PRESET_COMMANDS: PresetCommand[] = [
 
 export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggleFloat }) => {
     const [subTab, setSubTab] = useState<SubTab>('events');
-    const [logs, setLogs] = useState<string[]>([]);
-    
-    // Console History State
-    const [consoleHistory, setConsoleHistory] = useState<ConsoleEntry[]>([]);
+    const { logs, consoleHistory, isLoggingEnabled, isVConsoleEnabled } = useLoggerStore();
     
     const [inputCmd, setInputCmd] = useState('');
     const [inspectorObj, setInspectorObj] = useState('navigator');
     const [showPresets, setShowPresets] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
     
     const logsEndRef = useRef<HTMLDivElement>(null);
     const consoleEndRef = useRef<HTMLDivElement>(null);
@@ -98,60 +90,12 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
         setIsOverlayFading(false);
     };
 
-    const loadVConsole = async () => {
-        interface VConsoleWindow extends Window {
-            vConsole?: any;
-        }
-        const win = window as unknown as VConsoleWindow;
-        if (win.vConsole) {
-            try { win.vConsole.show(); } catch (e) { /* ignore */ }
-            return;
-        }
-        try {
-            // Workaround for environments where window.fetch has only a getter on the prototype
-            if (!Object.getOwnPropertyDescriptor(window, 'fetch')) {
-                const originalFetch = window.fetch;
-                Object.defineProperty(window, 'fetch', {
-                    configurable: true,
-                    enumerable: true,
-                    writable: true,
-                    value: originalFetch
-                });
-            } else {
-                const fetchDesc = Object.getOwnPropertyDescriptor(window, 'fetch');
-                if (fetchDesc && !fetchDesc.set && fetchDesc.configurable) {
-                    const originalFetch = window.fetch;
-                    Object.defineProperty(window, 'fetch', {
-                        configurable: true,
-                        enumerable: fetchDesc.enumerable,
-                        writable: true,
-                        value: originalFetch
-                    });
-                }
-            }
+    const toggleVConsole = () => {
+        loggerStore.setVConsoleEnabled(!isVConsoleEnabled);
+    };
 
-            const VConsole = (await import('vconsole')).default;
-            const isDark = document.documentElement.classList.contains('dark');
-            win.vConsole = new (VConsole as any)({ theme: isDark ? 'dark' : 'light' });
-            
-            // Sync vConsole theme with app theme using a MutationObserver
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.attributeName === 'class') {
-                        const isCurrentlyDark = document.documentElement.classList.contains('dark');
-                        if (win.vConsole && typeof win.vConsole.setOption === 'function') {
-                            win.vConsole.setOption('theme', isCurrentlyDark ? 'dark' : 'light');
-                        }
-                    }
-                });
-            });
-            observer.observe(document.documentElement, { attributes: true });
-
-            addToConsole('output', 'vConsole mounted. Theme synced with app.');
-        } catch (e: unknown) {
-            const errName = e instanceof Error ? e.message : String(e);
-            addToConsole('error', 'Failed to load vConsole: ' + errName);
-        }
+    const toggleLogging = () => {
+        loggerStore.setLoggingEnabled(!isLoggingEnabled);
     };
 
     // Auto-scroll console
@@ -160,45 +104,6 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
             consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
     }, [consoleHistory, subTab]);
-
-    // Event Monitor Logic
-    useEffect(() => {
-        if (!hasAcceptedRisk) return;
-
-        const addLog = (type: string, detail: string) => {
-            const time = new Date().toLocaleTimeString('en-US', { 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit', 
-                fractionalSecondDigits: 3 
-            } as any);
-            setLogs(prev => [`[${time}] ${type}: ${detail}`, ...prev].slice(0, 100));
-        };
-
-        const handleResize = () => addLog('resize', `${window.innerWidth}x${window.innerHeight}`);
-        const handleVisibility = () => addLog('visibilitychange', document.visibilityState);
-        const handleOnline = () => addLog('network', 'online');
-        const handleOffline = () => addLog('network', 'offline');
-        const handleFocus = () => addLog('window', 'focus');
-        const handleBlur = () => addLog('window', 'blur');
-        
-        window.addEventListener('resize', handleResize);
-        document.addEventListener('visibilitychange', handleVisibility);
-        window.addEventListener('online', handleOnline);
-        window.addEventListener('offline', handleOffline);
-        window.addEventListener('focus', handleFocus);
-        window.addEventListener('blur', handleBlur);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            document.removeEventListener('visibilitychange', handleVisibility);
-            window.removeEventListener('online', handleOnline);
-            window.removeEventListener('offline', handleOffline);
-            window.removeEventListener('focus', handleFocus);
-            window.removeEventListener('blur', handleBlur);
-        };
-    }, [hasAcceptedRisk]); 
 
     // Inspector Logic: Safe object extraction
     const getInspectData = (key: string) => {
@@ -230,15 +135,6 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     };
 
     // Console Logic
-    const addToConsole = (type: ConsoleEntry['type'], content: string) => {
-        setConsoleHistory(prev => [...prev, {
-            id: Math.random().toString(36).substr(2, 9),
-            type,
-            content,
-            timestamp: Date.now()
-        }]);
-    };
-
     const runConsole = (cmdOverride?: string) => {
         const cmdToRun = cmdOverride || inputCmd;
         if (!cmdToRun.trim()) return;
@@ -250,7 +146,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
         }
 
         // Add input to history
-        addToConsole('input', cmdToRun);
+        loggerStore.addConsole('input', cmdToRun);
 
         try {
             // eslint-disable-next-line no-eval
@@ -263,9 +159,9 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                 }
             }
             if (output === undefined) output = 'undefined';
-            addToConsole('output', output);
+            loggerStore.addConsole('output', output);
         } catch (e: any) {
-            addToConsole('error', e.message || String(e));
+            loggerStore.addConsole('error', e.message || String(e));
         }
     };
 
@@ -353,7 +249,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                                 {copied ? <Check size={10} /> : <Copy size={10} />}
                                 {t.events.copy}
                             </button>
-                            <button onClick={() => setLogs([])} className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-[10px] flex items-center gap-1">
+                            <button onClick={() => loggerStore.clearLogs()} className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-[10px] flex items-center gap-1">
                                 <Trash2 size={10} />
                                 {t.events.clear}
                             </button>
@@ -437,7 +333,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                             <Download size={12} />
                         </button>
                         <button 
-                            onClick={() => setConsoleHistory([])} 
+                            onClick={() => loggerStore.clearConsole()} 
                             className="p-1.5 bg-slate-800/80 text-slate-400 hover:text-red-400 hover:bg-slate-700 border border-slate-700 rounded backdrop-blur-sm transition-colors"
                             title={t.console.clear}
                         >
@@ -609,14 +505,45 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     if (isFloating) {
         return (
             <div className="relative h-full flex flex-col">
-                <div className="flex p-1 bg-slate-800 border-b border-slate-700 shrink-0 gap-1 items-center">
+                <div className="flex p-1 bg-slate-800 border-b border-slate-700 shrink-0 gap-1 items-center relative">
                     <button onClick={() => setSubTab('events')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'events' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.nav.events}</button>
                     <button onClick={() => setSubTab('inspector')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'inspector' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.nav.inspector}</button>
                     <button onClick={() => setSubTab('console')} className={`flex-1 py-1.5 text-xs font-medium rounded ${subTab === 'console' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}>{t.nav.console}</button>
                     <div className="w-px bg-slate-700 mx-1 self-center h-4"></div>
-                    <button onClick={loadVConsole} className="p-1.5 text-slate-400 hover:text-white rounded hover:bg-slate-700" title={'Load vConsole'}>
+                    
+                    <button onClick={() => setShowSettings(!showSettings)} className="p-1.5 text-slate-400 hover:text-white rounded hover:bg-slate-700 transition" title="Settings">
+                        <SettingsIcon size={14} />
+                    </button>
+                    <button onClick={toggleVConsole} className={`p-1.5 rounded transition ${isVConsoleEnabled ? 'text-indigo-400 bg-indigo-900/30' : 'text-slate-400 hover:text-white hover:bg-slate-700'}`} title="Toggle vConsole">
                         <Bug size={14} />
                     </button>
+
+                    {showSettings && (
+                        <div className="absolute top-full right-2 mt-1 w-48 bg-slate-800 border border-slate-700 rounded shadow-xl z-50 overflow-hidden text-sm animate-in slide-in-from-top-2">
+                            <div className="p-3 border-b border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition" onClick={toggleLogging}>
+                                <div className="flex flex-col gap-1 cursor-pointer">
+                                    <div className="flex items-center justify-between text-slate-200">
+                                        <span>Record Events</span>
+                                        <div className={`w-8 h-4 rounded-full relative transition-colors ${isLoggingEnabled ? 'bg-indigo-500' : 'bg-slate-600'}`}>
+                                            <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${isLoggingEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] text-slate-500">Auto-record window & network events</span>
+                                </div>
+                            </div>
+                            <div className="p-3 hover:bg-slate-700 transition" onClick={toggleVConsole}>
+                                <div className="flex flex-col gap-1 cursor-pointer">
+                                    <div className="flex items-center justify-between text-slate-200">
+                                        <span>vConsole Integration</span>
+                                        <div className={`w-8 h-4 rounded-full relative transition-colors ${isVConsoleEnabled ? 'bg-indigo-500' : 'bg-slate-600'}`}>
+                                            <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${isVConsoleEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] text-slate-500">Enable Tencent vConsole panel</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
                 {content}
                 {!hasAcceptedRisk && warningOverlay}
@@ -628,7 +555,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
     return (
         <div className="flex flex-col h-full space-y-4 relative">
             {/* Controls */}
-            <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg shrink-0">
+            <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg shrink-0 relative">
                 <Button 
                     onClick={() => setSubTab('events')}
                     variant={subTab === 'events' ? 'secondary' : 'ghost'}
@@ -657,11 +584,21 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                     {t.nav.console}
                 </Button>
                 <div className="w-px bg-slate-300 dark:bg-slate-600 mx-1 self-center h-4"></div>
+                
                 <Button 
-                    onClick={loadVConsole}
-                    variant="ghost"
+                    onClick={() => setShowSettings(!showSettings)}
+                    variant={showSettings ? 'soft' : 'ghost'}
                     size="xs"
-                    title={'Load vConsole'}
+                    title="Settings"
+                >
+                    <SettingsIcon size={14} />
+                </Button>
+
+                <Button 
+                    onClick={toggleVConsole}
+                    variant={isVConsoleEnabled ? 'soft' : 'ghost'}
+                    size="xs"
+                    title="Toggle vConsole"
                 >
                     <Bug size={14} />
                 </Button>
@@ -673,6 +610,33 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                 >
                     <Maximize2 size={14} />
                 </Button>
+
+                {showSettings && (
+                        <div className="absolute top-10 right-0 mt-1 w-48 bg-slate-800 border border-slate-700 rounded shadow-xl z-50 overflow-hidden text-sm animate-in slide-in-from-top-2 text-left">
+                            <div className="p-3 border-b border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition" onClick={toggleLogging}>
+                                <div className="flex flex-col gap-1 cursor-pointer">
+                                    <div className="flex items-center justify-between text-slate-200">
+                                        <span>Record Events</span>
+                                        <div className={`w-8 h-4 rounded-full relative transition-colors ${isLoggingEnabled ? 'bg-indigo-500' : 'bg-slate-600'}`}>
+                                            <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${isLoggingEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] text-slate-500">Auto-record window & network events</span>
+                                </div>
+                            </div>
+                            <div className="p-3 bg-slate-800 hover:bg-slate-700 transition" onClick={toggleVConsole}>
+                                <div className="flex flex-col gap-1 cursor-pointer">
+                                    <div className="flex items-center justify-between text-slate-200">
+                                        <span>vConsole Integration</span>
+                                        <div className={`w-8 h-4 rounded-full relative transition-colors ${isVConsoleEnabled ? 'bg-indigo-500' : 'bg-slate-600'}`}>
+                                            <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${isVConsoleEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] text-slate-500">Enable Tencent vConsole panel</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
             </div>
 
             {/* Docked Content Area */}

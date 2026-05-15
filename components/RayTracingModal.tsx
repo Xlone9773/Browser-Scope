@@ -246,7 +246,8 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       const TEXTURE_USAGE_COPY_DST = (window as any).GPUTextureUsage?.COPY_DST || 0x02;
       const TEXTURE_USAGE_RENDER_ATTACHMENT = (window as any).GPUTextureUsage?.RENDER_ATTACHMENT || 0x10;
 
-      const format = (navigator as any).gpu.getPreferredCanvasFormat();
+      // Force 'rgba8unorm' to match the storage texture and avoid bgra8unorm_storage requirement
+      const format = 'rgba8unorm';
       (context as any).configure({
         device,
         format,
@@ -256,7 +257,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
 
       const computeTexture = device.createTexture({
         size: [canvas.width, canvas.height, 1],
-        format: 'rgba8unorm',
+        format: format,
         usage: TEXTURE_USAGE_STORAGE | TEXTURE_USAGE_COPY_SRC
       });
       computeTextureRef.current = computeTexture;
@@ -389,9 +390,19 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
 
   useEffect(() => {
     isUnmountedRef.current = false;
-    initWebGPU();
+    let localIsUnmounted = false;
+    
+    const init = async () => {
+        await initWebGPU();
+        if (localIsUnmounted) {
+            stopLoop();
+        }
+    };
+    init();
+    
     return () => {
         isUnmountedRef.current = true;
+        localIsUnmounted = true;
         stopLoop();
     };
   }, []);

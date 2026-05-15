@@ -5,9 +5,31 @@ import { Translation } from '../utils/i18n/types';
 import { videoCodecs, videoResolutions, audioCodecs, audioConfigs } from '../data/codecs';
 import { Modal } from './ui/Modal';
 
-let cachedVideoResults: any[] | null = null;
-let cachedAudioResults: any[] | null = null;
-let cachedDrmResults: any[] | null = null;
+const CACHE_KEY = 'videoDecodeTestCache';
+
+const loadCache = () => {
+    try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+            const data = JSON.parse(cached);
+            if (data.video && data.audio && data.drm) {
+                return data;
+            }
+        }
+    } catch (e) {}
+    return null;
+};
+
+const saveCache = (video: any[], audio: any[], drm: any[]) => {
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ video, audio, drm }));
+    } catch (e) {}
+};
+
+let memCache = loadCache();
+let cachedVideoResults: any[] | null = memCache?.video || null;
+let cachedAudioResults: any[] | null = memCache?.audio || null;
+let cachedDrmResults: any[] | null = memCache?.drm || null;
 
 interface VideoDecodeModalProps {
     onClose: () => void;
@@ -170,6 +192,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
             cachedVideoResults = tempVideoResults;
             cachedAudioResults = tempAudioResults;
             cachedDrmResults = tempDrmResults;
+            saveCache(tempVideoResults, tempAudioResults, tempDrmResults);
             setIsTesting(false);
         };
 

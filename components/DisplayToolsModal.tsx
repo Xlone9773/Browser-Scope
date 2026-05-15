@@ -40,7 +40,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
             onClose={onClose} 
             title={t.settings.nav.display || "Display & Screen Tools"} 
             icon={<Monitor size={24} className="text-indigo-500" />}
-            size="3xl"
+            size="5xl"
             fullHeight
         >
             <div className="max-w-4xl mx-auto space-y-8">
