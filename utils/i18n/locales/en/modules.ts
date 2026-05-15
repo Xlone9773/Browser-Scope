@@ -366,6 +366,7 @@ export const modules = {
     video_efficient: "Power Efficient (Hardware)",
     video_smooth: "Smooth Playback",
     filter_supported: "Show Supported Only",
+    action_retest: "Retest",
     video_title: "Video & Audio Decoding Matrix",
     status_api_error: "API Error",
     status_api_na: "API N/A",

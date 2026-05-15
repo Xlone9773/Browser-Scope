@@ -215,6 +215,7 @@ export const modules = {
     video_efficient: "高效能 (硬件加速)",
     video_smooth: "流畅播放",
     filter_supported: "仅显示支持项",
+    action_retest: "重新测试",
     video_title: "音视频解码能力矩阵",
     status_api_error: "API 错误",
     status_api_na: "API 不可用",

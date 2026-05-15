@@ -1,9 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { Film, Battery, Zap, Check, X, MonitorPlay, Filter, Music, Speaker, Tv, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { Film, Battery, Zap, Check, X, MonitorPlay, Filter, Music, Speaker, Tv, ShieldCheck, ShieldAlert, RotateCcw } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { videoCodecs, videoResolutions, audioCodecs, audioConfigs } from '../data/codecs';
 import { Modal } from './ui/Modal';
+
+let cachedVideoResults: any[] | null = null;
+let cachedAudioResults: any[] | null = null;
+let cachedDrmResults: any[] | null = null;
 
 interface VideoDecodeModalProps {
     onClose: () => void;
@@ -15,20 +19,20 @@ interface VideoDecodeModalProps {
 }
 
 export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, values, labels }) => {
-    const [videoResults, setVideoResults] = useState<any[]>([]);
-    const [audioResults, setAudioResults] = useState<any[]>([]);
-    const [drmResults, setDrmResults] = useState<any[]>([]);
-    const [progress, setProgress] = useState(0);
+    const [videoResults, setVideoResults] = useState<any[]>(cachedVideoResults || []);
+    const [audioResults, setAudioResults] = useState<any[]>(cachedAudioResults || []);
+    const [drmResults, setDrmResults] = useState<any[]>(cachedDrmResults || []);
+    const [progress, setProgress] = useState(cachedVideoResults ? 100 : 0);
     const [isTesting, setIsTesting] = useState(false);
     const [showSupportedOnly, setShowSupportedOnly] = useState(false);
 
-    useEffect(() => {
-        const runTests = async () => {
-            setIsTesting(true);
-            const tempVideoResults: any[] = [];
-            const tempAudioResults: any[] = [];
-            
-            let done = 0;
+    const runTests = async () => {
+        setIsTesting(true);
+        setProgress(0);
+        const tempVideoResults: any[] = [];
+        const tempAudioResults: any[] = [];
+        
+        let done = 0;
             const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length) + 3; // 3 DRM systems
 
             // --- Run DRM Tests ---
@@ -163,10 +167,16 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                 setAudioResults([...tempAudioResults]);
             }
 
+            cachedVideoResults = tempVideoResults;
+            cachedAudioResults = tempAudioResults;
+            cachedDrmResults = tempDrmResults;
             setIsTesting(false);
         };
 
-        runTests();
+    useEffect(() => {
+        if (!cachedVideoResults || !cachedAudioResults || !cachedDrmResults) {
+            runTests();
+        }
     }, []);
 
     const getTagColor = (tag: string) => {
@@ -219,6 +229,13 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                         </div>
                     ) : (
                         <div className="flex items-center gap-3">
+                            <button
+                                onClick={runTests}
+                                className="text-xs font-medium px-2 py-1 rounded border transition-colors flex items-center gap-1 bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700"
+                            >
+                                <RotateCcw size={12} />
+                                {t.action_retest || "Retest"}
+                            </button>
                             <button 
                                 onClick={() => setShowSupportedOnly(!showSupportedOnly)}
                                 className={`text-xs font-medium px-2 py-1 rounded border transition-colors flex items-center gap-1 ${showSupportedOnly ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400' : 'bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400'}`}

@@ -215,6 +215,7 @@ export const tools = {
     video_efficient: "高効率 (ハードウェア)",
     video_smooth: "スムーズ再生",
     filter_supported: "対応済みのみ表示",
+    action_retest: "再テスト",
     video_title: "動画・音声デコードマトリックス",
     status_api_error: "API エラー",
     status_api_na: "API 利用不可",

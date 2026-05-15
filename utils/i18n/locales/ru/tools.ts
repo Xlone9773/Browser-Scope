@@ -215,6 +215,7 @@ export const tools = {
     video_efficient: "Эффективность (HW)",
     video_smooth: "Плавность",
     filter_supported: "Только поддерживаемые",
+    action_retest: "Повторить тест",
     video_title: "Матрица декодирования аудио/видео",
     status_api_error: "Ошибка API",
     status_api_na: "API Н/Д",

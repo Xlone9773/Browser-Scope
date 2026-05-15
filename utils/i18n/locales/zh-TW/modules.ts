@@ -179,6 +179,7 @@ export const modules = {
     video_efficient: "高效能 (硬體加速)",
     video_smooth: "流暢播放",
     filter_supported: "僅顯示支援項",
+    action_retest: "重新測試",
     video_title: "音視訊解碼能力矩陣",
     status_api_error: "API 錯誤",
     status_api_na: "API 不可用",
