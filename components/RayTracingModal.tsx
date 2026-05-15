@@ -213,10 +213,12 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
   const deviceRef = useRef<GPUDevice | null>(null);
   const pipelineRef = useRef<GPUComputePipeline | null>(null);
   const uniformBufferRef = useRef<GPUBuffer | null>(null);
-  const bindGroupRef = useRef<GPUBindGroup | null>(null);
+  const computeTextureRef = useRef<any>(null);
   const rafRef = useRef<number | null>(null);
   const frameCountRef = useRef(0);
   const lastTimeRef = useRef(0);
+  const isRunningRef = useRef(false);
+  const isUnmountedRef = useRef(false);
   
   // Camera State
   const cameraAngleRef = useRef(0);
@@ -240,12 +242,24 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
 
       // GPUTextureUsage logic with fallback
       const TEXTURE_USAGE_STORAGE = (window as any).GPUTextureUsage?.STORAGE_BINDING || 0x08;
+      const TEXTURE_USAGE_COPY_SRC = (window as any).GPUTextureUsage?.COPY_SRC || 0x01;
+      const TEXTURE_USAGE_COPY_DST = (window as any).GPUTextureUsage?.COPY_DST || 0x02;
+      const TEXTURE_USAGE_RENDER_ATTACHMENT = (window as any).GPUTextureUsage?.RENDER_ATTACHMENT || 0x10;
 
+      const format = (navigator as any).gpu.getPreferredCanvasFormat();
       (context as any).configure({
         device,
-        format: 'rgba8unorm',
-        usage: TEXTURE_USAGE_STORAGE // Critical: Allow compute shader to write to canvas
+        format,
+        alphaMode: 'premultiplied',
+        usage: TEXTURE_USAGE_COPY_DST | TEXTURE_USAGE_RENDER_ATTACHMENT 
       });
+
+      const computeTexture = device.createTexture({
+        size: [canvas.width, canvas.height, 1],
+        format: 'rgba8unorm',
+        usage: TEXTURE_USAGE_STORAGE | TEXTURE_USAGE_COPY_SRC
+      });
+      computeTextureRef.current = computeTexture;
 
       const shaderModule = device.createShaderModule({ code: SHADER_CODE });
       
@@ -269,6 +283,11 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       });
       uniformBufferRef.current = uniformBuffer;
 
+      if (isUnmountedRef.current) {
+         device.destroy();
+         return;
+      }
+
       startLoop();
     } catch (e: any) {
       console.error(e);
@@ -277,12 +296,14 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
   };
 
   const startLoop = () => {
-    if (isRunning) return;
+    if (isRunningRef.current) return;
+    isRunningRef.current = true;
     setIsRunning(true);
     frameCountRef.current = 0;
     
     const render = (time: number) => {
-      if (!deviceRef.current || !pipelineRef.current || !contextRef.current || !uniformBufferRef.current) return;
+      if (!isRunningRef.current) return;
+      if (!deviceRef.current || !pipelineRef.current || !contextRef.current || !uniformBufferRef.current || !computeTextureRef.current) return;
 
       // Stats
       if (time - lastTimeRef.current >= 1000) {
@@ -327,11 +348,11 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       deviceRef.current.queue.writeBuffer(uniformBufferRef.current, 0, uniforms);
 
       // Create Bind Group (must be done per frame if texture view changes, which happens with canvas resize or swap chain)
-      // Actually for 'rgba8unorm' configured canvas, `getCurrentTexture().createView()` returns a new view each frame.
+      // We read from computeTexture which is static sizes, but conceptually neat to map it
       const bindGroup = deviceRef.current.createBindGroup({
         layout: pipelineRef.current.getBindGroupLayout(0),
         entries: [
-          { binding: 0, resource: contextRef.current.getCurrentTexture().createView() },
+          { binding: 0, resource: computeTextureRef.current.createView() },
           { binding: 1, resource: { buffer: uniformBufferRef.current } }
         ]
       });
@@ -343,6 +364,12 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       passEncoder.dispatchWorkgroups(Math.ceil(canvas.width / 8), Math.ceil(canvas.height / 8));
       passEncoder.end();
       
+      commandEncoder.copyTextureToTexture(
+          { texture: computeTextureRef.current },
+          { texture: contextRef.current.getCurrentTexture() },
+          [canvas.width, canvas.height, 1]
+      );
+      
       deviceRef.current.queue.submit([commandEncoder.finish()]);
 
       rafRef.current = requestAnimationFrame(render);
@@ -352,13 +379,21 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
   };
 
   const stopLoop = () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+    }
+    isRunningRef.current = false;
     setIsRunning(false);
   };
 
   useEffect(() => {
+    isUnmountedRef.current = false;
     initWebGPU();
-    return () => stopLoop();
+    return () => {
+        isUnmountedRef.current = true;
+        stopLoop();
+    };
   }, []);
 
   // Interaction Handlers
