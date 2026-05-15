@@ -36,9 +36,14 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
     }
 
     return (
-        <Modal onClose={onClose} title={t.settings.nav.display || "Display & Screen Tools"} icon={<Monitor size={24} className="text-indigo-500" />}>
-            <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
-                <div className="max-w-2xl mx-auto space-y-8">
+        <Modal 
+            onClose={onClose} 
+            title={t.settings.nav.display || "Display & Screen Tools"} 
+            icon={<Monitor size={24} className="text-indigo-500" />}
+            size="3xl"
+            fullHeight
+        >
+            <div className="max-w-4xl mx-auto space-y-8">
                     
                     {/* Dead Pixel Check */}
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm text-center">
@@ -233,7 +238,6 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 text-center">{displayT.motion?.desc || "Follow the moving block with your eyes. If motion is not smooth, your OS might be dropping frames, or your refresh rate is low."}</p>
             </div>
             
-        </div>
         </div>
         </Modal>
     );

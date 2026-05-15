@@ -13,6 +13,7 @@ export interface ModalProps {
   className?: string;
   noPadding?: boolean; // If true, removes default padding from body (useful for custom layouts like Settings/Camera)
   fullHeight?: boolean; // If true, forces a fixed large height (good for tools/settings)
+  disableHeaderBlur?: boolean; // If true, disables the blurred header effect
 }
 
 export const Modal: React.FC<ModalProps> = ({ 
@@ -23,7 +24,8 @@ export const Modal: React.FC<ModalProps> = ({
   size = 'md',
   className = '',
   noPadding = false,
-  fullHeight = false
+  fullHeight = false,
+  disableHeaderBlur = false
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -131,9 +133,10 @@ export const Modal: React.FC<ModalProps> = ({
         {/* Blur Header */}
         <div className={`
             px-6 py-4 flex justify-between items-center z-30 shrink-0
-            bg-white/80 dark:bg-slate-800/80 backdrop-blur-md
-            border-b border-slate-200/60 dark:border-slate-700/60
-            supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:dark:bg-slate-800/60
+            ${disableHeaderBlur 
+                ? 'bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700' 
+                : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-700/60 supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:dark:bg-slate-800/60'
+            }
             ${headerPositionClass}
         `}>
           <div className="flex items-center gap-3 overflow-hidden">

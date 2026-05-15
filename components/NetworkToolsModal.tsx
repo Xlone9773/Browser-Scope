@@ -189,9 +189,14 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
     };
 
     return (
-        <Modal onClose={onClose} title={t.settings.nav.network || "Network Tools"} icon={<Wifi size={24} className="text-indigo-500" />}>
-            <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
-                <div className="max-w-3xl mx-auto space-y-8">
+        <Modal 
+            onClose={onClose} 
+            title={t.settings.nav.network || "Network Tools"} 
+            icon={<Wifi size={24} className="text-indigo-500" />}
+            size="3xl"
+            fullHeight
+        >
+            <div className="max-w-4xl mx-auto space-y-8">
                     
                     {/* Unified IP Information Section */}
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
@@ -554,7 +559,6 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                 </div>
             </div>
             </div>
-        </div>
         </Modal>
     );
 };
