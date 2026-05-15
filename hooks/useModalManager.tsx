@@ -18,6 +18,8 @@ const MODULE_FACTORIES: Record<string, () => Promise<any>> = {
     score: () => import('../components/ScoreModal').then(m => ({ default: m.ScoreModal })),
     fingerprint: () => import('../components/FingerprintModal').then(m => ({ default: m.FingerprintModal })),
     settings: () => import('../components/SettingsModal').then(m => ({ default: m.SettingsModal })),
+    networkTools: () => import('../components/NetworkToolsModal').then(m => ({ default: m.NetworkToolsModal })),
+    displayTools: () => import('../components/DisplayToolsModal').then(m => ({ default: m.DisplayToolsModal })),
     benchmark: () => import('../components/BenchmarkModal').then(m => ({ default: m.BenchmarkModal })),
     tools: () => import('../components/HardwareToolsModal').then(m => ({ default: m.HardwareToolsModal })),
     ai: () => import('../components/AiPlaygroundModal').then(m => ({ default: m.AiPlaygroundModal })),

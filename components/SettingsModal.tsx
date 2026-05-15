@@ -6,8 +6,6 @@ import { ModuleState } from './settings/ModulesTab';
 import { Modal } from './ui/Modal';
 
 const GeneralTab = lazy(() => import('./settings/GeneralTab').then(m => ({ default: m.GeneralTab })));
-const NetworkTab = lazy(() => import('./settings/NetworkTab').then(m => ({ default: m.NetworkTab })));
-const DisplayTab = lazy(() => import('./settings/DisplayTab').then(m => ({ default: m.DisplayTab })));
 const StorageTab = lazy(() => import('./settings/StorageTab').then(m => ({ default: m.StorageTab })));
 const ResourcesTab = lazy(() => import('./settings/ResourcesTab').then(m => ({ default: m.ResourcesTab })));
 const DeveloperTab = lazy(() => import('./settings/DeveloperTab').then(m => ({ default: m.DeveloperTab })));
@@ -73,17 +71,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setDevToolsFloating,
     moduleStates = [] 
 }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'network' | 'display' | 'storage' | 'res' | 'dev' | 'mod'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'storage' | 'res' | 'dev' | 'mod'>('general');
   const [isPending, startTransition] = useTransition();
 
-  const handleTabChange = (tab: 'general' | 'network' | 'display' | 'storage' | 'res' | 'dev' | 'mod') => {
+  const handleTabChange = (tab: 'general' | 'storage' | 'res' | 'dev' | 'mod') => {
       startTransition(() => {
           setActiveTab(tab);
       });
   };
-
-  // Display Test State (Lifted up as it overlays everything)
-  const [fullScreenColor, setFullScreenColor] = useState<string | null>(null);
 
   // Access structured settings
   const settings = t.settings;
@@ -92,21 +87,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const getNavTitle = (key: keyof Translation['settings']['nav']) => {
       return settings.nav[key];
   };
-
-  // Full Screen Color Overlay (Special case that overrides the Modal)
-  if (fullScreenColor) {
-      return (
-          <div 
-            className="fixed inset-0 z-[100] cursor-pointer flex items-center justify-center"
-            style={{ backgroundColor: fullScreenColor }}
-            onClick={() => setFullScreenColor(null)}
-          >
-              <div className="bg-black/50 text-white px-4 py-2 rounded-full text-xs pointer-events-none select-none backdrop-blur-sm opacity-50 hover:opacity-100 transition-opacity">
-                  Click anywhere to exit
-              </div>
-          </div>
-      );
-  }
 
   return (
     <Modal
@@ -137,34 +117,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         >
                             <Sliders size={16} />
                             {getNavTitle('general')}
-                        </button>
-                        <button 
-                            onClick={() => handleTabChange('network')}
-                            className={`
-                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
-                                flex-1 md:flex-none justify-center md:justify-start
-                                border-b-2 md:border-b-0 md:border-l-[3px]
-                                ${activeTab === 'network' 
-                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
-                            `}
-                        >
-                            <Globe size={16} />
-                            {getNavTitle('network')}
-                        </button>
-                        <button 
-                            onClick={() => handleTabChange('display')}
-                            className={`
-                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
-                                flex-1 md:flex-none justify-center md:justify-start
-                                border-b-2 md:border-b-0 md:border-l-[3px]
-                                ${activeTab === 'display' 
-                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
-                            `}
-                        >
-                            <Monitor size={16} />
-                            {getNavTitle('display')}
                         </button>
                         <button 
                             onClick={() => handleTabChange('storage')}
@@ -260,14 +212,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 setHiddenCards={setHiddenCards}
                                 translationDict={t}
                             />
-                        )}
-
-                        {activeTab === 'network' && (
-                            <NetworkTab t={settings.network} />
-                        )}
-
-                        {activeTab === 'display' && (
-                            <DisplayTab t={settings.display} onColorSelect={setFullScreenColor} />
                         )}
 
                         {activeTab === 'storage' && (

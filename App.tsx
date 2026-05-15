@@ -128,6 +128,8 @@ const App: React.FC = () => {
       { id: 'heatmap', name: t.heatmap.title, isOpen: visibility.heatmap, setOpen: (v) => v ? open('heatmap') : close('heatmap'), impact: 'Medium', onUnload: () => unload('heatmap'), isLoaded: loadedModules.has('heatmap') },
       { id: 'rayTracing', name: t.rayTracing.title, isOpen: visibility.rayTracing, setOpen: (v) => v ? open('rayTracing') : close('rayTracing'), impact: 'High', onUnload: () => unload('rayTracing'), isLoaded: loadedModules.has('rayTracing') },
       { id: 'extensions', name: 'Browser Extensions', isOpen: visibility.extensions, setOpen: (v) => v ? open('extensions') : close('extensions'), impact: 'Low', onUnload: () => unload('extensions'), isLoaded: loadedModules.has('extensions') },
+      { id: 'networkTools', name: t.settings.nav.network, isOpen: visibility.networkTools, setOpen: (v) => v ? open('networkTools') : close('networkTools'), impact: 'Medium', onUnload: () => unload('networkTools'), isLoaded: loadedModules.has('networkTools') },
+      { id: 'displayTools', name: t.settings.nav.display, isOpen: visibility.displayTools, setOpen: (v) => v ? open('displayTools') : close('displayTools'), impact: 'Low', onUnload: () => unload('displayTools'), isLoaded: loadedModules.has('displayTools') },
   ];
 
   // Initialize and listen to theme changes
@@ -166,15 +168,21 @@ const App: React.FC = () => {
       const handleStorageBench = () => open('storageBench');
       const handleHeatmap = () => open('heatmap');
       const handleRayTracing = () => open('rayTracing');
+      const handleNetworkTools = () => open('networkTools');
+      const handleDisplayTools = () => open('displayTools');
       
       window.addEventListener('open-storage-benchmark', handleStorageBench);
       window.addEventListener('open-heatmap', handleHeatmap);
       window.addEventListener('open-ray-tracing', handleRayTracing);
+      window.addEventListener('open-network-tools', handleNetworkTools);
+      window.addEventListener('open-display-tools', handleDisplayTools);
       
       return () => {
           window.removeEventListener('open-storage-benchmark', handleStorageBench);
           window.removeEventListener('open-heatmap', handleHeatmap);
           window.removeEventListener('open-ray-tracing', handleRayTracing);
+          window.removeEventListener('open-network-tools', handleNetworkTools);
+          window.removeEventListener('open-display-tools', handleDisplayTools);
       };
   }, [open]);
 
@@ -649,6 +657,18 @@ const App: React.FC = () => {
                 <Components.extensions 
                     onClose={() => close('extensions')} 
                     t={(t as any).extensionsModal}
+                />
+            )}
+            {visibility.networkTools && (
+                <Components.networkTools
+                    onClose={() => close('networkTools')}
+                    t={t}
+                />
+            )}
+            {visibility.displayTools && (
+                <Components.displayTools
+                    onClose={() => close('displayTools')}
+                    t={t}
                 />
             )}
         </Suspense>

@@ -1,14 +1,18 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Monitor, Eye, Layers, Sun } from 'lucide-react';
-import { Translation } from '../../utils/i18n/types';
+import { Translation } from '../utils/i18n/types';
+import { Modal } from './ui/Modal';
 
-interface DisplayTabProps {
-    t: Translation['settings']['display'];
-    onColorSelect: (color: string) => void;
+interface DisplayToolsModalProps {
+    onClose: () => void;
+    t: any; // Using any for simplicity since we don't know the exact type, or Translation['settings']['display'] if passed
 }
 
-export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
+export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t }) => {
+    const displayT = t.settings.display;
+    const [fullScreenColor, setFullScreenColor] = useState<string | null>(null);
+
     // Check support for color(display-p3) syntax
     const isP3Supported = typeof CSS !== 'undefined' && CSS.supports('color', 'color(display-p3 1 0 0)');
     
@@ -16,21 +20,38 @@ export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
     const isHDR = typeof window !== 'undefined' && window.matchMedia('(dynamic-range: high)').matches;
     const isVideoHDR = typeof window !== 'undefined' && window.matchMedia('(video-dynamic-range: high)').matches;
 
+    // Full screen color overlay for dead pixel testing
+    if (fullScreenColor) {
+        return (
+            <div 
+                className="fixed inset-0 z-[100] cursor-pointer flex items-center justify-center"
+                style={{ backgroundColor: fullScreenColor }}
+                onClick={() => setFullScreenColor(null)}
+            >
+                <div className="bg-black/50 text-white px-4 py-2 rounded-full text-xs pointer-events-none select-none backdrop-blur-sm opacity-50 hover:opacity-100 transition-opacity">
+                    Click anywhere to exit
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="max-w-2xl mx-auto space-y-8">
-            
-            {/* Dead Pixel Check */}
+        <Modal onClose={onClose} title={t.settings.nav.display || "Display & Screen Tools"} icon={<Monitor size={24} className="text-indigo-500" />}>
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
+                <div className="max-w-2xl mx-auto space-y-8">
+                    
+                    {/* Dead Pixel Check */}
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm text-center">
                 <Monitor size={32} className="mx-auto text-indigo-600 dark:text-indigo-400 mb-3" />
-                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">{t.deadPixel.title}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{t.deadPixel.desc}</p>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">{displayT.deadPixel.title}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{displayT.deadPixel.desc}</p>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                    <button onClick={() => onColorSelect('#ff0000')} className="h-12 rounded-lg bg-red-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{t.deadPixel.colors.red}</button>
-                    <button onClick={() => onColorSelect('#00ff00')} className="h-12 rounded-lg bg-green-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{t.deadPixel.colors.green}</button>
-                    <button onClick={() => onColorSelect('#0000ff')} className="h-12 rounded-lg bg-blue-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{t.deadPixel.colors.blue}</button>
-                    <button onClick={() => onColorSelect('#ffffff')} className="h-12 rounded-lg bg-white border border-slate-200 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-black font-bold text-xs">{t.deadPixel.colors.white}</button>
-                    <button onClick={() => onColorSelect('#000000')} className="h-12 rounded-lg bg-black hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{t.deadPixel.colors.black}</button>
+                    <button onClick={() => setFullScreenColor('#ff0000')} className="h-12 rounded-lg bg-red-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.red}</button>
+                    <button onClick={() => setFullScreenColor('#00ff00')} className="h-12 rounded-lg bg-green-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.green}</button>
+                    <button onClick={() => setFullScreenColor('#0000ff')} className="h-12 rounded-lg bg-blue-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.blue}</button>
+                    <button onClick={() => setFullScreenColor('#ffffff')} className="h-12 rounded-lg bg-white border border-slate-200 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-black font-bold text-xs">{displayT.deadPixel.colors.white}</button>
+                    <button onClick={() => setFullScreenColor('#000000')} className="h-12 rounded-lg bg-black hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.black}</button>
                 </div>
             </div>
 
@@ -41,34 +62,34 @@ export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
                         <Sun size={20} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.hdr.title}</h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t.hdr.desc}</p>
+                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.hdr.title}</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{displayT.hdr.desc}</p>
                     </div>
                 </div>
 
                 <div className="flex gap-4 mb-6">
                     <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                        <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.hdr.rangeScreen}</span>
+                        <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{displayT.hdr.rangeScreen}</span>
                         <span className={`text-xs px-2 py-1 rounded font-bold ${isHDR ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
                             {isHDR ? 'High' : 'Standard'}
                         </span>
                     </div>
                     <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                        <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.hdr.rangeVideo}</span>
+                        <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{displayT.hdr.rangeVideo}</span>
                         <span className={`text-xs px-2 py-1 rounded font-bold ${isVideoHDR ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
                             {isVideoHDR ? 'High' : 'Standard'}
                         </span>
                     </div>
                 </div>
 
-                <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">{t.hdr.brightnessTest}</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">{t.hdr.brightnessDesc}</p>
+                <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">{displayT.hdr.brightnessTest}</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">{displayT.hdr.brightnessDesc}</p>
                 
                 {/* EDR Brightness Test Box */}
                 <div className="relative w-full h-32 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 flex items-center justify-center">
                     {/* Background is Standard White */}
                     <div className="absolute inset-0 bg-white flex items-start justify-start p-2">
-                        <span className="text-[10px] font-mono text-black/50">{t.hdr.labelSdr} (sRGB 1.0)</span>
+                        <span className="text-[10px] font-mono text-black/50">{displayT.hdr.labelSdr} (sRGB 1.0)</span>
                     </div>
                     
                     {/* Center is P3 White (Potential EDR) */}
@@ -76,7 +97,7 @@ export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
                         className="w-1/2 h-1/2 rounded-lg flex items-center justify-center shadow-sm relative z-10"
                         style={{ backgroundColor: 'color(display-p3 1 1 1)' }}
                     >
-                        <span className="text-[10px] font-mono text-black/50 font-bold bg-white/20 px-2 py-1 rounded">{t.hdr.labelEdr} (P3 1.0)</span>
+                        <span className="text-[10px] font-mono text-black/50 font-bold bg-white/20 px-2 py-1 rounded">{displayT.hdr.labelEdr} (P3 1.0)</span>
                     </div>
                 </div>
             </div>
@@ -88,8 +109,8 @@ export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
                         <Eye size={20} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.gamut.title}</h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.gamut.desc}</p>
+                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.gamut.title || "Color Gamut"}</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{displayT.gamut.desc || "Check wide gamut support"}</p>
                     </div>
                 </div>
 
@@ -133,7 +154,7 @@ export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
                     </div>
                 ) : (
                     <div className="p-4 bg-slate-100 dark:bg-slate-700/50 rounded-lg text-sm text-slate-500 text-center">
-                        {t.gamut.unsupported}
+                        {displayT.gamut.unsupported}
                     </div>
                 )}
             </div>
@@ -145,8 +166,8 @@ export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
                         <Layers size={20} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.gradient.title}</h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t.gradient.desc}</p>
+                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.gradient.title || "Bit Depth / Banding"}</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{displayT.gradient.desc || "Check for gradient banding"}</p>
                     </div>
                 </div>
 
@@ -187,7 +208,33 @@ export const DisplayTab: React.FC<DisplayTabProps> = ({ t, onColorSelect }) => {
                     <div className="text-center text-[10px] text-slate-400">Near-black steps (0-21 RGB) - Check visibility of darker steps</div>
                 </div>
             </div>
-
+            
+            {/* Motion / Refresh Rate Test */}
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden">
+                <style>{`
+                    @keyframes slideTarget {
+                        from { transform: translateX(0); }
+                        to { transform: translateX(calc(100cqw - 48px)); }
+                    }
+                    .ufo-tester {
+                        animation: slideTarget 3s linear infinite alternate;
+                    }
+                `}</style>
+                <div className="flex items-center gap-3 mb-6 relative z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2 rounded-lg inline-flex">
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.motion?.title || "Motion Blur & Stutter Test"}</h3>
+                </div>
+                
+                <div className="w-full relative h-16 bg-slate-900 rounded-lg overflow-hidden [container-type:inline-size]">
+                    <div className="absolute inset-y-0 w-[48px] bg-white flex items-center justify-center font-bold text-slate-900 border-x-4 border-indigo-500 ufo-tester will-change-transform shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+                        960
+                    </div>
+                </div>
+                
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 text-center">{displayT.motion?.desc || "Follow the moving block with your eyes. If motion is not smooth, your OS might be dropping frames, or your refresh rate is low."}</p>
+            </div>
+            
         </div>
+        </div>
+        </Modal>
     );
 };

@@ -132,6 +132,10 @@ export const settings = {
         gradient: {
             title: "Bit Depth & Banding",
             desc: "Check for smooth color gradients (no banding) and dark details."
+        },
+        motion: {
+            title: "Motion Blur & Stutter Test",
+            desc: "Follow the moving block with your eyes. If motion is not smooth, your OS might be dropping frames, or your refresh rate is low."
         }
     },
     storage: {

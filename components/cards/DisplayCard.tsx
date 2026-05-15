@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { Layers } from 'lucide-react';
+import { Layers, Monitor } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { RefreshRate } from '../RefreshRate';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
+import { Button } from '../ui/Button';
 
 interface DisplayCardProps {
   data: BrowserData['display'];
@@ -14,6 +15,7 @@ interface DisplayCardProps {
 }
 
 export const DisplayCard: React.FC<DisplayCardProps> = ({ data, screenExtended, t, simpleMode }) => {
+
   const trVal = (val: string | boolean | undefined | null) => {
     if (val === true) return t.values.supported;
     if (val === false) return t.values.not_supported;
@@ -40,6 +42,18 @@ export const DisplayCard: React.FC<DisplayCardProps> = ({ data, screenExtended, 
               <InfoItem label={t.labels.hdr} value={trVal(data.hdr)} />
               <InfoItem label={t.labels.display_mode} value={data.displayMode} />
               <InfoItem label={t.labels.dark_mode} value={trVal(data.darkMode)} />
+              
+              <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50">
+                  <Button 
+                      variant="secondary" 
+                      size="xs" 
+                      onClick={() => window.dispatchEvent(new CustomEvent('open-display-tools'))} 
+                      fullWidth
+                      leftIcon={<Monitor size={14} />}
+                  >
+                      {t.settings.nav.display}
+                  </Button>
+              </div>
           </>
       )}
     </InfoCard>

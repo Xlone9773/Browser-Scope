@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wifi, Copy, Check, Shield, Server, Radio } from 'lucide-react';
-import { Translation } from '../../utils/i18n/types';
-import { Select } from '../ui/Select';
-import { Button } from '../ui/Button';
+import { Translation } from '../utils/i18n/types';
+import { Select } from './ui/Select';
+import { Button } from './ui/Button';
+import { Modal } from './ui/Modal';
 import { 
     fetchIpInfoFromSource, 
     detectIpv6, 
@@ -12,10 +13,11 @@ import {
     detectProtocols, 
     IpInfo, 
     WebRTCCandidate 
-} from '../../services/detectors/networkDiagnostics';
+} from '../services/detectors/networkDiagnostics';
 
-interface NetworkTabProps {
-    t: Translation['settings']['network'];
+interface NetworkToolsModalProps {
+    onClose: () => void;
+    t: any;
 }
 
 interface CDNStatus {
@@ -38,7 +40,9 @@ const IPV6_SOURCES = [
     { id: 'icanhazip', label: 'icanhazip' },
 ];
 
-export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
+export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t }) => {
+    const networkT = t.settings.network;
+
     // IPv4 State
     const [ipInfo, setIpInfo] = useState<IpInfo | null>(null);
     const [loadingIp, setLoadingIp] = useState(false);
@@ -185,13 +189,15 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto space-y-8">
-            
-            {/* Unified IP Information Section */}
+        <Modal onClose={onClose} title={t.settings.nav.network || "Network Tools"} icon={<Wifi size={24} className="text-indigo-500" />}>
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
+                <div className="max-w-3xl mx-auto space-y-8">
+                    
+                    {/* Unified IP Information Section */}
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 bg-slate-50/50 dark:bg-slate-800/50">
                     <Globe size={18} className="text-slate-400" />
-                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">{t.ip.title}</h3>
+                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">{networkT.ip.title}</h3>
                 </div>
 
                 <div className="flex flex-col divide-y divide-slate-100 dark:divide-slate-700">
@@ -199,8 +205,8 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                     <div className="p-6 transition-colors hover:bg-slate-50/30 dark:hover:bg-slate-800/50 group">
                         <div className="flex justify-between items-start md:items-center mb-4 flex-col md:flex-row gap-3">
                             <div className="flex items-center gap-2">
-                                <span className="px-2 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-md dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800">{t.ip.ipv4}</span>
-                                <span className="text-xs text-slate-400 hidden sm:inline-block">{t.ip.ipv4_desc}</span>
+                                <span className="px-2 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-md dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800">{networkT.ip.ipv4}</span>
+                                <span className="text-xs text-slate-400 hidden sm:inline-block">{networkT.ip.ipv4_desc}</span>
                             </div>
                             
                             <div className="flex items-center gap-2 w-full md:w-auto">
@@ -221,7 +227,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     size="xs"
                                     leftIcon={<RefreshCw size={12} />}
                                 >
-                                    {t.ip.fetch}
+                                    {networkT.ip.fetch}
                                 </Button>
                             </div>
                         </div>
@@ -277,8 +283,8 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                     <div className="p-6 transition-colors hover:bg-slate-50/30 dark:hover:bg-slate-800/50">
                         <div className="flex justify-between items-start md:items-center mb-4 flex-col md:flex-row gap-3">
                             <div className="flex items-center gap-2">
-                                <span className="px-2 py-1 text-xs font-bold text-purple-600 bg-purple-50 border border-purple-100 rounded-md dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800">{t.ip.ipv6}</span>
-                                <span className="text-xs text-slate-400 hidden sm:inline-block">{t.ip.ipv6_desc}</span>
+                                <span className="px-2 py-1 text-xs font-bold text-purple-600 bg-purple-50 border border-purple-100 rounded-md dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800">{networkT.ip.ipv6}</span>
+                                <span className="text-xs text-slate-400 hidden sm:inline-block">{networkT.ip.ipv6_desc}</span>
                             </div>
                             
                             <div className="flex items-center gap-2 w-full md:w-auto">
@@ -299,7 +305,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     size="xs"
                                     leftIcon={<Zap size={12} />}
                                 >
-                                    {t.ip.check_v6}
+                                    {networkT.ip.check_v6}
                                 </Button>
                             </div>
                         </div>
@@ -321,7 +327,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                 <div className="flex items-center gap-2">
                                     <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
                                         <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></div>
-                                        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">{t.ip.success_v6}</span>
+                                        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">{networkT.ip.success_v6}</span>
                                     </div>
                                 </div>
                             </div>
@@ -329,7 +335,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-2 text-slate-400">
                                     <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
-                                    <span className="text-sm font-medium">{t.ip.fail_v6}</span>
+                                    <span className="text-sm font-medium">{networkT.ip.fail_v6}</span>
                                 </div>
                             </div>
                         ) : (
@@ -346,7 +352,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 bg-slate-50/50 dark:bg-slate-800/50">
                     <Server size={18} className="text-slate-400" />
-                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">{t.diagnostics.title}</h3>
+                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">{networkT.diagnostics.title}</h3>
                 </div>
                 
                 <div className="p-6 space-y-8">
@@ -359,8 +365,8 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     <Radio size={20} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.diagnostics.webrtc.title}</h4>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.diagnostics.webrtc.desc}</p>
+                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{networkT.diagnostics.webrtc.title}</h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{networkT.diagnostics.webrtc.desc}</p>
                                 </div>
                             </div>
                             <Button 
@@ -369,7 +375,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                 variant="primary"
                                 size="xs"
                             >
-                                {t.diagnostics.webrtc.btn}
+                                {networkT.diagnostics.webrtc.btn}
                             </Button>
                         </div>
                         
@@ -378,10 +384,10 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                 <table className="w-full text-xs text-left">
                                     <thead className="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 font-semibold text-slate-600 dark:text-slate-300 uppercase">
                                         <tr>
-                                            <th className="px-4 py-2">{t.diagnostics.webrtc.columns.type}</th>
-                                            <th className="px-4 py-2">{t.diagnostics.webrtc.columns.ip}</th>
-                                            <th className="px-4 py-2">{t.diagnostics.webrtc.columns.proto}</th>
-                                            <th className="px-4 py-2">{t.diagnostics.webrtc.columns.port}</th>
+                                            <th className="px-4 py-2">{networkT.diagnostics.webrtc.columns.type}</th>
+                                            <th className="px-4 py-2">{networkT.diagnostics.webrtc.columns.ip}</th>
+                                            <th className="px-4 py-2">{networkT.diagnostics.webrtc.columns.proto}</th>
+                                            <th className="px-4 py-2">{networkT.diagnostics.webrtc.columns.port}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -413,8 +419,8 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     <Shield size={20} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.diagnostics.dns.title}</h4>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.diagnostics.dns.desc}</p>
+                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{networkT.diagnostics.dns.title}</h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{networkT.diagnostics.dns.desc}</p>
                                 </div>
                             </div>
                             <Button 
@@ -423,18 +429,18 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                 variant="secondary"
                                 size="xs"
                             >
-                                {t.diagnostics.dns.btn}
+                                {networkT.diagnostics.dns.btn}
                             </Button>
                         </div>
 
                         {dnsInfo && (
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                                    <div className="text-xs text-slate-400 mb-1">{t.diagnostics.dns.label_ip}</div>
+                                    <div className="text-xs text-slate-400 mb-1">{networkT.diagnostics.dns.label_ip}</div>
                                     <div className="font-mono font-bold text-slate-700 dark:text-slate-200">{dnsInfo.ip}</div>
                                 </div>
                                 <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                                    <div className="text-xs text-slate-400 mb-1">{t.diagnostics.dns.label_geo}</div>
+                                    <div className="text-xs text-slate-400 mb-1">{networkT.diagnostics.dns.label_geo}</div>
                                     <div className="font-bold text-slate-700 dark:text-slate-200">{dnsInfo.geo}</div>
                                 </div>
                             </div>
@@ -457,8 +463,8 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                     <Zap size={20} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{t.diagnostics.proto.title}</h4>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{t.diagnostics.proto.desc}</p>
+                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{networkT.diagnostics.proto.title}</h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{networkT.diagnostics.proto.desc}</p>
                                 </div>
                             </div>
                             <Button 
@@ -467,20 +473,20 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                                 variant="secondary"
                                 size="xs"
                             >
-                                {t.diagnostics.proto.btn}
+                                {networkT.diagnostics.proto.btn}
                             </Button>
                         </div>
 
                         {protocols && (
                             <div className="flex gap-4">
                                 <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.diagnostics.proto.h2}</span>
+                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{networkT.diagnostics.proto.h2}</span>
                                     <span className={`text-xs px-2 py-1 rounded font-mono font-bold ${protocols.h2 === 'h2' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
                                         {protocols.h2 === 'h2' ? 'Supported' : protocols.h2}
                                     </span>
                                 </div>
                                 <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t.diagnostics.proto.h3}</span>
+                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{networkT.diagnostics.proto.h3}</span>
                                     <span className={`text-xs px-2 py-1 rounded font-mono font-bold ${protocols.h3 === 'h3' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
                                         {protocols.h3 === 'h3' ? 'Supported' : protocols.h3}
                                     </span>
@@ -494,13 +500,13 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
 
             {/* Connectivity Test */}
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{t.connectivity.title}</h3>
+                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{networkT.connectivity.title}</h3>
                 <div className="flex gap-2 mb-4">
                     <input 
                         type="text" 
                         value={testUrl}
                         onChange={(e) => setTestUrl(e.target.value)}
-                        placeholder={t.connectivity.placeholder}
+                        placeholder={networkT.connectivity.placeholder}
                         className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none"
                         onKeyDown={(e) => e.key === 'Enter' && runConnectivityTest()}
                     />
@@ -510,7 +516,7 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                         isLoading={testingConn}
                         leftIcon={<Wifi size={18} />}
                     >
-                        {t.connectivity.btn}
+                        {networkT.connectivity.btn}
                     </Button>
                 </div>
                 {testResult && (
@@ -526,9 +532,9 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
             {/* CDN Status */}
             <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{t.cdn.title}</h3>
+                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{networkT.cdn.title}</h3>
                     <button onClick={checkAllCDNs} className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
-                        {t.cdn.check_all}
+                        {networkT.cdn.check_all}
                     </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -547,6 +553,8 @@ export const NetworkTab: React.FC<NetworkTabProps> = ({ t }) => {
                     ))}
                 </div>
             </div>
+            </div>
         </div>
+        </Modal>
     );
 };

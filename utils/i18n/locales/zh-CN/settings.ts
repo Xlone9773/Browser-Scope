@@ -132,6 +132,10 @@ export const settings = {
         gradient: {
             title: "色深与灰阶",
             desc: "检查色彩过渡是否平滑（无断层）以及暗部细节。"
+        },
+        motion: {
+            title: "动态模糊与帧率检测",
+            desc: "请双眼注视移动的滑块。如果滑动不平滑或者边缘有严重拖影，可能说明系统正在掉帧或刷新率偏低。"
         }
     },
     storage: {
