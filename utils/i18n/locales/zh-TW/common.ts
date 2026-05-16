@@ -9,9 +9,26 @@ export const common = {
     loading: "正在掃描系統能力...",
     error_boundary: {
         title: "組件崩潰",
-        message: "發生未知的渲染錯誤。",
+        message: "渲染此模組時發生了未預期的錯誤。",
         retry: "重試",
-        unknown_component: "未知組件"
+        unknown_component: "未知組件",
+        component_in: "in",
+        preliminary_analysis: "初步分析：",
+        show_stack_trace: "查看錯誤堆疊",
+        hide_stack_trace: "隱藏錯誤堆疊",
+        copy_error_details: "複製錯誤詳情",
+        copied: "已複製！",
+        error_stack: "錯誤堆疊",
+        component_stack: "React 組件堆疊",
+        no_stack_trace: "無錯誤堆疊資訊。",
+        no_component_stack: "無組件堆疊資訊。",
+        analysis_no_error: "無可用錯誤物件。",
+        analysis_null_reference: "可能是空值參考錯誤。請檢查渲染前資料是否已載入完成。",
+        analysis_function_call: "函式呼叫失敗。請檢查回呼函式或方法是否存在且已正確綁定。",
+        analysis_invalid_hook: "React Hook 問題。Hooks 必須在函式組件主體內部呼叫。",
+        analysis_network: "網路錯誤。請檢查您的網路連線或 API 介面狀態。",
+        analysis_json: "JSON 解析錯誤。伺服器傳回了不符合預期的資料格式。",
+        analysis_unexpected: "未知的執行時期錯誤。請查看下方的堆疊資訊。"
     },
     modal_loading: {
         initializing: "正在初始化",

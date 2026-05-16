@@ -9,9 +9,26 @@ export const common = {
     loading: "Initializing...",
     error_boundary: {
         title: "Component Crashed",
-        message: "An unexpected error occurred.",
+        message: "An unexpected error occurred rendering this module.",
         retry: "Try Again",
-        unknown_component: "Unknown Component"
+        unknown_component: "Unknown Component",
+        component_in: "in",
+        preliminary_analysis: "Preliminary Analysis:",
+        show_stack_trace: "View Stack Trace",
+        hide_stack_trace: "Hide Stack Trace",
+        copy_error_details: "Copy Error Details",
+        copied: "Copied!",
+        error_stack: "Error Stack",
+        component_stack: "React Component Stack",
+        no_stack_trace: "No stack trace available.",
+        no_component_stack: "No component stack available.",
+        analysis_no_error: "No error object available.",
+        analysis_null_reference: "Possible null reference error. Check if data is loaded before rendering.",
+        analysis_function_call: "Function call fail. Check if the callback/method exists and is bound correctly.",
+        analysis_invalid_hook: "React Hook issue. Hooks must be called inside a functional component body.",
+        analysis_network: "Network error. Check your internet connection or API endpoint status.",
+        analysis_json: "JSON parsing error. Received unexpected data format from the server.",
+        analysis_unexpected: "Unexpected runtime error. Please review the stack trace below."
     },
     modal_loading: {
         initializing: "Initializing",

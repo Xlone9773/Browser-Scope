@@ -9,9 +9,26 @@ export const common = {
     loading: "正在扫描系统能力...",
     error_boundary: {
         title: "组件崩溃",
-        message: "发生未知的渲染错误。",
+        message: "渲染该模块时发生了未预期的错误。",
         retry: "重试",
-        unknown_component: "未知组件"
+        unknown_component: "未知组件",
+        component_in: "in",
+        preliminary_analysis: "初步分析：",
+        show_stack_trace: "查看错误堆栈",
+        hide_stack_trace: "隐藏错误堆栈",
+        copy_error_details: "复制错误详情",
+        copied: "已复制！",
+        error_stack: "错误堆栈",
+        component_stack: "React 组件堆栈",
+        no_stack_trace: "无错误堆栈信息。",
+        no_component_stack: "无组件堆栈信息。",
+        analysis_no_error: "无可用错误对象。",
+        analysis_null_reference: "可能是空引用错误。请检查渲染前数据是否已加载完成。",
+        analysis_function_call: "方法调用失败。请检查回调函数或方法是否存在且已正确绑定。",
+        analysis_invalid_hook: "React Hook 问题。Hooks 必须在函数组件主体内部调用。",
+        analysis_network: "网络错误。请检查您的网络连接或 API 接口状态。",
+        analysis_json: "JSON 解析错误。服务器返回了不符合预期的数据格式。",
+        analysis_unexpected: "未知的运行时错误。请查看下方的堆栈信息。"
     },
     modal_loading: {
         initializing: "正在初始化",

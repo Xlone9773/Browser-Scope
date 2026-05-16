@@ -54,25 +54,25 @@ export class ErrorBoundary extends Component<Props, State> {
     } catch(e) {}
   };
 
-  private getAnalysis(error: Error | null) {
-      if (!error) return "No error object available.";
+  private getAnalysis(error: Error | null, t: any) {
+      if (!error) return t.analysis_no_error || "No error object available.";
       const msg = error.message.toLowerCase();
-      if (msg.includes("cannot read properties of undefined") || msg.includes("cannot read properties of null")) {
-          return "Possible null reference error. Check if data is loaded before rendering.";
+      if (msg.includes("cannot read properties of undefined") || msg.includes("cannot read properties of null") || msg.includes("reading 'usestate'")) {
+          return t.analysis_null_reference || "Possible null reference error. Check if data is loaded before rendering.";
       }
       if (msg.includes("is not a function")) {
-          return "Function call fail. Check if the callback/method exists and is bound correctly.";
+          return t.analysis_function_call || "Function call fail. Check if the callback/method exists and is bound correctly.";
       }
-      if (msg.includes("invalid hook call")) {
-          return "React Hook issue. Hooks must be called inside a functional component body.";
+      if (msg.includes("invalid hook call") || msg.includes("reading 'usestate'")) {
+          return t.analysis_invalid_hook || "React Hook issue. Hooks must be called inside a functional component body.";
       }
       if (msg.includes("network") || msg.includes("fetch")) {
-          return "Network error. Check your internet connection or API endpoint status.";
+          return t.analysis_network || "Network error. Check your internet connection or API endpoint status.";
       }
       if (msg.includes("unexpected token") || msg.includes("json")) {
-          return "JSON parsing error. Received unexpected data format from the server.";
+          return t.analysis_json || "JSON parsing error. Received unexpected data format from the server.";
       }
-      return "Unexpected runtime error. Please review the stack trace below.";
+      return t.analysis_unexpected || "Unexpected runtime error. Please review the stack trace below.";
   }
 
   private getTranslation() {
@@ -94,14 +94,14 @@ export class ErrorBoundary extends Component<Props, State> {
     };
   }
 
-  public render() {
+    public render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
       const t = this.getTranslation();
-      const analysisMsg = this.getAnalysis(this.state.error);
+      const analysisMsg = this.getAnalysis(this.state.error, t);
 
       return (
         <div className="p-6 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/40 rounded-xl flex flex-col text-left min-h-[200px] shadow-sm w-full font-sans">
@@ -111,7 +111,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             <div>
               <h3 className="text-lg font-bold text-red-800 dark:text-red-300">
-                {t.title} <span className="text-red-500 font-normal text-sm opacity-70">in {this.props.name || t.unknown_component}</span>
+                {t.title} <span className="text-red-500 font-normal text-sm opacity-70">{t.component_in || 'in'} {this.props.name || t.unknown_component}</span>
               </h3>
               <p className="text-sm text-red-600 dark:text-red-400 font-medium">
                 {this.state.error?.message || t.message}
@@ -122,7 +122,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="mb-4 bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-900/30 rounded p-3 text-sm text-orange-800 dark:text-orange-300 flex gap-2 items-start">
              <BookOpen size={16} className="shrink-0 mt-0.5" />
              <div>
-                <span className="font-bold block mb-1">Preliminary Analysis:</span>
+                <span className="font-bold block mb-1">{t.preliminary_analysis || 'Preliminary Analysis:'}</span>
                 {analysisMsg}
              </div>
           </div>
@@ -141,7 +141,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 className="flex items-center gap-2 px-3 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 rounded-lg text-sm font-medium transition-colors"
               >
                 {this.state.showDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                {this.state.showDetails ? 'Hide Stack Trace' : 'View Stack Trace'}
+                {this.state.showDetails ? (t.hide_stack_trace || 'Hide Stack Trace') : (t.show_stack_trace || 'View Stack Trace')}
               </button>
               
               {this.state.showDetails && (
@@ -150,7 +150,7 @@ export class ErrorBoundary extends Component<Props, State> {
                     className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium transition-colors ml-auto"
                   >
                     {this.state.copied ? <Copy size={16} className="text-green-500" /> : <Copy size={16} />}
-                    {this.state.copied ? 'Copied!' : 'Copy Error Details'}
+                    {this.state.copied ? (t.copied || 'Copied!') : (t.copy_error_details || 'Copy Error Details')}
                   </button>
               )}
           </div>
@@ -158,16 +158,16 @@ export class ErrorBoundary extends Component<Props, State> {
           {this.state.showDetails && (
               <div className="mt-2 bg-slate-900 rounded p-4 overflow-x-auto text-xs text-red-300 font-mono text-left w-full shadow-inner border border-red-900">
                 <div className="text-slate-400 mb-1 border-b border-red-900/50 pb-1 flex items-center gap-1">
-                    <Bug size={14} /> Error Stack
+                    <Bug size={14} /> {t.error_stack || 'Error Stack'}
                 </div>
                 <div className="whitespace-pre-wrap break-all mb-4">
-                    {this.state.error?.stack || 'No stack trace available.'}
+                    {this.state.error?.stack || t.no_stack_trace || 'No stack trace available.'}
                 </div>
                 <div className="text-slate-400 mb-1 border-b border-red-900/50 pb-1 flex items-center gap-1 mt-4">
-                    <AlertTriangle size={14} /> React Component Stack
+                    <AlertTriangle size={14} /> {t.component_stack || 'React Component Stack'}
                 </div>
                 <div className="whitespace-pre-wrap break-all text-orange-300">
-                    {this.state.errorInfo?.componentStack || 'No component stack available.'}
+                    {this.state.errorInfo?.componentStack || t.no_component_stack || 'No component stack available.'}
                 </div>
               </div>
           )}

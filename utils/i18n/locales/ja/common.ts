@@ -9,9 +9,26 @@ export const common = {
     loading: "システム機能をスキャン中...",
     error_boundary: {
         title: "コンポーネントのクラッシュ",
-        message: "予期しないエラーが発生しました。",
+        message: "このモジュールのレンダリング中に予期しないエラーが発生しました。",
         retry: "再試行",
-        unknown_component: "不明なコンポーネント"
+        unknown_component: "不明なコンポーネント",
+        component_in: "in",
+        preliminary_analysis: "事前分析：",
+        show_stack_trace: "スタックトレースを表示",
+        hide_stack_trace: "スタックトレースを隠す",
+        copy_error_details: "エラー詳細をコピー",
+        copied: "コピーしました！",
+        error_stack: "エラースタック",
+        component_stack: "React コンポーネントスタック",
+        no_stack_trace: "スタックトレースはありません。",
+        no_component_stack: "コンポーネントスタックはありません。",
+        analysis_no_error: "エラーオブジェクトがありません。",
+        analysis_null_reference: "Null参照エラーの可能性があります。レンダリング前にデータが読み込まれているか確認してください。",
+        analysis_function_call: "関数呼び出しの失敗。コールバック/メソッドが存在し、正しくバインドされているか確認してください。",
+        analysis_invalid_hook: "React Hook の問題。フックは関数コンポーネントの本体内で呼び出す必要があります。",
+        analysis_network: "ネットワークエラー。インターネット接続または API エンドポイントのステータスを確認してください。",
+        analysis_json: "JSON 構文解析エラー。サーバーから予期しないデータ形式を受信しました。",
+        analysis_unexpected: "予期しないランタイムエラーです。以下のスタックトレースを確認してください。"
     },
     modal_loading: {
         initializing: "初期化中",
