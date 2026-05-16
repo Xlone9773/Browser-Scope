@@ -194,7 +194,21 @@ export const settings = {
             download: "Скачать результат",
             clear: "Очистить результат",
             quickCommands: "Быстрые команды",
-            run: "Выполнить"
+            run: "Выполнить",
+            presets: {
+                userAgent: { label: "User Agent", desc: "Показать строку UA браузера" },
+                screenInfo: { label: "Информация об экране", desc: "Разрешение и соотношение пикселей" },
+                cookies: { label: "Cookies", desc: "Показать все файлы cookie" },
+                clearStorage: { label: "Очистить LocalStorage", desc: "Удалить все данные из LocalStorage" },
+                editPage: { label: "Редактировать страницу", desc: "Переключить contentEditable" },
+                disableBlur: { label: "Отключить размытие", desc: "Переключить глобальное размытие" },
+                blockClicks: { label: "Блокировать клики", desc: "Переключить pointer-events" },
+                getKeys: { label: "Получить все ключи", desc: "Список ключей LocalStorage" },
+                reload: { label: "Перезагрузить страницу", desc: "Принудительное обновление" },
+                performance: { label: "Производительность", desc: "Текущая метка времени (мс)" },
+                network: { label: "Информация о сети", desc: "Детали подключения" },
+                memory: { label: "Память", desc: "Размер кучи (Только Chrome)" }
+            }
         },
         floating_state: {
             title: "Инструменты разработчика плавают",

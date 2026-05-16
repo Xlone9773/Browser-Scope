@@ -194,7 +194,21 @@ export const settings = {
             download: "下载结果",
             clear: "清空结果",
             quickCommands: "快捷指令",
-            run: "立即运行"
+            run: "立即运行",
+            presets: {
+                userAgent: { label: "User Agent", desc: "查看浏览器 UA 字符串" },
+                screenInfo: { label: "屏幕信息", desc: "分辨率与像素比例" },
+                cookies: { label: "Cookies", desc: "显示所有 Cookie" },
+                clearStorage: { label: "清空本地存储", desc: "擦除 LocalStorage 数据" },
+                editPage: { label: "编辑页面", desc: "切换页面内容是否可编辑" },
+                disableBlur: { label: "禁用模糊", desc: "切换全局模糊效果" },
+                blockClicks: { label: "阻断点击", desc: "切换全局事件拦截" },
+                getKeys: { label: "获取所有键", desc: "列出 LocalStorage 中的键名" },
+                reload: { label: "重新加载", desc: "强制刷新当前页面" },
+                performance: { label: "性能计时", desc: "当前时间戳（毫秒）" },
+                network: { label: "网络信息", desc: "连接与带宽情况" },
+                memory: { label: "内存状况", desc: "堆内存大小 (仅 Chrome)" }
+            }
         },
         floating_state: {
             title: "开发者工具处于悬浮窗模式",

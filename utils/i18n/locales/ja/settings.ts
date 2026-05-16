@@ -194,7 +194,21 @@ export const settings = {
             download: "結果をDL",
             clear: "結果をクリア",
             quickCommands: "クイックコマンド",
-            run: "即時実行"
+            run: "即時実行",
+            presets: {
+                userAgent: { label: "User Agent", desc: "ブラウザの UA 文字列を表示" },
+                screenInfo: { label: "画面情報", desc: "解像度とピクセル比" },
+                cookies: { label: "Cookies", desc: "すべてのクッキーを表示" },
+                clearStorage: { label: "ローカルストレージ消去", desc: "LocalStorage を消去" },
+                editPage: { label: "ページ編集", desc: "コンテンツの編集可否を切り替え" },
+                disableBlur: { label: "ぼかし無効化", desc: "グローバルぼかしを切り替え" },
+                blockClicks: { label: "クリックブロック", desc: "グローバルクリックを切り替え" },
+                getKeys: { label: "すべてのキー取得", desc: "LocalStorage のキー一覧" },
+                reload: { label: "ページ再読み込み", desc: "強制リロード" },
+                performance: { label: "パフォーマンス", desc: "現在のタイムスタンプ(ms)" },
+                network: { label: "ネットワーク情報", desc: "接続の詳細" },
+                memory: { label: "メモリ", desc: "ヒープサイズ (Chromeのみ)" }
+            }
         },
         floating_state: {
             title: "開発者ツールが別ウィンドウで開いています",

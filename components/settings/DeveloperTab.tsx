@@ -14,26 +14,25 @@ interface DeveloperTabProps {
 type SubTab = 'events' | 'inspector' | 'console';
 
 interface PresetCommand {
-    label: string;
+    id: keyof Translation['settings']['developer']['console']['presets'];
     cmd: string;
-    desc: string;
     icon: React.ElementType;
     autoRun?: boolean;
 }
 
 const PRESET_COMMANDS: PresetCommand[] = [
-    { label: 'User Agent', cmd: 'navigator.userAgent', desc: 'View browser UA string', icon: Globe, autoRun: true },
-    { label: 'Screen Info', cmd: '`${window.innerWidth}x${window.innerHeight} (PR: ${window.devicePixelRatio})`', desc: 'Resolution & Pixel Ratio', icon: Smartphone, autoRun: true },
-    { label: 'Cookies', cmd: 'document.cookie', desc: 'Show all cookies', icon: Shield, autoRun: true },
-    { label: 'Clear LocalStorage', cmd: 'localStorage.clear(); "LocalStorage Cleared"', desc: 'Wipe local storage', icon: Trash2, autoRun: true },
-    { label: 'Edit Page', cmd: 'document.body.contentEditable = document.body.contentEditable === "true" ? "false" : "true"', desc: 'Toggle contentEditable', icon: Edit3, autoRun: true },
-    { label: 'Disable Blur', cmd: 'document.body.classList.toggle("no-blur")', desc: 'Toggle global blur', icon: Eye, autoRun: true },
-    { label: 'Block Clicks', cmd: 'document.body.style.pointerEvents = document.body.style.pointerEvents === "none" ? "auto" : "none"', desc: 'Toggle pointer-events', icon: Shield, autoRun: true },
-    { label: 'Get All Keys', cmd: 'Object.keys(localStorage)', desc: 'List localStorage keys', icon: Database, autoRun: true },
-    { label: 'Reload Page', cmd: 'window.location.reload()', desc: 'Force refresh', icon: Activity, autoRun: true },
-    { label: 'Performance', cmd: 'performance.now()', desc: 'Current timestamp (ms)', icon: Activity, autoRun: true },
-    { label: 'Network Info', cmd: 'navigator.connection', desc: 'Connection details', icon: Activity, autoRun: true },
-    { label: 'Memory', cmd: 'performance.memory', desc: 'Heap size (Chrome)', icon: Database, autoRun: true },
+    { id: 'userAgent', cmd: 'navigator.userAgent', icon: Globe, autoRun: true },
+    { id: 'screenInfo', cmd: '`${window.innerWidth}x${window.innerHeight} (PR: ${window.devicePixelRatio})`', icon: Smartphone, autoRun: true },
+    { id: 'cookies', cmd: 'document.cookie', icon: Shield, autoRun: true },
+    { id: 'clearStorage', cmd: 'localStorage.clear(); "LocalStorage Cleared"', icon: Trash2, autoRun: true },
+    { id: 'editPage', cmd: 'document.body.contentEditable = document.body.contentEditable === "true" ? "false" : "true"', icon: Edit3, autoRun: true },
+    { id: 'disableBlur', cmd: 'document.body.classList.toggle("no-blur")', icon: Eye, autoRun: true },
+    { id: 'blockClicks', cmd: 'document.body.style.pointerEvents = document.body.style.pointerEvents === "none" ? "auto" : "none"', icon: Shield, autoRun: true },
+    { id: 'getKeys', cmd: 'Object.keys(localStorage)', icon: Database, autoRun: true },
+    { id: 'reload', cmd: 'window.location.reload()', icon: Activity, autoRun: true },
+    { id: 'performance', cmd: 'performance.now()', icon: Activity, autoRun: true },
+    { id: 'network', cmd: 'navigator.connection', icon: Activity, autoRun: true },
+    { id: 'memory', cmd: 'performance.memory', icon: Database, autoRun: true },
 ];
 
 export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggleFloat }) => {
@@ -359,8 +358,8 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                                                 <preset.icon size={14} />
                                             </div>
                                             <div className="flex flex-col min-w-0">
-                                                <span className="text-slate-200 font-medium truncate">{preset.label}</span>
-                                                <span className="text-[10px] text-slate-500 truncate">{preset.desc}</span>
+                                                <span className="text-slate-200 font-medium truncate">{(t.console as any).presets?.[preset.id]?.label || preset.id}</span>
+                                                <span className="text-[10px] text-slate-500 truncate">{(t.console as any).presets?.[preset.id]?.desc || ""}</span>
                                             </div>
                                         </div>
                                         <button 

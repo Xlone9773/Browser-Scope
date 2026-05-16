@@ -194,7 +194,21 @@ export const settings = {
             download: "Download Result",
             clear: "Clear Result",
             quickCommands: "Quick Commands",
-            run: "Run Now"
+            run: "Run Now",
+            presets: {
+                userAgent: { label: "User Agent", desc: "View browser UA string" },
+                screenInfo: { label: "Screen Info", desc: "Resolution & Pixel Ratio" },
+                cookies: { label: "Cookies", desc: "Show all cookies" },
+                clearStorage: { label: "Clear LocalStorage", desc: "Wipe local storage" },
+                editPage: { label: "Edit Page", desc: "Toggle contentEditable" },
+                disableBlur: { label: "Disable Blur", desc: "Toggle global blur" },
+                blockClicks: { label: "Block Clicks", desc: "Toggle pointer-events" },
+                getKeys: { label: "Get All Keys", desc: "List localStorage keys" },
+                reload: { label: "Reload Page", desc: "Force refresh" },
+                performance: { label: "Performance", desc: "Current timestamp (ms)" },
+                network: { label: "Network Info", desc: "Connection details" },
+                memory: { label: "Memory", desc: "Heap size (Chrome)" }
+            }
         },
         floating_state: {
             title: "Developer Tools is Floating",

@@ -194,7 +194,21 @@ export const settings = {
             download: "下載結果",
             clear: "清空結果",
             quickCommands: "快捷指令",
-            run: "立即運行"
+            run: "立即運行",
+            presets: {
+                userAgent: { label: "User Agent", desc: "查看瀏覽器 UA 字串" },
+                screenInfo: { label: "螢幕資訊", desc: "解像度與像素比例" },
+                cookies: { label: "Cookies", desc: "顯示所有 Cookie" },
+                clearStorage: { label: "清空本地儲存", desc: "擦除 LocalStorage 資料" },
+                editPage: { label: "編輯頁面", desc: "切換頁面內容是否可編輯" },
+                disableBlur: { label: "停用模糊", desc: "切換全域模糊效果" },
+                blockClicks: { label: "阻斷點擊", desc: "切換全域事件攔截" },
+                getKeys: { label: "取得所有鍵", desc: "列出 LocalStorage 中的鍵名" },
+                reload: { label: "重新載入", desc: "強制重新整理當前頁面" },
+                performance: { label: "效能計時", desc: "當前時間戳（毫秒）" },
+                network: { label: "網絡資訊", desc: "連線與頻寬情況" },
+                memory: { label: "記憶體狀況", desc: "堆疊記憶體大小 (僅 Chrome)" }
+            }
         },
         floating_state: {
             title: "開發者工具處於懸浮窗模式",
