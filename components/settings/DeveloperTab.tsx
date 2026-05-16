@@ -523,23 +523,23 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                             <div className="p-3 border-b border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition" onClick={toggleLogging}>
                                 <div className="flex flex-col gap-1 cursor-pointer">
                                     <div className="flex items-center justify-between text-slate-200">
-                                        <span>Record Events</span>
+                                        <span>{t.config?.recordEvents || 'Record Events'}</span>
                                         <div className={`w-8 h-4 rounded-full relative transition-colors ${isLoggingEnabled ? 'bg-indigo-500' : 'bg-slate-600'}`}>
                                             <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${isLoggingEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] text-slate-500">Auto-record window & network events</span>
+                                    <span className="text-[10px] text-slate-500">{t.config?.recordEventsDesc || 'Auto-record window & network events'}</span>
                                 </div>
                             </div>
                             <div className="p-3 hover:bg-slate-700 transition" onClick={toggleVConsole}>
                                 <div className="flex flex-col gap-1 cursor-pointer">
                                     <div className="flex items-center justify-between text-slate-200">
-                                        <span>vConsole Integration</span>
+                                        <span>{t.config?.vconsole || 'vConsole Integration'}</span>
                                         <div className={`w-8 h-4 rounded-full relative transition-colors ${isVConsoleEnabled ? 'bg-indigo-500' : 'bg-slate-600'}`}>
                                             <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${isVConsoleEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] text-slate-500">Enable Tencent vConsole panel</span>
+                                    <span className="text-[10px] text-slate-500">{t.config?.vconsoleDesc || 'Enable Tencent vConsole panel'}</span>
                                 </div>
                             </div>
                         </div>
@@ -616,23 +616,23 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({ t, isFloating, toggl
                             <div className="p-3 border-b border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition" onClick={toggleLogging}>
                                 <div className="flex flex-col gap-1 cursor-pointer">
                                     <div className="flex items-center justify-between text-slate-200">
-                                        <span>Record Events</span>
+                                        <span>{t.config?.recordEvents || 'Record Events'}</span>
                                         <div className={`w-8 h-4 rounded-full relative transition-colors ${isLoggingEnabled ? 'bg-indigo-500' : 'bg-slate-600'}`}>
                                             <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${isLoggingEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] text-slate-500">Auto-record window & network events</span>
+                                    <span className="text-[10px] text-slate-500">{t.config?.recordEventsDesc || 'Auto-record window & network events'}</span>
                                 </div>
                             </div>
                             <div className="p-3 bg-slate-800 hover:bg-slate-700 transition" onClick={toggleVConsole}>
                                 <div className="flex flex-col gap-1 cursor-pointer">
                                     <div className="flex items-center justify-between text-slate-200">
-                                        <span>vConsole Integration</span>
+                                        <span>{t.config?.vconsole || 'vConsole Integration'}</span>
                                         <div className={`w-8 h-4 rounded-full relative transition-colors ${isVConsoleEnabled ? 'bg-indigo-500' : 'bg-slate-600'}`}>
                                             <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${isVConsoleEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] text-slate-500">Enable Tencent vConsole panel</span>
+                                    <span className="text-[10px] text-slate-500">{t.config?.vconsoleDesc || 'Enable Tencent vConsole panel'}</span>
                                 </div>
                             </div>
                         </div>

@@ -156,6 +156,12 @@ export const settings = {
         columns: { name: "资源名称", type: "类型", duration: "耗时" }
     },
     developer: {
+        config: {
+            recordEvents: "记录事件",
+            recordEventsDesc: "自动记录窗口与网络事件",
+            vconsole: "vConsole 调试",
+            vconsoleDesc: "开启腾讯 vConsole 面板"
+        },
         warning: {
             title: "操作极其危险！",
             desc: "这里是为开发者准备的调试区域。如果不清楚自己在做什么，请立即关闭窗口！\n\n任何诱导你在此处粘贴代码的人都是骗子。执行未知代码可能导致你的隐私泄露、账号被盗或设备被恶意控制。",

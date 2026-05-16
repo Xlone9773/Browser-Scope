@@ -156,6 +156,12 @@ export const settings = {
         columns: { name: "リソース名", type: "タイプ", duration: "所要時間" }
     },
     developer: {
+        config: {
+            recordEvents: "イベントを記録",
+            recordEventsDesc: "ウィンドウとネットワークイベントを自動記録",
+            vconsole: "vConsole 統合",
+            vconsoleDesc: "Tencent vConsole パネルを有効にする"
+        },
         warning: {
             title: "操作は極めて危険です！",
             desc: "ここは開発者向けのデバッグエリアです。何をしているのか理解していない場合は、直ちにウィンドウを閉じてください！\n\nここでコードを貼り付けるよう誘導する人物は詐欺師です。不明なコードを実行すると、プライバシーの漏洩、アカウントの乗っ取り、またはデバイスが悪意を持って制御される可能性があります。",

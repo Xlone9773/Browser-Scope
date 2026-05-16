@@ -156,6 +156,12 @@ export const settings = {
         columns: { name: "資源名稱", type: "類型", duration: "耗時" }
     },
     developer: {
+        config: {
+            recordEvents: "記錄事件",
+            recordEventsDesc: "自動記錄視窗與網絡事件",
+            vconsole: "vConsole 整合",
+            vconsoleDesc: "啓用騰訊 vConsole 面板"
+        },
         warning: {
             title: "操作極度危險！",
             desc: "這裡是為開發者準備的偵錯區域。如果不清楚自己在做什麼，請立即關閉視窗！\n\n任何誘導你在此處貼上代碼的人都是詐騙。執行未知代碼可能導致你的私隱洩露、帳號被盜或裝置被惡意控制。",

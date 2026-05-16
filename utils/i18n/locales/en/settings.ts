@@ -156,6 +156,12 @@ export const settings = {
         columns: { name: "Name", type: "Type", duration: "Duration" }
     },
     developer: {
+        config: {
+            recordEvents: "Record Events",
+            recordEventsDesc: "Auto-record window & network events",
+            vconsole: "vConsole Integration",
+            vconsoleDesc: "Enable Tencent vConsole panel"
+        },
         warning: {
             title: "EXTREME CAUTION!",
             desc: "This area is for developers only. If you do not know what you are doing, CLOSE THIS WINDOW IMMEDIATELY!\n\nIf someone told you to copy-paste code here to unlock a 'hidden feature' or 'hack', it is a SCAM. Executing unknown code can allow attackers to steal your identity or take control of your device.",
