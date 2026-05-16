@@ -227,7 +227,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
         title={selectedRegion ? t.mtr_title : t.title}
         icon={selectedRegion ? <Activity size={24} /> : <Globe size={24} />}
         onClose={handleClose}
-        size="5xl"
+        size="3xl"
         fullHeight
         noPadding
     >

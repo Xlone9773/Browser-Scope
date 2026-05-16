@@ -231,7 +231,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
             title={t.tab_video}
             icon={<Film size={24} />}
             onClose={onClose}
-            size="5xl"
+            size="3xl"
             fullHeight
             noPadding
         >

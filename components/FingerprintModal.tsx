@@ -272,7 +272,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         title={t.title}
         icon={<Fingerprint size={24} />}
         onClose={onClose}
-        size="5xl"
+        size="3xl"
         fullHeight
         noPadding
     >

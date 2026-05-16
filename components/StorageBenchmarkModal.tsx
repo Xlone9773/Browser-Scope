@@ -331,7 +331,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
         title={t.title}
         icon={<HardDrive size={24} />}
         onClose={handleClose}
-        size="5xl"
+        size="3xl"
         fullHeight
     >
         {({ close }) => (

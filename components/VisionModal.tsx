@@ -321,7 +321,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
         title={t.title}
         icon={<ScanBarcode size={24} />}
         onClose={handleClose}
-        size="5xl"
+        size="3xl"
         fullHeight
         noPadding
     >

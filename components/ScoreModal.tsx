@@ -106,7 +106,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
         title={t.score_details_title}
         icon={<Fingerprint size={24} />}
         onClose={onClose}
-        size="5xl"
+        size="3xl"
         fullHeight={true} 
         noPadding={true}
     >

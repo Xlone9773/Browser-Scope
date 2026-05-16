@@ -70,7 +70,7 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
         title={`${t.title} (${extensions.length})`}
         icon={<Layers size={24} />}
         onClose={onClose}
-        size="5xl"
+        size="3xl"
         fullHeight
         noPadding
     >
