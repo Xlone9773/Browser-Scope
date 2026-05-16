@@ -138,7 +138,7 @@ export const tools = {
     peak: "峰值"
   },
   gamepadTool: {
-    title: "手掣與藍牙",
+    title: "遊戲手掣",
     tab_gamepad: "遊戲手掣",
     tab_bluetooth: "藍牙裝置",
     no_gamepad: "未檢測到手掣",

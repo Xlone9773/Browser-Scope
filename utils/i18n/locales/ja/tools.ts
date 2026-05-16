@@ -138,7 +138,7 @@ export const tools = {
     peak: "ピーク"
   },
   gamepadTool: {
-    title: "ゲームパッドとBluetooth",
+    title: "ゲームパッド",
     tab_gamepad: "ゲームパッド",
     tab_bluetooth: "Bluetooth機器",
     no_gamepad: "ゲームパッド未検出",

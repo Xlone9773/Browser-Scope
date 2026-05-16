@@ -163,7 +163,7 @@ export const modules = {
   },
 
   gamepadTool: {
-    title: "手柄与蓝牙",
+    title: "游戏手柄",
     tab_gamepad: "游戏手柄",
     tab_bluetooth: "蓝牙设备",
     no_gamepad: "未检测到手柄",

@@ -138,7 +138,7 @@ export const tools = {
     peak: "Пик"
   },
   gamepadTool: {
-    title: "Геймпад и Bluetooth",
+    title: "Геймпад",
     tab_gamepad: "Геймпад",
     tab_bluetooth: "Bluetooth устройства",
     no_gamepad: "Геймпад не обнаружен",

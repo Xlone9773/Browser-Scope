@@ -314,7 +314,7 @@ export const modules = {
   },
 
   gamepadTool: {
-    title: "Gamepad & Bluetooth",
+    title: "Gamepad",
     tab_gamepad: "Gamepad",
     tab_bluetooth: "Bluetooth",
     no_gamepad: "No Gamepad Detected",
