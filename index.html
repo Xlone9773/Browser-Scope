@@ -1,15 +1,29 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <script>
-      window.addEventListener('error', function(e) {
-        if (e.message && e.message.indexOf('VConsole') !== -1) { e.preventDefault(); e.stopImmediatePropagation(); }
-      }, true);
-      window.addEventListener('unhandledrejection', function(e) {
-        var msg = e.reason && e.reason.message ? e.reason.message : String(e.reason);
-        if (msg.indexOf('VConsole') !== -1) { e.preventDefault(); e.stopImmediatePropagation(); }
-      }, true);
+      window.addEventListener(
+        "error",
+        function (e) {
+          if (e.message && e.message.indexOf("VConsole") !== -1) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+          }
+        },
+        true,
+      );
+      window.addEventListener(
+        "unhandledrejection",
+        function (e) {
+          var msg =
+            e.reason && e.reason.message ? e.reason.message : String(e.reason);
+          if (msg.indexOf("VConsole") !== -1) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+          }
+        },
+        true,
+      );
     </script>
     <meta charset="UTF-8" />
     <meta name="color-scheme" content="light dark" />
@@ -18,39 +32,58 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
-        darkMode: 'class',
+        darkMode: "class",
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", 'Arial', "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", 'sans-serif'],
+              sans: [
+                "Inter",
+                "-apple-system",
+                "BlinkMacSystemFont",
+                "Segoe UI",
+                "Roboto",
+                "Helvetica Neue",
+                "Arial",
+                "Noto Sans",
+                "PingFang SC",
+                "Hiragino Sans GB",
+                "Microsoft YaHei",
+                "WenQuanYi Micro Hei",
+                "sans-serif",
+              ],
             },
             colors: {
               indigo: {
-                50: 'rgb(var(--color-primary-50, 238 242 255) / <alpha-value>)',
-                100: 'rgb(var(--color-primary-100, 224 231 255) / <alpha-value>)',
-                200: 'rgb(var(--color-primary-200, 199 210 254) / <alpha-value>)',
-                300: 'rgb(var(--color-primary-300, 165 180 252) / <alpha-value>)',
-                400: 'rgb(var(--color-primary-400, 129 140 248) / <alpha-value>)',
-                500: 'rgb(var(--color-primary-500, 99 102 241) / <alpha-value>)',
-                600: 'rgb(var(--color-primary-600, 79 70 229) / <alpha-value>)',
-                700: 'rgb(var(--color-primary-700, 67 56 202) / <alpha-value>)',
-                800: 'rgb(var(--color-primary-800, 55 48 163) / <alpha-value>)',
-                900: 'rgb(var(--color-primary-900, 49 46 129) / <alpha-value>)',
-                950: 'rgb(var(--color-primary-950, 30 27 75) / <alpha-value>)',
-              }
-            }
+                50: "rgb(var(--color-primary-50, 238 242 255) / <alpha-value>)",
+                100: "rgb(var(--color-primary-100, 224 231 255) / <alpha-value>)",
+                200: "rgb(var(--color-primary-200, 199 210 254) / <alpha-value>)",
+                300: "rgb(var(--color-primary-300, 165 180 252) / <alpha-value>)",
+                400: "rgb(var(--color-primary-400, 129 140 248) / <alpha-value>)",
+                500: "rgb(var(--color-primary-500, 99 102 241) / <alpha-value>)",
+                600: "rgb(var(--color-primary-600, 79 70 229) / <alpha-value>)",
+                700: "rgb(var(--color-primary-700, 67 56 202) / <alpha-value>)",
+                800: "rgb(var(--color-primary-800, 55 48 163) / <alpha-value>)",
+                900: "rgb(var(--color-primary-900, 49 46 129) / <alpha-value>)",
+                950: "rgb(var(--color-primary-950, 30 27 75) / <alpha-value>)",
+              },
+            },
           },
         },
-      }
+      };
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
       body {
         /* font-family set in tailwind config now */
         background-color: #f8fafc; /* Slate 50 */
-        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        transition:
+          background-color 0.3s ease-in-out,
+          color 0.3s ease-in-out;
       }
       .theme-emerald {
         --color-primary-50: 236 253 245;
@@ -182,22 +215,22 @@
 
       /* Utility to hide scrollbar but allow scrolling */
       .scrollbar-hide::-webkit-scrollbar {
-          display: none;
+        display: none;
       }
       .scrollbar-hide {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
       }
 
       /* Utility to hide ALL scrollbars globally */
       html.global-scrollbar-hide *::-webkit-scrollbar,
       html.global-scrollbar-hide::-webkit-scrollbar {
-          display: none !important;
+        display: none !important;
       }
       html.global-scrollbar-hide *,
       html.global-scrollbar-hide {
-          -ms-overflow-style: none !important;
-          scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
       }
 
       /* View Transitions API Customization */
@@ -211,7 +244,7 @@
          === DISABLE VISUAL EFFECTS MODE (Previously High Performance) ===
          Forces opaque backgrounds and removes blur filters to reduce GPU load 
       */
-      
+
       /* 1. Remove all backdrop filters */
       body.no-blur .backdrop-blur-sm,
       body.no-blur .backdrop-blur-md,
@@ -220,10 +253,10 @@
       body.no-blur .backdrop-blur-2xl,
       body.no-blur .backdrop-blur-3xl,
       body.no-blur .backdrop-blur-\[2px\] {
-          backdrop-filter: none !important;
-          -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
       }
-      
+
       /* 2. Force Opaque Backgrounds in Light Mode */
       html:not(.dark) body.no-blur .bg-white\/50,
       html:not(.dark) body.no-blur .bg-white\/60,
@@ -232,8 +265,8 @@
       html:not(.dark) body.no-blur .bg-white\/90,
       html:not(.dark) body.no-blur .bg-white\/95,
       html:not(.dark) body.no-blur .supports-\[backdrop-filter\]\:bg-white\/60 {
-          background-color: #ffffff !important;
-          border-color: #e2e8f0 !important; /* slate-200 */
+        background-color: #ffffff !important;
+        border-color: #e2e8f0 !important; /* slate-200 */
       }
 
       /* 3. Force Opaque Backgrounds in Dark Mode */
@@ -243,11 +276,13 @@
       html.dark body.no-blur .dark\:bg-slate-800\/80,
       html.dark body.no-blur .dark\:bg-slate-800\/90,
       html.dark body.no-blur .dark\:bg-slate-800\/95,
-      html.dark body.no-blur .supports-\[backdrop-filter\]\:dark\:bg-slate-800\/60 {
-          background-color: #1e293b !important; /* slate-800 */
-          border-color: #334155 !important; /* slate-700 */
+      html.dark
+        body.no-blur
+        .supports-\[backdrop-filter\]\:dark\:bg-slate-800\/60 {
+        background-color: #1e293b !important; /* slate-800 */
+        border-color: #334155 !important; /* slate-700 */
       }
-      
+
       html.dark body.no-blur .dark\:bg-slate-900\/50,
       html.dark body.no-blur .dark\:bg-slate-900\/60,
       html.dark body.no-blur .dark\:bg-slate-900\/75,
@@ -257,83 +292,125 @@
       html.dark body.no-blur .dark\:bg-black\/40,
       html.dark body.no-blur .dark\:bg-black\/50,
       html.dark body.no-blur .dark\:bg-black\/60 {
-          background-color: #0f172a !important; /* slate-900 */
-          border-color: #334155 !important; /* slate-700 */
+        background-color: #0f172a !important; /* slate-900 */
+        border-color: #334155 !important; /* slate-700 */
       }
-      
+
       /* 4. Specific Component Overrides */
       /* Modal Overlay - make it solid dark to hide content behind */
       body.no-blur .fixed.inset-0.bg-slate-900\/60 {
-          background-color: rgba(15, 23, 42, 0.98) !important;
+        background-color: rgba(15, 23, 42, 0.98) !important;
       }
 
       /* === FAST TRANSITIONS MODE === */
       body.fast-animations * {
-          transition-duration: 0.1s !important;
+        transition-duration: 0.1s !important;
       }
 
       /* === CUSTOM ANIMATIONS === */
-      @keyframes slideUp { 
-          from { opacity: 0; transform: translateY(24px); } 
-          to { opacity: 1; transform: translateY(0); } 
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-      @keyframes fadeIn { 
-          from { opacity: 0; } 
-          to { opacity: 1; } 
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
-      @keyframes flyIn { 
-          from { opacity: 0; transform: translateX(-32px); } 
-          to { opacity: 1; transform: translateX(0); } 
+      @keyframes flyIn {
+        from {
+          opacity: 0;
+          transform: translateX(-32px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
       }
-      @keyframes zoomIn { 
-          from { opacity: 0; transform: scale(0.95); } 
-          to { opacity: 1; transform: scale(1); } 
+      @keyframes zoomIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
       }
 
       /* Make sure key prop change actually triggers by giving them duration */
-      .anim-slide-up { animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; }
-      .anim-fade { animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; }
-      .anim-fly-in { animation: flyIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; }
-      .anim-zoom { animation: zoomIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; }
+      .anim-slide-up {
+        animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+      }
+      .anim-fade {
+        animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+      }
+      .anim-fly-in {
+        animation: flyIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+      }
+      .anim-zoom {
+        animation: zoomIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+      }
 
       /* Delay modifiers for sub-sections */
-      .delay-100 { animation-delay: 100ms; animation-fill-mode: both; }
-      .delay-200 { animation-delay: 200ms; animation-fill-mode: both; }
+      .delay-100 {
+        animation-delay: 100ms;
+        animation-fill-mode: both;
+      }
+      .delay-200 {
+        animation-delay: 200ms;
+        animation-fill-mode: both;
+      }
 
       /* === DISABLE ANIMATIONS MODE === */
       body.disable-animations * {
-          animation-duration: 0s !important;
-          transition-duration: 0s !important;
-          animation: none !important;
+        animation-duration: 0s !important;
+        transition-duration: 0s !important;
+        animation: none !important;
       }
 
       /* === VCONSOLE SCROLL PATCH === */
       #__vconsole .vc-mask,
       #__vconsole .vc-panel,
       #__vconsole .vc-scroller {
-          overscroll-behavior: none !important;
+        overscroll-behavior: none !important;
+      }
+
+      /* === ERUDA SCROLL PATCH === */
+      #eruda-container,
+      .eruda-container {
+        overscroll-behavior: none !important;
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "@fingerprintjs/fingerprintjs": "https://esm.sh/@fingerprintjs/fingerprintjs@4.5.1",
-    "fingerprintjs2": "https://esm.sh/fingerprintjs2@2.1.4",
-    "react-dom": "https://esm.sh/react-dom@^19.2.3",
-    "@xenova/transformers": "https://esm.sh/@xenova/transformers@2.17.1",
-    "buffer": "https://esm.sh/buffer@6.0.3",
-    "long": "https://esm.sh/long@5.2.3"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+    <script type="importmap">
+      {
+        "imports": {
+          "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
+          "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+          "react/": "https://esm.sh/react@^19.2.3/",
+          "react": "https://esm.sh/react@^19.2.3",
+          "@fingerprintjs/fingerprintjs": "https://esm.sh/@fingerprintjs/fingerprintjs@4.5.1",
+          "fingerprintjs2": "https://esm.sh/fingerprintjs2@2.1.4",
+          "react-dom": "https://esm.sh/react-dom@^19.2.3",
+          "@xenova/transformers": "https://esm.sh/@xenova/transformers@2.17.1",
+          "buffer": "https://esm.sh/buffer@6.0.3",
+          "long": "https://esm.sh/long@5.2.3"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>

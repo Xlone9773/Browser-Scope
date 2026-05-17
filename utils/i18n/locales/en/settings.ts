@@ -160,7 +160,9 @@ export const settings = {
             recordEvents: "Record Events",
             recordEventsDesc: "Auto-record window & network events",
             vconsole: "vConsole Integration",
-            vconsoleDesc: "Enable Tencent vConsole panel"
+            vconsoleDesc: "Enable Tencent vConsole panel",
+            eruda: "Eruda Integration",
+            erudaDesc: "Enable Eruda panel"
         },
         warning: {
             title: "EXTREME CAUTION!",

@@ -160,7 +160,9 @@ export const settings = {
             recordEvents: "Запись событий",
             recordEventsDesc: "Автозапись оконных и сетевых событий",
             vconsole: "Интеграция vConsole",
-            vconsoleDesc: "Включить панель Tencent vConsole"
+            vconsoleDesc: "Включить панель Tencent vConsole",
+            eruda: "Интеграция Eruda",
+            erudaDesc: "Включить панель Eruda"
         },
         warning: {
             title: "КРАЙНЕ ОПАСНО!",

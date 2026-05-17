@@ -160,7 +160,9 @@ export const settings = {
             recordEvents: "イベントを記録",
             recordEventsDesc: "ウィンドウとネットワークイベントを自動記録",
             vconsole: "vConsole 統合",
-            vconsoleDesc: "Tencent vConsole パネルを有効にする"
+            vconsoleDesc: "Tencent vConsole パネルを有効にする",
+            eruda: "Eruda 統合",
+            erudaDesc: "Eruda パネルを有効にする"
         },
         warning: {
             title: "操作は極めて危険です！",

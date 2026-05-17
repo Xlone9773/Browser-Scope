@@ -160,7 +160,9 @@ export const settings = {
             recordEvents: "記錄事件",
             recordEventsDesc: "自動記錄視窗與網路事件",
             vconsole: "vConsole 整合",
-            vconsoleDesc: "啟用騰訊 vConsole 面板"
+            vconsoleDesc: "啟用騰訊 vConsole 面板",
+            eruda: "Eruda 整合",
+            erudaDesc: "啟用 Eruda 面板"
         },
         warning: {
             title: "操作極度危險！",
