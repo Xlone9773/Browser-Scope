@@ -28,7 +28,13 @@ export const common = {
         analysis_invalid_hook: "React Hook issue. Hooks must be called inside a functional component body.",
         analysis_network: "Network error. Check your internet connection or API endpoint status.",
         analysis_json: "JSON parsing error. Received unexpected data format from the server.",
-        analysis_unexpected: "Unexpected runtime error. Please review the stack trace below."
+        analysis_unexpected: "Unexpected runtime error. Please review the stack trace below.",
+        clear_cache: "Clear Cache & Reload",
+        home: "Return Home",
+        context_metadata: "Environment Context",
+        time: "Timestamp",
+        url: "Current URL",
+        user_agent: "User Agent"
     },
     modal_loading: {
         initializing: "Initializing",

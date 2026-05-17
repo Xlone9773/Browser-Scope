@@ -28,7 +28,13 @@ export const common = {
         analysis_invalid_hook: "React Hook 問題。Hooks 必須在函式組件主體內部呼叫。",
         analysis_network: "網絡錯誤。請檢查您的網絡連線或 API 介面狀態。",
         analysis_json: "JSON 解析錯誤。伺服器傳回了不符合預期的資料格式。",
-        analysis_unexpected: "未知的執行時期錯誤。請查看下方的堆疊資訊。"
+        analysis_unexpected: "未知的執行時期錯誤。請查看下方的堆疊資訊。",
+        clear_cache: "清除快取並重新載入",
+        home: "返回首頁",
+        context_metadata: "環境上下文",
+        time: "發生時間",
+        url: "當前 URL",
+        user_agent: "瀏覽器資訊"
     },
     modal_loading: {
         initializing: "正在初始化",

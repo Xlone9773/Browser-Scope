@@ -28,7 +28,13 @@ export const common = {
         analysis_invalid_hook: "React Hook の問題。フックは関数コンポーネントの本体内で呼び出す必要があります。",
         analysis_network: "ネットワークエラー。インターネット接続または API エンドポイントのステータスを確認してください。",
         analysis_json: "JSON 構文解析エラー。サーバーから予期しないデータ形式を受信しました。",
-        analysis_unexpected: "予期しないランタイムエラーです。以下のスタックトレースを確認してください。"
+        analysis_unexpected: "予期しないランタイムエラーです。以下のスタックトレースを確認してください。",
+        clear_cache: "キャッシュをクリアして再読み込み",
+        home: "ホームに戻る",
+        context_metadata: "環境コンテキスト",
+        time: "タイムスタンプ",
+        url: "現在の URL",
+        user_agent: "ユーザーエージェント"
     },
     modal_loading: {
         initializing: "初期化中",
