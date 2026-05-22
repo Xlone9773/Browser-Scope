@@ -19,6 +19,19 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        target: 'esnext',
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              'react-vendor': ['react', 'react-dom'],
+              'ai-vendor': ['@xenova/transformers'],
+              'device-vendor': ['@fingerprintjs/fingerprintjs', 'fingerprintjs2'],
+              'ui-vendor': ['lucide-react']
+            }
+          }
+        }
       }
     };
 });
