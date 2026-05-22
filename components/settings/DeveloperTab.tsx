@@ -141,6 +141,11 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
   // Cooldown Timer
   const [countdown, setCountdown] = useState(5);
 
+  const [crash, setCrash] = useState(false);
+  if (crash) {
+    throw new Error("Simulated Dev Crash triggered.");
+  }
+
   useEffect(() => {
     if (!hasAcceptedRisk && !hasRejectedRisk && countdown > 0) {
       const timer = setTimeout(() => setCountdown((prev) => prev - 1), 1000);
@@ -701,8 +706,8 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                 </div>
               </div>
               <div className="p-3 bg-slate-800 border-b border-slate-700">
-                <span className="text-slate-200 text-[11px] mb-2 block font-medium">
-                  DEFAULT CONSOLE
+                <span className="text-slate-200 text-[11px] mb-2 block font-medium uppercase">
+                  {(t.config as any)?.defaultConsoleTitle || "DEFAULT CONSOLE"}
                 </span>
                 <div className="flex gap-2">
                   <button
@@ -712,7 +717,8 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                     }}
                     className={`flex-1 py-1.5 px-2 rounded flex items-center justify-center gap-1.5 transition text-xs ${defaultConsole === "vconsole" ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-400 hover:bg-slate-600"}`}
                   >
-                    <Bug size={12} /> vConsole
+                    <Bug size={12} />{" "}
+                    {(t.config as any)?.consoleVConsole || "vConsole"}
                   </button>
                   <button
                     onClick={(e) => {
@@ -721,9 +727,19 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                     }}
                     className={`flex-1 py-1.5 px-2 rounded flex items-center justify-center gap-1.5 transition text-xs ${defaultConsole === "eruda" ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-400 hover:bg-slate-600"}`}
                   >
-                    <Wrench size={12} /> Eruda
+                    <Wrench size={12} />{" "}
+                    {(t.config as any)?.consoleEruda || "Eruda"}
                   </button>
                 </div>
+              </div>
+              <div className="p-3 bg-slate-800 border-b border-slate-700">
+                <button
+                  onClick={() => setCrash(true)}
+                  className="w-full py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 rounded flex gap-2 items-center justify-center font-bold text-xs font-sans transition-colors border border-red-500/30"
+                >
+                  <Skull size={14} />{" "}
+                  {(t.config as any)?.simulateCrash || "Simulate Dev Crash"}
+                </button>
               </div>
             </div>
           )}
@@ -822,8 +838,8 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
               </div>
             </div>
             <div className="p-3 bg-slate-800 border-b border-slate-700">
-              <span className="text-slate-200 text-[11px] mb-2 block font-medium">
-                DEFAULT CONSOLE
+              <span className="text-slate-200 text-[11px] mb-2 block font-medium uppercase">
+                {(t.config as any)?.defaultConsoleTitle || "DEFAULT CONSOLE"}
               </span>
               <div className="flex gap-2">
                 <button
@@ -833,7 +849,8 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                   }}
                   className={`flex-1 py-1.5 px-2 rounded flex items-center justify-center gap-1.5 transition text-xs ${defaultConsole === "vconsole" ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-400 hover:bg-slate-600"}`}
                 >
-                  <Bug size={12} /> vConsole
+                  <Bug size={12} />{" "}
+                  {(t.config as any)?.consoleVConsole || "vConsole"}
                 </button>
                 <button
                   onClick={(e) => {
@@ -842,9 +859,19 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                   }}
                   className={`flex-1 py-1.5 px-2 rounded flex items-center justify-center gap-1.5 transition text-xs ${defaultConsole === "eruda" ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-400 hover:bg-slate-600"}`}
                 >
-                  <Wrench size={12} /> Eruda
+                  <Wrench size={12} />{" "}
+                  {(t.config as any)?.consoleEruda || "Eruda"}
                 </button>
               </div>
+            </div>
+            <div className="p-3 bg-slate-800 border-b border-slate-700">
+              <button
+                onClick={() => setCrash(true)}
+                className="w-full py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 rounded flex gap-2 items-center justify-center font-bold text-xs font-sans transition-colors border border-red-500/30"
+              >
+                <Skull size={14} />{" "}
+                {(t.config as any)?.simulateCrash || "Simulate Dev Crash"}
+              </button>
             </div>
           </div>
         )}

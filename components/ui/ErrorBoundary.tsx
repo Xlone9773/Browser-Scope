@@ -101,7 +101,18 @@ ${errorInfo?.componentStack || "No component stack available."}`;
   };
 
   public handleHome = () => {
-    window.location.href = "/";
+    window.dispatchEvent(new Event("close-all-modals"));
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      showDetails: false,
+      copied: false,
+    });
+  };
+
+  public handleReload = () => {
+    window.location.reload();
   };
 
   private getAnalysis(error: Error | null, t: any) {
@@ -234,6 +245,14 @@ ${errorInfo?.componentStack || "No component stack available."}`;
               >
                 <Home size={16} />
                 {t.home || "Return Home"}
+              </button>
+
+              <button
+                onClick={this.handleReload}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+              >
+                <RefreshCw size={16} />
+                {t.reload_page || "Reload Page"}
               </button>
 
               <button

@@ -157,6 +157,11 @@ export const settings = {
     },
     developer: {
         config: {
+            simulateCrash: "Имитация сбоя приложения",
+            defaultConsoleTitle: "Консоль по умолчанию",
+            consoleNone: "Нет (системная)",
+            consoleVConsole: "vConsole",
+            consoleEruda: "Eruda",
             recordEvents: "Запись событий",
             recordEventsDesc: "Автозапись оконных и сетевых событий",
             vconsole: "Интеграция vConsole",

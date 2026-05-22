@@ -157,6 +157,11 @@ export const settings = {
     },
     developer: {
         config: {
+            simulateCrash: "模拟应用崩溃",
+            defaultConsoleTitle: "默认控制台",
+            consoleNone: "无（系统默认）",
+            consoleVConsole: "vConsole",
+            consoleEruda: "Eruda",
             recordEvents: "记录事件",
             recordEventsDesc: "自动记录窗口与网络事件",
             vconsole: "vConsole 调试",

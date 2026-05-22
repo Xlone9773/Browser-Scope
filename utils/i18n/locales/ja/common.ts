@@ -6,6 +6,8 @@ export const common = {
     footer: "BrowserScope - ブラウザ能力検出ツール",
   },
   common: {
+    fullscreen: "全画面表示",
+    exit_fullscreen: "全画面を終了",
     loading: "システム機能をスキャン中...",
     error_boundary: {
         title: "コンポーネントのクラッシュ",
@@ -30,6 +32,7 @@ export const common = {
         analysis_json: "JSON 構文解析エラー。サーバーから予期しないデータ形式を受信しました。",
         analysis_unexpected: "予期しないランタイムエラーです。以下のスタックトレースを確認してください。",
         clear_cache: "キャッシュをクリアして再読み込み",
+        reload_page: "ページを更新",
         home: "ホームに戻る",
         context_metadata: "環境コンテキスト",
         time: "タイムスタンプ",

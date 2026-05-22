@@ -6,6 +6,8 @@ export const common = {
     footer: "BrowserScope - Device Intelligence Tool",
   },
   common: {
+    fullscreen: "Fullscreen",
+    exit_fullscreen: "Exit Fullscreen",
     loading: "Initializing...",
     error_boundary: {
         title: "Component Crashed",
@@ -30,6 +32,7 @@ export const common = {
         analysis_json: "JSON parsing error. Received unexpected data format from the server.",
         analysis_unexpected: "Unexpected runtime error. Please review the stack trace below.",
         clear_cache: "Clear Cache & Reload",
+        reload_page: "Reload Page",
         home: "Return Home",
         context_metadata: "Environment Context",
         time: "Timestamp",

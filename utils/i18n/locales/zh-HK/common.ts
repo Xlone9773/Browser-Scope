@@ -6,6 +6,8 @@ export const common = {
     footer: "BrowserScope - 瀏覽器能力檢測工具",
   },
   common: {
+    fullscreen: "全螢幕",
+    exit_fullscreen: "退出全螢幕",
     loading: "正在掃描系統能力...",
     error_boundary: {
         title: "組件崩潰",
@@ -30,6 +32,7 @@ export const common = {
         analysis_json: "JSON 解析錯誤。伺服器傳回了不符合預期的資料格式。",
         analysis_unexpected: "未知的執行時期錯誤。請查看下方的堆疊資訊。",
         clear_cache: "清除快取並重新載入",
+        reload_page: "重新載入",
         home: "返回首頁",
         context_metadata: "環境上下文",
         time: "發生時間",

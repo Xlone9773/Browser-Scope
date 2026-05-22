@@ -157,6 +157,11 @@ export const settings = {
     },
     developer: {
         config: {
+            simulateCrash: "アプリのクラッシュをシミュレート",
+            defaultConsoleTitle: "デフォルトコンソール",
+            consoleNone: "なし（システムデフォルト）",
+            consoleVConsole: "vConsole",
+            consoleEruda: "Eruda",
             recordEvents: "イベントを記録",
             recordEventsDesc: "ウィンドウとネットワークイベントを自動記録",
             vconsole: "vConsole 統合",

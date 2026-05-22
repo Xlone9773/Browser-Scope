@@ -94,10 +94,23 @@ export const useModalManager = () => {
         }
     }, [close]);
 
+    const closeAll = useCallback(() => {
+        setVisibility({});
+    }, []);
+
+    React.useEffect(() => {
+        const handleCloseAll = () => {
+            closeAll();
+        };
+        window.addEventListener('close-all-modals', handleCloseAll);
+        return () => window.removeEventListener('close-all-modals', handleCloseAll);
+    }, [closeAll]);
+
     return {
         visibility,
         open,
         close,
+        closeAll,
         unload,
         loadedModules,
         Components: components

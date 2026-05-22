@@ -6,6 +6,8 @@ export const common = {
     footer: "BrowserScope - 浏览器能力检测工具",
   },
   common: {
+    fullscreen: "全屏",
+    exit_fullscreen: "退出全屏",
     loading: "正在扫描系统能力...",
     error_boundary: {
         title: "组件崩溃",
@@ -30,6 +32,7 @@ export const common = {
         analysis_json: "JSON 解析错误。服务器返回了不符合预期的数据格式。",
         analysis_unexpected: "未知的运行时错误。请查看下方的堆栈信息。",
         clear_cache: "清除缓存并刷新",
+        reload_page: "刷新页面",
         home: "返回首页",
         context_metadata: "环境上下文",
         time: "发生时间",
