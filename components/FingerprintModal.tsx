@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Fingerprint, Settings, Copy, Check, Info, Box, Type } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
@@ -78,6 +78,18 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
   const [salt, setSalt] = useState('');
   const [copied, setCopied] = useState(false);
 
+  const workerRef = useRef<Worker | null>(null);
+
+  useEffect(() => {
+    workerRef.current = new Worker(new URL('../services/app.worker.ts', import.meta.url), { type: 'module' });
+
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.terminate();
+      }
+    };
+  }, []);
+
   // Font Detection Logic
   const detectFonts = useCallback(() => {
       setLoading(true);
@@ -131,6 +143,48 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
       setDetectedFonts(detected);
       setTimeTaken(Math.round(performance.now() - startTime));
       setLoading(false);
+  }, []);
+
+  // Recalculate hash based on enabled components and salt
+  const calculateHash = useCallback((currentComponents: Component[], currentSalt: string, startTime?: number) => {
+      const start = startTime || performance.now();
+      
+      const enabledValues = currentComponents
+        .filter(c => c.enabled)
+        .map(c => {
+            // Normalize value to string for hashing
+            const val = c.value;
+            return typeof val === 'object' ? JSON.stringify(val) : String(val);
+        });
+      
+      // Add salt if present
+      if (currentSalt) {
+          enabledValues.push(currentSalt);
+      }
+
+      const joined = enabledValues.join(':::');
+
+      if (workerRef.current) {
+          const handleResult = (e: MessageEvent) => {
+              if (e.data.type === 'hash') {
+                  workerRef.current?.removeEventListener('message', handleResult);
+                  if (e.data.success) {
+                      setVisitorId(e.data.hexHash);
+                      setTimeTaken(Math.round(performance.now() - start));
+                      setLoading(false);
+                  }
+              }
+          };
+          workerRef.current.addEventListener('message', handleResult);
+          workerRef.current.postMessage({ type: 'hash', key: joined, seed: 31 });
+      } else {
+          // Fallback if worker isn't loaded yet
+          const hash = murmurhash3_32_gc(joined, 31);
+          const hexHash = hash.toString(16).padStart(8, '0'); // emulate typical 32bit hash hex
+          setVisitorId(hexHash);
+          setTimeTaken(Math.round(performance.now() - start));
+          setLoading(false);
+      }
   }, []);
 
   // Run Fingerprint Logic
@@ -227,33 +281,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
       setVisitorId("Error loading library");
       setLoading(false);
     }
-  }, [activeTab, salt, detectFonts]);
-
-  // Recalculate hash based on enabled components and salt
-  const calculateHash = (currentComponents: Component[], currentSalt: string, startTime?: number) => {
-      const start = startTime || performance.now();
-      
-      const enabledValues = currentComponents
-        .filter(c => c.enabled)
-        .map(c => {
-            // Normalize value to string for hashing
-            const val = c.value;
-            return typeof val === 'object' ? JSON.stringify(val) : String(val);
-        });
-      
-      // Add salt if present
-      if (currentSalt) {
-          enabledValues.push(currentSalt);
-      }
-
-      const joined = enabledValues.join(':::');
-      const hash = murmurhash3_32_gc(joined, 31);
-      const hexHash = hash.toString(16).padStart(8, '0'); // emulate typical 32bit hash hex
-
-      setVisitorId(hexHash);
-      setTimeTaken(Math.round(performance.now() - start));
-      setLoading(false);
-  };
+  }, [activeTab, salt, detectFonts, calculateHash]);
 
   // Effect to run on tab change
   useEffect(() => {

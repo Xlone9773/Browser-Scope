@@ -44,66 +44,12 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
-    const workerCode = `
-      self.onmessage = function(e) {
-          const { id, config } = e.data;
-          const start = performance.now();
-          
-          try {
-              if (id === 'cpu') {
-                  let count = 0;
-                  const max = config.primeMax;
-                  for (let i = 2; i <= max; i++) {
-                      let isPrime = true;
-                      const limit = Math.sqrt(i);
-                      for (let j = 2; j <= limit; j++) {
-                          if (i % j === 0) { isPrime = false; break; }
-                      }
-                      if (isPrime) count++;
-                  }
-                  const duration = Math.max(performance.now() - start, 1);
-                  const score = Math.floor(config.multiplier / duration);
-                  const details = count + ' primes (' + duration.toFixed(0) + 'ms)';
-                  self.postMessage({ id, score, details, success: true });
-              } else if (id === 'math') {
-                  const ops = config.ops;
-                  for (let i = 0; i < ops; i++) {
-                      Math.sqrt(i) * Math.sin(i) * Math.cos(i);
-                  }
-                  const duration = Math.max(performance.now() - start, 1);
-                  const score = Math.floor(config.multiplier / duration);
-                  const details = (ops/1000000).toFixed(1) + 'M ops (' + duration.toFixed(0) + 'ms)';
-                  self.postMessage({ id, score, details, success: true });
-              } else if (id === 'memory') {
-                  const size = config.size;
-                  const arr = new Uint32Array(size);
-                  // Write
-                  for(let i=0; i<size; i++) arr[i] = i;
-                  // Read/Write Sparse
-                  for(let i=0; i<size; i+=8) arr[i] = arr[size - 1 - i];
-                  arr.reverse();
-                  
-                  const duration = Math.max(performance.now() - start, 1);
-                  const mbProcessed = (size * 4 * 2.5) / (1024 * 1024); 
-                  const throughput = (mbProcessed / (duration / 1000)).toFixed(0);
-                  const score = Math.floor(config.multiplier / duration);
-                  const details = throughput + ' MB/s (' + duration.toFixed(0) + 'ms)';
-                  self.postMessage({ id, score, details, success: true });
-              }
-          } catch (err) {
-              self.postMessage({ id, success: false, error: err.message });
-          }
-      };
-    `;
-    const blob = new Blob([workerCode], { type: 'application/javascript' });
-    const workerUrl = URL.createObjectURL(blob);
-    workerRef.current = new Worker(workerUrl);
+    workerRef.current = new Worker(new URL('../services/app.worker.ts', import.meta.url), { type: 'module' });
 
     return () => {
       if (workerRef.current) {
         workerRef.current.terminate();
       }
-      URL.revokeObjectURL(workerUrl);
     };
   }, []);
 
