@@ -147,6 +147,7 @@ export const modals = {
   fingerprintModal: {
     title: "指紋ジェネレーター",
     desc: "ブラウザ指紋の生成と分析",
+    tab_v5: "FingerprintJS v5",
     tab_v4: "FingerprintJS v4",
     tab_v2: "FingerprintJS v2",
     tab_fonts: "フォント検出",

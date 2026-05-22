@@ -223,6 +223,7 @@ export const modules = {
   fingerprintModal: {
     title: "Fingerprint Generator",
     desc: "Generate and analyze browser fingerprints",
+    tab_v5: "FingerprintJS v5",
     tab_v4: "FingerprintJS v4",
     tab_v2: "FingerprintJS v2",
     tab_fonts: "Font Detection",

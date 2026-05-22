@@ -69,7 +69,7 @@ interface FingerprintModalProps {
 }
 
 export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }) => {
-  const [activeTab, setActiveTab] = useState<'v4' | 'v2' | 'fonts'>('v4');
+  const [activeTab, setActiveTab] = useState<'v5' | 'v4' | 'v2' | 'fonts'>('v5');
   const [loading, setLoading] = useState(false);
   const [components, setComponents] = useState<Component[]>([]);
   const [detectedFonts, setDetectedFonts] = useState<string[]>([]);
@@ -148,7 +148,22 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
     try {
       let rawComponents: Record<string, any> = {};
 
-      if (activeTab === 'v4') {
+      if (activeTab === 'v5') {
+        // Load v5
+        // @ts-ignore
+        const fpPromise = import('fpjs-v5')
+          .then((FingerprintJS) => FingerprintJS.load());
+        
+        const fp = await fpPromise;
+        const result = await fp.get();
+        
+        // Convert v5 components object to our format
+        if (result.components) {
+            Object.entries(result.components).forEach(([key, val]: [string, any]) => {
+                rawComponents[key] = val.value;
+            });
+        }
+      } else if (activeTab === 'v4') {
         // Load v4
         // @ts-ignore
         const fpPromise = import('@fingerprintjs/fingerprintjs')
@@ -288,7 +303,17 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                 {/* Tabs & Controls */}
                 <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 grid grid-cols-1 md:grid-cols-12 gap-4 items-center shrink-0">
                     {/* Version Tabs */}
-                    <div className="md:col-span-4 flex bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
+                    <div className="md:col-span-6 flex bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
+                        <button
+                            onClick={() => setActiveTab('v5')}
+                            className={`flex-1 py-1.5 px-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
+                                activeTab === 'v5' 
+                                ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm' 
+                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+                            }`}
+                        >
+                            {t.tab_v5}
+                        </button>
                         <button
                             onClick={() => setActiveTab('v4')}
                             className={`flex-1 py-1.5 px-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
@@ -323,7 +348,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
 
                     {/* Salt Input - Only for standard fingerprints */}
                     {activeTab !== 'fonts' ? (
-                        <div className="md:col-span-4 relative">
+                        <div className="md:col-span-3 relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <Settings size={14} className="text-slate-400" />
                             </div>
@@ -343,7 +368,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                     )}
 
                     {/* Result Box */}
-                    <div className="md:col-span-4 flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg px-4 py-2">
+                    <div className="md:col-span-3 flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg px-4 py-2">
                         <div className="flex flex-col">
                             <span className="text-[10px] text-indigo-400 uppercase font-semibold tracking-wider">
                                 {activeTab === 'fonts' ? 'Count' : t.visitor_id}
@@ -436,15 +461,17 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                         </>
                     ) : (
                         // Font Viewer
-                        <div className="flex-1 p-6 bg-slate-50 dark:bg-slate-900 overflow-y-auto">
+                        <div className="flex-1 p-6 bg-slate-50 dark:bg-slate-900 overflow-y-auto w-full">
                             <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
                                 <Type size={16} />
                                 {t.font_list_title}
                             </h3>
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                 {detectedFonts.map(font => (
-                                    <div key={font} className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 flex items-center justify-center text-center shadow-sm">
-                                        {font}
+                                    <div key={font} className="p-4 py-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm flex flex-col items-center justify-center text-center shadow-sm gap-4 transition hover:border-indigo-300 dark:hover:border-indigo-500">
+                                        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:block truncate w-full px-2" title={font}>{font}</span>
+                                        <span style={{ fontFamily: font }} className="text-4xl text-slate-800 dark:text-slate-200">Aa</span>
+                                        <span className="text-[10px] text-slate-400 dark:text-slate-500 sm:hidden">{font}</span>
                                     </div>
                                 ))}
                             </div>

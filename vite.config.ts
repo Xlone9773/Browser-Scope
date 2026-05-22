@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => {
             manualChunks: {
               'react-vendor': ['react', 'react-dom'],
               'ai-vendor': ['@xenova/transformers'],
-              'device-vendor': ['@fingerprintjs/fingerprintjs', 'fingerprintjs2'],
+              'device-vendor': ['@fingerprintjs/fingerprintjs', 'fingerprintjs2', 'fpjs-v5'],
               'ui-vendor': ['lucide-react']
             }
           }

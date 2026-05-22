@@ -17,6 +17,7 @@
     "buffer": "6.0.3",
     "eruda": "^3.4.3",
     "fingerprintjs2": "2.1.4",
+    "fpjs-v5": "npm:@fingerprintjs/fingerprintjs@^5.2.0",
     "long": "5.2.3",
     "lucide-react": "^0.561.0",
     "react": "^19.2.3",

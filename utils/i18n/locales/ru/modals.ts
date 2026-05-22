@@ -147,6 +147,7 @@ export const modals = {
   fingerprintModal: {
     title: "Генератор Отпечатков",
     desc: "Генерация и анализ отпечатков браузера",
+    tab_v5: "FingerprintJS v5",
     tab_v4: "FingerprintJS v4",
     tab_v2: "FingerprintJS v2",
     tab_fonts: "Детектор Шрифтов",
