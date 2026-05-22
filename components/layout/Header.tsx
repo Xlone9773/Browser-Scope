@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useTransition } from "react";
 import {
   Monitor,
   RefreshCw,
@@ -14,6 +14,7 @@ import {
   Maximize,
   Minimize,
   MoreVertical,
+  Loader2,
 } from "lucide-react";
 import { Translation, Language } from "../../utils/i18n/types";
 import { Theme } from "../../appearance/theme";
@@ -60,6 +61,8 @@ export const Header: React.FC<HeaderProps> = ({
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [pendingLang, setPendingLang] = useState<Language | null>(null);
+  const [isPending, startTransition] = useTransition();
   const { formatNativeLanguageName } = useFormatter(lang);
 
   const langMenuRef = useRef<HTMLDivElement>(null);
@@ -74,9 +77,20 @@ export const Header: React.FC<HeaderProps> = ({
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
+  // Reset states when language actually changes!
+  useEffect(() => {
+    if (pendingLang === lang) {
+      setPendingLang(null);
+      setIsLangMenuOpen(false);
+      setIsMoreMenuOpen(false);
+    }
+  }, [lang, pendingLang]);
+
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
+      // Don't close if we are in the middle of a transition
+      if (isPending) return;
       if (
         langMenuRef.current &&
         !langMenuRef.current.contains(e.target as Node)
@@ -92,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isPending]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -118,9 +132,15 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const handleLangSelect = (code: Language) => {
-    setLang(code);
-    setIsLangMenuOpen(false);
-    setIsMoreMenuOpen(false);
+    if (code === lang) {
+      setIsLangMenuOpen(false);
+      setIsMoreMenuOpen(false);
+      return;
+    }
+    setPendingLang(code);
+    startTransition(() => {
+      setLang(code);
+    });
   };
 
   const useCollapsed = collapseHeader
@@ -221,15 +241,27 @@ export const Header: React.FC<HeaderProps> = ({
             <div
               className={`absolute right-0 top-full mt-2 w-48 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl py-1 z-50 transform transition-all duration-200 origin-top-right ${isLangMenuOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"}`}
             >
-              {SUPPORTED_LANGUAGES.map((code) => (
-                <button
-                  key={code}
-                  onClick={() => handleLangSelect(code as Language)}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${lang === code ? "text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20" : "text-slate-700 dark:text-slate-300"}`}
-                >
-                  {formatNativeLanguageName(code)}
-                </button>
-              ))}
+              {SUPPORTED_LANGUAGES.map((code) => {
+                const isCurrent = lang === code;
+                const isItemPending = isPending && pendingLang === code;
+
+                return (
+                  <button
+                    key={code}
+                    onClick={() => handleLangSelect(code as Language)}
+                    disabled={isPending}
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isCurrent ? "text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20" : "text-slate-700 dark:text-slate-300"}`}
+                  >
+                    <span>{formatNativeLanguageName(code)}</span>
+                    {isItemPending && (
+                      <Loader2
+                        size={14}
+                        className="animate-spin text-indigo-500"
+                      />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -298,20 +330,34 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                 Language
               </div>
-              {SUPPORTED_LANGUAGES.map((code) => (
-                <button
-                  key={code}
-                  onClick={() => handleLangSelect(code as Language)}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors flex items-center gap-2 ${lang === code ? "text-indigo-600 dark:text-indigo-400 font-medium" : "text-slate-600 dark:text-slate-300"}`}
-                >
-                  {lang === code && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
-                  )}
-                  <span className={lang === code ? "" : "ml-3"}>
-                    {formatNativeLanguageName(code)}
-                  </span>
-                </button>
-              ))}
+              {SUPPORTED_LANGUAGES.map((code) => {
+                const isCurrent = lang === code;
+                const isItemPending = isPending && pendingLang === code;
+
+                return (
+                  <button
+                    key={code}
+                    onClick={() => handleLangSelect(code as Language)}
+                    disabled={isPending}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors flex items-center gap-2 justify-between disabled:opacity-50 disabled:cursor-not-allowed ${isCurrent ? "text-indigo-600 dark:text-indigo-400 font-medium" : "text-slate-600 dark:text-slate-300"}`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {isCurrent && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                      )}
+                      <span className={isCurrent ? "" : "ml-3"}>
+                        {formatNativeLanguageName(code)}
+                      </span>
+                    </div>
+                    {isItemPending && (
+                      <Loader2
+                        size={14}
+                        className="animate-spin text-indigo-500"
+                      />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
