@@ -151,7 +151,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
       if (activeTab === 'v4') {
         // Load v4
         // @ts-ignore
-        const fpPromise = import('https://esm.sh/@fingerprintjs/fingerprintjs@4.5.1')
+        const fpPromise = import('@fingerprintjs/fingerprintjs')
           .then((FingerprintJS) => FingerprintJS.load());
         
         const fp = await fpPromise;
@@ -166,7 +166,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
       } else {
         // Load v2 (Fingerprintjs2)
         // @ts-ignore
-        const Fingerprint2 = await import('https://esm.sh/fingerprintjs2@2.1.4');
+        const Fingerprint2 = await import('fingerprintjs2');
         
         // V2 uses a callback pattern usually, but we wrap in promise
         const componentsV2 = await new Promise<any[]>((resolve) => {
