@@ -174,7 +174,8 @@ export const modals = {
     memory_test: "Пропускная способность памяти",
     dom_test: "Операции с DOM",
     gpu_test: "Рендеринг Canvas",
-    storage_test: "IOPS Базы данных"
+    storage_test: "IOPS Базы данных",
+    worker_status: "Web Worker активен (Многопоточность)"
   },
   graphicsModal: {
     supported_features: "Поддерживаемые возможности",

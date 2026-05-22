@@ -174,7 +174,8 @@ export const modals = {
     memory_test: "メモリスループット",
     dom_test: "DOM操作性能",
     gpu_test: "Canvas描画性能",
-    storage_test: "データベースIOPS"
+    storage_test: "データベースIOPS",
+    worker_status: "Web Worker 有効 (マルチスレッド高速)"
   },
   graphicsModal: {
     supported_features: "サポートされている機能",

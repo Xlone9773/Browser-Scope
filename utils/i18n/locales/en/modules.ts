@@ -251,7 +251,8 @@ export const modules = {
     memory_test: "Memory Throughput",
     dom_test: "DOM Manipulation",
     gpu_test: "Canvas Rendering",
-    storage_test: "Database IOPS"
+    storage_test: "Database IOPS",
+    worker_status: "Web Worker Active (Multi-Threaded)"
   },
 
   aiPlayground: {

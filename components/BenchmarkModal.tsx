@@ -41,6 +41,71 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   const [progress, setProgress] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
   const isRunningRef = useRef(false);
+  const workerRef = useRef<Worker | null>(null);
+
+  useEffect(() => {
+    const workerCode = `
+      self.onmessage = function(e) {
+          const { id, config } = e.data;
+          const start = performance.now();
+          
+          try {
+              if (id === 'cpu') {
+                  let count = 0;
+                  const max = config.primeMax;
+                  for (let i = 2; i <= max; i++) {
+                      let isPrime = true;
+                      const limit = Math.sqrt(i);
+                      for (let j = 2; j <= limit; j++) {
+                          if (i % j === 0) { isPrime = false; break; }
+                      }
+                      if (isPrime) count++;
+                  }
+                  const duration = Math.max(performance.now() - start, 1);
+                  const score = Math.floor(config.multiplier / duration);
+                  const details = count + ' primes (' + duration.toFixed(0) + 'ms)';
+                  self.postMessage({ id, score, details, success: true });
+              } else if (id === 'math') {
+                  const ops = config.ops;
+                  for (let i = 0; i < ops; i++) {
+                      Math.sqrt(i) * Math.sin(i) * Math.cos(i);
+                  }
+                  const duration = Math.max(performance.now() - start, 1);
+                  const score = Math.floor(config.multiplier / duration);
+                  const details = (ops/1000000).toFixed(1) + 'M ops (' + duration.toFixed(0) + 'ms)';
+                  self.postMessage({ id, score, details, success: true });
+              } else if (id === 'memory') {
+                  const size = config.size;
+                  const arr = new Uint32Array(size);
+                  // Write
+                  for(let i=0; i<size; i++) arr[i] = i;
+                  // Read/Write Sparse
+                  for(let i=0; i<size; i+=8) arr[i] = arr[size - 1 - i];
+                  arr.reverse();
+                  
+                  const duration = Math.max(performance.now() - start, 1);
+                  const mbProcessed = (size * 4 * 2.5) / (1024 * 1024); 
+                  const throughput = (mbProcessed / (duration / 1000)).toFixed(0);
+                  const score = Math.floor(config.multiplier / duration);
+                  const details = throughput + ' MB/s (' + duration.toFixed(0) + 'ms)';
+                  self.postMessage({ id, score, details, success: true });
+              }
+          } catch (err) {
+              self.postMessage({ id, success: false, error: err.message });
+          }
+      };
+    `;
+    const blob = new Blob([workerCode], { type: 'application/javascript' });
+    const workerUrl = URL.createObjectURL(blob);
+    workerRef.current = new Worker(workerUrl);
+
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.terminate();
+      }
+      URL.revokeObjectURL(workerUrl);
+    };
+  }, []);
 
   const [tests, setTests] = useState<TestItem[]>([
       { id: 'cpu', name: t.cpu_test, icon: Cpu, status: 'pending', score: null },
@@ -81,48 +146,35 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
 
       try {
           switch (id) {
-              case 'cpu': {
-                  let count = 0;
-                  const max = TEST_CONFIG.cpu.primeMax;
-                  for (let i = 2; i <= max; i++) {
-                      let isPrime = true;
-                      const limit = Math.sqrt(i);
-                      for (let j = 2; j <= limit; j++) {
-                          if (i % j === 0) { isPrime = false; break; }
-                      }
-                      if (isPrime) count++;
-                  }
-                  const duration = Math.max(performance.now() - start, 1);
-                  score = Math.floor(TEST_CONFIG.cpu.multiplier / duration);
-                  details = `${count} primes (${duration.toFixed(0)}ms)`;
-                  break;
-              }
-              case 'math': {
-                  const ops = TEST_CONFIG.math.ops;
-                  for (let i = 0; i < ops; i++) {
-                      Math.sqrt(i) * Math.sin(i) * Math.cos(i);
-                  }
-                  const duration = Math.max(performance.now() - start, 1);
-                  score = Math.floor(TEST_CONFIG.math.multiplier / duration);
-                  details = `${(ops/1000000).toFixed(1)}M ops (${duration.toFixed(0)}ms)`;
-                  break;
-              }
+              case 'cpu':
+              case 'math':
               case 'memory': {
-                  const size = TEST_CONFIG.memory.size;
-                  const arr = new Uint32Array(size);
-                  // Write
-                  for(let i=0; i<size; i++) arr[i] = i;
-                  // Read/Write Sparse
-                  for(let i=0; i<size; i+=8) arr[i] = arr[size - 1 - i];
-                  arr.reverse();
-                  
-                  const duration = Math.max(performance.now() - start, 1);
-                  // Approximate throughput calculation
-                  const mbProcessed = (size * 4 * 2.5) / (1024 * 1024); 
-                  const throughput = (mbProcessed / (duration / 1000)).toFixed(0);
-                  
-                  score = Math.floor(TEST_CONFIG.memory.multiplier / duration);
-                  details = `${throughput} MB/s (${duration.toFixed(0)}ms)`;
+                  if (!workerRef.current) {
+                      throw new Error("Web Worker not initialized");
+                  }
+                  const resultPlan = await new Promise<{score: number, details: string}>((resolve, reject) => {
+                      const worker = workerRef.current;
+                      if (!worker) {
+                          resolve({ score: 0, details: "No worker active" });
+                          return;
+                      }
+                      
+                      const handleMessage = (e: MessageEvent) => {
+                          if (e.data.id === id) {
+                              worker.removeEventListener('message', handleMessage);
+                              if (e.data.success) {
+                                  resolve({ score: e.data.score, details: e.data.details });
+                              } else {
+                                  reject(new Error(e.data.error || "Web Worker execution failed"));
+                              }
+                          }
+                      };
+                      
+                      worker.addEventListener('message', handleMessage);
+                      worker.postMessage({ id, config: TEST_CONFIG[id] });
+                  });
+                  score = resultPlan.score;
+                  details = resultPlan.details;
                   break;
               }
               case 'dom': {
@@ -344,6 +396,15 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                         <Zap size={48} className="text-slate-200 dark:text-slate-600" />
                     )}
                 </div>
+            </div>
+
+            {/* Web Worker Performance Accent */}
+            <div className="flex items-center gap-2 mb-6 px-3 py-1.5 bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100/50 dark:border-indigo-900/40 rounded-full text-[11px] font-medium text-indigo-600 dark:text-indigo-400 select-none animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                </span>
+                <span>{t.worker_status}</span>
             </div>
 
             {/* Test List */}

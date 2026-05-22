@@ -184,7 +184,8 @@ export const modals = {
     memory_test: "内存读写吞吐",
     dom_test: "DOM 操作性能",
     gpu_test: "Canvas 渲染性能",
-    storage_test: "数据库 IOPS"
+    storage_test: "数据库 IOPS",
+    worker_status: "Web Worker 已启用 (多线程高效)"
   },
   graphicsModal: {
     supported_features: "支持的特性",
