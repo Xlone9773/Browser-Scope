@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { BrowserData } from "../types";
 import { getAllData } from "../services/detectionService";
 import { runAiReadinessCheck } from "../services/detectors/hardware";
@@ -9,6 +9,11 @@ export function useAppData(steps: string[]) {
   const [fadeLoader, setFadeLoader] = useState(true);
   const [loadingText, setLoadingText] = useState("");
 
+  const stepsRef = useRef(steps);
+  useEffect(() => {
+    stepsRef.current = steps;
+  }, [steps]);
+
   const fetchData = useCallback(async () => {
     setFadeLoader(true);
     setShowLoader(true);
@@ -17,7 +22,10 @@ export function useAppData(steps: string[]) {
     setFadeLoader(false);
 
     let stepIndex = 0;
-    const validSteps = steps && steps.length > 0 ? steps : ["Loading..."];
+    const validSteps =
+      stepsRef.current && stepsRef.current.length > 0
+        ? stepsRef.current
+        : ["Loading..."];
     setLoadingText(validSteps[0]);
 
     const interval = setInterval(() => {
@@ -40,7 +48,7 @@ export function useAppData(steps: string[]) {
     setTimeout(() => {
       setShowLoader(false);
     }, 500);
-  }, [steps]);
+  }, []);
 
   const handleAiRetest = useCallback(() => {
     setData((prev) => {
