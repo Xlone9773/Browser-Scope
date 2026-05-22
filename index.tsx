@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './utils/loggerStore';
+import './index.css';
 
 // Suppress specific VConsole errors that might leak to the console
 window.addEventListener('error', (e) => {
