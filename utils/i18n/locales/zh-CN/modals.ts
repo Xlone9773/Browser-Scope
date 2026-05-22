@@ -239,7 +239,8 @@ export const modals = {
     table_speed: "吞吐量",
     table_latency: "延迟 (平均/峰值)",
     op_read: "读取",
-    op_write: "写入"
+    op_write: "写入",
+    worker_status: "专有 Web Worker 生效中 (启用多线程同步高速 IO)"
   },
   heatmap: {
     title: "全球网络质量监测",

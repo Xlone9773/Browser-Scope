@@ -229,7 +229,8 @@ export const modals = {
     table_speed: "Скорость",
     table_latency: "Задержка (Сред./Пик)",
     op_read: "Чтение",
-    op_write: "Запись"
+    op_write: "Запись",
+    worker_status: "Выделенный Web Worker активен (Включен быстрый синхронный IO)"
   },
   heatmap: {
     title: "Мониторинг качества сети",

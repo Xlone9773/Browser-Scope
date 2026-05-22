@@ -239,7 +239,8 @@ export const modals = {
     table_speed: "Throughput",
     table_latency: "Latency (Avg/Peak)",
     op_read: "Read",
-    op_write: "Write"
+    op_write: "Write",
+    worker_status: "Dedicated Web Worker Active (Fast Sync IO Enabled)"
   },
   heatmap: {
     title: "Global Network Quality",

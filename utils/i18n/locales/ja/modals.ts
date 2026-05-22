@@ -229,7 +229,8 @@ export const modals = {
     table_speed: "スループット",
     table_latency: "レイテンシ (平均/ピーク)",
     op_read: "読み込み",
-    op_write: "書き込み"
+    op_write: "書き込み",
+    worker_status: "専有 Web Worker 動作中 (マルチスレッド高速同期 IO 有効)"
   },
   heatmap: {
     title: "グローバルネットワーク品質監視",
