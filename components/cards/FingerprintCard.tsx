@@ -18,7 +18,7 @@ interface FingerprintCardProps {
   onOpenFingerprintModal: () => void;
 }
 
-export const FingerprintCard: React.FC<FingerprintCardProps> = ({ 
+export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({ 
     data, 
     audioSampleRate, 
     t, 
@@ -80,4 +80,4 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = ({
         )}
     </InfoCard>
   );
-};
+});

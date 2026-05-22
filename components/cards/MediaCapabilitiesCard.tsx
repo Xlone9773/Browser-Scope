@@ -13,7 +13,7 @@ interface MediaCapabilitiesCardProps {
   onOpenSpeech?: () => void;
 }
 
-export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = ({ data, t, onOpenVideoTest, onOpenSpeech }) => {
+export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = React.memo(({ data, t, onOpenVideoTest, onOpenSpeech }) => {
   return (
     <InfoCard title={t.sections.media_sup} icon={Film}>
         <div className="mb-3">
@@ -87,4 +87,4 @@ export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = ({ da
         )}
     </InfoCard>
   );
-};
+});

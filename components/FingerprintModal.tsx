@@ -195,6 +195,13 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
           enabled: true
       }));
 
+      // SECURITY: Explictly drop reference to raw fingerprint result out of memory
+      // to avoid snapshot bleeding
+      for(const key in rawComponents) {
+         delete rawComponents[key];
+      }
+      Object.keys(rawComponents).forEach(key => delete rawComponents[key]);
+
       setComponents(comps);
       
       // Initial Hash Calculation

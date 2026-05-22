@@ -13,7 +13,7 @@ interface SystemCardProps {
   lang?: Language; // Pass current UI lang to hook
 }
 
-export const SystemCard: React.FC<SystemCardProps> = ({ data, t, simpleMode, lang = 'en' }) => {
+export const SystemCard: React.FC<SystemCardProps> = React.memo(({ data, t, simpleMode, lang = 'en' }) => {
   const trVal = (val: boolean) => val ? t.values.supported : t.values.not_supported;
   const { formatLanguageName, list } = useFormatter(lang);
 
@@ -59,4 +59,4 @@ export const SystemCard: React.FC<SystemCardProps> = ({ data, t, simpleMode, lan
       )}
     </InfoCard>
   );
-};
+});

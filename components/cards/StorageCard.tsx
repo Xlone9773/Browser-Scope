@@ -12,7 +12,7 @@ interface StorageCardProps {
   t: Translation;
 }
 
-export const StorageCard: React.FC<StorageCardProps> = ({ data, t }) => {
+export const StorageCard: React.FC<StorageCardProps> = React.memo(({ data, t }) => {
   const { open } = useModalManager();
 
   const trVal = (val: string | boolean | undefined | null) => {
@@ -110,4 +110,4 @@ export const StorageCard: React.FC<StorageCardProps> = ({ data, t }) => {
         </div>
     </InfoCard>
   );
-};
+});

@@ -73,7 +73,7 @@ const AnimatedClock = ({ timeFormat }: { timeFormat: '12' | '24' }) => {
     );
 };
 
-export const LocationCard: React.FC<LocationCardProps> = ({ 
+export const LocationCard: React.FC<LocationCardProps> = React.memo(({ 
     data, 
     geoData, 
     permStatus, 
@@ -196,4 +196,4 @@ export const LocationCard: React.FC<LocationCardProps> = ({
         </div>
     </InfoCard>
   );
-};
+});

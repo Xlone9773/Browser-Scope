@@ -18,7 +18,7 @@ interface HardwareCardProps {
   onOpenMidi?: () => void;
 }
 
-export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamepad, onOpenWebDevice, onOpenSensors, onOpenTools, onOpenVision, onOpenGraphics, onOpenMidi }) => {
+export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, onOpenGamepad, onOpenWebDevice, onOpenSensors, onOpenTools, onOpenVision, onOpenGraphics, onOpenMidi }) => {
   
   // Parse battery level
   const batteryLevel = parseFloat(data.batteryLevel) || 0;
@@ -139,4 +139,4 @@ export const HardwareCard: React.FC<HardwareCardProps> = ({ data, t, onOpenGamep
       )}
     </InfoCard>
   );
-};
+});

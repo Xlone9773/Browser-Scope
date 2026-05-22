@@ -16,7 +16,7 @@ interface AiComputeCardProps {
   onRetest: () => void;
 }
 
-export const AiComputeCard: React.FC<AiComputeCardProps> = ({ data, t, onOpenPlayground, onOpenStress, onRetest }) => {
+export const AiComputeCard: React.FC<AiComputeCardProps> = React.memo(({ data, t, onOpenPlayground, onOpenStress, onRetest }) => {
   const [isRetesting, setIsRetesting] = useState(false);
   const trVal = (val: boolean) => val ? t.values.supported : t.values.not_supported;
 
@@ -98,4 +98,4 @@ export const AiComputeCard: React.FC<AiComputeCardProps> = ({ data, t, onOpenPla
         </div>
     </InfoCard>
   );
-};
+});

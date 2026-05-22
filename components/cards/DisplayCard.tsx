@@ -14,7 +14,7 @@ interface DisplayCardProps {
   simpleMode: boolean;
 }
 
-export const DisplayCard: React.FC<DisplayCardProps> = ({ data, screenExtended, t, simpleMode }) => {
+export const DisplayCard: React.FC<DisplayCardProps> = React.memo(({ data, screenExtended, t, simpleMode }) => {
 
   const trVal = (val: string | boolean | undefined | null) => {
     if (val === true) return t.values.supported;
@@ -58,4 +58,4 @@ export const DisplayCard: React.FC<DisplayCardProps> = ({ data, screenExtended, 
       )}
     </InfoCard>
   );
-};
+});

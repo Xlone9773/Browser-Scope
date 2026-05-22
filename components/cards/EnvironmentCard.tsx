@@ -7,7 +7,7 @@ interface EnvironmentCardProps {
     t: any;
 }
 
-export const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ t }) => {
+export const EnvironmentCard: React.FC<EnvironmentCardProps> = React.memo(({ t }) => {
     const assessment = useEnvironmentAssessment();
     const envT = t.environment;
 
@@ -131,4 +131,4 @@ export const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ t }) => {
             </div>
         </InfoCard>
     );
-};
+});

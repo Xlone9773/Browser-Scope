@@ -13,7 +13,7 @@ interface NetworkCardProps {
   onOpenSpeedTest?: () => void;
 }
 
-export const NetworkCard: React.FC<NetworkCardProps> = ({ data, t, simpleMode, onOpenSpeedTest }) => {
+export const NetworkCard: React.FC<NetworkCardProps> = React.memo(({ data, t, simpleMode, onOpenSpeedTest }) => {
   
   const trVal = (val: string | boolean | undefined | null) => {
     if (val === true) return t.values.supported;
@@ -63,4 +63,4 @@ export const NetworkCard: React.FC<NetworkCardProps> = ({ data, t, simpleMode, o
         )}
     </InfoCard>
   );
-};
+});

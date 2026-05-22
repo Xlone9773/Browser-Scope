@@ -10,7 +10,7 @@ interface UserAgentCardProps {
   t: Translation;
 }
 
-export const UserAgentCard: React.FC<UserAgentCardProps> = ({ userAgent, clientHints, t }) => {
+export const UserAgentCard: React.FC<UserAgentCardProps> = React.memo(({ userAgent, clientHints, t }) => {
   const [copied, setCopied] = useState(false);
   const [showClientHints, setShowClientHints] = useState(false);
 
@@ -51,4 +51,4 @@ export const UserAgentCard: React.FC<UserAgentCardProps> = ({ userAgent, clientH
         </InfoCard>
     </div>
   );
-};
+});

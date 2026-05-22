@@ -17,7 +17,7 @@ interface PermissionsCardProps {
   onRequestPermission: (key: PermissionKey) => void;
 }
 
-export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, geoData, t, onRequestPermission }) => {
+export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ permStatus, geoData, t, onRequestPermission }) => {
   const [showNotifTest, setShowNotifTest] = useState(false);
   const [notifTitle, setNotifTitle] = useState('');
   const [notifBody, setNotifBody] = useState('');
@@ -274,5 +274,4 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = ({ permStatus, ge
         )}
     </InfoCard>
   );
-};
-
+});

@@ -13,7 +13,7 @@ interface SecurityCardProps {
   onOpenExtensions: () => void;
 }
 
-export const SecurityCard: React.FC<SecurityCardProps> = ({ data, webrtcIp, t, simpleMode, onOpenExtensions }) => {
+export const SecurityCard: React.FC<SecurityCardProps> = React.memo(({ data, webrtcIp, t, simpleMode, onOpenExtensions }) => {
   // Helper for translation values
   const trVal = (val: string | boolean | undefined | null) => {
     if (val === true) return t.values.supported;
@@ -49,4 +49,4 @@ export const SecurityCard: React.FC<SecurityCardProps> = ({ data, webrtcIp, t, s
         )}
     </InfoCard>
   );
-};
+});

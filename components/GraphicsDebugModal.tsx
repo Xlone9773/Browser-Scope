@@ -82,6 +82,11 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
             if (ext) {
                 glData['MAX_TEXTURE_MAX_ANISOTROPY'] = ctx.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
             }
+            
+            // SECURITY: Explicitly lose context and wipe from memory
+            const loseCtx = ctx.getExtension('WEBGL_lose_context');
+            if (loseCtx) loseCtx.loseContext();
+            
         }
       } catch(e) { console.error(e); }
       setWebglInfo(glData);

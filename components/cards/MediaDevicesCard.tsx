@@ -16,7 +16,7 @@ interface MediaDevicesCardProps {
   onOpenMic: () => void;
 }
 
-export const MediaDevicesCard: React.FC<MediaDevicesCardProps> = ({ 
+export const MediaDevicesCard: React.FC<MediaDevicesCardProps> = React.memo(({ 
     permStatus, 
     t, 
     onRequestPermission,
@@ -92,4 +92,4 @@ export const MediaDevicesCard: React.FC<MediaDevicesCardProps> = ({
         </div>
     </InfoCard>
   );
-};
+});
