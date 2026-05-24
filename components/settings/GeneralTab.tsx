@@ -26,6 +26,8 @@ interface GeneralTabProps {
     toggleFastAnimations: (value: boolean) => void;
     collapseHeader: boolean;
     toggleCollapseHeader: (value: boolean) => void;
+    enableUdp?: boolean;
+    toggleEnableUdp?: (value: boolean) => void;
     hiddenCards: string[];
     setHiddenCards: (cards: string[]) => void;
     translationDict: any;
@@ -80,6 +82,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     toggleFastAnimations,
     collapseHeader,
     toggleCollapseHeader,
+    enableUdp,
+    toggleEnableUdp,
     hiddenCards,
     setHiddenCards,
     translationDict
@@ -350,6 +354,30 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     />
                 </div>
             </div>
+
+            {/* Enable UDP Toggle */}
+            {toggleEnableUdp && (
+                <div 
+                    className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
+                    onClick={() => toggleEnableUdp(!enableUdp)}
+                >
+                    <div className="flex flex-col gap-1 pr-4">
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                            {t.udpBypass?.title || 'Enable UDP Network (Bypass CORS)'}
+                        </h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                            {t.udpBypass?.desc || 'Use UDP mapping API to fetch network tools endpoints entirely bypassing all CORS errors.'}
+                        </p>
+                    </div>
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <Switch 
+                            checked={!!enableUdp} 
+                            onChange={toggleEnableUdp} 
+                            label={t.udpBypass?.title || 'Enable UDP'} 
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Custom Visibility */}
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">

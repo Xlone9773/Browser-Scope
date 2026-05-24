@@ -116,6 +116,8 @@ const App: React.FC = () => {
     toggleFastAnimations,
     collapseHeader,
     toggleCollapseHeader,
+    enableUdp,
+    toggleEnableUdp,
     hiddenCards,
     updateHiddenCards,
   } = useAppSettings();
@@ -560,6 +562,8 @@ const App: React.FC = () => {
               toggleFastAnimations={toggleFastAnimations}
               collapseHeader={collapseHeader}
               toggleCollapseHeader={toggleCollapseHeader}
+              enableUdp={enableUdp}
+              toggleEnableUdp={toggleEnableUdp}
               hiddenCards={hiddenCards}
               setHiddenCards={updateHiddenCards}
               isDevToolsFloating={isDevToolsFloating}
@@ -655,6 +659,7 @@ const App: React.FC = () => {
             <Components.networkTools
               onClose={() => close("networkTools")}
               t={t}
+              enableUdp={enableUdp}
             />
           )}
           {visibility.displayTools && (

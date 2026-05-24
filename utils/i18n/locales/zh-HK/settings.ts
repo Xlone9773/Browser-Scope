@@ -61,6 +61,10 @@ export const settings = {
         cardVisibility: {
             title: "自訂顯示項目",
             desc: "如果你不希望在主介面看到某些卡片或分組，可以在這裡按需隱藏。"
+        },
+        udpBypass: {
+            title: "啟用 UDP 網絡代理 (完全繞過跨域)",
+            desc: "使用UDP映射API提取網絡工具端點，徹底解決由於CORS產生的任何網絡請求攔截。"
         }
     },
     network: {

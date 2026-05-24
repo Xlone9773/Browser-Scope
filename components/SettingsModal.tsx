@@ -35,6 +35,8 @@ interface SettingsModalProps {
   toggleFastAnimations: (value: boolean) => void;
   collapseHeader: boolean;
   toggleCollapseHeader: (value: boolean) => void;
+  enableUdp?: boolean;
+  toggleEnableUdp?: (value: boolean) => void;
   hiddenCards: string[];
   setHiddenCards: (cards: string[]) => void;
   isDevToolsFloating: boolean;
@@ -65,6 +67,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     toggleFastAnimations,
     collapseHeader,
     toggleCollapseHeader,
+    enableUdp,
+    toggleEnableUdp,
     hiddenCards,
     setHiddenCards,
     isDevToolsFloating, 
@@ -208,6 +212,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 toggleFastAnimations={toggleFastAnimations}
                                 collapseHeader={collapseHeader}
                                 toggleCollapseHeader={toggleCollapseHeader}
+                                enableUdp={enableUdp}
+                                toggleEnableUdp={toggleEnableUdp}
                                 hiddenCards={hiddenCards}
                                 setHiddenCards={setHiddenCards}
                                 translationDict={t}

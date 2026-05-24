@@ -17,6 +17,7 @@ import {
 interface NetworkToolsModalProps {
     onClose: () => void;
     t: any;
+    enableUdp?: boolean;
 }
 
 interface CDNStatus {
@@ -40,7 +41,7 @@ const IPV6_SOURCES = [
     { id: 'icanhazip', label: 'icanhazip' },
 ];
 
-export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t }) => {
+export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t, enableUdp = false }) => {
     const networkT = t.settings.network;
 
     // IPv4 State
@@ -85,7 +86,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
     const handleFetchIp = async () => {
         setLoadingIp(true);
         setIpInfo(null);
-        const data = await fetchIpInfoFromSource(activeIpv4Source);
+        const data = await fetchIpInfoFromSource(activeIpv4Source, enableUdp);
         setIpInfo(data);
         setLoadingIp(false);
     };
@@ -93,7 +94,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
     const handleCheckIpv6 = async () => {
         setCheckingIpv6(true);
         setIpv6Address(null);
-        const ip = await detectIpv6(activeIpv6Source);
+        const ip = await detectIpv6(activeIpv6Source, enableUdp);
         setIpv6Address(ip);
         setCheckingIpv6(false);
     };
@@ -112,7 +113,16 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
 
         const start = performance.now();
         try {
-            await fetch(cdn.url, { method: 'HEAD', cache: 'no-store', mode: 'no-cors' });
+            if (enableUdp) {
+                const res = await fetch('/api/proxy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: cdn.url, method: 'HEAD', useUdp: true })
+                });
+                if (!res.ok) throw new Error("Failed");
+            } else {
+                await fetch(cdn.url, { method: 'HEAD', cache: 'no-store', mode: 'no-cors' });
+            }
             const end = performance.now();
             newCdns[index].status = 'success';
             newCdns[index].latency = Math.round(end - start);
@@ -138,7 +148,16 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
 
         const start = performance.now();
         try {
-            await fetch(urlToTest, { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
+            if (enableUdp) {
+                const res = await fetch('/api/proxy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: urlToTest, method: 'HEAD', useUdp: true })
+                });
+                if (!res.ok) throw new Error("Proxy error");
+            } else {
+                await fetch(urlToTest, { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
+            }
             const end = performance.now();
             setTestResult({
                 status: 'Success',
@@ -168,7 +187,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
         setDnsInfo(null);
         setDnsError(null);
         try {
-            const info = await detectDns();
+            const info = await detectDns(enableUdp);
             if (info) setDnsInfo(info);
             else throw new Error('Unknown');
         } catch (e) {

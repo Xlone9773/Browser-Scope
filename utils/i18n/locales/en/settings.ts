@@ -61,6 +61,10 @@ export const settings = {
         cardVisibility: {
             title: "Custom Display Items",
             desc: "Hide specific cards or groups from the main dashboard if you don't need them."
+        },
+        udpBypass: {
+            title: "Enable UDP Network (Bypass CORS)",
+            desc: "Use UDP mapping API to fetch network tools endpoints entirely bypassing all CORS errors."
         }
     },
     network: {

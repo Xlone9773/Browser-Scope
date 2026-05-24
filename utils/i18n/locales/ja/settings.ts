@@ -61,6 +61,10 @@ export const settings = {
         cardVisibility: {
             title: "表示項目をカスタマイズ",
             desc: "必要のない特定のカードやグループをメイン画面から非表示にします。"
+        },
+        udpBypass: {
+            title: "UDP プロキシを有効にする (CORS バイパス)",
+            desc: "UDP マッピング API を使用して、CORS によるネットワーク要求のインターセプトを完全にバイパスします。"
         }
     },
     network: {

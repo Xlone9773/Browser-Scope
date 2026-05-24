@@ -49,6 +49,9 @@ export function useAppSettings() {
   const [collapseHeader, setCollapseHeader] = useState<boolean>(
     () => localStorage.getItem("collapseHeader") === "true",
   );
+  const [enableUdp, setEnableUdp] = useState<boolean>(
+    () => localStorage.getItem("enableUdp") === "true",
+  );
   const [hiddenCards, setHiddenCards] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem("hiddenCards");
@@ -271,6 +274,11 @@ export function useAppSettings() {
     localStorage.setItem("collapseHeader", String(value));
   };
 
+  const toggleEnableUdp = (value: boolean) => {
+    setEnableUdp(value);
+    localStorage.setItem("enableUdp", String(value));
+  };
+
   return {
     lang,
     changeLang,
@@ -297,6 +305,8 @@ export function useAppSettings() {
     toggleFastAnimations,
     collapseHeader,
     toggleCollapseHeader,
+    enableUdp,
+    toggleEnableUdp,
     hiddenCards,
     updateHiddenCards,
   };
