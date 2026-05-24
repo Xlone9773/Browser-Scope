@@ -35,9 +35,11 @@ async function startServer() {
            const hostname = parsedUrl.hostname;
            
            const client = dgram.createSocket('udp4');
+           client.on('error', () => {
+               try { client.close(); } catch (e) {}
+           });
            client.send(Buffer.from('PING'), 80, hostname, (err) => {
-               if (err) console.warn('UDP Ping Error:', err);
-               client.close();
+               try { client.close(); } catch (e) {}
            });
            
            const response = await fetch(url, {

@@ -32,22 +32,51 @@ export interface WebRTCCandidate {
 }
 
 const customFetch = async (url: string, enableUdp: boolean, options: RequestInit = {}): Promise<any> => {
-    if (enableUdp) {
+    const doProxyFetch = async () => {
         const res = await fetch('/api/proxy', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url, method: options.method || 'GET', useUdp: true })
         });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const proxyData = await res.json();
+        
+        let proxyData;
+        try {
+            proxyData = await res.json();
+        } catch (e) {
+            throw new Error(`HTTP ${res.status}: Proxy server error or unreachable.`);
+        }
+        
+        if (!res.ok) {
+            throw new Error(`Proxy Error: ${proxyData.error || res.statusText}`);
+        }
+        
         return {
             ok: true,
             status: proxyData.status,
-            json: async () => JSON.parse(proxyData.data),
+            json: async () => {
+                try {
+                    return JSON.parse(proxyData.data);
+                } catch (e) {
+                    throw new Error("Unable to parse JSON response from proxy. The endpoint might be blocking requests.");
+                }
+            },
             text: async () => proxyData.data
         };
+    };
+
+    if (enableUdp) {
+        return doProxyFetch();
     }
-    return fetch(url, options);
+
+    try {
+        return await fetch(url, options);
+    } catch (err: any) {
+        if (err.message === 'Failed to fetch' || err.name === 'TypeError') {
+            console.warn(`Direct fetch failed for ${url}, falling back to server proxy...`);
+            return doProxyFetch();
+        }
+        throw err;
+    }
 };
 
 export const fetchIpInfoFromSource = async (source: string, enableUdp: boolean = false): Promise<IpInfo> => {
