@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wifi, Copy, Check, Shield, Server, Radio } from 'lucide-react';
-import { Translation } from '../utils/i18n/types';
+import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wifi, Copy, Check, Shield, Server, Radio, Monitor, Clock, Map as MapIcon, Home, Smartphone } from 'lucide-react';
 import { Select } from './ui/Select';
 import { Button } from './ui/Button';
 import { Modal } from './ui/Modal';
@@ -28,6 +27,7 @@ interface CDNStatus {
 }
 
 const IPV4_SOURCES = [
+    { id: 'ippure', label: 'my.ippure.com (Detailed)' },
     { id: 'ipwhois', label: 'ipwho.is (Detailed)' },
     { id: 'ipapi', label: 'ipapi.co (Detailed)' },
     { id: 'cloudflare', label: 'Cloudflare (Simple)' },
@@ -46,7 +46,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
     // IPv4 State
     const [ipInfo, setIpInfo] = useState<IpInfo | null>(null);
     const [loadingIp, setLoadingIp] = useState(false);
-    const [activeIpv4Source, setActiveIpv4Source] = useState(() => localStorage.getItem('ipv4_source') || 'ipwhois');
+    const [activeIpv4Source, setActiveIpv4Source] = useState(() => localStorage.getItem('ipv4_source') || 'ippure');
     const [ipv4Copied, setIpv4Copied] = useState(false);
 
     // IPv6 State
@@ -79,11 +79,8 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
         { name: 'FingerprintJS', url: 'https://esm.sh/@fingerprintjs/fingerprintjs@4.5.1', status: 'idle', latency: 0 }
     ]);
 
-    // Persist backend choices
     useEffect(() => { localStorage.setItem('ipv4_source', activeIpv4Source); }, [activeIpv4Source]);
     useEffect(() => { localStorage.setItem('ipv6_source', activeIpv6Source); }, [activeIpv6Source]);
-
-    // --- Actions ---
 
     const handleFetchIp = async () => {
         setLoadingIp(true);
@@ -188,376 +185,328 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
         setCheckingProto(false);
     };
 
+    const renderBentoItem = (icon: any, label: string, value: string | number | undefined | null | boolean, colorClass = 'text-slate-800 dark:text-slate-200', colSpan = 'col-span-1') => {
+        if (value === undefined || value === null || value === '') return null;
+        
+        let displayValue = typeof value === 'boolean' ? (value ? networkT.ip.yes : networkT.ip.no) : value;
+
+        return (
+            <div className={`flex flex-col gap-1.5 p-3.5 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/60 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors ${colSpan}`}>
+                <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                    {React.createElement(icon, { size: 14, className: "opacity-70" })}
+                    <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
+                </div>
+                <div className={`text-sm font-medium break-words ${colorClass}`}>
+                    {displayValue}
+                </div>
+            </div>
+        );
+    };
+
     return (
         <Modal 
             onClose={onClose} 
             title={t.settings.nav.network || "Network Tools"} 
             icon={<Wifi size={24} className="text-indigo-500" />}
-            size="3xl"
+            size="4xl"
             fullHeight
         >
-            <div className="max-w-4xl mx-auto space-y-8">
-                    
-                    {/* Unified IP Information Section */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 bg-slate-50/50 dark:bg-slate-800/50">
-                    <Globe size={18} className="text-slate-400" />
-                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">{networkT.ip.title}</h3>
-                </div>
-
-                <div className="flex flex-col divide-y divide-slate-100 dark:divide-slate-700">
-                    {/* IPv4 Section */}
-                    <div className="p-6 transition-colors hover:bg-slate-50/30 dark:hover:bg-slate-800/50 group">
-                        <div className="flex justify-between items-start md:items-center mb-4 flex-col md:flex-row gap-3">
-                            <div className="flex items-center gap-2">
-                                <span className="px-2 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-md dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800">{networkT.ip.ipv4}</span>
-                                <span className="text-xs text-slate-400 hidden sm:inline-block">{networkT.ip.ipv4_desc}</span>
+            <div className="max-w-5xl mx-auto space-y-6">
+                
+                {/* Modern IP Configuration Card */}
+                <div className="bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+                    <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700/60 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg text-indigo-500 dark:text-indigo-400">
+                                <Globe size={20} />
                             </div>
-                            
-                            <div className="flex items-center gap-2 w-full md:w-auto">
-                                <Select 
-                                    value={activeIpv4Source}
-                                    options={IPV4_SOURCES}
-                                    onChange={setActiveIpv4Source}
-                                    color="indigo"
-                                    size="sm"
-                                    fullWidth={false}
-                                    className="min-w-[140px]"
-                                />
-
-                                <Button 
-                                    onClick={handleFetchIp}
-                                    isLoading={loadingIp}
-                                    variant="secondary"
-                                    size="xs"
-                                    leftIcon={<RefreshCw size={12} />}
-                                >
-                                    {networkT.ip.fetch}
-                                </Button>
-                            </div>
+                            <h3 className="font-semibold text-slate-800 dark:text-slate-200">{networkT.ip.title}</h3>
                         </div>
-
-                        {ipInfo ? (
-                            ipInfo.error ? (
-                                <div className="py-4 text-sm text-red-500 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/10 p-3 rounded-lg border border-red-100 dark:border-red-900/30">
-                                    <AlertCircle size={16} className="shrink-0" />
-                                    <span>{ipInfo.error}</span>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="font-mono text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight break-all">
-                                            {ipInfo.ip}
-                                        </div>
-                                        <button
-                                            onClick={() => handleCopy(ipInfo.ip!, setIpv4Copied)}
-                                            className="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-indigo-100 hover:text-indigo-600 dark:hover:bg-indigo-900/50 dark:hover:text-indigo-400 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-                                            title="Copy IPv4"
-                                        >
-                                            {ipv4Copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
-                                        </button>
-                                    </div>
-                                    
-                                    <div className="flex flex-wrap gap-3">
-                                        {ipInfo.isp && (
-                                            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700/50">
-                                                <Network size={14} className="text-indigo-500" />
-                                                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{ipInfo.isp}</span>
-                                            </div>
-                                        )}
-                                        {(ipInfo.city || ipInfo.country) && (
-                                            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700/50">
-                                                <MapPin size={14} className="text-emerald-500" />
-                                                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                                                    {[ipInfo.city, ipInfo.region, ipInfo.country].filter(Boolean).join(', ')}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )
-                        ) : (
-                            <div className="py-4 text-sm text-slate-400 italic flex items-center gap-2">
-                                <Info size={16} />
-                                Tap button to detect public IPv4
-                            </div>
-                        )}
                     </div>
 
-                    {/* IPv6 Section */}
-                    <div className="p-6 transition-colors hover:bg-slate-50/30 dark:hover:bg-slate-800/50">
-                        <div className="flex justify-between items-start md:items-center mb-4 flex-col md:flex-row gap-3">
-                            <div className="flex items-center gap-2">
-                                <span className="px-2 py-1 text-xs font-bold text-purple-600 bg-purple-50 border border-purple-100 rounded-md dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800">{networkT.ip.ipv6}</span>
-                                <span className="text-xs text-slate-400 hidden sm:inline-block">{networkT.ip.ipv6_desc}</span>
+                    <div className="p-6 md:p-8 space-y-8">
+                        {/* IPv4 Fetch Block */}
+                        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+                            <div className="space-y-4 flex-1">
+                                <div className="flex items-center gap-3">
+                                    <span className="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-500/20 dark:text-indigo-300 rounded-md ring-1 ring-inset ring-indigo-500/20">{networkT.ip.ipv4}</span>
+                                    <Select 
+                                        value={activeIpv4Source}
+                                        options={IPV4_SOURCES}
+                                        onChange={setActiveIpv4Source}
+                                        size="sm"
+                                        fullWidth={false}
+                                        className="w-[200px]"
+                                    />
+                                    <Button 
+                                        onClick={handleFetchIp}
+                                        isLoading={loadingIp}
+                                        variant="secondary"
+                                        size="sm"
+                                        leftIcon={<RefreshCw size={14} />}
+                                    >
+                                        {networkT.ip.fetch}
+                                    </Button>
+                                </div>
+
+                                {ipInfo?.error && (
+                                    <div className="text-sm text-red-500 flex items-center gap-2 bg-red-50 dark:bg-red-900/10 p-3 rounded-lg border border-red-100 dark:border-red-900/30">
+                                        <AlertCircle size={16} />
+                                        <span>{ipInfo.error}</span>
+                                    </div>
+                                )}
+                                
+                                {ipInfo && !ipInfo.error && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-4">
+                                        <div className="flex items-center gap-4 border border-slate-200 dark:border-slate-700/60 rounded-xl p-4 bg-slate-50 dark:bg-slate-900/40">
+                                            <div className="font-mono text-3xl md:text-5xl font-extrabold text-slate-800 dark:text-white tracking-tighter break-all bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-500 dark:from-white dark:to-slate-400">
+                                                {ipInfo.ip}
+                                            </div>
+                                            <button
+                                                onClick={() => handleCopy(ipInfo.ip!, setIpv4Copied)}
+                                                className="p-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:text-indigo-400 dark:hover:bg-indigo-500/20 ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm transition-all active:scale-95"
+                                            >
+                                                {ipv4Copied ? <Check size={20} className="text-emerald-500" /> : <Copy size={20} />}
+                                            </button>
+                                        </div>
+
+                                        {/* Bento Grid layout for IP details */}
+                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                            {renderBentoItem(MapPin, networkT.ip.detail_location, [ipInfo.city, ipInfo.region, ipInfo.countryCode || ipInfo.country].filter(Boolean).join(', '), 'text-slate-800 dark:text-slate-200', 'col-span-2')}
+                                            {renderBentoItem(Network, "ISP", ipInfo.isp, 'font-medium font-sans', 'col-span-2')}
+                                            {renderBentoItem(Server, networkT.ip.detail_asn, ipInfo.asn ? `AS${ipInfo.asn}` : undefined)}
+                                            {renderBentoItem(Clock, networkT.ip.detail_timezone, ipInfo.timezone, "font-mono text-xs")}
+                                            {renderBentoItem(MapIcon, networkT.ip.detail_zip, ipInfo.postalCode)}
+                                            {renderBentoItem(Shield, networkT.ip.detail_fraud, ipInfo.fraudScore, ipInfo.fraudScore !== undefined ? (ipInfo.fraudScore > 50 ? 'text-red-500 font-bold' : 'text-emerald-500 font-bold') : undefined)}
+                                            {renderBentoItem(Home, networkT.ip.detail_residential, ipInfo.isResidential, ipInfo.isResidential ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500')}
+                                            {renderBentoItem(Radio, networkT.ip.detail_broadcast, ipInfo.isBroadcast)}
+                                            {renderBentoItem(Smartphone, networkT.ip.detail_ua, ipInfo.userAgent, 'text-xs text-slate-500 line-clamp-2', 'col-span-2 md:col-span-3 lg:col-span-4')}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                            
-                            <div className="flex items-center gap-2 w-full md:w-auto">
+
+                            {/* Separator for Desktop/Mobile */}
+                            <div className="w-full lg:w-px h-px lg:h-auto bg-slate-200 dark:bg-slate-700/60 self-stretch my-2 lg:my-0"></div>
+
+                            {/* IPv6 Fetch Block */}
+                            <div className="space-y-4 lg:w-1/3 flex-shrink-0">
+                                <div className="flex items-center gap-3">
+                                    <span className="px-2.5 py-1 text-xs font-bold text-purple-600 bg-purple-50 dark:bg-purple-500/20 dark:text-purple-300 rounded-md ring-1 ring-inset ring-purple-500/20">{networkT.ip.ipv6}</span>
+                                    <Button 
+                                        onClick={handleCheckIpv6}
+                                        isLoading={checkingIpv6}
+                                        variant="secondary"
+                                        size="sm"
+                                        leftIcon={<Zap size={14} />}
+                                    >
+                                        {networkT.ip.check_v6}
+                                    </Button>
+                                </div>
                                 <Select 
                                     value={activeIpv6Source}
                                     options={IPV6_SOURCES}
                                     onChange={setActiveIpv6Source}
-                                    color="purple"
                                     size="sm"
-                                    fullWidth={false}
-                                    className="min-w-[140px]"
+                                    fullWidth={true}
                                 />
 
-                                <Button 
-                                    onClick={handleCheckIpv6}
-                                    isLoading={checkingIpv6}
-                                    variant="secondary"
-                                    size="xs"
-                                    leftIcon={<Zap size={12} />}
-                                >
-                                    {networkT.ip.check_v6}
-                                </Button>
+                                {ipv6Address && ipv6Address !== 'fail' ? (
+                                    <div className="p-4 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700/60 rounded-xl space-y-3">
+                                        <div className="flex justify-between items-start gap-2">
+                                            <div className="font-mono text-sm font-bold text-slate-800 dark:text-white break-all leading-tight">
+                                                {ipv6Address}
+                                            </div>
+                                            <button
+                                                onClick={() => handleCopy(ipv6Address!, setIpv6Copied)}
+                                                className="p-1.5 rounded-lg text-slate-400 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-500/20 transition-colors shrink-0"
+                                            >
+                                                {ipv6Copied ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
+                                            </button>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="relative flex h-2.5 w-2.5">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                                            </span>
+                                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{networkT.ip.success_v6}</span>
+                                        </div>
+                                    </div>
+                                ) : ipv6Address === 'fail' ? (
+                                    <div className="p-4 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700/60 rounded-xl flex items-center gap-2">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{networkT.ip.fail_v6}</span>
+                                    </div>
+                                ) : (
+                                    <div className="p-4 border border-dashed border-slate-200 dark:border-slate-700 rounded-xl flex items-center gap-2 text-slate-400 text-sm">
+                                        <Info size={16} />
+                                        IPv6 status pending detection...
+                                    </div>
+                                )}
                             </div>
                         </div>
-
-                        {ipv6Address && ipv6Address !== 'fail' ? (
-                            <div className="flex flex-col gap-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="font-mono text-xl sm:text-2xl font-bold text-slate-800 dark:text-white tracking-tight break-all">
-                                        {ipv6Address}
-                                    </div>
-                                    <button
-                                        onClick={() => handleCopy(ipv6Address!, setIpv6Copied)}
-                                        className="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-purple-100 hover:text-purple-600 dark:hover:bg-purple-900/50 dark:hover:text-purple-400 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                                        title="Copy IPv6"
-                                    >
-                                        {ipv6Copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
-                                    </button>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
-                                        <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></div>
-                                        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">{networkT.ip.success_v6}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : ipv6Address === 'fail' ? (
-                            <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-2 text-slate-400">
-                                    <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
-                                    <span className="text-sm font-medium">{networkT.ip.fail_v6}</span>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="py-2 text-sm text-slate-400 italic flex items-center gap-2">
-                                <Info size={16} />
-                                Tap button to detect IPv6 connectivity
-                            </div>
-                        )}
                     </div>
                 </div>
-            </div>
 
-            {/* Advanced Diagnostics Grid */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 bg-slate-50/50 dark:bg-slate-800/50">
-                    <Server size={18} className="text-slate-400" />
-                    <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">{networkT.diagnostics.title}</h3>
-                </div>
-                
-                <div className="p-6 space-y-8">
-                    
-                    {/* WebRTC */}
-                    <div>
-                        <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
-                                    <Radio size={20} />
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{networkT.diagnostics.webrtc.title}</h4>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{networkT.diagnostics.webrtc.desc}</p>
-                                </div>
-                            </div>
-                            <Button 
-                                onClick={handleWebRTC}
-                                isLoading={scanningWebrtc}
-                                variant="primary"
-                                size="xs"
-                            >
-                                {networkT.diagnostics.webrtc.btn}
-                            </Button>
+                {/* Diagnostics and Utils Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Advanced Diagnostics Container */}
+                    <div className="bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden flex flex-col">
+                        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700/60 flex items-center gap-3 bg-slate-50/50 dark:bg-slate-800/30">
+                            <Server size={18} className="text-slate-500 text-indigo-500" />
+                            <h3 className="font-semibold text-slate-800 dark:text-slate-200">{networkT.diagnostics.title}</h3>
                         </div>
                         
-                        {webrtcCandidates.length > 0 && (
-                            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-                                <table className="w-full text-xs text-left">
-                                    <thead className="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 font-semibold text-slate-600 dark:text-slate-300 uppercase">
-                                        <tr>
-                                            <th className="px-4 py-2">{networkT.diagnostics.webrtc.columns.type}</th>
-                                            <th className="px-4 py-2">{networkT.diagnostics.webrtc.columns.ip}</th>
-                                            <th className="px-4 py-2">{networkT.diagnostics.webrtc.columns.proto}</th>
-                                            <th className="px-4 py-2">{networkT.diagnostics.webrtc.columns.port}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                                        {webrtcCandidates.map(c => (
-                                            <tr key={c.id} className="text-slate-700 dark:text-slate-300 font-mono">
-                                                <td className="px-4 py-2">
-                                                    <span className={`px-2 py-0.5 rounded ${c.type === 'host' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'}`}>
-                                                        {c.type}
-                                                    </span>
-                                                </td>
-                                                <td className="px-4 py-2">{c.ip}</td>
-                                                <td className="px-4 py-2 uppercase">{c.protocol}</td>
-                                                <td className="px-4 py-2">{c.port}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                        <div className="p-6 space-y-6 flex-1 flex flex-col">
+                            {/* WebRTC */}
+                            <div>
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <Radio size={16} className="text-blue-500" />
+                                        <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{networkT.diagnostics.webrtc.title}</h4>
+                                    </div>
+                                    <Button onClick={handleWebRTC} isLoading={scanningWebrtc} variant="secondary" size="xs">{networkT.diagnostics.webrtc.btn}</Button>
+                                </div>
+                                {webrtcCandidates.length > 0 ? (
+                                    <div className="bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700/60 overflow-hidden text-xs">
+                                        <table className="w-full text-left">
+                                            <thead className="bg-slate-100/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700/60 text-slate-500 dark:text-slate-400">
+                                                <tr>
+                                                    <th className="px-3 py-2 font-medium">{networkT.diagnostics.webrtc.columns.type}</th>
+                                                    <th className="px-3 py-2 font-medium">{networkT.diagnostics.webrtc.columns.ip}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                                                {webrtcCandidates.map(c => (
+                                                    <tr key={c.id}>
+                                                        <td className="px-3 py-2">
+                                                            <span className="px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] uppercase">{c.type}</span>
+                                                        </td>
+                                                        <td className="px-3 py-2 font-mono font-medium text-slate-700 dark:text-slate-300">{c.ip} <span className="text-slate-400">:{c.port}</span></td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                ) : (
+                                    <div className="text-xs text-slate-500 dark:text-slate-400">{networkT.diagnostics.webrtc.desc}</div>
+                                )}
                             </div>
-                        )}
-                    </div>
 
-                    <div className="h-px bg-slate-100 dark:bg-slate-700" />
-
-                    {/* DNS Leak */}
-                    <div>
-                        <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400">
-                                    <Shield size={20} />
+                            {/* DNS */}
+                            <div>
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <Shield size={16} className="text-orange-500" />
+                                        <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{networkT.diagnostics.dns.title}</h4>
+                                    </div>
+                                    <Button onClick={handleDnsCheck} isLoading={checkingDns} variant="secondary" size="xs">{networkT.diagnostics.dns.btn}</Button>
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{networkT.diagnostics.dns.title}</h4>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{networkT.diagnostics.dns.desc}</p>
-                                </div>
+                                {dnsInfo ? (
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div className="p-3 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700/60 rounded-xl">
+                                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">{networkT.diagnostics.dns.label_ip}</div>
+                                            <div className="font-mono text-sm font-bold text-slate-700 dark:text-slate-200">{dnsInfo.ip}</div>
+                                        </div>
+                                        <div className="p-3 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700/60 rounded-xl">
+                                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">{networkT.diagnostics.dns.label_geo}</div>
+                                            <div className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{dnsInfo.geo}</div>
+                                        </div>
+                                    </div>
+                                ) : dnsError ? (
+                                    <div className="text-xs text-red-500 flex items-center gap-1.5"><AlertCircle size={14} />{dnsError}</div>
+                                ) : (
+                                    <div className="text-xs text-slate-500 dark:text-slate-400">{networkT.diagnostics.dns.desc}</div>
+                                )}
                             </div>
-                            <Button 
-                                onClick={handleDnsCheck}
-                                isLoading={checkingDns}
-                                variant="secondary"
-                                size="xs"
-                            >
-                                {networkT.diagnostics.dns.btn}
-                            </Button>
-                        </div>
 
-                        {dnsInfo && (
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                                    <div className="text-xs text-slate-400 mb-1">{networkT.diagnostics.dns.label_ip}</div>
-                                    <div className="font-mono font-bold text-slate-700 dark:text-slate-200">{dnsInfo.ip}</div>
+                            {/* Protocols */}
+                            <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-700/60">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <Zap size={16} className="text-emerald-500" />
+                                        <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{networkT.diagnostics.proto.title}</h4>
+                                    </div>
+                                    <Button onClick={handleProtoCheck} isLoading={checkingProto} variant="secondary" size="xs">{networkT.diagnostics.proto.btn}</Button>
                                 </div>
-                                <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                                    <div className="text-xs text-slate-400 mb-1">{networkT.diagnostics.dns.label_geo}</div>
-                                    <div className="font-bold text-slate-700 dark:text-slate-200">{dnsInfo.geo}</div>
-                                </div>
-                            </div>
-                        )}
-                        {dnsError && (
-                            <div className="text-xs text-red-500 flex items-center gap-2 mt-2">
-                                <AlertCircle size={14} />
-                                {dnsError}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="h-px bg-slate-100 dark:bg-slate-700" />
-
-                    {/* Protocol Support */}
-                    <div>
-                        <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400">
-                                    <Zap size={20} />
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{networkT.diagnostics.proto.title}</h4>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{networkT.diagnostics.proto.desc}</p>
-                                </div>
-                            </div>
-                            <Button 
-                                onClick={handleProtoCheck}
-                                isLoading={checkingProto}
-                                variant="secondary"
-                                size="xs"
-                            >
-                                {networkT.diagnostics.proto.btn}
-                            </Button>
-                        </div>
-
-                        {protocols && (
-                            <div className="flex gap-4">
-                                <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{networkT.diagnostics.proto.h2}</span>
-                                    <span className={`text-xs px-2 py-1 rounded font-mono font-bold ${protocols.h2 === 'h2' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
-                                        {protocols.h2 === 'h2' ? 'Supported' : protocols.h2}
-                                    </span>
-                                </div>
-                                <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{networkT.diagnostics.proto.h3}</span>
-                                    <span className={`text-xs px-2 py-1 rounded font-mono font-bold ${protocols.h3 === 'h3' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-200 text-slate-500'}`}>
-                                        {protocols.h3 === 'h3' ? 'Supported' : protocols.h3}
-                                    </span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                </div>
-            </div>
-
-            {/* Connectivity Test */}
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{networkT.connectivity.title}</h3>
-                <div className="flex gap-2 mb-4">
-                    <input 
-                        type="text" 
-                        value={testUrl}
-                        onChange={(e) => setTestUrl(e.target.value)}
-                        placeholder={networkT.connectivity.placeholder}
-                        className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none"
-                        onKeyDown={(e) => e.key === 'Enter' && runConnectivityTest()}
-                    />
-                    <Button 
-                        onClick={runConnectivityTest}
-                        disabled={!testUrl}
-                        isLoading={testingConn}
-                        leftIcon={<Wifi size={18} />}
-                    >
-                        {networkT.connectivity.btn}
-                    </Button>
-                </div>
-                {testResult && (
-                    <div className={`p-4 rounded-lg flex items-center justify-between ${testResult.status.includes('Success') ? 'bg-emerald-50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-300'}`}>
-                        <span className="font-medium">{testResult.status}</span>
-                        {testResult.latency !== undefined && (
-                            <span className="font-mono font-bold">{testResult.latency} ms</span>
-                        )}
-                    </div>
-                )}
-            </div>
-
-            {/* CDN Status */}
-            <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{networkT.cdn.title}</h3>
-                    <button onClick={checkAllCDNs} className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
-                        {networkT.cdn.check_all}
-                    </button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {cdns.map((cdn, idx) => (
-                        <div key={idx} className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center justify-between shadow-sm">
-                            <div className="flex flex-col min-w-0 mr-4">
-                                <span className="font-semibold text-sm text-slate-700 dark:text-slate-200">{cdn.name}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                {cdn.status === 'idle' && <span className="w-2 h-2 rounded-full bg-slate-300" />}
-                                {cdn.status === 'loading' && <Activity className="animate-spin text-indigo-500" size={16} />}
-                                {cdn.status === 'success' && <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-0.5 rounded">{cdn.latency}ms</span>}
-                                {cdn.status === 'error' && <AlertCircle className="text-red-500" size={16} />}
+                                {protocols ? (
+                                    <div className="flex gap-2">
+                                        <div className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700/60 rounded-xl flex justify-between items-center">
+                                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">HTTP/2</span>
+                                            <span className={`w-2.5 h-2.5 rounded-full ${protocols.h2 === 'h2' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}`} />
+                                        </div>
+                                        <div className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700/60 rounded-xl flex justify-between items-center">
+                                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">HTTP/3</span>
+                                            <span className={`w-2.5 h-2.5 rounded-full ${protocols.h3 === 'h3' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}`} />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-xs text-slate-500 dark:text-slate-400">{networkT.diagnostics.proto.desc}</div>
+                                )}
                             </div>
                         </div>
-                    ))}
+                    </div>
+
+                    <div className="space-y-6">
+                        {/* Connectivity Test Container */}
+                        <div className="bg-white dark:bg-slate-800/60 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Wifi size={18} className="text-indigo-500" />
+                                <h3 className="font-semibold text-slate-800 dark:text-slate-200">{networkT.connectivity.title}</h3>
+                            </div>
+                            <div className="flex gap-2">
+                                <input 
+                                    type="text" 
+                                    value={testUrl}
+                                    onChange={(e) => setTestUrl(e.target.value)}
+                                    placeholder={networkT.connectivity.placeholder}
+                                    className="flex-1 min-w-0 px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow"
+                                    onKeyDown={(e) => e.key === 'Enter' && runConnectivityTest()}
+                                />
+                                <Button onClick={runConnectivityTest} disabled={!testUrl} isLoading={testingConn}>{networkT.connectivity.btn}</Button>
+                            </div>
+                            {testResult && (
+                                <div className={`mt-4 p-4 rounded-xl flex flex-col gap-1 ${testResult.status.includes('Success') ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/20' : 'bg-red-50 dark:bg-red-500/10 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-500/20'}`}>
+                                    <div className="flex justify-between items-center text-sm font-semibold">
+                                        <span>Status</span>
+                                        <span>{testResult.status}</span>
+                                    </div>
+                                    {testResult.latency !== undefined && (
+                                        <div className="flex justify-between items-center text-xs opacity-80">
+                                            <span>Latency</span>
+                                            <span className="font-mono">{testResult.latency} ms</span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* CDN Status */}
+                        <div className="bg-white dark:bg-slate-800/60 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                            <div className="flex justify-between items-center mb-4">
+                                <div className="flex items-center gap-2">
+                                    <Activity size={18} className="text-teal-500" />
+                                    <h3 className="font-semibold text-slate-800 dark:text-slate-200">{networkT.cdn.title}</h3>
+                                </div>
+                                <Button onClick={checkAllCDNs} variant="secondary" size="xs">{networkT.cdn.check_all}</Button>
+                            </div>
+                            <div className="grid grid-cols-1 gap-2">
+                                {cdns.map((cdn, idx) => (
+                                    <div key={idx} className="bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
+                                        <span className="font-semibold text-xs text-slate-700 dark:text-slate-300">{cdn.name}</span>
+                                        <div className="flex items-center justify-end min-w-[60px]">
+                                            {cdn.status === 'idle' && <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600" />}
+                                            {cdn.status === 'loading' && <Activity className="animate-spin text-teal-500" size={14} />}
+                                            {cdn.status === 'success' && <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-0.5 rounded-lg">{cdn.latency}ms</span>}
+                                            {cdn.status === 'error' && <AlertCircle className="text-red-500" size={14} />}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
             </div>
         </Modal>
     );

@@ -136,36 +136,49 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
   const handleExportCSV = async () => {
       if (logs.length === 0) return;
       
-      const headers = "Timestamp,Target,Operation,Size,ChunkSize,Throughput(MB/s),AvgLatency(ms),PeakLatency(ms),Duration(ms)\n";
+      // Add UTF-8 BOM for Excel compatibility
+      const headers = "\uFEFFTimestamp,Target,Operation,Size,ChunkSize,Throughput(MB/s),AvgLatency(ms),PeakLatency(ms),Duration(ms)\n";
       const rows = logs.map(log => {
           const time = new Date(log.timestamp).toISOString();
           return `${time},${log.target},${log.op},${log.size},${log.chunkSize},${log.throughput.toFixed(2)},${log.avgLatency.toFixed(2)},${log.peakLatency.toFixed(2)},${log.duration.toFixed(2)}`;
       }).join("\n");
       const csvContent = headers + rows;
       
+      let copied = false;
       try {
           if (navigator.clipboard && navigator.clipboard.writeText) {
               await navigator.clipboard.writeText(csvContent);
+              copied = true;
           }
       } catch (e) {
           // Ignore clipboard error
       }
       
       try {
-          const blob = new Blob([csvContent], { type: 'text/csv' });
+          // Attempt standard HTML5 download
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
           const url = URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `storage_benchmark_${Date.now()}.csv`;
+          link.setAttribute('download', `storage_benchmark_${Date.now()}.csv`);
+          link.style.visibility = 'hidden';
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
           URL.revokeObjectURL(url);
-          setExportStatus("Copied / Exported");
+          
+          setExportStatus(copied ? "Copied & Exported" : "Exported");
       } catch (e) {
-          setExportStatus("Failed");
+          // Fallback to data URI in new window if download blocked by iframe sandbox
+          try {
+              const dataUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+              window.open(dataUri, '_blank');
+              setExportStatus(copied ? "Copied to clipboard" : "Opened in new tab");
+          } catch(err) {
+              setExportStatus(copied ? "Copied to clipboard" : "Export Failed");
+          }
       }
-      setTimeout(() => setExportStatus(null), 2000);
+      setTimeout(() => setExportStatus(null), 3000);
   };
 
   const handleClearLogs = () => {

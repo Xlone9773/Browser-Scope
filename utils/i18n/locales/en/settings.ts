@@ -73,7 +73,17 @@ export const settings = {
             fetch: "Fetch Info",
             check_v6: "Check IPv6",
             success_v6: "IPv6 Supported",
-            fail_v6: "IPv6 Unsupported"
+            fail_v6: "IPv6 Unsupported",
+            detail_location: "Location",
+            detail_asn: "ASN",
+            detail_timezone: "Timezone",
+            detail_zip: "Postal Code",
+            detail_fraud: "Fraud Score",
+            detail_residential: "Residential",
+            detail_broadcast: "Broadcast",
+            detail_ua: "User Agent",
+            yes: "Yes",
+            no: "No"
         },
         diagnostics: {
             title: "Advanced Diagnostics",

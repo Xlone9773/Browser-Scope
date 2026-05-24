@@ -73,7 +73,17 @@ export const settings = {
             fetch: "IPを取得",
             check_v6: "IPv6を確認",
             success_v6: "IPv6 対応",
-            fail_v6: "IPv6 非対応"
+            fail_v6: "IPv6 非対応",
+            detail_location: "位置情報",
+            detail_asn: "ASN",
+            detail_timezone: "タイムゾーン",
+            detail_zip: "郵便番号",
+            detail_fraud: "不正スコア",
+            detail_residential: "家庭用回線",
+            detail_broadcast: "ブロードキャスト",
+            detail_ua: "ユーザーエージェント",
+            yes: "はい",
+            no: "いいえ"
         },
         diagnostics: {
             title: "高度なネットワーク診断",

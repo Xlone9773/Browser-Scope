@@ -73,7 +73,17 @@ export const settings = {
             fetch: "查詢 IP",
             check_v6: "檢測 IPv6",
             success_v6: "支援 IPv6",
-            fail_v6: "不支援 IPv6"
+            fail_v6: "不支援 IPv6",
+            detail_location: "地理位置",
+            detail_asn: "自治系統",
+            detail_timezone: "時區",
+            detail_zip: "郵遞區號",
+            detail_fraud: "欺詐分數",
+            detail_residential: "家居寬頻",
+            detail_broadcast: "廣播 IP",
+            detail_ua: "用戶代理",
+            yes: "是",
+            no: "否"
         },
         diagnostics: {
             title: "進階網絡診斷",

@@ -21,7 +21,12 @@ function openDB(): Promise<IDBDatabase> {
 async function cleanup(filename: string, tgt: string) {
     try {
         if (tgt === 'idb') {
-            indexedDB.deleteDatabase('BrowserScopeBench');
+            await new Promise<void>((resolve) => {
+                const req = indexedDB.deleteDatabase('BrowserScopeBench');
+                req.onsuccess = () => resolve();
+                req.onerror = () => resolve(); 
+                req.onblocked = () => resolve(); 
+            });
         } else if (tgt === 'cache') {
             if (typeof caches !== 'undefined') {
                 await caches.delete('bench-cache');
@@ -29,16 +34,25 @@ async function cleanup(filename: string, tgt: string) {
         } else if (tgt === 'opfs') {
             if (navigator.storage && navigator.storage.getDirectory) {
                 const root = await navigator.storage.getDirectory();
-                // @ts-ignore
-                for await (const name of root.keys()) {
-                    if (name.startsWith('bench_')) {
-                        await root.removeEntry(name).catch(() => {});
+                try {
+                    // Modern way to iterate over directory
+                    // @ts-ignore
+                    for await (const [name, handle] of root) {
+                        if (name.startsWith('bench_')) {
+                            await root.removeEntry(name, { recursive: true }).catch(() => {});
+                        }
                     }
+                } catch(e) {
+                    // Fallback if async iterator fails
+                    try {
+                        await root.removeEntry(filename).catch(()=> {});
+                    } catch(err) {}
                 }
             }
         }
     } catch (e) {
-        // Ignore
+        // Ignore overall error
+        console.error("Cleanup error:", e);
     }
 }
 

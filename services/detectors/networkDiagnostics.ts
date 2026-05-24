@@ -5,9 +5,20 @@ export interface IpInfo {
     type?: string;
     continent?: string;
     country?: string;
+    countryCode?: string;
     region?: string;
+    regionCode?: string;
     city?: string;
     isp?: string;
+    asn?: number;
+    timezone?: string;
+    longitude?: string;
+    latitude?: string;
+    postalCode?: string;
+    fraudScore?: number;
+    isResidential?: boolean;
+    isBroadcast?: boolean;
+    userAgent?: string;
     error?: string;
 }
 
@@ -22,7 +33,31 @@ export interface WebRTCCandidate {
 
 export const fetchIpInfoFromSource = async (source: string): Promise<IpInfo> => {
     try {
-        if (source === 'ipwhois') {
+        if (source === 'ippure') {
+            const res = await fetch('https://my.ippure.com/v1/info', { referrerPolicy: 'no-referrer' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const json = await res.json();
+            return {
+                ip: json.ip,
+                success: true,
+                type: 'IPv4/IPv6', 
+                country: json.country,
+                countryCode: json.countryCode,
+                region: json.region,
+                regionCode: json.regionCode,
+                city: json.city,
+                isp: json.asOrganization,
+                asn: json.asn,
+                timezone: json.timezone,
+                longitude: json.longitude,
+                latitude: json.latitude,
+                postalCode: json.postalCode,
+                fraudScore: json.fraudScore,
+                isResidential: json.isResidential,
+                isBroadcast: json.isBroadcast,
+                userAgent: json.userAgent,
+            };
+        } else if (source === 'ipwhois') {
             const res = await fetch('https://ipwho.is/', { referrerPolicy: 'no-referrer' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const json = await res.json();

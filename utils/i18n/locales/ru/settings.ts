@@ -73,7 +73,17 @@ export const settings = {
             fetch: "Получить IP",
             check_v6: "Проверить IPv6",
             success_v6: "IPv6 Поддерживается",
-            fail_v6: "IPv6 Не поддерживается"
+            fail_v6: "IPv6 Не поддерживается",
+            detail_location: "Локация",
+            detail_asn: "ASN",
+            detail_timezone: "Часовой пояс",
+            detail_zip: "Индекс",
+            detail_fraud: "Оценка риска",
+            detail_residential: "Домашняя сеть",
+            detail_broadcast: "Широковещательный",
+            detail_ua: "User Agent",
+            yes: "Да",
+            no: "Нет"
         },
         diagnostics: {
             title: "Расширенная диагностика",
