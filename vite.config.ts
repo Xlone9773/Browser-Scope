@@ -32,9 +32,13 @@ export default defineConfig(({ mode }) => {
           '@': path.resolve(__dirname, '.'),
         }
       },
+      css: {
+        transformer: 'lightningcss',
+      },
       build: {
         target: 'esnext',
         minify: 'terser',
+        cssMinify: 'lightningcss',
         terserOptions: {
           compress: {
             drop_console: mode === 'production',
