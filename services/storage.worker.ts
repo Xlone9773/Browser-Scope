@@ -29,7 +29,12 @@ async function cleanup(filename: string, tgt: string) {
         } else if (tgt === 'opfs') {
             if (navigator.storage && navigator.storage.getDirectory) {
                 const root = await navigator.storage.getDirectory();
-                await root.removeEntry(filename).catch(() => {});
+                // @ts-ignore
+                for await (const name of root.keys()) {
+                    if (name.startsWith('bench_')) {
+                        await root.removeEntry(name).catch(() => {});
+                    }
+                }
             }
         }
     } catch (e) {
@@ -37,7 +42,14 @@ async function cleanup(filename: string, tgt: string) {
     }
 }
 
+let isStopping = false;
+
 self.onmessage = async function(e: MessageEvent) {
+    if (e.data.type === 'stop') {
+        isStopping = true;
+        return;
+    }
+    isStopping = false;
     const { target, sizeMB, chunkSizeKB, origin } = e.data;
     const totalBytes = sizeMB * 1024 * 1024;
     const CHUNK_SIZE = chunkSizeKB * 1024;
@@ -51,12 +63,14 @@ self.onmessage = async function(e: MessageEvent) {
         // --- WRITE PHASE ---
         const startWrite = performance.now();
         
+        let writeDb: IDBDatabase | null = null;
         if (target === 'idb') {
-            const db = await openDB();
+            writeDb = await openDB();
             for(let i=0; i<chunks; i++) {
+                if (isStopping) break;
                 const chunk = generateData(CHUNK_SIZE); 
                 const txStart = performance.now();
-                const tx = db.transaction('store', 'readwrite');
+                const tx = writeDb.transaction('store', 'readwrite');
                 const store = tx.objectStore('store');
 
                 await new Promise<void>((resolve, reject) => {
@@ -76,6 +90,7 @@ self.onmessage = async function(e: MessageEvent) {
                     progress: Math.floor(((i + 1) / chunks) * 50)
                 });
             }
+            writeDb.close();
         } 
         else if (target === 'cache') {
             if (typeof caches === 'undefined') {
@@ -123,6 +138,7 @@ self.onmessage = async function(e: MessageEvent) {
             
             let offset = 0;
             for(let i=0; i<chunks; i++) {
+                if (isStopping) break;
                 const chunk = generateData(CHUNK_SIZE);
                 const arrayBuffer = await chunk.arrayBuffer();
                 
@@ -154,6 +170,12 @@ self.onmessage = async function(e: MessageEvent) {
             }
         }
 
+        if (isStopping) {
+            await cleanup(filename, target);
+            self.postMessage({ type: 'stopped' });
+            return;
+        }
+
         const endWrite = performance.now();
         const writeDuration = endWrite - startWrite;
         const writeSpeed = (totalBytes / 1024 / 1024) / (writeDuration / 1000);
@@ -173,11 +195,13 @@ self.onmessage = async function(e: MessageEvent) {
         // --- READ PHASE ---
         const startRead = performance.now();
 
+        let readDb: IDBDatabase | null = null;
         if (target === 'idb') {
-            const db = await openDB();
+            readDb = await openDB();
             for(let i=0; i<chunks; i++) {
+                if (isStopping) break;
                 const txStart = performance.now();
-                const tx = db.transaction('store', 'readonly');
+                const tx = readDb.transaction('store', 'readonly');
                 const store = tx.objectStore('store');
 
                 await new Promise<void>((resolve, reject) => {
@@ -198,6 +222,7 @@ self.onmessage = async function(e: MessageEvent) {
                     progress: 50 + Math.floor(((i + 1) / chunks) * 50)
                 });
             }
+            readDb.close();
         }
         else if (target === 'cache') {
             const cacheUrl = new URL(filename, origin || self.location.origin).toString();
@@ -229,6 +254,7 @@ self.onmessage = async function(e: MessageEvent) {
                 let readBytes = 0;
                 
                 while (readBytes < fileLength) {
+                    if (isStopping) break;
                     const chunkStart = performance.now();
                     const n = accessHandle.read(buffer, { at: readBytes });
                     if (n === 0) break;
@@ -251,6 +277,7 @@ self.onmessage = async function(e: MessageEvent) {
                 const reader = file.stream().getReader();
                 let readBytes = 0;
                 while(true) {
+                    if (isStopping) break;
                     const chunkStart = performance.now();
                     const { done, value } = await reader.read();
                     if (done) break;
@@ -270,6 +297,12 @@ self.onmessage = async function(e: MessageEvent) {
             }
         }
 
+        if (isStopping) {
+            await cleanup(filename, target);
+            self.postMessage({ type: 'stopped' });
+            return;
+        }
+
         const endRead = performance.now();
         const readDuration = endRead - startRead;
         const readSpeed = (totalBytes / 1024 / 1024) / (readDuration / 1000);
@@ -286,11 +319,11 @@ self.onmessage = async function(e: MessageEvent) {
             duration: readDuration
         });
 
+        await cleanup(filename, target);
         self.postMessage({ type: 'done' });
-        cleanup(filename, target);
 
     } catch (err: any) {
+        await cleanup(filename, target);
         self.postMessage({ type: 'error', message: err.message || "Unknown error inside Web Worker" });
-        cleanup(filename, target);
     }
 };

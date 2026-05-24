@@ -36,6 +36,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
   const [currentSpeed, setCurrentSpeed] = useState(0);
   const [logs, setLogs] = useState<ResultLog[]>([]);
   const [opfsSupported, setOpfsSupported] = useState(false);
+  const [exportStatus, setExportStatus] = useState<string | null>(null);
 
   const workerRef = useRef<Worker | null>(null);
 
@@ -53,12 +54,12 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
 
   const stopTest = () => {
       if (workerRef.current) {
-          workerRef.current.terminate();
-          workerRef.current = null;
+          workerRef.current.postMessage({ type: 'stop' });
+      } else {
+          setState('idle');
+          setProgress(0);
+          setCurrentSpeed(0);
       }
-      setState('idle');
-      setProgress(0);
-      setCurrentSpeed(0);
   };
 
   const runTest = async () => {
@@ -99,6 +100,14 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
           } else if (data.type === 'done') {
               setState('done');
               setProgress(100);
+          } else if (data.type === 'stopped') {
+              setState('idle');
+              setProgress(0);
+              setCurrentSpeed(0);
+              if (workerRef.current) {
+                  workerRef.current.terminate();
+                  workerRef.current = null;
+              }
           } else if (data.type === 'error') {
               console.error("Worker error details:", data.message);
               setState('idle');
@@ -124,7 +133,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
       };
   }, []);
 
-  const handleExportCSV = () => {
+  const handleExportCSV = async () => {
       if (logs.length === 0) return;
       
       const headers = "Timestamp,Target,Operation,Size,ChunkSize,Throughput(MB/s),AvgLatency(ms),PeakLatency(ms),Duration(ms)\n";
@@ -132,16 +141,31 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
           const time = new Date(log.timestamp).toISOString();
           return `${time},${log.target},${log.op},${log.size},${log.chunkSize},${log.throughput.toFixed(2)},${log.avgLatency.toFixed(2)},${log.peakLatency.toFixed(2)},${log.duration.toFixed(2)}`;
       }).join("\n");
+      const csvContent = headers + rows;
       
-      const blob = new Blob([headers + rows], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `storage_benchmark_${Date.now()}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(csvContent);
+          }
+      } catch (e) {
+          // Ignore clipboard error
+      }
+      
+      try {
+          const blob = new Blob([csvContent], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `storage_benchmark_${Date.now()}.csv`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          setExportStatus("Copied / Exported");
+      } catch (e) {
+          setExportStatus("Failed");
+      }
+      setTimeout(() => setExportStatus(null), 2000);
   };
 
   const handleClearLogs = () => {
@@ -285,7 +309,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
                                         className="text-xs flex items-center gap-1 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-lg transition-colors font-medium"
                                     >
                                         <Download size={12} />
-                                        {t.export_csv || "Export"}
+                                        {exportStatus ? exportStatus : (t.export_csv || "Export")}
                                     </button>
                                     <button 
                                         onClick={handleClearLogs}
