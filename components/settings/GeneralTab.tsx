@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Translation } from '../../utils/i18n/types';
 
 import { Select } from '../ui/Select';
@@ -88,6 +88,17 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     setHiddenCards,
     translationDict
 }) => {
+    const [udpSupported, setUdpSupported] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        if (toggleEnableUdp) {
+            fetch('/api/udp-status')
+                .then(res => res.json())
+                .then(data => setUdpSupported(data.supported))
+                .catch(() => setUdpSupported(false));
+        }
+    }, [toggleEnableUdp]);
+
     // Collect all card names using the translation dictionary.
     // Note: If translations are added dynamically or missing in dict, we provide fallbacks.
     const sectionsObj = translationDict?.sections || {};
@@ -312,8 +323,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
 
             {/* Fast Animations */}
             <div 
-                className={`bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800 ${disableAnimations ? 'opacity-50 pointer-events-none' : ''}`}
-                onClick={() => !disableAnimations && toggleFastAnimations(!fastAnimations)}
+                className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${disableAnimations ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
+                onClick={() => { if (!disableAnimations) toggleFastAnimations(!fastAnimations); }}
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -335,8 +346,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
 
             {/* Collapse Header Menu Desktop */}
             <div 
-                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800 max-lg:opacity-50 max-lg:pointer-events-none"
-                onClick={() => toggleCollapseHeader(!collapseHeader)}
+                className="p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800 max-lg:opacity-50 max-lg:cursor-not-allowed max-lg:bg-slate-50 max-lg:dark:bg-slate-900 max-lg:border-slate-100 max-lg:dark:border-slate-800"
+                onClick={() => { if (window.innerWidth >= 1024) toggleCollapseHeader(!collapseHeader); }}
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -358,8 +369,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             {/* Enable UDP Toggle */}
             {toggleEnableUdp && (
                 <div 
-                    className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
-                    onClick={() => toggleEnableUdp(!enableUdp)}
+                    className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${!udpSupported ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
+                    onClick={() => { if (udpSupported) toggleEnableUdp(!enableUdp); }}
                 >
                     <div className="flex flex-col gap-1 pr-4">
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -368,12 +379,23 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
                             {t.udpBypass?.desc || 'Use UDP mapping API to fetch network tools endpoints entirely bypassing all CORS errors.'}
                         </p>
+                        {!udpSupported && udpSupported !== null && (
+                            <p className="text-xs text-rose-500 font-medium mt-1">
+                                {t.udpBypass?.unsupportedEnv || 'Not supported in the current environment'}
+                            </p>
+                        )}
+                        {udpSupported === null && (
+                            <p className="text-xs text-indigo-500 font-medium mt-1 animate-pulse">
+                                Checking UDP support...
+                            </p>
+                        )}
                     </div>
-                    <div onClick={(e) => e.stopPropagation()}>
+                    <div>
                         <Switch 
                             checked={!!enableUdp} 
-                            onChange={toggleEnableUdp} 
+                            onChange={() => { if(udpSupported) toggleEnableUdp(!enableUdp); }} 
                             label={t.udpBypass?.title || 'Enable UDP'} 
+                            disabled={!udpSupported}
                         />
                     </div>
                 </div>

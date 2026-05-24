@@ -11,6 +11,28 @@ async function startServer() {
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+  app.get("/api/udp-status", async (req, res) => {
+    try {
+      if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+        return res.json({ supported: false });
+      }
+      const client = dgram.createSocket('udp4');
+      await new Promise<void>((resolve, reject) => {
+        client.send(Buffer.from('ping'), 53, '8.8.8.8', (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+      client.close();
+      res.json({ supported: true });
+    } catch (e) {
+      res.json({ supported: false });
+    }
+  });
+
   // Generalized proxy route to bypass CORS (TCP fetch or UDP DNS/Ping mapping)
   app.post("/api/proxy", async (req, res) => {
     const { url, method = "GET", headers = {}, body, useUdp, timeout = 15000 } = req.body;
