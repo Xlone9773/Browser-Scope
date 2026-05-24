@@ -7,48 +7,56 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(express.json());
+  // Enhance stability with increased limits
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
   // Generalized proxy route to bypass CORS (TCP fetch or UDP DNS/Ping mapping)
   app.post("/api/proxy", async (req, res) => {
-    try {
-      const { url, method = "GET", headers = {}, body, useUdp } = req.body;
-      
-      if (!url) {
-        return res.status(400).json({ error: "URL is required" });
-      }
+    const { url, method = "GET", headers = {}, body, useUdp, timeout = 15000 } = req.body;
+    
+    if (!url) {
+      return res.status(400).json({ error: "URL is required" });
+    }
 
-      // True UDP logic: if useUdp is checked, attempt minimal UDP mapping 
-      // (or fall back to bypassing CORS normally with note)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+    try {
+      let proxyHeaders = { ...headers };
+      // Prevent browser forbidden headers issues if forwarded directly
+      delete proxyHeaders['host'];
+      delete proxyHeaders['origin'];
+      delete proxyHeaders['referer'];
+
       if (useUdp) {
-         // Here we actually implement a basic mock of "UDP Fetch" 
-         // since standard HTTP cannot just be 'switched' to UDP without specific proxies.
-         // Realistically, to resolve domain via UDP:
          try {
            const parsedUrl = new URL(url);
            const hostname = parsedUrl.hostname;
            
-           // We can send a UDP packet as a proof of concept
            const client = dgram.createSocket('udp4');
            client.send(Buffer.from('PING'), 80, hostname, (err) => {
-               if (err) console.error(err);
+               if (err) console.warn('UDP Ping Error:', err);
                client.close();
            });
            
-           // We'll still execute the HTTP request to fulfill the feature requirements and bypass CORS
            const response = await fetch(url, {
               method,
-              headers,
-              body: ["GET", "HEAD"].includes(method.toUpperCase()) ? undefined : JSON.stringify(body)
+              headers: proxyHeaders,
+              body: ["GET", "HEAD"].includes(method.toUpperCase()) ? undefined : typeof body === 'string' ? body : JSON.stringify(body),
+              signal: controller.signal
            });
-           const text = await response.text();
+           
+           const data = await response.text();
+           clearTimeout(timeoutId);
            return res.json({
              status: response.status,
-             data: text,
+             data: data,
              udpPingSent: true,
              message: "UDP packet sent. Data fetched completely bypassing CORS."
            });
          } catch(e: any) {
+           clearTimeout(timeoutId);
            return res.status(500).json({ error: e.message || "UDP proxy failed" });
          }
       }
@@ -56,17 +64,29 @@ async function startServer() {
       // Standard CORS-bypassing proxy logic
       const response = await fetch(url, {
           method,
-          headers,
-          body: ["GET", "HEAD"].includes(method.toUpperCase()) ? undefined : JSON.stringify(body)
+          headers: proxyHeaders,
+          body: ["GET", "HEAD"].includes(method.toUpperCase()) ? undefined : typeof body === 'string' ? body : JSON.stringify(body),
+          signal: controller.signal
       });
+      
       const text = await response.text();
+      clearTimeout(timeoutId);
+      
       res.json({
          status: response.status,
          data: text
       });
     } catch (e: any) {
-      res.status(500).json({ error: e.message || "Proxy error" });
+      clearTimeout(timeoutId);
+      console.error("Proxy error:", e.name, e.message);
+      res.status(500).json({ error: e.name === 'AbortError' ? 'Request Timeout' : e.message || "Proxy error" });
     }
+  });
+
+  // Global Error Handler for stability
+  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error('Unhandled Server Error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
   });
 
   // Vite middleware for development
