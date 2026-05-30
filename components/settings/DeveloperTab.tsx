@@ -114,8 +114,10 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
     isLoggingEnabled,
     activeConsole,
     defaultConsole,
+    loadDefaultSnippets,
     setActiveConsole,
     setDefaultConsole,
+    setLoadDefaultSnippets,
   } = useLoggerStore();
 
   const [inputCmd, setInputCmd] = useState("");
@@ -732,6 +734,29 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                   </button>
                 </div>
               </div>
+              {defaultConsole === "eruda" && (
+                <div
+                  className="p-3 border-b border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition"
+                  onClick={() => setLoadDefaultSnippets(!loadDefaultSnippets)}
+                >
+                  <div className="flex flex-col gap-1 cursor-pointer">
+                    <div className="flex items-center justify-between text-slate-200">
+                      <span>{(t.config as any)?.loadSnippets || "Load Default Snippets"}</span>
+                      <div
+                        className={`w-8 h-4 rounded-full relative transition-colors ${loadDefaultSnippets ? "bg-indigo-500" : "bg-slate-600"}`}
+                      >
+                        <div
+                          className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${loadDefaultSnippets ? "translate-x-4" : "translate-x-0"}`}
+                        ></div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] text-slate-500">
+                      {(t.config as any)?.loadSnippetsDesc ||
+                        "Automatically add useful code presets to Eruda snippets"}
+                    </span>
+                  </div>
+                </div>
+              )}
               <div className="p-3 bg-slate-800 border-b border-slate-700">
                 <button
                   onClick={() => setCrash(true)}
@@ -864,6 +889,29 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                 </button>
               </div>
             </div>
+            {defaultConsole === "eruda" && (
+              <div
+                className="p-3 border-b border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition"
+                onClick={() => setLoadDefaultSnippets(!loadDefaultSnippets)}
+              >
+                <div className="flex flex-col gap-1 cursor-pointer">
+                  <div className="flex items-center justify-between text-slate-200">
+                    <span>{(t.config as any)?.loadSnippets || "Load Default Snippets"}</span>
+                    <div
+                      className={`w-8 h-4 rounded-full relative transition-colors ${loadDefaultSnippets ? "bg-indigo-500" : "bg-slate-600"}`}
+                    >
+                      <div
+                        className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${loadDefaultSnippets ? "translate-x-4" : "translate-x-0"}`}
+                      ></div>
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-slate-500">
+                    {(t.config as any)?.loadSnippetsDesc ||
+                      "Automatically add useful code presets to Eruda snippets"}
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="p-3 bg-slate-800 border-b border-slate-700">
               <button
                 onClick={() => setCrash(true)}

@@ -182,7 +182,9 @@ export const settings = {
             vconsole: "vConsole 整合",
             vconsoleDesc: "啓用騰訊 vConsole 面板",
             eruda: "Eruda 整合",
-            erudaDesc: "啓用 Eruda 面板"
+            erudaDesc: "啓用 Eruda 面板",
+            loadSnippets: "預先載入實用片段",
+            loadSnippetsDesc: "自動將常用的快捷代碼注入 Eruda",
         },
         warning: {
             title: "操作極度危險！",

@@ -182,7 +182,9 @@ export const settings = {
             vconsole: "vConsole Integration",
             vconsoleDesc: "Enable Tencent vConsole panel",
             eruda: "Eruda Integration",
-            erudaDesc: "Enable Eruda panel"
+            erudaDesc: "Enable Eruda panel",
+            loadSnippets: "Standard Snippets",
+            loadSnippetsDesc: "Inject useful built-in codes to Eruda",
         },
         warning: {
             title: "EXTREME CAUTION!",

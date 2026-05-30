@@ -182,7 +182,9 @@ export const settings = {
             vconsole: "Интеграция vConsole",
             vconsoleDesc: "Включить панель Tencent vConsole",
             eruda: "Интеграция Eruda",
-            erudaDesc: "Включить панель Eruda"
+            erudaDesc: "Включить панель Eruda",
+            loadSnippets: "Стандартные сниппеты",
+            loadSnippetsDesc: "Автоматически добавлять полезные коды в Eruda",
         },
         warning: {
             title: "КРАЙНЕ ОПАСНО!",

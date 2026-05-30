@@ -182,7 +182,9 @@ export const settings = {
             vconsole: "vConsole 调试",
             vconsoleDesc: "开启腾讯 vConsole 面板",
             eruda: "Eruda 调试",
-            erudaDesc: "开启 Eruda 面板"
+            erudaDesc: "开启 Eruda 面板",
+            loadSnippets: "预加载实用片段",
+            loadSnippetsDesc: "自动将常用的便捷代码注入到 Eruda",
         },
         warning: {
             title: "操作极其危险！",

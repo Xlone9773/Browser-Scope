@@ -16,6 +16,8 @@ class LoggerStore {
     (localStorage.getItem("developer_active_console") as any) || "none";
   public defaultConsole: "vconsole" | "eruda" =
     (localStorage.getItem("developer_default_console") as any) || "vconsole";
+  public loadDefaultSnippets: boolean =
+    localStorage.getItem("developer_load_default_snippets") === "true";
 
   private logListeners: Set<(logs: string[]) => void> = new Set();
   private consoleListeners: Set<(history: ConsoleEntry[]) => void> = new Set();
@@ -101,6 +103,16 @@ class LoggerStore {
     this.notifySettings();
   }
 
+  setLoadDefaultSnippets(enabled: boolean) {
+    this.loadDefaultSnippets = enabled;
+    localStorage.setItem("developer_load_default_snippets", String(enabled));
+    if (this.activeConsole === "eruda") {
+      this.unloadEruda();
+      this.loadEruda();
+    }
+    this.notifySettings();
+  }
+
   setActiveConsole(consoleType: "none" | "vconsole" | "eruda") {
     const previousConsole = this.activeConsole;
     this.activeConsole = consoleType;
@@ -157,6 +169,50 @@ class LoggerStore {
         useShadowDom: true,
       });
       (window as any).eruda = eruda;
+
+      if (this.loadDefaultSnippets) {
+        const snippets = eruda.get("snippets");
+        if (snippets) {
+          snippets.add(
+            "Clear LocalStorage",
+            function () {
+              localStorage.clear();
+              alert("LocalStorage cleared");
+            },
+            "Clears all data from localStorage",
+          );
+          snippets.add(
+            "Clear SessionStorage",
+            function () {
+              sessionStorage.clear();
+              alert("SessionStorage cleared");
+            },
+            "Clears all data from sessionStorage",
+          );
+          snippets.add(
+            "Show Cookies",
+            function () {
+              alert(document.cookie || "No cookies found");
+            },
+            "Alerts all current document cookies",
+          );
+          snippets.add(
+            "Disable Body Blur",
+            function () {
+              document.body.classList.toggle("no-blur");
+            },
+            "Toggles body blur",
+          );
+          snippets.add(
+            "Toggle Editable Page",
+            function () {
+              document.body.contentEditable =
+                document.body.contentEditable === "true" ? "false" : "true";
+            },
+            "Toggles content editable mode for the entire page",
+          );
+        }
+      }
 
       // Stop propagation as an extra fallback
       container.addEventListener("wheel", (e) => e.stopPropagation(), {
@@ -321,6 +377,9 @@ export function useLoggerStore() {
   const [defaultConsole, setDefaultConsole] = useState(
     loggerStore.defaultConsole,
   );
+  const [loadDefaultSnippets, setLoadDefaultSnippets] = useState(
+    loggerStore.loadDefaultSnippets,
+  );
 
   useEffect(() => {
     const unsubs = [
@@ -330,6 +389,7 @@ export function useLoggerStore() {
         setIsLoggingEnabled(loggerStore.isLoggingEnabled);
         setActiveConsole(loggerStore.activeConsole);
         setDefaultConsole(loggerStore.defaultConsole);
+        setLoadDefaultSnippets(loggerStore.loadDefaultSnippets);
       }),
     ];
     return () => unsubs.forEach((u) => u());
@@ -341,10 +401,13 @@ export function useLoggerStore() {
     isLoggingEnabled,
     activeConsole,
     defaultConsole,
+    loadDefaultSnippets,
     setActiveConsole: (type: "none" | "vconsole" | "eruda") =>
       loggerStore.setActiveConsole(type),
     setDefaultConsole: (type: "vconsole" | "eruda") =>
       loggerStore.setDefaultConsole(type),
+    setLoadDefaultSnippets: (enabled: boolean) =>
+      loggerStore.setLoadDefaultSnippets(enabled),
   };
 }
 

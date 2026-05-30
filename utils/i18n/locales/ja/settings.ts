@@ -182,7 +182,9 @@ export const settings = {
             vconsole: "vConsole 統合",
             vconsoleDesc: "Tencent vConsole パネルを有効にする",
             eruda: "Eruda 統合",
-            erudaDesc: "Eruda パネルを有効にする"
+            erudaDesc: "Eruda パネルを有効にする",
+            loadSnippets: "便利なスニペットの事前読み込み",
+            loadSnippetsDesc: "よく使用されるコードをErudaに自動的に追加します",
         },
         warning: {
             title: "操作は極めて危険です！",
