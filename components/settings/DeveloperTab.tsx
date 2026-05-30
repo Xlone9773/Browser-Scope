@@ -114,10 +114,10 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
     isLoggingEnabled,
     activeConsole,
     defaultConsole,
-    loadDefaultSnippets,
+    erudaSnippets,
     setActiveConsole,
     setDefaultConsole,
-    setLoadDefaultSnippets,
+    setErudaSnippet,
   } = useLoggerStore();
 
   const [inputCmd, setInputCmd] = useState("");
@@ -735,25 +735,35 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                 </div>
               </div>
               {defaultConsole === "eruda" && (
-                <div
-                  className="p-3 border-b border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition"
-                  onClick={() => setLoadDefaultSnippets(!loadDefaultSnippets)}
-                >
-                  <div className="flex flex-col gap-1 cursor-pointer">
-                    <div className="flex items-center justify-between text-slate-200">
-                      <span>{(t.config as any)?.loadSnippets || "Load Default Snippets"}</span>
-                      <div
-                        className={`w-8 h-4 rounded-full relative transition-colors ${loadDefaultSnippets ? "bg-indigo-500" : "bg-slate-600"}`}
-                      >
-                        <div
-                          className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${loadDefaultSnippets ? "translate-x-4" : "translate-x-0"}`}
-                        ></div>
-                      </div>
-                    </div>
+                <div className="p-3 border-b border-slate-700 bg-slate-900/50">
+                  <div className="flex flex-col gap-1 mb-3">
+                    <span className="text-sm font-semibold text-slate-200">
+                      {(t.config as any)?.loadSnippets || "Code Snippets"}
+                    </span>
                     <span className="text-[10px] text-slate-500">
                       {(t.config as any)?.loadSnippetsDesc ||
-                        "Automatically add useful code presets to Eruda snippets"}
+                        "Select which code snippets to automatically inject into Eruda"}
                     </span>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {[
+                      { id: "clear_local", label: (t.config as any)?.snippetClearLocal || "Clear LocalStorage" },
+                      { id: "clear_session", label: (t.config as any)?.snippetClearSession || "Clear SessionStorage" },
+                      { id: "show_cookies", label: (t.config as any)?.snippetShowCookies || "Show Cookies" },
+                      { id: "toggle_blur", label: (t.config as any)?.snippetToggleBlur || "Toggle Body Blur" },
+                      { id: "toggle_editable", label: (t.config as any)?.snippetToggleEditable || "Toggle Editable Page" },
+                    ].map(snippet => (
+                      <div 
+                        key={snippet.id} 
+                        className="flex items-center justify-between cursor-pointer py-1 hover:bg-slate-800/50 rounded px-1 transition" 
+                        onClick={() => setErudaSnippet(snippet.id, !(erudaSnippets as any)[snippet.id])}
+                      >
+                        <span className="text-xs text-slate-300">{snippet.label}</span>
+                        <div className={`w-8 h-4 rounded-full relative transition-colors ${(erudaSnippets as any)[snippet.id] ? "bg-indigo-500" : "bg-slate-600"}`}>
+                          <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${(erudaSnippets as any)[snippet.id] ? "translate-x-4" : "translate-x-0"}`}></div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -890,25 +900,35 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
               </div>
             </div>
             {defaultConsole === "eruda" && (
-              <div
-                className="p-3 border-b border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition"
-                onClick={() => setLoadDefaultSnippets(!loadDefaultSnippets)}
-              >
-                <div className="flex flex-col gap-1 cursor-pointer">
-                  <div className="flex items-center justify-between text-slate-200">
-                    <span>{(t.config as any)?.loadSnippets || "Load Default Snippets"}</span>
-                    <div
-                      className={`w-8 h-4 rounded-full relative transition-colors ${loadDefaultSnippets ? "bg-indigo-500" : "bg-slate-600"}`}
-                    >
-                      <div
-                        className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${loadDefaultSnippets ? "translate-x-4" : "translate-x-0"}`}
-                      ></div>
-                    </div>
-                  </div>
+              <div className="p-3 border-b border-slate-700 bg-slate-900/50">
+                <div className="flex flex-col gap-1 mb-3">
+                  <span className="text-sm font-semibold text-slate-200">
+                    {(t.config as any)?.loadSnippets || "Code Snippets"}
+                  </span>
                   <span className="text-[10px] text-slate-500">
                     {(t.config as any)?.loadSnippetsDesc ||
-                      "Automatically add useful code presets to Eruda snippets"}
+                      "Select which code snippets to automatically inject into Eruda"}
                   </span>
+                </div>
+                <div className="flex flex-col gap-2">
+                  {[
+                    { id: "clear_local", label: (t.config as any)?.snippetClearLocal || "Clear LocalStorage" },
+                    { id: "clear_session", label: (t.config as any)?.snippetClearSession || "Clear SessionStorage" },
+                    { id: "show_cookies", label: (t.config as any)?.snippetShowCookies || "Show Cookies" },
+                    { id: "toggle_blur", label: (t.config as any)?.snippetToggleBlur || "Toggle Body Blur" },
+                    { id: "toggle_editable", label: (t.config as any)?.snippetToggleEditable || "Toggle Editable Page" },
+                  ].map(snippet => (
+                    <div 
+                      key={snippet.id} 
+                      className="flex items-center justify-between cursor-pointer py-1 hover:bg-slate-800/50 rounded px-1 transition" 
+                      onClick={() => setErudaSnippet(snippet.id, !(erudaSnippets as any)[snippet.id])}
+                    >
+                      <span className="text-xs text-slate-300">{snippet.label}</span>
+                      <div className={`w-8 h-4 rounded-full relative transition-colors ${(erudaSnippets as any)[snippet.id] ? "bg-indigo-500" : "bg-slate-600"}`}>
+                        <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${(erudaSnippets as any)[snippet.id] ? "translate-x-4" : "translate-x-0"}`}></div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

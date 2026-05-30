@@ -16,8 +16,14 @@ class LoggerStore {
     (localStorage.getItem("developer_active_console") as any) || "none";
   public defaultConsole: "vconsole" | "eruda" =
     (localStorage.getItem("developer_default_console") as any) || "vconsole";
-  public loadDefaultSnippets: boolean =
-    localStorage.getItem("developer_load_default_snippets") === "true";
+  public erudaSnippets: Record<string, boolean> = (() => {
+    try {
+      const stored = localStorage.getItem("developer_eruda_snippets");
+      return stored ? JSON.parse(stored) : { clear_local: true, clear_session: true, show_cookies: true, toggle_blur: true, toggle_editable: true };
+    } catch {
+      return { clear_local: true, clear_session: true, show_cookies: true, toggle_blur: true, toggle_editable: true };
+    }
+  })();
 
   private logListeners: Set<(logs: string[]) => void> = new Set();
   private consoleListeners: Set<(history: ConsoleEntry[]) => void> = new Set();
@@ -103,9 +109,9 @@ class LoggerStore {
     this.notifySettings();
   }
 
-  setLoadDefaultSnippets(enabled: boolean) {
-    this.loadDefaultSnippets = enabled;
-    localStorage.setItem("developer_load_default_snippets", String(enabled));
+  setErudaSnippet(key: string, enabled: boolean) {
+    this.erudaSnippets = { ...this.erudaSnippets, [key]: enabled };
+    localStorage.setItem("developer_eruda_snippets", JSON.stringify(this.erudaSnippets));
     if (this.activeConsole === "eruda") {
       this.unloadEruda();
       this.loadEruda();
@@ -170,9 +176,9 @@ class LoggerStore {
       });
       (window as any).eruda = eruda;
 
-      if (this.loadDefaultSnippets) {
-        const snippets = eruda.get("snippets");
-        if (snippets) {
+      const snippets = eruda.get("snippets");
+      if (snippets) {
+        if (this.erudaSnippets.clear_local) {
           snippets.add(
             "Clear LocalStorage",
             function () {
@@ -181,6 +187,8 @@ class LoggerStore {
             },
             "Clears all data from localStorage",
           );
+        }
+        if (this.erudaSnippets.clear_session) {
           snippets.add(
             "Clear SessionStorage",
             function () {
@@ -189,6 +197,8 @@ class LoggerStore {
             },
             "Clears all data from sessionStorage",
           );
+        }
+        if (this.erudaSnippets.show_cookies) {
           snippets.add(
             "Show Cookies",
             function () {
@@ -196,6 +206,8 @@ class LoggerStore {
             },
             "Alerts all current document cookies",
           );
+        }
+        if (this.erudaSnippets.toggle_blur) {
           snippets.add(
             "Disable Body Blur",
             function () {
@@ -203,6 +215,8 @@ class LoggerStore {
             },
             "Toggles body blur",
           );
+        }
+        if (this.erudaSnippets.toggle_editable) {
           snippets.add(
             "Toggle Editable Page",
             function () {
@@ -377,8 +391,8 @@ export function useLoggerStore() {
   const [defaultConsole, setDefaultConsole] = useState(
     loggerStore.defaultConsole,
   );
-  const [loadDefaultSnippets, setLoadDefaultSnippets] = useState(
-    loggerStore.loadDefaultSnippets,
+  const [erudaSnippets, setErudaSnippets] = useState(
+    loggerStore.erudaSnippets,
   );
 
   useEffect(() => {
@@ -389,7 +403,7 @@ export function useLoggerStore() {
         setIsLoggingEnabled(loggerStore.isLoggingEnabled);
         setActiveConsole(loggerStore.activeConsole);
         setDefaultConsole(loggerStore.defaultConsole);
-        setLoadDefaultSnippets(loggerStore.loadDefaultSnippets);
+        setErudaSnippets(loggerStore.erudaSnippets);
       }),
     ];
     return () => unsubs.forEach((u) => u());
@@ -401,13 +415,13 @@ export function useLoggerStore() {
     isLoggingEnabled,
     activeConsole,
     defaultConsole,
-    loadDefaultSnippets,
+    erudaSnippets,
     setActiveConsole: (type: "none" | "vconsole" | "eruda") =>
       loggerStore.setActiveConsole(type),
     setDefaultConsole: (type: "vconsole" | "eruda") =>
       loggerStore.setDefaultConsole(type),
-    setLoadDefaultSnippets: (enabled: boolean) =>
-      loggerStore.setLoadDefaultSnippets(enabled),
+    setErudaSnippet: (key: string, enabled: boolean) =>
+      loggerStore.setErudaSnippet(key, enabled),
   };
 }
 
