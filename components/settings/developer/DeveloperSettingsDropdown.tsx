@@ -11,6 +11,8 @@ interface DeveloperSettingsDropdownProps {
   setDefaultConsole: (con: "vconsole" | "eruda") => void;
   erudaDefaultTab: string;
   setErudaDefaultTab: (tab: string) => void;
+  vconsoleDefaultTab: string;
+  setVconsoleDefaultTab: (tab: string) => void;
   erudaSnippets: Record<string, boolean>;
   setErudaSnippet: (id: string, val: boolean) => void;
   onCrash: () => void;
@@ -25,6 +27,8 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
   setDefaultConsole,
   erudaDefaultTab,
   setErudaDefaultTab,
+  vconsoleDefaultTab,
+  setVconsoleDefaultTab,
   erudaSnippets,
   setErudaSnippet,
   onCrash,
@@ -79,6 +83,30 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
           </button>
         </div>
       </div>
+      {defaultConsole === "vconsole" && (
+        <div className="p-3 border-b border-slate-700 bg-slate-900/50 flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-semibold text-slate-200">
+              {(t.config as any)?.vconsoleDefaultTab || "Default vConsole Tab"}
+            </span>
+            <span className="text-[10px] text-slate-500">
+              {(t.config as any)?.vconsoleDefaultTabDesc || "Select the tab to focus when vConsole is opened."}
+            </span>
+          </div>
+          <Select
+            value={vconsoleDefaultTab}
+            onChange={(val: string) => setVconsoleDefaultTab(val)}
+            fullWidth
+            options={[
+              { id: "default", label: (t.config as any)?.vconsoleTabs?.default || "Default" },
+              { id: "system", label: (t.config as any)?.vconsoleTabs?.system || "System" },
+              { id: "network", label: (t.config as any)?.vconsoleTabs?.network || "Network" },
+              { id: "element", label: (t.config as any)?.vconsoleTabs?.element || "Element" },
+              { id: "storage", label: (t.config as any)?.vconsoleTabs?.storage || "Storage" },
+            ]}
+          />
+        </div>
+      )}
       {defaultConsole === "eruda" && (
         <>
           <div className="p-3 border-b border-slate-700 bg-slate-900/50 flex flex-col gap-2">

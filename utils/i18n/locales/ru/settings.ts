@@ -185,6 +185,15 @@ export const settings = {
             erudaDesc: "Включить панель Eruda",
             erudaDefaultTab: "Вкладка по умолчанию",
             erudaDefaultTabDesc: "Выберите вкладку для фокуса при открытии Eruda",
+            vconsoleDefaultTab: "Вкладка vConsole по умолчанию",
+            vconsoleDefaultTabDesc: "Выберите вкладку для фокуса при открытии vConsole",
+            vconsoleTabs: {
+                default: "По умолчанию (Default)",
+                system: "Система (System)",
+                network: "Сеть (Network)",
+                element: "Элементы (Element)",
+                storage: "Хранилище (Storage)"
+            },
             erudaTabs: {
                 console: "Консоль (Console)",
                 elements: "Элементы (Elements)",

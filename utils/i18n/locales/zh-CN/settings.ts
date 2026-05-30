@@ -185,6 +185,15 @@ export const settings = {
             erudaDesc: "开启 Eruda 面板",
             erudaDefaultTab: "默认激活标签页",
             erudaDefaultTabDesc: "选择打开 Eruda 控制台时默认聚焦的标签页",
+            vconsoleDefaultTab: "默认 vConsole 标签页",
+            vconsoleDefaultTabDesc: "选择打开 vConsole 时默认聚焦的标签页",
+            vconsoleTabs: {
+                default: "默认 (Default)",
+                system: "系统 (System)",
+                network: "网络 (Network)",
+                element: "元素 (Element)",
+                storage: "存储 (Storage)"
+            },
             erudaTabs: {
                 console: "控制台 (Console)",
                 elements: "元素 (Elements)",

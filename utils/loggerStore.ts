@@ -18,6 +18,8 @@ class LoggerStore {
     (localStorage.getItem("developer_default_console") as any) || "vconsole";
   public erudaDefaultTab: string =
     localStorage.getItem("developer_eruda_default_tab") || "console";
+  public vconsoleDefaultTab: string =
+    localStorage.getItem("developer_vconsole_default_tab") || "default";
   public erudaSnippets: Record<string, boolean> = (() => {
     try {
       const stored = localStorage.getItem("developer_eruda_snippets");
@@ -128,6 +130,17 @@ class LoggerStore {
     if (this.activeConsole === "eruda" && (window as any).eruda) {
       try {
         (window as any).eruda.show(tab);
+      } catch (e) {}
+    }
+    this.notifySettings();
+  }
+
+  setVconsoleDefaultTab(tab: string) {
+    this.vconsoleDefaultTab = tab;
+    localStorage.setItem("developer_vconsole_default_tab", tab);
+    if (this.activeConsole === "vconsole" && (window as any).vConsole) {
+      try {
+        (window as any).vConsole.showPlugin(tab);
       } catch (e) {}
     }
     this.notifySettings();
@@ -341,6 +354,11 @@ class LoggerStore {
       win.vConsole = new (VConsole as any)({
         theme: isDark ? "dark" : "light",
       });
+      try {
+        if (this.vconsoleDefaultTab && this.vconsoleDefaultTab !== "default") {
+          setTimeout(() => win.vConsole.showPlugin(this.vconsoleDefaultTab), 100);
+        }
+      } catch (e) {}
 
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -422,6 +440,9 @@ export function useLoggerStore() {
   const [erudaDefaultTab, setErudaDefaultTab] = useState(
     loggerStore.erudaDefaultTab,
   );
+  const [vconsoleDefaultTab, setVconsoleDefaultTab] = useState(
+    loggerStore.vconsoleDefaultTab,
+  );
 
   useEffect(() => {
     const unsubs = [
@@ -433,6 +454,7 @@ export function useLoggerStore() {
         setDefaultConsole(loggerStore.defaultConsole);
         setErudaSnippets(loggerStore.erudaSnippets);
         setErudaDefaultTab(loggerStore.erudaDefaultTab);
+        setVconsoleDefaultTab(loggerStore.vconsoleDefaultTab);
       }),
     ];
     return () => unsubs.forEach((u) => u());
@@ -446,6 +468,7 @@ export function useLoggerStore() {
     defaultConsole,
     erudaSnippets,
     erudaDefaultTab,
+    vconsoleDefaultTab,
     setActiveConsole: (type: "none" | "vconsole" | "eruda") =>
       loggerStore.setActiveConsole(type),
     setDefaultConsole: (type: "vconsole" | "eruda") =>
@@ -454,6 +477,8 @@ export function useLoggerStore() {
       loggerStore.setErudaSnippet(key, enabled),
     setErudaDefaultTab: (tab: string) =>
       loggerStore.setErudaDefaultTab(tab),
+    setVconsoleDefaultTab: (tab: string) =>
+      loggerStore.setVconsoleDefaultTab(tab),
   };
 }
 

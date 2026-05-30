@@ -11,6 +11,7 @@ import {
 import { Translation } from "../../utils/i18n/types";
 import { Button } from "../ui/Button";
 import {
+  loggerStore,
   useLoggerStore,
 } from "../../utils/loggerStore";
 import { EventsView } from "./developer/EventsView";
@@ -41,10 +42,12 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
     defaultConsole,
     erudaSnippets,
     erudaDefaultTab,
+    vconsoleDefaultTab,
     setActiveConsole,
     setDefaultConsole,
     setErudaSnippet,
     setErudaDefaultTab,
+    setVconsoleDefaultTab,
   } = useLoggerStore();
 
   const [showSettings, setShowSettings] = useState(false);
@@ -220,6 +223,8 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
               setDefaultConsole={setDefaultConsole}
               erudaDefaultTab={erudaDefaultTab}
               setErudaDefaultTab={setErudaDefaultTab}
+              vconsoleDefaultTab={vconsoleDefaultTab}
+              setVconsoleDefaultTab={setVconsoleDefaultTab}
               erudaSnippets={erudaSnippets}
               setErudaSnippet={setErudaSnippet}
               onCrash={() => setCrash(true)}
@@ -306,6 +311,8 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
             setDefaultConsole={setDefaultConsole}
             erudaDefaultTab={erudaDefaultTab}
             setErudaDefaultTab={setErudaDefaultTab}
+            vconsoleDefaultTab={vconsoleDefaultTab}
+            setVconsoleDefaultTab={setVconsoleDefaultTab}
             erudaSnippets={erudaSnippets}
             setErudaSnippet={setErudaSnippet}
             onCrash={() => setCrash(true)}

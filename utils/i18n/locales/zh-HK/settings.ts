@@ -185,6 +185,15 @@ export const settings = {
             erudaDesc: "啓用 Eruda 面板",
             erudaDefaultTab: "預設啓用標籤頁",
             erudaDefaultTabDesc: "選擇打開 Eruda 控制台時預設聚焦的標籤頁",
+            vconsoleDefaultTab: "預設 vConsole 標籤頁",
+            vconsoleDefaultTabDesc: "選擇打開 vConsole 時預設聚焦的標籤頁",
+            vconsoleTabs: {
+                default: "預設 (Default)",
+                system: "系統 (System)",
+                network: "網絡 (Network)",
+                element: "元素 (Element)",
+                storage: "儲存 (Storage)"
+            },
             erudaTabs: {
                 console: "控制台 (Console)",
                 elements: "元素 (Elements)",

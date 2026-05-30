@@ -185,6 +185,15 @@ export const settings = {
             erudaDesc: "Eruda パネルを有効にする",
             erudaDefaultTab: "デフォルトタブ",
             erudaDefaultTabDesc: "Erudaが開かれたときにフォーカスするタブを選択します",
+            vconsoleDefaultTab: "vConsole デフォルトタブ",
+            vconsoleDefaultTabDesc: "vConsoleが開かれたときにフォーカスするタブを選択します",
+            vconsoleTabs: {
+                default: "デフォルト (Default)",
+                system: "システム (System)",
+                network: "ネットワーク (Network)",
+                element: "要素 (Element)",
+                storage: "ストレージ (Storage)"
+            },
             erudaTabs: {
                 console: "コンソール (Console)",
                 elements: "要素 (Elements)",

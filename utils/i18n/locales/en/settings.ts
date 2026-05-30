@@ -185,6 +185,15 @@ export const settings = {
             erudaDesc: "Enable Eruda panel",
             erudaDefaultTab: "Default Eruda Tab",
             erudaDefaultTabDesc: "Select the tab to focus when Eruda is opened",
+            vconsoleDefaultTab: "Default vConsole Tab",
+            vconsoleDefaultTabDesc: "Select the tab to focus when vConsole is opened",
+            vconsoleTabs: {
+                default: "Default",
+                system: "System",
+                network: "Network",
+                element: "Element",
+                storage: "Storage"
+            },
             erudaTabs: {
                 console: "Console",
                 elements: "Elements (DOM)",
