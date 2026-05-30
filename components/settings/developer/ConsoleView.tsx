@@ -16,6 +16,7 @@ import {
   Database,
   Activity,
   X,
+  Play,
 } from "lucide-react";
 import { Translation } from "../../../utils/i18n/types";
 import { loggerStore, ConsoleEntry } from "../../../utils/loggerStore";
