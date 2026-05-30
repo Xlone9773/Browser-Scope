@@ -2,206 +2,161 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# 🌐 BrowserScope - 浏览器 & AI 就绪性检测平台
-
-一个功能强大的浏览器环境检测与 AI 计算能力评估工具，帮助您全面了解设备的浏览器特性、硬件配置及 AI 就绪状态。
+[Read in English](#-english-version) | [中文说明](#-中文说明)
 
 ---
+
+<a id="-english-version"></a>
+
+# 🌐 BrowserScope - Browser Capability Detector & Omni Toolbox
+
+A highly polished, detail-oriented browser utility platform and robust testing toolbox. It provides deep environment detection, network diagnostics, and device capability evaluation.
+
+## ✨ Core Highlights
+
+- 🔍 **Deep Capability Detection** - Covers 13+ dimensions including system, hardware, network, storage, security, media devices, and detailed Web APIs.
+- 🧰 **Omni Toolbox** - Features practical networking tools such as Speed Test, precise IP lookups, and UDP Ping tests.
+- 🎨 **Extreme Polish & Craftsmanship** - Multiple dynamic themes, fine-grained color palettes, motion/animation controls, and meticulous UI layouts.
+- 🌍 **Comprehensive Localization** - Native support for 6 languages (English, Simplified/Traditional Chinese, Japanese, Russian), with fully dynamic switching.
+- 🗄️ **Full-Stack Proxy Engine** - Powered by a custom Express backend handling CORS bypass, safe request proxying, and restricted UDP network probing.
+
+---
+
+## 🚀 Deployment & Environment
+
+> [!WARNING]
+> **Full-Stack Architecture:** This project has evolved into a full-stack application leveraging Node.js + Express. It provides critical CORS circumvention, API proxying, and specific system probing. You **must** deploy this as a full-stack Node.js environment (e.g., Cloud Run, Docker, VPS), not as a static site.
+
+> [!CAUTION]
+> **Restricted Network Environments:** In many Serverless platforms (like Vercel, AWS Lambda, or edge runtimes), underlying UDP sockets and long-lived connections may be completely blocked.
+> The application includes environment state-detection. If UDP proxying is unsupported in your deployment platform, the related toggles in the settings and diagnostics will automatically turn gray and show an "Unsupported" hint. To unlock deep network probing features, please deploy on a VPS or full container environments like Docker/Cloud Run.
+
+## 📦 Features Breakdown
+
+### Environment Detectors
+
+| Module | Description |
+|--------|-------------|
+| 🖥️ **System** | OS specifics, precise Browser versions, User-Agent analysis. |
+| 💻 **Hardware** | Logical processors, memory limits, GPU vendor/renderer details. |
+| 🌐 **Network & Speed** | Advanced network connection probing, bandwidth tests, IP details. |
+| 🔒 **Security / CSP** | HTTPS state, Content Security Policy, permission API statuses. |
+| 📺 **Display & Screen** | Resolution, color depth, pixel density mapping. |
+| 🆔 **Device Fingerprinting**| Unique hardware and software fingerprint generation tracking. |
+| 💾 **Storage Limits** | Quotas for IndexedDB, LocalStorage, and Cache APIs. |
+| 📍 **Geolocation** | Precision GPS polling, timezone overrides, localization properties. |
+| 📹 **Media Devices** | Granular enumeration of camera/microphone hardware. |
+| 🎬 **Media Codecs** | Hardware decoding support, HDR, video/audio formats. |
+
+### Practical Tools & Configuration
+- **Advanced Network Diagnostics** - UDP Ping and DNS tests to bypass strict CORS environments.
+- **Speed Test Engine** - Real-time websocket or fetch-based bandwidth testing.
+- **Data Exporter** - Extract entire detection states to localized JSON files.
+- **Floating Monitor Tool** - Minimalist, draggable floating stat overlay. 
+- **PWA Ready** - Fully installable as an offline-first desktop/mobile application.
+
+---
+
+<br/>
+
+<a id="-中文说明"></a>
+
+# 🌐 BrowserScope - 浏览器高级特性检测与全能工具箱
+
+一个重返“打磨细节”初心的浏览器能力检测与实用工具平台。为您提供深度的浏览器运行环境分析、全面的硬件特性评估以及丰富的网络诊断探针。
 
 ## ✨ 主要亮点
 
-- 🔍 **全方位检测** - 覆盖系统、硬件、网络、存储、媒体设备等 13+ 维度
-- 🤖 **AI 就绪评估** - 基于 Transformers.js 的本地 AI 推理能力检测
-- 🎭 **隐私指纹** - 使用 FingerprintJS 生成设备唯一标识
-- 🌍 **多语言支持** - 支持中文（简/繁）、英文、日文、俄文等多种语言
-- 🎨 **主题切换** - 支持亮色/暗色主题，适配不同使用场景
-- 📱 **响应式设计** - 完美适配桌面端与移动端
-- 🗄️ **后端代理与增强** - 集成 Express 服务，实现高级网络代理、CORS绕过及受限UDP网络访问能力
+- 🔍 **全方位深度检测** - 深入剖析系统、硬件、网络、前端存储、安全策略、流媒体等 13+ 核心维度。
+- 🧰 **全能测试工具箱** - 集成网络测速、精准 IP 寻址、UDP Ping 连通性测试等高级调试工具。
+- 🎨 **极致打磨的 UI 细节** - 支持自选主题色的深浅模式切换，全局动画控制，注重留白与排版的高级卡片设计。
+- 🌍 **零死角多语言** - 内置动态支持中文（简/繁两版）、英文、日文、俄文等 6 种主流语言。
+- 🗄️ **后端代理与增强** - 内部集成 Express 服务，实现高级接口中转、跨域请求(CORS)无缝绕过及深层 UDP 探查。
 
 ---
 
-## 🛠️ 技术栈
+## 🚀 部署参考与注意事项
 
-| 类别 | 技术 |
-|------|------|
-| **框架** | React 19.2 + TypeScript 5.8 |
-| **构建工具** | Vite 6.2 |
-| **UI 组件** | Lucide React 图标库 |
-| **AI 引擎** | Transformers.js 2.17 |
-| **指纹识别** | FingerprintJS 4.5 + FingerprintJS2 |
-| **调试工具** | vConsole（移动端调试） |
-| **国际化** | 自定义 i18n 方案 |
+> [!WARNING]
+> **全栈环境要求：** 该项目架构现已升级为完整的 Node.js + Express 全栈应用。包含了必不可少的跨域(CORS)请求绕过、安全接口代理等核心业务代码。部署时请确保使用 Node.js 全栈环境承载，**切勿仅部署静态网页**。
 
----
+> [!CAUTION]
+> **关于网络功能受限 (UDP 探针)：** 在众多轻量级 Serverless 平台（例如 Vercel、AWS Lambda 函数或某些托管服务）上，底层的 UDP Socket 和原生请求端口经常会被完全阻断。
+> 我们已经给应用添加了**环境感知降级功能**——如果底层不支持 UDP 操作，设置中的代理高权限开关及相关组件将自动变灰，并给与“不支持”提示。若想解锁所有极限网络监控与代理能力，强烈建议使用 **Docker 容器、VPS 或 Cloud Run 等能放开完整协议链的环境**进行部署。
 
-## 📦 功能模块
+## 📦 功能模块概览
 
-### 核心检测卡片
+### 核心环境检测
 
 | 模块 | 功能描述 |
 |------|----------|
-| 🖥️ **系统信息** | 操作系统、浏览器版本、UserAgent |
-| 💻 **硬件配置** | CPU 核心数、内存大小、GPU 信息 |
-| 🧠 **AI 计算** | WebGPU/WebGL 支持、本地模型推理测试 |
-| 🔒 **安全特性** | HTTPS、CSP、各种安全头检测 |
-| 📺 **显示信息** | 屏幕分辨率、色彩深度、像素比 |
-| 🆔 **设备指纹** | 基于多维度生成的唯一设备标识 |
-| 🌐 **网络状态** | IP 地址、连接类型、在线状态 |
-| 💾 **存储能力** | LocalStorage、IndexedDB、配额信息 |
-| 📍 **地理位置** | GPS 定位、时区、语言环境 |
-| 🔐 **权限管理** | 摄像头、麦克风、通知等权限状态 |
-| 📹 **媒体设备** | 可用的音视频输入输出设备 |
-| 🎬 **媒体能力** | 编解码器支持、HDR 能力 |
+| 🖥️ **基础系统** | 呈现底层操作系统、浏览器核心版本、UserAgent 解析。 |
+| 💻 **硬件特征** | 抓取系统支持的 CPU 逻辑核心数、内存限额、GPU 详细信息。 |
+| 🌐 **网络与连通性**| 解析有效连接属性、带宽基准，及外网 IP 的精准定位。 |
+| 🔒 **浏览器安全** | HTTPS状态、同源与安全沙箱(CSP)情况、以及详细首部验证。 |
+| 📺 **图形与显示** | 屏幕极限分辨率、显示器色彩深度及高 PPI 像素比检测。 |
+| 🆔 **防追踪指纹** | 使用底层综合维度哈希生成您当前机器的“唯一设备指纹”。|
+| 💾 **存储与配额** | LocalStorage、IndexedDB 以及其他持久化缓存能力的精准配额报告。|
+| 📍 **定位与地理** | 提取高精度 GPS 数据以及用户时区、时差、语言等本地化环境设定。 |
+| 📹 **外接媒体硬件**| 列举可用的本地扬声器、麦克风和摄像头权限及设备名称。|
+| 🎬 **视音频解码** | 检测本地硬件或软件底层对各类现代影音格式（含 HDR 等）的解压能力。|
 
-### 特色功能
-
-- 📊 **综合评分** - 基于检测结果生成 AI 就绪度评分
-- 📥 **数据导出** - 支持将检测结果导出为 JSON 格式
-- 🔄 **实时刷新** - 一键重新检测所有指标
-- 🪟 **悬浮窗口** - 可拖拽的悬浮面板设计
-- 📲 **PWA 支持** - 可安装为独立应用使用
+### 实用的开发者工具
+- **高级网络诊断** - 突破同源策略进行测速，并引入 UDP DNS 解析来验证被降级网络的存活性。
+- **自定义数据导出** - 一键将当前的数百项检测数据转存为规范的 JSON 格式图表。
+- **全局定制化** - 可以强制指定主题色，开关动效减少性能负载以满足低端设备的体验。
+- **悬浮数据窗** - 实现跨窗口的极简 PWA 监控，完美适配桌面与手机应用生态。
 
 ---
 
-## 🚀 部署参考与注意事项 (Deployment)
+## 🛠️ 技术栈总览
 
-> [!WARNING]
-> 该项目架构已从纯前端升级为全栈应用，现集成完整的 Node.js + Express 后端服务体系，涵盖跨域(CORS)请求绕过、安全接口代理及部分本地系统探查任务。部署时请确保启动全栈执行环境（不能单纯部署静态网页）。
-
-> [!CAUTION]
-> 关于**受限的网络功能 (UDP代理等)**：在众多 Serverless 平台（例如 Vercel、AWS Lambda 函数、静态页面托管服务等）上，系统的 UDP Socket 或长链接机制是完全不支持或者被强制阻断的。
-> 应用程序内包含完善的环境感知与状态检测逻辑——如果在由于底层限制导致探测失败的平台环境内，设置及主页面中涉及到 UDP 并发及相关代理服务设定的开关将**自动呈现灰色（置灰并不可用状态）提示环境不支持**。
-> 为了彻底解锁应用所有深入网络通讯的监控与代理能力，强烈建议您使用标准的 **运行容器化(Docker)、VPS 或者类似 Cloud Run** 的完全受管型服务进行完整部署。
+| 类别 | 框架 / 技术 |
+|------|-------------|
+| **核心视图与脚本**| React 19 + TypeScript 5.8 严格模式 |
+| **全栈引擎** | Express + Node.js (处理接口代理 & 系统联通) |
+| **样式与视觉** | Tailwind CSS V4 + Lucide 可缩放矢量图标 |
+| **工程构建打包** | Vite 6.2 + ESBuild |
+| **安全与指纹** | FingerprintJS 驱动 |
 
 ---
 
-## 🚀 快速开始
-
-### 前置要求
-
-- Node.js 18+
-- npm 或 yarn
+## 📝 入门与构建指南
 
 ### 本地开发
 
 ```bash
-# 1. 克隆项目
+# 1. 下载本地仓库
 git clone <your-repo-url>
 cd browserscope
 
-# 2. 安装依赖
+# 2. 安装全部依赖项 (涵盖前端与 Express)
 npm install
 
-# 3. 配置环境变量（可选）
-# 复制 .env.local.example 到 .env.local 并设置你的 API Key
-cp .env.local.example .env.local
-
-# 4. 启动开发服务器
+# 3. 启动全功能包含接口的开发服务器
 npm run dev
 ```
+服务器正常启动后，请在浏览器中打开内置的地址即可进行实时预览。
 
-访问 `http://localhost:3000` 即可预览应用。
-
-### 生产构建
+### 生产化打包
 
 ```bash
-# 构建生产版本
+# 执行生产代码瘦身压缩及 Node 后端转义
 npm run build
 
-# 预览生产构建
-npm run preview
-```
-
-### 代码检查
-
-```bash
-# 运行 TypeScript 类型检查
-npm run lint
+# 测试构建之后的同构节点
+npm run start
 ```
 
 ---
 
-## ⚙️ 环境配置
-
-如需使用 Gemini AI 相关功能，请在项目根目录创建 `.env.local` 文件：
-
-```env
-GEMINI_API_KEY=your_api_key_here
-```
-
-> 💡 提示：大部分检测功能无需 API Key 即可正常使用。
-
----
-
-## 🌐 支持的语言
-
-- 🇨🇳 简体中文 (zh-CN)
-- 🇭🇰 繁体中文 - 香港 (zh-HK)
-- 🇹🇼 繁体中文 - 台湾 (zh-TW)
-- 🇺🇸 English (en)
-- 🇯🇵 日本語 (ja)
-- 🇷🇺 Русский (ru)
-
-可通过界面右上角的语言切换器更改显示语言。
-
----
-
-## 📁 项目结构
-
-```
-browserscope/
-├── App.tsx                 # 主应用入口
-├── index.tsx               # React 渲染入口
-├── components/             # UI 组件
-│   ├── cards/              # 各检测模块卡片
-│   ├── layout/             # 布局组件
-│   ├── sections/           # 功能区块
-│   ├── settings/           # 设置面板
-│   └── ui/                 # 通用 UI 组件
-├── services/               # 业务逻辑层
-│   ├── detectors/          # 各项检测器实现
-│   ├── detectionService.ts # 检测服务聚合
-│   └── exporter.ts         # 数据导出服务
-├── hooks/                  # 自定义 Hooks
-├── utils/                  # 工具函数
-│   ├── i18n/               # 国际化资源
-│   ├── formatters.ts       # 格式化函数
-│   └── cpuMapping.ts       # CPU 映射表
-├── appearance/             # 主题样式
-└── types/                  # TypeScript 类型定义
-```
-
----
-
-## 🎯 使用场景
-
-- 🔬 **开发者调试** - 快速查看浏览器环境信息
-- 📱 **兼容性测试** - 评估设备对新技术的支持程度
-- 🤖 **AI 应用部署** - 判断设备是否适合运行本地 AI 模型
-- 🔐 **安全审计** - 检查浏览器安全配置
-- 📊 **用户分析** - 了解用户设备特征（需合规使用）
-
----
-
-## 📝 许可证
-
-本项目采用 MIT 许可证。
-
----
-
-## 🙏 致谢
-
-- [Google AI Studio](https://ai.studio/) - AI 技术支持
-- [FingerprintJS](https://fingerprintjs.com/) - 设备指纹识别
-- [Transformers.js](https://huggingface.co/docs/transformers.js) - 本地 AI 推理
-- [Lucide Icons](https://lucide.dev/) - 精美图标库
-
----
+## 📝 协议声明
+本项目以 **MIT** 许可证开源发行。您可以自由使用，探索其打磨极限的前端与中转实现逻辑。
 
 <div align="center">
 
-**🌟 如果这个项目对你有帮助，请给个 Star！**
+**🌟 如果本项目的细节设计曾让您眼前一亮，请考虑点亮一颗 Star！**
 
-[在 AI Studio 中查看](https://ai.studio/apps/6b6b64a8-d32c-490e-a9ab-35a241066ab2)
+[在 AI Studio 中查看最新版本](https://ai.studio/apps/6b6b64a8-d32c-490e-a9ab-35a241066ab2)
 
 </div>
