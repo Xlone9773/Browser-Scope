@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { Translation } from "../../utils/i18n/types";
 import { Button } from "../ui/Button";
+import { Select } from "../ui/Select";
 import {
   loggerStore,
   useLoggerStore,
@@ -747,23 +748,24 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                         {(t.config as any)?.erudaDefaultTabDesc || "Select the tab to focus when Eruda is opened."}
                       </span>
                     </div>
-                    <select
+                    <Select
                       value={erudaDefaultTab}
-                      onChange={(e) => setErudaDefaultTab(e.target.value)}
-                      className="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded px-2 py-1.5 focus:outline-none focus:border-indigo-500 w-full"
-                    >
-                      <option value="console">Console</option>
-                      <option value="elements">Elements (DOM)</option>
-                      <option value="network">Network</option>
-                      <option value="resources">Resources</option>
-                      <option value="sources">Sources (Code)</option>
-                      <option value="info">Info</option>
-                      <option value="snippets">Snippets</option>
-                      <option value="timing">Timing</option>
-                      <option value="features">Features</option>
-                      <option value="monitor">Monitor</option>
-                      <option value="fps">FPS</option>
-                    </select>
+                      onChange={(val) => setErudaDefaultTab(val)}
+                      fullWidth
+                      options={[
+                        { id: "console", label: (t.config as any)?.erudaTabs?.console || "Console" },
+                        { id: "elements", label: (t.config as any)?.erudaTabs?.elements || "Elements (DOM)" },
+                        { id: "network", label: (t.config as any)?.erudaTabs?.network || "Network" },
+                        { id: "resources", label: (t.config as any)?.erudaTabs?.resources || "Resources" },
+                        { id: "sources", label: (t.config as any)?.erudaTabs?.sources || "Sources (Code)" },
+                        { id: "info", label: (t.config as any)?.erudaTabs?.info || "Info" },
+                        { id: "snippets", label: (t.config as any)?.erudaTabs?.snippets || "Snippets" },
+                        { id: "timing", label: (t.config as any)?.erudaTabs?.timing || "Timing" },
+                        { id: "features", label: (t.config as any)?.erudaTabs?.features || "Features" },
+                        { id: "monitor", label: (t.config as any)?.erudaTabs?.monitor || "Monitor" },
+                        { id: "fps", label: (t.config as any)?.erudaTabs?.fps || "FPS" },
+                      ]}
+                    />
                   </div>
                   <div className="p-3 border-b border-slate-700 bg-slate-900/50">
                     <div className="flex flex-col gap-1 mb-3">
@@ -941,23 +943,24 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                       {(t.config as any)?.erudaDefaultTabDesc || "Select the tab to focus when Eruda is opened."}
                     </span>
                   </div>
-                  <select
+                  <Select
                     value={erudaDefaultTab}
-                    onChange={(e) => setErudaDefaultTab(e.target.value)}
-                    className="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded px-2 py-1.5 focus:outline-none focus:border-indigo-500 w-full"
-                  >
-                    <option value="console">Console</option>
-                    <option value="elements">Elements (DOM)</option>
-                    <option value="network">Network</option>
-                    <option value="resources">Resources</option>
-                    <option value="sources">Sources (Code)</option>
-                    <option value="info">Info</option>
-                    <option value="snippets">Snippets</option>
-                    <option value="timing">Timing</option>
-                    <option value="features">Features</option>
-                    <option value="monitor">Monitor</option>
-                    <option value="fps">FPS</option>
-                  </select>
+                    onChange={(val) => setErudaDefaultTab(val)}
+                    fullWidth
+                    options={[
+                      { id: "console", label: (t.config as any)?.erudaTabs?.console || "Console" },
+                      { id: "elements", label: (t.config as any)?.erudaTabs?.elements || "Elements (DOM)" },
+                      { id: "network", label: (t.config as any)?.erudaTabs?.network || "Network" },
+                      { id: "resources", label: (t.config as any)?.erudaTabs?.resources || "Resources" },
+                      { id: "sources", label: (t.config as any)?.erudaTabs?.sources || "Sources (Code)" },
+                      { id: "info", label: (t.config as any)?.erudaTabs?.info || "Info" },
+                      { id: "snippets", label: (t.config as any)?.erudaTabs?.snippets || "Snippets" },
+                      { id: "timing", label: (t.config as any)?.erudaTabs?.timing || "Timing" },
+                      { id: "features", label: (t.config as any)?.erudaTabs?.features || "Features" },
+                      { id: "monitor", label: (t.config as any)?.erudaTabs?.monitor || "Monitor" },
+                      { id: "fps", label: (t.config as any)?.erudaTabs?.fps || "FPS" },
+                    ]}
+                  />
                 </div>
                 <div className="p-3 border-b border-slate-700 bg-slate-900/50">
                   <div className="flex flex-col gap-1 mb-3">
