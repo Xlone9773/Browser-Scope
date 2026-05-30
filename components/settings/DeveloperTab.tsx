@@ -115,9 +115,11 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
     activeConsole,
     defaultConsole,
     erudaSnippets,
+    erudaDefaultTab,
     setActiveConsole,
     setDefaultConsole,
     setErudaSnippet,
+    setErudaDefaultTab,
   } = useLoggerStore();
 
   const [inputCmd, setInputCmd] = useState("");
@@ -735,8 +737,36 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                 </div>
               </div>
               {defaultConsole === "eruda" && (
-                <div className="p-3 border-b border-slate-700 bg-slate-900/50">
-                  <div className="flex flex-col gap-1 mb-3">
+                <>
+                  <div className="p-3 border-b border-slate-700 bg-slate-900/50 flex flex-col gap-2">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-sm font-semibold text-slate-200">
+                        {(t.config as any)?.erudaDefaultTab || "Default Eruda Tab"}
+                      </span>
+                      <span className="text-[10px] text-slate-500">
+                        {(t.config as any)?.erudaDefaultTabDesc || "Select the tab to focus when Eruda is opened."}
+                      </span>
+                    </div>
+                    <select
+                      value={erudaDefaultTab}
+                      onChange={(e) => setErudaDefaultTab(e.target.value)}
+                      className="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded px-2 py-1.5 focus:outline-none focus:border-indigo-500 w-full"
+                    >
+                      <option value="console">Console</option>
+                      <option value="elements">Elements (DOM)</option>
+                      <option value="network">Network</option>
+                      <option value="resources">Resources</option>
+                      <option value="sources">Sources (Code)</option>
+                      <option value="info">Info</option>
+                      <option value="snippets">Snippets</option>
+                      <option value="timing">Timing</option>
+                      <option value="features">Features</option>
+                      <option value="monitor">Monitor</option>
+                      <option value="fps">FPS</option>
+                    </select>
+                  </div>
+                  <div className="p-3 border-b border-slate-700 bg-slate-900/50">
+                    <div className="flex flex-col gap-1 mb-3">
                     <span className="text-sm font-semibold text-slate-200">
                       {(t.config as any)?.loadSnippets || "Code Snippets"}
                     </span>
@@ -766,6 +796,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                     ))}
                   </div>
                 </div>
+                </>
               )}
               <div className="p-3 bg-slate-800 border-b border-slate-700">
                 <button
@@ -900,8 +931,36 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
               </div>
             </div>
             {defaultConsole === "eruda" && (
-              <div className="p-3 border-b border-slate-700 bg-slate-900/50">
-                <div className="flex flex-col gap-1 mb-3">
+              <>
+                <div className="p-3 border-b border-slate-700 bg-slate-900/50 flex flex-col gap-2">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm font-semibold text-slate-200">
+                      {(t.config as any)?.erudaDefaultTab || "Default Eruda Tab"}
+                    </span>
+                    <span className="text-[10px] text-slate-500">
+                      {(t.config as any)?.erudaDefaultTabDesc || "Select the tab to focus when Eruda is opened."}
+                    </span>
+                  </div>
+                  <select
+                    value={erudaDefaultTab}
+                    onChange={(e) => setErudaDefaultTab(e.target.value)}
+                    className="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded px-2 py-1.5 focus:outline-none focus:border-indigo-500 w-full"
+                  >
+                    <option value="console">Console</option>
+                    <option value="elements">Elements (DOM)</option>
+                    <option value="network">Network</option>
+                    <option value="resources">Resources</option>
+                    <option value="sources">Sources (Code)</option>
+                    <option value="info">Info</option>
+                    <option value="snippets">Snippets</option>
+                    <option value="timing">Timing</option>
+                    <option value="features">Features</option>
+                    <option value="monitor">Monitor</option>
+                    <option value="fps">FPS</option>
+                  </select>
+                </div>
+                <div className="p-3 border-b border-slate-700 bg-slate-900/50">
+                  <div className="flex flex-col gap-1 mb-3">
                   <span className="text-sm font-semibold text-slate-200">
                     {(t.config as any)?.loadSnippets || "Code Snippets"}
                   </span>
@@ -931,6 +990,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
                   ))}
                 </div>
               </div>
+              </>
             )}
             <div className="p-3 bg-slate-800 border-b border-slate-700">
               <button

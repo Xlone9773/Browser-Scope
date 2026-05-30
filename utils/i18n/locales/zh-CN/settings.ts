@@ -183,6 +183,8 @@ export const settings = {
             vconsoleDesc: "开启腾讯 vConsole 面板",
             eruda: "Eruda 调试",
             erudaDesc: "开启 Eruda 面板",
+            erudaDefaultTab: "默认激活标签页",
+            erudaDefaultTabDesc: "选择打开 Eruda 控制台时默认聚焦的标签页",
             loadSnippets: "预注入代码片段",
             loadSnippetsDesc: "选择将哪些常用的快捷代码片段注入到 Eruda 控制台中",
             snippetClearLocal: "清理本地存储 (LocalStorage)",

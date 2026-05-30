@@ -183,6 +183,8 @@ export const settings = {
             vconsoleDesc: "啟用騰訊 vConsole 面板",
             eruda: "Eruda 整合",
             erudaDesc: "啟用 Eruda 面板",
+            erudaDefaultTab: "預設啟用標籤頁",
+            erudaDefaultTabDesc: "選擇打開 Eruda 控制台時預設聚焦的標籤頁",
             loadSnippets: "預先注入程式碼片段",
             loadSnippetsDesc: "選擇將哪些常用的快捷程式碼片段注入到 Eruda 控制台中",
             snippetClearLocal: "清理本地存儲 (LocalStorage)",

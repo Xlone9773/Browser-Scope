@@ -16,6 +16,8 @@ class LoggerStore {
     (localStorage.getItem("developer_active_console") as any) || "none";
   public defaultConsole: "vconsole" | "eruda" =
     (localStorage.getItem("developer_default_console") as any) || "vconsole";
+  public erudaDefaultTab: string =
+    localStorage.getItem("developer_eruda_default_tab") || "console";
   public erudaSnippets: Record<string, boolean> = (() => {
     try {
       const stored = localStorage.getItem("developer_eruda_snippets");
@@ -119,6 +121,18 @@ class LoggerStore {
     this.notifySettings();
   }
 
+  setErudaDefaultTab(tab: string) {
+    this.erudaDefaultTab = tab;
+    localStorage.setItem("developer_eruda_default_tab", tab);
+    // Note: Do not reload the core eruda on tab switch, just try to focus it
+    if (this.activeConsole === "eruda" && (window as any).eruda) {
+      try {
+        (window as any).eruda.show(tab);
+      } catch (e) {}
+    }
+    this.notifySettings();
+  }
+
   setActiveConsole(consoleType: "none" | "vconsole" | "eruda") {
     const previousConsole = this.activeConsole;
     this.activeConsole = consoleType;
@@ -178,7 +192,14 @@ class LoggerStore {
 
       const erudaTiming = (await import("eruda-timing")).default;
       eruda.add(erudaTiming);
-      eruda.show("timing");
+      
+      try { const erudaDom = (await import("eruda-dom")).default; eruda.add(erudaDom); } catch (e) {}
+      try { const erudaCode = (await import("eruda-code")).default; eruda.add(erudaCode); } catch (e) {}
+      try { const erudaMonitor = (await import("eruda-monitor")).default; eruda.add(erudaMonitor); } catch (e) {}
+      try { const erudaFeatures = (await import("eruda-features")).default; eruda.add(erudaFeatures); } catch (e) {}
+      try { const erudaFps = (await import("eruda-fps")).default; eruda.add(erudaFps); } catch (e) {}
+
+      try { eruda.show(this.erudaDefaultTab); } catch (e) {}
 
       const snippets = eruda.get("snippets");
       if (snippets) {
@@ -398,6 +419,9 @@ export function useLoggerStore() {
   const [erudaSnippets, setErudaSnippets] = useState(
     loggerStore.erudaSnippets,
   );
+  const [erudaDefaultTab, setErudaDefaultTab] = useState(
+    loggerStore.erudaDefaultTab,
+  );
 
   useEffect(() => {
     const unsubs = [
@@ -408,6 +432,7 @@ export function useLoggerStore() {
         setActiveConsole(loggerStore.activeConsole);
         setDefaultConsole(loggerStore.defaultConsole);
         setErudaSnippets(loggerStore.erudaSnippets);
+        setErudaDefaultTab(loggerStore.erudaDefaultTab);
       }),
     ];
     return () => unsubs.forEach((u) => u());
@@ -420,12 +445,15 @@ export function useLoggerStore() {
     activeConsole,
     defaultConsole,
     erudaSnippets,
+    erudaDefaultTab,
     setActiveConsole: (type: "none" | "vconsole" | "eruda") =>
       loggerStore.setActiveConsole(type),
     setDefaultConsole: (type: "vconsole" | "eruda") =>
       loggerStore.setDefaultConsole(type),
     setErudaSnippet: (key: string, enabled: boolean) =>
       loggerStore.setErudaSnippet(key, enabled),
+    setErudaDefaultTab: (tab: string) =>
+      loggerStore.setErudaDefaultTab(tab),
   };
 }
 

@@ -183,6 +183,8 @@ export const settings = {
             vconsoleDesc: "Enable Tencent vConsole panel",
             eruda: "Eruda Integration",
             erudaDesc: "Enable Eruda panel",
+            erudaDefaultTab: "Default Eruda Tab",
+            erudaDefaultTabDesc: "Select the tab to focus when Eruda is opened",
             loadSnippets: "Code Snippets",
             loadSnippetsDesc: "Select which code snippets to automatically inject into Eruda",
             snippetClearLocal: "Clear LocalStorage",

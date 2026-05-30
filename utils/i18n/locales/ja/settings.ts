@@ -183,6 +183,8 @@ export const settings = {
             vconsoleDesc: "Tencent vConsole パネルを有効にする",
             eruda: "Eruda 統合",
             erudaDesc: "Eruda パネルを有効にする",
+            erudaDefaultTab: "デフォルトタブ",
+            erudaDefaultTabDesc: "Erudaが開かれたときにフォーカスするタブを選択します",
             loadSnippets: "コードスニペット",
             loadSnippetsDesc: "Eruda コンソールに挿入するコードスニペットを選択します",
             snippetClearLocal: "ローカルストレージのクリア",

@@ -183,6 +183,8 @@ export const settings = {
             vconsoleDesc: "Включить панель Tencent vConsole",
             eruda: "Интеграция Eruda",
             erudaDesc: "Включить панель Eruda",
+            erudaDefaultTab: "Вкладка по умолчанию",
+            erudaDefaultTabDesc: "Выберите вкладку для фокуса при открытии Eruda",
             loadSnippets: "Фрагменты кода",
             loadSnippetsDesc: "Выберите, какие фрагменты кода автоматически внедрять в Eruda",
             snippetClearLocal: "Очистить LocalStorage",
