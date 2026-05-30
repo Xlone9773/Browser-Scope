@@ -6,6 +6,8 @@ export const common = {
     footer: "BrowserScope - Инструмент анализа возможностей браузера",
   },
   common: {
+    menu: "Меню",
+    language: "Язык",
     fullscreen: "Полноэкранный",
     exit_fullscreen: "Выйти из полноэкранного",
     loading: "Сканирование возможностей системы...",

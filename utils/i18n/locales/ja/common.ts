@@ -6,6 +6,8 @@ export const common = {
     footer: "BrowserScope - ブラウザ能力検出ツール",
   },
   common: {
+    menu: "メニュー",
+    language: "言語",
     fullscreen: "全画面表示",
     exit_fullscreen: "全画面を終了",
     loading: "システム機能をスキャン中...",

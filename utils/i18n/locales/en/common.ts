@@ -6,6 +6,8 @@ export const common = {
     footer: "BrowserScope - Device Intelligence Tool",
   },
   common: {
+    menu: "Menu",
+    language: "Language",
     fullscreen: "Fullscreen",
     exit_fullscreen: "Exit Fullscreen",
     loading: "Initializing...",

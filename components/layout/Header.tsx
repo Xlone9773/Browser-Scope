@@ -291,7 +291,7 @@ export const Header: React.FC<HeaderProps> = ({
             className={`absolute right-0 top-full mt-2 w-48 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl py-2 z-50 transform transition-all duration-200 origin-top-right flex flex-col ${isMoreMenuOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"}`}
           >
             <div className="px-3 pb-2 mb-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
-              Menu
+              {t.common.menu || "Menu"}
             </div>
 
             <button
@@ -328,7 +328,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             <div className="mt-1 pt-1 border-t border-slate-100 dark:border-slate-700">
               <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                Language
+                {t.common.language || "Language"}
               </div>
               {SUPPORTED_LANGUAGES.map((code) => {
                 const isCurrent = lang === code;

@@ -6,6 +6,8 @@ export const common = {
     footer: "BrowserScope - 浏览器能力检测工具",
   },
   common: {
+    menu: "菜单",
+    language: "语言",
     fullscreen: "全屏",
     exit_fullscreen: "退出全屏",
     loading: "正在扫描系统能力...",
