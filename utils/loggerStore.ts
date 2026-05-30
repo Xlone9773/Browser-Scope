@@ -176,6 +176,10 @@ class LoggerStore {
       });
       (window as any).eruda = eruda;
 
+      const erudaTiming = (await import("eruda-timing")).default;
+      eruda.add(erudaTiming);
+      eruda.show("timing");
+
       const snippets = eruda.get("snippets");
       if (snippets) {
         if (this.erudaSnippets.clear_local) {
