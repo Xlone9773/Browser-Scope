@@ -150,40 +150,39 @@ npm run start
 
 ---
 
-## 📂 代码结构说明 (Code Structure)
+## 📂 代码结构说明
 
 ```text
 /
-├── appearance/          # Theme configuration 
-├── components/          # React views and component library
-│   ├── cards/           # Individual capability cards (OS, CPU, Network, etc.)
-│   ├── compute/         # Computation stress testing tools
-│   ├── hardware/        # Hardware diagnostics and WebGL testing features
-│   ├── heatmap/         # Map and visualization tools
-│   ├── layout/          # Core layout components (Header, Sidebar)
-│   ├── sections/        # Sectional views
-│   ├── settings/        # User settings and developer tool modals
-│   ├── speedtest/       # Network speed diagnostic tools
-│   └── ui/              # Reusable base UI elements
-├── hooks/               # Global React hooks
-├── services/            # Core logical services and background workers
-│   ├── detectors/       # Modular detection logic scripts
-│   ├── app.worker.ts    # Web Worker for async computation tasks
-│   ├── detectionService.ts # Unified detection service export
-│   └── score.ts         # Device scoring heuristics
-├── utils/               # Utility functions
-│   ├── i18n/            # Localization dictionaries (i18n)
-│   └── logger/          # Dev console interceptors (vConsole/Eruda)
-├── src/main.tsx         # React entry point
-└── server.ts            # Express backend entry for proxying
+├── appearance/          # 主题与外观配置
+├── components/          # React 视图与组件库
+│   ├── cards/           # 独立能力卡片组合 (系统、CPU、网络等)
+│   ├── compute/         # 计算压力测试工具
+│   ├── hardware/        # 硬件特征读取及 WebGL 测试诊断
+│   ├── heatmap/         # 传感器及网络热力图可视化组件
+│   ├── layout/          # 全局排版模块 (头栏、侧栏)
+│   ├── sections/        # Section区块划分组
+│   ├── settings/        # 设置配置页与开发者调试面板入口
+│   ├── speedtest/       # 网速深度测试套件
+│   └── ui/              # 原子级无状态 UI 搭建组件库
+├── hooks/               # 全局共享 Hooks
+├── services/            # 系统后台资源逻辑分配端
+│   ├── detectors/       # 层级探针逻辑库
+│   ├── app.worker.ts    # 挂载计算进程 Web Worker
+│   ├── detectionService.ts # 集成后的探针对外分工统一入口
+│   └── score.ts         # 本地设备性能打分判定工具链
+├── utils/               # 无状态纯函数工具集
+│   ├── i18n/            # 完整的应用级国际化多维词典库 (i18n)
+│   └── logger/          # VConsole/Eruda 终端拦截挂载服务
+├── src/main.tsx         # 整个 React 前端的单页核心总挂载入口
+└── server.ts            # 全栈底层 Express 核心端处理网络端口转发映射
 ```
 
 ---
 
-## 🙌 鸣谢 (Acknowledgments)
+## 🙌 鸣谢
 
 感谢以下开源项目，让本项目变得更好：
-Thanks to the following open-source projects for making this project better:
 
 - **[React](https://react.dev/)**
 - **[Tailwind CSS](https://tailwindcss.com/)**
