@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
+import { ConsoleEntry } from "./logger/types";
+import { loadEruda, unloadEruda } from "./logger/eruda";
+import { loadVConsole, unloadVConsole } from "./logger/vconsole";
+import { setupInterceptors } from "./logger/interceptors";
 
-export interface ConsoleEntry {
-  id: string;
-  type: "input" | "output" | "error";
-  content: string;
-  timestamp: number;
-}
+export type { ConsoleEntry };
 
 class LoggerStore {
   public logs: string[] = [];
@@ -117,8 +116,8 @@ class LoggerStore {
     this.erudaSnippets = { ...this.erudaSnippets, [key]: enabled };
     localStorage.setItem("developer_eruda_snippets", JSON.stringify(this.erudaSnippets));
     if (this.activeConsole === "eruda") {
-      this.unloadEruda();
-      this.loadEruda();
+      unloadEruda();
+      loadEruda(this);
     }
     this.notifySettings();
   }
@@ -126,7 +125,6 @@ class LoggerStore {
   setErudaDefaultTab(tab: string) {
     this.erudaDefaultTab = tab;
     localStorage.setItem("developer_eruda_default_tab", tab);
-    // Note: Do not reload the core eruda on tab switch, just try to focus it
     if (this.activeConsole === "eruda" && (window as any).eruda) {
       try {
         (window as any).eruda.show(tab);
@@ -151,18 +149,16 @@ class LoggerStore {
     this.activeConsole = consoleType;
     localStorage.setItem("developer_active_console", consoleType);
 
-    // Unload old console
     if (previousConsole === "vconsole" && consoleType !== "vconsole") {
-      this.unloadVConsole();
+      unloadVConsole();
     } else if (previousConsole === "eruda" && consoleType !== "eruda") {
-      this.unloadEruda();
+      unloadEruda();
     }
 
-    // Load new console
     if (consoleType === "vconsole") {
-      this.loadVConsole();
+      loadVConsole(this);
     } else if (consoleType === "eruda") {
-      this.loadEruda();
+      loadEruda(this);
     }
 
     this.notifySettings();
@@ -176,219 +172,6 @@ class LoggerStore {
       this.setActiveConsole(consoleType);
     } else {
       this.notifySettings();
-    }
-  }
-
-  async loadEruda() {
-    if ((window as any).eruda) {
-      try {
-        (window as any).eruda.show();
-      } catch (e) {}
-      return;
-    }
-    try {
-      let container = document.getElementById("eruda-container");
-      if (!container) {
-        container = document.createElement("div");
-        container.id = "eruda-container";
-        // Apply VConsole-like scroll patch to the container to prevent scroll penetration
-        container.style.overscrollBehavior = "none";
-        document.body.appendChild(container);
-      }
-
-      const eruda = (await import("eruda")).default;
-      eruda.init({
-        container: container,
-        useShadowDom: true,
-      });
-      (window as any).eruda = eruda;
-
-      const erudaTiming = (await import("eruda-timing")).default;
-      eruda.add(erudaTiming);
-      
-      try { const erudaDom = (await import("eruda-dom")).default; eruda.add(erudaDom); } catch (e) {}
-      try { const erudaCode = (await import("eruda-code")).default; eruda.add(erudaCode); } catch (e) {}
-      try { const erudaMonitor = (await import("eruda-monitor")).default; eruda.add(erudaMonitor); } catch (e) {}
-      try { const erudaFeatures = (await import("eruda-features")).default; eruda.add(erudaFeatures); } catch (e) {}
-      try { const erudaFps = (await import("eruda-fps")).default; eruda.add(erudaFps); } catch (e) {}
-
-      try { eruda.show(this.erudaDefaultTab); } catch (e) {}
-
-      const snippets = eruda.get("snippets");
-      if (snippets) {
-        if (this.erudaSnippets.clear_local) {
-          snippets.add(
-            "Clear LocalStorage",
-            function () {
-              localStorage.clear();
-              alert("LocalStorage cleared");
-            },
-            "Clears all data from localStorage",
-          );
-        }
-        if (this.erudaSnippets.clear_session) {
-          snippets.add(
-            "Clear SessionStorage",
-            function () {
-              sessionStorage.clear();
-              alert("SessionStorage cleared");
-            },
-            "Clears all data from sessionStorage",
-          );
-        }
-        if (this.erudaSnippets.show_cookies) {
-          snippets.add(
-            "Show Cookies",
-            function () {
-              alert(document.cookie || "No cookies found");
-            },
-            "Alerts all current document cookies",
-          );
-        }
-        if (this.erudaSnippets.toggle_blur) {
-          snippets.add(
-            "Disable Body Blur",
-            function () {
-              document.body.classList.toggle("no-blur");
-            },
-            "Toggles body blur",
-          );
-        }
-        if (this.erudaSnippets.toggle_editable) {
-          snippets.add(
-            "Toggle Editable Page",
-            function () {
-              document.body.contentEditable =
-                document.body.contentEditable === "true" ? "false" : "true";
-            },
-            "Toggles content editable mode for the entire page",
-          );
-        }
-      }
-
-      // Stop propagation as an extra fallback
-      container.addEventListener("wheel", (e) => e.stopPropagation(), {
-        passive: false,
-      });
-      container.addEventListener("touchstart", (e) => e.stopPropagation(), {
-        passive: false,
-      });
-      container.addEventListener("touchmove", (e) => e.stopPropagation(), {
-        passive: false,
-      });
-      container.addEventListener("touchend", (e) => e.stopPropagation(), {
-        passive: false,
-      });
-
-      // Inject overscroll-behavior into shadow root as well
-      if (container.shadowRoot) {
-        const style = document.createElement("style");
-        style.textContent = `
-          * { overscroll-behavior: none !important; }
-        `;
-        container.shadowRoot.appendChild(style);
-      }
-
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          if (mutation.attributeName === "class") {
-            const isCurrentlyDark =
-              document.documentElement.classList.contains("dark");
-            if (
-              (window as any).eruda &&
-              typeof (window as any).eruda.position === "function"
-            ) {
-              try {
-                (window as any).eruda._devTools._theme = isCurrentlyDark
-                  ? "Dark"
-                  : "Light";
-                (window as any).eruda._devTools.emit(
-                  "themeChange",
-                  isCurrentlyDark ? "Dark" : "Light",
-                );
-              } catch (e) {}
-            }
-          }
-        });
-      });
-      observer.observe(document.documentElement, { attributes: true });
-    } catch (e) {}
-  }
-
-  unloadEruda() {
-    if ((window as any).eruda) {
-      try {
-        (window as any).eruda.destroy();
-      } catch (e) {}
-      (window as any).eruda = undefined;
-      const erudaNode = document.getElementById("eruda-container");
-      if (erudaNode) {
-        erudaNode.remove();
-      }
-      // Fallback: Remove any other elements that eruda might have added to the body directly.
-      const el = document.querySelector('div[id="eruda"]');
-      if (el) el.remove();
-    }
-  }
-
-  async loadVConsole() {
-    const win = window as any;
-    if (win.vConsole) {
-      try {
-        win.vConsole.show();
-      } catch (e) {}
-      return;
-    }
-    try {
-      if (!Object.getOwnPropertyDescriptor(window, "fetch")) {
-        const originalFetch = window.fetch;
-        Object.defineProperty(window, "fetch", {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value: originalFetch,
-        });
-      }
-      const VConsole = (await import("vconsole")).default;
-      const isDark = document.documentElement.classList.contains("dark");
-      win.vConsole = new (VConsole as any)({
-        theme: isDark ? "dark" : "light",
-      });
-      try {
-        if (this.vconsoleDefaultTab && this.vconsoleDefaultTab !== "default") {
-          setTimeout(() => win.vConsole.showPlugin(this.vconsoleDefaultTab), 100);
-        }
-      } catch (e) {}
-
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          if (mutation.attributeName === "class") {
-            const isCurrentlyDark =
-              document.documentElement.classList.contains("dark");
-            if (win.vConsole && typeof win.vConsole.setOption === "function") {
-              win.vConsole.setOption(
-                "theme",
-                isCurrentlyDark ? "dark" : "light",
-              );
-            }
-          }
-        });
-      });
-      observer.observe(document.documentElement, { attributes: true });
-    } catch (e) {}
-  }
-
-  unloadVConsole() {
-    const win = window as any;
-    if (win.vConsole) {
-      try {
-        win.vConsole.destroy();
-      } catch (e) {}
-      win.vConsole = undefined;
-      const vcNode = document.getElementById("__vconsole");
-      if (vcNode) {
-        vcNode.remove();
-      }
     }
   }
 
@@ -482,79 +265,4 @@ export function useLoggerStore() {
   };
 }
 
-// Map window errors / fetch / network to logs if needed
-if (typeof window !== "undefined") {
-  // Initialise console if enabled
-  if (loggerStore.activeConsole === "vconsole") {
-    loggerStore.loadVConsole();
-  } else if (loggerStore.activeConsole === "eruda") {
-    loggerStore.loadEruda();
-  }
-
-  // Auto capture console logs
-  const originalLog = console.log;
-  const originalError = console.error;
-  const originalWarn = console.warn;
-  const originalInfo = console.info;
-
-  const serializeArgs = (args: any[]) =>
-    args
-      .map((a) => {
-        try {
-          return typeof a === "object" ? JSON.stringify(a) : String(a);
-        } catch (e) {
-          return String(a);
-        }
-      })
-      .join(" ");
-
-  console.log = function (...args) {
-    if (loggerStore.isLoggingEnabled)
-      loggerStore.addConsole("output", serializeArgs(args));
-    originalLog.apply(console, args);
-  };
-  console.error = function (...args) {
-    if (loggerStore.isLoggingEnabled)
-      loggerStore.addConsole("error", serializeArgs(args));
-    originalError.apply(console, args);
-  };
-  console.warn = function (...args) {
-    if (loggerStore.isLoggingEnabled)
-      loggerStore.addConsole("warn", serializeArgs(args));
-    originalWarn.apply(console, args);
-  };
-  console.info = function (...args) {
-    if (loggerStore.isLoggingEnabled)
-      loggerStore.addConsole("info", serializeArgs(args));
-    originalInfo.apply(console, args);
-  };
-
-  // Global event listener
-  const handleResize = () =>
-    loggerStore.addLog("resize", `${window.innerWidth}x${window.innerHeight}`);
-  const handleVisibility = () =>
-    loggerStore.addLog("visibilitychange", document.visibilityState);
-  const handleOnline = () => loggerStore.addLog("network", "online");
-  const handleOffline = () => loggerStore.addLog("network", "offline");
-  const handleFocus = () => loggerStore.addLog("window", "focus");
-  const handleBlur = () => loggerStore.addLog("window", "blur");
-  window.addEventListener("resize", handleResize);
-  document.addEventListener("visibilitychange", handleVisibility);
-  window.addEventListener("online", handleOnline);
-  window.addEventListener("offline", handleOffline);
-  window.addEventListener("focus", handleFocus);
-  window.addEventListener("blur", handleBlur);
-
-  window.addEventListener("error", (e) => {
-    loggerStore.addConsole(
-      "error",
-      `[Uncaught Error] ${e.message}\n${e.error?.stack || ""}`,
-    );
-  });
-  window.addEventListener("unhandledrejection", (e) => {
-    loggerStore.addConsole(
-      "error",
-      `[Unhandled Promise Rejection] ${e.reason}`,
-    );
-  });
-}
+setupInterceptors(loggerStore);
