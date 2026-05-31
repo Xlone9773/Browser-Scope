@@ -138,7 +138,7 @@ npm run dev
 ```
 服务器正常启动后，请在浏览器中打开内置的地址即可进行实时预览。
 
-### 生产化打包
+### 开发测试
 
 ```bash
 # 执行生产代码瘦身压缩及 Node 后端转义
@@ -147,6 +147,47 @@ npm run build
 # 测试构建之后的同构节点
 npm run start
 ```
+
+---
+
+## 📂 代码结构说明
+
+本项目采用高内聚、低耦合的形式组织代码，以下为核心目录架构及描述：
+
+```text
+/
+├── components/          # 全局 React 视图组件库
+│   ├── capability/      # 核心检测器系列 (系统、网络、安全等特性的分发模块)
+│   ├── diagnostic/      # 实用的开发者工具系列 (测速、UDP Ping 等)
+│   ├── settings/        # 应用程序级别设定与开发者选项 (控制 Eruda/vConsole 等)
+│   ├── layout/          # 全局布局体系构建
+│   └── ui/              # 纯无状态的底层 UI 原子组件库
+├── ext/                 # 扩展底层探查模块与工具链
+│   ├── env/             # 浏览器内核与特性判定核心
+│   ├── net/             # 增强网络请求与探测工具 (如 IP 查询)
+│   └── secure/          # 安全层解析及设备指纹算子
+├── utils/               # 业务级辅助中心
+│   ├── i18n/            # 灵活多维度的国际化 (i18n) 字典配置映射
+│   ├── logger/          # 开发者模式的高级日志劫持与格式化输出
+│   ├── cpuMapping.ts    # CPU 与 GPU 架构关系大数据库
+│   └── loggerStore.ts   # 收集劫持日志并集中分发的响应式 Store
+├── server.ts            # (重要) 核心 Node.js/Express 中继服务器，实现反代与端口探测
+└── src/main.tsx         # 整个 React 框架主入口点
+```
+
+---
+
+## 🙌 特别鸣谢 (Acknowledgments)
+
+本项目的极限打磨与全能体系离不开以下所有伟大开源项目的支持与贡献，我们在此致以最崇高的敬意：
+
+- **[React](https://react.dev/)** - 支撑整个响应式交互系统的现代视图库。
+- **[Tailwind CSS](https://tailwindcss.com/)** - 造就了像素级精细可配的视觉底层。
+- **[Express](https://expressjs.com/)** - 赋予应用全栈请求中转、跨域消除的核心能力。
+- **[Lucide Icons](https://lucide.dev/)** - 提供统一且优雅的矢量图标体验。
+- **[FingerprintJS](https://fingerprint.com/)** - 提供精密前沿的设备指纹计算逻辑。
+- **[Eruda](https://github.com/liriliri/eruda)** & **[vConsole](https://github.com/Tencent/vConsole)** - 为我们在移动端及特殊环境下带来了极为便利的调试控制台。
+- **[Vite](https://vitejs.dev/)** & **[ESBuild](https://esbuild.github.io/)** - 将前端工程的构建和 Node 侧单文件压缩体验推向极致。
 
 ---
 
