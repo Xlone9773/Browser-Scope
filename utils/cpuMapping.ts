@@ -56,11 +56,8 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('adreno 685')) return 'Snapdragon 8cx Gen 2';
   if (r.includes('adreno 680')) return 'Snapdragon 8cx';
   
-  // Mobile Next-Gen / Late 2025+
-  if (r.includes('adreno 850')) return 'Snapdragon 8 Elite 2 / Gen 5';
-  if (r.includes('adreno 840')) return 'Snapdragon 8 Elite 2 / Gen 5';
-
   // Mobile High-end
+  if (r.includes('adreno 840')) return 'Snapdragon 8 Elite Gen 5';
   if (r.includes('adreno 830')) return 'Snapdragon 8 Elite';
   if (r.includes('adreno 810')) return 'Snapdragon 7s Gen 3';
   if (r.includes('adreno 750')) return 'Snapdragon 8 Gen 3';
