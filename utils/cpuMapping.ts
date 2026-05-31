@@ -56,6 +56,10 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('adreno 685')) return 'Snapdragon 8cx Gen 2';
   if (r.includes('adreno 680')) return 'Snapdragon 8cx';
   
+  // Mobile Next-Gen / Late 2025+
+  if (r.includes('adreno 850')) return 'Snapdragon 8 Elite 2 / Gen 5';
+  if (r.includes('adreno 840')) return 'Snapdragon 8 Elite 2 / Gen 5';
+
   // Mobile High-end
   if (r.includes('adreno 830')) return 'Snapdragon 8 Elite';
   if (r.includes('adreno 810')) return 'Snapdragon 7s Gen 3';
@@ -105,6 +109,8 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('adreno 306')) return 'Snapdragon 410';
 
   // --- Samsung Exynos (Xclipse - AMD RDNA based) ---
+  if (r.includes('xclipse 960')) return 'Exynos 2600';
+  if (r.includes('xclipse 950')) return 'Exynos 2500';
   if (r.includes('xclipse 940')) return 'Exynos 2400 / 2400e';
   if (r.includes('xclipse 930')) return 'Exynos 2300 (Prototype)';
   if (r.includes('xclipse 920')) return 'Exynos 2200';
@@ -119,6 +125,8 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('google') && r.includes('mali-g78')) return 'Google Tensor';
 
   // Mediatek Dimensity / High-end Mali
+  if (r.includes('mali-g935-immortalis') || r.includes('immortalis-g935')) return 'Dimensity 9500+ / Dimensity 9500';
+  if (r.includes('mali-g935')) return 'Dimensity 9500+ / Dimensity 9500 / 8500';
   if (r.includes('mali-g925-immortalis mc12')) return 'Dimensity 9400+ / Dimensity 9400';
   if (r.includes('immortalis-g925')) return 'Dimensity 9400+ / Dimensity 9400';
   if (r.includes('mali-g925')) return 'Dimensity 9400+ / Dimensity 9400 / 8400';
