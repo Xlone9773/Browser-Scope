@@ -12,8 +12,89 @@ async function startServer() {
   const PORT = 3000;
 
   // Basic security, performance, and cross-origin setup
+  const isProd = process.env.NODE_ENV === "production";
   app.use(helmet({
-    contentSecurityPolicy: false, // Disabled for Vite dev server and external scripts
+    contentSecurityPolicy: isProd ? {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          "https://esm.sh",
+          "https://cdn.tailwindcss.com",
+          "https://unpkg.com",
+          "https://cdn.jsdelivr.net"
+        ],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://fonts.googleapis.com"
+        ],
+        fontSrc: [
+          "'self'",
+          "data:",
+          "https://fonts.gstatic.com"
+        ],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "blob:",
+          "https:"
+        ],
+        connectSrc: [
+          "'self'",
+          "wss:",
+          "ws:",
+          "https://dynamodb.ca-central-1.amazonaws.com",
+          "https://dynamodb.sa-east-1.amazonaws.com",
+          "https://dynamodb.us-west-2.amazonaws.com",
+          "https://dynamodb.eu-west-2.amazonaws.com",
+          "https://dynamodb.eu-central-1.amazonaws.com",
+          "https://dynamodb.eu-west-3.amazonaws.com",
+          "https://dynamodb.eu-north-1.amazonaws.com",
+          "https://dynamodb.ap-south-1.amazonaws.com",
+          "https://dynamodb.ap-southeast-1.amazonaws.com",
+          "https://dynamodb.ap-northeast-1.amazonaws.com",
+          "https://dynamodb.ap-northeast-2.amazonaws.com",
+          "https://dynamodb.ap-southeast-2.amazonaws.com",
+          "https://dynamodb.ap-east-1.amazonaws.com",
+          "https://dynamodb.af-south-1.amazonaws.com",
+          "https://www.baidu.com",
+          "https://www.google.com.tw",
+          "https://www.google.com",
+          "https://my.ippure.com",
+          "https://ipwho.is",
+          "https://ipapi.co",
+          "https://www.cloudflare.com",
+          "https://api.ipify.org",
+          "https://api6.ipify.org",
+          "https://ip6.seeip.org",
+          "https://ipv6.icanhazip.com",
+          "https://edns.ip-api.com",
+          "https://speed.cloudflare.com",
+          "https://cachefly.cachefly.net",
+          "https://mirrors.ustc.edu.cn",
+          "https://mirrors.nju.edu.cn",
+          "https://speedtest.selectel.ru",
+          "https://speedtest.tele2.kz",
+          "https://fsn1-speed.hetzner.com",
+          "https://hel1-speed.hetzner.com",
+          "https://ping.online.net",
+          "https://nj-us-ping.vultr.com",
+          "https://lax-ca-us-ping.vultr.com",
+          "https://sgp-ping.vultr.com",
+          "https://hnd-jp-ping.vultr.com",
+          "https://syd-au-ping.vultr.com",
+          "https://registry.khronos.org"
+        ],
+        workerSrc: ["'self'", "blob:"],
+        childSrc: ["'self'", "blob:"],
+        frameSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      }
+    } : false,
     crossOriginEmbedderPolicy: false // Disabled to allow external resources
   }));
   app.use(compression());
