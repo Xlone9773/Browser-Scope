@@ -2,10 +2,22 @@ import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import dgram from "dgram";
+import helmet from "helmet";
+import compression from "compression";
+import cors from "cors";
+import { rateLimit } from "express-rate-limit";
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
+
+  // Basic security, performance, and cross-origin setup
+  app.use(helmet({
+    contentSecurityPolicy: false, // Disabled for Vite dev server and external scripts
+    crossOriginEmbedderPolicy: false // Disabled to allow external resources
+  }));
+  app.use(compression());
+  app.use(cors());
 
   // Enhance stability with increased limits
   app.use(express.json({ limit: '50mb' }));
@@ -34,7 +46,15 @@ async function startServer() {
   });
 
   // Generalized proxy route to bypass CORS (TCP fetch or UDP DNS/Ping mapping)
-  app.post("/api/proxy", async (req, res) => {
+  const apiLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 1500, // Limit each IP to 1500 requests per `window` (here, per 1 minute)
+    message: { error: 'Too many requests, please try again later.' },
+    standardHeaders: true, 
+    legacyHeaders: false, 
+  });
+  
+  app.post("/api/proxy", apiLimiter, async (req, res) => {
     const { url, method = "GET", headers = {}, body, useUdp, timeout = 15000 } = req.body;
     
     if (!url) {
