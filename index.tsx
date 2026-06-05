@@ -4,6 +4,10 @@ import App from './App';
 import './utils/loggerStore';
 import './index.css';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { registerSW } from 'virtual:pwa-register';
+
+// Register PWA service worker with auto-update
+registerSW({ immediate: true });
 
 // Suppress specific VConsole errors that might leak to the console
 window.addEventListener('error', (e) => {
