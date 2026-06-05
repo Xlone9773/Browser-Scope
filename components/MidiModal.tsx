@@ -43,9 +43,9 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   useEffect(() => {
       const initMIDI = async () => {
           try {
-              // @ts-ignore
+              
               if (navigator.requestMIDIAccess) {
-                  // @ts-ignore
+                  
                   const midiAccess = await navigator.requestMIDIAccess();
                   
                   const updateDevices = () => {
@@ -292,7 +292,6 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
                                     onClick={() => setWaveform(w)}
                                     className={`flex-1 py-1 text-[10px] font-medium rounded transition-all ${waveform === w ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-white' : 'text-slate-500 hover:text-slate-700'}`}
                                 >
-                                    {/* @ts-ignore */}
                                     {t[w]}
                                 </button>
                             ))}

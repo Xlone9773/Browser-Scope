@@ -48,10 +48,10 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
 
   // Check Capabilities on Mount
   useEffect(() => {
-    // @ts-ignore
+    
     if ('BarcodeDetector' in window) {
       setHasNativeBarcode(true);
-      // @ts-ignore
+      
       BarcodeDetector.getSupportedFormats().then(formats => {
         setSupportedFormats(formats);
       }).catch(() => {});
@@ -60,9 +60,9 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
         setMode('polyfill');
     }
 
-    // @ts-ignore
+    
     if ('FaceDetector' in window) setHasNativeFace(true);
-    // @ts-ignore
+    
     if ('TextDetector' in window) setHasNativeText(true);
   }, []);
 
@@ -208,13 +208,13 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
       frameCount.current++;
 
       if (mode === 'native') {
-          // @ts-ignore
+          
           if (window.BarcodeDetector) {
               try {
-                  // @ts-ignore
+                  
                   const barcodeDetector = new BarcodeDetector({ formats: supportedFormats });
                   const startDetect = performance.now();
-                  // @ts-ignore
+                  
                   const barcodes: DetectedBarcode[] = await barcodeDetector.detect(video);
                   const endDetect = performance.now();
                   setDetectTime(Math.round(endDetect - startDetect));

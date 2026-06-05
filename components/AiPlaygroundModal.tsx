@@ -48,7 +48,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
       const startTime = performance.now();
 
       try {
-          // @ts-ignore
+          
           const { pipeline, env } = await import('@xenova/transformers');
           
           env.allowLocalModels = false;
@@ -142,19 +142,19 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
 
   // Safe translation access
   const getTaskTitle = (task: TaskType) => {
-      // @ts-ignore
+      
       return t.tasks?.[task]?.title || task;
   };
   const getTaskDesc = (task: TaskType) => {
-      // @ts-ignore
+      
       return t.tasks?.[task]?.desc || '';
   };
   const getTaskInputPlaceholder = (task: TaskType) => {
-      // @ts-ignore
+      
       return t.tasks?.[task]?.input || '';
   };
   const getTaskBtnText = (task: TaskType) => {
-      // @ts-ignore
+      
       return t.tasks?.[task]?.btn || 'Run';
   };
 

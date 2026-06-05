@@ -134,9 +134,9 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
           }
 
           // Try to get capabilities for max resolution (Chrome/Edge only)
-          // @ts-ignore
+          
           if (videoTrack.getCapabilities) {
-             // @ts-ignore
+             
              const caps = videoTrack.getCapabilities();
              if (caps.width && caps.height && caps.width.max && caps.height.max) {
                  setMaxResolution({ width: caps.width.max, height: caps.height.max });
@@ -175,7 +175,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                  }
                  return; // Successfully recovered without audio
              } catch (retryErr: any) {
-                 handleError(retryErr);
+                                  handleError(retryErr);
              }
         } else {
             handleError(err);

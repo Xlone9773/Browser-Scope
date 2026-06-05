@@ -292,7 +292,7 @@ export const useSpeedTest = () => {
                 const start = performance.now();
                 try {
                     await fetch(pingUrl, { cache: 'no-store', signal, method: 'HEAD', mode: 'cors' });
-                } catch {
+                } catch (e) {
                     // Fallback for CORS opaque responses (timing might be slightly off but works for basic check)
                     await fetch(pingUrl, { cache: 'no-store', signal, mode: 'no-cors' });
                 }

@@ -38,7 +38,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
 
                 const resPromises = videoResolutions.map(async (res) => {
                     try {
-                        // @ts-ignore
+                        
                         if (navigator.mediaCapabilities) {
                             const config: any = {
                                 type: 'file', 
@@ -56,7 +56,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                                 Object.assign(config.video, (codec as any).hdrConfig);
                             }
 
-                            // @ts-ignore
+                            
                             const info = await navigator.mediaCapabilities.decodingInfo(config);
                             return {
                                 ...res,
@@ -67,7 +67,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                         } else {
                             return { ...res, error: 'API N/A' };
                         }
-                    } catch (e) {
+                    } catch {
                         return { ...res, supported: false };
                     }
                 });
@@ -92,7 +92,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
 
                 const audioPromises = audioConfigs.map(async (conf) => {
                     try {
-                        // @ts-ignore
+                        
                         if (navigator.mediaCapabilities) {
                             const config = {
                                 type: 'file',
@@ -103,7 +103,8 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                                     samplerate: conf.samplerate
                                 }
                             };
-                            // @ts-ignore
+                            
+                            // @ts-expect-error auto-fixed
                             const info = await navigator.mediaCapabilities.decodingInfo(config);
                             return {
                                 ...conf,
@@ -114,7 +115,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                         } else {
                             return { ...conf, error: 'API N/A' };
                         }
-                    } catch (e) {
+                    } catch {
                         return { ...conf, supported: false };
                     }
                 });

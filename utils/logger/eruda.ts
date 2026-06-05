@@ -2,7 +2,7 @@ export async function loadEruda(store: any) {
   if ((window as any).eruda) {
     try {
       (window as any).eruda.show();
-    } catch (e) {}
+    } catch { /* ignore */ }
     return;
   }
   try {
@@ -24,13 +24,13 @@ export async function loadEruda(store: any) {
     const erudaTiming = (await import("eruda-timing")).default;
     eruda.add(erudaTiming);
     
-    try { const erudaDom = (await import("eruda-dom")).default; eruda.add(erudaDom); } catch (e) {}
-    try { const erudaCode = (await import("eruda-code")).default; eruda.add(erudaCode); } catch (e) {}
-    try { const erudaMonitor = (await import("eruda-monitor")).default; eruda.add(erudaMonitor); } catch (e) {}
-    try { const erudaFeatures = (await import("eruda-features")).default; eruda.add(erudaFeatures); } catch (e) {}
-    try { const erudaFps = (await import("eruda-fps")).default; eruda.add(erudaFps); } catch (e) {}
+    try { const erudaDom = (await import("eruda-dom")).default; eruda.add(erudaDom); } catch { /* ignore */ }
+    try { const erudaCode = (await import("eruda-code")).default; eruda.add(erudaCode); } catch { /* ignore */ }
+    try { const erudaMonitor = (await import("eruda-monitor")).default; eruda.add(erudaMonitor); } catch { /* ignore */ }
+    try { const erudaFeatures = (await import("eruda-features")).default; eruda.add(erudaFeatures); } catch { /* ignore */ }
+    try { const erudaFps = (await import("eruda-fps")).default; eruda.add(erudaFps); } catch { /* ignore */ }
 
-    try { eruda.show(store.erudaDefaultTab); } catch (e) {}
+    try { eruda.show(store.erudaDefaultTab); } catch { /* ignore */ }
 
     const snippets = eruda.get("snippets");
     if (snippets) {
@@ -122,20 +122,20 @@ export async function loadEruda(store: any) {
                 "themeChange",
                 isCurrentlyDark ? "Dark" : "Light",
               );
-            } catch (e) {}
+            } catch { /* ignore */ }
           }
         }
       });
     });
     observer.observe(document.documentElement, { attributes: true });
-  } catch (e) {}
+  } catch { /* ignore */ }
 }
 
 export function unloadEruda() {
   if ((window as any).eruda) {
     try {
       (window as any).eruda.destroy();
-    } catch (e) {}
+    } catch { /* ignore */ }
     (window as any).eruda = undefined;
     const erudaNode = document.getElementById("eruda-container");
     if (erudaNode) {

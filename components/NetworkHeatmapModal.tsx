@@ -94,7 +94,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
                       ...prev,
                       [region.id]: { id: region.id, latency, status: 'success' }
                   }));
-              } catch (e) {
+              } catch {
                   setResults(prev => ({
                       ...prev,
                       [region.id]: { id: region.id, latency: 0, status: 'error' }
@@ -141,7 +141,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
               clearTimeout(timeoutId);
               const end = performance.now();
               latency = Math.round(end - start);
-          } catch (e) {
+          } catch {
               latency = null; // Timeout or error
           }
 
@@ -213,7 +213,8 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
   };
 
   const getRegionName = (id: string, defaultName: string) => {
-      // @ts-ignore
+      
+      // @ts-expect-error auto-fixed
       return t.regions?.[id] || defaultName;
   };
 

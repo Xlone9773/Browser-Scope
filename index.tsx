@@ -9,16 +9,16 @@ import { registerSW } from 'virtual:pwa-register';
 // Register PWA service worker with auto-update
 registerSW({ immediate: true });
 
-// Suppress specific VConsole errors that might leak to the console
+// Suppress specific errors that might leak to the console
 window.addEventListener('error', (e) => {
-    if (e.message && (e.message.includes('VConsole is not defined') || e.message.includes('vconsole'))) {
+    if (e.message && (e.message.includes('VConsole is not defined') || e.message.includes('vconsole') || e.message.includes('WebSocket closed without opened'))) {
         e.preventDefault();
         e.stopImmediatePropagation();
     }
 });
 window.addEventListener('unhandledrejection', (e) => {
     const msg = e.reason instanceof Error ? e.reason.message : String(e.reason);
-    if (msg.includes('VConsole is not defined') || msg.includes('vconsole')) {
+    if (msg.includes('VConsole is not defined') || msg.includes('vconsole') || msg.includes('WebSocket closed without opened')) {
         e.preventDefault();
         e.stopImmediatePropagation();
     }

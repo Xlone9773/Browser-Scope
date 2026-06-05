@@ -159,10 +159,10 @@ async function startServer() {
            
            const client = dgram.createSocket('udp4');
            client.on('error', () => {
-               try { client.close(); } catch (e) {}
+               try { client.close(); } catch (e) { /* ignore */ }
            });
            client.send(Buffer.from('PING'), 80, hostname, (err) => {
-               try { client.close(); } catch (e) {}
+               try { client.close(); } catch (e) { /* ignore */ }
            });
            
            const response = await fetch(url, {

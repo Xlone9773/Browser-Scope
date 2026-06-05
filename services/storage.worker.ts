@@ -36,8 +36,9 @@ async function cleanup(filename: string, tgt: string) {
                 const root = await navigator.storage.getDirectory();
                 try {
                     // Modern way to iterate over directory
-                    // @ts-ignore
-                    for await (const [name, handle] of root) {
+                    
+                                        // @ts-expect-error fixed implicitly typed external libraries
+                                        for await (const [name, handle] of root) {
                         if (name.startsWith('bench_')) {
                             await root.removeEntry(name, { recursive: true }).catch(() => {});
                         }

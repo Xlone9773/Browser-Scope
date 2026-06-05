@@ -82,8 +82,9 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
 
             // 5. Engine stack mismatches
             try {
-                // @ts-ignore
-                null.test();
+                
+                                // @ts-expect-error fixed implicitly typed external libraries
+                                null.test();
             } catch (e: any) {
                 if (e.stack) {
                     const stackString = e.stack.toString();

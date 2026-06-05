@@ -31,7 +31,8 @@ export const AiComputeCard: React.FC<AiComputeCardProps> = React.memo(({ data, t
 
   // Get localized description based on level
   const getDescription = (level: string) => {
-      // @ts-ignore - Dynamic key access
+      
+      // @ts-expect-error auto-fixed
       return t.labels.ai_levels?.[level] || level;
   };
 

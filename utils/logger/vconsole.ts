@@ -3,7 +3,7 @@ export async function loadVConsole(store: any) {
   if (win.vConsole) {
     try {
       win.vConsole.show();
-    } catch (e) {}
+    } catch { /* ignore */ }
     return;
   }
   try {
@@ -25,7 +25,7 @@ export async function loadVConsole(store: any) {
       if (store.vconsoleDefaultTab && store.vconsoleDefaultTab !== "default") {
         setTimeout(() => win.vConsole.showPlugin(store.vconsoleDefaultTab), 100);
       }
-    } catch (e) {}
+    } catch { /* ignore */ }
 
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
@@ -42,7 +42,7 @@ export async function loadVConsole(store: any) {
       });
     });
     observer.observe(document.documentElement, { attributes: true });
-  } catch (e) {}
+  } catch { /* ignore */ }
 }
 
 export function unloadVConsole() {
@@ -50,7 +50,7 @@ export function unloadVConsole() {
   if (win.vConsole) {
     try {
       win.vConsole.destroy();
-    } catch (e) {}
+    } catch { /* ignore */ }
     win.vConsole = undefined;
     const vcNode = document.getElementById("__vconsole");
     if (vcNode) {

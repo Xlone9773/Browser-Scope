@@ -42,7 +42,7 @@ const customFetch = async (url: string, enableUdp: boolean, options: RequestInit
         let proxyData;
         try {
             proxyData = await res.json();
-        } catch (e) {
+        } catch (err) {
             throw new Error(`HTTP ${res.status}: Proxy server error or unreachable.`);
         }
         
@@ -56,7 +56,7 @@ const customFetch = async (url: string, enableUdp: boolean, options: RequestInit
             json: async () => {
                 try {
                     return JSON.parse(proxyData.data);
-                } catch (e) {
+                } catch (err) {
                     throw new Error("Unable to parse JSON response from proxy. The endpoint might be blocking requests.");
                 }
             },
@@ -185,7 +185,7 @@ export const detectIpv6 = async (source: string, enableUdp: boolean = false): Pr
             const data = await res.json();
             return data.ip;
         }
-    } catch (e) {
+    } catch (err) {
         return 'fail';
     }
 };
@@ -242,7 +242,7 @@ export const detectDns = async (enableUdp: boolean = false): Promise<{ ip: strin
             };
         }
         return null;
-    } catch (e) {
+    } catch (err) {
         throw new Error("Failed to detect resolver");
     }
 };
@@ -263,8 +263,9 @@ export const detectProtocols = async (): Promise<{ h2: string; h3: string }> => 
         const getProto = (url: string) => {
             const entries = performance.getEntriesByName(url);
             if (entries.length > 0) {
-                // @ts-ignore
-                return entries[entries.length - 1].nextHopProtocol || 'unknown';
+                
+                                // @ts-expect-error fixed implicitly typed external libraries
+                                return entries[entries.length - 1].nextHopProtocol || 'unknown';
             }
             return 'unknown';
         };
@@ -273,7 +274,7 @@ export const detectProtocols = async (): Promise<{ h2: string; h3: string }> => 
             h2: getProto(testH2),
             h3: getProto(testH3)
         };
-    } catch (e) {
+    } catch (err) {
         return { h2: 'error', h3: 'error' };
     }
 };

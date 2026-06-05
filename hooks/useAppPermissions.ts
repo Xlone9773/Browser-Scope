@@ -37,7 +37,7 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
   const checkPermissionStatus = async (key: PermissionKey, name: string) => {
     try {
       if (navigator.permissions && navigator.permissions.query) {
-        // @ts-ignore
+        
         const result = await navigator.permissions.query({ name: name as any });
         updatePermStatus(key, result.state as PermissionStatusType);
 
@@ -108,9 +108,9 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
           result === "default" ? "prompt" : result,
         );
       } else if (type === "midi") {
-        // @ts-ignore
+        
         if (navigator.requestMIDIAccess) {
-          // @ts-ignore
+          
           await navigator.requestMIDIAccess();
           updatePermStatus("midi", "granted");
           openModal("midi");

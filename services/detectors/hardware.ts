@@ -4,9 +4,11 @@ import { formatBytes, formatPercent } from '../../utils/formatters';
 
 export const getBatteryInfo = async (): Promise<{ level: string; charging: string; chargingTime: string; dischargingTime: string }> => {
   try {
-    // @ts-ignore
+    
+    // @ts-expect-error auto-fixed
     if (navigator.getBattery) {
-      // @ts-ignore
+      
+      // @ts-expect-error auto-fixed
       const battery: BatteryManager = await navigator.getBattery();
       const formatTime = (time: number) => {
           if (time === Infinity || time === 0) return 'N/A';
@@ -23,7 +25,7 @@ export const getBatteryInfo = async (): Promise<{ level: string; charging: strin
       };
     }
     return { level: 'Not Supported', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' };
-  } catch (e) { return { level: 'Unavailable', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' }; }
+  } catch { return { level: 'Unavailable', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' }; }
 };
 
 export const getStorageEstimate = async (): Promise<{ quota: string, usage: string, persisted: boolean }> => {
@@ -41,7 +43,7 @@ export const getStorageEstimate = async (): Promise<{ quota: string, usage: stri
       if (navigator.storage && navigator.storage.persisted) {
         persisted = await navigator.storage.persisted();
       }
-  } catch (e) {
+  } catch {
       // Fail silently for storage perms
   }
 

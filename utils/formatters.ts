@@ -3,6 +3,7 @@
 
 // Fix: Add type definitions for Intl.ListFormat if they are missing
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Intl {
     interface ListFormatOptions {
       localeMatcher?: 'lookup' | 'best fit';
@@ -59,7 +60,7 @@ export const formatBytes = (bytes: number, locale?: string): string => {
         unitDisplay: 'short',
         maximumFractionDigits: 2
       }).format(value);
-  } catch (e) {
+  } catch {
       // Fallback for older browsers if unit is not supported
       const suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
       return `${value.toFixed(2)} ${suffixes[unitIndex]}`;
@@ -79,7 +80,7 @@ export const formatSpeed = (mbps: number, locale?: string): string => {
             unitDisplay: 'short',
             maximumFractionDigits: 1
         }).format(mbps);
-    } catch (e) {
+    } catch {
         return `${mbps.toFixed(1)} Mbps`;
     }
 };
@@ -96,7 +97,7 @@ export const formatHertz = (hz: number, locale?: string): string => {
             unitDisplay: 'short',
             maximumFractionDigits: 0
         }).format(hz);
-    } catch (e) {
+    } catch {
         return `${hz} Hz`;
     }
 };

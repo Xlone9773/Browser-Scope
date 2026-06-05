@@ -18,15 +18,15 @@ export const InspectorView: React.FC = () => {
         if (typeof val !== "function") {
           result[k] = val;
         }
-      } catch (e) {}
+      } catch { /* ignore */ }
     }
     if (key === "navigator") {
-      // @ts-ignore
+      
       if ((navigator as any).userAgentData)
         result["userAgentData"] = (navigator as any).userAgentData;
       if ((navigator as any).connection)
         result["connection"] = (navigator as any).connection;
-      // @ts-ignore
+      
       if ((navigator as any).deviceMemory)
         result["deviceMemory"] = (navigator as any).deviceMemory;
     }

@@ -20,7 +20,7 @@ export function setupInterceptors(loggerStore: any) {
       .map((a) => {
         try {
           return typeof a === "object" ? JSON.stringify(a) : String(a);
-        } catch (e) {
+        } catch {
           return String(a);
         }
       })

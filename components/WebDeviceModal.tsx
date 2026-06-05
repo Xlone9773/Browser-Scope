@@ -62,16 +62,18 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
 
   // Web Bluetooth
   const scanBluetooth = async () => {
-      // @ts-ignore
-      if (!navigator.bluetooth) {
+      
+            // @ts-expect-error fixed implicitly typed external libraries
+            if (!navigator.bluetooth) {
           setError(t.bt_not_supported);
           return;
       }
       setScanning(true);
       setError(null);
       try {
-          // @ts-ignore
-          const device = await navigator.bluetooth.requestDevice({
+          
+                    // @ts-expect-error fixed implicitly typed external libraries
+                    const device = await navigator.bluetooth.requestDevice({
               acceptAllDevices: true,
               optionalServices: ['battery_service', 'device_information']
           });
@@ -85,7 +87,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                      throw new Error(`Device name "${nameToTest}" does not match regex filter`);
                   }
               } catch (regExErr: any) {
-                  throw new Error(`Regex check failed: ${regExErr.message}`);
+                                    throw new Error(`Regex check failed: ${regExErr.message}`);
               }
           } else {
               // Built-in hardcoded filtering to avoid messy irrelevant devices if no custom regex provided
@@ -107,16 +109,18 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
 
   // Web USB
   const scanUsb = async () => {
-      // @ts-ignore
-      if (!navigator.usb) {
+      
+            // @ts-expect-error fixed implicitly typed external libraries
+            if (!navigator.usb) {
           setError(t.usb_not_supported);
           return;
       }
       setScanning(true);
       setError(null);
       try {
-          // @ts-ignore
-          const device = await navigator.usb.requestDevice({ filters: [] });
+          
+                    // @ts-expect-error fixed implicitly typed external libraries
+                    const device = await navigator.usb.requestDevice({ filters: [] });
           setUsbDevices(prev => prev.find(d => d.id === (device.serialNumber || `${device.vendorId}-${device.productId}`)) ? prev : [...prev, {
               id: device.serialNumber || `${device.vendorId}-${device.productId}`,
               name: device.productName || 'Unknown USB Device',
@@ -131,16 +135,18 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
 
   // Web Serial
   const scanSerial = async () => {
-      // @ts-ignore
-      if (!navigator.serial) {
+      
+            // @ts-expect-error fixed implicitly typed external libraries
+            if (!navigator.serial) {
           setError(t.serial_not_supported);
           return;
       }
       setScanning(true);
       setError(null);
       try {
-          // @ts-ignore
-          const port = await navigator.serial.requestPort();
+          
+                    // @ts-expect-error fixed implicitly typed external libraries
+                    const port = await navigator.serial.requestPort();
           const info = port.getInfo();
           setSerialDevices(prev => prev.find(d => d.id === `${info.usbVendorId}-${info.usbProductId}`) ? prev : [...prev, {
               id: `${info.usbVendorId}-${info.usbProductId}`,
@@ -240,10 +246,11 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
       setScanning(true);
       setError(null);
       try {
-          // @ts-ignore
-          const ndef = new NDEFReader();
+          
+                    // @ts-expect-error fixed implicitly typed external libraries
+                    const ndef = new NDEFReader();
           await ndef.scan();
-          // @ts-ignore
+          
           ndef.addEventListener("reading", ({ message, serialNumber }: any) => {
               setNfcDevices(prev => {
                   const existing = prev.find(d => d.id === serialNumber);
@@ -260,7 +267,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               });
               setScanning(false);
           });
-          // @ts-ignore
+          
           ndef.addEventListener("error", (e: any) => {
               handleError(e, "NFC scan error");
               setScanning(false);
@@ -279,8 +286,9 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
       setScanning(true);
       setError(null);
       try {
-          // @ts-ignore
-          const ndef = new NDEFReader();
+          
+                    // @ts-expect-error fixed implicitly typed external libraries
+                    const ndef = new NDEFReader();
           await ndef.write("Hello from BrowserScope!");
           
           setNfcDevices(prev => [...prev, {

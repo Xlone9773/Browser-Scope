@@ -19,15 +19,15 @@ export const checkDrmSupport = async (): Promise<DrmSystem[]> => {
     // Parallelize DRM checks
     const checks = systems.map(async (sys) => {
         try {
-            // @ts-ignore
+            
             if (navigator.requestMediaKeySystemAccess) {
-                // @ts-ignore
+                
                 await navigator.requestMediaKeySystemAccess(sys.id, config);
                 return { name: sys.name, supported: true };
             } else {
                 return { name: sys.name, supported: false };
             }
-        } catch (e) {
+        } catch {
             return { name: sys.name, supported: false };
         }
     });

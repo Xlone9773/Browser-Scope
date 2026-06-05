@@ -40,7 +40,13 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private handleGlobalError = (event: ErrorEvent) => {
     if (this.props.name === "RootApp" && !this.state.hasError) {
-      if (event.message && (event.message.includes("VConsole") || event.message.includes("vconsole"))) return;
+      if (
+        event.message &&
+        (event.message.includes("VConsole") ||
+          event.message.includes("vconsole") ||
+          event.message.includes("WebSocket closed without opened"))
+      )
+        return;
       this.setState({
         hasError: true,
         error: event.error || new Error(event.message),
@@ -52,7 +58,12 @@ export class ErrorBoundary extends Component<Props, State> {
   private handleGlobalPromise = (event: PromiseRejectionEvent) => {
     if (this.props.name === "RootApp" && !this.state.hasError) {
       const msg = event.reason instanceof Error ? event.reason.message : String(event.reason);
-      if (msg.includes("VConsole") || msg.includes("vconsole")) return;
+      if (
+        msg.includes("VConsole") ||
+        msg.includes("vconsole") ||
+        msg.includes("WebSocket closed without opened")
+      )
+        return;
       this.setState({
         hasError: true,
         error: event.reason instanceof Error ? event.reason : new Error(msg),
@@ -122,7 +133,7 @@ ${errorInfo?.componentStack || "No component stack available."}`;
       navigator.clipboard.writeText(text);
       this.setState({ copied: true });
       setTimeout(() => this.setState({ copied: false }), 2000);
-    } catch (e) {}
+    } catch { /* ignore */ }
   };
 
   public handleClearCache = () => {
@@ -206,7 +217,7 @@ ${errorInfo?.componentStack || "No component stack available."}`;
       if (stored && translations[stored as Language]) {
         lang = stored;
       }
-    } catch (e) {}
+    } catch { /* ignore */ }
 
     // Fallback to english if not found
     return (

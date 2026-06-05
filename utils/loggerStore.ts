@@ -39,13 +39,13 @@ class LoggerStore {
 
       const savedConsole = sessionStorage.getItem("dev_console");
       if (savedConsole) this.consoleHistory = JSON.parse(savedConsole);
-    } catch (e) {}
+    } catch { /* ignore */ }
   }
 
   private persistLogs() {
     try {
       sessionStorage.setItem("dev_logs", JSON.stringify(this.logs));
-    } catch (e) {}
+    } catch { /* ignore */ }
   }
 
   private persistConsole() {
@@ -54,7 +54,7 @@ class LoggerStore {
         "dev_console",
         JSON.stringify(this.consoleHistory),
       );
-    } catch (e) {}
+    } catch { /* ignore */ }
   }
 
   addLog(type: string, detail: string) {
@@ -128,7 +128,7 @@ class LoggerStore {
     if (this.activeConsole === "eruda" && (window as any).eruda) {
       try {
         (window as any).eruda.show(tab);
-      } catch (e) {}
+      } catch { /* ignore */ }
     }
     this.notifySettings();
   }
@@ -139,7 +139,7 @@ class LoggerStore {
     if (this.activeConsole === "vconsole" && (window as any).vConsole) {
       try {
         (window as any).vConsole.showPlugin(tab);
-      } catch (e) {}
+      } catch { /* ignore */ }
     }
     this.notifySettings();
   }

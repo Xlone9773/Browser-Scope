@@ -88,8 +88,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                       body,
                       icon: notifIcon || '/icon512_maskable.png',
                       badge: '/icon-192x192.png',
-                      data: { url: window.location.href, actions: actionsConfig },
-                      // @ts-ignore
+                      // @ts-expect-error
                       actions: mappedActions
                   });
                   return;

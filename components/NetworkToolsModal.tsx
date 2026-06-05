@@ -126,7 +126,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
             const end = performance.now();
             newCdns[index].status = 'success';
             newCdns[index].latency = Math.round(end - start);
-        } catch (e) {
+        } catch {
             newCdns[index].status = 'error';
         }
         setCdns([...newCdns]);
@@ -164,7 +164,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                 latency: Math.round(end - start),
                 code: 200
             });
-        } catch (e) {
+        } catch {
             setTestResult({ status: 'Failed (Network Error)' });
         }
         setTestingConn(false);
@@ -190,7 +190,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
             const info = await detectDns(enableUdp);
             if (info) setDnsInfo(info);
             else throw new Error('Unknown');
-        } catch (e) {
+        } catch {
             setDnsError("Failed to detect resolver (Likely blocked by AdBlock or CORS)");
         }
         setCheckingDns(false);

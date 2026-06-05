@@ -31,7 +31,7 @@ export const getGPUInfo = (): { renderer: string; vendor: string; maxTextureSize
     const vendor = ctx.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
 
     return { renderer, vendor, maxTextureSize: `${maxTexSize}px` };
-  } catch (e) {
+  } catch {
     return { renderer: 'Unavailable', vendor: 'Unavailable', maxTextureSize: 'Unavailable' };
   }
 };
@@ -41,10 +41,11 @@ export const getWebGLExtensions = (): string[] => {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     if (!gl) return [];
-    // @ts-ignore
+    
+    // @ts-expect-error auto-fixed
     const extensions = gl.getSupportedExtensions();
     return extensions ? extensions.sort() : [];
-  } catch (e) { return []; }
+  } catch { return []; }
 };
 
 export const getShaderPrecisionFormat = (): { vertexHigh: string, fragmentHigh: string } | undefined => {
@@ -107,7 +108,7 @@ export const getCanvasFingerprint = (): { hash: string; dataUri: string } => {
     const dataUri = canvas.toDataURL();
     const b64 = dataUri.replace("data:image/png;base64,", "");
     return { hash: simpleHash(b64), dataUri: dataUri };
-  } catch (e) { return { hash: 'Error', dataUri: '' }; }
+  } catch { return { hash: 'Error', dataUri: '' }; }
 };
 
 export const getWebGLFingerprint = (): string => {

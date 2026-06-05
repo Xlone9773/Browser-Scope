@@ -150,7 +150,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
               await navigator.clipboard.writeText(csvContent);
               copied = true;
           }
-      } catch (e) {
+      } catch {
           // Ignore clipboard error
       }
       
@@ -168,7 +168,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
           URL.revokeObjectURL(url);
           
           setExportStatus(copied ? "Copied & Exported" : "Exported");
-      } catch (e) {
+      } catch {
           // Fallback to data URI in new window if download blocked by iframe sandbox
           try {
               const dataUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);

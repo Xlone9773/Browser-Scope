@@ -68,7 +68,8 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
   const presetOptions = useMemo(() => SPEED_TEST_PRESETS.map(p => ({
       id: p.id,
       // Using new structure: preset_names is now inside speedTest object
-      // @ts-ignore
+      
+      // @ts-expect-error auto-fixed
       label: t.preset_names?.[p.id] || p.name 
   })), [t]);
 
@@ -221,7 +222,7 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                 <div className="absolute top-4 left-4 flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                     <Globe size={12} />
                     <span className="max-w-[150px] truncate" title={selectedBackend.name}>
-                        {/* @ts-ignore: Safe access via key */}
+                        {/* @ts-expect-error: Safe access via key */}
                         {t.preset_names?.[backend] || selectedBackend.name}
                     </span>
                 </div>

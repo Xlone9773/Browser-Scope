@@ -8,38 +8,38 @@ export const useFormatter = (locale: string) => {
   // Returns the name of a language code (e.g. 'zh-CN' -> 'Chinese (Simplified)') in the CURRENT locale
   const formatLanguageName = useCallback((code: string) => {
     try {
-      // @ts-ignore - TS might not know about DisplayNames in older libs
+      
       if (typeof Intl.DisplayNames !== 'undefined') {
-        // @ts-ignore
+        
         return new Intl.DisplayNames([locale], { type: 'language' }).of(code) || code;
       }
       return code;
-    } catch (e) { return code; }
+    } catch { return code; }
   }, [locale]);
 
   // Returns the name of a region code (e.g. 'US' -> 'United States') in the CURRENT locale
   const formatRegionName = useCallback((code: string) => {
     try {
-      // @ts-ignore
+      
       if (typeof Intl.DisplayNames !== 'undefined') {
-        // @ts-ignore
+        
         return new Intl.DisplayNames([locale], { type: 'region' }).of(code) || code;
       }
       return code;
-    } catch (e) { return code; }
+    } catch { return code; }
   }, [locale]);
 
   // Returns the Native name of a language (e.g. 'ja' -> '日本語' even if current locale is en)
   // Useful for language switchers
   const formatNativeLanguageName = useCallback((code: string) => {
     try {
-      // @ts-ignore
+      
       if (typeof Intl.DisplayNames !== 'undefined') {
-        // @ts-ignore
+        
         return new Intl.DisplayNames([code], { type: 'language' }).of(code) || code;
       }
       return code;
-    } catch (e) { return code; }
+    } catch { return code; }
   }, []);
 
   // Relative Time (e.g., "5 minutes ago")
@@ -49,7 +49,7 @@ export const useFormatter = (locale: string) => {
         return new Intl.RelativeTimeFormat(locale, options).format(value, unit);
       }
       return `${value} ${unit}`;
-    } catch (e) { return `${value} ${unit}`; }
+    } catch { return `${value} ${unit}`; }
   }, [locale]);
 
   // Bind existing utils to the hook's locale

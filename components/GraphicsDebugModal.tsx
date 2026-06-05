@@ -68,7 +68,8 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
 
             params.forEach(p => {
                 try {
-                    // @ts-ignore
+                    
+                    // @ts-expect-error auto-fixed
                     const val = ctx.getParameter(ctx[p]);
                     // Format arrays
                     glData[p] = (val && val.length !== undefined && typeof val !== 'string') ? `[${val[0]}, ${val[1]}]` : String(val);
@@ -105,7 +106,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                   
                   // Features
                   const features: string[] = [];
-                  // @ts-ignore
+                  
                   for (const f of adapter.features) {
                       features.push(f);
                   }

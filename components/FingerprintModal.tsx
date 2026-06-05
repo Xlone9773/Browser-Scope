@@ -204,7 +204,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
 
       if (activeTab === 'v5') {
         // Load v5
-        // @ts-ignore
+        
         const fpPromise = import('fpjs-v5')
           .then((FingerprintJS) => FingerprintJS.load());
         
@@ -219,7 +219,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         }
       } else if (activeTab === 'v4') {
         // Load v4
-        // @ts-ignore
+        
         const fpPromise = import('@fingerprintjs/fingerprintjs')
           .then((FingerprintJS) => FingerprintJS.load());
         
@@ -234,19 +234,22 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         }
       } else {
         // Load v2 (Fingerprintjs2)
-        // @ts-ignore
+        
+        // @ts-expect-error auto-fixed
         const Fingerprint2 = await import('fingerprintjs2');
         
         // V2 uses a callback pattern usually, but we wrap in promise
         const componentsV2 = await new Promise<any[]>((resolve) => {
             if (typeof window.requestIdleCallback === 'function') {
                 requestIdleCallback(() => {
-                    // @ts-ignore
+                    
+                    // @ts-expect-error auto-fixed
                     Fingerprint2.default.get((components) => resolve(components));
                 });
             } else {
                 setTimeout(() => {
-                    // @ts-ignore
+                    
+                    // @ts-expect-error auto-fixed
                     Fingerprint2.default.get((components) => resolve(components));
                 }, 500);
             }

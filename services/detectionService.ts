@@ -32,22 +32,23 @@ export const getAllData = async (): Promise<BrowserData> => {
   const deviceMemory = nav.deviceMemory ? formatBytes(nav.deviceMemory * 1024 * 1024 * 1024) : 'Unknown';
   
   // Peripherals
-  // @ts-ignore
-  const screenExtended = window.screen.isExtended || false;
+  
+    const screenExtended = (window.screen as any).isExtended || false;
   const gamepads = navigator.getGamepads ? navigator.getGamepads().filter(g => g !== null).length : 0;
 
   // Security
   const isBot = nav.webdriver || false;
   const gpcEnabled = nav.globalPrivacyControl || false;
-  // @ts-ignore
+  
   const pdfViewer = nav.pdfViewerEnabled || false;
   const secureContext = window.isSecureContext;
 
   // AI & Compute
   const wasmSupport = typeof WebAssembly === 'object';
   const wasmSimd = checkWasmSimd();
-  // @ts-ignore
-  const windowAi = !!(window.ai || window.model);
+  
+      // @ts-expect-error fixed implicitly typed external libraries
+      const windowAi = !!((window as any).ai || window.model);
   const webnn = !!nav.ml;
   const webgpuCompute = !!nav.gpu; 
 

@@ -16,14 +16,14 @@ const loadCache = () => {
                 return data;
             }
         }
-    } catch (e) {}
+    } catch { /* ignore */ }
     return null;
 };
 
 const saveCache = (video: any[], audio: any[], drm: any[]) => {
     try {
         localStorage.setItem(CACHE_KEY, JSON.stringify({ video, audio, drm }));
-    } catch (e) {}
+    } catch { /* ignore */ }
 };
 
 const memCache = loadCache();
@@ -68,19 +68,19 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
             
             const tempDrmResults = await Promise.all(drms.map(async (sys) => {
                 try {
-                    // @ts-ignore
+                    
                     if (navigator.requestMediaKeySystemAccess) {
                         const config = [{
                             initDataTypes: ['cenc'],
                             videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }],
                             audioCapabilities: [{ contentType: 'audio/mp4; codecs="mp4a.40.2"' }]
                         }];
-                        // @ts-ignore
+                        
                         await navigator.requestMediaKeySystemAccess(sys.id, config);
                         return { ...sys, supported: true };
                     }
                     return { ...sys, supported: false, error: true };
-                } catch (e) {
+                } catch {
                     return { ...sys, supported: false };
                 }
             }));
@@ -99,7 +99,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
 
                 const resPromises = videoResolutions.map(async (res) => {
                     try {
-                        // @ts-ignore
+                        
                         if (navigator.mediaCapabilities) {
                             const config: any = {
                                 type: 'file', 
@@ -117,7 +117,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                                 Object.assign(config.video, (codec as any).hdrConfig);
                             }
 
-                            // @ts-ignore
+                            
                             const info = await navigator.mediaCapabilities.decodingInfo(config);
                             return {
                                 ...res,
@@ -128,7 +128,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                         } else {
                             return { ...res, error: 'API N/A' };
                         }
-                    } catch (e) {
+                    } catch {
                         return { ...res, supported: false };
                     }
                 });
@@ -153,7 +153,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
 
                 const audioPromises = audioConfigs.map(async (conf) => {
                     try {
-                        // @ts-ignore
+                        
                         if (navigator.mediaCapabilities) {
                             const config = {
                                 type: 'file',
@@ -164,7 +164,8 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                                     samplerate: conf.samplerate
                                 }
                             };
-                            // @ts-ignore
+                            
+                            // @ts-expect-error auto-fixed
                             const info = await navigator.mediaCapabilities.decodingInfo(config);
                             return {
                                 ...conf,
@@ -175,7 +176,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                         } else {
                             return { ...conf, error: 'API N/A' };
                         }
-                    } catch (e) {
+                    } catch {
                         return { ...conf, supported: false };
                     }
                 });

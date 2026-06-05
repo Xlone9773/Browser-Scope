@@ -61,8 +61,9 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
       // Magnetometer
       if ('Magnetometer' in window) {
           try {
-              // @ts-ignore
-              magSensor = new Magnetometer({ frequency: 10 });
+              
+                            // @ts-expect-error fixed implicitly typed external libraries
+                            magSensor = new Magnetometer({ frequency: 10 });
               magSensor.addEventListener('reading', () => {
                   setMagnet({ x: magSensor.x, y: magSensor.y, z: magSensor.z });
               });
@@ -76,8 +77,9 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
       // Ambient Light Sensor
       if ('AmbientLightSensor' in window) {
           try {
-              // @ts-ignore
-              lightSensor = new AmbientLightSensor();
+              
+                            // @ts-expect-error fixed implicitly typed external libraries
+                            lightSensor = new AmbientLightSensor();
               lightSensor.addEventListener('reading', () => {
                   setLux(lightSensor.illuminance);
               });
@@ -96,11 +98,13 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
 
   const requestPermission = async () => {
       // iOS 13+ requires permission for these events
-      // @ts-ignore
-      if (typeof DeviceMotionEvent.requestPermission === 'function') {
+      
+            // @ts-expect-error fixed implicitly typed external libraries
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
           try {
-              // @ts-ignore
-              const response = await DeviceMotionEvent.requestPermission();
+              
+                            // @ts-expect-error fixed implicitly typed external libraries
+                            const response = await DeviceMotionEvent.requestPermission();
               if (response === 'granted') {
                   setPermissionStatus('granted');
                   window.addEventListener('devicemotion', handleMotion);
@@ -121,8 +125,9 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
 
   // Try to start immediately on non-iOS if possible
   useEffect(() => {
-      // @ts-ignore
-      if (typeof DeviceMotionEvent.requestPermission !== 'function') {
+      
+            // @ts-expect-error fixed implicitly typed external libraries
+            if (typeof DeviceMotionEvent.requestPermission !== 'function') {
           setPermissionStatus('granted');
           window.addEventListener('devicemotion', handleMotion);
           window.addEventListener('deviceorientation', handleOrientation);
@@ -145,8 +150,9 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
             <>
                 {/* iOS Permission Button */}
                 {permissionStatus === 'prompt' && (
-                    // @ts-ignore
-                    typeof DeviceMotionEvent.requestPermission === 'function' && (
+                    
+                                        // @ts-expect-error fixed implicitly typed external libraries
+                                        typeof DeviceMotionEvent.requestPermission === 'function' && (
                         <div className="mb-6 text-center">
                             <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">{t.sensor_permission_desc}</p>
                             <button 
