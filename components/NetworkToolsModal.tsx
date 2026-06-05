@@ -207,7 +207,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
     const renderBentoItem = (icon: any, label: string, value: string | number | undefined | null | boolean, colorClass = 'text-slate-800 dark:text-slate-200', colSpan = 'col-span-1') => {
         if (value === undefined || value === null || value === '') return null;
         
-        let displayValue = typeof value === 'boolean' ? (value ? networkT.ip.yes : networkT.ip.no) : value;
+        const displayValue = typeof value === 'boolean' ? (value ? networkT.ip.yes : networkT.ip.no) : value;
 
         return (
             <div className={`flex flex-col gap-1.5 p-3.5 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/60 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors ${colSpan}`}>

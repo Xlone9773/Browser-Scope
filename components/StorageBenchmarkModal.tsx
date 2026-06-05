@@ -42,7 +42,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
 
   // Check OPFS Support
   useEffect(() => {
-      if (typeof window !== 'undefined' && navigator.storage && navigator.storage.getDirectory) {
+      if (typeof window !== 'undefined' && navigator.storage && typeof navigator.storage.getDirectory === 'function') {
           setOpfsSupported(true);
       }
   }, []);

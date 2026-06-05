@@ -6,14 +6,14 @@ import { Badge } from './ui/Badge';
 
 interface InfoItemProps {
   label: string;
-  value: string | number | boolean;
+  value: string | number | boolean | null | undefined;
   subValue?: string;
   isFeature?: boolean;
 }
 
 // Memoized InfoItem to prevent re-renders of list items
 const InfoItem = memo<InfoItemProps>(({ label, value, subValue, isFeature }) => {
-  let displayValue: React.ReactNode = value;
+  let displayValue: React.ReactNode = value ?? 'N/A';
 
   if (typeof value === 'boolean') {
     displayValue = value ? (

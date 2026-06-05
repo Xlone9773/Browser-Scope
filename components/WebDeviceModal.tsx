@@ -76,7 +76,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               optionalServices: ['battery_service', 'device_information']
           });
           
-          let nameToTest = device.name || '';
+          const nameToTest = device.name || '';
           // Avoid irrelevant devices by matching an optional regex
           if (btRegex.trim()) {
               try {

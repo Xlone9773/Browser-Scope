@@ -70,8 +70,8 @@ self.onmessage = async function(e: MessageEvent) {
     const chunks = Math.ceil(totalBytes / CHUNK_SIZE);
     const filename = 'bench_' + Date.now() + '.bin';
 
-    let writeLatencies: number[] = [];
-    let readLatencies: number[] = [];
+    const writeLatencies: number[] = [];
+    const readLatencies: number[] = [];
 
     try {
         // --- WRITE PHASE ---

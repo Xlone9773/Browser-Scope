@@ -110,7 +110,7 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
     loggerStore.addConsole("input", cmdToRun);
 
     try {
-      // eslint-disable-next-line no-eval
+       
       const res = eval(cmdToRun);
       let output = String(res);
       if (typeof res === "object" && res !== null) {

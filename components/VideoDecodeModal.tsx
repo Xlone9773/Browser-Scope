@@ -26,7 +26,7 @@ const saveCache = (video: any[], audio: any[], drm: any[]) => {
     } catch (e) {}
 };
 
-let memCache = loadCache();
+const memCache = loadCache();
 let cachedVideoResults: any[] | null = memCache?.video || null;
 let cachedAudioResults: any[] | null = memCache?.audio || null;
 let cachedDrmResults: any[] | null = memCache?.drm || null;

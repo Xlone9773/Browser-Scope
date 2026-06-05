@@ -200,7 +200,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
     setVisitorId('');
 
     try {
-      let rawComponents: Record<string, any> = {};
+      const rawComponents: Record<string, any> = {};
 
       if (activeTab === 'v5') {
         // Load v5
@@ -239,7 +239,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         
         // V2 uses a callback pattern usually, but we wrap in promise
         const componentsV2 = await new Promise<any[]>((resolve) => {
-            if (window.requestIdleCallback) {
+            if (typeof window.requestIdleCallback === 'function') {
                 requestIdleCallback(() => {
                     // @ts-ignore
                     Fingerprint2.default.get((components) => resolve(components));

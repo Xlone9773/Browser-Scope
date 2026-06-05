@@ -131,11 +131,11 @@ export const fetchIpInfoFromSource = async (source: string, enableUdp: boolean =
         else if (source === 'cloudflare') {
             const res = await customFetch('https://www.cloudflare.com/cdn-cgi/trace', enableUdp);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const text = await res.text();
-            const lines = text.split('\n');
-            const ipLine = lines.find(l => l.startsWith('ip='));
+            const text: string = await res.text();
+            const lines: string[] = text.split('\n');
+            const ipLine = lines.find((l: string) => l.startsWith('ip='));
             const ip = ipLine ? ipLine.split('=')[1] : 'Unknown';
-            const locLine = lines.find(l => l.startsWith('loc='));
+            const locLine = lines.find((l: string) => l.startsWith('loc='));
             const loc = locLine ? locLine.split('=')[1] : '';
             return {
                 ip,

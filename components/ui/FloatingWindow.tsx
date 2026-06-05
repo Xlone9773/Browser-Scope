@@ -63,7 +63,7 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
             const s = startRectRef.current;
             const currentMode = dragModeRef.current;
 
-            let newRect = { ...s };
+            const newRect = { ...s };
             const minSize = 300;
 
             if (currentMode === 'move') {

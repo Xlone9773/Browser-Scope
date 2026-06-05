@@ -50,7 +50,7 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     
     // Fonts
     if (input.fontsCount && input.fontsCount > 0) {
-        let fontScore = Math.min(20, (input.fontsCount / 100) * 10); // up to 20
+        const fontScore = Math.min(20, (input.fontsCount / 100) * 10); // up to 20
         catBrowser += fontScore;
         factors.push({ id: 'installed_fonts', value: `${input.fontsCount} Fonts`, score: Math.round(fontScore), maxScore: 20, description: 'desc_hardware_unique', category: 'browser' });
     }

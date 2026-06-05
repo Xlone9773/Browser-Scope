@@ -65,7 +65,7 @@ async function startServer() {
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
-      let proxyHeaders = { ...headers };
+      const proxyHeaders = { ...headers };
       // Prevent browser forbidden headers issues if forwarded directly
       delete proxyHeaders['host'];
       delete proxyHeaders['origin'];
