@@ -229,13 +229,9 @@ ${errorInfo?.componentStack || "No component stack available."}`;
       const analysisMsg = this.getAnalysis(this.state.error, t);
 
       return (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '20px', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto'
-        }} className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-sm p-4 md:p-8 flex items-start justify-center overflow-y-auto">
-          <div style={{
-            backgroundColor: '#fffcfc', border: '1px solid #fca5a5', borderRadius: '12px', padding: '24px', display: 'flex', flexDirection: 'column', textAlign: 'left', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', width: '100%', maxWidth: '896px', fontFamily: 'sans-serif', marginTop: '40px', color: '#1e293b'
-          }} className="p-6 bg-red-50 dark:bg-slate-900 border border-red-200 dark:border-red-900/60 rounded-xl flex flex-col text-left shadow-2xl w-full max-w-4xl font-sans relative backdrop-blur-md mt-10 md:mt-20">
-            <div className="flex items-center gap-3 mb-4" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+        <div className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-sm p-4 md:p-8 flex items-start justify-center overflow-y-auto">
+          <div className="p-6 bg-red-50 dark:bg-slate-900 border border-red-200 dark:border-red-900/60 rounded-xl flex flex-col text-left shadow-2xl w-full max-w-4xl font-sans relative backdrop-blur-md mt-10 md:mt-20">
+            <div className="flex items-center gap-3 mb-4">
               <div className="p-2.5 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-600 dark:text-red-400 shrink-0">
                 <AlertTriangle size={24} />
               </div>
