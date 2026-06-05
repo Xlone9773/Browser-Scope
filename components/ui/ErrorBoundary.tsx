@@ -38,6 +38,43 @@ export class ErrorBoundary extends Component<Props, State> {
     copied: false,
   };
 
+  private handleGlobalError = (event: ErrorEvent) => {
+    if (this.props.name === "RootApp" && !this.state.hasError) {
+      if (event.message && (event.message.includes("VConsole") || event.message.includes("vconsole"))) return;
+      this.setState({
+        hasError: true,
+        error: event.error || new Error(event.message),
+        errorInfo: { componentStack: "Captured by Window Error Listener" },
+      });
+    }
+  };
+
+  private handleGlobalPromise = (event: PromiseRejectionEvent) => {
+    if (this.props.name === "RootApp" && !this.state.hasError) {
+      const msg = event.reason instanceof Error ? event.reason.message : String(event.reason);
+      if (msg.includes("VConsole") || msg.includes("vconsole")) return;
+      this.setState({
+        hasError: true,
+        error: event.reason instanceof Error ? event.reason : new Error(msg),
+        errorInfo: { componentStack: "Captured by Window Unhandled Rejection Listener" },
+      });
+    }
+  };
+
+  public componentDidMount() {
+    if (this.props.name === "RootApp") {
+      window.addEventListener("error", this.handleGlobalError);
+      window.addEventListener("unhandledrejection", this.handleGlobalPromise);
+    }
+  }
+
+  public componentWillUnmount() {
+    if (this.props.name === "RootApp") {
+      window.removeEventListener("error", this.handleGlobalError);
+      window.removeEventListener("unhandledrejection", this.handleGlobalPromise);
+    }
+  }
+
   public static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, error };
   }
@@ -192,9 +229,13 @@ ${errorInfo?.componentStack || "No component stack available."}`;
       const analysisMsg = this.getAnalysis(this.state.error, t);
 
       return (
-        <div className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-sm p-4 md:p-8 flex items-start justify-center overflow-y-auto">
-          <div className="p-6 bg-red-50 dark:bg-slate-900 border border-red-200 dark:border-red-900/60 rounded-xl flex flex-col text-left shadow-2xl w-full max-w-4xl font-sans relative backdrop-blur-md mt-10 md:mt-20">
-            <div className="flex items-center gap-3 mb-4">
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '20px', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto'
+        }} className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-sm p-4 md:p-8 flex items-start justify-center overflow-y-auto">
+          <div style={{
+            backgroundColor: '#fffcfc', border: '1px solid #fca5a5', borderRadius: '12px', padding: '24px', display: 'flex', flexDirection: 'column', textAlign: 'left', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', width: '100%', maxWidth: '896px', fontFamily: 'sans-serif', marginTop: '40px', color: '#1e293b'
+          }} className="p-6 bg-red-50 dark:bg-slate-900 border border-red-200 dark:border-red-900/60 rounded-xl flex flex-col text-left shadow-2xl w-full max-w-4xl font-sans relative backdrop-blur-md mt-10 md:mt-20">
+            <div className="flex items-center gap-3 mb-4" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
               <div className="p-2.5 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-600 dark:text-red-400 shrink-0">
                 <AlertTriangle size={24} />
               </div>
