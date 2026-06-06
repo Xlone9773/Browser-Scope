@@ -141,6 +141,14 @@ export const useModalManager = () => {
   });
 
   // Actions
+  function setLoadedSet(id: string) {
+    setLoadedModules((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  };
+
   const open = useCallback((id: string) => {
     setVisibility((prev) => ({ ...prev, [id]: true }));
     setLoadedSet(id);
@@ -150,14 +158,7 @@ export const useModalManager = () => {
     setVisibility((prev) => ({ ...prev, [id]: false }));
   }, []);
 
-  const setLoadedSet = (id: string) => {
-    setLoadedModules((prev) => {
-      const next = new Set(prev);
-      next.add(id);
-      return next;
-    });
-  };
-
+  
   const unload = useCallback(
     (id: string) => {
       // 1. Close

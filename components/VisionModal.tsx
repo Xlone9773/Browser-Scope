@@ -136,7 +136,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
     }
   };
 
-  const stopCamera = () => {
+  function stopCamera() {
     if (rafId.current) cancelAnimationFrame(rafId.current);
     if (stream) {
         stream.getTracks().forEach(t => t.stop());
@@ -254,7 +254,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
       }
   };
 
-  const detectLoop = async () => {
+  async function detectLoop() {
       if (!videoRef.current || !canvasRef.current || !stream || !isAutoScan) return;
 
       const video = videoRef.current;
@@ -278,7 +278,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
       rafId.current = requestAnimationFrame(detectLoop);
   };
 
-  const initPolyfillLoop = () => {
+  function initPolyfillLoop() {
       detectLoop(); // Same structure for this demo
   };
 

@@ -49,6 +49,15 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   useEffect(() => { peakGflopsRef.current = peakGflops; }, [peakGflops]);
   useEffect(() => { graphDataRef.current = graphData; }, [graphData]);
 
+  function stopTest() {
+      isRunningRef.current = false;
+      if (animRef.current) {
+          cancelAnimationFrame(animRef.current);
+          animRef.current = null;
+      }
+      setIsRunning(false);
+  };
+
   useEffect(() => {
      // Cleanup on unmount
      return () => {
@@ -302,15 +311,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       animRef.current = requestAnimationFrame(loop);
   };
 
-  const stopTest = () => {
-      isRunningRef.current = false;
-      if (animRef.current) {
-          cancelAnimationFrame(animRef.current);
-          animRef.current = null;
-      }
-      setIsRunning(false);
-  };
-
+  
   // Calculate Stability
   const stability = peakGflops > 0 ? Math.round((gflops / peakGflops) * 100) : 100;
 

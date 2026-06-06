@@ -77,14 +77,14 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
       }
   }, [logs]);
 
-  const addLog = (msg: string) => {
+  function addLog(msg: string) {
       // Fix: Cast options to 'any' because fractionalSecondDigits might not be in the TS definition for DateTimeFormatOptions
       const time = new Date().toLocaleTimeString([], { hour12: false, fractionalSecondDigits: 2 } as any);
       setLogs(prev => [`[${time}] ${msg}`, ...prev].slice(0, 50));
   };
 
   // Fix: Use 'any' for event type
-  const handleMidiMessage = (event: any) => {
+  function handleMidiMessage(event: any) {
       const [status, data1, data2] = event.data;
       const command = status & 0xf0;
       // const channel = status & 0x0f;
