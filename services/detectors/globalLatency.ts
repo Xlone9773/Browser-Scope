@@ -51,13 +51,9 @@ export const LATENCY_REGIONS: LatencyRegion[] = [
 
 export const measureLatency = async (url: string): Promise<number> => {
     const start = performance.now();
-    try {
-        // Use no-cors to allow measuring time even if CORS headers are missing
-        // cache: no-store is critical to measure network, not disk
-        await fetch(url, { mode: 'no-cors', cache: 'no-store', method: 'HEAD' });
-        const end = performance.now();
-        return Math.round(end - start);
-    } catch (e) {
-        throw e;
-    }
+    // Use no-cors to allow measuring time even if CORS headers are missing
+    // cache: no-store is critical to measure network, not disk
+    await fetch(url, { mode: 'no-cors', cache: 'no-store', method: 'HEAD' });
+    const end = performance.now();
+    return Math.round(end - start);
 };

@@ -83,11 +83,13 @@ self.onmessage = function (e: MessageEvent) {
       self.postMessage({ id, score, details, success: true });
     } else if (id === 'math') {
       const ops = config.ops;
+      let sum = 0;
       for (let i = 0; i < ops; i++) {
-        Math.sqrt(i) * Math.sin(i) * Math.cos(i);
+        sum += Math.sqrt(i) * Math.sin(i) * Math.cos(i);
       }
+      // Use sum to prevent optimization
       const duration = Math.max(performance.now() - start, 1);
-      const score = Math.floor(config.multiplier / duration);
+      const score = Math.floor(config.multiplier / duration) + (sum === 0 ? 0 : 0);
       const details = (ops / 1000000).toFixed(1) + 'M ops (' + duration.toFixed(0) + 'ms)';
       self.postMessage({ id, score, details, success: true });
     } else if (id === 'memory') {

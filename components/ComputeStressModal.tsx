@@ -19,6 +19,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const [isWebGPUSupported, setIsWebGPUSupported] = useState<boolean | null>(null);
   const [hasFp16Support, setHasFp16Support] = useState(false);
   const [useFp16, setUseFp16] = useState(false);
+  const [adapterName, setAdapterName] = useState('Checking GPU...');
   
   const [isRunning, setIsRunning] = useState(false);
   const [matrixSize, setMatrixSize] = useState(512); 
@@ -84,6 +85,11 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                 return;
             }
             adapterRef.current = adapter;
+            if (adapter.name) {
+                setAdapterName(adapter.name);
+            } else {
+                setAdapterName('WebGPU Adapter');
+            }
             
             // Check for shader-f16 feature
             const features = adapter.features;
@@ -459,7 +465,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                     
                     {/* Device Info */}
                     <div className="text-[10px] text-slate-500 font-mono break-all leading-tight">
-                        {adapterRef.current ? adapterRef.current.name : 'Checking GPU...'}
+                        {adapterName}
                     </div>
                 </div>
             </div>
