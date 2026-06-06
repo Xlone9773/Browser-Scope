@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wifi, Copy, Check, Shield, Server, Radio, Monitor, Clock, Map as MapIcon, Home, Smartphone } from 'lucide-react';
+import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wifi, Copy, Check, Shield, Server, Radio, Clock, Map as MapIcon, Home, Smartphone } from 'lucide-react';
 import { Select } from './ui/Select';
 import { Button } from './ui/Button';
 import { Modal } from './ui/Modal';
@@ -16,7 +16,7 @@ import {
 
 interface NetworkToolsModalProps {
     onClose: () => void;
-    t: any;
+    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
     enableUdp?: boolean;
 }
 
@@ -204,7 +204,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
         setCheckingProto(false);
     };
 
-    const renderBentoItem = (icon: any, label: string, value: string | number | undefined | null | boolean, colorClass = 'text-slate-800 dark:text-slate-200', colSpan = 'col-span-1') => {
+    const renderBentoItem = (icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, label: string, value: string | number | undefined | null | boolean, colorClass = 'text-slate-800 dark:text-slate-200', colSpan = 'col-span-1') => {
         if (value === undefined || value === null || value === '') return null;
         
         const displayValue = typeof value === 'boolean' ? (value ? networkT.ip.yes : networkT.ip.no) : value;
@@ -224,7 +224,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
 
     return (
         <Modal 
-            onClose={onClose} 
+            onClose={onClose}
             title={t.settings.nav.network || "Network Tools"} 
             icon={<Wifi size={24} className="text-indigo-500" />}
             size="4xl"

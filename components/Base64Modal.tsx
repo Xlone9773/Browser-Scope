@@ -28,7 +28,7 @@ export const Base64Modal: React.FC<Base64ModalProps> = ({ data, onClose, t }) =>
         fullHeight
         noPadding
     >
-        {({ close }) => (
+        {({ close: _close }) => (
             <>
                 {/* Content */}
                 <div className="flex-1 overflow-hidden p-0 relative group flex flex-col">

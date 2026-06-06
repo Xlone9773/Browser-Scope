@@ -94,7 +94,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
           if (videoDevices.length > 0 && !selectedDeviceId) {
               setSelectedDeviceId(videoDevices[0].deviceId);
           }
-      } catch (err) {
+      } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           console.error("Error enumerating devices:", err);
       }
   }, [selectedDeviceId]);
@@ -129,7 +129,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
       // Update device list now that we have permissions (labels will appear)
       await getDevices();
 
-    } catch (e: any) {
+    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error(e);
       setCameraError(t.no_cam_error);
       setIsCameraActive(false);
@@ -172,7 +172,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
         setStream(newStream);
         setIsCameraActive(true);
         setCameraError(null);
-      } catch (e) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           console.error(e);
           setCameraError(t.no_cam_error);
       }
@@ -243,7 +243,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                           ctx.fill();
                       });
                   });
-              } catch (e) {
+              } catch (_e) {
                   // console.debug('Detection failed', e);
               }
           }

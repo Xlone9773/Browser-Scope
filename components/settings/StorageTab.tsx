@@ -44,7 +44,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
                   await reg.unregister();
               }
               setSwCount(0);
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error("Failed to unregister service workers:", err);
             }
         }

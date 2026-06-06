@@ -1,6 +1,6 @@
 
 import { FeatureItem, ExtendedNavigator } from '../../types';
-import { formatSpeed } from '../../utils/formatters';
+
 
 const nav = navigator as ExtendedNavigator;
 
@@ -72,7 +72,7 @@ export const getWebRTCIP = async (): Promise<string> => {
             };
             setTimeout(() => { pc.close(); resolve('Timeout/Hidden'); }, 200);
             pc.createOffer().then(sdp => pc.setLocalDescription(sdp));
-        } catch(e) { resolve('Not Supported'); }
+        } catch(_e) { resolve('Not Supported'); }
     });
 };
 
@@ -92,7 +92,7 @@ export const getHighEntropyClientHints = async () => {
     try {
         // Request specific hints
         const hints = ['architecture', 'model', 'platformVersion', 'bitness', 'fullVersionList'];
-        const values = await nav.userAgentData.getHighEntropyValues(hints);
+        const values = await nav.userAgentData.getHighEntropyValues(hints) as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
         return {
             architecture: values.architecture,
             model: values.model,
@@ -100,7 +100,7 @@ export const getHighEntropyClientHints = async () => {
             bitness: values.bitness,
             fullVersionList: values.fullVersionList
         };
-    } catch (e) {
+    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
         console.warn("UA-CH blocked or failed", e);
         return undefined;
     }
@@ -111,7 +111,7 @@ export const getPWAFeatures = (): FeatureItem[] => {
     { name: 'Web App Manifest', key: 'manifest', supported: !!document.querySelector('link[rel="manifest"]'), description: 'Defines PWA branding and behavior' },
     { name: 'Standalone Mode', key: 'standalone', supported: window.matchMedia && window.matchMedia('(display-mode: standalone)').matches, description: 'Running as installed app' },
     { name: 'Service Worker', key: 'serviceWorker', supported: 'serviceWorker' in navigator, description: 'Offline capabilities & PWA support' },
-    { name: 'Background Sync', key: 'bgSync', supported: 'serviceWorker' in navigator && 'sync' in ((navigator as any).serviceWorker || {}), description: 'Defer actions until user has connectivity' },
+    { name: 'Background Sync', key: 'bgSync', supported: 'serviceWorker' in navigator && 'sync' in ((navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).serviceWorker || {}), description: 'Defer actions until user has connectivity' },
     { name: 'Push API', key: 'pushApi', supported: 'PushManager' in window, description: 'Receive push notifications from server' },
     { name: 'Notification API', key: 'notification', supported: 'Notification' in window, description: 'System level notifications' },
     { name: 'App Badges', key: 'appBadges', supported: 'setAppBadge' in navigator, description: 'Set badges on app icon' },
@@ -165,7 +165,7 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'WebSocket', key: 'webSocket', supported: 'WebSocket' in window, description: 'Two-way socket connection' },
     { name: 'Server-Sent Events', key: 'sse', supported: 'EventSource' in window, description: 'Server push notifications' },
     { name: 'Pointer Lock', key: 'pointerLock', supported: typeof document !== 'undefined' && 'exitPointerLock' in document, description: 'Lock mouse cursor' },
-    { name: 'Fullscreen API', key: 'fullscreen', supported: typeof document !== 'undefined' && !!(document.fullscreenEnabled || (document as any).webkitFullscreenEnabled || (document as any).mozFullScreenEnabled), description: 'Native full screen' },
+    { name: 'Fullscreen API', key: 'fullscreen', supported: typeof document !== 'undefined' && !!(document.fullscreenEnabled || (document as any  ).webkitFullscreenEnabled || (document as any   as Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */>).mozFullScreenEnabled), description: 'Native full screen' },
     { name: 'Page Visibility', key: 'pageVisibility', supported: typeof document !== 'undefined' && 'hidden' in document, description: 'Detect tab backgrounding' },
     { name: 'Drag and Drop', key: 'dragAndDrop', supported: typeof document !== 'undefined' && 'draggable' in document.createElement('span'), description: 'Native DND features' },
     { name: 'Canvas API', key: 'canvas', supported: typeof document !== 'undefined' && !!document.createElement('canvas').getContext, description: '2D dynamic rendering' },

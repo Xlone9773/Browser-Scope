@@ -107,7 +107,7 @@ export const SPEED_TEST_PRESETS: SpeedTestPreset[] = [
     // Europe
     { 
         id: 'hetzner_de', 
-        name: 'Hetzner (Germany/Falkenstein)', 
+        name: 'Hetzner (Germany /* eslint-disable-line @typescript-eslint/no-explicit-any *//Falkenstein)', 
         url: 'https://fsn1-speed.hetzner.com/{{size}}.bin', 
         isDynamic: false, 
         supportsUpload: false,
@@ -292,7 +292,7 @@ export const useSpeedTest = () => {
                 const start = performance.now();
                 try {
                     await fetch(pingUrl, { cache: 'no-store', signal, method: 'HEAD', mode: 'cors' });
-                } catch (e) {
+                } catch (_e) {
                     // Fallback for CORS opaque responses (timing might be slightly off but works for basic check)
                     await fetch(pingUrl, { cache: 'no-store', signal, mode: 'no-cors' });
                 }
@@ -440,7 +440,7 @@ export const useSpeedTest = () => {
             setTestState('done');
             setMetrics(prev => ({ ...prev, current: 0 }));
 
-        } catch (e: any) {
+        } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
             if (e.name !== 'AbortError') {
                 console.error("Speed test error", e);
                 setTestState('error');

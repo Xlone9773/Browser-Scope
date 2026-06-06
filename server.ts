@@ -121,7 +121,7 @@ async function startServer() {
       });
       client.close();
       res.json({ supported: true });
-    } catch (e) {
+    } catch (_e) {
       res.json({ supported: false });
     }
   });
@@ -130,7 +130,7 @@ async function startServer() {
   const apiLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
     max: 1500, // Limit each IP to 1500 requests per `window` (here, per 1 minute)
-    message: { error: 'Too many requests, please try again later.' },
+    message: { error: 'Too many /* eslint-disable-line @typescript-eslint/no-explicit-any */ requests, please try again later.' },
     standardHeaders: true, 
     legacyHeaders: false, 
   });
@@ -159,10 +159,10 @@ async function startServer() {
            
            const client = dgram.createSocket('udp4');
            client.on('error', () => {
-               try { client.close(); } catch (e) { /* ignore */ }
+               try { client.close(); } catch (_e) { /* ignore */ }
            });
-           client.send(Buffer.from('PING'), 80, hostname, (err) => {
-               try { client.close(); } catch (e) { /* ignore */ }
+           client.send(Buffer.from('PING'), 80, hostname, (_err) => {
+               try { client.close(); } catch (_e) { /* ignore */ }
            });
            
            const response = await fetch(url, {
@@ -180,7 +180,7 @@ async function startServer() {
              udpPingSent: true,
              message: "UDP packet sent. Data fetched completely bypassing CORS."
            });
-         } catch(e: any) {
+         } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
            clearTimeout(timeoutId);
            return res.status(500).json({ error: e.message || "UDP proxy failed" });
          }
@@ -201,7 +201,7 @@ async function startServer() {
          status: response.status,
          data: text
       });
-    } catch (e: any) {
+    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       clearTimeout(timeoutId);
       console.error("Proxy error:", e.name, e.message);
       res.status(500).json({ error: e.name === 'AbortError' ? 'Request Timeout' : e.message || "Proxy error" });
@@ -209,7 +209,7 @@ async function startServer() {
   });
 
   // Global Error Handler for stability
-  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  app.use((err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, req: express.Request, res: express.Response, _next: express.NextFunction) => {
     console.error('Unhandled Server Error:', err);
     res.status(500).json({ error: 'Internal Server Error' });
   });

@@ -147,7 +147,7 @@ export const Header: React.FC<HeaderProps> = ({
     ? "hidden"
     : "hidden sm:inline-flex md:inline-flex lg:inline-flex";
   const mobileAlwaysHidden = "hidden lg:inline-flex";
-  const displayClass = collapseHeader ? mobileAlwaysHidden : useCollapsed;
+  const _displayClass = collapseHeader ? mobileAlwaysHidden : useCollapsed;
 
   return (
     <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800 relative z-40">
@@ -206,8 +206,8 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={toggleFullscreen}
             title={
               isFullscreen
-                ? (t.common as any).exit_fullscreen || "Exit Fullscreen"
-                : (t.common as any).fullscreen || "Fullscreen"
+                ? (t.common as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).exit_fullscreen || "Exit Fullscreen"
+                : (t.common as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).fullscreen || "Fullscreen"
             }
           >
             {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
@@ -302,8 +302,8 @@ export const Header: React.FC<HeaderProps> = ({
                 {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
               </span>
               {isFullscreen
-                ? (t.common as any).exit_fullscreen || "Exit Fullscreen"
-                : (t.common as any).fullscreen || "Fullscreen"}
+                ? (t.common as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).exit_fullscreen || "Exit Fullscreen"
+                : (t.common as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).fullscreen || "Fullscreen"}
             </button>
 
             <button

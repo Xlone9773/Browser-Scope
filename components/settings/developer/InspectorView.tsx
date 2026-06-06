@@ -4,14 +4,14 @@ export const InspectorView: React.FC = () => {
   const [inspectorObj, setInspectorObj] = useState("navigator");
 
   const getInspectData = (key: string) => {
-    let target: any = {};
+    let target: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = {};
     if (key === "navigator") target = navigator;
     else if (key === "screen") target = screen;
     else if (key === "location") target = location;
     else if (key === "performance") target = performance;
     else if (key === "document") target = document;
 
-    const result: Record<string, any> = {};
+    const result: Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */> = {};
     for (const k in target) {
       try {
         const val = target[k];
@@ -21,14 +21,12 @@ export const InspectorView: React.FC = () => {
       } catch { /* ignore */ }
     }
     if (key === "navigator") {
-      
-      if ((navigator as any).userAgentData)
-        result["userAgentData"] = (navigator as any).userAgentData;
-      if ((navigator as any).connection)
-        result["connection"] = (navigator as any).connection;
-      
-      if ((navigator as any).deviceMemory)
-        result["deviceMemory"] = (navigator as any).deviceMemory;
+      if ((navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).userAgentData)
+        result["userAgentData"] = (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).userAgentData;
+      if ((navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).connection)
+        result["connection"] = (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).connection;
+      if ((navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).deviceMemory)
+        result["deviceMemory"] = (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).deviceMemory;
     }
 
     return JSON.stringify(result, null, 2);

@@ -14,7 +14,7 @@ export const MouseTab: React.FC<MouseTabProps> = ({ t }) => {
     const mouseTimestamps = useRef<number[]>([]);
     const mouseRaf = useRef<number | null>(null);
 
-    const handleMouseMove = (e: React.MouseEvent) => {
+    const handleMouseMove = (_e: React.MouseEvent) => {
         const now = performance.now();
         mouseTimestamps.current.push(now);
         

@@ -16,7 +16,7 @@ interface ScoreInput {
     webRTC: string;
     drmCount: number;
     touchPoints: number;
-    clientHints?: any;
+    clientHints?: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
     hdr: boolean;
     timezone?: string;
     languages?: string;

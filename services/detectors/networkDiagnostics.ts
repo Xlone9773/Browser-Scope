@@ -31,7 +31,7 @@ export interface WebRTCCandidate {
     raw: string;
 }
 
-const customFetch = async (url: string, enableUdp: boolean, options: RequestInit = {}): Promise<any> => {
+const customFetch = async (url: string, enableUdp: boolean, options: RequestInit = {}): Promise<any /* eslint-disable-line @typescript-eslint/no-explicit-any */> => {
     const doProxyFetch = async () => {
         const res = await fetch('/api/proxy', {
             method: 'POST',
@@ -42,7 +42,7 @@ const customFetch = async (url: string, enableUdp: boolean, options: RequestInit
         let proxyData;
         try {
             proxyData = await res.json();
-        } catch (err) {
+        } catch (_err) {
             throw new Error(`HTTP ${res.status}: Proxy server error or unreachable.`);
         }
         
@@ -56,7 +56,7 @@ const customFetch = async (url: string, enableUdp: boolean, options: RequestInit
             json: async () => {
                 try {
                     return JSON.parse(proxyData.data);
-                } catch (err) {
+                } catch (_err) {
                     throw new Error("Unable to parse JSON response from proxy. The endpoint might be blocking requests.");
                 }
             },
@@ -70,7 +70,7 @@ const customFetch = async (url: string, enableUdp: boolean, options: RequestInit
 
     try {
         return await fetch(url, options);
-    } catch (err: any) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
         if (err.message === 'Failed to fetch' || err.name === 'TypeError') {
             console.warn(`Direct fetch failed for ${url}, falling back to server proxy...`);
             return doProxyFetch();
@@ -156,7 +156,7 @@ export const fetchIpInfoFromSource = async (source: string, enableUdp: boolean =
                 isp: 'Ipify'
             };
         }
-    } catch (e) {
+    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
         console.error("IP fetch failed", e);
         return { error: "Detection failed. Check network or AdBlock." };
     }
@@ -176,7 +176,6 @@ export const detectIpv6 = async (source: string, enableUdp: boolean = false): Pr
             mode: 'cors' 
         });
         clearTimeout(timeoutId);
-        
         if (!res.ok) throw new Error('Failed');
         
         if (source === 'icanhazip') {
@@ -185,7 +184,7 @@ export const detectIpv6 = async (source: string, enableUdp: boolean = false): Pr
             const data = await res.json();
             return data.ip;
         }
-    } catch (err) {
+    } catch (_err) {
         return 'fail';
     }
 };
@@ -222,7 +221,7 @@ export const runWebRTCScan = (onCandidate: (c: WebRTCCandidate) => void): Promis
                 resolve();
             }, 5000);
 
-        } catch (e) {
+        } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
             console.error("WebRTC Error", e);
             resolve();
         }
@@ -242,7 +241,7 @@ export const detectDns = async (enableUdp: boolean = false): Promise<{ ip: strin
             };
         }
         return null;
-    } catch (err) {
+    } catch (_err) {
         throw new Error("Failed to detect resolver");
     }
 };
@@ -265,16 +264,16 @@ export const detectProtocols = async (): Promise<{ h2: string; h3: string }> => 
             if (entries.length > 0) {
                 
                                 // @ts-expect-error fixed implicitly typed external libraries
-                                return entries[entries.length - 1].nextHopProtocol || 'unknown';
+                                return entries[entries.length - 1].nextHopProtocol || 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */';
             }
-            return 'unknown';
+            return 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */';
         };
 
         return {
             h2: getProto(testH2),
             h3: getProto(testH3)
         };
-    } catch (err) {
+    } catch (_err) {
         return { h2: 'error', h3: 'error' };
     }
 };

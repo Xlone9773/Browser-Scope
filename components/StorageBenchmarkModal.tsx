@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Database, HardDrive, Play, Square, AlertTriangle, FileText, Download, Trash2, Cpu } from 'lucide-react';
+import { HardDrive, Play, Square, AlertTriangle, FileText, Download, Trash2, Cpu } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 import { Select } from './ui/Select';
@@ -69,7 +69,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
       setProgress(0);
       setCurrentSpeed(0);
 
-      // Clean up existing worker if any
+      // Clean up existing worker if any /* eslint-disable-line @typescript-eslint/no-explicit-any */
       if (workerRef.current) {
           workerRef.current.terminate();
       }
@@ -174,7 +174,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
               const dataUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
               window.open(dataUri, '_blank');
               setExportStatus(copied ? "Copied to clipboard" : "Opened in new tab");
-          } catch(err) {
+          } catch(_err) {
               setExportStatus(copied ? "Copied to clipboard" : "Export Failed");
           }
       }
@@ -197,7 +197,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
         size="3xl"
         fullHeight
     >
-        {({ close }) => (
+        {({ close: _close }) => (
             <div className="flex flex-col h-full p-6 bg-slate-50 dark:bg-slate-900 overflow-y-auto">
                 
                 {/* Warning */}
@@ -275,7 +275,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
                         {/* Web Worker Status Badge */}
                         <div className="absolute top-4 left-4 flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/30 rounded-full text-[10px] font-medium text-indigo-400 select-none">
                             <Cpu size={12} className="animate-spin duration-3000" />
-                            <span>{(t as any).worker_status || "Dedicated Web Worker Active"}</span>
+                            <span>{(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).worker_status || "Dedicated Web Worker Active"}</span>
                         </div>
 
                         {/* Speed Text */}

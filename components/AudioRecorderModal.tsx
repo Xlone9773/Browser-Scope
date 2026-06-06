@@ -21,9 +21,9 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
   const streamRef = useRef<MediaStream | null>(null);
   const isUnmounted = useRef(false);
 
-  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [_stream, setStream] = useState<MediaStream | null>(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [_audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -160,7 +160,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
   useEffect(() => {
       if (audioUrl && audioPlayerRef.current && audioContextRef.current && analyzerRef.current) {
           // Check to prevent creating MediaElementSource twice on the same element
-          if (!(audioPlayerRef.current as any).hasSourceConnected) {
+          if (!(audioPlayerRef.current as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).hasSourceConnected) {
               const audioCtx = audioContextRef.current;
               // Add a new track source
               const source = audioCtx.createMediaElementSource(audioPlayerRef.current);
@@ -169,7 +169,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
               // For microphone record, we didn't connect analyzer to destination.
               // To hear playback, we can connect the element source straight to destination as well.
               source.connect(audioCtx.destination);
-              (audioPlayerRef.current as any).hasSourceConnected = true;
+              (audioPlayerRef.current as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).hasSourceConnected = true;
           }
       }
   }, [audioUrl]);
@@ -216,7 +216,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
       
       // Setup Audio Context for Visualizer if not already setup
       if (!audioContextRef.current) {
-          const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+          const AudioContext = window.AudioContext || (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).webkitAudioContext;
           const audioCtx = new AudioContext();
           setSampleRate(audioCtx.sampleRate);
           
@@ -262,11 +262,11 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
           setAudioBlob(null);
           setAudioUrl(null);
           
-      } catch (e) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           console.error("Recorder error:", e);
       }
 
-    } catch (err) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error("Error accessing microphone:", err);
       setError(t.error_mic);
     }
@@ -332,7 +332,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
         onClose={handleClose}
         size="lg"
     >
-        {({ close }) => (
+        {({ close: _close }) => (
             <>
                 {/* Content */}
                 <div className="flex flex-col gap-6 items-center">

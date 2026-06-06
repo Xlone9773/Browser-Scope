@@ -13,10 +13,10 @@ export interface BatteryManager extends EventTarget {
     chargingTime: number;
     dischargingTime: number;
     level: number;
-    onchargingchange: ((this: BatteryManager, ev: Event) => any) | null;
-    onchargingtimechange: ((this: BatteryManager, ev: Event) => any) | null;
-    ondischargingtimechange: ((this: BatteryManager, ev: Event) => any) | null;
-    onlevelchange: ((this: BatteryManager, ev: Event) => any) | null;
+    onchargingchange: ((this: BatteryManager, ev: Event) => unknown) | null;
+    onchargingtimechange: ((this: BatteryManager, ev: Event) => unknown) | null;
+    ondischargingtimechange: ((this: BatteryManager, ev: Event) => unknown) | null;
+    onlevelchange: ((this: BatteryManager, ev: Event) => unknown) | null;
 }
 
 // Extend the Navigator interface for non-standard or experimental APIs
@@ -30,20 +30,20 @@ export interface ExtendedNavigator extends Navigator {
     brands: { brand: string; version: string }[];
     mobile: boolean;
     platform: string;
-    getHighEntropyValues: (hints: string[]) => Promise<any>;
+    getHighEntropyValues: (hints: string[]) => Promise<unknown>;
   };
-  gpu?: any;
-  bluetooth?: any;
-  usb?: any;
-  xr?: any;
-  nfc?: any;
-  windowControlsOverlay?: any;
-  hid?: any;
-  serial?: any;
-  presentation?: any;
+  gpu?: unknown;
+  bluetooth?: unknown;
+  usb?: unknown;
+  xr?: unknown;
+  nfc?: unknown;
+  windowControlsOverlay?: unknown;
+  hid?: unknown;
+  serial?: unknown;
+  presentation?: unknown;
   globalPrivacyControl?: boolean;
   webdriver: boolean;
-  ml: any; // WebNN (Required to match Navigator interface)
+  ml: unknown; // WebNN (Required to match Navigator interface)
 }
 
 export interface CodecInfo {
@@ -242,7 +242,7 @@ declare global {
   
   interface Window {
       BarcodeDetector: typeof BarcodeDetector;
-      FaceDetector: any;
-      TextDetector: any;
+      FaceDetector: unknown;
+      TextDetector: unknown;
   }
 }

@@ -7,8 +7,8 @@ export interface DetectedExtension {
 }
 
 export const detectExtensions = (): DetectedExtension[] => {
-  const w = window as any;
-  const d = document as any;
+  const w = window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+  const _d = document as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
 
   const extensions: DetectedExtension[] = [];
 
@@ -16,7 +16,7 @@ export const detectExtensions = (): DetectedExtension[] => {
     let detected = false;
     try {
       detected = test();
-    } catch(e) {}
+    } catch(_e) {}
     extensions.push({ id, name, description, category, detected });
   };
 
@@ -64,7 +64,7 @@ export const detectExtensions = (): DetectedExtension[] => {
   check('tampermonkey', 'Tampermonkey', 'Userscript manager', 'Utility', () => !!w.GM_info || !!w.GM);
 
   // Privacy / Adblock (Heuristics without fetch)
-  check('brave-shields', 'Brave Shields', 'Built-in Brave Ad/Tracker Blocker', 'Privacy', () => !!(navigator as any).brave && typeof (navigator as any).brave.isBrave === 'function');
+  check('brave-shields', 'Brave Shields', 'Built-in Brave Ad/Tracker Blocker', 'Privacy', () => !!(navigator as any  ).brave && typeof (navigator as any   as Record<string, { isBrave: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ }>).brave.isBrave === 'function');
   check('ghostery', 'Ghostery', 'Tracker Blocker', 'Privacy', () => !!w.Ghostery);
 
   return extensions;

@@ -32,8 +32,7 @@ export const getAllData = async (): Promise<BrowserData> => {
   const deviceMemory = nav.deviceMemory ? formatBytes(nav.deviceMemory * 1024 * 1024 * 1024) : 'Unknown';
   
   // Peripherals
-  
-    const screenExtended = (window.screen as any).isExtended || false;
+    const screenExtended = (window.screen as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).isExtended || false;
   const gamepads = navigator.getGamepads ? navigator.getGamepads().filter(g => g !== null).length : 0;
 
   // Security
@@ -48,7 +47,7 @@ export const getAllData = async (): Promise<BrowserData> => {
   const wasmSimd = checkWasmSimd();
   
       // @ts-expect-error fixed implicitly typed external libraries
-      const windowAi = !!((window as any).ai || window.model);
+      const windowAi = !!((window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).ai || window.model);
   const webnn = !!nav.ml;
   const webgpuCompute = !!nav.gpu; 
 
@@ -94,10 +93,10 @@ export const getAllData = async (): Promise<BrowserData> => {
 
   // Detect Intl Features
   const intlSupport = {
-      listFormat: typeof (Intl as any).ListFormat !== 'undefined',
+      listFormat: typeof (Intl as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).ListFormat !== 'undefined',
       relativeTimeFormat: typeof Intl.RelativeTimeFormat !== 'undefined',
-      displayNames: typeof (Intl as any).DisplayNames !== 'undefined',
-      segmenter: typeof (Intl as any).Segmenter !== 'undefined',
+      displayNames: typeof (Intl as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).DisplayNames !== 'undefined',
+      segmenter: typeof (Intl as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).Segmenter !== 'undefined',
       pluralRules: typeof Intl.PluralRules !== 'undefined',
       collator: typeof Intl.Collator !== 'undefined'
   };

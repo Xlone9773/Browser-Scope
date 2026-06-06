@@ -1,6 +1,6 @@
 
 import React, { useState, useTransition, Suspense, lazy } from 'react';
-import { Globe, Database, Activity, Sliders, Monitor, Terminal, Package, Loader2 } from 'lucide-react';
+import { Database, Activity, Sliders, Monitor, Terminal, Package, Loader2 } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { ModuleState } from './settings/ModulesTab';
 import { Modal } from './ui/Modal';
@@ -101,7 +101,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         fullHeight={true}
         noPadding={true}
     >
-        {({ close }) => (
+        {({ close: _close }) => (
             <>
                 {/* Layout Container */}
                 <div className="flex flex-col md:flex-row flex-1 overflow-hidden h-full">

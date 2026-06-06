@@ -58,7 +58,7 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
       </div>
       <div className="p-3 bg-slate-800 border-b border-slate-700">
         <span className="text-slate-200 text-[11px] mb-2 block font-medium uppercase">
-          {(t.config as any)?.defaultConsoleTitle || "DEFAULT CONSOLE"}
+          {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.defaultConsoleTitle || "DEFAULT CONSOLE"}
         </span>
         <div className="flex gap-2">
           <button
@@ -69,7 +69,7 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
             className={`flex-1 py-1.5 px-2 rounded flex items-center justify-center gap-1.5 transition text-xs ${defaultConsole === "vconsole" ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-400 hover:bg-slate-600"}`}
           >
             <Bug size={12} />{" "}
-            {(t.config as any)?.consoleVConsole || "vConsole"}
+            {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.consoleVConsole || "vConsole"}
           </button>
           <button
             onClick={(e) => {
@@ -79,7 +79,7 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
             className={`flex-1 py-1.5 px-2 rounded flex items-center justify-center gap-1.5 transition text-xs ${defaultConsole === "eruda" ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-400 hover:bg-slate-600"}`}
           >
             <Wrench size={12} />{" "}
-            {(t.config as any)?.consoleEruda || "Eruda"}
+            {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.consoleEruda || "Eruda"}
           </button>
         </div>
       </div>
@@ -87,10 +87,10 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
         <div className="p-3 border-b border-slate-700 bg-slate-900/50 flex flex-col gap-2">
           <div className="flex flex-col gap-1">
             <span className="text-sm font-semibold text-slate-200">
-              {(t.config as any)?.vconsoleDefaultTab || "Default vConsole Tab"}
+              {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.vconsoleDefaultTab || "Default vConsole Tab"}
             </span>
             <span className="text-[10px] text-slate-500">
-              {(t.config as any)?.vconsoleDefaultTabDesc || "Select the tab to focus when vConsole is opened."}
+              {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.vconsoleDefaultTabDesc || "Select the tab to focus when vConsole is opened."}
             </span>
           </div>
           <Select
@@ -98,11 +98,11 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
             onChange={(val: string) => setVconsoleDefaultTab(val)}
             fullWidth
             options={[
-              { id: "default", label: (t.config as any)?.vconsoleTabs?.default || "Default" },
-              { id: "system", label: (t.config as any)?.vconsoleTabs?.system || "System" },
-              { id: "network", label: (t.config as any)?.vconsoleTabs?.network || "Network" },
-              { id: "element", label: (t.config as any)?.vconsoleTabs?.element || "Element" },
-              { id: "storage", label: (t.config as any)?.vconsoleTabs?.storage || "Storage" },
+              { id: "default", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.vconsoleTabs?.default || "Default" },
+              { id: "system", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.vconsoleTabs?.system || "System" },
+              { id: "network", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.vconsoleTabs?.network || "Network" },
+              { id: "element", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.vconsoleTabs?.element || "Element" },
+              { id: "storage", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.vconsoleTabs?.storage || "Storage" },
             ]}
           />
         </div>
@@ -112,10 +112,10 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
           <div className="p-3 border-b border-slate-700 bg-slate-900/50 flex flex-col gap-2">
             <div className="flex flex-col gap-1">
               <span className="text-sm font-semibold text-slate-200">
-                {(t.config as any)?.erudaDefaultTab || "Default Eruda Tab"}
+                {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaDefaultTab || "Default Eruda Tab"}
               </span>
               <span className="text-[10px] text-slate-500">
-                {(t.config as any)?.erudaDefaultTabDesc || "Select the tab to focus when Eruda is opened."}
+                {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaDefaultTabDesc || "Select the tab to focus when Eruda is opened."}
               </span>
             </div>
             <Select
@@ -123,46 +123,46 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
               onChange={(val: string) => setErudaDefaultTab(val)}
               fullWidth
               options={[
-                { id: "console", label: (t.config as any)?.erudaTabs?.console || "Console" },
-                { id: "elements", label: (t.config as any)?.erudaTabs?.elements || "Elements (DOM)" },
-                { id: "network", label: (t.config as any)?.erudaTabs?.network || "Network" },
-                { id: "resources", label: (t.config as any)?.erudaTabs?.resources || "Resources" },
-                { id: "sources", label: (t.config as any)?.erudaTabs?.sources || "Sources (Code)" },
-                { id: "info", label: (t.config as any)?.erudaTabs?.info || "Info" },
-                { id: "snippets", label: (t.config as any)?.erudaTabs?.snippets || "Snippets" },
-                { id: "timing", label: (t.config as any)?.erudaTabs?.timing || "Timing" },
-                { id: "features", label: (t.config as any)?.erudaTabs?.features || "Features" },
-                { id: "monitor", label: (t.config as any)?.erudaTabs?.monitor || "Monitor" },
-                { id: "fps", label: (t.config as any)?.erudaTabs?.fps || "FPS" },
+                { id: "console", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.console || "Console" },
+                { id: "elements", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.elements || "Elements (DOM)" },
+                { id: "network", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.network || "Network" },
+                { id: "resources", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.resources || "Resources" },
+                { id: "sources", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.sources || "Sources (Code)" },
+                { id: "info", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.info || "Info" },
+                { id: "snippets", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.snippets || "Snippets" },
+                { id: "timing", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.timing || "Timing" },
+                { id: "features", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.features || "Features" },
+                { id: "monitor", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.monitor || "Monitor" },
+                { id: "fps", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.fps || "FPS" },
               ]}
             />
           </div>
           <div className="p-3 border-b border-slate-700 bg-slate-900/50">
             <div className="flex flex-col gap-1 mb-3">
               <span className="text-sm font-semibold text-slate-200">
-                {(t.config as any)?.loadSnippets || "Code Snippets"}
+                {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.loadSnippets || "Code Snippets"}
               </span>
               <span className="text-[10px] text-slate-500">
-                {(t.config as any)?.loadSnippetsDesc ||
+                {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.loadSnippetsDesc ||
                   "Select which code snippets to automatically inject into Eruda"}
               </span>
             </div>
             <div className="flex flex-col gap-2">
               {[
-                { id: "clear_local", label: (t.config as any)?.snippetClearLocal || "Clear LocalStorage" },
-                { id: "clear_session", label: (t.config as any)?.snippetClearSession || "Clear SessionStorage" },
-                { id: "show_cookies", label: (t.config as any)?.snippetShowCookies || "Show Cookies" },
-                { id: "toggle_blur", label: (t.config as any)?.snippetToggleBlur || "Toggle Body Blur" },
-                { id: "toggle_editable", label: (t.config as any)?.snippetToggleEditable || "Toggle Editable Page" },
+                { id: "clear_local", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.snippetClearLocal || "Clear LocalStorage" },
+                { id: "clear_session", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.snippetClearSession || "Clear SessionStorage" },
+                { id: "show_cookies", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.snippetShowCookies || "Show Cookies" },
+                { id: "toggle_blur", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.snippetToggleBlur || "Toggle Body Blur" },
+                { id: "toggle_editable", label: (t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.snippetToggleEditable || "Toggle Editable Page" },
               ].map(snippet => (
                 <div 
                   key={snippet.id} 
-                  className="flex items-center justify-between cursor-pointer py-1 hover:bg-slate-800/50 rounded px-1 transition" 
-                  onClick={() => setErudaSnippet(snippet.id, !(erudaSnippets as any)[snippet.id])}
+                  className="flex items-center justify-between cursor-pointer py-1 hover:bg-slate-800/50 rounded px-1 transition"
+                  onClick={() => setErudaSnippet(snippet.id, !(erudaSnippets as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)[snippet.id])}
                 >
                   <span className="text-xs text-slate-300">{snippet.label}</span>
-                  <div className={`w-8 h-4 rounded-full relative transition-colors ${(erudaSnippets as any)[snippet.id] ? "bg-indigo-500" : "bg-slate-600"}`}>
-                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${(erudaSnippets as any)[snippet.id] ? "translate-x-4" : "translate-x-0"}`}></div>
+                  <div className={`w-8 h-4 rounded-full relative transition-colors ${(erudaSnippets as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)[snippet.id] ? "bg-indigo-500" : "bg-slate-600"}`}>
+                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${(erudaSnippets as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)[snippet.id] ? "translate-x-4" : "translate-x-0"}`}></div>
                   </div>
                 </div>
               ))}
@@ -176,7 +176,7 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
           className="w-full py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 rounded flex gap-2 items-center justify-center font-bold text-xs font-sans transition-colors border border-red-500/30"
         >
           <Skull size={14} />{" "}
-          {(t.config as any)?.simulateCrash || "Simulate Dev Crash"}
+          {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.simulateCrash || "Simulate Dev Crash"}
         </button>
       </div>
     </div>

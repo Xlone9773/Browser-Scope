@@ -17,7 +17,7 @@ interface LocationCardProps {
   lang?: Language;
 }
 
-const AnimatedClock = ({ timeFormat }: { timeFormat: '12' | '24' }) => {
+const AnimatedClock = ({ timeFormat: _timeFormat }: { timeFormat: '12' | '24' }) => {
     const [angles, setAngles] = useState(() => {
         const date = new Date();
         const seconds = date.getSeconds();

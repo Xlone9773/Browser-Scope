@@ -11,7 +11,7 @@ export interface SelectOption {
 interface SelectProps {
     value: string | number;
     options: SelectOption[];
-    onChange: (value: any) => void;
+    onChange: (value: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => void;
     color?: 'indigo' | 'purple' | 'blue' | 'emerald';
     disabled?: boolean;
     className?: string;

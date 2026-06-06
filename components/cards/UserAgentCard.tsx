@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { Globe, Copy, Check, Fingerprint, SwitchCamera } from 'lucide-react';
+import { Globe, Copy, Check, SwitchCamera } from 'lucide-react';
 import { InfoCard } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 
 interface UserAgentCardProps {
   userAgent: string;
-  clientHints?: any;
+  clientHints?: unknown;
   t: Translation;
 }
 

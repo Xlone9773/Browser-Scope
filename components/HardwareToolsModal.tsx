@@ -17,7 +17,7 @@ interface HardwareToolsModalProps {
   labels: Translation['labels'];
 }
 
-export const HardwareToolsModal: React.FC<HardwareToolsModalProps> = ({ onClose, t, values, labels }) => {
+export const HardwareToolsModal: React.FC<HardwareToolsModalProps> = ({ onClose, t, values: _values, labels: _labels }) => {
   const [activeTab, setActiveTab] = useState<'vibrate' | 'touch' | 'keyboard' | 'mouse' | 'pointer' | 'gpu'>('vibrate');
 
   const openRayTracing = () => {

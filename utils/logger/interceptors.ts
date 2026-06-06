@@ -1,9 +1,8 @@
 import { loadVConsole } from "./vconsole";
 import { loadEruda } from "./eruda";
 
-export function setupInterceptors(loggerStore: any) {
+export function setupInterceptors(loggerStore: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
   if (typeof window === "undefined") return;
-
   if (loggerStore.activeConsole === "vconsole") {
     loadVConsole(loggerStore);
   } else if (loggerStore.activeConsole === "eruda") {
@@ -15,7 +14,7 @@ export function setupInterceptors(loggerStore: any) {
   const originalWarn = console.warn;
   const originalInfo = console.info;
 
-  const serializeArgs = (args: any[]) =>
+  const serializeArgs = (args: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]) =>
     args
       .map((a) => {
         try {

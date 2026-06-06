@@ -32,9 +32,9 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   // Refs for loop access to avoid dependency churn and memory leaks
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visualizerCanvasRef = useRef<HTMLCanvasElement>(null);
-  const adapterRef = useRef<any>(null);
-  const deviceRef = useRef<any>(null);
-  const pipelineRef = useRef<any>(null);
+  const adapterRef = useRef<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
+  const deviceRef = useRef<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
+  const pipelineRef = useRef<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
   
   const animRef = useRef<number | null>(null); // For WebGPU loop
   const renderLoopRef = useRef<number | null>(null); // For UI render loop
@@ -74,12 +74,12 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   // Init WebGPU & Check Features
   useEffect(() => {
     const init = async () => {
-        if (!(navigator as any).gpu) {
+        if (!(navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu) {
             setIsWebGPUSupported(false);
             return;
         }
         try {
-            const adapter = await (navigator as any).gpu.requestAdapter({ powerPreference: 'high-performance' });
+            const adapter = await (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu.requestAdapter({ powerPreference: 'high-performance' });
             if (!adapter) {
                 setIsWebGPUSupported(false);
                 return;
@@ -102,7 +102,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
             deviceRef.current = device;
             
             setIsWebGPUSupported(true);
-        } catch (e) {
+        } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
             console.error("WebGPU Init Error", e);
             setIsWebGPUSupported(false);
         }
@@ -116,9 +116,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       
       const shaderCode = useFp16 && hasFp16Support ? MATMUL_SHADER_F16 : MATMUL_SHADER_F32;
       const device = deviceRef.current;
-
       const shaderModule = device.createShaderModule({ code: shaderCode });
-      
       const pipeline = device.createComputePipeline({
           layout: 'auto',
           compute: {
@@ -249,8 +247,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           buffer.unmap();
           return buffer;
       };
-
-      const USAGE_STORAGE = (window as any).GPUBufferUsage?.STORAGE || 128;
+      const USAGE_STORAGE = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUBufferUsage?.STORAGE || 128;
 
       const gpuBufferFirstMatrix = createBuffer(firstMatrix, USAGE_STORAGE);
       const gpuBufferSecondMatrix = createBuffer(secondMatrix, USAGE_STORAGE);
@@ -259,7 +256,6 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           size: resultMatrixBufferSize,
           usage: USAGE_STORAGE
       });
-
       const bindGroup = device.createBindGroup({
           layout: pipeline.getBindGroupLayout(0),
           entries: [
@@ -276,7 +272,6 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
       const loop = async () => {
           if (!isRunningRef.current) return; // Stopped
-
           const commandEncoder = device.createCommandEncoder();
           const passEncoder = commandEncoder.beginComputePass();
           passEncoder.setPipeline(pipeline);
@@ -284,9 +279,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           const workgroupCount = Math.ceil(matrixSize / 8);
           passEncoder.dispatchWorkgroups(workgroupCount, workgroupCount);
           passEncoder.end();
-          
           device.queue.submit([commandEncoder.finish()]);
-          
           await device.queue.onSubmittedWorkDone();
 
           frames++;

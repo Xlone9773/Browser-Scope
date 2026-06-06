@@ -38,7 +38,7 @@ export const TouchTab: React.FC<TouchTabProps> = ({ t }) => {
                 ctx.fillText(t.touch_instruction, canvas.width/2, canvas.height/2);
             }
 
-            touches.forEach((t, id) => {
+            touches.forEach((t, _id) => {
                 ctx.beginPath();
                 ctx.arc(t.x, t.y, 40, 0, Math.PI * 2);
                 ctx.fillStyle = t.color;

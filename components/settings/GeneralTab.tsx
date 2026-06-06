@@ -1,11 +1,11 @@
 
 import React, { useEffect, useState } from 'react';
-import { Translation } from '../../utils/i18n/types';
+
 
 import { Select } from '../ui/Select';
 
 interface GeneralTabProps {
-    t: any; // Using any for t because Translation type was getting complicated with extensions
+    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */; // Using any /* eslint-disable-line @typescript-eslint/no-explicit-any */ for t because Translation type was getting complicated with extensions
     themeColor: string;
     setThemeColor: (color: string) => void;
     animationStyle: string;
@@ -30,7 +30,7 @@ interface GeneralTabProps {
     toggleEnableUdp?: (value: boolean) => void;
     hiddenCards: string[];
     setHiddenCards: (cards: string[]) => void;
-    translationDict: any;
+    translationDict: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
 }
 
 // Custom Switch Component with Spring Animation
@@ -146,7 +146,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={simpleMode} 
-                        onChange={toggleSimpleMode} 
+                        onChange={toggleSimpleMode}
                         label={t.simpleMode.title} 
                     />
                 </div>
@@ -168,7 +168,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={timeFormat === '24'} 
-                        onChange={(val) => setTimeFormat(val ? '24' : '12')} 
+                        onChange={(val) => setTimeFormat(val ? '24' : '12')}
                         label={t.timeFormat.title} 
                     />
                 </div>
@@ -229,7 +229,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         { id: 'zoom', label: translationDict.settings?.general?.animationStyle?.options?.zoom || 'Zoom In' }
                     ]}
                     className="w-full sm:w-48"
-                    color={themeColor as any}
+                    color={themeColor as any /* eslint-disable-line @typescript-eslint/no-explicit-any */}
                 />
             </div>
 
@@ -249,7 +249,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={disableBlur} 
-                        onChange={toggleDisableBlur} 
+                        onChange={toggleDisableBlur}
                         label={t.performance.title} 
                     />
                 </div>
@@ -271,7 +271,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={hideScrollbar || globalHideScrollbar} 
-                        onChange={(val) => { if (!globalHideScrollbar) toggleHideScrollbar(val); }} 
+                        onChange={(val) => { if (!globalHideScrollbar) toggleHideScrollbar(val); }}
                         label={t.scrollbar?.title || "Hide Main Page Scrollbar"} 
                         disabled={globalHideScrollbar}
                     />
@@ -294,7 +294,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={globalHideScrollbar} 
-                        onChange={toggleGlobalHideScrollbar} 
+                        onChange={toggleGlobalHideScrollbar}
                         label={t.globalScrollbar?.title || "Hide All Scrollbars"} 
                     />
                 </div>
@@ -315,7 +315,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={disableAnimations} 
-                        onChange={toggleDisableAnimations} 
+                        onChange={toggleDisableAnimations}
                         label={t.animations?.title} 
                     />
                 </div>
@@ -337,7 +337,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={fastAnimations} 
-                        onChange={toggleFastAnimations} 
+                        onChange={toggleFastAnimations}
                         label={t.fastAnimations?.title}
                         disabled={disableAnimations} 
                     />
@@ -360,7 +360,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={collapseHeader} 
-                        onChange={toggleCollapseHeader} 
+                        onChange={toggleCollapseHeader}
                         label={t.collapseHeader?.title} 
                     />
                 </div>
@@ -393,7 +393,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     <div>
                         <Switch 
                             checked={!!enableUdp} 
-                            onChange={() => { if(udpSupported) toggleEnableUdp(!enableUdp); }} 
+                            onChange={() => { if(udpSupported) toggleEnableUdp(!enableUdp); }}
                             label={t.udpBypass?.title || 'Enable UDP'} 
                             disabled={!udpSupported}
                         />

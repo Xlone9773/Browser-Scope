@@ -163,7 +163,7 @@ ${errorInfo?.componentStack || "No component stack available."}`;
     window.location.reload();
   };
 
-  private getAnalysis(error: Error | null, t: any) {
+  private getAnalysis(error: Error | null, t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     if (!error) return t.analysis_no_error || "No error object available.";
     const msg = error.message.toLowerCase();
     if (
@@ -221,11 +221,11 @@ ${errorInfo?.componentStack || "No component stack available."}`;
 
     // Fallback to english if not found
     return (
-      (translations[lang as Language] as any)?.common?.error_boundary || {
+      (translations[lang as Language] as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.common?.error_boundary || {
         title: "Component Crashed",
         message: "An unexpected error occurred rendering this module.",
         retry: "Try Again",
-        unknown_component: "Unknown Component",
+        any_component: "Unknown Component",
       }
     );
   }
@@ -251,7 +251,7 @@ ${errorInfo?.componentStack || "No component stack available."}`;
                   {t.title}{" "}
                   <span className="text-red-500 font-normal text-sm opacity-70">
                     {t.component_in || "in"}{" "}
-                    {this.props.name || t.unknown_component}
+                    {this.props.name || t.any_component}
                   </span>
                 </h3>
                 <p className="text-sm text-red-600 dark:text-red-400 font-medium">

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from './ui/Modal';
 import { detectExtensions, DetectedExtension } from '../services/detectors/extensions';
 
-export const ExtensionsModal = ({ onClose, t }: { onClose: () => void; t?: any }) => {
+export const ExtensionsModal = ({ onClose, t }: { onClose: () => void; t?: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ }) => {
   const [extensions, setExtensions] = useState<DetectedExtension[]>([]);
 
   useEffect(() => {

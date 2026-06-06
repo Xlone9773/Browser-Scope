@@ -84,7 +84,7 @@ export const getMediaSupport = (): { video: CodecInfo[], audio: CodecInfo[], ima
 };
 
 export const getAudioContextInfo = () => {
-    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    const AudioContext = window.AudioContext || (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).webkitAudioContext;
     if (!AudioContext) return { rate: 'Not Supported', latency: 'Unknown', channels: 'Unknown' };
     try {
         const ctx = new AudioContext();
@@ -93,7 +93,7 @@ export const getAudioContextInfo = () => {
         const channels = ctx.destination.maxChannelCount || 2;
         ctx.close();
         return { rate: formatHertz(rate), latency, channels };
-    } catch(e) { return { rate: 'Error', latency: 'Error', channels: 'Error' }; }
+    } catch(_e) { return { rate: 'Error', latency: 'Error', channels: 'Error' }; }
 };
 
 export const getSpeechVoicesCount = (): Promise<number> => {

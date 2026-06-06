@@ -1,5 +1,5 @@
 
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { formatNumber, formatPercent, formatList, formatBytes, formatSpeed, formatHertz } from '../utils/formatters';
 
 export const useFormatter = (locale: string) => {

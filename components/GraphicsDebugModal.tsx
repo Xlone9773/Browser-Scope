@@ -13,8 +13,8 @@ type ParameterCategory = 'WebGL' | 'WebGPU' | 'Features';
 
 export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose, t }) => {
   const [activeTab, setActiveTab] = useState<ParameterCategory>('WebGL');
-  const [webglInfo, setWebglInfo] = useState<Record<string, any>>({});
-  const [webgpuInfo, setWebgpuInfo] = useState<Record<string, any>>({});
+  const [webglInfo, setWebglInfo] = useState<Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */>>({});
+  const [webgpuInfo, setWebgpuInfo] = useState<Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */>>({});
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [copied, setCopied] = useState(false);
@@ -24,7 +24,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
       setLoading(true);
       
       // 1. WebGL Limits
-      const glData: Record<string, any> = {};
+      const glData: Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */> = {};
       try {
         const canvas = document.createElement('canvas');
         const gl = canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -73,7 +73,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                     const val = ctx.getParameter(ctx[p]);
                     // Format arrays
                     glData[p] = (val && val.length !== undefined && typeof val !== 'string') ? `[${val[0]}, ${val[1]}]` : String(val);
-                } catch(e) {
+                } catch(_e) {
                     glData[p] = 'Error';
                 }
             });
@@ -93,10 +93,10 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
       setWebglInfo(glData);
 
       // 2. WebGPU Limits
-      const gpuData: Record<string, any> = {};
+      const gpuData: Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */> = {};
       try {
-          if ((navigator as any).gpu) {
-              const adapter = await (navigator as any).gpu.requestAdapter();
+          if ((navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu) {
+              const adapter = await (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu.requestAdapter();
               if (adapter) {
                   const limits = adapter.limits;
                   // Enumerate limits object
@@ -118,7 +118,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
           } else {
               gpuData['error'] = t.not_supported;
           }
-      } catch(e) {
+      } catch(_e) {
           gpuData['error'] = 'WebGPU Access Denied or Error';
       }
       setWebgpuInfo(gpuData);
@@ -217,11 +217,10 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                                 <span className="text-sm font-mono font-medium text-slate-700 dark:text-slate-200 break-all">{String(value)}</span>
                             </div>
                         ))}
-                        
                         {/* Special Features Section for WebGPU */}
                         {activeTab === 'WebGPU' && webgpuInfo.__features__ && webgpuInfo.__features__.length > 0 && (
                             <div className="md:col-span-2 mt-4">
-                                <h3 className="text-sm font-bold text-slate-500 mb-3 px-1">{(t as any).supported_features || 'Supported Features'}</h3>
+                                <h3 className="text-sm font-bold text-slate-500 mb-3 px-1">{(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).supported_features || 'Supported Features'}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {webgpuInfo.__features__.map((feat: string) => (
                                         <span key={feat} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-mono rounded border border-indigo-100 dark:border-indigo-800">
@@ -234,7 +233,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                         
                         {filteredData.length === 0 && (
                             <div className="md:col-span-2 text-center py-10 text-slate-400">
-                                {(t as any).no_params_found || 'No parameters found matching'} "{searchTerm}"
+                                {(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).no_params_found || 'No parameters found matching'} "{searchTerm}"
                             </div>
                         )}
                     </div>

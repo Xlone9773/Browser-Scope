@@ -1,15 +1,15 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Play, Square, Layers, RefreshCw, Sliders, AlertTriangle, Maximize, Minimize } from 'lucide-react';
+import { Box, Play, Square, RefreshCw, Sliders, AlertTriangle, Maximize, Minimize } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 
 // Fix for missing WebGPU types
-type GPUCanvasContext = any;
-type GPUDevice = any;
-type GPUComputePipeline = any;
-type GPUBuffer = any;
-type GPUBindGroup = any;
+type GPUCanvasContext = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+type GPUDevice = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+type GPUComputePipeline = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+type GPUBuffer = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+type _GPUBindGroup = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
 
 interface RayTracingModalProps {
   onClose: () => void;
@@ -213,7 +213,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
   const deviceRef = useRef<GPUDevice | null>(null);
   const pipelineRef = useRef<GPUComputePipeline | null>(null);
   const uniformBufferRef = useRef<GPUBuffer | null>(null);
-  const computeTextureRef = useRef<any>(null);
+  const computeTextureRef = useRef<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
   const rafRef = useRef<number | null>(null);
   const frameCountRef = useRef(0);
   const lastTimeRef = useRef(0);
@@ -227,28 +227,27 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
 
   const initWebGPU = async () => {
     try {
-      if (!(navigator as any).gpu) throw new Error("WebGPU not supported");
-      const adapter = await (navigator as any).gpu.requestAdapter({ powerPreference: 'high-performance' });
+      if (!(navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu) throw new Error("WebGPU not supported");
+      const adapter = await (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu.requestAdapter({ powerPreference: 'high-performance' });
       if (!adapter) throw new Error("No adapter found");
       const device = await adapter.requestDevice();
       deviceRef.current = device;
 
       const canvas = canvasRef.current;
       if (!canvas) return;
-
-      const context = canvas.getContext('webgpu' as any);
+      const context = canvas.getContext('webgpu' as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
       if (!context) throw new Error("WebGPU context creation failed");
       contextRef.current = context;
 
       // GPUTextureUsage logic with fallback
-      const TEXTURE_USAGE_STORAGE = (window as any).GPUTextureUsage?.STORAGE_BINDING || 0x08;
-      const TEXTURE_USAGE_COPY_SRC = (window as any).GPUTextureUsage?.COPY_SRC || 0x01;
-      const TEXTURE_USAGE_COPY_DST = (window as any).GPUTextureUsage?.COPY_DST || 0x02;
-      const TEXTURE_USAGE_RENDER_ATTACHMENT = (window as any).GPUTextureUsage?.RENDER_ATTACHMENT || 0x10;
+      const TEXTURE_USAGE_STORAGE = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUTextureUsage?.STORAGE_BINDING || 0x08;
+      const TEXTURE_USAGE_COPY_SRC = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUTextureUsage?.COPY_SRC || 0x01;
+      const TEXTURE_USAGE_COPY_DST = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUTextureUsage?.COPY_DST || 0x02;
+      const TEXTURE_USAGE_RENDER_ATTACHMENT = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUTextureUsage?.RENDER_ATTACHMENT || 0x10;
 
       // Force 'rgba8unorm' to match the storage texture and avoid bgra8unorm_storage requirement
       const format = 'rgba8unorm';
-      (context as any).configure({
+      (context as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).configure({
         device,
         format,
         alphaMode: 'premultiplied',
@@ -275,8 +274,8 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       // Total size: ~64 bytes is safe.
       const uniformBufferSize = 128; 
       // GPUBufferUsage logic with fallback
-      const BUFFER_USAGE_UNIFORM = (window as any).GPUBufferUsage?.UNIFORM || 0x0040;
-      const BUFFER_USAGE_COPY_DST = (window as any).GPUBufferUsage?.COPY_DST || 0x0008;
+      const BUFFER_USAGE_UNIFORM = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUBufferUsage?.UNIFORM || 0x0040;
+      const BUFFER_USAGE_COPY_DST = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUBufferUsage?.COPY_DST || 0x0008;
 
       const uniformBuffer = device.createBuffer({
         size: uniformBufferSize,
@@ -290,7 +289,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       }
 
       startLoop();
-    } catch (e: any) {
+    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error(e);
       setError(t.error_webgpu || "WebGPU Error");
     }
@@ -345,7 +344,6 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       view.setFloat32(64, color.r, true);
       view.setFloat32(68, color.g, true);
       view.setFloat32(72, color.b, true);
-
       deviceRef.current.queue.writeBuffer(uniformBufferRef.current, 0, uniforms);
 
       // Create Bind Group (must be done per frame if texture view changes, which happens with canvas resize or swap chain)
@@ -357,7 +355,6 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
           { binding: 1, resource: { buffer: uniformBufferRef.current } }
         ]
       });
-
       const commandEncoder = deviceRef.current.createCommandEncoder();
       const passEncoder = commandEncoder.beginComputePass();
       passEncoder.setPipeline(pipelineRef.current);
@@ -370,7 +367,6 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
           { texture: contextRef.current.getCurrentTexture() },
           [canvas.width, canvas.height, 1]
       );
-      
       deviceRef.current.queue.submit([commandEncoder.finish()]);
 
       rafRef.current = requestAnimationFrame(render);

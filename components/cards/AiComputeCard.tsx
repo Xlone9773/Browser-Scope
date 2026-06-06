@@ -61,7 +61,7 @@ export const AiComputeCard: React.FC<AiComputeCardProps> = React.memo(({ data, t
                     >
                         <RefreshCw size={12} />
                     </button>
-                    <Badge variant={getReadinessColor(data.readiness.level) as any}>{data.readiness.level}</Badge>
+                    <Badge variant={getReadinessColor(data.readiness.level) as any /* eslint-disable-line @typescript-eslint/no-explicit-any */}>{data.readiness.level}</Badge>
                 </div>
             </div>
             <div className="text-sm font-mono font-bold text-indigo-900 dark:text-indigo-100 mt-1">

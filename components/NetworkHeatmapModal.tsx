@@ -1,12 +1,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Globe, Play, Square, Activity, ArrowLeft, BarChart2, AlertCircle, Zap, RefreshCw, LayoutDashboard } from 'lucide-react';
+import { Globe, Play, Square, Activity, ArrowLeft, Zap, LayoutDashboard } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 import { measureLatency, LATENCY_REGIONS, LatencyResult, LatencyRegion } from '../services/detectors/globalLatency';
 import { WorldMap } from './heatmap/WorldMap';
 import { TraceGraph } from './heatmap/TraceGraph';
-import { formatNumber } from '../utils/formatters';
+
 
 interface NetworkHeatmapModalProps {
   onClose: () => void;

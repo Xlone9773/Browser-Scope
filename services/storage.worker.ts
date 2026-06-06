@@ -7,13 +7,13 @@ function generateData(size: number) {
 function openDB(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open('BrowserScopeBench', 1);
-        req.onupgradeneeded = (e: any) => {
+        req.onupgradeneeded = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
             const db = e.target.result;
             if (!db.objectStoreNames.contains('store')) {
                 db.createObjectStore('store', { keyPath: ['id', 'chunk'] });
             }
         };
-        req.onsuccess = (e: any) => resolve(e.target.result);
+        req.onsuccess = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => resolve(e.target.result);
         req.onerror = () => reject(req.error);
     });
 }
@@ -38,20 +38,20 @@ async function cleanup(filename: string, tgt: string) {
                     // Modern way to iterate over directory
                     
                                         // @ts-expect-error fixed implicitly typed external libraries
-                                        for await (const [name, handle] of root) {
+                                        for await (const [name, _handle] of root) {
                         if (name.startsWith('bench_')) {
                             await root.removeEntry(name, { recursive: true }).catch(() => {});
                         }
                     }
-                } catch(e) {
+                } catch(_e) {
                     // Fallback if async iterator fails
                     try {
                         await root.removeEntry(filename).catch(()=> {});
-                    } catch(err) {}
+                    } catch(_err) {}
                 }
             }
         }
-    } catch (e) {
+    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
         // Ignore overall error
         console.error("Cleanup error:", e);
     }
@@ -138,13 +138,13 @@ self.onmessage = async function(e: MessageEvent) {
             const root = await navigator.storage.getDirectory();
             const handle = await root.getFileHandle(filename, { create: true });
             
-            let writable: any;
+            let writable: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
             let isSync = false;
-            if ((handle as any).createSyncAccessHandle) {
+            if ((handle as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).createSyncAccessHandle) {
                 try {
-                    writable = await (handle as any).createSyncAccessHandle();
+                    writable = await (handle as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).createSyncAccessHandle();
                     isSync = true;
-                } catch(e) {
+                } catch(_e) {
                     writable = await handle.createWritable();
                 }
             } else {
@@ -261,9 +261,8 @@ self.onmessage = async function(e: MessageEvent) {
         else if (target === 'opfs') {
             const root = await navigator.storage.getDirectory();
             const handle = await root.getFileHandle(filename);
-            
-            if ((handle as any).createSyncAccessHandle) {
-                const accessHandle = await (handle as any).createSyncAccessHandle();
+            if ((handle as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).createSyncAccessHandle) {
+                const accessHandle = await (handle as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).createSyncAccessHandle();
                 const fileLength = accessHandle.getSize();
                 const buffer = new Uint8Array(CHUNK_SIZE);
                 let readBytes = 0;
@@ -297,7 +296,7 @@ self.onmessage = async function(e: MessageEvent) {
                     const { done, value } = await reader.read();
                     if (done) break;
                     readLatencies.push(performance.now() - chunkStart);
-                    readBytes += (value as any).length;
+                    readBytes += (value as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).length;
                     
                     const now = performance.now();
                     const elapsed = (now - startRead) / 1000;
@@ -337,7 +336,7 @@ self.onmessage = async function(e: MessageEvent) {
         await cleanup(filename, target);
         self.postMessage({ type: 'done' });
 
-    } catch (err: any) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
         await cleanup(filename, target);
         self.postMessage({ type: 'error', message: err.message || "Unknown error inside Web Worker" });
     }

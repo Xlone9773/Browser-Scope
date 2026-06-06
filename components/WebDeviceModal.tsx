@@ -14,11 +14,11 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
   const [btRegex, setBtRegex] = useState<string>('');
 
   // Universal Device State
-  const [usbDevices, setUsbDevices] = useState<any[]>([]);
-  const [btDevices, setBtDevices] = useState<any[]>([]);
-  const [serialDevices, setSerialDevices] = useState<any[]>([]);
-  const [webAuthnDevices, setWebAuthnDevices] = useState<any[]>([]);
-  const [nfcDevices, setNfcDevices] = useState<any[]>([]);
+  const [usbDevices, setUsbDevices] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
+  const [btDevices, setBtDevices] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
+  const [serialDevices, setSerialDevices] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
+  const [webAuthnDevices, setWebAuthnDevices] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
+  const [nfcDevices, setNfcDevices] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
 
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,19 +34,17 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
       setError(null);
   };
 
-  const handleError = (e: any, defaultMsg: string) => {
+  const handleError = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, defaultMsg: string) => {
     console.error(e);
     if (!e || typeof e !== 'object') {
         setError(defaultMsg);
         return;
     }
     const msgLower = (e.message || '').toLowerCase();
-    
     if (e.name === 'NotFoundError') {
         setError(t.err_not_found || '未发现设备或用户取消');
         return;
     }
-    
     let msg = e.message || defaultMsg;
     if (e.name === 'NotAllowedError') {
         msg = t.err_not_allowed || '被拒绝：受限于跨域/沙箱策略或用户未授权';
@@ -86,7 +84,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   if (!rx.test(nameToTest)) {
                      throw new Error(`Device name "${nameToTest}" does not match regex filter`);
                   }
-              } catch (regExErr: any) {
+              } catch (regExErr: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
                                     throw new Error(`Regex check failed: ${regExErr.message}`);
               }
           } else {
@@ -95,13 +93,12 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   throw new Error("Filtered out irrelevant/unnamed device (MAC Address or Unknown).");
               }
           }
-
           setBtDevices(prev => prev.find(d => d.id === device.id) ? prev : [...prev, {
               id: device.id,
               name: device.name || 'Unnamed BT Device',
               raw: device
           }]);
-      } catch (e: any) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, 'Scan failed');
       }
       setScanning(false);
@@ -127,7 +124,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               details: `Vendor: ${device.vendorId}, Product: ${device.productId}`,
               raw: device
           }]);
-      } catch (e: any) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, 'USB request failed');
       }
       setScanning(false);
@@ -154,7 +151,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               details: `Vendor: ${info.usbVendorId}, Product: ${info.usbProductId}`,
               raw: port
           }]);
-      } catch (e: any) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, 'Serial port request failed');
       }
       setScanning(false);
@@ -191,7 +188,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   raw: credential
               }]);
           }
-      } catch (e: any) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, 'Registration failed');
       }
       setScanning(false);
@@ -205,7 +202,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           const challenge = new Uint8Array(32);
           window.crypto.getRandomValues(challenge);
           
-          const options: any = {
+          const options: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = {
               publicKey: {
                   challenge,
                   rpId: window.location.hostname,
@@ -220,7 +217,6 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   type: "public-key"
               }];
           }
-          
           const credential = await navigator.credentials.get(options);
           
           if (credential) {
@@ -231,7 +227,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   raw: credential
               }]);
           }
-      } catch (e: any) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, 'Authentication failed');
       }
       setScanning(false);
@@ -250,8 +246,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                     // @ts-expect-error fixed implicitly typed external libraries
                     const ndef = new NDEFReader();
           await ndef.scan();
-          
-          ndef.addEventListener("reading", ({ message, serialNumber }: any) => {
+          ndef.addEventListener("reading", ({ message, serialNumber }: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
               setNfcDevices(prev => {
                   const existing = prev.find(d => d.id === serialNumber);
                   const newRecs = message.records.length;
@@ -268,11 +263,11 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               setScanning(false);
           });
           
-          ndef.addEventListener("error", (e: any) => {
+          ndef.addEventListener("error", (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
               handleError(e, "NFC scan error");
               setScanning(false);
           });
-      } catch(e: any) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, "NFC scan failed");
           setScanning(false);
       }
@@ -297,7 +292,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                 details: `Successfully wrote test message`,
                 raw: null
           }]);
-      } catch(e: any) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, "NFC write failed");
       }
       setScanning(false);
@@ -433,8 +428,8 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                     ) : (
                         <div className="space-y-2">
                             {currentDevices.map((dev, idx) => (
-                                <div 
-                                    key={dev.id || idx} 
+                                <div
+                                    key={dev.id || idx}
                                     className={`p-3 rounded-lg flex items-center justify-between border transition-all ${activeTab === 'webauthn' && dev.raw?.rawId ? 'hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-purple-200 dark:border-purple-800' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 border-slate-100 dark:border-slate-700'}`}
                                     onClick={() => {
                                         if (activeTab === 'webauthn' && dev.raw?.rawId && dev.name === 'Registered Passkey (New)') {

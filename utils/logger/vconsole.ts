@@ -1,5 +1,5 @@
-export async function loadVConsole(store: any) {
-  const win = window as any;
+export async function loadVConsole(store: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+  const win = window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
   if (win.vConsole) {
     try {
       win.vConsole.show();
@@ -18,7 +18,7 @@ export async function loadVConsole(store: any) {
     }
     const VConsole = (await import("vconsole")).default;
     const isDark = document.documentElement.classList.contains("dark");
-    win.vConsole = new (VConsole as any)({
+    win.vConsole = new (VConsole as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)({
       theme: isDark ? "dark" : "light",
     });
     try {
@@ -46,7 +46,7 @@ export async function loadVConsole(store: any) {
 }
 
 export function unloadVConsole() {
-  const win = window as any;
+  const win = window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
   if (win.vConsole) {
     try {
       win.vConsole.destroy();

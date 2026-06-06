@@ -1,13 +1,13 @@
 
 import React from 'react';
-import { Fingerprint, Monitor, Wifi, Cpu, Layers, Globe, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { Fingerprint, Monitor, Wifi, Cpu, Layers, Globe, ShieldCheck } from 'lucide-react';
 import { FingerprintScore } from '../types';
 import { Modal } from './ui/Modal';
 
 interface ScoreModalProps {
   scoreData: FingerprintScore;
   onClose: () => void;
-  t: any;
+  t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
 }
 
 export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t }) => {
@@ -110,7 +110,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
         fullHeight={true} 
         noPadding={true}
     >
-        {({ close }) => (
+        {({ close: _close }) => (
             <div className="flex flex-col lg:flex-row h-full bg-slate-50 dark:bg-slate-900 overflow-hidden">
                 
                 {/* Left Panel: Visuals (Fixed width on desktop) */}

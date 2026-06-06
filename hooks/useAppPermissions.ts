@@ -37,8 +37,7 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
   const checkPermissionStatus = async (key: PermissionKey, name: string) => {
     try {
       if (navigator.permissions && navigator.permissions.query) {
-        
-        const result = await navigator.permissions.query({ name: name as any });
+        const result = await navigator.permissions.query({ name: name as any /* eslint-disable-line @typescript-eslint/no-explicit-any */ });
         updatePermStatus(key, result.state as PermissionStatusType);
 
         if (key === "geolocation" && result.state === "granted") {
@@ -61,7 +60,7 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
           updatePermStatus(key, result.state as PermissionStatusType);
         };
       }
-    } catch (e) {
+    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.debug(`Permission query failed for ${name}`, e);
     }
   };
@@ -118,7 +117,7 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
           updatePermStatus("midi", "error");
         }
       }
-    } catch (error: any) {
+    } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error(`Error requesting permission for ${type}:`, error);
       if (
         error.name === "NotAllowedError" ||

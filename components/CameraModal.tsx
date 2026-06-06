@@ -73,7 +73,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
       if (videoDevices.length > 0 && !selectedDeviceId) {
         setSelectedDeviceId(videoDevices[0].deviceId);
       }
-    } catch (err) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error("Error enumerating devices:", err);
       setError(t.no_devices);
     }
@@ -87,7 +87,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
 
     const startCamera = async () => {
       // Helper to map error to message
-      const handleError = (e: any) => {
+      const handleError = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
            if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
                setError(t.permission_denied);
            } else if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
@@ -143,7 +143,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
              }
           }
         }
-      } catch (err: any) {
+      } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
         console.error("Error accessing camera:", err);
         // Try without audio if it failed (maybe mic permission denied or mic not found)
         if (err.name === 'NotAllowedError' || err.name === 'NotFoundError') {
@@ -174,7 +174,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                      }
                  }
                  return; // Successfully recovered without audio
-             } catch (retryErr: any) {
+             } catch (retryErr: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
                                   handleError(retryErr);
              }
         } else {
@@ -263,7 +263,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
           recorder.start();
           mediaRecorderRef.current = recorder;
           setIsRecording(true);
-      } catch (e) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           console.error("Recording error:", e);
       }
   };

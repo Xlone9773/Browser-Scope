@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Smartphone, ChevronDown, ChevronRight } from 'lucide-react';
+import { Smartphone } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation, Language } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';

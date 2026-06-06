@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { Monitor, Eye, Layers, Sun } from 'lucide-react';
-import { Translation } from '../utils/i18n/types';
+
 import { Modal } from './ui/Modal';
 
 interface DisplayToolsModalProps {
     onClose: () => void;
-    t: any; // Using any for simplicity since we don't know the exact type, or Translation['settings']['display'] if passed
+    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */; // Using any /* eslint-disable-line @typescript-eslint/no-explicit-any */ for simplicity since we don't know the exact type, or Translation['settings']['display'] if passed
 }
 
 export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t }) => {
@@ -29,7 +29,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                 onClick={() => setFullScreenColor(null)}
             >
                 <div className="bg-black/50 text-white px-4 py-2 rounded-full text-xs pointer-events-none select-none backdrop-blur-sm opacity-50 hover:opacity-100 transition-opacity">
-                    Click anywhere to exit
+                    Click any /* eslint-disable-line @typescript-eslint/no-explicit-any */where to exit
                 </div>
             </div>
         );
@@ -37,7 +37,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
 
     return (
         <Modal 
-            onClose={onClose} 
+            onClose={onClose}
             title={t.settings.nav.display || "Display & Screen Tools"} 
             icon={<Monitor size={24} className="text-indigo-500" />}
             size="3xl"

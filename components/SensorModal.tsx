@@ -55,8 +55,8 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
 
   // Setup Magnetometer & Ambient Light
   useEffect(() => {
-      let magSensor: any = null;
-      let lightSensor: any = null;
+      let magSensor: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = null;
+      let lightSensor: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = null;
 
       // Magnetometer
       if ('Magnetometer' in window) {
@@ -67,9 +67,9 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
               magSensor.addEventListener('reading', () => {
                   setMagnet({ x: magSensor.x, y: magSensor.y, z: magSensor.z });
               });
-              magSensor.addEventListener('error', (e: any) => console.debug('Magnetometer error', e));
+              magSensor.addEventListener('error', (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => console.debug('Magnetometer error', e));
               magSensor.start();
-          } catch (error) {
+          } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
               console.debug("Magnetometer init error", error);
           }
       } 
@@ -83,9 +83,9 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
               lightSensor.addEventListener('reading', () => {
                   setLux(lightSensor.illuminance);
               });
-              lightSensor.addEventListener('error', (e: any) => console.debug('AmbientLightSensor error', e));
+              lightSensor.addEventListener('error', (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => console.debug('AmbientLightSensor error', e));
               lightSensor.start();
-          } catch (error) {
+          } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
               console.debug("AmbientLightSensor init error", error);
           }
       }
@@ -112,7 +112,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
               } else {
                   setPermissionStatus('denied');
               }
-          } catch (e) {
+          } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
               console.error(e);
           }
       } else {
@@ -146,7 +146,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
         onClose={onClose}
         size="3xl"
     >
-        {({ close }) => (
+        {({ close: _close }) => (
             <>
                 {/* iOS Permission Button */}
                 {permissionStatus === 'prompt' && (

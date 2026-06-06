@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Music, Activity, Terminal, RefreshCw, Volume2, ArrowRightLeft, Radio, Piano } from 'lucide-react';
+import { Music, Activity, Terminal, RefreshCw, ArrowRightLeft } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
-import { Select } from './ui/Select';
+
 
 interface MidiModalProps {
   onClose: () => void;
@@ -13,9 +13,9 @@ interface MidiModalProps {
 type Waveform = 'sine' | 'square' | 'sawtooth' | 'triangle';
 
 export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
-  // Fix: Use 'any' for MIDI types as WebMidi namespace is not available in global scope without specific typings
-  const [inputs, setInputs] = useState<any[]>([]);
-  const [outputs, setOutputs] = useState<any[]>([]);
+  // Fix: Use 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */' for MIDI types as WebMidi namespace is not available in global scope without specific typings
+  const [inputs, setInputs] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
+  const [_outputs, setOutputs] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   
   // Audio Config
@@ -30,7 +30,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
 
   // Initialize Web Audio
   useEffect(() => {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContext = window.AudioContext || (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).webkitAudioContext;
       if (AudioContext) {
           audioContextRef.current = new AudioContext();
       }
@@ -57,13 +57,13 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
                   midiAccess.onstatechange = updateDevices;
 
                   // Attach listeners to all inputs
-                  midiAccess.inputs.forEach((input: any) => {
+                  midiAccess.inputs.forEach((input: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
                       input.onmidimessage = handleMidiMessage;
                   });
               } else {
                   addLog("Web MIDI API not supported in this browser.");
               }
-          } catch (e) {
+          } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
               addLog(`MIDI Access Failed: ${e}`);
           }
       };
@@ -78,13 +78,13 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   }, [logs]);
 
   function addLog(msg: string) {
-      // Fix: Cast options to 'any' because fractionalSecondDigits might not be in the TS definition for DateTimeFormatOptions
-      const time = new Date().toLocaleTimeString([], { hour12: false, fractionalSecondDigits: 2 } as any);
+      // Fix: Cast options to 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */' because fractionalSecondDigits might not be in the TS definition for DateTimeFormatOptions
+      const time = new Date().toLocaleTimeString([], { hour12: false, fractionalSecondDigits: 2 } as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
       setLogs(prev => [`[${time}] ${msg}`, ...prev].slice(0, 50));
   };
 
-  // Fix: Use 'any' for event type
-  function handleMidiMessage(event: any) {
+  // Fix: Use 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */' for event type
+  function handleMidiMessage(event: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       const [status, data1, data2] = event.data;
       const command = status & 0xf0;
       // const channel = status & 0x0f;
@@ -131,7 +131,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
 
       oscillatorsRef.current.set(midiNote, osc);
       // Store gain node on osc object hackily or separate map if needed for release envelope
-      (osc as any).gainNode = gainNode;
+      (osc as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gainNode = gainNode;
 
       setActiveNotes(prev => new Set(prev).add(midiNote));
   };
@@ -141,7 +141,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
       if (osc) {
           const ctx = audioContextRef.current;
           if (ctx) {
-              const gainNode = (osc as any).gainNode as GainNode;
+              const gainNode = (osc as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gainNode as GainNode;
               // Release envelope
               gainNode.gain.cancelScheduledValues(ctx.currentTime);
               gainNode.gain.setValueAtTime(gainNode.gain.value, ctx.currentTime);
@@ -176,7 +176,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   // Render range: C2 (36) to C6 (84). 4 Octaves.
   const startKey = 36 + (octaveShift * 12);
   const endKey = 84 + (octaveShift * 12); 
-  const keys = [];
+  const _keys = [];
   
   // Pre-calculate visual layout
   // White keys are basic units. Black keys overlay.

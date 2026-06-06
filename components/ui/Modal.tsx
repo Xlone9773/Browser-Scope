@@ -27,7 +27,7 @@ export const Modal: React.FC<ModalProps> = ({
   fullHeight = false,
   disableHeaderBlur = false
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [_isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 

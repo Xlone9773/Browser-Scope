@@ -1,6 +1,6 @@
 // Simple MurmurHash3 implementation for custom component hashing
 function murmurhash3_32_gc(key: string, seed: number): number {
-  let remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
+  let remainder, bytes, h1, h1b, c1, _c1b, c2, _c2b, k1, i;
 
   remainder = key.length & 3; // key.length % 4
   bytes = key.length - remainder;
@@ -108,7 +108,7 @@ self.onmessage = function (e: MessageEvent) {
       const details = throughput + ' MB/s (' + duration.toFixed(0) + 'ms)';
       self.postMessage({ id, score, details, success: true });
     }
-  } catch (err: any) {
+  } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     self.postMessage({ id, type, success: false, error: err.message });
   }
 };

@@ -85,7 +85,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                 
                                 // @ts-expect-error fixed implicitly typed external libraries
                                 null.test();
-            } catch (e: any) {
+            } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
                 if (e.stack) {
                     const stackString = e.stack.toString();
                     if (navigator.userAgent.includes('Chrome') && stackString.includes('@')) {
@@ -147,7 +147,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                         addAnomaly('permission_mismatch', 'Permissions API contradicts Notification API', 'danger', 'trust', 25);
                     }
                 }
-            } catch (e) {
+            } catch (_e) {
                 // Ignore if query fails
             }
 

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { HardDrive, Trash2, Gauge, ChevronRight } from 'lucide-react';
+import { HardDrive, Trash2, Gauge } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
@@ -13,7 +13,7 @@ interface StorageCardProps {
 }
 
 export const StorageCard: React.FC<StorageCardProps> = React.memo(({ data, t }) => {
-  const { open } = useModalManager();
+  const { open: _open } = useModalManager();
 
   const trVal = (val: string | boolean | undefined | null) => {
     if (val === true) return t.values.supported;

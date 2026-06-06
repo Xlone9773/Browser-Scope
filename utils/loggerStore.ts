@@ -12,9 +12,9 @@ class LoggerStore {
   public isLoggingEnabled: boolean =
     localStorage.getItem("developer_logging_enabled") !== "false";
   public activeConsole: "none" | "vconsole" | "eruda" =
-    (localStorage.getItem("developer_active_console") as any) || "none";
+    (localStorage.getItem("developer_active_console") as any /* eslint-disable-line @typescript-eslint/no-explicit-any */) || "none";
   public defaultConsole: "vconsole" | "eruda" =
-    (localStorage.getItem("developer_default_console") as any) || "vconsole";
+    (localStorage.getItem("developer_default_console") as any /* eslint-disable-line @typescript-eslint/no-explicit-any */) || "vconsole";
   public erudaDefaultTab: string =
     localStorage.getItem("developer_eruda_default_tab") || "console";
   public vconsoleDefaultTab: string =
@@ -65,7 +65,7 @@ class LoggerStore {
       minute: "2-digit",
       second: "2-digit",
       fractionalSecondDigits: 3,
-    } as any);
+    } as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
     this.logs = [`[${time}] ${type}: ${detail}`, ...this.logs].slice(0, 500);
     this.persistLogs();
     this.notifyLogs();
@@ -125,9 +125,9 @@ class LoggerStore {
   setErudaDefaultTab(tab: string) {
     this.erudaDefaultTab = tab;
     localStorage.setItem("developer_eruda_default_tab", tab);
-    if (this.activeConsole === "eruda" && (window as any).eruda) {
+    if (this.activeConsole === "eruda" && (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda) {
       try {
-        (window as any).eruda.show(tab);
+        (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda.show(tab);
       } catch { /* ignore */ }
     }
     this.notifySettings();
@@ -136,9 +136,9 @@ class LoggerStore {
   setVconsoleDefaultTab(tab: string) {
     this.vconsoleDefaultTab = tab;
     localStorage.setItem("developer_vconsole_default_tab", tab);
-    if (this.activeConsole === "vconsole" && (window as any).vConsole) {
+    if (this.activeConsole === "vconsole" && (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).vConsole) {
       try {
-        (window as any).vConsole.showPlugin(tab);
+        (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).vConsole.showPlugin(tab);
       } catch { /* ignore */ }
     }
     this.notifySettings();

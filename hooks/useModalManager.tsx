@@ -1,12 +1,12 @@
 import React, { useState, lazy, useCallback } from "react";
 
 // Dynamic Import Helper
-const lazyWithoutDelay = (importFunc: () => Promise<any>) => {
+const lazyWithoutDelay = (importFunc: () => Promise<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>) => {
   return lazy(() => importFunc());
 };
 
 // Module Factories Definition
-const MODULE_FACTORIES: Record<string, () => Promise<any>> = {
+const MODULE_FACTORIES: Record<string, () => Promise<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>> = {
   camera: () =>
     import("../components/CameraModal").then((m) => ({
       default: m.CameraModal,
@@ -130,9 +130,9 @@ export const useModalManager = () => {
 
   // Lazy Components Registry (allows resetting/unloading)
   const [components, setComponents] = useState<
-    Record<string, React.ComponentType<any>>
+    Record<string, React.ComponentType<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>>
   >(() => {
-    const initial: Record<string, React.ComponentType<any>> = {};
+    const initial: Record<string, React.ComponentType<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>> = {};
     Object.keys(MODULE_FACTORIES).forEach((key) => {
       // Initial load uses standard lazy (or delay if preferred, but usually standard)
       initial[key] = lazy(MODULE_FACTORIES[key]);

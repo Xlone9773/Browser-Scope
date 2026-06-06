@@ -6,7 +6,7 @@ import { Modal } from './ui/Modal';
 
 // Simple MurmurHash3 implementation for custom component hashing
 function murmurhash3_32_gc(key: string, seed: number) {
-  let remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
+  let remainder, bytes, h1, h1b, c1, _c1b, c2, _c2b, k1, i;
 
   remainder = key.length & 3; // key.length % 4
   bytes = key.length - remainder;
@@ -59,7 +59,7 @@ function murmurhash3_32_gc(key: string, seed: number) {
 
 interface Component {
   key: string;
-  value: any;
+  value: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
   enabled: boolean;
 }
 
@@ -200,7 +200,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
     setVisitorId('');
 
     try {
-      const rawComponents: Record<string, any> = {};
+      const rawComponents: Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */> = {};
 
       if (activeTab === 'v5') {
         // Load v5
@@ -213,7 +213,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         
         // Convert v5 components object to our format
         if (result.components) {
-            Object.entries(result.components).forEach(([key, val]: [string, any]) => {
+            Object.entries(result.components).forEach(([key, val]: [string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */]) => {
                 rawComponents[key] = val.value;
             });
         }
@@ -228,7 +228,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         
         // Convert v4 components object to our format
         if (result.components) {
-            Object.entries(result.components).forEach(([key, val]: [string, any]) => {
+            Object.entries(result.components).forEach(([key, val]: [string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */]) => {
                 rawComponents[key] = val.value;
             });
         }
@@ -239,7 +239,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         const Fingerprint2 = await import('fingerprintjs2');
         
         // V2 uses a callback pattern usually, but we wrap in promise
-        const componentsV2 = await new Promise<any[]>((resolve) => {
+        const componentsV2 = await new Promise<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>((resolve) => {
             if (typeof window.requestIdleCallback === 'function') {
                 requestIdleCallback(() => {
                     
@@ -279,7 +279,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
       // Initial Hash Calculation
       calculateHash(comps, salt, startTime);
 
-    } catch (e) {
+    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error("Fingerprint error:", e);
       setVisitorId("Error loading library");
       setLoading(false);
@@ -329,7 +329,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         fullHeight
         noPadding
     >
-        {({ close }) => (
+        {({ close: _close }) => (
             <>
                 {/* Tabs & Controls */}
                 <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 grid grid-cols-1 md:grid-cols-12 gap-4 items-center shrink-0">

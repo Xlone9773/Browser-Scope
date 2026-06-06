@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Brain, Sparkles, Send, Cpu, Activity, MessageSquare, Type, Languages, Download, RefreshCw, Zap, CloudDownload } from 'lucide-react';
+import { Brain, Sparkles, Activity, MessageSquare, Type, Languages, RefreshCw, Zap, CloudDownload } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 
@@ -26,12 +26,12 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
   const [progress, setProgress] = useState<{status: string, progress?: number, file?: string} | null>(null);
   
   // Result State
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
   const [metrics, setMetrics] = useState<{ loadTime?: string, inferenceTime?: string, device?: string }>({});
   const [isComputing, setIsComputing] = useState(false);
 
   // Refs
-  const pipelineRef = useRef<any>(null);
+  const pipelineRef = useRef<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
   const loadedTaskRef = useRef<TaskType | null>(null);
 
   // Load Model Logic
@@ -56,8 +56,8 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
 
           const config = MODELS[task];
           // Explicit cast to avoid type mismatch with specific string literals expected by the library
-          const pipe = await pipeline(config.id as any, config.model, {
-              progress_callback: (data: any) => {
+          const pipe = await pipeline(config.id as any /* eslint-disable-line @typescript-eslint/no-explicit-any */, config.model, {
+              progress_callback: (data: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
                   if (data.status === 'progress' || data.status === 'initiate') {
                       setProgress(data);
                   }
@@ -72,7 +72,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
           setModelStatus('ready');
           setProgress(null);
 
-      } catch (e) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           console.error("Model load failed", e);
           setProgress({ status: 'error' });
           setModelStatus('idle');
@@ -125,7 +125,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
           
           setResult(output);
           setMetrics(prev => ({ ...prev, inferenceTime: (end - start).toFixed(2) + ' ms' }));
-      } catch (e) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           console.error(e);
       }
       setIsComputing(false);

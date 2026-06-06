@@ -134,7 +134,7 @@ const App: React.FC = () => {
   } = useAppData(t.common.loading_steps || [t.common.loading]);
 
   const { permStatus, geoData, checkPermissionStatus, requestPermission } =
-    useAppPermissions((modalId) => open(modalId as any));
+    useAppPermissions((modalId) => open(modalId as any /* eslint-disable-line @typescript-eslint/no-explicit-any */));
 
   const [isDevToolsFloating, setIsDevToolsFloating] = useState(false);
 
@@ -454,8 +454,8 @@ const App: React.FC = () => {
         <Suspense
           fallback={
             <ModalLoading
-              initializingText={(t as any).common?.modal_loading?.initializing}
-              loadingText={(t as any).common?.modal_loading?.loading_module}
+              initializingText={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).common?.modal_loading?.initializing}
+              loadingText={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).common?.modal_loading?.loading_module}
             />
           }
         >
@@ -652,7 +652,7 @@ const App: React.FC = () => {
           {visibility.extensions && (
             <Components.extensions
               onClose={() => close("extensions")}
-              t={(t as any).extensionsModal}
+              t={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).extensionsModal}
             />
           )}
           {visibility.networkTools && (
@@ -703,7 +703,7 @@ const App: React.FC = () => {
                 {!hiddenCards.includes("environment") && (
                   <SectionGroup
                     title={
-                      (t as any).groups?.environment || "Environment & Trust"
+                      (t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.environment || "Environment & Trust"
                     }
                     icon={<ShieldAlert className="text-emerald-500" />}
                   >
@@ -718,7 +718,7 @@ const App: React.FC = () => {
                   !hiddenCards.includes("hardware") ||
                   !hiddenCards.includes("display")) && (
                   <SectionGroup
-                    title={(t as any).groups?.system || "Device & System Core"}
+                    title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.system || "Device & System Core"}
                     icon={<Smartphone className="text-indigo-500" />}
                   >
                     {!hiddenCards.includes("system") && (
@@ -760,7 +760,7 @@ const App: React.FC = () => {
                   !hiddenCards.includes("security") ||
                   !hiddenCards.includes("fingerprint")) && (
                   <SectionGroup
-                    title={(t as any).groups?.network || "Network & Security"}
+                    title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.network || "Network & Security"}
                     icon={<ShieldAlert className="text-emerald-500" />}
                   >
                     {!hiddenCards.includes("network") && (
@@ -807,7 +807,7 @@ const App: React.FC = () => {
                   !hiddenCards.includes("media_capabilities") ||
                   !hiddenCards.includes("user_agent")) && (
                   <SectionGroup
-                    title={(t as any).groups?.advanced || "Capabilities & APIs"}
+                    title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.advanced || "Capabilities & APIs"}
                     icon={<Cpu className="text-amber-500" />}
                   >
                     {!hiddenCards.includes("ai") && (

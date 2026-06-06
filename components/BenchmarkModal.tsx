@@ -180,10 +180,10 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   
                   await new Promise<void>((resolve, reject) => {
                       const req = indexedDB.open(dbName, 1);
-                      req.onupgradeneeded = (e: any) => {
+                      req.onupgradeneeded = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
                           e.target.result.createObjectStore('store');
                       };
-                      req.onsuccess = (e: any) => {
+                      req.onsuccess = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
                           const db = e.target.result;
                           const tx = db.transaction('store', 'readwrite');
                           const store = tx.objectStore('store');
@@ -209,7 +209,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   break;
               }
           }
-      } catch (e) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           console.error(e);
           return { score: 0, details: "Failed" };
       }

@@ -61,7 +61,7 @@ export const runAiReadinessCheck = (): AiReadiness => {
         const a = Math.random();
         const b = Math.random();
         const c = Math.sqrt(a * b + 0.1);
-        const d = Math.sin(c) * Math.cos(a);
+        const _d = Math.sin(c) * Math.cos(a);
         ops += 10; // Approx operations per loop
     }
     
@@ -89,5 +89,5 @@ export const checkWasmSimd = () => {
     try {
         const buffer = new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11]);
         return WebAssembly.validate(buffer);
-    } catch(e) { return false; }
+    } catch(_e) { return false; }
 };

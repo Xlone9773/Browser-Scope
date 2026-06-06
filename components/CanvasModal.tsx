@@ -39,7 +39,7 @@ export const CanvasModal: React.FC<CanvasModalProps> = ({ imageSrc, onClose, t }
         onClose={onClose}
         size="4xl"
     >
-        {({ close }) => (
+        {({ close: _close }) => (
             <>
                 <div className="flex flex-col items-center">
                     {/* Replaced confusing texture with a clean, neutral background */}

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Cpu, Loader2 } from 'lucide-react';
+import { Cpu } from 'lucide-react';
 
 export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: string }> = ({ 
     initializingText = "Initializing", 

@@ -3,7 +3,7 @@ import React from 'react';
 import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
-import { Package, Power, Zap, ShieldCheck, Activity, CircleOff, Lock, Archive, Trash2 } from 'lucide-react';
+import { Package, Power, Zap, ShieldCheck, CircleOff, Lock, Trash2 } from 'lucide-react';
 
 export interface ModuleState {
     id: string;
@@ -173,7 +173,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                                     )}
                                 </td>
                                 <td className="px-5 py-4">
-                                    <Badge variant={getImpactColor(mod.impact) as any} icon={<Zap size={10} />}>
+                                    <Badge variant={getImpactColor(mod.impact) as any /* eslint-disable-line @typescript-eslint/no-explicit-any */} icon={<Zap size={10} />}>
                                         {getImpactLabel(mod.impact)}
                                     </Badge>
                                 </td>

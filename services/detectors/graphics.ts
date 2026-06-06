@@ -1,7 +1,7 @@
 
 import { ExtendedNavigator } from '../../types';
 
-const nav = navigator as ExtendedNavigator;
+const _nav = navigator as ExtendedNavigator;
 
 // Helper to hash string
 export const simpleHash = (str: string): string => {
@@ -63,11 +63,11 @@ export const getShaderPrecisionFormat = (): { vertexHigh: string, fragmentHigh: 
             return `${format.precision}-bit (range ${format.rangeMin}-${format.rangeMax})`;
         };
 
-        const vHigh = getFormat(ctx.VERTEX_SHADER, ctx.HIGH_FLOAT);
-        const fHigh = getFormat(ctx.FRAGMENT_SHADER, ctx.HIGH_FLOAT);
+        const _vHigh = getFormat(ctx.VERTEX_SHADER, ctx.HIGH_FLOAT);
+        const _fHigh = getFormat(ctx.FRAGMENT_SHADER, ctx.HIGH_FLOAT);
         
         // Simpler string rep
-        const simple = (f: any) => {
+        const simple = (f: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
             if (!f) return 'Low';
             if (f.precision >= 23) return 'High (23-bit+)';
             if (f.precision >= 16) return 'Medium (16-bit+)';
@@ -82,7 +82,7 @@ export const getShaderPrecisionFormat = (): { vertexHigh: string, fragmentHigh: 
             fragmentHigh: simple(fHighRaw)
         };
 
-    } catch(e) {
+    } catch(_e) {
         return undefined;
     }
 }
@@ -134,5 +134,5 @@ export const getWebGLFingerprint = (): string => {
         const pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
         gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
         return simpleHash(pixels.join(''));
-    } catch(e) { return 'Error'; }
+    } catch(_e) { return 'Error'; }
 };

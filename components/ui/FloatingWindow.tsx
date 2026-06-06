@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Maximize2, Move, Minus } from 'lucide-react';
+import { Move, Minus } from 'lucide-react';
 
 interface FloatingWindowProps {
     title: string;
