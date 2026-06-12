@@ -24,8 +24,7 @@ export async function loadEruda(store: any /* eslint-disable-line @typescript-es
     const erudaTiming = (await import("eruda-timing")).default;
     eruda.add(erudaTiming);
     
-    try { const erudaDom = (await import("eruda-dom")).default; eruda.add(erudaDom); } catch { /* ignore */ }
-    try { const erudaCode = (await import("eruda-code")).default; eruda.add(erudaCode); } catch { /* ignore */ }
+        try { const erudaCode = (await import("eruda-code")).default; eruda.add(erudaCode); } catch { /* ignore */ }
     try { const erudaMonitor = (await import("eruda-monitor")).default; eruda.add(erudaMonitor); } catch { /* ignore */ }
     try { const erudaFeatures = (await import("eruda-features")).default; eruda.add(erudaFeatures); } catch { /* ignore */ }
     try { const erudaFps = (await import("eruda-fps")).default; eruda.add(erudaFps); } catch { /* ignore */ }

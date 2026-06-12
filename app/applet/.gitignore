@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-ssr/
+.DS_Store
+*.local
+.env
+.env.*
+!.env.example
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+eslint-results.json
+eslint-report.json
+ts-errors.log
+eslint-full-results.log

@@ -20,7 +20,6 @@
     "cors": "^2.8.6",
     "eruda": "^3.4.3",
     "eruda-code": "^2.2.0",
-    "eruda-dom": "^2.0.0",
     "eruda-features": "^2.1.0",
     "eruda-fps": "^2.0.0",
     "eruda-monitor": "^1.1.2",
