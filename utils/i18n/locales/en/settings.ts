@@ -127,6 +127,7 @@ export const settings = {
         deadPixel: {
             title: "Dead Pixel Check",
             desc: "Displays solid colors fullscreen to help find dead or stuck pixels. Click anywhere to exit.",
+            click_to_exit: "Click anywhere to exit",
             colors: { red: "Red", green: "Green", blue: "Blue", white: "White", black: "Black" }
         },
         hdr: {

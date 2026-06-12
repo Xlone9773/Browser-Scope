@@ -127,6 +127,7 @@ export const settings = {
         deadPixel: {
             title: "壞點檢測",
             desc: "全螢幕顯示純色背景，幫助您尋找螢幕上的壞點或亮點。點擊任意處退出。",
+            click_to_exit: "點擊任意處退出",
             colors: { red: "紅", green: "綠", blue: "藍", white: "白", black: "黑" }
         },
         hdr: {

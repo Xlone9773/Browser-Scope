@@ -127,6 +127,7 @@ export const settings = {
         deadPixel: {
             title: "ドット抜け検出",
             desc: "全画面で単色背景を表示し、画面上のドット抜けや輝点を探すのを助けます。クリックで終了。",
+            click_to_exit: "クリックして終了",
             colors: { red: "赤", green: "緑", blue: "青", white: "白", black: "黒" }
         },
         hdr: {
