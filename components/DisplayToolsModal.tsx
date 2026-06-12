@@ -65,11 +65,11 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{displayT.deadPixel.desc}</p>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                    <button onClick={() => openFullScreen()} className="h-12 rounded-lg bg-red-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.red}</button>
-                    <button onClick={() => openFullScreen()} className="h-12 rounded-lg bg-green-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.green}</button>
-                    <button onClick={() => openFullScreen()} className="h-12 rounded-lg bg-blue-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.blue}</button>
-                    <button onClick={() => openFullScreen()} className="h-12 rounded-lg bg-white border border-slate-200 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-black font-bold text-xs">{displayT.deadPixel.colors.white}</button>
-                    <button onClick={() => openFullScreen()} className="h-12 rounded-lg bg-black hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.black}</button>
+                    <button onClick={() => openFullScreen('#ff0000')} className="h-12 rounded-lg bg-red-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.red}</button>
+                    <button onClick={() => openFullScreen('#00ff00')} className="h-12 rounded-lg bg-green-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.green}</button>
+                    <button onClick={() => openFullScreen('#0000ff')} className="h-12 rounded-lg bg-blue-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.blue}</button>
+                    <button onClick={() => openFullScreen('#ffffff')} className="h-12 rounded-lg bg-white border border-slate-200 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-black font-bold text-xs">{displayT.deadPixel.colors.white}</button>
+                    <button onClick={() => openFullScreen('#000000')} className="h-12 rounded-lg bg-black hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.black}</button>
                 </div>
             </div>
 
