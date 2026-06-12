@@ -41,6 +41,7 @@ export const dashboard = {
   },
 
   groups: {
+    all: "すべて",
     environment: "環境評価と耐改ざん性",
     system: "デバイスとシステムコア",
     network: "ネットワークとセキュリティ",

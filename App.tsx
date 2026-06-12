@@ -693,7 +693,7 @@ const App: React.FC = () => {
           <ErrorBoundary name="MainContent">
             
             {/* Navigation Tabs */}
-            <div className="flex space-x-2 mb-6 overflow-x-auto scrollbar-hide pb-2 border-b border-slate-200 dark:border-slate-800">
+            <div className="sticky top-0 z-20 pt-4 -mt-4 bg-[#f8fafc]/90 dark:bg-slate-900/90 backdrop-blur-md flex space-x-2 mb-6 overflow-x-auto scrollbar-hide pb-2 border-b border-slate-200 dark:border-slate-800">
               {[
                 { id: "all", label: (t as any).groups?.all || "All", icon: null },
                 { id: "environment", label: (t as any).groups?.environment || "Environment", icon: <ShieldAlert size={16} /> },

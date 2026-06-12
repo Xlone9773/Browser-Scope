@@ -42,6 +42,7 @@ export const dashboard = {
   },
 
   groups: {
+    all: "All",
     environment: "Environment & Trust",
     system: "Device & System Core",
     network: "Network & Security",

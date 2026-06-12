@@ -41,6 +41,7 @@ export const dashboard = {
   },
 
   groups: {
+    all: "全部",
     environment: "环境评估与防篡改",
     system: "设备系统与硬件",
     network: "网络与安全标识",

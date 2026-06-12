@@ -41,6 +41,7 @@ export const dashboard = {
   },
 
   groups: {
+    all: "Все",
     environment: "Среда и Доверие",
     system: "Ядро Устройства и Системы",
     network: "Сеть и Безопасность",
