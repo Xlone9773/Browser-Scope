@@ -187,6 +187,22 @@ export const useModalManager = () => {
   }, []);
 
   React.useEffect(() => {
+    // Preload all modules in background when idle to eliminate network delay on first open
+    const preloadTimer = setTimeout(() => {
+      const preload = (factory: () => Promise<unknown>) => factory().catch(() => {});
+      if ('requestIdleCallback' in window) {
+        Object.values(MODULE_FACTORIES).forEach(factory => {
+          (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).requestIdleCallback(() => preload(factory));
+        });
+      } else {
+        let delay = 0;
+        Object.values(MODULE_FACTORIES).forEach(factory => {
+          setTimeout(() => preload(factory), delay);
+          delay += 200;
+        });
+      }
+    }, 2500);
+
     const handleCloseAll = () => {
       closeAll();
     };
@@ -207,6 +223,7 @@ export const useModalManager = () => {
     window.addEventListener("open-ray-tracing", handleOpenRayTracing);
 
     return () => {
+      clearTimeout(preloadTimer);
       window.removeEventListener("close-all-modals", handleCloseAll);
       window.removeEventListener("open-heatmap", handleOpenHeatmap);
       window.removeEventListener("open-network-tools", handleOpenNetworkTools);

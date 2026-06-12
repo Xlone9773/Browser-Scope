@@ -28,8 +28,8 @@ export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: s
                 relative bg-white/90 dark:bg-slate-900/90 p-8 rounded-2xl shadow-2xl 
                 border border-white/20 dark:border-indigo-500/30 
                 flex flex-col items-center gap-6 
-                transform transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1)
-                ${isVisible ? 'scale-100 translate-y-0' : 'scale-90 translate-y-8'}
+                transform transition-all duration-200 ease-out
+                ${isVisible ? 'scale-100 translate-y-0' : 'scale-95 translate-y-2'}
             `}
         >
             {/* Background Glow Effect */}
