@@ -1,122 +1,64 @@
-import React, { useState, lazy, useCallback } from "react";
+import React, { useState, useCallback } from 'react';
+import { CameraModal } from '../components/CameraModal';
+import { AudioRecorderModal } from '../components/AudioRecorderModal';
+import { WebGLExtensionsModal } from '../components/WebGLExtensionsModal';
+import { CanvasModal } from '../components/CanvasModal';
+import { Base64Modal } from '../components/Base64Modal';
+import { AboutModal } from '../components/AboutModal';
+import { SensorModal } from '../components/SensorModal';
+import { ScoreModal } from '../components/ScoreModal';
+import { FingerprintModal } from '../components/FingerprintModal';
+import { SettingsModal } from '../components/SettingsModal';
+import { NetworkToolsModal } from '../components/NetworkToolsModal';
+import { DisplayToolsModal } from '../components/DisplayToolsModal';
+import { BenchmarkModal } from '../components/BenchmarkModal';
+import { HardwareToolsModal } from '../components/HardwareToolsModal';
+import { AiPlaygroundModal } from '../components/AiPlaygroundModal';
+import { GamepadToolModal } from '../components/GamepadToolModal';
+import { WebDeviceModal } from '../components/WebDeviceModal';
+import { VisionModal } from '../components/VisionModal';
+import { SpeedTestModal } from '../components/SpeedTestModal';
+import { ComputeStressModal } from '../components/ComputeStressModal';
+import { DeveloperTab } from '../components/settings/DeveloperTab';
+import { VideoDecodeModal } from '../components/VideoDecodeModal';
+import { GraphicsDebugModal } from '../components/GraphicsDebugModal';
+import { SpeechExplorerModal } from '../components/SpeechExplorerModal';
+import { MidiModal } from '../components/MidiModal';
+import { StorageBenchmarkModal } from '../components/StorageBenchmarkModal';
+import { NetworkHeatmapModal } from '../components/NetworkHeatmapModal';
+import { RayTracingModal } from '../components/RayTracingModal';
+import { ExtensionsModal } from '../components/ExtensionsModal';
 
-// Dynamic Import Helper
-const lazyWithoutDelay = (importFunc: () => Promise<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>) => {
-  return lazy(() => importFunc());
-};
-
-// Module Factories Definition
-const MODULE_FACTORIES: Record<string, () => Promise<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>> = {
-  camera: () =>
-    import("../components/CameraModal").then((m) => ({
-      default: m.CameraModal,
-    })),
-  audio: () =>
-    import("../components/AudioRecorderModal").then((m) => ({
-      default: m.AudioRecorderModal,
-    })),
-  webgl: () =>
-    import("../components/WebGLExtensionsModal").then((m) => ({
-      default: m.WebGLExtensionsModal,
-    })),
-  canvas: () =>
-    import("../components/CanvasModal").then((m) => ({
-      default: m.CanvasModal,
-    })),
-  base64: () =>
-    import("../components/Base64Modal").then((m) => ({
-      default: m.Base64Modal,
-    })),
-  about: () =>
-    import("../components/AboutModal").then((m) => ({ default: m.AboutModal })),
-  sensor: () =>
-    import("../components/SensorModal").then((m) => ({
-      default: m.SensorModal,
-    })),
-  score: () =>
-    import("../components/ScoreModal").then((m) => ({ default: m.ScoreModal })),
-  fingerprint: () =>
-    import("../components/FingerprintModal").then((m) => ({
-      default: m.FingerprintModal,
-    })),
-  settings: () =>
-    import("../components/SettingsModal").then((m) => ({
-      default: m.SettingsModal,
-    })),
-  networkTools: () =>
-    import("../components/NetworkToolsModal").then((m) => ({
-      default: m.NetworkToolsModal,
-    })),
-  displayTools: () =>
-    import("../components/DisplayToolsModal").then((m) => ({
-      default: m.DisplayToolsModal,
-    })),
-  benchmark: () =>
-    import("../components/BenchmarkModal").then((m) => ({
-      default: m.BenchmarkModal,
-    })),
-  tools: () =>
-    import("../components/HardwareToolsModal").then((m) => ({
-      default: m.HardwareToolsModal,
-    })),
-  ai: () =>
-    import("../components/AiPlaygroundModal").then((m) => ({
-      default: m.AiPlaygroundModal,
-    })),
-  gamepad: () =>
-    import("../components/GamepadToolModal").then((m) => ({
-      default: m.GamepadToolModal,
-    })),
-  webDevice: () =>
-    import("../components/WebDeviceModal").then((m) => ({
-      default: m.WebDeviceModal,
-    })),
-  vision: () =>
-    import("../components/VisionModal").then((m) => ({
-      default: m.VisionModal,
-    })),
-  speed: () =>
-    import("../components/SpeedTestModal").then((m) => ({
-      default: m.SpeedTestModal,
-    })),
-  compute: () =>
-    import("../components/ComputeStressModal").then((m) => ({
-      default: m.ComputeStressModal,
-    })),
-  developer: () =>
-    import("../components/settings/DeveloperTab").then((m) => ({
-      default: m.DeveloperTab,
-    })),
-  video: () =>
-    import("../components/VideoDecodeModal").then((m) => ({
-      default: m.VideoDecodeModal,
-    })),
-  graphics: () =>
-    import("../components/GraphicsDebugModal").then((m) => ({
-      default: m.GraphicsDebugModal,
-    })),
-  speech: () =>
-    import("../components/SpeechExplorerModal").then((m) => ({
-      default: m.SpeechExplorerModal,
-    })),
-  midi: () =>
-    import("../components/MidiModal").then((m) => ({ default: m.MidiModal })),
-  storageBench: () =>
-    import("../components/StorageBenchmarkModal").then((m) => ({
-      default: m.StorageBenchmarkModal,
-    })),
-  heatmap: () =>
-    import("../components/NetworkHeatmapModal").then((m) => ({
-      default: m.NetworkHeatmapModal,
-    })),
-  rayTracing: () =>
-    import("../components/RayTracingModal").then((m) => ({
-      default: m.RayTracingModal,
-    })),
-  extensions: () =>
-    import("../components/ExtensionsModal").then((m) => ({
-      default: m.ExtensionsModal,
-    })),
+const COMPONENTS: Record<string, React.ComponentType<any>> = {
+  camera: CameraModal,
+  audio: AudioRecorderModal,
+  webgl: WebGLExtensionsModal,
+  canvas: CanvasModal,
+  base64: Base64Modal,
+  about: AboutModal,
+  sensor: SensorModal,
+  score: ScoreModal,
+  fingerprint: FingerprintModal,
+  settings: SettingsModal,
+  networkTools: NetworkToolsModal,
+  displayTools: DisplayToolsModal,
+  benchmark: BenchmarkModal,
+  tools: HardwareToolsModal,
+  ai: AiPlaygroundModal,
+  gamepad: GamepadToolModal,
+  webDevice: WebDeviceModal,
+  vision: VisionModal,
+  speed: SpeedTestModal,
+  compute: ComputeStressModal,
+  developer: DeveloperTab,
+  video: VideoDecodeModal,
+  graphics: GraphicsDebugModal,
+  speech: SpeechExplorerModal,
+  midi: MidiModal,
+  storageBench: StorageBenchmarkModal,
+  heatmap: NetworkHeatmapModal,
+  rayTracing: RayTracingModal,
+  extensions: ExtensionsModal,
 };
 
 export const useModalManager = () => {
@@ -124,21 +66,9 @@ export const useModalManager = () => {
   const [visibility, setVisibility] = useState<Record<string, boolean>>({});
 
   // Track which modules have been loaded at least once
-  const [loadedModules, setLoadedModules] = useState<Set<string>>(
-    new Set(["settings"]),
-  );
+  const [loadedModules, setLoadedModules] = useState<Set<string>>(new Set(Object.keys(COMPONENTS)));
 
-  // Lazy Components Registry (allows resetting/unloading)
-  const [components, setComponents] = useState<
-    Record<string, React.ComponentType<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>>
-  >(() => {
-    const initial: Record<string, React.ComponentType<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>> = {};
-    Object.keys(MODULE_FACTORIES).forEach((key) => {
-      // Initial load uses standard lazy (or delay if preferred, but usually standard)
-      initial[key] = lazy(MODULE_FACTORIES[key]);
-    });
-    return initial;
-  });
+  const components = COMPONENTS;
 
   // Actions
   function setLoadedSet(id: string) {
@@ -159,49 +89,16 @@ export const useModalManager = () => {
   }, []);
 
   
-  const unload = useCallback(
-    (id: string) => {
-      // 1. Close
-      close(id);
-
-      // 2. Remove from loaded set
-      setLoadedModules((prev) => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
-
-      // 3. Reset lazy component with delay wrapper to show loading state on next open
-      if (MODULE_FACTORIES[id]) {
-        setComponents((prev) => ({
-          ...prev,
-          [id]: lazyWithoutDelay(MODULE_FACTORIES[id]),
-        }));
-      }
-    },
-    [close],
-  );
+  const unload = useCallback((id: string) => {
+    close(id);
+  }, [close]);
 
   const closeAll = useCallback(() => {
     setVisibility({});
   }, []);
 
   React.useEffect(() => {
-    // Preload all modules in background when idle to eliminate network delay on first open
-    const preloadTimer = setTimeout(() => {
-      const preload = (factory: () => Promise<unknown>) => factory().catch(() => {});
-      if ('requestIdleCallback' in window) {
-        Object.values(MODULE_FACTORIES).forEach(factory => {
-          (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).requestIdleCallback(() => preload(factory));
-        });
-      } else {
-        let delay = 0;
-        Object.values(MODULE_FACTORIES).forEach(factory => {
-          setTimeout(() => preload(factory), delay);
-          delay += 200;
-        });
-      }
-    }, 2500);
+    
 
     const handleCloseAll = () => {
       closeAll();
@@ -223,8 +120,7 @@ export const useModalManager = () => {
     window.addEventListener("open-ray-tracing", handleOpenRayTracing);
 
     return () => {
-      clearTimeout(preloadTimer);
-      window.removeEventListener("close-all-modals", handleCloseAll);
+            window.removeEventListener("close-all-modals", handleCloseAll);
       window.removeEventListener("open-heatmap", handleOpenHeatmap);
       window.removeEventListener("open-network-tools", handleOpenNetworkTools);
       window.removeEventListener("open-display-tools", handleOpenDisplayTools);
