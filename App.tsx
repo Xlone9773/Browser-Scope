@@ -90,6 +90,8 @@ const App: React.FC = () => {
   const { visibility, open, close, unload, loadedModules, Components } =
     useModalManager();
 
+  const [activeTab, setActiveTab] = useState<"all" | "environment" | "system" | "network" | "advanced">("all");
+
   const {
     lang,
     changeLang,
@@ -689,6 +691,31 @@ const App: React.FC = () => {
         {/* Main Content - Only render if data exists */}
         {data && (
           <ErrorBoundary name="MainContent">
+            
+            {/* Navigation Tabs */}
+            <div className="flex space-x-2 mb-6 overflow-x-auto scrollbar-hide pb-2 border-b border-slate-200 dark:border-slate-800">
+              {[
+                { id: "all", label: (t as any).groups?.all || "All", icon: null },
+                { id: "environment", label: (t as any).groups?.environment || "Environment", icon: <ShieldAlert size={16} /> },
+                { id: "system", label: (t as any).groups?.system || "System", icon: <Smartphone size={16} /> },
+                { id: "network", label: (t as any).groups?.network || "Network", icon: <ShieldAlert size={16} /> },
+                { id: "advanced", label: (t as any).groups?.advanced || "Advanced", icon: <Cpu size={16} /> }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-sm font-medium ${
+                    activeTab === tab.id
+                      ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                  }`}
+                >
+                  {tab.icon}
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </div>
+
             <Suspense
               fallback={
                 <div className="flex justify-center p-12">
@@ -700,7 +727,7 @@ const App: React.FC = () => {
                 className={`space-y-6 ${initialAnimationStyle === "slide-up" ? "anim-slide-up" : initialAnimationStyle === "fade" ? "anim-fade" : initialAnimationStyle === "fly-in" ? "anim-fly-in" : initialAnimationStyle === "zoom" ? "anim-zoom" : ""}`}
               >
                 {/* Group 0: Environment & Trust */}
-                {!hiddenCards.includes("environment") && (
+                {!hiddenCards.includes("environment") && (activeTab === "all" || activeTab === "environment") && (
                   <SectionGroup
                     title={
                       (t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.environment || "Environment & Trust"
@@ -716,7 +743,7 @@ const App: React.FC = () => {
                 {/* Group 1: Device & System */}
                 {(!hiddenCards.includes("system") ||
                   !hiddenCards.includes("hardware") ||
-                  !hiddenCards.includes("display")) && (
+                  !hiddenCards.includes("display")) && (activeTab === "all" || activeTab === "system") && (
                   <SectionGroup
                     title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.system || "Device & System Core"}
                     icon={<Smartphone className="text-indigo-500" />}
@@ -758,7 +785,7 @@ const App: React.FC = () => {
                 {/* Group 2: Network & Security */}
                 {(!hiddenCards.includes("network") ||
                   !hiddenCards.includes("security") ||
-                  !hiddenCards.includes("fingerprint")) && (
+                  !hiddenCards.includes("fingerprint")) && (activeTab === "all" || activeTab === "network") && (
                   <SectionGroup
                     title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.network || "Network & Security"}
                     icon={<ShieldAlert className="text-emerald-500" />}
@@ -805,7 +832,7 @@ const App: React.FC = () => {
                   !hiddenCards.includes("permissions") ||
                   !hiddenCards.includes("media_devices") ||
                   !hiddenCards.includes("media_capabilities") ||
-                  !hiddenCards.includes("user_agent")) && (
+                  !hiddenCards.includes("user_agent")) && (activeTab === "all" || activeTab === "advanced") && (
                   <SectionGroup
                     title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.advanced || "Capabilities & APIs"}
                     icon={<Cpu className="text-amber-500" />}
@@ -876,7 +903,7 @@ const App: React.FC = () => {
                   </SectionGroup>
                 )}
 
-                {!hiddenCards.includes("pwa") && (
+                {!hiddenCards.includes("pwa") && (activeTab === "all" || activeTab === "advanced") && (
                   <div className="anim-slide-up delay-100">
                     <PwaSection
                       isPwaInstalled={data.system.isPwaInstalled}
@@ -886,7 +913,7 @@ const App: React.FC = () => {
                   </div>
                 )}
 
-                {!hiddenCards.includes("features") && (
+                {!hiddenCards.includes("features") && (activeTab === "all" || activeTab === "advanced") && (
                   <div className="anim-slide-up delay-200">
                     <FeaturesSection features={data.features} t={t} />
                   </div>
