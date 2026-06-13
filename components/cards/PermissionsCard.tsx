@@ -27,8 +27,6 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js').catch(console.error);
-
         const handleMessage = (event: MessageEvent) => {
             if (event.data && event.data.type === 'NOTIFICATION_ACTION') {
                 setActionAlert({
