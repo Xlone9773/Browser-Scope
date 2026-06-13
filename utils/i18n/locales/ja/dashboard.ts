@@ -6,6 +6,13 @@ export const dashboard = {
   footer: "BrowserScope - ブラウザ能力検出ツール",
   refresh: "再検出",
   
+  
+  browserCard: {
+    title: "ブラウザ ID",
+    subtitle: "機能に基づいて推定された、現在使用されていると思われるブラウザ",
+    unknown: "不明なブラウザ"
+  },
+
   environment: {
     safe: "安全な環境",
     suspicious: "不審な環境",
@@ -36,7 +43,24 @@ export const dashboard = {
       os_mismatch: "UserAgentとPlatformのOSが一致しません",
       no_languages: "navigator.languagesが空です",
       permission_mismatch: "Permissions APIとNotification APIが競合しています",
-      engine_mismatch: "JSエンジンスタックがUserAgentと矛盾しています"
+      engine_mismatch: "JSエンジンスタックがUserAgentと矛盾しています",
+      webdriver_attr: "WebDriver HTML 属性が検出されました",
+      nightmarejs: "NightmareJS ランタイムが検出されました",
+      selenium: "Selenium コンポーネントが検出されました",
+      cdp_cdc: "CDP (Puppeteer/Chromedriver) 変数が検出されました",
+      languages_override: "Navigator Languages が改ざんされています",
+      no_plugins: "デスクトップブラウザにプラグインがありません",
+      fake_plugins: "偽装されたプラグイン配列が検出されました",
+      console_tampered: "Console メソッドがオーバーライドされています",
+      screen_tampered: "画面の有効サイズが物理サイズよりも大きいです（改ざんの疑い）",
+      native_override: "ネイティブ関数 toString がオーバーライドされています",
+      screen_zero: "画面サイズがゼロです",
+      low_color_depth: "不審な低色深度",
+      timezone_utc: "不審な UTC タイムゾーン（ヘッドレスでよく使用されます）",
+      arch_mismatch: "UA(ARM) とプラットフォーム(x86)アーキテクチャの不一致",
+      mobile_desktop_mismatch: "デスクトッププラットフォームでのモバイル UA",
+      hardware_anomaly: "モバイルデバイスのコア数が異常に多い",
+      touch_mismatch: "タッチポイントサポートがないモバイル UA"
     }
   },
 
@@ -45,7 +69,8 @@ export const dashboard = {
     environment: "環境評価と耐改ざん性",
     system: "デバイスとシステムコア",
     network: "ネットワークとセキュリティ",
-    advanced: "機能とAPI"
+    advanced: "機能とAPI",
+    browser: "ブラウザ"
   },
 
   sections: {

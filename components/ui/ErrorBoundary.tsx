@@ -40,16 +40,17 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private handleGlobalError = (event: ErrorEvent) => {
     if (this.props.name === "RootApp" && !this.state.hasError) {
+      const msg = event.message || (event.error && event.error.message) || "";
       if (
-        event.message &&
-        (event.message.includes("VConsole") ||
-          event.message.includes("vconsole") ||
-          event.message.includes("WebSocket closed without opened"))
+        msg.includes("VConsole") ||
+        msg.includes("vconsole") ||
+        msg.includes("WebSocket closed without opened") ||
+        msg.includes("Script error")
       )
         return;
       this.setState({
         hasError: true,
-        error: event.error || new Error(event.message),
+        error: event.error || new Error(msg),
         errorInfo: { componentStack: "Captured by Window Error Listener" },
       });
     }

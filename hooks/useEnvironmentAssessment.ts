@@ -102,9 +102,6 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
             }
 
             // Mime types and Plugins spoofing
-            if (navigator.plugins && navigator.plugins.length === 0 && navigator.mimeTypes && navigator.mimeTypes.length === 0 && /Chrome|Firefox/.test(navigator.userAgent) && !/Mobile/.test(navigator.userAgent)) {
-                 addAnomaly('no_plugins', 'Empty plugins array on desktop browser', 'suspicious', 'trust', 15);
-            }
             if (navigator.plugins && navigator.plugins.length > 0) {
                 let allValid = true;
                 for (let i = 0; i < navigator.plugins.length; i++) {
@@ -116,6 +113,14 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                 if (!allValid) {
                      addAnomaly('fake_plugins', 'Fake plugins array detected', 'danger', 'trust', 40);
                 }
+            }
+
+            // Window objects tampering
+            if (console.debug.toString().indexOf('native code') === -1) {
+                 addAnomaly('console_tampered', 'Console methods have been overridden', 'suspicious', 'trust', 15);
+            }
+            if (window.screen.width < window.screen.availWidth || window.screen.height < window.screen.availHeight) {
+                 addAnomaly('screen_tampered', 'Screen availability dimensions are larger than screen dimensions', 'danger', 'trust', 20);
             }
 
             // Function.prototype.toString tampering

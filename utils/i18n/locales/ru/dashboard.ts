@@ -6,6 +6,13 @@ export const dashboard = {
   footer: "BrowserScope - Инструмент анализа возможностей браузера",
   refresh: "Обновить данные",
   
+  
+  browserCard: {
+    title: "Идентификация браузера",
+    subtitle: "Текущий используемый браузер, оцененный по характеристикам",
+    unknown: "Неизвестный браузер"
+  },
+
   environment: {
     safe: "Среда безопасна",
     suspicious: "Подозрительная среда",
@@ -36,7 +43,24 @@ export const dashboard = {
       os_mismatch: "Несоответствие ОС в UserAgent и Platform",
       no_languages: "Отсутствуют языки в navigator",
       permission_mismatch: "Ответ Permissions API противоречит Notification API",
-      engine_mismatch: "Стек ошибок JS противоречит UserAgent"
+      engine_mismatch: "Стек ошибок JS противоречит UserAgent",
+      webdriver_attr: "Обнаружен HTML-атрибут WebDriver",
+      nightmarejs: "Обнаружена среда выполнения NightmareJS",
+      selenium: "Обнаружены компоненты Selenium",
+      cdp_cdc: "Обнаружена переменная CDP (Puppeteer/Chromedriver)",
+      languages_override: "Navigator Languages были подменены",
+      no_plugins: "Пустой массив плагинов в десктопном браузере",
+      fake_plugins: "Обнаружен поддельный массив плагинов",
+      console_tampered: "Методы Console были переопределены",
+      screen_tampered: "Доступные размеры экрана больше общих (Подозрение на подмену)",
+      native_override: "Нативная функция toString переопределена",
+      screen_zero: "Нулевые размеры экрана",
+      low_color_depth: "Подозрительно низкая глубина цвета",
+      timezone_utc: "Подозрительный часовой пояс UTC (часто используется в headless)",
+      arch_mismatch: "Несоответствие архитектуры UA (ARM) и платформы (x86)",
+      mobile_desktop_mismatch: "Мобильный UA на десктопной платформе",
+      hardware_anomaly: "Необычно большое количество ядер для мобильного устройства",
+      touch_mismatch: "Мобильный UA без поддержки сенсорных точек"
     }
   },
 
@@ -45,7 +69,8 @@ export const dashboard = {
     environment: "Среда и Доверие",
     system: "Ядро Устройства и Системы",
     network: "Сеть и Безопасность",
-    advanced: "Возможности и API"
+    advanced: "Возможности и API",
+    browser: "Браузер"
   },
 
   sections: {

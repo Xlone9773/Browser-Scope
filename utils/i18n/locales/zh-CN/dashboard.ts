@@ -6,6 +6,13 @@ export const dashboard = {
   footer: "BrowserScope - 浏览器能力检测工具",
   refresh: "重新检测",
 
+  
+  browserCard: {
+    title: "浏览器身份",
+    subtitle: "基于特征探测当前可能正在使用的浏览器",
+    unknown: "未知浏览器"
+  },
+
   environment: {
     safe: "环境安全",
     suspicious: "环境可能被篡改",
@@ -36,7 +43,24 @@ export const dashboard = {
       os_mismatch: "UA和Platform反应的操作系统不匹配",
       no_languages: "语言列表为空 (navigator.languages)",
       permission_mismatch: "Permissions API 与 Notification API 冲突",
-      engine_mismatch: "JS引擎堆栈格式与用户代理不符"
+      engine_mismatch: "JS引擎堆栈格式与用户代理不符",
+      webdriver_attr: "检测到 WebDriver HTML 属性",
+      nightmarejs: "检测到 NightmareJS 运行环境",
+      selenium: "检测到 Selenium 组件",
+      cdp_cdc: "检测到 CDP (Puppeteer/Chromedriver) 变量",
+      languages_override: "Navigator Languages 被篡改",
+      no_plugins: "桌面浏览器插件数组为空",
+      fake_plugins: "检测到伪造的插件数组",
+      console_tampered: "Console 控制台方法被重写",
+      screen_tampered: "屏幕可用尺寸大于屏幕总尺寸（涉嫌篡改）",
+      native_override: "原生函数 toString 被重写",
+      screen_zero: "屏幕尺寸为零",
+      low_color_depth: "可疑的低颜色深度",
+      timezone_utc: "可疑的 UTC 时区（通常在无头浏览器中使用）",
+      arch_mismatch: "UA(ARM) 与平台(x86)架构不匹配",
+      mobile_desktop_mismatch: "桌面平台上出现移动端 UA",
+      hardware_anomaly: "移动设备核心数异常偏高",
+      touch_mismatch: "移动端 UA 缺少触摸点支持"
     }
   },
 
@@ -45,7 +69,8 @@ export const dashboard = {
     environment: "环境评估与防篡改",
     system: "设备系统与硬件",
     network: "网络与安全标识",
-    advanced: "高级能力与特色接口"
+    advanced: "高级能力与特色接口",
+    browser: "浏览器"
   },
 
   sections: {

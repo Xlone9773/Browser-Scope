@@ -11,6 +11,7 @@ import { useModalManager } from "./hooks/useModalManager";
 // Components
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
+import { BrowserCard } from "./components/cards/BrowserCard";
 import { EnvironmentCard } from "./components/cards/EnvironmentCard";
 import { SystemCard } from "./components/cards/SystemCard";
 import { HardwareCard } from "./components/cards/HardwareCard";
@@ -90,7 +91,7 @@ const App: React.FC = () => {
   const { visibility, open, close, unload, loadedModules, Components } =
     useModalManager();
 
-  const [activeTab, setActiveTab] = useState<"all" | "environment" | "system" | "network" | "advanced">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "browser" | "environment" | "system" | "network" | "advanced">("all");
 
   const {
     lang,
@@ -696,6 +697,7 @@ const App: React.FC = () => {
             <div className="sticky top-0 z-20 pt-4 -mt-4 bg-[#f8fafc]/90 dark:bg-slate-900/90 backdrop-blur-md flex space-x-2 mb-6 overflow-x-auto scrollbar-hide pb-2 border-b border-slate-200 dark:border-slate-800">
               {[
                 { id: "all", label: (t as any).groups?.all || "All", icon: null },
+                { id: "browser", label: (t as any).groups?.browser || "Browser", icon: <Monitor size={16} /> },
                 { id: "environment", label: (t as any).groups?.environment || "Environment", icon: <ShieldAlert size={16} /> },
                 { id: "system", label: (t as any).groups?.system || "System", icon: <Smartphone size={16} /> },
                 { id: "network", label: (t as any).groups?.network || "Network", icon: <ShieldAlert size={16} /> },
@@ -736,6 +738,20 @@ const App: React.FC = () => {
                   >
                     <div className="col-span-1 md:col-span-2 lg:col-span-3">
                       <EnvironmentCard t={t} />
+                    </div>
+                  </SectionGroup>
+                )}
+
+                {/* Group 00: Browser Identity */}
+                {!hiddenCards.includes("browser") && (activeTab === "all" || activeTab === "browser") && (
+                  <SectionGroup
+                    title={
+                      (t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.browser || "Browser"
+                    }
+                    icon={<Monitor className="text-indigo-500" />}
+                  >
+                    <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                      <BrowserCard systemData={data.system} t={t} />
                     </div>
                   </SectionGroup>
                 )}

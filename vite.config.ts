@@ -31,6 +31,10 @@ export default defineConfig(({ mode }) => {
           injectManifest: {
             globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm}']
           },
+          devOptions: {
+            enabled: true,
+            type: 'module'
+          },
           manifest: {
             name: 'BrowserScope',
             short_name: 'Scope',

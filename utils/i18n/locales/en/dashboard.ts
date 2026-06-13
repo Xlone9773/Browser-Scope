@@ -7,6 +7,13 @@ export const dashboard = {
   footer: "BrowserScope - Device Intelligence Tool",
   refresh: "Refresh Data",
 
+  
+  browserCard: {
+    title: "Browser Identity",
+    subtitle: "Current actively used browser estimated by features",
+    unknown: "Unknown Browser"
+  },
+
   environment: {
     safe: "Environment Trusted",
     suspicious: "Suspicious Environment",
@@ -37,7 +44,24 @@ export const dashboard = {
       os_mismatch: "UserAgent vs Platform OS mismatch",
       no_languages: "No languages specified in navigator",
       permission_mismatch: "Permissions API response contradicts Notification API",
-      engine_mismatch: "JS Engine error stack format contradicts UserAgent claims"
+      engine_mismatch: "JS Engine error stack format contradicts UserAgent claims",
+      webdriver_attr: "WebDriver HTML attribute detected",
+      nightmarejs: "NightmareJS runtime detected",
+      selenium: "Selenium components detected",
+      cdp_cdc: "CDP (Puppeteer/Chromedriver) variable detected",
+      languages_override: "Navigator Languages tampered",
+      no_plugins: "Empty plugins array on desktop browser",
+      fake_plugins: "Fake plugins array detected",
+      console_tampered: "Console methods have been overridden",
+      screen_tampered: "Screen availability dimensions are larger than screen dimensions (Tampering)",
+      native_override: "Native function toString overridden",
+      screen_zero: "Screen dimensions are zero",
+      low_color_depth: "Suspiciously low color depth",
+      timezone_utc: "Suspicious UTC timezone (often used in headless)",
+      arch_mismatch: "ARM UA with x86 Platform mismatch",
+      mobile_desktop_mismatch: "Mobile UA on Desktop Platform",
+      hardware_anomaly: "Unusually high cores for mobile",
+      touch_mismatch: "Mobile UA without touch points"
     }
   },
 
@@ -46,7 +70,8 @@ export const dashboard = {
     environment: "Environment & Trust",
     system: "Device & System Core",
     network: "Network & Security",
-    advanced: "Capabilities & APIs"
+    advanced: "Capabilities & APIs",
+    browser: "Browser"
   },
 
   sections: {

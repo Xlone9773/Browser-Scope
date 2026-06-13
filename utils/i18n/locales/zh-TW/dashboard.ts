@@ -6,6 +6,13 @@ export const dashboard = {
   footer: "BrowserScope - 瀏覽器能力檢測工具",
   refresh: "重新檢測",
 
+  
+  browserCard: {
+    title: "瀏覽器身分",
+    subtitle: "基於特徵探測目前可能正在使用的瀏覽器",
+    unknown: "未知瀏覽器"
+  },
+
   environment: {
     safe: "環境安全",
     suspicious: "環境可能被篡改",
@@ -36,7 +43,24 @@ export const dashboard = {
       os_mismatch: "UA和Platform反應的操作系統不匹配",
       no_languages: "語言列表為空 (navigator.languages)",
       permission_mismatch: "Permissions API 與 Notification API 衝突",
-      engine_mismatch: "JS引擎堆棧格式與用戶代理不符"
+      engine_mismatch: "JS引擎堆棧格式與用戶代理不符",
+      webdriver_attr: "偵測到 WebDriver HTML 屬性",
+      nightmarejs: "偵測到 NightmareJS 執行環境",
+      selenium: "偵測到 Selenium 元件",
+      cdp_cdc: "偵測到 CDP (Puppeteer/Chromedriver) 變數",
+      languages_override: "Navigator Languages 被竄改",
+      no_plugins: "桌面瀏覽器外掛程式陣列為空",
+      fake_plugins: "偵測到偽造的外掛程式陣列",
+      console_tampered: "Console 控制台方法被覆寫",
+      screen_tampered: "螢幕可用尺寸大於螢幕總尺寸（涉嫌篡改）",
+      native_override: "原生函式 toString 被覆寫",
+      screen_zero: "螢幕尺寸為零",
+      low_color_depth: "可疑的低色彩深度",
+      timezone_utc: "可疑的 UTC 時區（通常在無頭瀏覽器中使用）",
+      arch_mismatch: "UA(ARM) 與平台(x86)架構不符",
+      mobile_desktop_mismatch: "桌面平台上出現行動端 UA",
+      hardware_anomaly: "行動裝置核心數異常偏高",
+      touch_mismatch: "行動端 UA 缺少觸控點支援"
     }
   },
 
@@ -45,7 +69,8 @@ export const dashboard = {
     environment: "環境評估與防篡改",
     system: "設備系統與硬體",
     network: "網路與安全標識",
-    advanced: "高級能力與特色介面"
+    advanced: "高級能力與特色介面",
+    browser: "瀏覽器"
   },
   
   sections: {
