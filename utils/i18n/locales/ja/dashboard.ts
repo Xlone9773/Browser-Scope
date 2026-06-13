@@ -32,7 +32,20 @@ export const dashboard = {
     bot: "不審な自動化",
     tampering: "指紋の改ざん",
     inconsistency: "ハードウェア/OSの不一致",
-    anomaliesList: {
+    
+  notifications: {
+    outdated: {
+      title: "古いブラウザが検出されました",
+      message: "ブラウザのバージョンが古すぎます。高度なスキャン機能の一部が正しく機能しない可能性があります。アップグレードをお勧めします。"
+    },
+    update: {
+      title: "更新が利用可能です",
+      message: "最新のブラウザ指紋定義を含む新しいバージョンが利用可能です。精度を保つため、更新をお勧めします。",
+      action: "今すぐ更新"
+    }
+  },
+
+  anomaliesList: {
       webdriver: "WebDriverシグナル検出 (自動ブラウザ)",
       headless_dims: "異常なウィンドウサイズ (幅/高さが0)",
       missing_chrome: "Chrome環境に window.chrome がありません",

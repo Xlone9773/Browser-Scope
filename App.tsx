@@ -8,7 +8,8 @@ import { ModalLoading } from "./components/ui/ModalLoading";
 import { SectionGroup } from "./components/ui/SectionGroup";
 import { useModalManager } from "./hooks/useModalManager";
 
-// Components
+import { AppNotification } from "./components/ui/AppNotification";
+import { useRegisterSW } from "virtual:pwa-register/react";
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
 import { BrowserCard } from "./components/cards/BrowserCard";
@@ -128,6 +129,18 @@ const App: React.FC = () => {
   const t = translations[lang];
 
   const {
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW({
+    onRegistered(r) {
+      console.log('SW Registered');
+    },
+    onRegisterError(error) {
+      console.log('SW registration error', error);
+    },
+  });
+
+  const {
     data,
     showLoader,
     fadeLoader,
@@ -135,6 +148,20 @@ const App: React.FC = () => {
     fetchData,
     handleAiRetest,
   } = useAppData(t.common.loading_steps || [t.common.loading]);
+
+  const [isOutdated, setIsOutdated] = useState(false);
+  useEffect(() => {
+    if (data && data.system && data.system.browserName && data.system.browserVersion) {
+      const name = data.system.browserName.toLowerCase();
+      const version = parseInt(data.system.browserVersion, 10);
+      if (!isNaN(version)) {
+        if (name.includes('chrome') && version < 100) setIsOutdated(true);
+        if (name.includes('firefox') && version < 100) setIsOutdated(true);
+        if (name.includes('safari') && version < 15) setIsOutdated(true);
+        if (name.includes('edge') && version < 100) setIsOutdated(true);
+      }
+    }
+  }, [data]);
 
   const { permStatus, geoData, checkPermissionStatus, requestPermission } =
     useAppPermissions((modalId) => open(modalId as any /* eslint-disable-line @typescript-eslint/no-explicit-any */));
@@ -688,6 +715,33 @@ const App: React.FC = () => {
           onOpenBenchmark={() => open("benchmark")}
           collapseHeader={collapseHeader}
         />
+
+        {/* Notifications */}
+        {(needRefresh || isOutdated) && (
+          <div className="flex flex-col gap-4 w-full">
+            {needRefresh && (
+              <AppNotification 
+                type="success"
+                title={(t as any).notifications?.update?.title || "Update Available"}
+                message={(t as any).notifications?.update?.message || "A new version of BrowserScope is available."}
+                action={{
+                  label: (t as any).notifications?.update?.action || "Update Now",
+                  onClick: () => updateServiceWorker(true)
+                }}
+                onClose={() => setNeedRefresh(false)}
+              />
+            )}
+
+            {isOutdated && (
+              <AppNotification 
+                type="warning"
+                title={(t as any).notifications?.outdated?.title || "Legacy Browser Detected"}
+                message={(t as any).notifications?.outdated?.message || "Your browser version is too old. Some advanced scanning features might be unavailable or inaccurate."}
+                onClose={() => setIsOutdated(false)}
+              />
+            )}
+          </div>
+        )}
 
         {/* Main Content - Only render if data exists */}
         {data && (

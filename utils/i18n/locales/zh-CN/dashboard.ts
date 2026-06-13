@@ -32,7 +32,20 @@ export const dashboard = {
     bot: "可疑的脚本或自动化",
     tampering: "指纹篡改",
     inconsistency: "硬件/系统不匹配",
-    anomaliesList: {
+    
+  notifications: {
+    outdated: {
+      title: "检测到过时浏览器",
+      message: "您的浏览器版本过旧，部分高级探测功能可能无法按预期正常工作甚至出现错误，建议升级。"
+    },
+    update: {
+      title: "发现新版本",
+      message: "发现新版浏览器指纹特征库和探测逻辑，建议立即拉取增量更新以保持准确性。",
+      action: "立即升级"
+    }
+  },
+
+  anomaliesList: {
       webdriver: "检测到WebDriver (自动化浏览器)",
       headless_dims: "无头浏览器尺寸异常 (宽/高为0)",
       missing_chrome: "Chrome环境下丢失 window.chrome",

@@ -84,19 +84,19 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                   });
                   await reg.showNotification(title, {
                       body,
-                      icon: notifIcon || '/icon512_maskable.png',
-                      badge: '/icon-192x192.png',
+                      icon: notifIcon || '/vite.svg',
+                      badge: '/vite.svg',
                       actions: mappedActions
                   } as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
                   return;
               }
           }
           // Fallback if ServiceWorker is not available or getRegistration fails
-          const n = new Notification(title, { body, icon: notifIcon || '/icon512_maskable.png' });
+          const n = new Notification(title, { body, icon: notifIcon || '/vite.svg' });
           n.onclick = () => { window.focus(); };
       } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           console.error('Notification error:', error);
-          const n = new Notification(title, { body, icon: notifIcon || '/icon512_maskable.png' });
+          const n = new Notification(title, { body, icon: notifIcon || '/vite.svg' });
           n.onclick = () => { window.focus(); };
       }
     } else {

@@ -33,7 +33,20 @@ export const dashboard = {
     bot: "Suspicious Automation",
     tampering: "Fingerprint Tampering",
     inconsistency: "Hardware/OS Inconsistency",
-    anomaliesList: {
+    
+  notifications: {
+    outdated: {
+      title: "Legacy Browser Detected",
+      message: "Your browser version is too old. Some advanced scanning features might be unavailable or inaccurate."
+    },
+    update: {
+      title: "Update Available",
+      message: "A new version of BrowserScope is available for download with the latest fingerprinting definitions.",
+      action: "Update Now"
+    }
+  },
+
+  anomaliesList: {
       webdriver: "WebDriver signal detected (Automated browser)",
       headless_dims: "Window dimensions are zero (Typical of headless browsers)",
       missing_chrome: "Missing window.chrome object in Chrome browser",
