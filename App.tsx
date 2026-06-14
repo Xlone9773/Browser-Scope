@@ -89,7 +89,7 @@ import {
 import { useAppData } from "./hooks/useAppData";
 
 const App: React.FC = () => {
-  const { visibility, open, close, Components } =
+  const { visibility, open, close, unload, loadedModules, Components } =
     useModalManager();
 
   const [activeTab, setActiveTab] = useState<"all" | "browser" | "environment" | "system" | "network" | "advanced">("all");
@@ -168,9 +168,263 @@ const App: React.FC = () => {
 
   const [isDevToolsFloating, setIsDevToolsFloating] = useState(false);
 
-  // No longer building moduleStates since statically imported modules can't be unloaded from memory.
   const settingsTitle = t.settings?.title;
   const developerTabTitle = t.settings?.nav?.developer;
+
+  const modalStates: any[] = [
+    {
+      id: "settings",
+      name: settingsTitle,
+      isOpen: visibility.settings,
+      setOpen: (v: boolean) => (v ? open("settings") : close("settings")),
+      impact: "Low",
+      isSystem: true,
+      isLoaded: true,
+    },
+    {
+       id: "camera",
+       name: t.cameraTool?.title || "Camera Tool",
+       isOpen: visibility.camera,
+       setOpen: (v: boolean) => (v ? open("camera") : close("camera")),
+       impact: "High",
+       onUnload: () => unload("camera"),
+       isLoaded: loadedModules.has("camera"),
+    },
+    {
+       id: "audio",
+       name: t.audioTool?.title || "Audio Recorder",
+       isOpen: visibility.audio,
+       setOpen: (v: boolean) => (v ? open("audio") : close("audio")),
+       impact: "Medium",
+       onUnload: () => unload("audio"),
+       isLoaded: loadedModules.has("audio"),
+    },
+    {
+       id: "webgl",
+       name: t.webglTool?.title || "WebGL Extensions",
+       isOpen: visibility.webgl,
+       setOpen: (v: boolean) => (v ? open("webgl") : close("webgl")),
+       impact: "Low",
+       onUnload: () => unload("webgl"),
+       isLoaded: loadedModules.has("webgl"),
+    },
+    {
+       id: "canvas",
+       name: "Canvas Detail",
+       isOpen: visibility.canvas,
+       setOpen: (v: boolean) => (v ? open("canvas") : close("canvas")),
+       impact: "Low",
+       onUnload: () => unload("canvas"),
+       isLoaded: loadedModules.has("canvas"),
+    },
+    {
+       id: "base64",
+       name: t.base64Tool?.title || "Base64 Inspector",
+       isOpen: visibility.base64,
+       setOpen: (v: boolean) => (v ? open("base64") : close("base64")),
+       impact: "Low",
+       onUnload: () => unload("base64"),
+       isLoaded: loadedModules.has("base64"),
+    },
+    {
+       id: "about",
+       name: t.aboutModal?.title || "About",
+       isOpen: visibility.about,
+       setOpen: (v: boolean) => (v ? open("about") : close("about")),
+       impact: "Low",
+       onUnload: () => unload("about"),
+       isLoaded: loadedModules.has("about"),
+    },
+    {
+       id: "sensor",
+       name: t.sensorModal?.sensor_title || "Sensors",
+       isOpen: visibility.sensor,
+       setOpen: (v: boolean) => (v ? open("sensor") : close("sensor")),
+       impact: "Medium",
+       onUnload: () => unload("sensor"),
+       isLoaded: loadedModules.has("sensor"),
+    },
+    {
+       id: "score",
+       name: t.scoreModal?.score_details_title || "Score Details",
+       isOpen: visibility.score,
+       setOpen: (v: boolean) => (v ? open("score") : close("score")),
+       impact: "Low",
+       onUnload: () => unload("score"),
+       isLoaded: loadedModules.has("score"),
+    },
+    {
+       id: "fingerprint",
+       name: t.fingerprintModal?.title || "Fingerprint Inspector",
+       isOpen: visibility.fingerprint,
+       setOpen: (v: boolean) => (v ? open("fingerprint") : close("fingerprint")),
+       impact: "Medium",
+       onUnload: () => unload("fingerprint"),
+       isLoaded: loadedModules.has("fingerprint"),
+    },
+    {
+       id: "benchmark",
+       name: t.benchmarkModal?.title || "Benchmark",
+       isOpen: visibility.benchmark,
+       setOpen: (v: boolean) => (v ? open("benchmark") : close("benchmark")),
+       impact: "High",
+       onUnload: () => unload("benchmark"),
+       isLoaded: loadedModules.has("benchmark"),
+    },
+    {
+       id: "tools",
+       name: t.hardwareToolsModal?.title || "Hardware Tools",
+       isOpen: visibility.tools,
+       setOpen: (v: boolean) => (v ? open("tools") : close("tools")),
+       impact: "Medium",
+       onUnload: () => unload("tools"),
+       isLoaded: loadedModules.has("tools"),
+    },
+    {
+       id: "ai",
+       name: t.aiPlayground?.title || "AI Playground",
+       isOpen: visibility.ai,
+       setOpen: (v: boolean) => (v ? open("ai") : close("ai")),
+       impact: "High",
+       onUnload: () => unload("ai"),
+       isLoaded: loadedModules.has("ai"),
+    },
+    {
+       id: "gamepad",
+       name: t.gamepadTool?.title || "Gamepad API Test",
+       isOpen: visibility.gamepad,
+       setOpen: (v: boolean) => (v ? open("gamepad") : close("gamepad")),
+       impact: "Medium",
+       onUnload: () => unload("gamepad"),
+       isLoaded: loadedModules.has("gamepad"),
+    },
+    {
+       id: "webDevice",
+       name: t.webDevice?.title || "Web Device API",
+       isOpen: visibility.webDevice,
+       setOpen: (v: boolean) => (v ? open("webDevice") : close("webDevice")),
+       impact: "Medium",
+       onUnload: () => unload("webDevice"),
+       isLoaded: loadedModules.has("webDevice"),
+    },
+    {
+       id: "vision",
+       name: t.visionModal?.title || "Computer Vision Tests",
+       isOpen: visibility.vision,
+       setOpen: (v: boolean) => (v ? open("vision") : close("vision")),
+       impact: "High",
+       onUnload: () => unload("vision"),
+       isLoaded: loadedModules.has("vision"),
+    },
+    {
+       id: "speed",
+       name: t.speedTest?.title || "Speed Test",
+       isOpen: visibility.speed,
+       setOpen: (v: boolean) => (v ? open("speed") : close("speed")),
+       impact: "Medium",
+       onUnload: () => unload("speed"),
+       isLoaded: loadedModules.has("speed"),
+    },
+    {
+       id: "compute",
+       name: t.computeStress?.title || "Compute Stress Test",
+       isOpen: visibility.compute,
+       setOpen: (v: boolean) => (v ? open("compute") : close("compute")),
+       impact: "High",
+       onUnload: () => unload("compute"),
+       isLoaded: loadedModules.has("compute"),
+    },
+    {
+       id: "video",
+       name: t.actions?.open_video_test || "Video Decoder Analysis",
+       isOpen: visibility.video,
+       setOpen: (v: boolean) => (v ? open("video") : close("video")),
+       impact: "High",
+       onUnload: () => unload("video"),
+       isLoaded: loadedModules.has("video"),
+    },
+    {
+       id: "graphics",
+       name: t.graphicsModal?.title || "Graphics Debug",
+       isOpen: visibility.graphics,
+       setOpen: (v: boolean) => (v ? open("graphics") : close("graphics")),
+       impact: "Medium",
+       onUnload: () => unload("graphics"),
+       isLoaded: loadedModules.has("graphics"),
+    },
+    {
+       id: "speech",
+       name: t.speechModal?.title || "Speech synthesis APIs",
+       isOpen: visibility.speech,
+       setOpen: (v: boolean) => (v ? open("speech") : close("speech")),
+       impact: "Medium",
+       onUnload: () => unload("speech"),
+       isLoaded: loadedModules.has("speech"),
+    },
+    {
+       id: "midi",
+       name: t.midiModal?.title || "Web MIDI API Analysis",
+       isOpen: visibility.midi,
+       setOpen: (v: boolean) => (v ? open("midi") : close("midi")),
+       impact: "Low",
+       onUnload: () => unload("midi"),
+       isLoaded: loadedModules.has("midi"),
+    },
+    {
+       id: "storageBench",
+       name: t.storageBenchmark?.title || "Storage Benchmark",
+       isOpen: visibility.storageBench,
+       setOpen: (v: boolean) => (v ? open("storageBench") : close("storageBench")),
+       impact: "High",
+       onUnload: () => unload("storageBench"),
+       isLoaded: loadedModules.has("storageBench"),
+    },
+    {
+       id: "heatmap",
+       name: t.heatmap?.title || "Global Network Heatmap",
+       isOpen: visibility.heatmap,
+       setOpen: (v: boolean) => (v ? open("heatmap") : close("heatmap")),
+       impact: "Medium",
+       onUnload: () => unload("heatmap"),
+       isLoaded: loadedModules.has("heatmap"),
+    },
+    {
+       id: "rayTracing",
+       name: t.rayTracing?.title || "WebGL Ray Tracing Test",
+       isOpen: visibility.rayTracing,
+       setOpen: (v: boolean) => (v ? open("rayTracing") : close("rayTracing")),
+       impact: "High",
+       onUnload: () => unload("rayTracing"),
+       isLoaded: loadedModules.has("rayTracing"),
+    },
+    {
+       id: "extensions",
+       name: "Browser Extensions",
+       isOpen: visibility.extensions,
+       setOpen: (v: boolean) => (v ? open("extensions") : close("extensions")),
+       impact: "Low",
+       onUnload: () => unload("extensions"),
+       isLoaded: loadedModules.has("extensions"),
+    },
+    {
+       id: "networkTools",
+       name: t.settings?.nav?.network || "Network Tools",
+       isOpen: visibility.networkTools,
+       setOpen: (v: boolean) => (v ? open("networkTools") : close("networkTools")),
+       impact: "Medium",
+       onUnload: () => unload("networkTools"),
+       isLoaded: loadedModules.has("networkTools"),
+    },
+    {
+       id: "displayTools",
+       name: t.settings?.nav?.display || "Display Tools",
+       isOpen: visibility.displayTools,
+       setOpen: (v: boolean) => (v ? open("displayTools") : close("displayTools")),
+       impact: "Low",
+       onUnload: () => unload("displayTools"),
+       isLoaded: loadedModules.has("displayTools"),
+    },
+  ];
 
   useEffect(() => {
     fetchData();
@@ -343,6 +597,7 @@ const App: React.FC = () => {
               setHiddenCards={updateHiddenCards}
               isDevToolsFloating={isDevToolsFloating}
               setDevToolsFloating={setIsDevToolsFloating}
+              moduleStates={modalStates}
             />
           )}
 

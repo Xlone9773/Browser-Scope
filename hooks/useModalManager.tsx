@@ -64,19 +64,35 @@ const COMPONENTS: Record<string, React.ComponentType<any>> = {
 export const useModalManager = () => {
   // Visibility State for all modals
   const [visibility, setVisibility] = useState<Record<string, boolean>>({});
+  const [loadedModules, setLoadedModules] = useState<Set<string>>(new Set(Object.keys(COMPONENTS)));
 
   const components = COMPONENTS;
 
   const open = useCallback((id: string) => {
     setVisibility((prev) => ({ ...prev, [id]: true }));
+    setLoadedModules((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
   }, []);
 
   const close = useCallback((id: string) => {
     setVisibility((prev) => ({ ...prev, [id]: false }));
   }, []);
+
   const closeAll = useCallback(() => {
     setVisibility({});
   }, []);
+
+  const unload = useCallback((id: string) => {
+    close(id);
+    setLoadedModules((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }, [close]);
 
   React.useEffect(() => {
     
@@ -118,6 +134,8 @@ export const useModalManager = () => {
     open,
     close,
     closeAll,
+    unload,
+    loadedModules,
     Components: components,
   };
 };
