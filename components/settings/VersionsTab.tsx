@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Package, GitCommit, Search, RefreshCw, Layers } from 'lucide-react';
+import { Package, GitCommit, Search, RefreshCw, Layers, Zap } from 'lucide-react';
 import { ModuleState } from './ModulesTab';
+import packageJson from '../../package.json';
 
 interface VersionsTabProps {
   t: any;
@@ -26,6 +27,14 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
     }
     setTimeout(() => setIsPulling(false), 2000); 
   };
+
+  const coreLibraries = [
+    { name: "React", version: packageJson.dependencies.react.replace(/[\^~]/, '') },
+    { name: "Tailwind CSS", version: packageJson.devDependencies["tailwindcss"].replace(/[\^~]/, '') },
+    { name: "Vite", version: packageJson.devDependencies.vite.replace(/[\^~]/, '') },
+    { name: "Lucide Icons", version: packageJson.dependencies["lucide-react"].replace(/[\^~]/, '') },
+    { name: "FingerprintJS", version: packageJson.dependencies["@fingerprintjs/fingerprintjs"].replace(/[\^~]/, '') }
+  ];
 
   return (
     <div className="space-y-6">
@@ -63,6 +72,21 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
           <div className="px-3 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400 text-sm font-mono rounded-md shadow-sm border border-indigo-200 dark:border-indigo-500/30">
             v{appVersion}
           </div>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 px-1 flex items-center gap-2">
+          <Zap size={16} />
+          {t?.libraries || "Core Libraries"}
+        </h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {coreLibraries.map((lib) => (
+            <div key={lib.name} className="p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 flex flex-col hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+              <span className="font-medium text-sm text-slate-800 dark:text-slate-200">{lib.name}</span>
+              <span className="text-xs font-mono text-slate-500 dark:text-slate-400 mt-1">v{lib.version}</span>
+            </div>
+          ))}
         </div>
       </div>
 

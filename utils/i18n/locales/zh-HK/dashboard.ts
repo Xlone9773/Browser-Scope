@@ -86,6 +86,22 @@ export const dashboard = {
     browser: "瀏覽器"
   },
   
+  quickSummary: {
+    allClear: "未檢測到關鍵風險",
+    allClearDesc: "您的瀏覽器環境看起來是標準的且安全的。",
+    webrtcLeaked: "WebRTC IP 洩漏",
+    webrtcLeakedDesc: "您的真實 IP 地址可能正透過 WebRTC 暴露。",
+    botDetected: "檢測到機械人/自動化",
+    botDetectedDesc: "有強烈訊號顯示當前處於自動化環境（如無頭瀏覽器）。",
+    insecureContext: "不安全的上下文",
+    insecureContextDesc: "當前連線未使用現代 HTTPS 進行加密保護。",
+    adBlocker: "防廣告擴充已啟用",
+    adBlockerDesc: "阻擋廣告或私隱追踪的擴充套件正在修改網絡請求。",
+    privacyBrowser: "檢測到私隱瀏覽器",
+    privacyBrowserDesc: "您正在使用注重私隱的瀏覽器（如 Brave 或 Tor）。",
+    cookiesDisabled: "Cookie 已停用",
+    cookiesDisabledDesc: "第一方 Cookie 已被停用，可能導致部份網站無法正常運作。"
+  },
   sections: {
     environment: "環境分析",
     system: "系統環境",

@@ -86,6 +86,22 @@ export const dashboard = {
     browser: "Браузер"
   },
 
+  quickSummary: {
+    allClear: "Критические угрозы не обнаружены",
+    allClearDesc: "Среда вашего браузера выглядит стандартной и безопасной.",
+    webrtcLeaked: "Утечка IP WebRTC",
+    webrtcLeakedDesc: "Ваш реальный IP-адрес может быть раскрыт через WebRTC.",
+    botDetected: "Обнаружен бот / автоматизация",
+    botDetectedDesc: "Сильные сигналы указывают на автоматизированную среду (например, Headless-браузер).",
+    insecureContext: "Небезопасный контекст",
+    insecureContextDesc: "Соединение не защищено современным HTTPS.",
+    adBlocker: "Блокировщик рекламы включён",
+    adBlockerDesc: "Блокировщик рекламы или отслеживания изменяет сетевые запросы.",
+    privacyBrowser: "Обнаружен приватный браузер",
+    privacyBrowserDesc: "Вы используете браузер, ориентированный на конфиденциальность (например, Brave или Tor).",
+    cookiesDisabled: "Cookie отключены",
+    cookiesDisabledDesc: "Основные cookie отключены, что может привести к сбоям на некоторых сайтах."
+  },
   sections: {
     environment: "Анализ среды",
     system: "Системная среда",

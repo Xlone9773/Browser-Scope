@@ -86,6 +86,22 @@ export const dashboard = {
     browser: "ブラウザ"
   },
 
+  quickSummary: {
+    allClear: "重大なリスクは検出されませんでした",
+    allClearDesc: "ブラウザ環境は標準的で安全です。",
+    webrtcLeaked: "WebRTC IP 漏洩の可能性",
+    webrtcLeakedDesc: "WebRTCを通じて実際のIPアドレスが公開されている可能性があります。",
+    botDetected: "ボット/自動化を検出",
+    botDetectedDesc: "自動化環境（ヘッドレスブラウザなど）の強いシグナルがあります。",
+    insecureContext: "安全でないコンテキスト",
+    insecureContextDesc: "現在の接続は最新のHTTPSで保護されていません。",
+    adBlocker: "広告ブロッカーが有効です",
+    adBlockerDesc: "広告または追跡ブロッカーがネットワークリクエストを変更しています。",
+    privacyBrowser: "プライバシーブラウザを検出",
+    privacyBrowserDesc: "プライバシー重視のブラウザ（BraveやTorなど）を使用しています。",
+    cookiesDisabled: "Cookieが無効です",
+    cookiesDisabledDesc: "ファーストパーティCookieが無効になっているため、一部のサイトが正常に動作しない可能性があります。"
+  },
   sections: {
     environment: "環境分析",
     system: "システム環境",

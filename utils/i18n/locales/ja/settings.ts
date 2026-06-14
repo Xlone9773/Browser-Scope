@@ -301,7 +301,8 @@ export const settings = {
         desc: "現在のコアアプリケーションのバージョンとロード済みのモジュールを表示します。必要に応じて更新情報を強制的に取得します。",
         forcePull: "アップデートを強制確認",
         coreApp: "コアアプリケーション",
-        installedModules: "インストール済みモジュール"
+        installedModules: "インストール済みモジュール",
+        libraries: "コアライブラリ"
     }
   }
 };

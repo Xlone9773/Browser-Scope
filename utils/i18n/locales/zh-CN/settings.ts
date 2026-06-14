@@ -301,7 +301,8 @@ export const settings = {
         desc: "查看当前核心软件版本和已加载模块，如有需要可强制拉取更新代码。",
         forcePull: "强制检查更新",
         coreApp: "核心应用程序",
-        installedModules: "已安装模块"
+        installedModules: "已安装模块",
+        libraries: "核心依赖库"
     }
   }
 };

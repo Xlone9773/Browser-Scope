@@ -86,6 +86,22 @@ export const dashboard = {
     browser: "浏览器"
   },
 
+  quickSummary: {
+    allClear: "未检测到关键风险",
+    allClearDesc: "您的浏览器环境看起来是标准的且安全的。",
+    webrtcLeaked: "WebRTC IP 泄漏",
+    webrtcLeakedDesc: "您的真实 IP 地址可能正通过 WebRTC 暴露。",
+    botDetected: "检测到机器人/自动化",
+    botDetectedDesc: "有强烈信号表明当前处于自动化环境（如无头浏览器）。",
+    insecureContext: "不安全的上下文",
+    insecureContextDesc: "当前连接未使用现代 HTTPS 进行加密保护。",
+    adBlocker: "防广告插件已启用",
+    adBlockerDesc: "去广告或隐私追踪拦截器正在修改网络请求。",
+    privacyBrowser: "检测到隐私浏览器",
+    privacyBrowserDesc: "您正在使用注重隐私的浏览器（如 Brave 或 Tor）。",
+    cookiesDisabled: "Cookie 已禁用",
+    cookiesDisabledDesc: "第一方 Cookie 已被禁用，可能导致某些网站无法正常工作。"
+  },
   sections: {
     environment: "环境分析",
     system: "系统环境",

@@ -87,6 +87,22 @@ export const dashboard = {
     browser: "Browser"
   },
 
+  quickSummary: {
+    allClear: "No Critical Flags Detected",
+    allClearDesc: "Your browser environment appears to be standard and secure.",
+    webrtcLeaked: "WebRTC IP Leak",
+    webrtcLeakedDesc: "Your real IP address might be exposed via WebRTC.",
+    botDetected: "Bot/Automation Detected",
+    botDetectedDesc: "Strong signals indicate an automated environment (e.g. Headless Browser).",
+    insecureContext: "Insecure Context",
+    insecureContextDesc: "The connection is not secured with modern HTTPS.",
+    adBlocker: "Ad Blocker Enabled",
+    adBlockerDesc: "An ad or tracking blocker is actively modifying network requests.",
+    privacyBrowser: "Privacy Browser Detected",
+    privacyBrowserDesc: "You are using a privacy-focused browser (e.g., Brave or Tor).",
+    cookiesDisabled: "Cookies Disabled",
+    cookiesDisabledDesc: "First-party cookies are disabled, which may break some sites."
+  },
   sections: {
     environment: "Analysis Environment",
     system: "System Environment",

@@ -17,6 +17,7 @@ import { EnvironmentCard } from "./components/cards/EnvironmentCard";
 import { SystemCard } from "./components/cards/SystemCard";
 import { HardwareCard } from "./components/cards/HardwareCard";
 import { DisplayCard } from "./components/cards/DisplayCard";
+import { QuickSummaryWidget } from "./components/sections/QuickSummaryWidget";
 
 const SecurityCard = React.lazy(() =>
   import("./components/cards/SecurityCard").then((m) => ({
@@ -784,6 +785,8 @@ const App: React.FC = () => {
               <div
                 className={`space-y-6 ${initialAnimationStyle === "slide-up" ? "anim-slide-up" : initialAnimationStyle === "fade" ? "anim-fade" : initialAnimationStyle === "fly-in" ? "anim-fly-in" : initialAnimationStyle === "zoom" ? "anim-zoom" : ""}`}
               >
+                {activeTab === "all" && <QuickSummaryWidget data={data} t={t} />}
+
                 {/* Group 0: Environment & Trust */}
                 {!hiddenCards.includes("environment") && (activeTab === "all" || activeTab === "environment") && (
                   <SectionGroup

@@ -301,7 +301,8 @@ export const settings = {
         desc: "View current core software version and loaded modules. Pull updates if needed.",
         forcePull: "Force Check Updates",
         coreApp: "Core Application",
-        installedModules: "Installed Modules"
+        installedModules: "Installed Modules",
+        libraries: "Core Libraries"
     }
   }
 };

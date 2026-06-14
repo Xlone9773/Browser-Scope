@@ -301,7 +301,8 @@ export const settings = {
         desc: "檢視當前核心軟件版本和已載入模組。如有需要可強制拉取更新代碼。",
         forcePull: "強制檢查更新",
         coreApp: "核心應用程式",
-        installedModules: "已安裝模組"
+        installedModules: "已安裝模組",
+        libraries: "核心依賴庫"
     }
   }
 };
