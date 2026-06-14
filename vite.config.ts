@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
             globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm}']
           },
           devOptions: {
-            enabled: true,
+            enabled: false,
             type: 'module'
           },
           manifest: {

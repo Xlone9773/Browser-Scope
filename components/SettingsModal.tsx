@@ -1,15 +1,13 @@
 
 import React, { useState, useTransition, Suspense, lazy } from 'react';
-import { Database, Activity, Sliders, Monitor, Terminal, Package, Loader2 } from 'lucide-react';
+import { Database, Activity, Sliders, Monitor, Terminal, Loader2 } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
-import { ModuleState } from './settings/ModulesTab';
 import { Modal } from './ui/Modal';
 
 const GeneralTab = lazy(() => import('./settings/GeneralTab').then(m => ({ default: m.GeneralTab })));
 const StorageTab = lazy(() => import('./settings/StorageTab').then(m => ({ default: m.StorageTab })));
 const ResourcesTab = lazy(() => import('./settings/ResourcesTab').then(m => ({ default: m.ResourcesTab })));
 const DeveloperTab = lazy(() => import('./settings/DeveloperTab').then(m => ({ default: m.DeveloperTab })));
-const ModulesTab = lazy(() => import('./settings/ModulesTab').then(m => ({ default: m.ModulesTab })));
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -41,7 +39,6 @@ interface SettingsModalProps {
   setHiddenCards: (cards: string[]) => void;
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
-  moduleStates?: ModuleState[];
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ 
@@ -72,13 +69,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     hiddenCards,
     setHiddenCards,
     isDevToolsFloating, 
-    setDevToolsFloating,
-    moduleStates = [] 
+    setDevToolsFloating
 }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'storage' | 'res' | 'dev' | 'mod'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'storage' | 'res' | 'dev'>('general');
   const [isPending, startTransition] = useTransition();
 
-  const handleTabChange = (tab: 'general' | 'storage' | 'res' | 'dev' | 'mod') => {
+  const handleTabChange = (tab: 'general' | 'storage' | 'res' | 'dev') => {
       startTransition(() => {
           setActiveTab(tab);
       });
@@ -151,20 +147,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             {getNavTitle('resources')}
                         </button>
                         <button 
-                            onClick={() => handleTabChange('mod')}
-                            className={`
-                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
-                                flex-1 md:flex-none justify-center md:justify-start
-                                border-b-2 md:border-b-0 md:border-l-[3px]
-                                ${activeTab === 'mod' 
-                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
-                            `}
-                        >
-                            <Package size={16} />
-                            {getNavTitle('modules')}
-                        </button>
-                        <button 
                             onClick={() => handleTabChange('dev')}
                             className={`
                                 flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
@@ -226,10 +208,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                         {activeTab === 'res' && (
                             <ResourcesTab t={settings.resources} />
-                        )}
-
-                        {activeTab === 'mod' && settings.modules && (
-                            <ModulesTab t={settings.modules} modules={moduleStates} />
                         )}
 
                         {activeTab === 'dev' && settings.developer && (

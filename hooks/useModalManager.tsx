@@ -65,34 +65,15 @@ export const useModalManager = () => {
   // Visibility State for all modals
   const [visibility, setVisibility] = useState<Record<string, boolean>>({});
 
-  // Track which modules have been loaded at least once
-  const [loadedModules, setLoadedModules] = useState<Set<string>>(new Set(Object.keys(COMPONENTS)));
-
   const components = COMPONENTS;
-
-  // Actions
-  function setLoadedSet(id: string) {
-    setLoadedModules((prev) => {
-      const next = new Set(prev);
-      next.add(id);
-      return next;
-    });
-  };
 
   const open = useCallback((id: string) => {
     setVisibility((prev) => ({ ...prev, [id]: true }));
-    setLoadedSet(id);
   }, []);
 
   const close = useCallback((id: string) => {
     setVisibility((prev) => ({ ...prev, [id]: false }));
   }, []);
-
-  
-  const unload = useCallback((id: string) => {
-    close(id);
-  }, [close]);
-
   const closeAll = useCallback(() => {
     setVisibility({});
   }, []);
@@ -137,8 +118,6 @@ export const useModalManager = () => {
     open,
     close,
     closeAll,
-    unload,
-    loadedModules,
     Components: components,
   };
 };
