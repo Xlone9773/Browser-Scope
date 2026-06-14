@@ -9,7 +9,8 @@ export const settings = {
         storage: "存储管理",
         resources: "资源监控",
         developer: "开发者",
-        modules: "模块管理"
+        modules: "模块管理",
+        versions: "版本与更新"
     },
     general: {
         simpleMode: {
@@ -294,6 +295,13 @@ export const settings = {
             unload: "卸载",
             unloadAll: "卸载所有活动模块"
         }
+    },
+    versions: {
+        title: "软件版本",
+        desc: "查看当前核心软件版本和已加载模块，如有需要可强制拉取更新代码。",
+        forcePull: "强制检查更新",
+        coreApp: "核心应用程序",
+        installedModules: "已安装模块"
     }
   }
 };

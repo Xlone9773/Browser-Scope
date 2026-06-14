@@ -9,7 +9,8 @@ export const settings = {
         storage: "儲存管理",
         resources: "資源監控",
         developer: "開發者",
-        modules: "模組管理"
+        modules: "模組管理",
+        versions: "版本與更新"
     },
     general: {
         simpleMode: {
@@ -294,6 +295,13 @@ export const settings = {
             unload: "卸載",
             unloadAll: "卸載所有活動模組"
         }
+    },
+    versions: {
+        title: "軟件版本",
+        desc: "檢視當前核心軟件版本和已載入模組。如有需要可強制拉取更新代碼。",
+        forcePull: "強制檢查更新",
+        coreApp: "核心應用程式",
+        installedModules: "已安裝模組"
     }
   }
 };

@@ -87,6 +87,7 @@ import {
   PermissionStatusType,
 } from "./hooks/useAppPermissions";
 import { useAppData } from "./hooks/useAppData";
+import packageJson from "./package.json";
 
 const App: React.FC = () => {
   const { visibility, open, close, unload, loadedModules, Components } =
@@ -598,6 +599,8 @@ const App: React.FC = () => {
               isDevToolsFloating={isDevToolsFloating}
               setDevToolsFloating={setIsDevToolsFloating}
               moduleStates={modalStates}
+              appVersion={packageJson.version}
+              updateServiceWorker={updateServiceWorker}
             />
           )}
 

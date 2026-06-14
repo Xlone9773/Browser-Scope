@@ -9,7 +9,8 @@ export const settings = {
         storage: "ストレージ管理",
         resources: "リソース監視",
         developer: "開発者",
-        modules: "モジュール管理"
+        modules: "モジュール管理",
+        versions: "バージョンと更新"
     },
     general: {
         simpleMode: {
@@ -294,6 +295,13 @@ export const settings = {
             unload: "強制終了",
             unloadAll: "全モジュールをアンロード"
         }
+    },
+    versions: {
+        title: "ソフトウェアバージョン",
+        desc: "現在のコアアプリケーションのバージョンとロード済みのモジュールを表示します。必要に応じて更新情報を強制的に取得します。",
+        forcePull: "アップデートを強制確認",
+        coreApp: "コアアプリケーション",
+        installedModules: "インストール済みモジュール"
     }
   }
 };

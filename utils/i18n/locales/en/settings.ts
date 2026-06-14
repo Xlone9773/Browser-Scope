@@ -9,7 +9,8 @@ export const settings = {
         storage: "Storage",
         resources: "Resources",
         developer: "Developer",
-        modules: "Module Manager"
+        modules: "Module Manager",
+        versions: "Versions & Updates"
     },
     general: {
         simpleMode: {
@@ -294,6 +295,13 @@ export const settings = {
             unload: "Unload",
             unloadAll: "Unload All Active Modules"
         }
+    },
+    versions: {
+        title: "Software Versions",
+        desc: "View current core software version and loaded modules. Pull updates if needed.",
+        forcePull: "Force Check Updates",
+        coreApp: "Core Application",
+        installedModules: "Installed Modules"
     }
   }
 };

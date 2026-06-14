@@ -9,7 +9,8 @@ export const settings = {
         storage: "Хранилище",
         resources: "Ресурсы",
         developer: "Разработчик",
-        modules: "Модули"
+        modules: "Модули",
+        versions: "Версии и обновления"
     },
     general: {
         simpleMode: {
@@ -294,6 +295,13 @@ export const settings = {
             unload: "Закрыть",
             unloadAll: "Выгрузить все"
         }
+    },
+    versions: {
+        title: "Версии ПО",
+        desc: "Текущая версия основного приложения и загруженные модули. Вы можете принудительно обновить код, если необходимо.",
+        forcePull: "Принудительная проверка обновлений",
+        coreApp: "Основное приложение",
+        installedModules: "Установленные модули"
     }
   }
 };

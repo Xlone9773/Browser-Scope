@@ -9,6 +9,8 @@ import { StorageTab } from './settings/StorageTab';
 import { ResourcesTab } from './settings/ResourcesTab';
 import { DeveloperTab } from './settings/DeveloperTab';
 import { ModulesTab, ModuleState } from './settings/ModulesTab';
+import { VersionsTab } from './settings/VersionsTab';
+import { Layers } from 'lucide-react';
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -41,6 +43,8 @@ interface SettingsModalProps {
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
   moduleStates?: ModuleState[];
+  appVersion?: string;
+  updateServiceWorker?: (reloadPage?: boolean) => Promise<void>;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ 
@@ -72,12 +76,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setHiddenCards,
     isDevToolsFloating, 
     setDevToolsFloating,
-    moduleStates = []
+    moduleStates = [],
+    appVersion,
+    updateServiceWorker
 }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'storage' | 'res' | 'dev' | 'mod'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>('general');
   const [isPending, startTransition] = useTransition();
 
-  const handleTabChange = (tab: 'general' | 'storage' | 'res' | 'dev' | 'mod') => {
+  const handleTabChange = (tab: 'general' | 'storage' | 'res' | 'dev' | 'mod' | 'ver') => {
       startTransition(() => {
           setActiveTab(tab);
       });
@@ -164,6 +170,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             {getNavTitle('modules')}
                         </button>
                         <button 
+                            onClick={() => handleTabChange('ver')}
+                            className={`
+                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                                flex-1 md:flex-none justify-center md:justify-start
+                                border-b-2 md:border-b-0 md:border-l-[3px]
+                                ${activeTab === 'ver' 
+                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                            `}
+                        >
+                            <Layers size={16} />
+                            {getNavTitle('versions') || 'Versions'}
+                        </button>
+                        <button 
                             onClick={() => handleTabChange('dev')}
                             className={`
                                 flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
@@ -229,6 +249,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                         {activeTab === 'mod' && settings.modules && (
                             <ModulesTab t={settings.modules} modules={moduleStates} />
+                        )}
+
+                        {activeTab === 'ver' && settings.versions && (
+                            <VersionsTab 
+                                t={settings.versions} 
+                                appVersion={appVersion}
+                                modules={moduleStates}
+                                updateServiceWorker={updateServiceWorker}
+                            />
                         )}
 
                         {activeTab === 'dev' && settings.developer && (
