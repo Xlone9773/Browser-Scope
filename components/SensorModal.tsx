@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { Activity, Compass, Move, Navigation, Sun } from 'lucide-react';
+import { Activity, Compass, Move, Navigation, Sun, ArrowDown, Globe } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
 import { Modal } from './ui/Modal';
 
 interface SensorModalProps {
   onClose: () => void;
-  t: Translation['sensorModal'];
+  t: Translation['sensorModal'] & { linear_accel?: string, gravity?: string, abs_orientation?: string };
 }
 
 export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
@@ -19,6 +19,10 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
   const [gyro, setGyro] = useState({ alpha: 0, beta: 0, gamma: 0, displayAlpha: 0 });
   const [magnet, setMagnet] = useState<{ x: number, y: number, z: number } | null>(null);
   const [lux, setLux] = useState<number | null>(null);
+  
+  const [linearAccel, setLinearAccel] = useState<{ x: number, y: number, z: number } | null>(null);
+  const [gravity, setGravity] = useState<{ x: number, y: number, z: number } | null>(null);
+  const [absOrientation, setAbsOrientation] = useState<number[] | null>(null);
 
   const handleMotion = (event: DeviceMotionEvent) => {
       if (event.accelerationIncludingGravity) {
@@ -57,6 +61,9 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
   useEffect(() => {
       let magSensor: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = null;
       let lightSensor: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = null;
+      let linearAccelSensor: any = null;
+      let gravitySensor: any = null;
+      let absOrientationSensor: any = null;
 
       // Magnetometer
       if ('Magnetometer' in window) {
@@ -90,9 +97,51 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
           }
       }
       
+      // Linear Acceleration
+      if ('LinearAccelerationSensor' in window) {
+          try {
+              linearAccelSensor = new (window as any).LinearAccelerationSensor({ frequency: 10 });
+              linearAccelSensor.addEventListener('reading', () => {
+                  setLinearAccel({ x: linearAccelSensor.x, y: linearAccelSensor.y, z: linearAccelSensor.z });
+              });
+              linearAccelSensor.start();
+          } catch (e: any) {
+              console.debug("LinearAccelerationSensor init error", e);
+          }
+      }
+
+      // Gravity Sensor
+      if ('GravitySensor' in window) {
+          try {
+              gravitySensor = new (window as any).GravitySensor({ frequency: 10 });
+              gravitySensor.addEventListener('reading', () => {
+                  setGravity({ x: gravitySensor.x, y: gravitySensor.y, z: gravitySensor.z });
+              });
+              gravitySensor.start();
+          } catch (e: any) {
+              console.debug("GravitySensor init error", e);
+          }
+      }
+
+      // AbsoluteOrientationSensor
+      if ('AbsoluteOrientationSensor' in window) {
+          try {
+              absOrientationSensor = new (window as any).AbsoluteOrientationSensor({ frequency: 10 });
+              absOrientationSensor.addEventListener('reading', () => {
+                  setAbsOrientation(absOrientationSensor.quaternion);
+              });
+              absOrientationSensor.start();
+          } catch (e: any) {
+              console.debug("AbsoluteOrientationSensor init error", e);
+          }
+      }
+      
       return () => {
           if (magSensor) magSensor.stop();
           if (lightSensor) lightSensor.stop();
+          if (linearAccelSensor) linearAccelSensor.stop();
+          if (gravitySensor) gravitySensor.stop();
+          if (absOrientationSensor) absOrientationSensor.stop();
       };
   }, []);
 
@@ -311,6 +360,131 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                     <span>Dark</span>
                                     <span>Room</span>
                                     <span>Bright</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="h-20 flex items-center justify-center text-center px-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs">
+                                Sensor unavailable.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Linear Acceleration */}
+                    <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+                                <Activity size={20} />
+                            </div>
+                            <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.linear_accel || 'Linear Acceleration'}</h3>
+                        </div>
+                        
+                        {linearAccel ? (
+                            <div className="space-y-4">
+                                <div className="space-y-1">
+                                    <div className="flex justify-between text-xs text-slate-500">
+                                        <span>X-Axis</span>
+                                        <span className="font-mono">{formatNumber(linearAccel.x, 2, 2)} m/s²</span>
+                                    </div>
+                                    <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                                        <div 
+                                            className="h-full bg-blue-500 transition-all duration-75" 
+                                            style={{ width: `${Math.min(Math.abs(linearAccel.x) * 5, 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <div className="flex justify-between text-xs text-slate-500">
+                                        <span>Y-Axis</span>
+                                        <span className="font-mono">{formatNumber(linearAccel.y, 2, 2)} m/s²</span>
+                                    </div>
+                                    <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                                        <div 
+                                            className="h-full bg-blue-500 transition-all duration-75" 
+                                            style={{ width: `${Math.min(Math.abs(linearAccel.y) * 5, 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <div className="flex justify-between text-xs text-slate-500">
+                                        <span>Z-Axis</span>
+                                        <span className="font-mono">{formatNumber(linearAccel.z, 2, 2)} m/s²</span>
+                                    </div>
+                                    <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                                        <div 
+                                            className="h-full bg-blue-500 transition-all duration-75" 
+                                            style={{ width: `${Math.min(Math.abs(linearAccel.z) * 5, 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="h-20 flex items-center justify-center text-center px-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs">
+                                Sensor unavailable.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Gravity */}
+                    <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="p-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg text-emerald-600 dark:text-emerald-400">
+                                <ArrowDown size={20} />
+                            </div>
+                            <div className="flex flex-col">
+                                <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.gravity || 'Gravity'}</h3>
+                            </div>
+                        </div>
+                        
+                        {gravity ? (
+                            <div className="grid grid-cols-3 gap-2">
+                                <div className="text-center">
+                                    <div className="text-[10px] text-slate-400 mb-1">X (m/s²)</div>
+                                    <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{formatNumber(gravity.x, 2, 2)}</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-[10px] text-slate-400 mb-1">Y (m/s²)</div>
+                                    <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{formatNumber(gravity.y, 2, 2)}</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-[10px] text-slate-400 mb-1">Z (m/s²)</div>
+                                    <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{formatNumber(gravity.z, 2, 2)}</div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="h-20 flex items-center justify-center text-center px-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs">
+                                Sensor unavailable.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Absolute Orientation */}
+                    <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="p-2 bg-rose-50 dark:bg-rose-900/30 rounded-lg text-rose-600 dark:text-rose-400">
+                                <Globe size={20} />
+                            </div>
+                            <div className="flex flex-col">
+                                <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.abs_orientation || 'Absolute Orientation'}</h3>
+                            </div>
+                        </div>
+                        
+                        {absOrientation ? (
+                            <div className="grid grid-cols-4 gap-2">
+                                <div className="text-center">
+                                    <div className="text-[10px] text-slate-400 mb-1">Qx</div>
+                                    <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">{formatNumber(absOrientation[0] || 0, 3, 3)}</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-[10px] text-slate-400 mb-1">Qy</div>
+                                    <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">{formatNumber(absOrientation[1] || 0, 3, 3)}</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-[10px] text-slate-400 mb-1">Qz</div>
+                                    <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">{formatNumber(absOrientation[2] || 0, 3, 3)}</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-[10px] text-slate-400 mb-1">Qw</div>
+                                    <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">{formatNumber(absOrientation[3] || 0, 3, 3)}</div>
                                 </div>
                             </div>
                         ) : (

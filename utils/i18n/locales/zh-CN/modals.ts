@@ -95,6 +95,9 @@ export const modals = {
     gyroscope: "陀螺仪",
     magnetometer: "磁力计",
     ambient_light: "环境光",
+    linear_accel: "线性加速度",
+    gravity: "重力传感器",
+    abs_orientation: "绝对方向",
     close: "关闭"
   },
   scoreModal: {

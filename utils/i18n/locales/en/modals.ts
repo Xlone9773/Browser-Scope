@@ -95,6 +95,9 @@ export const modals = {
     gyroscope: "Gyroscope",
     magnetometer: "Magnetometer",
     ambient_light: "Ambient Light",
+    linear_accel: "Linear Acceleration",
+    gravity: "Gravity",
+    abs_orientation: "Absolute Orientation",
     close: "Close"
   },
   scoreModal: {
