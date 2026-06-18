@@ -124,6 +124,8 @@ const App: React.FC = () => {
     toggleCollapseHeader,
     enableUdp,
     toggleEnableUdp,
+    showTabs,
+    toggleShowTabs,
     hiddenCards,
     updateHiddenCards,
   } = useAppSettings();
@@ -595,6 +597,8 @@ const App: React.FC = () => {
               toggleCollapseHeader={toggleCollapseHeader}
               enableUdp={enableUdp}
               toggleEnableUdp={toggleEnableUdp}
+              showTabs={showTabs}
+              toggleShowTabs={toggleShowTabs}
               hiddenCards={hiddenCards}
               setHiddenCards={updateHiddenCards}
               isDevToolsFloating={isDevToolsFloating}
@@ -751,29 +755,53 @@ const App: React.FC = () => {
           <ErrorBoundary name="MainContent">
             
             {/* Navigation Tabs */}
-            <div className="sticky top-0 z-20 pt-4 -mt-4 bg-[#f8fafc]/90 dark:bg-slate-900/90 backdrop-blur-md flex space-x-2 mb-6 overflow-x-auto scrollbar-hide pb-2 border-b border-slate-200 dark:border-slate-800">
-              {[
-                { id: "all", label: (t as any).groups?.all || "All", icon: null },
-                { id: "browser", label: (t as any).groups?.browser || "Browser", icon: <Monitor size={16} /> },
-                { id: "environment", label: (t as any).groups?.environment || "Environment", icon: <ShieldAlert size={16} /> },
-                { id: "system", label: (t as any).groups?.system || "System", icon: <Smartphone size={16} /> },
-                { id: "network", label: (t as any).groups?.network || "Network", icon: <ShieldAlert size={16} /> },
-                { id: "advanced", label: (t as any).groups?.advanced || "Advanced", icon: <Cpu size={16} /> }
-              ].map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-sm font-medium ${
-                    activeTab === tab.id
-                      ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                  }`}
-                >
-                  {tab.icon}
-                  <span>{tab.label}</span>
-                </button>
-              ))}
-            </div>
+            {showTabs && (() => {
+              const availableTabs = [
+                { id: "all", label: (t as any).groups?.all || "All", icon: null }
+              ];
+              
+              if (!hiddenCards.includes("browser")) {
+                availableTabs.push({ id: "browser", label: (t as any).groups?.browser || "Browser", icon: <Monitor size={16} /> });
+              }
+              if (!hiddenCards.includes("environment")) {
+                availableTabs.push({ id: "environment", label: (t as any).groups?.environment || "Environment", icon: <ShieldAlert size={16} /> });
+              }
+              if (!(hiddenCards.includes("system") && hiddenCards.includes("hardware") && hiddenCards.includes("display"))) {
+                availableTabs.push({ id: "system", label: (t as any).groups?.system || "System", icon: <Smartphone size={16} /> });
+              }
+              if (!(hiddenCards.includes("network") && hiddenCards.includes("security") && hiddenCards.includes("fingerprint"))) {
+                availableTabs.push({ id: "network", label: (t as any).groups?.network || "Network", icon: <ShieldAlert size={16} /> });
+              }
+              if (!(hiddenCards.includes("ai") && hiddenCards.includes("location") && hiddenCards.includes("storage") && hiddenCards.includes("permissions") && hiddenCards.includes("media_devices") && hiddenCards.includes("media_capabilities") && hiddenCards.includes("user_agent") && hiddenCards.includes("pwa") && hiddenCards.includes("features"))) {
+                availableTabs.push({ id: "advanced", label: (t as any).groups?.advanced || "Advanced", icon: <Cpu size={16} /> });
+              }
+
+              if (availableTabs.length <= 1) return null;
+
+              // Ensure active tab is valid
+              if (activeTab !== "all" && !availableTabs.some(tab => tab.id === activeTab)) {
+                 setActiveTab("all");
+              }
+
+              return (
+                <div className="sticky top-0 z-20 pt-4 -mt-4 bg-[#f8fafc]/90 dark:bg-slate-900/90 backdrop-blur-md flex space-x-2 mb-6 overflow-x-auto scrollbar-hide pb-2 border-b border-slate-200 dark:border-slate-800">
+                  {availableTabs.map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id as any)}
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-sm font-medium ${
+                        activeTab === tab.id
+                          ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                      }`}
+                    >
+                      {tab.icon}
+                      <span>{tab.label}</span>
+                    </button>
+                  ))}
+                </div>
+              );
+            })()}
 
             <Suspense
               fallback={

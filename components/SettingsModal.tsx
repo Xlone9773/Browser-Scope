@@ -1,16 +1,16 @@
 
 import React, { useState, useTransition, Suspense, lazy } from 'react';
-import { Database, Activity, Sliders, Monitor, Terminal, Loader2, Package } from 'lucide-react';
+import { Database, Activity, Sliders, Monitor, Terminal, Loader2, Package, Layers, Palette } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 
 import { GeneralTab } from './settings/GeneralTab';
+import { AppearanceTab } from './settings/AppearanceTab';
 import { StorageTab } from './settings/StorageTab';
 import { ResourcesTab } from './settings/ResourcesTab';
 import { DeveloperTab } from './settings/DeveloperTab';
 import { ModulesTab, ModuleState } from './settings/ModulesTab';
 import { VersionsTab } from './settings/VersionsTab';
-import { Layers } from 'lucide-react';
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -38,6 +38,8 @@ interface SettingsModalProps {
   toggleCollapseHeader: (value: boolean) => void;
   enableUdp?: boolean;
   toggleEnableUdp?: (value: boolean) => void;
+  showTabs: boolean;
+  toggleShowTabs: (value: boolean) => void;
   hiddenCards: string[];
   setHiddenCards: (cards: string[]) => void;
   isDevToolsFloating: boolean;
@@ -72,6 +74,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     toggleCollapseHeader,
     enableUdp,
     toggleEnableUdp,
+    showTabs,
+    toggleShowTabs,
     hiddenCards,
     setHiddenCards,
     isDevToolsFloating, 
@@ -80,10 +84,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     appVersion,
     updateServiceWorker
 }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>('appearance');
   const [isPending, startTransition] = useTransition();
 
-  const handleTabChange = (tab: 'general' | 'storage' | 'res' | 'dev' | 'mod' | 'ver') => {
+  const handleTabChange = (tab: 'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver') => {
       startTransition(() => {
           setActiveTab(tab);
       });
@@ -126,6 +130,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         >
                             <Sliders size={16} />
                             {getNavTitle('general')}
+                        </button>
+                        <button 
+                            onClick={() => handleTabChange('appearance')}
+                            className={`
+                                flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
+                                flex-1 md:flex-none justify-center md:justify-start
+                                border-b-2 md:border-b-0 md:border-l-[3px]
+                                ${activeTab === 'appearance' 
+                                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                            `}
+                        >
+                            <Palette size={16} />
+                            {settings.nav?.appearance || 'Appearance'}
                         </button>
                         <button 
                             onClick={() => handleTabChange('storage')}
@@ -208,8 +226,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         )}
                         <Suspense fallback={<div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
                         
-                        {activeTab === 'general' && (
-                            <GeneralTab 
+                        {activeTab === 'appearance' && (
+                            <AppearanceTab 
                                 t={settings.general} 
                                 themeColor={themeColor}
                                 setThemeColor={setThemeColor}
@@ -221,8 +239,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 toggleHideScrollbar={toggleHideScrollbar}
                                 globalHideScrollbar={globalHideScrollbar}
                                 toggleGlobalHideScrollbar={toggleGlobalHideScrollbar}
-                                timeFormat={timeFormat}
-                                setTimeFormat={setTimeFormat}
                                 disableBlur={disableBlur}
                                 toggleDisableBlur={toggleDisableBlur}
                                 disableAnimations={disableAnimations}
@@ -231,6 +247,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 toggleFastAnimations={toggleFastAnimations}
                                 collapseHeader={collapseHeader}
                                 toggleCollapseHeader={toggleCollapseHeader}
+                                showTabs={showTabs}
+                                toggleShowTabs={toggleShowTabs}
+                                translationDict={t}
+                            />
+                        )}
+
+                        {activeTab === 'general' && (
+                            <GeneralTab 
+                                t={settings.general} 
+                                timeFormat={timeFormat}
+                                setTimeFormat={setTimeFormat}
                                 enableUdp={enableUdp}
                                 toggleEnableUdp={toggleEnableUdp}
                                 hiddenCards={hiddenCards}

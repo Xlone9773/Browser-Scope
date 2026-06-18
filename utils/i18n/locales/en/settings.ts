@@ -4,6 +4,7 @@ export const settings = {
     title: "Settings",
     nav: {
         general: "General",
+        appearance: "Appearance",
         network: "Network Tools",
         display: "Display Tests",
         storage: "Storage",
@@ -13,6 +14,10 @@ export const settings = {
         versions: "Versions & Updates"
     },
     general: {
+        showTabs: {
+            title: "Display Navigation Tabs",
+            desc: "Show navigation tabs above the content to filter items. Automatically hides if empty."
+        },
         simpleMode: {
             title: "Simple Mode",
             desc: "Hide complex technical details and show only core information."

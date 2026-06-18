@@ -4,6 +4,7 @@ export const settings = {
     title: "设置",
     nav: {
         general: "通用设置",
+        appearance: "外观设置",
         network: "网络工具",
         display: "屏幕检测",
         storage: "存储管理",
@@ -13,6 +14,10 @@ export const settings = {
         versions: "版本与更新"
     },
     general: {
+        showTabs: {
+            title: "显示导航栏",
+            desc: "在内容上方显示用于筛选分类的选项卡，若所有选项卡都为空将自动隐藏。"
+        },
         simpleMode: {
             title: "极简模式",
             desc: "隐藏部分复杂的技术细节，仅显示核心信息。"

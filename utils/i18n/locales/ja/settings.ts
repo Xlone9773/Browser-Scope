@@ -4,6 +4,7 @@ export const settings = {
     title: "設定",
     nav: {
         general: "一般",
+        appearance: "外観",
         network: "ネットワークツール",
         display: "画面テスト",
         storage: "ストレージ管理",
@@ -13,6 +14,10 @@ export const settings = {
         versions: "バージョンと更新"
     },
     general: {
+        showTabs: {
+            title: "ナビゲーションタブを表示",
+            desc: "コンテンツ上部にフィルタリング用のタブを表示します。すべてのタブが空の場合は自動的に非表示になります。"
+        },
         simpleMode: {
             title: "シンプルモード",
             desc: "複雑な技術的詳細を隠し、核心情報のみを表示します。"

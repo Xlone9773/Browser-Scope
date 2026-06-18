@@ -4,6 +4,7 @@ export const settings = {
     title: "設定",
     nav: {
         general: "通用",
+        appearance: "外觀設定",
         network: "網絡工具",
         display: "螢幕檢測",
         storage: "儲存管理",
@@ -13,6 +14,10 @@ export const settings = {
         versions: "版本與更新"
     },
     general: {
+        showTabs: {
+            title: "顯示導覽列",
+            desc: "在內容上方顯示用於篩選分類的選項卡，若所有選項卡都為空將自動隱藏。"
+        },
         simpleMode: {
             title: "極簡模式",
             desc: "隱藏部分複雜的技術細節，僅顯示核心資訊。"

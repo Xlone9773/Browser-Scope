@@ -2,6 +2,14 @@
 <html lang="en">
   <head>
     <script>
+      try {
+        var themeColor = localStorage.getItem("themeColor") || "indigo";
+        if (themeColor !== "indigo") {
+          document.documentElement.classList.add("theme-" + themeColor);
+        }
+      } catch (e) {}
+    </script>
+    <script>
       window.addEventListener(
         "error",
         function (e) {

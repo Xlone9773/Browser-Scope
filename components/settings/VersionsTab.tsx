@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Package, GitCommit, Search, RefreshCw, Layers, Zap } from 'lucide-react';
 import { ModuleState } from './ModulesTab';
 import packageJson from '../../package.json';
+import { Button } from '../ui/Button';
 
 interface VersionsTabProps {
   t: any;
@@ -20,12 +21,16 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
 
   const handleForcePull = async () => {
     setIsPulling(true);
-    if (updateServiceWorker) {
-      await updateServiceWorker(true);
-    } else {
+    try {
+      if (updateServiceWorker) {
+        await updateServiceWorker(true);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsPulling(false);
       window.location.reload();
     }
-    setTimeout(() => setIsPulling(false), 2000); 
   };
 
   const coreLibraries = [
@@ -53,14 +58,13 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
           </div>
         </div>
 
-        <button
+        <Button
           onClick={handleForcePull}
-          disabled={isPulling}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:bg-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-600 dark:disabled:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+          isLoading={isPulling}
+          leftIcon={<RefreshCw size={16} className={isPulling ? "animate-spin" : ""} />}
         >
-          <RefreshCw size={16} className={isPulling ? "animate-spin" : ""} />
           {t?.forcePull || "Force Check Updates"}
-        </button>
+        </Button>
       </div>
 
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">

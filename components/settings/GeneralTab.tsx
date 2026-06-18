@@ -62,26 +62,8 @@ const Switch: React.FC<{ checked: boolean; onChange: (val: boolean) => void; lab
 
 export const GeneralTab: React.FC<GeneralTabProps> = ({ 
     t, 
-    themeColor,
-    setThemeColor,
-    animationStyle,
-    setAnimationStyle,
-    simpleMode, 
-    toggleSimpleMode, 
-    hideScrollbar, 
-    toggleHideScrollbar,
-    globalHideScrollbar,
-    toggleGlobalHideScrollbar,
     timeFormat,
     setTimeFormat,
-    disableBlur,
-    toggleDisableBlur,
-    disableAnimations,
-    toggleDisableAnimations,
-    fastAnimations,
-    toggleFastAnimations,
-    collapseHeader,
-    toggleCollapseHeader,
     enableUdp,
     toggleEnableUdp,
     hiddenCards,
@@ -99,8 +81,6 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
         }
     }, [toggleEnableUdp]);
 
-    // Collect all card names using the translation dictionary.
-    // Note: If translations are added dynamically or missing in dict, we provide fallbacks.
     const sectionsObj = translationDict?.sections || {};
     const availableCards = [
         { id: 'environment', name: sectionsObj.environment || 'Analysis Environment' },
@@ -130,28 +110,6 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     };
     return (
         <div className="max-w-2xl mx-auto space-y-4">
-            {/* Simple Mode Toggle */}
-            <div 
-                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
-                onClick={() => toggleSimpleMode(!simpleMode)}
-            >
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.simpleMode.title}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.simpleMode.desc}
-                    </p>
-                </div>
-                <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={simpleMode} 
-                        onChange={toggleSimpleMode}
-                        label={t.simpleMode.title} 
-                    />
-                </div>
-            </div>
-
             {/* Time Format Toggle */}
             <div 
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
@@ -166,203 +124,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={timeFormat === '24'} 
-                        onChange={(val) => setTimeFormat(val ? '24' : '12')}
-                        label={t.timeFormat.title} 
-                    />
-                </div>
-            </div>
-
-            {/* Theme Color Selection */}
-            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {translationDict.settings?.general?.themeColor?.title || 'Theme Color'}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {translationDict.settings?.general?.themeColor?.desc || 'Select primary theme color for the application.'}
-                    </p>
-                </div>
-                <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg self-stretch sm:self-auto flex-wrap gap-1">
-                    {[
-                        { id: 'indigo', hex: '#6366f1' },
-                        { id: 'emerald', hex: '#10b981' },
-                        { id: 'rose', hex: '#f43f5e' },
-                        { id: 'amber', hex: '#f59e0b' },
-                        { id: 'blue', hex: '#3b82f6' },
-                        { id: 'violet', hex: '#8b5cf6' },
-                        { id: 'sky', hex: '#77bbee' },
-                        { id: 'ice', hex: '#a7c8ff' },
-                        { id: 'cherry', hex: '#efa7a8' }
-                    ].map(theme => (
-                        <button
-                            key={theme.id}
-                            onClick={() => setThemeColor(theme.id)}
-                            className={`w-8 h-8 rounded-md transition-all flex items-center justify-center ${themeColor === theme.id ? 'ring-2 ring-slate-800 dark:ring-white scale-110 shadow-sm' : 'hover:scale-105'}`}
-                            style={{ backgroundColor: theme.hex }}
-                            title={theme.id}
-                        >
-                            {themeColor === theme.id && <div className="w-2 h-2 rounded-full bg-white dark:bg-slate-900" />}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Animation Style Selection */}
-            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {translationDict.settings?.general?.animationStyle?.title || 'Animation Style'}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {translationDict.settings?.general?.animationStyle?.desc || 'Set entry component animation style.'}
-                    </p>
-                </div>
-                <Select 
-                    value={animationStyle}
-                    onChange={setAnimationStyle}
-                    options={[
-                        { id: 'slide-up', label: translationDict.settings?.general?.animationStyle?.options?.slideUp || 'Slide Up' },
-                        { id: 'fade', label: translationDict.settings?.general?.animationStyle?.options?.fade || 'Fade In' },
-                        { id: 'fly-in', label: translationDict.settings?.general?.animationStyle?.options?.flyIn || 'Fly In' },
-                        { id: 'zoom', label: translationDict.settings?.general?.animationStyle?.options?.zoom || 'Zoom In' }
-                    ]}
-                    className="w-full sm:w-48"
-                    color={themeColor as any /* eslint-disable-line @typescript-eslint/no-explicit-any */}
-                />
-            </div>
-
-            {/* Disable Blur (Renamed from High Performance) */}
-            <div 
-                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
-                onClick={() => toggleDisableBlur(!disableBlur)}
-            >
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.performance.title}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.performance.desc}
-                    </p>
-                </div>
-                <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={disableBlur} 
-                        onChange={toggleDisableBlur}
-                        label={t.performance.title} 
-                    />
-                </div>
-            </div>
-
-            {/* Hide Scrollbar Toggle */}
-            <div 
-                className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${globalHideScrollbar ? 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800 opacity-50 cursor-not-allowed' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
-                onClick={() => { if (!globalHideScrollbar) toggleHideScrollbar(!hideScrollbar); }}
-            >
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.scrollbar?.title || "Hide Main Page Scrollbar"}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.scrollbar?.desc || "Only hide the default scrollbar on the main page."}
-                    </p>
-                </div>
-                <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={hideScrollbar || globalHideScrollbar} 
-                        onChange={(val) => { if (!globalHideScrollbar) toggleHideScrollbar(val); }}
-                        label={t.scrollbar?.title || "Hide Main Page Scrollbar"} 
-                        disabled={globalHideScrollbar}
-                    />
-                </div>
-            </div>
-
-            {/* Global Hide Scrollbar Toggle */}
-            <div 
-                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
-                onClick={() => toggleGlobalHideScrollbar(!globalHideScrollbar)}
-            >
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.globalScrollbar?.title || "Hide All Scrollbars"}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.globalScrollbar?.desc || "Globally hide scrollbars for all elements, including inside modals."}
-                    </p>
-                </div>
-                <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={globalHideScrollbar} 
-                        onChange={toggleGlobalHideScrollbar}
-                        label={t.globalScrollbar?.title || "Hide All Scrollbars"} 
-                    />
-                </div>
-            </div>
-            {/* Disable Animations */}
-            <div 
-                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
-                onClick={() => toggleDisableAnimations(!disableAnimations)}
-            >
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.animations?.title || 'Disable Animations'}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.animations?.desc || 'Turn off all page transitions and card loading animations.'}
-                    </p>
-                </div>
-                <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={disableAnimations} 
-                        onChange={toggleDisableAnimations}
-                        label={t.animations?.title} 
-                    />
-                </div>
-            </div>
-
-            {/* Fast Animations */}
-            <div 
-                className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${disableAnimations ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
-                onClick={() => { if (!disableAnimations) toggleFastAnimations(!fastAnimations); }}
-            >
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.fastAnimations?.title || 'Fast Transitions'}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.fastAnimations?.desc || 'Speed up all transition animations (hover, expand, etc).'}
-                    </p>
-                </div>
-                <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={fastAnimations} 
-                        onChange={toggleFastAnimations}
-                        label={t.fastAnimations?.title}
-                        disabled={disableAnimations} 
-                    />
-                </div>
-            </div>
-
-            {/* Collapse Header Menu Desktop */}
-            <div 
-                className="p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800 max-lg:opacity-50 max-lg:cursor-not-allowed max-lg:bg-slate-50 max-lg:dark:bg-slate-900 max-lg:border-slate-100 max-lg:dark:border-slate-800"
-                onClick={() => { if (window.innerWidth >= 1024) toggleCollapseHeader(!collapseHeader); }}
-            >
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.collapseHeader?.title || 'Collapse Header (Desktop)'}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.collapseHeader?.desc || 'Use a collapsed menu for header actions on desktop screens.'}
-                    </p>
-                </div>
-                <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={collapseHeader} 
-                        onChange={toggleCollapseHeader}
-                        label={t.collapseHeader?.title} 
-                    />
+                    <Switch checked={timeFormat === '24'} onChange={(val) => setTimeFormat(val ? '24' : '12')} />
                 </div>
             </div>
 
@@ -390,13 +152,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                             </p>
                         )}
                     </div>
-                    <div>
-                        <Switch 
-                            checked={!!enableUdp} 
-                            onChange={() => { if(udpSupported) toggleEnableUdp(!enableUdp); }}
-                            label={t.udpBypass?.title || 'Enable UDP'} 
-                            disabled={!udpSupported}
-                        />
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <Switch checked={!!enableUdp} onChange={() => { if(udpSupported) toggleEnableUdp(!enableUdp); }} disabled={!udpSupported} />
                     </div>
                 </div>
             )}
