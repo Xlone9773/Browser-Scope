@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, useRef } from "react";
 import { Monitor, Smartphone, ShieldAlert, Cpu, Loader2 } from "lucide-react";
 import { exportAsJson } from "./services/exporter";
 import { translations } from "./utils/i18n/index";
@@ -132,17 +132,64 @@ const App: React.FC = () => {
 
   const t = translations[lang];
 
+  const swReg = useRef<ServiceWorkerRegistration | undefined>(undefined);
+  const [lastCheckTime, setLastCheckTime] = useState<number>(Date.now());
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({
     onRegistered(r) {
       console.log('SW Registered');
+      if (r) {
+        swReg.current = r;
+        setInterval(() => {
+          r.update();
+          setLastCheckTime(Date.now());
+        }, 60 * 60 * 1000); // 1 hour check
+      }
     },
     onRegisterError(error) {
       console.log('SW registration error', error);
     },
   });
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      // Check for updates automatically when user returns to app
+      // Throttle checking to not happen more than once every 10 mins
+      if (document.visibilityState === 'visible' && swReg.current) {
+        if (Date.now() - lastCheckTime > 10 * 60 * 1000) {
+          swReg.current.update();
+          setLastCheckTime(Date.now());
+        }
+      }
+    };
+    window.addEventListener('visibilitychange', handleVisibility);
+    return () => window.removeEventListener('visibilitychange', handleVisibility);
+  }, [lastCheckTime]);
+
+  const manualCheckUpdate = async () => {
+    setIsCheckingUpdate(true);
+    try {
+      if (needRefresh) {
+        await updateServiceWorker(true);
+        return "triggered";
+      }
+      if (swReg.current) {
+        await swReg.current.update();
+        setLastCheckTime(Date.now());
+        return "checked";
+      }
+      return "not-supported";
+    } catch (e) {
+      console.error(e);
+      return "error";
+    } finally {
+      setIsCheckingUpdate(false);
+    }
+  };
 
   const {
     data,
@@ -606,6 +653,10 @@ const App: React.FC = () => {
               moduleStates={modalStates}
               appVersion={packageJson.version}
               updateServiceWorker={updateServiceWorker}
+              manualCheckUpdate={manualCheckUpdate}
+              lastCheckTime={lastCheckTime}
+              isCheckingUpdate={isCheckingUpdate}
+              needRefresh={needRefresh}
             />
           )}
 

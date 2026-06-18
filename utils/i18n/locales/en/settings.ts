@@ -304,7 +304,10 @@ export const settings = {
     versions: {
         title: "Software Versions",
         desc: "View current core software version and loaded modules. Pull updates if needed.",
-        forcePull: "Force Check Updates",
+        forcePull: "Check Updates",
+        applyUpdate: "Apply Update & Restart",
+        upToDate: "App is already up to date.",
+        lastChecked: "Last checked: ",
         coreApp: "Core Application",
         installedModules: "Installed Modules",
         libraries: "Core Libraries"

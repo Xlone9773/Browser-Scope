@@ -304,7 +304,10 @@ export const settings = {
     versions: {
         title: "软件版本",
         desc: "查看当前核心软件版本和已加载模块，如有需要可强制拉取更新代码。",
-        forcePull: "强制检查更新",
+        forcePull: "检查更新",
+        applyUpdate: "应用更新并重启",
+        upToDate: "当前已是最新版本",
+        lastChecked: "上次检查时间: ",
         coreApp: "核心应用程序",
         installedModules: "已安装模块",
         libraries: "核心依赖库"

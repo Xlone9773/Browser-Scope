@@ -6,26 +6,8 @@ import { Select } from '../ui/Select';
 
 interface GeneralTabProps {
     t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */; // Using any /* eslint-disable-line @typescript-eslint/no-explicit-any */ for t because Translation type was getting complicated with extensions
-    themeColor: string;
-    setThemeColor: (color: string) => void;
-    animationStyle: string;
-    setAnimationStyle: (style: string) => void;
-    simpleMode: boolean;
-    toggleSimpleMode: (value: boolean) => void;
-    hideScrollbar: boolean;
-    toggleHideScrollbar: (value: boolean) => void;
-    globalHideScrollbar: boolean;
-    toggleGlobalHideScrollbar: (value: boolean) => void;
     timeFormat: '12' | '24';
     setTimeFormat: (format: '12' | '24') => void;
-    disableBlur: boolean;
-    toggleDisableBlur: (value: boolean) => void;
-    disableAnimations: boolean;
-    toggleDisableAnimations: (value: boolean) => void;
-    fastAnimations: boolean;
-    toggleFastAnimations: (value: boolean) => void;
-    collapseHeader: boolean;
-    toggleCollapseHeader: (value: boolean) => void;
     enableUdp?: boolean;
     toggleEnableUdp?: (value: boolean) => void;
     hiddenCards: string[];

@@ -9,28 +9,52 @@ interface VersionsTabProps {
   appVersion?: string;
   modules: ModuleState[];
   updateServiceWorker?: (reloadPage?: boolean) => Promise<void>;
+  manualCheckUpdate?: () => Promise<string>;
+  lastCheckTime?: number;
+  isCheckingUpdate?: boolean;
+  needRefresh?: boolean;
 }
 
 export const VersionsTab: React.FC<VersionsTabProps> = ({ 
   t, 
   appVersion = "Unknown", 
   modules,
-  updateServiceWorker
+  updateServiceWorker,
+  manualCheckUpdate,
+  lastCheckTime,
+  isCheckingUpdate,
+  needRefresh
 }) => {
   const [isPulling, setIsPulling] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleForcePull = async () => {
-    setIsPulling(true);
-    try {
-      if (updateServiceWorker) {
-        await updateServiceWorker(true);
+    if (manualCheckUpdate) {
+      const result = await manualCheckUpdate();
+      if (result === "checked" || result === "not-supported") {
+         setToastMessage(t?.upToDate || "App is already up to date.");
+         setTimeout(() => setToastMessage(null), 3000);
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsPulling(false);
-      window.location.reload();
+    } else {
+      // Fallback
+      setIsPulling(true);
+      try {
+        if (updateServiceWorker) {
+          await updateServiceWorker(true);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsPulling(false);
+        window.location.reload();
+      }
     }
+  };
+
+  const formatLastChecked = (timestamp?: number) => {
+    if (!timestamp) return "";
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
   const coreLibraries = [
@@ -58,13 +82,26 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
           </div>
         </div>
 
-        <Button
-          onClick={handleForcePull}
-          isLoading={isPulling}
-          leftIcon={<RefreshCw size={16} className={isPulling ? "animate-spin" : ""} />}
-        >
-          {t?.forcePull || "Force Check Updates"}
-        </Button>
+        <div className="flex flex-col items-end gap-2">
+          <Button
+            onClick={handleForcePull}
+            isLoading={isPulling || isCheckingUpdate}
+            leftIcon={<RefreshCw size={16} className={(isPulling || isCheckingUpdate) ? "animate-spin" : ""} />}
+            variant={needRefresh ? "primary" : "secondary"}
+          >
+            {needRefresh ? (t?.applyUpdate || "Apply Update") : (t?.forcePull || "Check Updates")}
+          </Button>
+          {lastCheckTime && (
+            <div className="text-xs text-slate-400">
+              {t?.lastChecked || "Last checked:"} {formatLastChecked(lastCheckTime)}
+            </div>
+          )}
+          {toastMessage && (
+            <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium animate-in fade-in slide-in-from-top-1">
+              {toastMessage}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">

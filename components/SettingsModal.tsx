@@ -47,6 +47,10 @@ interface SettingsModalProps {
   moduleStates?: ModuleState[];
   appVersion?: string;
   updateServiceWorker?: (reloadPage?: boolean) => Promise<void>;
+  manualCheckUpdate?: () => Promise<string>;
+  lastCheckTime?: number;
+  isCheckingUpdate?: boolean;
+  needRefresh?: boolean;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ 
@@ -82,7 +86,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setDevToolsFloating,
     moduleStates = [],
     appVersion,
-    updateServiceWorker
+    updateServiceWorker,
+    manualCheckUpdate,
+    lastCheckTime,
+    isCheckingUpdate,
+    needRefresh
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>('appearance');
   const [isPending, startTransition] = useTransition();
@@ -284,6 +292,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 appVersion={appVersion}
                                 modules={moduleStates}
                                 updateServiceWorker={updateServiceWorker}
+                                manualCheckUpdate={manualCheckUpdate}
+                                lastCheckTime={lastCheckTime}
+                                isCheckingUpdate={isCheckingUpdate}
+                                needRefresh={needRefresh}
                             />
                         )}
 
