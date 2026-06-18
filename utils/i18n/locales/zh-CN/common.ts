@@ -66,7 +66,8 @@ export const common = {
         open: "打开",
         reset: "重置",
         export: "导出 JSON"
-    }
+    },
+    googleTranslate: "Google 翻译"
   },
   status: {
     granted: "已授权",

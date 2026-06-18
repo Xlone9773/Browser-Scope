@@ -358,11 +358,90 @@
       .eruda-container {
         overscroll-behavior: none !important;
       }
+
+      /* Google Translate styling */
+      .goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon {
+        display: none !important;
+      }
+      body {
+        top: 0px !important;
+      }
+      .goog-tooltip {
+        display: none !important;
+      }
+      .goog-tooltip:hover {
+        display: none !important;
+      }
+      .goog-text-highlight {
+        background-color: transparent !important;
+        border: none !important; 
+        box-shadow: none !important;
+      }
+      #google_translate_element select {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        font-family: inherit;
+        background-color: #f8fafc;
+        color: #334155;
+        font-size: 14px;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 14px;
+        padding-right: 32px;
+      }
+      #google_translate_element select:hover {
+        border-color: #cbd5e1;
+        background-color: #f1f5f9;
+      }
+      .dark #google_translate_element select {
+        background-color: #1e293b;
+        color: #f8fafc;
+        border-color: #334155;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      }
+      .dark #google_translate_element select:hover {
+        border-color: #475569;
+        background-color: #0f172a;
+      }
+      /* Hide Google logo and text */
+      .goog-te-gadget {
+        color: transparent !important;
+        font-size: 0px !important;
+      }
+      .goog-te-gadget .goog-logo-link {
+        display: none !important;
+      }
+      .goog-te-gadget .goog-te-combo {
+        margin: 0 !important;
+      }
     </style>
     <link rel="stylesheet" href="/index.css" />
   </head>
   <body>
     <div id="root"></div>
+    <!-- Google Translate Widget (Hidden by default, shown when requested) -->
+    <div id="google_translate_wrapper" class="hidden fixed bottom-5 left-5 z-[9999] bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xl transition-all duration-300">
+      <div id="google_translate_element" class="px-2 py-1"></div>
+      <button onclick="document.getElementById('google_translate_wrapper').classList.add('hidden')" class="absolute -top-2.5 -right-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md transition-colors font-medium border-2 border-white dark:border-slate-800 text-sm">×</button>
+    </div>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'auto',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>

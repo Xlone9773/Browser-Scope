@@ -66,7 +66,8 @@ export const common = {
         open: "Открыть",
         reset: "Сброс",
         export: "Экспорт JSON"
-    }
+    },
+    googleTranslate: "Google Переводчик"
   },
   status: {
     granted: "Разрешено",

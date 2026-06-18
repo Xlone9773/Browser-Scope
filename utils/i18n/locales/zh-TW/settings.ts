@@ -304,7 +304,10 @@ export const settings = {
     versions: {
         title: "軟體版本",
         desc: "檢視當前核心軟體版本和已載入模組。如有需要可強制拉取更新代碼。",
-        forcePull: "強制檢查更新",
+        forcePull: "檢查更新",
+        applyUpdate: "套用更新並重啟",
+        upToDate: "目前的應用程式是最新的。",
+        lastChecked: "上次檢查時間: ",
         coreApp: "核心應用程式",
         installedModules: "已安裝模組",
         libraries: "核心依賴庫"

@@ -304,7 +304,10 @@ export const settings = {
     versions: {
         title: "ソフトウェアバージョン",
         desc: "現在のコアアプリケーションのバージョンとロード済みのモジュールを表示します。必要に応じて更新情報を強制的に取得します。",
-        forcePull: "アップデートを強制確認",
+        forcePull: "アップデートを確認",
+        applyUpdate: "アップデートを適用して再起動",
+        upToDate: "アプリはすでに最新です。",
+        lastChecked: "最終チェック: ",
         coreApp: "コアアプリケーション",
         installedModules: "インストール済みモジュール",
         libraries: "コアライブラリ"

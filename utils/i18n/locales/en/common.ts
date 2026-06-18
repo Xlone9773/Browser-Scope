@@ -65,7 +65,8 @@ export const common = {
         open: "Open",
         reset: "Reset",
         export: "Export JSON"
-    }
+    },
+    googleTranslate: "Google Translate"
   },
   status: {
     granted: "Granted",
