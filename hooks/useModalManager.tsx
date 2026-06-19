@@ -140,13 +140,7 @@ export const useModalManager = () => {
       while (deadline.timeRemaining() > 0 && index < keysToLoad.length) {
         const id = keysToLoad[index];
         if (!loadedModules.has(id)) {
-          loadFunctions[id]().then(() => {
-            setLoadedModules((prev) => {
-               const next = new Set(prev);
-               next.add(id);
-               return next;
-            });
-          }).catch(console.error);
+          loadFunctions[id]().catch(console.error);
         }
         index++;
       }

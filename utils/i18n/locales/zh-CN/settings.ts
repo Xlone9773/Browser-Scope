@@ -291,7 +291,8 @@ export const settings = {
             active: "运行中",
             inactive: "空闲",
             cached: "已缓存",
-            system: "系统核心"
+            system: "系统核心",
+            locked: "已锁定"
         },
         impact: {
             low: "低",

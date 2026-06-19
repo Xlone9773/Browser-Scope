@@ -291,7 +291,8 @@ export const settings = {
             active: "Active",
             inactive: "Idle",
             cached: "Cached",
-            system: "System"
+            system: "System",
+            locked: "Locked"
         },
         impact: {
             low: "Low",

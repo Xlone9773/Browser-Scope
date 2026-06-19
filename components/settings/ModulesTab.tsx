@@ -16,7 +16,7 @@ export interface ModuleState {
 }
 
 interface ModulesTabProps {
-    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */; // Fix TypeScript error by using explicit any
+    t: Translation['settings']['modules'];
     modules: ModuleState[];
 }
 
@@ -170,7 +170,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                                     {mod.isSystem ? (
                                         <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 text-xs font-medium cursor-not-allowed select-none opacity-60">
                                             <Lock size={12} />
-                                            <span>Locked</span>
+                                            <span>{t?.status?.locked || 'Locked'}</span>
                                         </div>
                                     ) : (
                                         <Button

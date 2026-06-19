@@ -291,7 +291,8 @@ export const settings = {
             active: "実行中",
             inactive: "アイドル",
             cached: "キャッシュ済み",
-            system: "システム"
+            system: "システム",
+            locked: "ロック"
         },
         impact: {
             low: "低",

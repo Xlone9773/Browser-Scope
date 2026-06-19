@@ -291,7 +291,8 @@ export const settings = {
             active: "Активен",
             inactive: "Неактивен",
             cached: "Кешировано",
-            system: "Система"
+            system: "Система",
+            locked: "Заблокировано"
         },
         impact: {
             low: "Низкое",
