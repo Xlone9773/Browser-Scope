@@ -72,7 +72,18 @@ export default defineConfig(({ mode }) => {
           compress: {
             drop_console: mode === 'production',
             drop_debugger: mode === 'production',
+            passes: 1, // Reduced to avoid build timeout
+            toplevel: true,
+            hoist_funs: true,
+            reduce_funcs: true,
+            booleans_as_integers: true,
           },
+          mangle: {
+            toplevel: true,
+          },
+          format: {
+            comments: false, // Ensure all comments are stripped
+          }
         },
         sourcemap: mode !== 'production',
         cssCodeSplit: true,

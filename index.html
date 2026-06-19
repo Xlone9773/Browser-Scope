@@ -413,30 +413,27 @@
       }
       /* Hide Google logo and text */
       .goog-te-gadget {
-        color: transparent !important;
-        font-size: 0px !important;
-      }
-      .goog-te-gadget .goog-logo-link {
         display: none !important;
       }
-      .goog-te-gadget .goog-te-combo {
-        margin: 0 !important;
+      .goog-te-banner-frame {
+        display: none !important;
+      }
+      body {
+        top: 0px !important; 
+      }
+      #google_translate_element {
+        display: none !important;
       }
     </style>
     <link rel="stylesheet" href="/index.css" />
   </head>
   <body>
     <div id="root"></div>
-    <!-- Google Translate Widget (Hidden by default, shown when requested) -->
-    <div id="google_translate_wrapper" class="hidden fixed bottom-5 left-5 z-[9999] bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xl transition-all duration-300">
-      <div id="google_translate_element" class="px-2 py-1"></div>
-      <button onclick="document.getElementById('google_translate_wrapper').classList.add('hidden')" class="absolute -top-2.5 -right-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md transition-colors font-medium border-2 border-white dark:border-slate-800 text-sm">×</button>
-    </div>
+    <div id="google_translate_element"></div>
     <script type="text/javascript">
       function googleTranslateElementInit() {
         new google.translate.TranslateElement({
           pageLanguage: 'auto',
-          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
           autoDisplay: false
         }, 'google_translate_element');
       }

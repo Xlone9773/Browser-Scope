@@ -475,6 +475,15 @@ const App: React.FC = () => {
        onUnload: () => unload("displayTools"),
        isLoaded: loadedModules.has("displayTools"),
     },
+    {
+       id: "googleTranslate",
+       name: t.common?.googleTranslate || "Google Translate",
+       isOpen: visibility.googleTranslate,
+       setOpen: (v: boolean) => (v ? open("googleTranslate") : close("googleTranslate")),
+       impact: "Low",
+       onUnload: () => unload("googleTranslate"),
+       isLoaded: loadedModules.has("googleTranslate"),
+    },
   ];
 
   useEffect(() => {
@@ -756,6 +765,12 @@ const App: React.FC = () => {
               t={t}
             />
           )}
+          {visibility.googleTranslate && (
+            <Components.googleTranslate
+              onClose={() => close("googleTranslate")}
+              t={t}
+            />
+          )}
         </Suspense>
       </ErrorBoundary>
 
@@ -771,6 +786,7 @@ const App: React.FC = () => {
           onOpenSettings={() => open("settings")}
           onOpenAbout={() => open("about")}
           onOpenBenchmark={() => open("benchmark")}
+          onOpenTranslate={() => open("googleTranslate")}
           collapseHeader={collapseHeader}
         />
 

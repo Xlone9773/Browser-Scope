@@ -43,6 +43,7 @@ interface HeaderProps {
   onOpenAbout: () => void;
   onOpenBenchmark: () => void;
   collapseHeader?: boolean;
+  onOpenTranslate: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -57,6 +58,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAbout,
   onOpenBenchmark,
   collapseHeader = false,
+  onOpenTranslate,
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -76,16 +78,6 @@ export const Header: React.FC<HeaderProps> = ({
     return () =>
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
-
-  // Reset states when language actually changes!
-  useEffect(() => {
-    if (pendingLang === lang) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPendingLang(null);
-      setIsLangMenuOpen(false);
-      setIsMoreMenuOpen(false);
-    }
-  }, [lang, pendingLang]);
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -141,6 +133,11 @@ export const Header: React.FC<HeaderProps> = ({
     setPendingLang(code);
     startTransition(() => {
       setLang(code);
+      setTimeout(() => {
+         setPendingLang(null);
+         setIsLangMenuOpen(false);
+         setIsMoreMenuOpen(false);
+      }, 0);
     });
   };
 
@@ -374,8 +371,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="my-1 border-t border-slate-200 dark:border-slate-700"></div>
               <button
                 onClick={() => {
-                  const el = document.getElementById('google_translate_wrapper');
-                  if (el) el.classList.remove('hidden');
+                  onOpenTranslate();
                   setIsMoreMenuOpen(false);
                 }}
                 className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-slate-700 dark:text-slate-300`}

@@ -56,7 +56,12 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
 
     const checkUdpSupport = React.useCallback((force = false) => {
         if (!force && udpSupported !== null) return;
-        setUdpSupported(null);
+        
+        // Use timeout to prevent synchronous state update in effect
+        if (force) {
+            setTimeout(() => setUdpSupported(null), 0);
+        }
+        
         fetch('/api/udp-status')
             .then(res => res.json())
             .then(data => {
@@ -70,11 +75,10 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     }, [udpSupported]);
 
     useEffect(() => {
-        if (toggleEnableUdp) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (toggleEnableUdp && udpSupported === null) {
             checkUdpSupport();
         }
-    }, [toggleEnableUdp, checkUdpSupport]);
+    }, [toggleEnableUdp, checkUdpSupport, udpSupported]);
 
     const sectionsObj = translationDict?.sections || {};
     const availableCards = [
