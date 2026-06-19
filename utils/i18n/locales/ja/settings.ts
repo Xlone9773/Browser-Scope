@@ -71,7 +71,9 @@ export const settings = {
         udpBypass: {
             title: "UDP プロキシを有効にする (CORS バイパス)",
             desc: "UDP マッピング API を使用して、CORS によるネットワーク要求のインターセプトを完全にバイパスします。",
-            unsupportedEnv: "現在の実行環境ではUDPを有効にできません"
+            unsupportedEnv: "現在の実行環境ではUDPを有効にできません",
+            checkingUdp: "UDP サポートを確認中...",
+            recheckUdp: "再確認"
         }
     },
     network: {

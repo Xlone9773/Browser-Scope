@@ -175,7 +175,7 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'Eye Dropper', key: 'eyeDropper', supported: 'EyeDropper' in window, description: 'System color picker' },
     { name: 'Accelerometer', key: 'accelerometer', supported: 'Accelerometer' in window, description: 'Motion sensor' },
     { name: 'View Transitions API', key: 'viewTransitions', supported: 'startViewTransition' in document, description: 'Smooth DOM transitions' },
-    { name: 'Popover API', key: 'popover', supported: typeof HTMLElement !== 'undefined' && HTMLElement.prototype.hasOwnProperty('popover'), description: 'Native popovers and tooltips' },
+    { name: 'Popover API', key: 'popover', supported: typeof HTMLElement !== 'undefined' && Object.prototype.hasOwnProperty.call(HTMLElement.prototype, 'popover'), description: 'Native popovers and tooltips' },
     { name: 'Trusted Types', key: 'trustedTypes', supported: 'trustedTypes' in window, description: 'DOM XSS protection' },
     { name: 'CSS Container Queries', key: 'containerQueries', supported: typeof CSS !== 'undefined' && CSS.supports('container-type: inline-size'), description: 'Element-based responsive design' },
     { name: 'CSS Anchor Positioning', key: 'anchorPositioning', supported: typeof CSS !== 'undefined' && CSS.supports('anchor-name: --test'), description: 'Tether elements to anchors' },

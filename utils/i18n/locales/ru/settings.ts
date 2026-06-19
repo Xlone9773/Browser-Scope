@@ -71,7 +71,9 @@ export const settings = {
         udpBypass: {
             title: "Включить UDP Proxy (Обход CORS)",
             desc: "Использование API сопоставления UDP для запроса сетевых инструментов с полным обходом любых CORS-блокировок.",
-            unsupportedEnv: "Не поддерживается в текущей среде выполнения"
+            unsupportedEnv: "Не поддерживается в текущей среде выполнения",
+            checkingUdp: "Проверка поддержки UDP...",
+            recheckUdp: "Перепроверить"
         }
     },
     network: {

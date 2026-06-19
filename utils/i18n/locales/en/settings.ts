@@ -71,7 +71,9 @@ export const settings = {
         udpBypass: {
             title: "Enable UDP Network (Bypass CORS)",
             desc: "Use UDP mapping API to fetch network tools endpoints entirely bypassing all CORS errors.",
-            unsupportedEnv: "Not supported in the current environment"
+            unsupportedEnv: "Not supported in the current environment",
+            checkingUdp: "Checking UDP support...",
+            recheckUdp: "Recheck"
         }
     },
     network: {

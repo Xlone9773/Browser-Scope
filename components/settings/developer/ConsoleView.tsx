@@ -111,7 +111,7 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
 
     try {
        
-      const res = eval(cmdToRun);
+      const res = new Function('return ' + cmdToRun)();
       let output = String(res);
       if (typeof res === "object" && res !== null) {
         try {

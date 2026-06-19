@@ -22,6 +22,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
             type: (entry as PerformanceResourceTiming).initiatorType,
             duration: entry.duration
         }));
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setResources(resList);
     }, []);
 

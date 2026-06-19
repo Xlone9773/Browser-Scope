@@ -807,7 +807,7 @@ const App: React.FC = () => {
             
             {/* Navigation Tabs */}
             {showTabs && (() => {
-              const availableTabs = [
+              const availableTabs: { id: string; label: string; icon: React.ReactNode }[] = [
                 { id: "all", label: (t as any).groups?.all || "All", icon: null }
               ];
               

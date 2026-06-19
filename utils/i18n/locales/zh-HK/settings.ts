@@ -71,7 +71,9 @@ export const settings = {
         udpBypass: {
             title: "啟用 UDP 網絡代理 (完全繞過跨域)",
             desc: "使用UDP映射API提取網絡工具端點，徹底解決由於CORS產生的任何網絡請求攔截。",
-            unsupportedEnv: "當前運行環境不支援開啟UDP"
+            unsupportedEnv: "當前運行環境不支援開啟UDP",
+            checkingUdp: "正在檢查 UDP 支援...",
+            recheckUdp: "重新檢查"
         }
     },
     network: {

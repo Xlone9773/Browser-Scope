@@ -67,6 +67,7 @@ export function useAppSettings() {
 
   useEffect(() => {
     const savedTheme = getSavedTheme();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(savedTheme);
     applyTheme(savedTheme);
 

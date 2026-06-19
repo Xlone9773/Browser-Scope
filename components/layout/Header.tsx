@@ -80,6 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
   // Reset states when language actually changes!
   useEffect(() => {
     if (pendingLang === lang) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPendingLang(null);
       setIsLangMenuOpen(false);
       setIsMoreMenuOpen(false);

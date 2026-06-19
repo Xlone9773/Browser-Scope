@@ -14,6 +14,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
     const [swCount, setSwCount] = useState<number | null>(null);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setLocalStorageCount(localStorage.length);
         setSessionStorageCount(sessionStorage.length);
         if ('serviceWorker' in navigator) {

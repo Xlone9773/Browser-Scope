@@ -197,7 +197,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                 if (!tz || tz === 'UTC') {
                     addAnomaly('timezone_utc', 'Suspicious UTC timezone (often used in headless)', 'suspicious', 'normalcy', 10);
                 }
-            } catch (e) {
+            } catch (_e) {
                 // Ignore
             }
 
