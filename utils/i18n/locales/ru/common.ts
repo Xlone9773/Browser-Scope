@@ -67,7 +67,10 @@ export const common = {
         reset: "Сброс",
         export: "Экспорт JSON"
     },
-    googleTranslate: "Google Переводчик"
+    googleTranslate: "Google Переводчик",
+    googleTranslateDesc: "Выберите целевой язык для перевода страницы",
+    googleTranslateExit: "Выйти из перевода",
+    poweredBy: "При поддержке Google Переводчика"
   },
   status: {
     granted: "Разрешено",

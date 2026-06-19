@@ -67,7 +67,10 @@ export const common = {
         reset: "重置",
         export: "导出 JSON"
     },
-    googleTranslate: "Google 翻译"
+    googleTranslate: "Google 翻译",
+    googleTranslateDesc: "选择目标语言以翻译整个页面",
+    googleTranslateExit: "退出翻译",
+    poweredBy: "由 Google 翻译提供支持"
   },
   status: {
     granted: "已授权",

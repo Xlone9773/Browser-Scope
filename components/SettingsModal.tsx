@@ -92,12 +92,25 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     isCheckingUpdate,
     needRefresh
 }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>('appearance');
+  const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>(() => {
+    try {
+      const saved = sessionStorage.getItem('browserscope_settings_last_tab');
+      if (saved && ['general', 'appearance', 'storage', 'res', 'dev', 'mod', 'ver'].includes(saved)) {
+        return saved as 'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver';
+      }
+    } catch (e) {
+      // Ignored
+    }
+    return 'appearance';
+  });
   const [isPending, startTransition] = useTransition();
 
   const handleTabChange = (tab: 'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver') => {
       startTransition(() => {
           setActiveTab(tab);
+          try {
+             sessionStorage.setItem('browserscope_settings_last_tab', tab);
+          } catch(e) {}
       });
   };
 

@@ -66,7 +66,10 @@ export const common = {
         reset: "Reset",
         export: "Export JSON"
     },
-    googleTranslate: "Google Translate"
+    googleTranslate: "Google Translate",
+    googleTranslateDesc: "Choose a target language for page translation",
+    googleTranslateExit: "Exit Translation",
+    poweredBy: "Powered by Google Translate"
   },
   status: {
     granted: "Granted",

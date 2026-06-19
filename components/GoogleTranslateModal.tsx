@@ -8,13 +8,31 @@ interface GoogleTranslateModalProps {
 }
 
 const SUPPORTED_LANGS = [
-  { code: "en", name: "English" },
-  { code: "zh-CN", name: "简体中文" },
-  { code: "zh-TW", name: "繁體中文" },
-  { code: "ja", name: "日本語" },
-  { code: "ru", name: "Русский" },
+  { code: "ar", name: "العربية" },
+  { code: "bg", name: "Български" },
+  { code: "cs", name: "Čeština" },
+  { code: "da", name: "Dansk" },
+  { code: "de", name: "Deutsch" },
+  { code: "el", name: "Ελληνικά" },
   { code: "es", name: "Español" },
+  { code: "fi", name: "Suomi" },
   { code: "fr", name: "Français" },
+  { code: "hi", name: "हिन्दी" },
+  { code: "hu", name: "Magyar" },
+  { code: "id", name: "Bahasa Indonesia" },
+  { code: "it", name: "Italiano" },
+  { code: "ko", name: "한국어" },
+  { code: "nl", name: "Nederlands" },
+  { code: "no", name: "Norsk" },
+  { code: "pl", name: "Polski" },
+  { code: "pt", name: "Português" },
+  { code: "ro", name: "Română" },
+  { code: "sk", name: "Slovenčina" },
+  { code: "sv", name: "Svenska" },
+  { code: "th", name: "ไทย" },
+  { code: "tr", name: "Türkçe" },
+  { code: "uk", name: "Українська" },
+  { code: "vi", name: "Tiếng Việt" },
 ];
 
 const setGoogleTranslateCookie = (langCode: string) => {
@@ -79,8 +97,9 @@ export const GoogleTranslateModal: React.FC<GoogleTranslateModalProps> = ({
 
   // Safe checks for translations
   const titleText = t?.common?.googleTranslate || "Google Translate";
-  const descText = "Choose a target language for page translation";
-  const exitText = "Exit Translation";
+  const descText = t?.common?.googleTranslateDesc || "Choose a target language for page translation";
+  const exitText = t?.common?.googleTranslateExit || "Exit Translation";
+  const poweredBy = t?.common?.poweredBy || "Powered by Google Translate";
 
   return (
     <BaseModal onClose={onClose} title={titleText} icon={<Languages />}>
@@ -116,7 +135,7 @@ export const GoogleTranslateModal: React.FC<GoogleTranslateModalProps> = ({
         <div className="pt-4 mt-6 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
           <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
             <Globe size={16} />
-            <span>Powered by Google Translate</span>
+            <span>{poweredBy}</span>
           </div>
 
           <button
