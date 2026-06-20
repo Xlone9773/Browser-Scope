@@ -103,15 +103,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     }
     return 'appearance';
   });
-  const [isPending, startTransition] = useTransition();
 
   const handleTabChange = (tab: 'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver') => {
-      startTransition(() => {
-          setActiveTab(tab);
-          try {
-             sessionStorage.setItem('browserscope_settings_last_tab', tab);
-          } catch(e) {}
-      });
+      setActiveTab(tab);
+      try {
+         sessionStorage.setItem('browserscope_settings_last_tab', tab);
+      } catch(e) {}
   };
 
   // Access structured settings
@@ -240,11 +237,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                     {/* Content Area */}
                     <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
-                        {isPending && (
-                            <div className="absolute inset-0 z-10 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col justify-center items-center backdrop-blur-sm">
-                                <Loader2 className="animate-spin text-indigo-500 mb-2" size={24} />
-                            </div>
-                        )}
                         <Suspense fallback={<div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
                         
                         {activeTab === 'appearance' && (

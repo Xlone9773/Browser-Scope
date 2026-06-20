@@ -131,35 +131,6 @@ export const useModalManager = () => {
     });
   }, [close]);
 
-  // Preload logic using requestIdleCallback
-  useEffect(() => {
-    const keysToLoad = Object.keys(loadFunctions);
-    let index = 0;
-
-    const idleCallback = (deadline: IdleDeadline) => {
-      while (deadline.timeRemaining() > 0 && index < keysToLoad.length) {
-        const id = keysToLoad[index];
-        if (!loadedModules.has(id)) {
-          loadFunctions[id]().catch(console.error);
-        }
-        index++;
-      }
-      if (index < keysToLoad.length) {
-        if ('requestIdleCallback' in window) {
-           (window as any).requestIdleCallback(idleCallback);
-        } else {
-           setTimeout(() => idleCallback({ timeRemaining: () => 1, didTimeout: false }), 50);
-        }
-      }
-    };
-
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(idleCallback);
-    } else {
-      setTimeout(() => idleCallback({ timeRemaining: () => 1, didTimeout: false }), 100);
-    }
-  }, []); // Only run once on mount
-
   React.useEffect(() => {
     
 

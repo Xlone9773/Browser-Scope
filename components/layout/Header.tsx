@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useTransition } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Monitor,
   RefreshCw,
@@ -64,7 +64,6 @@ export const Header: React.FC<HeaderProps> = ({
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [pendingLang, setPendingLang] = useState<Language | null>(null);
-  const [isPending, startTransition] = useTransition();
   const { formatNativeLanguageName } = useFormatter(lang);
 
   const langMenuRef = useRef<HTMLDivElement>(null);
@@ -82,8 +81,6 @@ export const Header: React.FC<HeaderProps> = ({
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      // Don't close if we are in the middle of a transition
-      if (isPending) return;
       if (
         langMenuRef.current &&
         !langMenuRef.current.contains(e.target as Node)
@@ -99,7 +96,7 @@ export const Header: React.FC<HeaderProps> = ({
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isPending]);
+  }, []);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -131,14 +128,12 @@ export const Header: React.FC<HeaderProps> = ({
       return;
     }
     setPendingLang(code);
-    startTransition(() => {
-      setLang(code);
-      setTimeout(() => {
-         setPendingLang(null);
-         setIsLangMenuOpen(false);
-         setIsMoreMenuOpen(false);
-      }, 0);
-    });
+    setLang(code);
+    setTimeout(() => {
+       setPendingLang(null);
+       setIsLangMenuOpen(false);
+       setIsMoreMenuOpen(false);
+    }, 0);
   };
 
   const useCollapsed = collapseHeader
@@ -241,13 +236,13 @@ export const Header: React.FC<HeaderProps> = ({
             >
               {SUPPORTED_LANGUAGES.map((code) => {
                 const isCurrent = lang === code;
-                const isItemPending = isPending && pendingLang === code;
+                const isItemPending = pendingLang === code;
 
                 return (
                   <button
                     key={code}
                     onClick={() => handleLangSelect(code as Language)}
-                    disabled={isPending}
+                    disabled={!!pendingLang}
                     className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isCurrent ? "text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20" : "text-slate-700 dark:text-slate-300"}`}
                   >
                     <span>{formatNativeLanguageName(code)}</span>
@@ -342,13 +337,13 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               {SUPPORTED_LANGUAGES.map((code) => {
                 const isCurrent = lang === code;
-                const isItemPending = isPending && pendingLang === code;
+                const isItemPending = pendingLang === code;
 
                 return (
                   <button
                     key={code}
                     onClick={() => handleLangSelect(code as Language)}
-                    disabled={isPending}
+                    disabled={!!pendingLang}
                     className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors flex items-center gap-2 justify-between disabled:opacity-50 disabled:cursor-not-allowed ${isCurrent ? "text-indigo-600 dark:text-indigo-400 font-medium" : "text-slate-600 dark:text-slate-300"}`}
                   >
                     <div className="flex items-center gap-2">
