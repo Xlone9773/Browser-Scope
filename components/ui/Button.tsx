@@ -52,10 +52,10 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled || isLoading}
       {...props}
     >
-      {isLoading && <Spinner size={size === 'sm' || size === 'xs' ? 14 : 18} />}
-      {!isLoading && leftIcon && <span className="flex-shrink-0">{leftIcon}</span>}
+      {!!isLoading && <Spinner size={size === 'sm' || size === 'xs' ? 14 : 18} />}
+      {!isLoading && !!leftIcon && <span className="flex-shrink-0">{leftIcon}</span>}
       {children}
-      {!isLoading && rightIcon && <span className="flex-shrink-0">{rightIcon}</span>}
+      {!isLoading && !!rightIcon && <span className="flex-shrink-0">{rightIcon}</span>}
     </button>
   );
 };
