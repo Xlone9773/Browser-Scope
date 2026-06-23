@@ -31,7 +31,7 @@ export const SystemCard: React.FC<SystemCardProps> = React.memo(({ data, t, simp
       <InfoItem label={t.labels.os} value={data.os} />
       
       {/* Platform / Bitness from Hints if available */}
-      {hasClientHints && data.clientHints?.platformVersion ? (
+      {hasClientHints && Boolean(data.clientHints?.platformVersion) ? (
           <InfoItem label={t.labels.platform_ver} value={data.clientHints.platformVersion} subValue={data.clientHints.bitness ? `${data.clientHints.bitness}-bit` : undefined} />
       ) : (
           <InfoItem label={t.labels.platform} value={data.platform} />
@@ -49,7 +49,7 @@ export const SystemCard: React.FC<SystemCardProps> = React.memo(({ data, t, simp
           </div>
       )}
 
-      {!simpleMode && (
+      {Boolean(!simpleMode) && (
           <>
               <InfoItem label={t.labels.language} value={formatLanguageName(data.language)} subValue={data.language} />
               <InfoItem label={t.labels.pref_langs} value={list(readableLanguages)} />

@@ -46,7 +46,7 @@ export const AppNotification: React.FC<AppNotificationProps> = ({ type, title, m
     <div className={`flex items-start gap-3 p-4 border rounded-lg shadow-sm w-full transition-all ${getBgClass()}`}>
       {getIcon()}
       <div className="flex-1 min-w-0">
-        {title && <h4 className={`text-sm font-semibold mb-1 ${
+        {Boolean(title) && <h4 className={`text-sm font-semibold mb-1 ${
           type === 'warning' ? 'text-amber-800 dark:text-amber-300' :
           type === 'error' ? 'text-rose-800 dark:text-rose-300' :
           type === 'success' ? 'text-emerald-800 dark:text-emerald-300' :
@@ -60,7 +60,7 @@ export const AppNotification: React.FC<AppNotificationProps> = ({ type, title, m
         }`}>{message}</div>
       </div>
       <div className="flex items-center gap-2 shrink-0">
-        {action && (
+        {Boolean(action) && (
           <button 
             onClick={action.onClick}
             className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${getButtonClass()}`}
@@ -68,7 +68,7 @@ export const AppNotification: React.FC<AppNotificationProps> = ({ type, title, m
             {action.label}
           </button>
         )}
-        {onClose && (
+        {Boolean(onClose) && (
           <button 
             onClick={onClose}
             className={`p-1.5 rounded-md opacity-70 hover:opacity-100 transition-opacity ${

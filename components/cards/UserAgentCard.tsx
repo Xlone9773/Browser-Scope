@@ -46,7 +46,7 @@ export const UserAgentCard: React.FC<UserAgentCardProps> = React.memo(({ userAge
                 <button onClick={handleCopy} className="absolute top-2 right-2 p-2 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title={t.actions.copy}>
                     {copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
                 </button>
-                {copied && <div className="absolute top-1 right-12 px-2 py-1 bg-black/75 text-white text-xs rounded shadow-sm animate-in fade-in slide-in-from-right-2">{t.actions.copied}</div>}
+                {Boolean(copied) && <div className="absolute top-1 right-12 px-2 py-1 bg-black/75 text-white text-xs rounded shadow-sm animate-in fade-in slide-in-from-right-2">{t.actions.copied}</div>}
             </div>
         </InfoCard>
     </div>

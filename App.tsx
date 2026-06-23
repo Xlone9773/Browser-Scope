@@ -818,7 +818,7 @@ const App: React.FC = () => {
         )}
 
         {/* Main Content - Only render if data exists */}
-        {data && (
+        {Boolean(data && Object.keys(data).length) && (
           <ErrorBoundary name="MainContent">
             
             {/* Navigation Tabs */}

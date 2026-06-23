@@ -27,7 +27,7 @@ export const NetworkCard: React.FC<NetworkCardProps> = React.memo(({ data, t, si
         <InfoItem label={t.labels.conn_type} value={data.effectiveType} />
         <InfoItem label={t.labels.net_type} value={data.type} />
         <InfoItem label={t.labels.downlink} value={data.downlink} />
-        {!simpleMode && (
+        {Boolean(!simpleMode) && (
             <>
                 <InfoItem label={t.labels.downlink_max} value={data.downlinkMax} />
                 <InfoItem label={t.labels.rtt} value={data.rtt} />

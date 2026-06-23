@@ -246,7 +246,7 @@ export const Header: React.FC<HeaderProps> = ({
                     className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isCurrent ? "text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20" : "text-slate-700 dark:text-slate-300"}`}
                   >
                     <span>{formatNativeLanguageName(code)}</span>
-                    {isItemPending && (
+                    {Boolean(isItemPending) && (
                       <Loader2
                         size={14}
                         className="animate-spin text-indigo-500"
@@ -347,14 +347,14 @@ export const Header: React.FC<HeaderProps> = ({
                     className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors flex items-center gap-2 justify-between disabled:opacity-50 disabled:cursor-not-allowed ${isCurrent ? "text-indigo-600 dark:text-indigo-400 font-medium" : "text-slate-600 dark:text-slate-300"}`}
                   >
                     <div className="flex items-center gap-2">
-                      {isCurrent && (
+                      {Boolean(isCurrent) && (
                         <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
                       )}
                       <span className={isCurrent ? "" : "ml-3"}>
                         {formatNativeLanguageName(code)}
                       </span>
                     </div>
-                    {isItemPending && (
+                    {Boolean(isItemPending) && (
                       <Loader2
                         size={14}
                         className="animate-spin text-indigo-500"

@@ -42,7 +42,7 @@ export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, 
   return (
     <InfoCard title={t.sections.hardware} icon={Cpu}>
       <InfoItem label={t.labels.cpu} value={data.cpuCores} />
-      {data.cpuModel && <InfoItem label={t.labels.cpu_model} value={data.cpuModel} />}
+      {Boolean(data.cpuModel) && <InfoItem label={t.labels.cpu_model} value={data.cpuModel} />}
       <InfoItem label={t.labels.memory} value={data.memory} />
       <div className="group relative">
           <InfoItem label={t.labels.gpu_renderer} value={data.gpuRenderer} />
@@ -58,7 +58,7 @@ export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, 
       </div>
       
       {/* GPU Precision Badge */}
-      {data.gpuPrecision && (
+      {Boolean(data.gpuPrecision) && (
           <div className="flex items-center justify-between py-1.5 px-2 -mx-2">
              <span className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5">
                  <Layers size={14} className="text-slate-400" />

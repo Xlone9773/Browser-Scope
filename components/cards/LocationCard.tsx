@@ -120,12 +120,12 @@ export const LocationCard: React.FC<LocationCardProps> = React.memo(({
             subValue={regionName && regionName !== data.locale ? regionName : undefined} 
         />
         <InfoItem label={t.labels.calendar} value={data.calendar} />
-        {data.numberingSystem && (
+        {Boolean(data.numberingSystem) && (
             <InfoItem label="Number System" value={data.numberingSystem} />
         )}
 
         {/* Intl API Capabilities */}
-        {data.intlSupport && (
+        {Boolean(data.intlSupport) && (
             <div className="mt-3 mb-2">
                 <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                     <Globe2 size={12} />

@@ -255,7 +255,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
         </div>
         
         {/* Action Alert Modal */}
-        {actionAlert && (
+        {Boolean(actionAlert) && (
             <Modal title={actionAlert.title} onClose={() => setActionAlert(null)} size="sm">
                 <div className="flex flex-col items-center py-6 text-center">
                     <Bell size={48} className="text-indigo-500 mb-4 opacity-80" />
