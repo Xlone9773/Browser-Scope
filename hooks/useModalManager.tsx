@@ -32,6 +32,7 @@ const RayTracingModal = lazy(() => import('../components/RayTracingModal').then(
 const ExtensionsModal = lazy(() => import('../components/ExtensionsModal').then(m => ({ default: m.ExtensionsModal })));
 const GoogleTranslateModal = lazy(() => import('../components/GoogleTranslateModal').then(m => ({ default: m.GoogleTranslateModal })));
 const AudioLatencyProbingModal = lazy(() => import('../components/AudioLatencyProbingModal').then(m => ({ default: m.AudioLatencyProbingModal })));
+const CanvasPoisoningModal = lazy(() => import('../components/CanvasPoisoningModal').then(m => ({ default: m.CanvasPoisoningModal })));
 
 const loadFunctions: Record<string, () => Promise<any>> = {
   camera: () => import('../components/CameraModal'),
@@ -65,6 +66,7 @@ const loadFunctions: Record<string, () => Promise<any>> = {
   extensions: () => import('../components/ExtensionsModal'),
   googleTranslate: () => import('../components/GoogleTranslateModal'),
   audioLatency: () => import('../components/AudioLatencyProbingModal'),
+  poisoning: () => import('../components/CanvasPoisoningModal'),
 };
 
 const COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -99,6 +101,7 @@ const COMPONENTS: Record<string, React.ComponentType<any>> = {
   extensions: ExtensionsModal,
   googleTranslate: GoogleTranslateModal,
   audioLatency: AudioLatencyProbingModal,
+  poisoning: CanvasPoisoningModal,
 };
 
 export const useModalManager = () => {

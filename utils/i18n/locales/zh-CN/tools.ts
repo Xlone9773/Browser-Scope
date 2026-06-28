@@ -299,5 +299,24 @@ export const tools = {
     legend_high_mid: "左 / 右 / 中置 (中高频)",
     legend_surround: "左环绕 / 右环绕 (高频鸟鸣)",
     legend_lfe: "低音炮 LFE (60Hz 低频扫描)"
+  },
+  poisoning: {
+    title: "噪音干扰与投毒检测",
+    detect: "开始检测",
+    desc_title: "噪音注入检测",
+    desc: "通过反复渲染复杂的几何图案和文本，并逐帧比对像素哈希。静态渲染时的变化表明存在人为的噪音注入（常见于隐私保护扩展）。",
+    status: "状态",
+    status_idle: "空闲",
+    status_running: "运行中",
+    status_poisoned: "已投毒 (干扰)",
+    status_clean: "干净 (无干扰)",
+    run_test: "运行投毒检测",
+    testing: "测试中",
+    waiting: "等待开始测试...",
+    start_log: "开始 Canvas 和 WebGL 投毒检测...",
+    testing_canvas: "测试 2D Canvas 稳定性...",
+    testing_webgl: "测试 WebGL 稳定性...",
+    poisoned_log: "⚠️ 环境很可能已被投毒（检测到噪音注入）。",
+    clean_log: "✅ 环境似乎是干净的（未检测到随机噪音）。"
   }
 };

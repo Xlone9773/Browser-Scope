@@ -287,6 +287,35 @@ export const tools = {
     stop_probe: "ループ停止",
     start_probe: "自動巡回テスト",
     channel_probing_desc: "下の仮想スピーカーノードをクリックして、特定の論理ドライバーチャンネルにのみ音声を送信するか、自動巡回を開始してすべてのスピーカーをテストします。",
-    listener_center: "センター"
+    listener_center: "センター",
+    early: "早め",
+    no_offset: "オフセットなし",
+    late: "遅れ / 遅延",
+    layout_stereo: "2.0 ステレオ",
+    layout_quad: "4.0 クアッド",
+    layout_5_1: "5.1 サラウンド",
+    layout_7_1: "7.1 サラウンド",
+    legend_high_mid: "左 / 右 / センター (中高音)",
+    legend_surround: "サラウンド左 / サラウンド右 (高音チャープ)",
+    legend_lfe: "サブウーファー LFE (60Hz 低周波スイープ)"
+  },
+  poisoning: {
+    title: "ノイズとポイズニングの検出",
+    detect: "検出開始",
+    desc_title: "ノイズインジェクションの検出",
+    desc: "複雑な幾何学模様とテキストを繰り返しレンダリングし、ピクセルハッシュをフレームごとに比較します。静的レンダリングにおける差異は、人為的なノイズインジェクション（プライバシー拡張機能で一般的）を示しています。",
+    status: "ステータス",
+    status_idle: "待機中",
+    status_running: "実行中",
+    status_poisoned: "ポイズニング（ノイズあり）",
+    status_clean: "クリーン（ノイズなし）",
+    run_test: "ポイズニングテストを実行",
+    testing: "テスト中",
+    waiting: "テストの開始を待っています...",
+    start_log: "Canvas および WebGL ポイズニングテストを開始...",
+    testing_canvas: "2D Canvas の安定性をテスト中...",
+    testing_webgl: "WebGL の安定性をテスト中...",
+    poisoned_log: "⚠️ 環境はおそらくポイズニングされています（ノイズインジェクションを検出）。",
+    clean_log: "✅ 環境はクリーンなようです（ランダムノイズは検出されませんでした）。"
   }
 };

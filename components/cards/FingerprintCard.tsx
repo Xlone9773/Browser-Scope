@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Fingerprint, ChevronRight, ZoomIn, FileCode, ExternalLink, Settings } from 'lucide-react';
+import { Fingerprint, ChevronRight, ZoomIn, FileCode, ExternalLink, Settings, ShieldAlert } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
@@ -17,6 +17,7 @@ interface FingerprintCardProps {
   onOpenWebgl: () => void;
   onOpenFingerprintModal: () => void;
   onOpenAudioLatency?: () => void;
+  onOpenPoisoning?: () => void;
 }
 
 export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({ 
@@ -29,7 +30,8 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
     onOpenBase64,
     onOpenWebgl,
     onOpenFingerprintModal,
-    onOpenAudioLatency
+    onOpenAudioLatency,
+    onOpenPoisoning
 }) => {
   const getScoreColor = (score: number) => {
       if (score > 80) return 'text-red-500';
@@ -85,6 +87,21 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
                         {data.audioLatency}
                     </span>
                     <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 transition-colors" />
+                </div>
+            </div>
+            <div 
+                className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 hover:bg-rose-50/50 dark:hover:bg-rose-950/30 hover:text-rose-600 dark:hover:text-rose-400 group cursor-pointer transition-all duration-200 px-2 -mx-2 rounded"
+                onClick={onOpenPoisoning}
+            >
+                <span className="text-sm text-slate-500 dark:text-slate-400 font-medium group-hover:text-rose-600 dark:group-hover:text-rose-400 flex items-center gap-1">
+                    <ShieldAlert size={14} />
+                    {(t as any).poisoning?.title || "Noise & Poisoning"}
+                </span>
+                <div className="flex items-center gap-1.5 text-right">
+                    <span className="text-xs text-rose-500 dark:text-rose-400 font-medium group-hover:text-rose-600 dark:group-hover:text-rose-400">
+                        {(t as any).poisoning?.detect || "Detect"}
+                    </span>
+                    <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 group-hover:text-rose-500 transition-colors" />
                 </div>
             </div>
             <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex justify-center">

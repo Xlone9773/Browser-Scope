@@ -299,5 +299,24 @@ export const tools = {
     legend_high_mid: "Left / Right / Center (High & Mid Tones)",
     legend_surround: "Surround Left / Surround Right (High Chirps)",
     legend_lfe: "Subwoofer LFE (60Hz Low Frequency Sweep)"
+  },
+  poisoning: {
+    title: "Noise & Poisoning Detection",
+    detect: "Detect",
+    desc_title: "Noise Injection Detection",
+    desc: "Repeatedly renders complex geometric patterns and texts, then compares pixel hashes frame-by-frame. Variances in static renders indicate artificial noise injection (common in privacy extensions).",
+    status: "Status",
+    status_idle: "IDLE",
+    status_running: "RUNNING",
+    status_poisoned: "POISONED",
+    status_clean: "CLEAN",
+    run_test: "Run Poisoning Test",
+    testing: "Testing",
+    waiting: "Waiting to start test...",
+    start_log: "Starting Canvas & WebGL Poisoning Test...",
+    testing_canvas: "Testing 2D Canvas stability...",
+    testing_webgl: "Testing WebGL stability...",
+    poisoned_log: "⚠️ Environment is likely poisoned (Noise Injection detected).",
+    clean_log: "✅ Environment appears clean."
   }
 };

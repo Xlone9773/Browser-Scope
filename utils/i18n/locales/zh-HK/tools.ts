@@ -287,6 +287,35 @@ export const tools = {
     stop_probe: "停止循環",
     start_probe: "自動循環探測",
     channel_probing_desc: "點擊下方的虛擬揚聲器節點，將聲音專門發送到該邏輯聲道，或啟動循環來映射所有揚聲器。",
-    listener_center: "中心"
+    listener_center: "中心",
+    early: "提前",
+    no_offset: "無偏移",
+    late: "延遲",
+    layout_stereo: "2.0 立體聲",
+    layout_quad: "4.0 四聲道",
+    layout_5_1: "5.1 環繞聲",
+    layout_7_1: "7.1 環繞聲",
+    legend_high_mid: "左 / 右 / 中置 (中高頻)",
+    legend_surround: "左環繞 / 右環繞 (高頻鳥鳴)",
+    legend_lfe: "重低音 LFE (60Hz 低頻掃瞄)"
+  },
+  poisoning: {
+    title: "噪音干擾與投毒檢測",
+    detect: "開始檢測",
+    desc_title: "噪音注入檢測",
+    desc: "透過反覆渲染複雜的幾何圖案和文字，並逐幀比對像素雜湊。靜態渲染時的變化表明存在人為的噪音注入（常見於私隱保護擴充功能）。",
+    status: "狀態",
+    status_idle: "閒置",
+    status_running: "執行中",
+    status_poisoned: "已投毒 (干擾)",
+    status_clean: "乾淨 (無干擾)",
+    run_test: "執行投毒檢測",
+    testing: "測試中",
+    waiting: "等待開始測試...",
+    start_log: "開始 Canvas 和 WebGL 投毒檢測...",
+    testing_canvas: "測試 2D Canvas 穩定性...",
+    testing_webgl: "測試 WebGL 穩定性...",
+    poisoned_log: "⚠️ 環境很可能已被投毒（檢測到噪音注入）。",
+    clean_log: "✅ 環境似乎是乾淨的（未檢測到隨機噪音）。"
   }
 };
