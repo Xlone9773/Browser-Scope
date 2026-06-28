@@ -317,5 +317,14 @@ export const tools = {
     testing_webgl: "WebGL の安定性をテスト中...",
     poisoned_log: "⚠️ 環境はおそらくポイズニングされています（ノイズインジェクションを検出）。",
     clean_log: "✅ 環境はクリーンなようです（ランダムノイズは検出されませんでした）。"
+  },
+  ja3: {
+    title: "JA3/JA4 TLS フィンガープリント",
+    detect: "検出開始",
+    desc_title: "TLS Client Hello フィンガープリント検出",
+    desc: "HTTPSハンドシェイク中に、ブラウザはサポートされている暗号スイートやTLS拡張機能などを含むClient Helloメッセージを送信します。JA3/JA4は、これらのTCP/TLSハンドシェイクの特性をハッシュ化することで、実際のブラウザエンジンを正確に特定したり、ボットやプロキシを検出したりします。",
+    fetching: "TLSハンドシェイクの特性を分析中...",
+    retry: "再試行",
+    close: "閉じる"
   }
 };

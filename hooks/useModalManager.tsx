@@ -33,6 +33,7 @@ const ExtensionsModal = lazy(() => import('../components/ExtensionsModal').then(
 const GoogleTranslateModal = lazy(() => import('../components/GoogleTranslateModal').then(m => ({ default: m.GoogleTranslateModal })));
 const AudioLatencyProbingModal = lazy(() => import('../components/AudioLatencyProbingModal').then(m => ({ default: m.AudioLatencyProbingModal })));
 const CanvasPoisoningModal = lazy(() => import('../components/CanvasPoisoningModal').then(m => ({ default: m.CanvasPoisoningModal })));
+const Ja3FingerprintModal = lazy(() => import('../components/Ja3FingerprintModal').then(m => ({ default: m.Ja3FingerprintModal })));
 
 const loadFunctions: Record<string, () => Promise<any>> = {
   camera: () => import('../components/CameraModal'),
@@ -67,6 +68,7 @@ const loadFunctions: Record<string, () => Promise<any>> = {
   googleTranslate: () => import('../components/GoogleTranslateModal'),
   audioLatency: () => import('../components/AudioLatencyProbingModal'),
   poisoning: () => import('../components/CanvasPoisoningModal'),
+  ja3: () => import('../components/Ja3FingerprintModal'),
 };
 
 const COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -102,6 +104,7 @@ const COMPONENTS: Record<string, React.ComponentType<any>> = {
   googleTranslate: GoogleTranslateModal,
   audioLatency: AudioLatencyProbingModal,
   poisoning: CanvasPoisoningModal,
+  ja3: Ja3FingerprintModal,
 };
 
 export const useModalManager = () => {

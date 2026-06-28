@@ -318,5 +318,14 @@ export const tools = {
     testing_webgl: "测试 WebGL 稳定性...",
     poisoned_log: "⚠️ 环境很可能已被投毒（检测到噪音注入）。",
     clean_log: "✅ 环境似乎是干净的（未检测到随机噪音）。"
+  },
+  ja3: {
+    title: "JA3/JA4 TLS 指纹",
+    detect: "开始检测",
+    desc_title: "TLS Client Hello 指纹检测",
+    desc: "在 HTTPS 握手阶段，浏览器发送的 Client Hello 报文包含其支持的加密套件、TLS 扩展等。JA3/JA4 通过对这些 TCP/TLS 握手特征进行哈希，能精准判定真实的内核身份或识别网络爬虫及代理工具。",
+    fetching: "正在分析 TLS 握手特征...",
+    retry: "重试",
+    close: "关闭"
   }
 };

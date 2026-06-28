@@ -318,5 +318,14 @@ export const tools = {
     testing_webgl: "Testing WebGL stability...",
     poisoned_log: "⚠️ Environment is likely poisoned (Noise Injection detected).",
     clean_log: "✅ Environment appears clean."
+  },
+  ja3: {
+    title: "JA3/JA4 Fingerprint",
+    detect: "Detect",
+    desc_title: "TLS Client Hello Fingerprinting",
+    desc: "During the HTTPS handshake, the browser sends a Client Hello message containing supported cipher suites, TLS extensions, etc. JA3/JA4 fingerprints these TCP/TLS characteristics to accurately identify the real browser engine or detect bots, proxies, and spoofed user agents.",
+    fetching: "Analyzing TLS Handshake...",
+    retry: "Retry",
+    close: "Close"
   }
 };

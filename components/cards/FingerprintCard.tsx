@@ -18,6 +18,7 @@ interface FingerprintCardProps {
   onOpenFingerprintModal: () => void;
   onOpenAudioLatency?: () => void;
   onOpenPoisoning?: () => void;
+  onOpenJa3?: () => void;
 }
 
 export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({ 
@@ -31,7 +32,8 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
     onOpenWebgl,
     onOpenFingerprintModal,
     onOpenAudioLatency,
-    onOpenPoisoning
+    onOpenPoisoning,
+    onOpenJa3
 }) => {
   const getScoreColor = (score: number) => {
       if (score > 80) return 'text-red-500';
@@ -102,6 +104,21 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
                         {(t as any).poisoning?.detect || "Detect"}
                     </span>
                     <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 group-hover:text-rose-500 transition-colors" />
+                </div>
+            </div>
+            <div 
+                className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400 group cursor-pointer transition-all duration-200 px-2 -mx-2 rounded"
+                onClick={onOpenJa3}
+            >
+                <span className="text-sm text-slate-500 dark:text-slate-400 font-medium group-hover:text-emerald-600 dark:group-hover:text-emerald-400 flex items-center gap-1">
+                    <Fingerprint size={14} />
+                    {(t as Record<string, any>).ja3?.title || "JA3/JA4 Fingerprint"}
+                </span>
+                <div className="flex items-center gap-1.5 text-right">
+                    <span className="text-xs text-emerald-500 dark:text-emerald-400 font-medium group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                        {(t as Record<string, any>).ja3?.detect || "Detect"}
+                    </span>
+                    <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 transition-colors" />
                 </div>
             </div>
             <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex justify-center">

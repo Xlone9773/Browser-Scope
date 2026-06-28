@@ -505,6 +505,15 @@ const App: React.FC = () => {
        onUnload: () => unload("poisoning"),
        isLoaded: loadedModules.has("poisoning"),
     },
+    {
+       id: "ja3",
+       name: (t as any).ja3?.title || "JA3/JA4 Fingerprint",
+       isOpen: visibility.ja3,
+       setOpen: (v: boolean) => (v ? open("ja3") : close("ja3")),
+       impact: "Low",
+       onUnload: () => unload("ja3"),
+       isLoaded: loadedModules.has("ja3"),
+    },
   ];
 
   useEffect(() => {
@@ -804,6 +813,12 @@ const App: React.FC = () => {
               t={(t as any).poisoning}
             />
           )}
+          {visibility.ja3 && (
+            <Components.ja3
+              onClose={() => close("ja3")}
+              t={(t as any).ja3}
+            />
+          )}
         </Suspense>
       </ErrorBoundary>
 
@@ -1025,6 +1040,7 @@ const App: React.FC = () => {
                         onOpenFingerprintModal={() => open("fingerprint")}
                         onOpenAudioLatency={() => open("audioLatency")}
                         onOpenPoisoning={() => open("poisoning")}
+                        onOpenJa3={() => open("ja3")}
                       />
                     )}
                   </SectionGroup>
