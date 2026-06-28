@@ -487,6 +487,15 @@ const App: React.FC = () => {
        onUnload: () => unload("googleTranslate"),
        isLoaded: loadedModules.has("googleTranslate"),
     },
+    {
+       id: "audioLatency",
+       name: t.audioLatencyProbing?.title || "Audio Output Latency & Channel Probing",
+       isOpen: visibility.audioLatency,
+       setOpen: (v: boolean) => (v ? open("audioLatency") : close("audioLatency")),
+       impact: "Low",
+       onUnload: () => unload("audioLatency"),
+       isLoaded: loadedModules.has("audioLatency"),
+    },
   ];
 
   useEffect(() => {
@@ -774,6 +783,12 @@ const App: React.FC = () => {
               t={t}
             />
           )}
+          {visibility.audioLatency && (
+            <Components.audioLatency
+              onClose={() => close("audioLatency")}
+              t={t}
+            />
+          )}
         </Suspense>
       </ErrorBoundary>
 
@@ -993,6 +1008,7 @@ const App: React.FC = () => {
                         onOpenBase64={() => open("base64")}
                         onOpenWebgl={() => open("webgl")}
                         onOpenFingerprintModal={() => open("fingerprint")}
+                        onOpenAudioLatency={() => open("audioLatency")}
                       />
                     )}
                   </SectionGroup>
@@ -1063,6 +1079,7 @@ const App: React.FC = () => {
                         t={t}
                         onOpenVideoTest={() => open("video")}
                         onOpenSpeech={() => open("speech")}
+                        onOpenAudioLatency={() => open("audioLatency")}
                       />
                     )}
 

@@ -11,9 +11,10 @@ interface MediaCapabilitiesCardProps {
   t: Translation;
   onOpenVideoTest?: () => void;
   onOpenSpeech?: () => void;
+  onOpenAudioLatency?: () => void;
 }
 
-export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = React.memo(({ data, t, onOpenVideoTest, onOpenSpeech }) => {
+export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = React.memo(({ data, t, onOpenVideoTest, onOpenSpeech, onOpenAudioLatency }) => {
   return (
     <InfoCard title={t.sections.media_sup} icon={Film}>
         <div className="mb-3">
@@ -64,12 +65,18 @@ export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = React
                 {onOpenSpeech && <ChevronRight size={12} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />}
             </div>
         </div>
-        <div className="mt-1 flex justify-between items-center px-1">
+        <div 
+            className="mt-1 flex justify-between items-center group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded px-1 -mx-1 transition-colors"
+            onClick={onOpenAudioLatency}
+        >
             <div className="flex items-center gap-1.5">
                 <Music size={14} className="text-slate-400"/>
                 <span className="text-xs font-medium text-slate-500">{t.labels.audio_channels}</span>
             </div>
-            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.audioChannels}</span>
+            <div className="flex items-center gap-1">
+                <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">{data.audioChannels}</span>
+                {onOpenAudioLatency && <ChevronRight size={12} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />}
+            </div>
         </div>
         
         {onOpenVideoTest && (

@@ -31,6 +31,7 @@ const NetworkHeatmapModal = lazy(() => import('../components/NetworkHeatmapModal
 const RayTracingModal = lazy(() => import('../components/RayTracingModal').then(m => ({ default: m.RayTracingModal })));
 const ExtensionsModal = lazy(() => import('../components/ExtensionsModal').then(m => ({ default: m.ExtensionsModal })));
 const GoogleTranslateModal = lazy(() => import('../components/GoogleTranslateModal').then(m => ({ default: m.GoogleTranslateModal })));
+const AudioLatencyProbingModal = lazy(() => import('../components/AudioLatencyProbingModal').then(m => ({ default: m.AudioLatencyProbingModal })));
 
 const loadFunctions: Record<string, () => Promise<any>> = {
   camera: () => import('../components/CameraModal'),
@@ -63,6 +64,7 @@ const loadFunctions: Record<string, () => Promise<any>> = {
   rayTracing: () => import('../components/RayTracingModal'),
   extensions: () => import('../components/ExtensionsModal'),
   googleTranslate: () => import('../components/GoogleTranslateModal'),
+  audioLatency: () => import('../components/AudioLatencyProbingModal'),
 };
 
 const COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -96,6 +98,7 @@ const COMPONENTS: Record<string, React.ComponentType<any>> = {
   rayTracing: RayTracingModal,
   extensions: ExtensionsModal,
   googleTranslate: GoogleTranslateModal,
+  audioLatency: AudioLatencyProbingModal,
 };
 
 export const useModalManager = () => {
@@ -142,6 +145,7 @@ export const useModalManager = () => {
     const handleOpenDisplayTools = () => open("displayTools");
     const handleOpenStorageBenchmark = () => open("storageBench");
     const handleOpenRayTracing = () => open("rayTracing");
+    const handleOpenAudioLatency = () => open("audioLatency");
 
     window.addEventListener("close-all-modals", handleCloseAll);
     window.addEventListener("open-heatmap", handleOpenHeatmap);
@@ -152,6 +156,7 @@ export const useModalManager = () => {
       handleOpenStorageBenchmark,
     );
     window.addEventListener("open-ray-tracing", handleOpenRayTracing);
+    window.addEventListener("open-audio-latency", handleOpenAudioLatency);
 
     return () => {
             window.removeEventListener("close-all-modals", handleCloseAll);
@@ -163,6 +168,7 @@ export const useModalManager = () => {
         handleOpenStorageBenchmark,
       );
       window.removeEventListener("open-ray-tracing", handleOpenRayTracing);
+      window.removeEventListener("open-audio-latency", handleOpenAudioLatency);
     };
   }, [closeAll, open]);
 

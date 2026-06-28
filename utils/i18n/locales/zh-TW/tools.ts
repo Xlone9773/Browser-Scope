@@ -266,5 +266,27 @@ export const tools = {
     triangle: "三角波",
     velocity: "力度",
     note: "音符"
+  },
+  audioLatencyProbing: {
+    title: "音訊輸出時延與聲道環境探測",
+    desc_title: "硬體音訊引擎分析",
+    desc: "本模組透過 Web Audio API 測試物理音訊硬體輸出。它檢測原始渲染延遲，並測試多聲道離散映射版面，如雙聲道、環繞聲 5.1 以及 7.1 系統。",
+    output: "輸出延遲",
+    output_desc: "音訊到達物理輸出裝置所需的時間。",
+    base: "基本緩衝區延遲",
+    base_desc: "Web Audio 引擎的內部處理緩衝區延遲。",
+    max_channels: "最大輸出聲道數",
+    max_channels_desc: "系統公開的硬體聲道。雙聲道 = 2，環繞聲 = 6 或 8。",
+    sync_calib: "音畫同步校正",
+    stop_test: "停止測試",
+    start_sync_test: "開始同步測試",
+    sync_calib_desc: "使視覺閃爍與音訊嗶嗶聲對齊。拖曳滑桿可以手動偏移或補償無線藍牙耳機的傳輸延遲。",
+    visual_flash: "同步視覺閃爍",
+    manual_compensation: "手動偏移",
+    discrete_probing: "離散聲道映射探測",
+    stop_probe: "停止循環",
+    start_probe: "自動循環探測",
+    channel_probing_desc: "點擊下方的虛擬揚聲器節點，將聲音專門發送到該邏輯聲道，或啟動循環來映射所有揚聲器。",
+    listener_center: "中心"
   }
 };

@@ -266,5 +266,27 @@ export const tools = {
     triangle: "三角波",
     velocity: "ベロシティ",
     note: "ノート"
+  },
+  audioLatencyProbing: {
+    title: "オーディオ出力遅延とチャンネル環境の検証",
+    desc_title: "ハードウェア・オーディオ・エンジンの分析",
+    desc: "このモジュールは、Web Audio APIを介して物理オーディオハードウェア出力をテストします。生のレンダリング遅延を検出し、ステレオ、サラウンド5.1、7.1システムなどのマルチチャンネル離散マッピングレイアウトをテストします。",
+    output: "出力遅延",
+    output_desc: "オーディオが物理的な出力デバイスに到達するまでにかかる時間。",
+    base: "基本バッファ遅延",
+    base_desc: "Web Audioエンジンの内部処理バッファ遅延。",
+    max_channels: "最大出力チャンネル数",
+    max_channels_desc: "システムが公開しているハードウェアチャンネル数。ステレオ = 2、サラウンド = 6または8。",
+    sync_calib: "オーディオ・ビジュアル同期キャリブレーション",
+    stop_test: "テストを停止",
+    start_sync_test: "同期テストを開始",
+    sync_calib_desc: "ビジュアルの点滅とビープ音を合わせます。スライダーをドラッグして、ワイヤレスBluetoothイヤホンの伝送遅延を手動で補正します。",
+    visual_flash: "同期ビジュアル点滅",
+    manual_compensation: "手動オフセット",
+    discrete_probing: "個別チャンネルマッピングテスト",
+    stop_probe: "ループ停止",
+    start_probe: "自動巡回テスト",
+    channel_probing_desc: "下の仮想スピーカーノードをクリックして、特定の論理ドライバーチャンネルにのみ音声を送信するか、自動巡回を開始してすべてのスピーカーをテストします。",
+    listener_center: "センター"
   }
 };

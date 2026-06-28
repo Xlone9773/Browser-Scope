@@ -84,15 +84,22 @@ export const getMediaSupport = (): { video: CodecInfo[], audio: CodecInfo[], ima
 };
 
 export const getAudioContextInfo = () => {
-    const AudioContext = window.AudioContext || (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).webkitAudioContext;
-    if (!AudioContext) return { rate: 'Not Supported', latency: 'Unknown', channels: 'Unknown' };
+    const AudioContextClass = window.AudioContext || (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).webkitAudioContext;
+    if (!AudioContextClass) return { rate: 'Not Supported', latency: 'Not Supported', channels: 'Unknown' };
     try {
-        const ctx = new AudioContext();
+        const ctx = new AudioContextClass();
         const rate = ctx.sampleRate;
-        const latency = ctx.outputLatency ? (ctx.outputLatency * 1000).toFixed(2) + ' ms' : 'Unknown';
+        
+        let latencyText = 'Unknown';
+        if (typeof ctx.outputLatency === 'number' && ctx.outputLatency > 0) {
+            latencyText = (ctx.outputLatency * 1000).toFixed(2) + ' ms';
+        } else if (typeof ctx.baseLatency === 'number' && ctx.baseLatency > 0) {
+            latencyText = '~' + (ctx.baseLatency * 1000).toFixed(2) + ' ms (Base)';
+        }
+
         const channels = ctx.destination.maxChannelCount || 2;
         ctx.close();
-        return { rate: formatHertz(rate), latency, channels };
+        return { rate: formatHertz(rate), latency: latencyText, channels };
     } catch(_e) { return { rate: 'Error', latency: 'Error', channels: 'Error' }; }
 };
 
