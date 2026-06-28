@@ -5,7 +5,7 @@ import { Button } from './ui/Button';
 
 interface CanvasPoisoningModalProps {
   onClose: () => void;
-  t: any;
+  t: Record<string, string>;
 }
 
 export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onClose, t }) => {
@@ -59,7 +59,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
     // Canvas Test
     const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const ctx = canvas.getContext('2d');
       if (ctx) {
         addLog(t?.testing_canvas || 'Testing 2D Canvas stability...');
         let lastHash = '';
