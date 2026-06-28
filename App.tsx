@@ -7,6 +7,7 @@ import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 import { ModalLoading } from "./components/ui/ModalLoading";
 import { SectionGroup } from "./components/ui/SectionGroup";
 import { useModalManager } from "./hooks/useModalManager";
+import { BrowserData } from "./types";
 
 import { AppNotification } from "./components/ui/AppNotification";
 import { useRegisterSW } from "virtual:pwa-register/react";
@@ -199,6 +200,8 @@ const App: React.FC = () => {
     fetchData,
     handleAiRetest,
   } = useAppData(t.common.loading_steps || [t.common.loading]);
+
+  const browserData = data as BrowserData;
 
   const [isOutdated, setIsOutdated] = useState(false);
   useEffect(() => {
@@ -818,7 +821,7 @@ const App: React.FC = () => {
         )}
 
         {/* Main Content - Only render if data exists */}
-        {Boolean(data && Object.keys(data).length) && (
+        {data && Object.keys(data).length > 0 && (
           <ErrorBoundary name="MainContent">
             
             {/* Navigation Tabs */}
@@ -880,7 +883,7 @@ const App: React.FC = () => {
               <div
                 className={`space-y-6 ${initialAnimationStyle === "slide-up" ? "anim-slide-up" : initialAnimationStyle === "fade" ? "anim-fade" : initialAnimationStyle === "fly-in" ? "anim-fly-in" : initialAnimationStyle === "zoom" ? "anim-zoom" : ""}`}
               >
-                {activeTab === "all" && <QuickSummaryWidget data={data} t={t} />}
+                {activeTab === "all" && <QuickSummaryWidget data={browserData} t={t} />}
 
                 {/* Group 0: Environment & Trust */}
                 {!hiddenCards.includes("environment") && (activeTab === "all" || activeTab === "environment") && (
@@ -905,7 +908,7 @@ const App: React.FC = () => {
                     icon={<Monitor className="text-indigo-500" />}
                   >
                     <div className="col-span-1 md:col-span-2 lg:col-span-3">
-                      <BrowserCard systemData={data.system} t={t} />
+                      <BrowserCard systemData={browserData.system} t={t} />
                     </div>
                   </SectionGroup>
                 )}
@@ -920,7 +923,7 @@ const App: React.FC = () => {
                   >
                     {!hiddenCards.includes("system") && (
                       <SystemCard
-                        data={data.system}
+                        data={browserData.system}
                         t={t}
                         simpleMode={simpleMode}
                         lang={lang}
@@ -929,7 +932,7 @@ const App: React.FC = () => {
 
                     {!hiddenCards.includes("hardware") && (
                       <HardwareCard
-                        data={data.hardware}
+                        data={browserData.hardware}
                         t={t}
                         onOpenGamepad={() => open("gamepad")}
                         onOpenWebDevice={() => open("webDevice")}
@@ -943,8 +946,8 @@ const App: React.FC = () => {
 
                     {!hiddenCards.includes("display") && (
                       <DisplayCard
-                        data={data.display}
-                        screenExtended={data.hardware.screenExtended}
+                        data={browserData.display}
+                        screenExtended={browserData.hardware.screenExtended}
                         t={t}
                         simpleMode={simpleMode}
                       />
@@ -962,7 +965,7 @@ const App: React.FC = () => {
                   >
                     {!hiddenCards.includes("network") && (
                       <NetworkCard
-                        data={data.network}
+                        data={browserData.network}
                         t={t}
                         simpleMode={simpleMode}
                         onOpenSpeedTest={() => open("speed")}
@@ -971,8 +974,8 @@ const App: React.FC = () => {
 
                     {!hiddenCards.includes("security") && (
                       <SecurityCard
-                        data={data.security}
-                        webrtcIp={data.network.webrtcIp}
+                        data={browserData.security}
+                        webrtcIp={browserData.network.webrtcIp}
                         t={t}
                         simpleMode={simpleMode}
                         onOpenExtensions={() => open("extensions")}
@@ -981,8 +984,8 @@ const App: React.FC = () => {
 
                     {!hiddenCards.includes("fingerprint") && (
                       <FingerprintCard
-                        data={data.fingerprints}
-                        audioSampleRate={data.hardware.audioSampleRate}
+                        data={browserData.fingerprints}
+                        audioSampleRate={browserData.hardware.audioSampleRate}
                         t={t}
                         simpleMode={simpleMode}
                         onOpenScore={() => open("score")}
@@ -1009,7 +1012,7 @@ const App: React.FC = () => {
                   >
                     {!hiddenCards.includes("ai") && (
                       <AiComputeCard
-                        data={data.ai}
+                        data={browserData.ai}
                         t={t}
                         onOpenPlayground={() => open("ai")}
                         onOpenStress={() => open("compute")}
@@ -1019,7 +1022,7 @@ const App: React.FC = () => {
 
                     {!hiddenCards.includes("location") && (
                       <LocationCard
-                        data={data.localization}
+                        data={browserData.localization}
                         geoData={geoData}
                         permStatus={permStatus.geolocation}
                         t={t}
@@ -1032,7 +1035,7 @@ const App: React.FC = () => {
                     )}
 
                     {!hiddenCards.includes("storage") && (
-                      <StorageCard data={data.storage} t={t} />
+                      <StorageCard data={browserData.storage} t={t} />
                     )}
 
                     {!hiddenCards.includes("permissions") && (
@@ -1056,7 +1059,7 @@ const App: React.FC = () => {
 
                     {!hiddenCards.includes("media_capabilities") && (
                       <MediaCapabilitiesCard
-                        data={data.media}
+                        data={browserData.media}
                         t={t}
                         onOpenVideoTest={() => open("video")}
                         onOpenSpeech={() => open("speech")}
@@ -1065,8 +1068,8 @@ const App: React.FC = () => {
 
                     {!hiddenCards.includes("user_agent") && (
                       <UserAgentCard
-                        userAgent={data.system.userAgent}
-                        clientHints={data.system.clientHints}
+                        userAgent={browserData.system.userAgent}
+                        clientHints={browserData.system.clientHints}
                         t={t}
                       />
                     )}
@@ -1076,8 +1079,8 @@ const App: React.FC = () => {
                 {!hiddenCards.includes("pwa") && (activeTab === "all" || activeTab === "advanced") && (
                   <div className="anim-slide-up delay-100">
                     <PwaSection
-                      isPwaInstalled={data.system.isPwaInstalled}
-                      features={data.pwaFeatures}
+                      isPwaInstalled={browserData.system.isPwaInstalled}
+                      features={browserData.pwaFeatures}
                       t={t}
                     />
                   </div>
@@ -1085,7 +1088,7 @@ const App: React.FC = () => {
 
                 {!hiddenCards.includes("features") && (activeTab === "all" || activeTab === "advanced") && (
                   <div className="anim-slide-up delay-200">
-                    <FeaturesSection features={data.features} t={t} />
+                    <FeaturesSection features={browserData.features} t={t} />
                   </div>
                 )}
               </div>

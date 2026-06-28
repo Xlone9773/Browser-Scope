@@ -60,7 +60,7 @@ export const AppNotification: React.FC<AppNotificationProps> = ({ type, title, m
         }`}>{message}</div>
       </div>
       <div className="flex items-center gap-2 shrink-0">
-        {Boolean(action) && (
+        {action && (
           <button 
             onClick={action.onClick}
             className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${getButtonClass()}`}
@@ -68,7 +68,7 @@ export const AppNotification: React.FC<AppNotificationProps> = ({ type, title, m
             {action.label}
           </button>
         )}
-        {Boolean(onClose) && (
+        {onClose && (
           <button 
             onClick={onClose}
             className={`p-1.5 rounded-md opacity-70 hover:opacity-100 transition-opacity ${

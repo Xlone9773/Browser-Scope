@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Box, Play, Square, RefreshCw, Sliders, AlertTriangle, Maximize, Minimize } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
+import { Slider } from './ui/Slider';
 
 // Fix for missing WebGPU types
 type GPUCanvasContext = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
@@ -490,25 +491,27 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
                             <Sliders size={14} />
                         </div>
                         
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3">
-                                <span className="text-xs text-white w-16">{t.roughness}</span>
-                                <input 
-                                    type="range" min="0" max="1" step="0.01" 
-                                    value={roughness} 
-                                    onChange={(e) => setRoughness(parseFloat(e.target.value))}
-                                    className="flex-1 h-1.5 bg-slate-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-indigo-500"
-                                />
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-xs text-white w-16">{t.metalness}</span>
-                                <input 
-                                    type="range" min="0" max="1" step="0.01" 
-                                    value={metalness} 
-                                    onChange={(e) => setMetalness(parseFloat(e.target.value))}
-                                    className="flex-1 h-1.5 bg-slate-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-500"
-                                />
-                            </div>
+                        <div className="space-y-4">
+                            <Slider
+                                value={roughness}
+                                onChange={setRoughness}
+                                min={0}
+                                max={1}
+                                step={0.01}
+                                label={t.roughness}
+                                color="indigo"
+                                formatValue={(val) => val.toFixed(2)}
+                            />
+                            <Slider
+                                value={metalness}
+                                onChange={setMetalness}
+                                min={0}
+                                max={1}
+                                step={0.01}
+                                label={t.metalness}
+                                color="emerald"
+                                formatValue={(val) => val.toFixed(2)}
+                            />
                         </div>
                     </div>
 

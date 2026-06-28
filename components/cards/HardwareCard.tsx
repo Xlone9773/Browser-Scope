@@ -58,7 +58,7 @@ export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, 
       </div>
       
       {/* GPU Precision Badge */}
-      {Boolean(data.gpuPrecision) && (
+      {data.gpuPrecision && (
           <div className="flex items-center justify-between py-1.5 px-2 -mx-2">
              <span className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5">
                  <Layers size={14} className="text-slate-400" />
