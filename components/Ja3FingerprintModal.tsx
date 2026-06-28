@@ -21,15 +21,22 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
   const [data, setData] = useState<Ja3Data | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const performFetch = async () => {
+    // JA3 fingerprinting must be done directly from the client.
+    // If we use a proxy, the TLS handshake is performed by the Node.js server,
+    // which results in the server's JA3 fingerprint and User-Agent being returned instead.
+    const res = await fetch('https://tls.browserleaks.com/json').catch(() => null);
+    if (!res || !res.ok) throw new Error('Failed to fetch JA3 data. Adblockers or privacy extensions might be blocking the request.');
+    return await res.json();
+  };
+
   useEffect(() => {
     let isMounted = true;
     const fetchJa3 = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch('https://tls.browserleaks.com/json');
-        if (!res.ok) throw new Error('Failed to fetch JA3 data');
-        const json = await res.json();
+        const json = await performFetch();
         if (isMounted) setData(json);
       } catch (err: unknown) {
         console.error(err);
@@ -48,9 +55,7 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch('https://tls.browserleaks.com/json');
-        if (!res.ok) throw new Error('Failed to fetch JA3 data');
-        const json = await res.json();
+        const json = await performFetch();
         setData(json);
       } catch (err: unknown) {
         console.error(err);
@@ -97,17 +102,17 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
             <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
               <div className="flex items-center gap-2 mb-3">
                 <Fingerprint className="text-indigo-500" size={18} />
-                <h5 className="font-semibold text-slate-800 dark:text-slate-100">JA3 Fingerprint</h5>
+                <h5 className="font-semibold text-slate-800 dark:text-slate-100">{t?.ja3_title || "JA3 Fingerprint"}</h5>
               </div>
               <div className="space-y-3">
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">JA3 Hash (MD5)</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3_hash || "JA3 Hash (MD5)"}</span>
                   <div className="font-mono text-sm text-slate-700 dark:text-slate-300 break-all bg-white dark:bg-slate-950 p-2 rounded border border-slate-100 dark:border-slate-800 mt-1 select-all">
                     {data.ja3_hash || "N/A"}
                   </div>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">JA3 String (Raw)</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3_string || "JA3 String (Raw)"}</span>
                   <div className="font-mono text-xs text-slate-600 dark:text-slate-400 break-all bg-white dark:bg-slate-950 p-2 rounded border border-slate-100 dark:border-slate-800 mt-1 h-24 overflow-y-auto select-all">
                     {data.ja3 || "N/A"}
                   </div>
@@ -119,17 +124,17 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
             <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
               <div className="flex items-center gap-2 mb-3">
                 <Hash className="text-emerald-500" size={18} />
-                <h5 className="font-semibold text-slate-800 dark:text-slate-100">JA3N Fingerprint</h5>
+                <h5 className="font-semibold text-slate-800 dark:text-slate-100">{t?.ja3n_title || "JA3N Fingerprint"}</h5>
               </div>
               <div className="space-y-3">
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">JA3N Hash (MD5)</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3n_hash || "JA3N Hash (MD5)"}</span>
                   <div className="font-mono text-sm text-slate-700 dark:text-slate-300 break-all bg-white dark:bg-slate-950 p-2 rounded border border-slate-100 dark:border-slate-800 mt-1 select-all">
                     {data.ja3n_hash || "N/A"}
                   </div>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">JA3N String (Raw)</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3n_string || "JA3N String (Raw)"}</span>
                   <div className="font-mono text-xs text-slate-600 dark:text-slate-400 break-all bg-white dark:bg-slate-950 p-2 rounded border border-slate-100 dark:border-slate-800 mt-1 h-20 overflow-y-auto select-all">
                     {data.ja3n || "N/A"}
                   </div>
@@ -141,7 +146,7 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
             <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-start gap-3">
                <Server className="text-slate-400 shrink-0 mt-0.5" size={16} />
                <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase block mb-1">Server Detected User-Agent</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase block mb-1">{t?.server_ua || "Server Detected User-Agent"}</span>
                   <div className="font-mono text-xs text-slate-600 dark:text-slate-400 break-all">
                     {data.user_agent || "N/A"}
                   </div>
@@ -149,12 +154,6 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
             </div>
           </div>
         ) : null}
-
-        <div className="flex justify-end pt-2 border-t border-slate-100 dark:border-slate-800">
-          <Button variant="ghost" onClick={onClose}>
-            {t?.close || "Close"}
-          </Button>
-        </div>
       </div>
     </Modal>
   );

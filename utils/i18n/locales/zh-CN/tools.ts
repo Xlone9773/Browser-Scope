@@ -326,6 +326,13 @@ export const tools = {
     desc: "在 HTTPS 握手阶段，浏览器发送的 Client Hello 报文包含其支持的加密套件、TLS 扩展等。JA3/JA4 通过对这些 TCP/TLS 握手特征进行哈希，能精准判定真实的内核身份或识别网络爬虫及代理工具。",
     fetching: "正在分析 TLS 握手特征...",
     retry: "重试",
-    close: "关闭"
+    close: "关闭",
+    ja3_title: "JA3 指纹",
+    ja3_hash: "JA3 哈希 (MD5)",
+    ja3_string: "JA3 原始字符串",
+    ja3n_title: "JA3N 指纹",
+    ja3n_hash: "JA3N 哈希 (MD5)",
+    ja3n_string: "JA3N 原始字符串",
+    server_ua: "服务器检测到的 User-Agent"
   }
 };

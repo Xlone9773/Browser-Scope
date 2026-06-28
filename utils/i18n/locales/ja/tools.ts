@@ -325,6 +325,13 @@ export const tools = {
     desc: "HTTPSハンドシェイク中に、ブラウザはサポートされている暗号スイートやTLS拡張機能などを含むClient Helloメッセージを送信します。JA3/JA4は、これらのTCP/TLSハンドシェイクの特性をハッシュ化することで、実際のブラウザエンジンを正確に特定したり、ボットやプロキシを検出したりします。",
     fetching: "TLSハンドシェイクの特性を分析中...",
     retry: "再試行",
-    close: "閉じる"
+    close: "閉じる",
+    ja3_title: "JA3 フィンガープリント",
+    ja3_hash: "JA3 ハッシュ (MD5)",
+    ja3_string: "JA3 生文字列",
+    ja3n_title: "JA3N フィンガープリント",
+    ja3n_hash: "JA3N ハッシュ (MD5)",
+    ja3n_string: "JA3N 生文字列",
+    server_ua: "サーバーが検出した User-Agent"
   }
 };
