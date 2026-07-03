@@ -70,7 +70,7 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
       // Using new structure: preset_names is now inside speedTest object
       
       // @ts-expect-error auto-fixed
-      label: t.preset_names?.[p.id] || p.name 
+      label: t.preset_names?.[p.id] 
   })), [t]);
 
   const handleStart = () => {
@@ -223,7 +223,7 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                     <Globe size={12} />
                     <span className="max-w-[150px] truncate" title={selectedBackend.name}>
                         {/* @ts-expect-error: Safe access via key */}
-                        {t.preset_names?.[backend] || selectedBackend.name}
+                        {t.preset_names?.[backend]}
                     </span>
                 </div>
 

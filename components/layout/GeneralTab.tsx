@@ -57,17 +57,17 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.timeFormat.title || '24-Hour Clock'}
+                        {t.timeFormat.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.timeFormat.desc || 'Switch between 12-hour and 24-hour formats.'}
+                        {t.timeFormat.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={timeFormat === '24'} 
                         onChange={(val) => setTimeFormat(val ? '24' : '12')} 
-                        label={t.timeFormat.title || 'Time Format'} 
+                        label={t.timeFormat.title} 
                     />
                 </div>
             </div>
@@ -79,17 +79,17 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.performance.title || "High Performance Mode"}
+                        {t.performance.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.performance.desc || "Disable blur effects and transparency to improve performance on older devices."}
+                        {t.performance.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch 
                         checked={disableBlur} 
                         onChange={toggleDisableBlur} 
-                        label={t.performance.title || "High Performance Mode"} 
+                        label={t.performance.title} 
                     />
                 </div>
             </div>

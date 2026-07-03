@@ -256,7 +256,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                                 className="text-xs font-medium px-2 py-1 rounded border transition-colors flex items-center gap-1 bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700"
                             >
                                 <RotateCcw size={12} />
-                                {t.action_retest || "Retest"}
+                                {t.action_retest}
                             </button>
                             <button 
                                 onClick={() => setShowSupportedOnly(!showSupportedOnly)}
@@ -280,7 +280,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                         <div className="mb-8 p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
                              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                                 <ShieldCheck size={14} />
-                                {t.drm_title || "DRM Capabilities"}
+                                {t.drm_title}
                             </h3>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {filteredDrm.map((sys, idx) => (

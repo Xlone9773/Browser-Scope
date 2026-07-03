@@ -407,4 +407,67 @@ export const dashboard = {
     vibration: "ハードウェアの触覚フィードバック",
     battery: "バッテリー残量と充電状態",
   }
+,
+  "extensionsModal": {
+    "title": "ブラウザ拡張機能"
+  }
+
+,
+  "audioLatencyProbing": {
+    "title": "オーディオ出力レイテンシとチャネルプローブ"
+  },
+  "poisoning": {
+    "title": "ノイズとポイズニング",
+    "detect": "検出"
+  },
+  "ja3": {
+    "title": "JA3/JA4 指紋",
+    "detect": "検出"
+  },
+
+
+  "analysis_no_error": "エラーオブジェクトはありません。",
+  "analysis_null_reference": "Null 参照エラー",
+  "analysis_function_call": "関数呼び出しエラー",
+  "analysis_invalid_hook": "無効なフック呼び出し",
+  "analysis_network": "ネットワークエラー",
+  "analysis_json": "JSON 解析エラー",
+  "analysis_unexpected": "予期せぬエラーが発生しました",
+  "component_in": "in",
+  "any_component": "コンポーネント",
+  "message": "エラーが発生しました",
+  "preliminary_analysis": "予備分析：",
+  "clear_cache": "キャッシュをクリアして再読み込み",
+  "home": "ホームに戻る",
+  "reload_page": "ページを再読み込み",
+  "hide_stack_trace": "スタックトレースを隠す",
+  "show_stack_trace": "スタックトレースを表示",
+  "copied": "コピーしました！",
+  "copy_error_details": "エラーの詳細をコピー",
+  "context_metadata": "環境コンテキスト",
+  "time": "タイムスタンプ",
+  "url": "現在の URL",
+  "user_agent": "ユーザーエージェント",
+  "error_stack": "エラースタック",
+  "no_stack_trace": "スタックトレースはありません。",
+  "component_stack": "React コンポーネントスタック",
+  "no_component_stack": "コンポーネントスタックはありません。",
+  "chunk_size": "チャンクサイズ",
+  "chunk_size_64": "64 KB (高 IOPS)",
+  "chunk_size_256": "256 KB",
+  "chunk_size_1024": "1 MB (バランス)",
+  "chunk_size_4096": "4 MB (高スループット)",
+  "export_csv": "エクスポート",
+  "clear_logs": "クリア",
+  "table_time": "時間",
+  "table_target": "ターゲット",
+  "table_op": "タイプ",
+  "table_chunk": "チャンク",
+  "table_speed": "スループット",
+  "op_write": "書き込み",
+  "op_read": "読み取り",
+  "key_input_placeholder": "ここに入力...",
+  "action_retest": "再テスト",
+  "drm_title": "DRM 機能",
+  "collapseHeader": {"title":"ヘッダーを折りたたむ (デスクトップ)","desc":"デスクトップ画面でヘッダーアクションに折りたたみメニューを使用します。"},
 };

@@ -52,14 +52,14 @@ export const CanvasModal: React.FC<CanvasModalProps> = ({ imageSrc, onClose, t }
                         {dimensions && (
                             <div className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700">
                                 <ImageIcon size={16} className="text-indigo-500" />
-                                <span className="font-medium">{t?.dimensions || 'Dimensions'}:</span>
+                                <span className="font-medium">{t?.dimensions}:</span>
                                 <span className="font-mono font-bold">{dimensions.width} x {dimensions.height}</span>
                             </div>
                         )}
                         {fileSize && (
                             <div className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700">
                                 <FileText size={16} className="text-emerald-500" />
-                                <span className="font-medium">{t?.size || 'Size'}:</span>
+                                <span className="font-medium">{t?.size}:</span>
                                 <span className="font-mono font-bold">{fileSize}</span>
                             </div>
                         )}

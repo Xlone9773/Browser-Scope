@@ -60,10 +60,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.simpleMode?.title || 'Simple Dashboard'}
+                        {t.simpleMode?.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.simpleMode?.desc || 'Hide advanced data cards and tracking logic items to keep the dashboard clean.'}
+                        {t.simpleMode?.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
@@ -78,10 +78,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.showTabs?.title || 'Display Navigation Tabs'}
+                        {t.showTabs?.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.showTabs?.desc || 'Show navigation tabs above the content to filter items. Automatically hides if empty.'}
+                        {t.showTabs?.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
@@ -93,10 +93,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {translationDict.settings?.general?.themeColor?.title || 'Theme Color'}
+                        {translationDict.settings?.general?.themeColor?.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {translationDict.settings?.general?.themeColor?.desc || 'Select primary theme color for the application.'}
+                        {translationDict.settings?.general?.themeColor?.desc}
                     </p>
                 </div>
                 <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg self-stretch sm:self-auto flex-wrap gap-1">
@@ -128,20 +128,20 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {translationDict.settings?.general?.animationStyle?.title || 'Animation Style'}
+                        {translationDict.settings?.general?.animationStyle?.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {translationDict.settings?.general?.animationStyle?.desc || 'Set entry component animation style.'}
+                        {translationDict.settings?.general?.animationStyle?.desc}
                     </p>
                 </div>
                 <Select 
                     value={animationStyle}
                     onChange={setAnimationStyle}
                     options={[
-                        { id: 'slide-up', label: translationDict.settings?.general?.animationStyle?.options?.slideUp || 'Slide Up' },
-                        { id: 'fade', label: translationDict.settings?.general?.animationStyle?.options?.fade || 'Fade In' },
-                        { id: 'fly-in', label: translationDict.settings?.general?.animationStyle?.options?.flyIn || 'Fly In' },
-                        { id: 'zoom', label: translationDict.settings?.general?.animationStyle?.options?.zoom || 'Zoom In' }
+                        { id: 'slide-up', label: translationDict.settings?.general?.animationStyle?.options?.slideUp },
+                        { id: 'fade', label: translationDict.settings?.general?.animationStyle?.options?.fade },
+                        { id: 'fly-in', label: translationDict.settings?.general?.animationStyle?.options?.flyIn },
+                        { id: 'zoom', label: translationDict.settings?.general?.animationStyle?.options?.zoom }
                     ]}
                     className="w-full sm:w-48"
                     color={themeColor as any}
@@ -155,10 +155,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.performance?.title || "High Performance Mode"}
+                        {t.performance?.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.performance?.desc || "Disable backdrop blurring across the UI to save battery and boost frame rates."}
+                        {t.performance?.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
@@ -173,10 +173,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.scrollbar?.title || "Hide Main Page Scrollbar"}
+                        {t.scrollbar?.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.scrollbar?.desc || "Only hide the default scrollbar on the main page."}
+                        {t.scrollbar?.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
@@ -191,10 +191,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.globalScrollbar?.title || "Hide All Scrollbars"}
+                        {t.globalScrollbar?.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.globalScrollbar?.desc || "Globally hide scrollbars for all elements, including inside modals."}
+                        {t.globalScrollbar?.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
@@ -209,10 +209,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.animations?.title || 'Disable Animations'}
+                        {t.animations?.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.animations?.desc || 'Turn off all page transitions and card loading animations.'}
+                        {t.animations?.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
@@ -227,10 +227,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.fastAnimations?.title || 'Fast Transitions'}
+                        {t.fastAnimations?.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.fastAnimations?.desc || 'Speed up all transition animations (hover, expand, etc).'}
+                        {t.fastAnimations?.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
@@ -245,10 +245,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.collapseHeader?.title || 'Collapse Header (Desktop)'}
+                        {t.collapseHeader?.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.collapseHeader?.desc || 'Use a collapsed menu for header actions on desktop screens.'}
+                        {t.collapseHeader?.desc}
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>

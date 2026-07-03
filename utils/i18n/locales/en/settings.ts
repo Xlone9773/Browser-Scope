@@ -316,4 +316,83 @@ export const settings = {
         libraries: "Core Libraries"
     }
   }
+,
+  "modules": {
+    "impact": {
+      "high": "High",
+      "med": "Medium",
+      "low": "Low"
+    },
+    "title": "Modules",
+    "desc": "Manage dynamically loaded tools.",
+    "status": {
+      "active": "Active",
+      "cached": "Cached",
+      "inactive": "Inactive",
+      "system": "System",
+      "locked": "Locked"
+    },
+    "actions": {
+      "unloadAll": "Unload All",
+      "unload": "Unload"
+    },
+    "headers": {
+      "name": "Name",
+      "status": "Status",
+      "impact": "Impact",
+      "action": "Action"
+    }
+  },
+  "versions": {
+    "upToDate": "App is already up to date.",
+    "title": "Software Versions",
+    "desc": "View current core software version and loaded modules. Pull updates if needed.",
+    "applyUpdate": "Apply Update",
+    "forcePull": "Check Updates",
+    "lastChecked": "Last checked:",
+    "coreApp": "Core Application",
+    "libraries": "Core Libraries",
+    "installedModules": "Installed Modules"
+  },
+  "developer": {
+    "config": {
+      "recordEvents": "Record Events",
+      "recordEventsDesc": "Auto-record window & network events",
+      "defaultConsoleTitle": "DEFAULT CONSOLE",
+      "consoleVConsole": "vConsole",
+      "consoleEruda": "Eruda",
+      "vconsoleDefaultTab": "Default vConsole Tab",
+      "vconsoleDefaultTabDesc": "Select the tab to focus when vConsole is opened.",
+      "vconsoleTabs": {
+        "default": "Default",
+        "system": "System",
+        "network": "Network",
+        "element": "Element",
+        "storage": "Storage"
+      },
+      "erudaDefaultTab": "Default Eruda Tab",
+      "erudaDefaultTabDesc": "Select the tab to focus when Eruda is opened.",
+      "erudaTabs": {
+        "console": "Console",
+        "elements": "Elements (DOM)",
+        "network": "Network",
+        "resources": "Resources",
+        "sources": "Sources (Code)",
+        "info": "Info",
+        "snippets": "Snippets",
+        "timing": "Timing",
+        "features": "Features",
+        "monitor": "Monitor",
+        "fps": "FPS"
+      },
+      "loadSnippets": "Code Snippets",
+      "snippetClearLocal": "Clear LocalStorage",
+      "snippetClearSession": "Clear SessionStorage",
+      "snippetShowCookies": "Show Cookies",
+      "snippetToggleBlur": "Toggle Body Blur",
+      "snippetToggleEditable": "Toggle Editable Page",
+      "simulateCrash": "Simulate Dev Crash"
+    }
+  }
+
 };

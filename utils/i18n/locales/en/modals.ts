@@ -383,4 +383,20 @@ export const modals = {
       "darkreader": "Dark mode for websites"
     }
   }
+,
+  "ja3Modal": {
+    "title": "SSL/TLS Fingerprint (JA3/JA4)",
+    "desc_title": "TLS Client Hello Fingerprinting",
+    "desc": "During the HTTPS handshake, the browser sends a Client Hello message containing supported cipher suites, TLS extensions, etc. JA3/JA4 fingerprints these TCP/TLS characteristics to accurately identify the real browser engine or detect bots, proxies, and spoofed user agents.",
+    "fetching": "Analyzing TLS Handshake...",
+    "retry": "Retry",
+    "ja3_title": "JA3 Fingerprint",
+    "ja3_hash": "JA3 Hash (MD5)",
+    "ja3_string": "JA3 String (Raw)",
+    "ja3n_title": "JA3N Fingerprint",
+    "ja3n_hash": "JA3N Hash (MD5)",
+    "ja3n_string": "JA3N String (Raw)",
+    "server_ua": "Server Detected User-Agent"
+  }
+
 };

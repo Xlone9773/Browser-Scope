@@ -66,8 +66,8 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
   const handleTestNotification = async () => {
     if (permStatus.notifications === 'granted') {
       const nt = t.notificationTest;
-      const title = notifTitle || nt.titlePlaceholder || 'Test Notification';
-      const body = notifBody || nt.bodyPlaceholder || 'This is a test notification from BrowserScope!';
+      const title = notifTitle || nt.titlePlaceholder;
+      const body = notifBody || nt.bodyPlaceholder;
 
       try {
           if ('serviceWorker' in navigator) {
@@ -84,7 +84,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                   });
                   await reg.showNotification(title, {
                       body,
-                      icon: notifIcon || '/vite.svg',
+                      icon: notifIcon,
                       badge: '/vite.svg',
                       actions: mappedActions
                   } as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
@@ -92,11 +92,11 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
               }
           }
           // Fallback if ServiceWorker is not available or getRegistration fails
-          const n = new Notification(title, { body, icon: notifIcon || '/vite.svg' });
+          const n = new Notification(title, { body, icon: notifIcon });
           n.onclick = () => { window.focus(); };
       } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           console.error('Notification error:', error);
-          const n = new Notification(title, { body, icon: notifIcon || '/vite.svg' });
+          const n = new Notification(title, { body, icon: notifIcon });
           n.onclick = () => { window.focus(); };
       }
     } else {
@@ -122,7 +122,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                             onRequestPermission('notifications');
                         }
                     }} variant="soft" size="xs">
-                        {permStatus.notifications === 'granted' ? (showNotifTest ? (t.notificationTest?.cancel || 'Cancel') : (t.notificationTest?.test || 'Test')) : t.actions.check}
+                        {permStatus.notifications === 'granted' ? (showNotifTest ? t.notificationTest?.cancel : t.notificationTest?.test) : t.actions.check}
                     </Button>
                 </div>
             </div>
@@ -133,13 +133,13 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                         type="text" 
                         value={notifTitle}
                         onChange={(e) => setNotifTitle(e.target.value)}
-                        placeholder={t.notificationTest?.titlePlaceholder || 'Notification Title'} 
+                        placeholder={t.notificationTest?.titlePlaceholder} 
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
                     />
                     <textarea 
                         value={notifBody}
                         onChange={(e) => setNotifBody(e.target.value)}
-                        placeholder={t.notificationTest?.bodyPlaceholder || 'Notification Body text...'} 
+                        placeholder={t.notificationTest?.bodyPlaceholder} 
                         rows={2}
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 resize-none"
                     ></textarea>
@@ -147,7 +147,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                         type="text" 
                         value={notifIcon}
                         onChange={(e) => setNotifIcon(e.target.value)}
-                        placeholder={t.notificationTest?.iconUrlPlaceholder || 'Icon URL (Optional)'} 
+                        placeholder={t.notificationTest?.iconUrlPlaceholder} 
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
                     />
                     
@@ -169,7 +169,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                                 disabled={notifActions.length >= ('Notification' in window ? ((Notification as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).maxActions || 2) : 2)}
                                 leftIcon={<Plus size={12}/>}
                             >
-                                {t.notificationTest?.addAction || 'Add Action'}
+                                {t.notificationTest?.addAction}
                             </Button>
                         </div>
                         {notifActions.map((act, idx) => (
@@ -183,7 +183,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                                             newActions[idx] = { ...newActions[idx], title: e.target.value };
                                             setNotifActions(newActions);
                                         }}
-                                        placeholder={t.notificationTest?.actionTitlePlaceholder || 'Action Title'}
+                                        placeholder={t.notificationTest?.actionTitlePlaceholder}
                                         className="text-xs px-2 py-1 flex-1 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 min-w-0"
                                     />
                                     <button onClick={() => {
@@ -204,9 +204,9 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                                                 setNotifActions(newActions);
                                             }}
                                             options={[
-                                                { id: 'alert', label: t.notificationTest?.actionTypeAlert || 'Alert' },
-                                                { id: 'url', label: t.notificationTest?.actionTypeUrl || 'Open URL' },
-                                                { id: 'close', label: t.notificationTest?.actionTypeClose || 'Close' }
+                                                { id: 'alert', label: t.notificationTest?.actionTypeAlert },
+                                                { id: 'url', label: t.notificationTest?.actionTypeUrl },
+                                                { id: 'close', label: t.notificationTest?.actionTypeClose }
                                             ]}
                                             size="sm"
                                         />
@@ -220,7 +220,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                                                 newActions[idx] = { ...newActions[idx], payload: e.target.value };
                                                 setNotifActions(newActions);
                                             }}
-                                            placeholder={t.notificationTest?.actionPayloadPlaceholder || 'URL'}
+                                            placeholder={t.notificationTest?.actionPayloadPlaceholder}
                                             className="text-xs px-2 py-1 flex-1 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 min-w-0"
                                         />
                                     )}
@@ -231,7 +231,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
 
                     <div className="flex justify-end mt-1">
                         <Button onClick={handleTestNotification} size="xs" variant="primary" leftIcon={<Send size={12}/>}>
-                            {t.notificationTest?.sendTest || 'Send Test'}
+                            {t.notificationTest?.sendTest}
                         </Button>
                     </div>
                 </div>
@@ -263,7 +263,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                         {actionAlert.message}
                     </p>
                     <Button variant="primary" className="mt-6 w-full" onClick={() => setActionAlert(null)}>
-                        {t.notificationTest?.cancel || 'Close'}
+                        {t.notificationTest?.cancel}
                     </Button>
                 </div>
             </Modal>

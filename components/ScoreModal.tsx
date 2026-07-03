@@ -27,7 +27,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
 
   // Helper to safely get translation
   const getFactorLabel = (id: string) => {
-      return t.factors?.[id] || id.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      return t.factors?.[id];
   };
 
   const getFactorValue = (val: string | number) => {
@@ -51,11 +51,11 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
   const levels = 3;
   
   const axes = [
-      { key: 'hardware', label: t.categories?.hardware || 'Hardware', icon: Cpu, score: scoreData.categoryScores.hardware },
-      { key: 'browser', label: t.categories?.browser || 'Browser', icon: Globe, score: scoreData.categoryScores.browser },
-      { key: 'network', label: t.categories?.network || 'Network', icon: Wifi, score: scoreData.categoryScores.network },
-      { key: 'media', label: t.categories?.media || 'Media', icon: Layers, score: scoreData.categoryScores.media },
-      { key: 'screen', label: t.categories?.screen || 'Screen', icon: Monitor, score: scoreData.categoryScores.screen },
+      { key: 'hardware', label: t.categories?.hardware, icon: Cpu, score: scoreData.categoryScores.hardware },
+      { key: 'browser', label: t.categories?.browser, icon: Globe, score: scoreData.categoryScores.browser },
+      { key: 'network', label: t.categories?.network, icon: Wifi, score: scoreData.categoryScores.network },
+      { key: 'media', label: t.categories?.media, icon: Layers, score: scoreData.categoryScores.media },
+      { key: 'screen', label: t.categories?.screen, icon: Monitor, score: scoreData.categoryScores.screen },
   ];
 
   const totalAxes = axes.length;

@@ -42,18 +42,18 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
     }
     const msgLower = (e.message || '').toLowerCase();
     if (e.name === 'NotFoundError') {
-        setError(t.err_not_found || '未发现设备或用户取消');
+        setError(t.err_not_found);
         return;
     }
     let msg = e.message || defaultMsg;
     if (e.name === 'NotAllowedError') {
-        msg = t.err_not_allowed || '被拒绝：受限于跨域/沙箱策略或用户未授权';
+        msg = t.err_not_allowed;
     } else if (e.name === 'NotSupportedError' || msgLower.includes('not supported') || msgLower.includes('not implement')) {
-        msg = t.err_not_supported || '不支持：您的浏览器或设备不支持该接口';
+        msg = t.err_not_supported;
     } else if (e.name === 'SecurityError') {
-        msg = t.err_security || '安全限制：当前上下文被禁止访问';
+        msg = t.err_security;
     } else if (msgLower.includes('user gesture')) {
-        msg = t.err_user_gesture || '需用户真实点击操作';
+        msg = t.err_user_gesture;
     }
     setError(msg);
   };
@@ -120,7 +120,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                     const device = await navigator.usb.requestDevice({ filters: [] });
           setUsbDevices(prev => prev.find(d => d.id === (device.serialNumber || `${device.vendorId}-${device.productId}`)) ? prev : [...prev, {
               id: device.serialNumber || `${device.vendorId}-${device.productId}`,
-              name: device.productName || 'Unknown USB Device',
+              name: device.productName,
               details: `Vendor: ${device.vendorId}, Product: ${device.productId}`,
               raw: device
           }]);
@@ -236,7 +236,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
   // Web NFC
   const scanNfc = async () => {
       if (!('NDEFReader' in window)) {
-          setError(t.nfc_not_supported || "Web NFC not supported");
+          setError(t.nfc_not_supported);
           return;
       }
       setScanning(true);
@@ -275,7 +275,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
 
   const writeNfc = async () => {
       if (!('NDEFReader' in window)) {
-          setError(t.nfc_not_supported || "Web NFC not supported");
+          setError(t.nfc_not_supported);
           return;
       }
       setScanning(true);
@@ -322,7 +322,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                 <Key size={16} /> {t.tab_webauthn}
             </button>
             <button onClick={() => handleTabChange('nfc')} className={`flex-1 py-3 font-medium text-sm transition-colors flex items-center justify-center gap-2 ${activeTab === 'nfc' ? 'text-rose-600 border-b-2 border-rose-600 bg-white dark:bg-slate-800' : 'text-slate-500 hover:text-slate-700'}`}>
-                <Nfc size={16} /> {t.tab_nfc || 'NFC'}
+                <Nfc size={16} /> {t.tab_nfc}
             </button>
         </div>
 
@@ -332,7 +332,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                 <div className="mb-6 mx-auto max-w-md p-4 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-xl flex items-start gap-3 text-sm border border-orange-100 dark:border-orange-900/50">
                     <AlertCircle size={20} className="shrink-0 mt-0.5" />
                     <div>
-                        {t.msg_sandbox_webauthn || "(Sandbox) WebAuthn may be blocked in embedded environments. Open the app in a new tab if it fails."}
+                        {t.msg_sandbox_webauthn}
                     </div>
                 </div>
             )}
@@ -343,7 +343,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                         type="text" 
                         value={btRegex}
                         onChange={(e) => setBtRegex(e.target.value)}
-                        placeholder={t.regex_placeholder || "^MI.*"}
+                        placeholder={t.regex_placeholder}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none text-sm placeholder:text-slate-400"
                     />
                 </div>
@@ -377,7 +377,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                             className="flex-1 px-6 py-3 bg-rose-600 hover:bg-rose-700 shadow-lg shadow-rose-200 dark:shadow-rose-900/30 text-white rounded-xl transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {scanning ? <Radio className="animate-pulse" /> : <Search />}
-                            {t.btn_req_nfc_scan || 'Scan NFC'}
+                            {t.btn_req_nfc_scan}
                         </button>
                         <button 
                             onClick={writeNfc}
@@ -385,7 +385,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                             className="flex-1 px-6 py-3 bg-pink-600 hover:bg-pink-700 shadow-lg shadow-pink-200 dark:shadow-pink-900/30 text-white rounded-xl transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {scanning ? <Radio className="animate-pulse" /> : <Nfc />}
-                            {t.btn_req_nfc_write || 'Write NFC'}
+                            {t.btn_req_nfc_write}
                         </button>
                     </>
                 ) : (

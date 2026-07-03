@@ -407,4 +407,67 @@ export const dashboard = {
     vibration: "Физическая вибрация устройства",
     battery: "Уровень заряда и статус батареи",
   }
+,
+  "extensionsModal": {
+    "title": "Расширения браузера"
+  }
+
+,
+  "audioLatencyProbing": {
+    "title": "Задержка вывода звука и зондирование каналов"
+  },
+  "poisoning": {
+    "title": "Шум и отравление",
+    "detect": "Обнаружить"
+  },
+  "ja3": {
+    "title": "Отпечаток JA3/JA4",
+    "detect": "Обнаружить"
+  },
+
+
+  "analysis_no_error": "Объект ошибки недоступен.",
+  "analysis_null_reference": "Ошибка нулевой ссылки",
+  "analysis_function_call": "Ошибка вызова функции",
+  "analysis_invalid_hook": "Неверный вызов хука",
+  "analysis_network": "Ошибка сети",
+  "analysis_json": "Ошибка парсинга JSON",
+  "analysis_unexpected": "Произошла непредвиденная ошибка",
+  "component_in": "в",
+  "any_component": "Компонент",
+  "message": "Произошла ошибка",
+  "preliminary_analysis": "Предварительный анализ:",
+  "clear_cache": "Очистить кэш и перезагрузить",
+  "home": "На главную",
+  "reload_page": "Перезагрузить страницу",
+  "hide_stack_trace": "Скрыть трассировку стека",
+  "show_stack_trace": "Показать трассировку стека",
+  "copied": "Скопировано!",
+  "copy_error_details": "Скопировать детали ошибки",
+  "context_metadata": "Контекст среды",
+  "time": "Временная метка",
+  "url": "Текущий URL",
+  "user_agent": "User Agent",
+  "error_stack": "Стек ошибок",
+  "no_stack_trace": "Трассировка стека недоступна.",
+  "component_stack": "Стек компонентов React",
+  "no_component_stack": "Стек компонентов недоступен.",
+  "chunk_size": "Размер фрагмента",
+  "chunk_size_64": "64 КБ (Высокий IOPS)",
+  "chunk_size_256": "256 КБ",
+  "chunk_size_1024": "1 МБ (Сбалансированный)",
+  "chunk_size_4096": "4 МБ (Высокая пропускная способность)",
+  "export_csv": "Экспорт",
+  "clear_logs": "Очистить",
+  "table_time": "Время",
+  "table_target": "Цель",
+  "table_op": "Тип",
+  "table_chunk": "Фрагмент",
+  "table_speed": "Пропускная способность",
+  "op_write": "Запись",
+  "op_read": "Чтение",
+  "key_input_placeholder": "Введите здесь...",
+  "action_retest": "Повторить тест",
+  "drm_title": "Возможности DRM",
+  "collapseHeader": {"title":"Свернуть заголовок (ПК)","desc":"Использовать свернутое меню для действий в заголовке на экранах ПК."},
 };

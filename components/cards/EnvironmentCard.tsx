@@ -43,11 +43,11 @@ export const EnvironmentCard: React.FC<EnvironmentCardProps> = React.memo(({ t }
         if (category === 'trust') {
             return level === 'danger' ? envT.bot : envT.tampering;
         }
-        return envT.inconsistency || "Inconsistency";
+        return envT.inconsistency;
     };
 
     return (
-        <InfoCard title={t.groups?.environment || "Environment & Trust Assessment"} icon={isTrustSafe && isNormSafe ? ShieldCheck : (isTrustSuspicious || isNormSuspicious ? AlertTriangle : Bot)}>
+        <InfoCard title={t.groups?.environment} icon={isTrustSafe && isNormSafe ? ShieldCheck : (isTrustSuspicious || isNormSuspicious ? AlertTriangle : Bot)}>
             <div className="p-6 space-y-4">
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">

@@ -64,7 +64,7 @@ export function setupInterceptors(loggerStore: any /* eslint-disable-line @types
   window.addEventListener("error", (e) => {
     loggerStore.addConsole(
       "error",
-      `[Uncaught Error] ${e.message}\n${e.error?.stack || ""}`,
+      `[Uncaught Error] ${e.message}\n${e.error?.stack}`,
     );
   });
   window.addEventListener("unhandledrejection", (e) => {

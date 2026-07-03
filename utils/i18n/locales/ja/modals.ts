@@ -375,4 +375,20 @@ export const modals = {
       "darkreader": "ウェブサイトのダークモード"
     }
   }
+,
+  "ja3Modal": {
+    "title": "SSL/TLS 指紋 (JA3/JA4)",
+    "desc_title": "TLS Client Hello フィンガープリント",
+    "desc": "HTTPSハンドシェイク中に、ブラウザはサポートされている暗号スイート、TLS拡張などを含むClient Helloメッセージを送信します。JA3/JA4は、これらのTCP/TLS特性をフィンガープリント化して、実際のブラウザエンジンを正確に特定したり、ボット、プロキシ、なりすましユーザーエージェントを検出したりします。",
+    "fetching": "TLSハンドシェイクを分析中...",
+    "retry": "再試行",
+    "ja3_title": "JA3 指紋",
+    "ja3_hash": "JA3 ハッシュ (MD5)",
+    "ja3_string": "JA3 文字列 (生)",
+    "ja3n_title": "JA3N 指紋",
+    "ja3n_hash": "JA3N ハッシュ (MD5)",
+    "ja3n_string": "JA3N 文字列 (生)",
+    "server_ua": "サーバーが検出したユーザーエージェント"
+  }
+
 };

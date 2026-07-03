@@ -225,7 +225,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
     return (
         <Modal 
             onClose={onClose}
-            title={t.settings.nav.network || "Network Tools"} 
+            title={t.settings.nav.network} 
             icon={<Wifi size={24} className="text-indigo-500" />}
             size="4xl"
             fullHeight

@@ -316,4 +316,83 @@ export const settings = {
         libraries: "コアライブラリ"
     }
   }
+,
+  "modules": {
+    "impact": {
+      "high": "高",
+      "med": "中",
+      "low": "低"
+    },
+    "title": "モジュール",
+    "desc": "動的にロードされたツールを管理します。",
+    "status": {
+      "active": "アクティブ",
+      "cached": "キャッシュ済",
+      "inactive": "非アクティブ",
+      "system": "システム",
+      "locked": "ロック済"
+    },
+    "actions": {
+      "unloadAll": "すべてアンロード",
+      "unload": "アンロード"
+    },
+    "headers": {
+      "name": "名前",
+      "status": "ステータス",
+      "impact": "影響",
+      "action": "アクション"
+    }
+  },
+  "versions": {
+    "upToDate": "アプリはすでに最新です。",
+    "title": "ソフトウェアバージョン",
+    "desc": "現在のコアソフトウェアバージョンとロードされたモジュールを表示します。必要に応じて更新を取得します。",
+    "applyUpdate": "更新を適用",
+    "forcePull": "更新を確認",
+    "lastChecked": "最終確認:",
+    "coreApp": "コアアプリケーション",
+    "libraries": "コアライブラリ",
+    "installedModules": "インストール済みモジュール"
+  },
+  "developer": {
+    "config": {
+      "recordEvents": "イベントを記録",
+      "recordEventsDesc": "ウィンドウとネットワークイベントを自動記録",
+      "defaultConsoleTitle": "デフォルトコンソール",
+      "consoleVConsole": "vConsole",
+      "consoleEruda": "Eruda",
+      "vconsoleDefaultTab": "vConsoleのデフォルトタブ",
+      "vconsoleDefaultTabDesc": "vConsoleを開いたときにフォーカスするタブを選択します。",
+      "vconsoleTabs": {
+        "default": "デフォルト",
+        "system": "システム",
+        "network": "ネットワーク",
+        "element": "要素",
+        "storage": "ストレージ"
+      },
+      "erudaDefaultTab": "Erudaのデフォルトタブ",
+      "erudaDefaultTabDesc": "Erudaを開いたときにフォーカスするタブを選択します。",
+      "erudaTabs": {
+        "console": "コンソール",
+        "elements": "要素 (DOM)",
+        "network": "ネットワーク",
+        "resources": "リソース",
+        "sources": "ソース (コード)",
+        "info": "情報",
+        "snippets": "スニペット",
+        "timing": "タイミング",
+        "features": "機能",
+        "monitor": "モニター",
+        "fps": "FPS"
+      },
+      "loadSnippets": "コードスニペット",
+      "snippetClearLocal": "LocalStorageをクリア",
+      "snippetClearSession": "SessionStorageをクリア",
+      "snippetShowCookies": "Cookieを表示",
+      "snippetToggleBlur": "ボディブラーの切り替え",
+      "snippetToggleEditable": "編集可能ページの切り替え",
+      "simulateCrash": "開発クラッシュをシミュレート"
+    }
+  }
+
 };

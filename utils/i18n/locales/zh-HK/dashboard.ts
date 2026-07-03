@@ -407,4 +407,67 @@ export const dashboard = {
     vibration: "控制裝置進行物理震動",
     battery: "讀取裝置電量與充電狀態",
   }
+,
+  "extensionsModal": {
+    "title": "瀏覽器擴充功能"
+  }
+
+,
+  "audioLatencyProbing": {
+    "title": "音訊輸出延遲和通道探測"
+  },
+  "poisoning": {
+    "title": "噪聲與投毒",
+    "detect": "檢測"
+  },
+  "ja3": {
+    "title": "JA3/JA4 指紋",
+    "detect": "檢測"
+  },
+
+
+  "analysis_no_error": "沒有可用的錯誤物件。",
+  "analysis_null_reference": "空引用錯誤",
+  "analysis_function_call": "函式呼叫錯誤",
+  "analysis_invalid_hook": "無效的 Hook 呼叫",
+  "analysis_network": "網路錯誤",
+  "analysis_json": "JSON 解析錯誤",
+  "analysis_unexpected": "發生意外錯誤",
+  "component_in": "在",
+  "any_component": "組件",
+  "message": "發生錯誤",
+  "preliminary_analysis": "初步分析：",
+  "clear_cache": "清除快取並重新載入",
+  "home": "返回首頁",
+  "reload_page": "重新載入頁面",
+  "hide_stack_trace": "隱藏堆疊追蹤",
+  "show_stack_trace": "查看堆疊追蹤",
+  "copied": "已複製！",
+  "copy_error_details": "複製錯誤詳情",
+  "context_metadata": "環境上下文",
+  "time": "時間戳",
+  "url": "當前 URL",
+  "user_agent": "使用者代理",
+  "error_stack": "錯誤堆疊",
+  "no_stack_trace": "沒有可用的堆疊追蹤。",
+  "component_stack": "React 組件堆疊",
+  "no_component_stack": "沒有可用的組件堆疊。",
+  "chunk_size": "區塊大小",
+  "chunk_size_64": "64 KB (高 IOPS)",
+  "chunk_size_256": "256 KB",
+  "chunk_size_1024": "1 MB (均衡)",
+  "chunk_size_4096": "4 MB (高吞吐量)",
+  "export_csv": "匯出",
+  "clear_logs": "清除",
+  "table_time": "時間",
+  "table_target": "目標",
+  "table_op": "類型",
+  "table_chunk": "區塊",
+  "table_speed": "吞吐量",
+  "op_write": "寫入",
+  "op_read": "讀取",
+  "key_input_placeholder": "在此輸入...",
+  "action_retest": "重新測試",
+  "drm_title": "DRM 功能",
+  "collapseHeader": {"title":"折疊標題列（桌面）","desc":"在桌面螢幕上使用折疊選單作為標題列操作。"},
 };

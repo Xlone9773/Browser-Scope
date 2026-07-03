@@ -96,10 +96,10 @@ export const GoogleTranslateModal: React.FC<GoogleTranslateModalProps> = ({
   };
 
   // Safe checks for translations
-  const titleText = t?.common?.googleTranslate || "Google Translate";
-  const descText = t?.common?.googleTranslateDesc || "Choose a target language for page translation";
-  const exitText = t?.common?.googleTranslateExit || "Exit Translation";
-  const poweredBy = t?.common?.poweredBy || "Powered by Google Translate";
+  const titleText = t?.common?.googleTranslate;
+  const descText = t?.common?.googleTranslateDesc;
+  const exitText = t?.common?.googleTranslateExit;
+  const poweredBy = t?.common?.poweredBy;
 
   return (
     <BaseModal onClose={onClose} title={titleText} icon={<Languages />}>

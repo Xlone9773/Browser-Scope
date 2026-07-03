@@ -56,7 +56,7 @@ export async function loadEruda(store: any /* eslint-disable-line @typescript-es
         snippets.add(
           "Show Cookies",
           function () {
-            alert(document.cookie || "No cookies found");
+            alert(document.cookie);
           },
           "Alerts all current document cookies",
         );

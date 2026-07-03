@@ -316,4 +316,83 @@ export const settings = {
         libraries: "核心依赖库"
     }
   }
+,
+  "modules": {
+    "impact": {
+      "high": "高",
+      "med": "中",
+      "low": "低"
+    },
+    "title": "模块",
+    "desc": "管理动态加载的工具。",
+    "status": {
+      "active": "活跃",
+      "cached": "已缓存",
+      "inactive": "未激活",
+      "system": "系统",
+      "locked": "已锁定"
+    },
+    "actions": {
+      "unloadAll": "全部卸载",
+      "unload": "卸载"
+    },
+    "headers": {
+      "name": "名称",
+      "status": "状态",
+      "impact": "影响",
+      "action": "操作"
+    }
+  },
+  "versions": {
+    "upToDate": "应用已是最新版本。",
+    "title": "软件版本",
+    "desc": "查看当前核心软件版本和已加载模块。如有需要可拉取更新。",
+    "applyUpdate": "应用更新",
+    "forcePull": "检查更新",
+    "lastChecked": "最后检查:",
+    "coreApp": "核心应用",
+    "libraries": "核心库",
+    "installedModules": "已安装模块"
+  },
+  "developer": {
+    "config": {
+      "recordEvents": "记录事件",
+      "recordEventsDesc": "自动记录窗口和网络事件",
+      "defaultConsoleTitle": "默认控制台",
+      "consoleVConsole": "vConsole",
+      "consoleEruda": "Eruda",
+      "vconsoleDefaultTab": "默认 vConsole 选项卡",
+      "vconsoleDefaultTabDesc": "选择打开 vConsole 时聚焦的选项卡。",
+      "vconsoleTabs": {
+        "default": "默认",
+        "system": "系统",
+        "network": "网络",
+        "element": "元素",
+        "storage": "存储"
+      },
+      "erudaDefaultTab": "默认 Eruda 选项卡",
+      "erudaDefaultTabDesc": "选择打开 Eruda 时聚焦的选项卡。",
+      "erudaTabs": {
+        "console": "控制台",
+        "elements": "元素 (DOM)",
+        "network": "网络",
+        "resources": "资源",
+        "sources": "源码",
+        "info": "信息",
+        "snippets": "代码片段",
+        "timing": "时间",
+        "features": "功能",
+        "monitor": "监控",
+        "fps": "FPS"
+      },
+      "loadSnippets": "代码片段",
+      "snippetClearLocal": "清除 LocalStorage",
+      "snippetClearSession": "清除 SessionStorage",
+      "snippetShowCookies": "显示 Cookies",
+      "snippetToggleBlur": "切换页面模糊",
+      "snippetToggleEditable": "切换页面可编辑",
+      "simulateCrash": "模拟开发崩溃"
+    }
+  }
+
 };

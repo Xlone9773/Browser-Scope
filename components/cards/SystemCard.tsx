@@ -54,7 +54,7 @@ export const SystemCard: React.FC<SystemCardProps> = React.memo(({ data, t, simp
               <InfoItem label={t.labels.language} value={formatLanguageName(data.language)} subValue={data.language} />
               <InfoItem label={t.labels.pref_langs} value={list(readableLanguages)} />
               <InfoItem label={t.labels.cookies} value={trVal(data.cookiesEnabled)} />
-              <InfoItem label={t.labels.dnt} value={data.doNotTrack || 'Off'} />
+              <InfoItem label={t.labels.dnt} value={data.doNotTrack} />
           </>
       )}
     </InfoCard>

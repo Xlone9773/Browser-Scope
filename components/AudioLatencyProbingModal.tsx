@@ -77,10 +77,10 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const layoutOptions = [
-    { id: "stereo", label: t.audioLatencyProbing?.layout_stereo || "2.0 Stereo" },
-    ...(maxHardwareChannels >= 4 ? [{ id: "quad", label: t.audioLatencyProbing?.layout_quad || "4.0 Quadraphonic" }] : []),
-    ...(maxHardwareChannels >= 6 ? [{ id: "5.1", label: t.audioLatencyProbing?.layout_5_1 || "5.1 Surround" }] : []),
-    ...(maxHardwareChannels >= 8 ? [{ id: "7.1", label: t.audioLatencyProbing?.layout_7_1 || "7.1 Surround" }] : [])
+    { id: "stereo", label: t.audioLatencyProbing?.layout_stereo },
+    ...(maxHardwareChannels >= 4 ? [{ id: "quad", label: t.audioLatencyProbing?.layout_quad }] : []),
+    ...(maxHardwareChannels >= 6 ? [{ id: "5.1", label: t.audioLatencyProbing?.layout_5_1 }] : []),
+    ...(maxHardwareChannels >= 8 ? [{ id: "7.1", label: t.audioLatencyProbing?.layout_7_1 }] : [])
   ];
 
   // Audio nodes and references
@@ -352,7 +352,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
 
   return (
     <Modal
-      title={t.audioLatencyProbing?.title || "Audio Output Latency & Channel Probing"}
+      title={t.audioLatencyProbing?.title}
       onClose={onClose}
       size="lg"
     >
@@ -362,11 +362,10 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
           <Volume2 className="text-indigo-500 shrink-0 w-5 h-5 mt-0.5" />
           <div className="text-sm space-y-1">
             <h4 className="font-semibold text-slate-800 dark:text-slate-100">
-              {t.audioLatencyProbing?.desc_title || "Hardware Audio Engine Analysis"}
+              {t.audioLatencyProbing?.desc_title}
             </h4>
             <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-xs">
-              {t.audioLatencyProbing?.desc ||
-                "This module tests physical audio hardware outputs via Web Audio API. It detects raw rendering latency and tests multi-channel discrete mapping layouts like Stereo, Surround 5.1, and 7.1 systems."}
+              {t.audioLatencyProbing?.desc}
             </p>
           </div>
         </div>
@@ -382,7 +381,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 bg-slate-50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-700/30 rounded-xl flex flex-col justify-between">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
-              {t.audioLatencyProbing?.output || "Output Latency"}
+              {t.audioLatencyProbing?.output}
             </span>
             <div className="flex items-baseline gap-1 my-2">
               <span className="text-2xl font-bold font-mono text-indigo-600 dark:text-indigo-400">
@@ -391,13 +390,13 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
               <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">ms</span>
             </div>
             <p className="text-[10px] text-slate-400">
-              {t.audioLatencyProbing?.output_desc || "Time taken for audio to reach the physical output device."}
+              {t.audioLatencyProbing?.output_desc}
             </p>
           </div>
 
           <div className="p-4 bg-slate-50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-700/30 rounded-xl flex flex-col justify-between">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
-              {t.audioLatencyProbing?.base || "Base Buffer Latency"}
+              {t.audioLatencyProbing?.base}
             </span>
             <div className="flex items-baseline gap-1 my-2">
               <span className="text-2xl font-bold font-mono text-emerald-500 dark:text-emerald-400">
@@ -406,13 +405,13 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
               <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">ms</span>
             </div>
             <p className="text-[10px] text-slate-400">
-              {t.audioLatencyProbing?.base_desc || "Internal processing buffer latency of the Web Audio engine."}
+              {t.audioLatencyProbing?.base_desc}
             </p>
           </div>
 
           <div className="p-4 bg-slate-50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-700/30 rounded-xl flex flex-col justify-between">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
-              {t.audioLatencyProbing?.max_channels || "Max Output Channels"}
+              {t.audioLatencyProbing?.max_channels}
             </span>
             <div className="flex items-baseline gap-1 my-2">
               <span className="text-2xl font-bold font-mono text-violet-500 dark:text-violet-400">
@@ -421,7 +420,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
               <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Ch</span>
             </div>
             <p className="text-[10px] text-slate-400">
-              {t.audioLatencyProbing?.max_channels_desc || "Hardware channels exposed by system. Stereo = 2, surround = 6 or 8."}
+              {t.audioLatencyProbing?.max_channels_desc}
             </p>
           </div>
         </div>
@@ -432,7 +431,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
             <div className="flex items-center gap-2">
               <Zap className="text-indigo-500 w-4 h-4" />
               <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-                {t.audioLatencyProbing?.sync_calib || "Audio-Visual Sync Calibration"}
+                {t.audioLatencyProbing?.sync_calib}
               </h3>
             </div>
             <Button
@@ -441,13 +440,12 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
               size="sm"
               leftIcon={isPlayingSyncTest ? <Pause size={14} /> : <Play size={14} />}
             >
-              {isPlayingSyncTest ? t.audioLatencyProbing?.stop_test || "Stop Test" : t.audioLatencyProbing?.start_sync_test || "Start Sync Test"}
+              {isPlayingSyncTest ? t.audioLatencyProbing?.stop_test : t.audioLatencyProbing?.start_sync_test}
             </Button>
           </div>
 
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            {t.audioLatencyProbing?.sync_calib_desc ||
-              "Align the visual flash with the audio beep. Drag the slider to manually offset or compensate for wireless bluetooth earbud transmission latencies."}
+            {t.audioLatencyProbing?.sync_calib_desc}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
@@ -469,7 +467,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
                 />
               </div>
               <span className="absolute bottom-2 text-[10px] text-slate-400 tracking-wider uppercase font-medium">
-                {t.audioLatencyProbing?.visual_flash || "Sync Visual Flash"}
+                {t.audioLatencyProbing?.visual_flash}
               </span>
             </div>
 
@@ -481,14 +479,14 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
                 min={-300}
                 max={300}
                 step={5}
-                label={t.audioLatencyProbing?.manual_compensation || "Manual Offset"}
+                label={t.audioLatencyProbing?.manual_compensation}
                 color="indigo"
                 formatValue={(val) => (val >= 0 ? `+${val} ms` : `${val} ms`)}
               />
               <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>-300ms ({t.audioLatencyProbing?.early || "Early"})</span>
-                <span>0ms ({t.audioLatencyProbing?.no_offset || "No offset"})</span>
-                <span>+300ms ({t.audioLatencyProbing?.late || "Late / Delay"})</span>
+                <span>-300ms ({t.audioLatencyProbing?.early})</span>
+                <span>0ms ({t.audioLatencyProbing?.no_offset})</span>
+                <span>+300ms ({t.audioLatencyProbing?.late})</span>
               </div>
             </div>
           </div>
@@ -500,7 +498,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
             <div className="flex items-center gap-2">
               <Radio className="text-emerald-500 w-4 h-4 animate-pulse" />
               <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-                {t.audioLatencyProbing?.discrete_probing || "Discrete Channel Mapping Probing"}
+                {t.audioLatencyProbing?.discrete_probing}
               </h3>
             </div>
 
@@ -511,7 +509,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
                 size="sm"
                 leftIcon={<RefreshCw size={12} className={isAutoProbing ? "animate-spin" : ""} />}
               >
-                {isAutoProbing ? t.audioLatencyProbing?.stop_probe || "Stop Loop" : t.audioLatencyProbing?.start_probe || "Auto Cycle Probe"}
+                {isAutoProbing ? t.audioLatencyProbing?.stop_probe : t.audioLatencyProbing?.start_probe}
               </Button>
 
               <Select
@@ -529,8 +527,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
           </div>
 
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            {t.audioLatencyProbing?.channel_probing_desc ||
-              "Click on individual virtual speaker nodes below to send sound specifically into that logical driver channel, or start the cycle to map all speakers."}
+            {t.audioLatencyProbing?.channel_probing_desc}
           </p>
 
           {/* Virtual Acoustic Room Arena */}
@@ -541,7 +538,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
             {/* Listener representation in middle */}
             <div className="absolute w-12 h-12 rounded-full border border-slate-300 dark:border-slate-700 bg-slate-200/30 dark:bg-slate-800/40 flex flex-col items-center justify-center z-0">
               <span className="text-[8px] text-slate-400 uppercase tracking-widest font-semibold font-mono">
-                {t.audioLatencyProbing?.listener_center || "Center"}
+                {t.audioLatencyProbing?.listener_center}
               </span>
               <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full mt-1 animate-ping" />
             </div>
@@ -589,15 +586,15 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
           <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-100/50 dark:bg-slate-900/30 rounded-lg border border-slate-200/20 text-[11px] text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
-              <span>{t.audioLatencyProbing?.legend_high_mid || "Left / Right / Center (High & Mid Tones)"}</span>
+              <span>{t.audioLatencyProbing?.legend_high_mid}</span>
             </div>
             <div className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-              <span>{t.audioLatencyProbing?.legend_surround || "Surround Left / Surround Right (High Chirps)"}</span>
+              <span>{t.audioLatencyProbing?.legend_surround}</span>
             </div>
             <div className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-              <span>{t.audioLatencyProbing?.legend_lfe || "Subwoofer LFE (60Hz Low Frequency Sweep)"}</span>
+              <span>{t.audioLatencyProbing?.legend_lfe}</span>
             </div>
           </div>
         </div>

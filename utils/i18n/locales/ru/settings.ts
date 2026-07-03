@@ -316,4 +316,83 @@ export const settings = {
         libraries: "Основные библиотеки"
     }
   }
+,
+  "modules": {
+    "impact": {
+      "high": "Высокое",
+      "med": "Среднее",
+      "low": "Низкое"
+    },
+    "title": "Модули",
+    "desc": "Управление динамически загружаемыми инструментами.",
+    "status": {
+      "active": "Активен",
+      "cached": "В кэше",
+      "inactive": "Неактивен",
+      "system": "Система",
+      "locked": "Заблокирован"
+    },
+    "actions": {
+      "unloadAll": "Выгрузить все",
+      "unload": "Выгрузить"
+    },
+    "headers": {
+      "name": "Имя",
+      "status": "Статус",
+      "impact": "Влияние",
+      "action": "Действие"
+    }
+  },
+  "versions": {
+    "upToDate": "Приложение уже обновлено.",
+    "title": "Версии ПО",
+    "desc": "Просмотр текущей версии основного ПО и загруженных модулей. При необходимости скачайте обновления.",
+    "applyUpdate": "Применить обновление",
+    "forcePull": "Проверить обновления",
+    "lastChecked": "Последняя проверка:",
+    "coreApp": "Основное приложение",
+    "libraries": "Основные библиотеки",
+    "installedModules": "Установленные модули"
+  },
+  "developer": {
+    "config": {
+      "recordEvents": "Запись событий",
+      "recordEventsDesc": "Автоматическая запись событий окна и сети",
+      "defaultConsoleTitle": "КОНСОЛЬ ПО УМОЛЧАНИЮ",
+      "consoleVConsole": "vConsole",
+      "consoleEruda": "Eruda",
+      "vconsoleDefaultTab": "Вкладка vConsole по умолчанию",
+      "vconsoleDefaultTabDesc": "Выберите вкладку для фокусировки при открытии vConsole.",
+      "vconsoleTabs": {
+        "default": "По умолчанию",
+        "system": "Система",
+        "network": "Сеть",
+        "element": "Элемент",
+        "storage": "Хранилище"
+      },
+      "erudaDefaultTab": "Вкладка Eruda по умолчанию",
+      "erudaDefaultTabDesc": "Выберите вкладку для фокусировки при открытии Eruda.",
+      "erudaTabs": {
+        "console": "Консоль",
+        "elements": "Элементы (DOM)",
+        "network": "Сеть",
+        "resources": "Ресурсы",
+        "sources": "Источники (Код)",
+        "info": "Информация",
+        "snippets": "Сниппеты",
+        "timing": "Тайминг",
+        "features": "Функции",
+        "monitor": "Монитор",
+        "fps": "FPS"
+      },
+      "loadSnippets": "Сниппеты кода",
+      "snippetClearLocal": "Очистить LocalStorage",
+      "snippetClearSession": "Очистить SessionStorage",
+      "snippetShowCookies": "Показать Cookies",
+      "snippetToggleBlur": "Переключить размытие",
+      "snippetToggleEditable": "Переключить редактируемость страницы",
+      "simulateCrash": "Симулировать сбой"
+    }
+  }
+
 };

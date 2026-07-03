@@ -32,7 +32,7 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
     if (manualCheckUpdate) {
       const result = await manualCheckUpdate();
       if (result === "checked" || result === "not-supported") {
-         setToastMessage(t?.upToDate || "App is already up to date.");
+         setToastMessage(t?.upToDate);
          setTimeout(() => setToastMessage(null), 3000);
       }
     } else {
@@ -74,10 +74,10 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
           </div>
           <div>
             <h3 className="font-semibold text-slate-900 dark:text-slate-100">
-              {t?.title || "Software Versions"}
+              {t?.title}
             </h3>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              {t?.desc || "View current core software version and loaded modules. Pull updates if needed."}
+              {t?.desc}
             </p>
           </div>
         </div>
@@ -89,11 +89,11 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
             leftIcon={<RefreshCw size={16} className={(isPulling || isCheckingUpdate) ? "animate-spin" : ""} />}
             variant={needRefresh ? "primary" : "secondary"}
           >
-            {needRefresh ? (t?.applyUpdate || "Apply Update") : (t?.forcePull || "Check Updates")}
+            {needRefresh ? t?.applyUpdate : t?.forcePull}
           </Button>
           {lastCheckTime && (
             <div className="text-xs text-slate-400">
-              {t?.lastChecked || "Last checked:"} {formatLastChecked(lastCheckTime)}
+              {t?.lastChecked} {formatLastChecked(lastCheckTime)}
             </div>
           )}
           {toastMessage && (
@@ -108,7 +108,7 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
         <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
           <div className="flex items-center gap-2 font-medium text-slate-800 dark:text-slate-200">
             <Layers size={18} className="text-indigo-500" />
-            {t?.coreApp || "Core Application"}
+            {t?.coreApp}
           </div>
           <div className="px-3 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400 text-sm font-mono rounded-md shadow-sm border border-indigo-200 dark:border-indigo-500/30">
             v{appVersion}
@@ -119,7 +119,7 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
       <div className="mt-6">
         <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 px-1 flex items-center gap-2">
           <Zap size={16} />
-          {t?.libraries || "Core Libraries"}
+          {t?.libraries}
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {coreLibraries.map((lib) => (
@@ -134,7 +134,7 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
       <div className="mt-6">
         <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 px-1 flex items-center gap-2">
           <Package size={16} />
-          {t?.installedModules || "Installed Modules"}
+          {t?.installedModules}
           <span className="bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-xs px-2 py-0.5 rounded-full">
             {modules.length}
           </span>

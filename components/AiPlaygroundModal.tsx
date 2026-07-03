@@ -143,19 +143,19 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
   // Safe translation access
   const getTaskTitle = (task: TaskType) => {
       
-      return t.tasks?.[task]?.title || task;
+      return t.tasks?.[task]?.title;
   };
   const getTaskDesc = (task: TaskType) => {
       
-      return t.tasks?.[task]?.desc || '';
+      return t.tasks?.[task]?.desc;
   };
   const getTaskInputPlaceholder = (task: TaskType) => {
       
-      return t.tasks?.[task]?.input || '';
+      return t.tasks?.[task]?.input;
   };
   const getTaskBtnText = (task: TaskType) => {
       
-      return t.tasks?.[task]?.btn || 'Run';
+      return t.tasks?.[task]?.btn;
   };
 
   const getCurrentModelSize = () => {
@@ -176,7 +176,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
             {/* Sidebar / Tabs */}
             <div className="md:w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0">
                 <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t.select_task || 'Select Model Task'}</div>
+                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t.select_task}</div>
                     <div className="flex flex-col gap-2">
                         {(['sentiment', 'generation', 'translation'] as TaskType[]).map(task => (
                             <button
@@ -202,15 +202,15 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                 
                 {/* Stats Panel */}
                 <div className="mt-auto p-4 bg-slate-50 dark:bg-slate-900/50">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">{t.perf_metrics || 'Performance Metrics'}</div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">{t.perf_metrics}</div>
                     <div className="space-y-3">
                         <div className="flex justify-between items-center">
                             <span className="text-xs text-slate-500">{t.metrics?.time_load}</span>
-                            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-200">{metrics.loadTime || '--'}</span>
+                            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-200">{metrics.loadTime}</span>
                         </div>
                         <div className="flex justify-between items-center">
                             <span className="text-xs text-slate-500">{t.metrics?.time_inference}</span>
-                            <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">{metrics.inferenceTime || '--'}</span>
+                            <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">{metrics.inferenceTime}</span>
                         </div>
                         <div className="flex justify-between items-center">
                             <span className="text-xs text-slate-500">{t.metrics?.device}</span>

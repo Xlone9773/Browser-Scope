@@ -277,7 +277,7 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
                         preset.id}
                     </span>
                     <span className="text-[10px] text-slate-500 truncate">
-                      {(t.console as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).presets?.[preset.id]?.desc || ""}
+                      {(t.console as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).presets?.[preset.id]?.desc}
                     </span>
                   </div>
                 </div>

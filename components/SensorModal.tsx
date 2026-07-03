@@ -375,7 +375,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                             <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
                                 <Activity size={20} />
                             </div>
-                            <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.linear_accel || 'Linear Acceleration'}</h3>
+                            <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.linear_accel}</h3>
                         </div>
                         
                         {linearAccel ? (
@@ -431,7 +431,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                 <ArrowDown size={20} />
                             </div>
                             <div className="flex flex-col">
-                                <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.gravity || 'Gravity'}</h3>
+                                <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.gravity}</h3>
                             </div>
                         </div>
                         
@@ -464,7 +464,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                 <Globe size={20} />
                             </div>
                             <div className="flex flex-col">
-                                <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.abs_orientation || 'Absolute Orientation'}</h3>
+                                <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.abs_orientation}</h3>
                             </div>
                         </div>
                         

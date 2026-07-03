@@ -254,7 +254,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
           };
 
           recorder.onstop = () => {
-              const type = recorder.mimeType || selectedType || 'video/webm';
+              const type = recorder.mimeType || selectedType;
               const blob = new Blob(recordedChunks.current, { type });
               const url = URL.createObjectURL(blob);
               setVideoUrl(url);

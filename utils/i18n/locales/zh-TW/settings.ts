@@ -316,4 +316,83 @@ export const settings = {
         libraries: "核心依賴庫"
     }
   }
+,
+  "modules": {
+    "impact": {
+      "high": "高",
+      "med": "中",
+      "low": "低"
+    },
+    "title": "模組",
+    "desc": "管理動態載入的工具。",
+    "status": {
+      "active": "活躍",
+      "cached": "已快取",
+      "inactive": "未啟動",
+      "system": "系統",
+      "locked": "已鎖定"
+    },
+    "actions": {
+      "unloadAll": "全部卸載",
+      "unload": "卸載"
+    },
+    "headers": {
+      "name": "名稱",
+      "status": "狀態",
+      "impact": "影響",
+      "action": "操作"
+    }
+  },
+  "versions": {
+    "upToDate": "應用程式已是最新版本。",
+    "title": "軟體版本",
+    "desc": "檢視當前核心軟體版本和已載入的模組。如有需要可擷取更新。",
+    "applyUpdate": "套用更新",
+    "forcePull": "檢查更新",
+    "lastChecked": "最後檢查:",
+    "coreApp": "核心應用程式",
+    "libraries": "核心函式庫",
+    "installedModules": "已安裝模組"
+  },
+  "developer": {
+    "config": {
+      "recordEvents": "記錄事件",
+      "recordEventsDesc": "自動記錄視窗與網路事件",
+      "defaultConsoleTitle": "預設控制台",
+      "consoleVConsole": "vConsole",
+      "consoleEruda": "Eruda",
+      "vconsoleDefaultTab": "預設 vConsole 標籤頁",
+      "vconsoleDefaultTabDesc": "選擇開啟 vConsole 時聚焦的標籤頁。",
+      "vconsoleTabs": {
+        "default": "預設",
+        "system": "系統",
+        "network": "網路",
+        "element": "元素",
+        "storage": "儲存"
+      },
+      "erudaDefaultTab": "預設 Eruda 標籤頁",
+      "erudaDefaultTabDesc": "選擇開啟 Eruda 時聚焦的標籤頁。",
+      "erudaTabs": {
+        "console": "控制台",
+        "elements": "元素 (DOM)",
+        "network": "網路",
+        "resources": "資源",
+        "sources": "原始碼",
+        "info": "資訊",
+        "snippets": "程式碼片段",
+        "timing": "時間",
+        "features": "功能",
+        "monitor": "監控",
+        "fps": "FPS"
+      },
+      "loadSnippets": "程式碼片段",
+      "snippetClearLocal": "清除 LocalStorage",
+      "snippetClearSession": "清除 SessionStorage",
+      "snippetShowCookies": "顯示 Cookies",
+      "snippetToggleBlur": "切換頁面模糊",
+      "snippetToggleEditable": "切換頁面可編輯",
+      "simulateCrash": "模擬開發崩潰"
+    }
+  }
+
 };

@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Precompiled files and script runner outputs
+*.cjs
+*.cjs.map

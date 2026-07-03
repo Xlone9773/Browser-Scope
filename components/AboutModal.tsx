@@ -77,9 +77,9 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                 <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl flex items-center justify-center text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
                                     <ShieldCheck size={20} />
                                 </div>
-                                <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-2">{t.features?.privacy.title || "Privacy First"}</h3>
+                                <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-2">{t.features?.privacy.title}</h3>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                                    {t.features?.privacy.desc || "100% Client-side execution. Zero data collection. Your fingerprint stays on your device."}
+                                    {t.features?.privacy.desc}
                                 </p>
                             </div>
 
@@ -88,9 +88,9 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                 <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl flex items-center justify-center text-indigo-500 mb-3 group-hover:scale-110 transition-transform">
                                     <Cpu size={20} />
                                 </div>
-                                <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-2">{t.features?.tech.title || "Frontier Tech"}</h3>
+                                <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-2">{t.features?.tech.title}</h3>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                                    {t.features?.tech.desc || "Powered by WebGPU, WebNN, and WASM to test the bleeding edge of browser capabilities."}
+                                    {t.features?.tech.desc}
                                 </p>
                             </div>
 
@@ -99,9 +99,9 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                 <div className="w-10 h-10 bg-amber-50 dark:bg-amber-900/20 rounded-xl flex items-center justify-center text-amber-500 mb-3 group-hover:scale-110 transition-transform">
                                     <Fingerprint size={20} />
                                 </div>
-                                <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-2">{t.features?.deepScan.title || "Deep Scan"}</h3>
+                                <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-2">{t.features?.deepScan.title}</h3>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                                    {t.features?.deepScan.desc || "Analyzes 100+ hardware and software signals to generate high-entropy identifiers."}
+                                    {t.features?.deepScan.desc}
                                 </p>
                             </div>
 
@@ -110,7 +110,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                 <div className="relative z-10">
                                     <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-3 flex items-center gap-2">
                                         <Zap size={18} className="text-yellow-500 fill-yellow-500" />
-                                        {t.features?.stack.title || "Innovation Stack"}
+                                        {t.features?.stack.title}
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
                                         {['WebGPU Compute', 'Transformer.js', 'WASM', 'WebCodecs', 'React 19', 'Tailwind', 'Intl API', 'WebRTC'].map(tag => (
@@ -133,8 +133,8 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                             >
                                 <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                 <Github size={32} className="text-white mb-3 group-hover:scale-110 transition-transform relative z-10" />
-                                <h3 className="font-bold text-white text-base relative z-10">{t.features?.openSource.title || "Open Source"}</h3>
-                                <span className="text-[10px] text-slate-400 mt-1 relative z-10">{t.features?.openSource.license || "MIT License"}</span>
+                                <h3 className="font-bold text-white text-base relative z-10">{t.features?.openSource.title}</h3>
+                                <span className="text-[10px] text-slate-400 mt-1 relative z-10">{t.features?.openSource.license}</span>
                             </a>
                         </div>
 

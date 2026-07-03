@@ -137,7 +137,7 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                                         <div className="flex items-center gap-1.5 mt-auto pt-2">
                                             <Check size={12} className="text-emerald-500" />
                                             <span className="text-[10px] text-emerald-600 dark:text-emerald-500 font-medium uppercase tracking-wide">
-                                                {(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).supported_status || 'Supported'}
+                                                {(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).supported_status}
                                             </span>
                                         </div>
                                     )}
@@ -147,7 +147,7 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                         {filteredExtensions.length === 0 && (
                             <div className="col-span-full py-12 flex flex-col items-center justify-center text-slate-400 gap-3">
                                 <Box size={48} className="opacity-20" />
-                                <p className="text-sm">{(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).no_results || 'No extensions match'} "{searchTerm}"</p>
+                                <p className="text-sm">{(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).no_results} "{searchTerm}"</p>
                             </div>
                         )}
                     </div>

@@ -405,4 +405,68 @@ export const dashboard = {
     vibration: "Hardware haptics",
     battery: "Power level and charging",
   }
+,
+
+  "extensionsModal": {
+    "title": "Browser Extensions"
+  }
+
+,
+  "audioLatencyProbing": {
+    "title": "Audio Output Latency & Channel Probing"
+  },
+  "poisoning": {
+    "title": "Noise & Poisoning",
+    "detect": "Detect"
+  },
+  "ja3": {
+    "title": "JA3/JA4 Fingerprint",
+    "detect": "Detect"
+  },
+
+
+  "analysis_no_error": "No error object available.",
+  "analysis_null_reference": "Null reference error",
+  "analysis_function_call": "Function call error",
+  "analysis_invalid_hook": "Invalid hook call",
+  "analysis_network": "Network error",
+  "analysis_json": "JSON parsing error",
+  "analysis_unexpected": "Unexpected error occurred",
+  "component_in": "in",
+  "any_component": "Component",
+  "message": "An error occurred",
+  "preliminary_analysis": "Preliminary Analysis:",
+  "clear_cache": "Clear Cache & Reload",
+  "home": "Return Home",
+  "reload_page": "Reload Page",
+  "hide_stack_trace": "Hide Stack Trace",
+  "show_stack_trace": "View Stack Trace",
+  "copied": "Copied!",
+  "copy_error_details": "Copy Error Details",
+  "context_metadata": "Environment Context",
+  "time": "Timestamp",
+  "url": "Current URL",
+  "user_agent": "User Agent",
+  "error_stack": "Error Stack",
+  "no_stack_trace": "No stack trace available.",
+  "component_stack": "React Component Stack",
+  "no_component_stack": "No component stack available.",
+  "chunk_size": "Chunk Size",
+  "chunk_size_64": "64 KB (High IOPS)",
+  "chunk_size_256": "256 KB",
+  "chunk_size_1024": "1 MB (Balanced)",
+  "chunk_size_4096": "4 MB (High Throughput)",
+  "export_csv": "Export",
+  "clear_logs": "Clear",
+  "table_time": "Time",
+  "table_target": "Target",
+  "table_op": "Type",
+  "table_chunk": "Chunk",
+  "table_speed": "Throughput",
+  "op_write": "Write",
+  "op_read": "Read",
+  "key_input_placeholder": "Type here...",
+  "action_retest": "Retest",
+  "drm_title": "DRM Capabilities",
+  "collapseHeader": {"title":"Collapse Header (Desktop)","desc":"Use a collapsed menu for header actions on desktop screens."},
 };

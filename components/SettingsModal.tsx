@@ -161,7 +161,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             `}
                         >
                             <Palette size={16} />
-                            {settings.nav?.appearance || 'Appearance'}
+                            {settings.nav?.appearance}
                         </button>
                         <button 
                             onClick={() => handleTabChange('storage')}
@@ -309,17 +309,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 <div className="flex flex-col items-center justify-center h-full text-center">
                                     <Terminal size={48} className="text-slate-300 dark:text-slate-600 mb-4" />
                                     <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">
-                                        {settings.developer.floating_state?.title || "Developer Tools is Floating"}
+                                        {settings.developer.floating_state?.title}
                                     </h3>
                                     <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-6">
-                                        {settings.developer.floating_state?.desc || "The developer tools window has been detached from this modal for a better experience."}
+                                        {settings.developer.floating_state?.desc}
                                     </p>
                                     <button 
                                         onClick={() => setDevToolsFloating(false)}
                                         className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors font-medium text-sm flex items-center gap-2"
                                     >
                                         <Monitor size={16} />
-                                        {settings.developer.floating_state?.return || "Return to Modal"}
+                                        {settings.developer.floating_state?.return}
                                     </button>
                                 </div>
                             ) : (

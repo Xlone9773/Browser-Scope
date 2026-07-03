@@ -408,4 +408,67 @@ export const dashboard = {
     vibration: "控制设备进行物理震动",
     battery: "读取设备电量与充电状态",
   }
+,
+  "extensionsModal": {
+    "title": "浏览器扩展"
+  }
+
+,
+  "audioLatencyProbing": {
+    "title": "音频输出延迟和通道探测"
+  },
+  "poisoning": {
+    "title": "噪声与投毒",
+    "detect": "检测"
+  },
+  "ja3": {
+    "title": "JA3/JA4 指纹",
+    "detect": "检测"
+  },
+
+
+  "analysis_no_error": "没有可用的错误对象。",
+  "analysis_null_reference": "空引用错误",
+  "analysis_function_call": "函数调用错误",
+  "analysis_invalid_hook": "无效的 Hook 调用",
+  "analysis_network": "网络错误",
+  "analysis_json": "JSON 解析错误",
+  "analysis_unexpected": "发生了意外错误",
+  "component_in": "在",
+  "any_component": "组件",
+  "message": "发生错误",
+  "preliminary_analysis": "初步分析：",
+  "clear_cache": "清除缓存并重新加载",
+  "home": "返回首页",
+  "reload_page": "重新加载页面",
+  "hide_stack_trace": "隐藏堆栈跟踪",
+  "show_stack_trace": "查看堆栈跟踪",
+  "copied": "已复制！",
+  "copy_error_details": "复制错误详情",
+  "context_metadata": "环境上下文",
+  "time": "时间戳",
+  "url": "当前 URL",
+  "user_agent": "用户代理",
+  "error_stack": "错误堆栈",
+  "no_stack_trace": "没有可用的堆栈跟踪。",
+  "component_stack": "React 组件堆栈",
+  "no_component_stack": "没有可用的组件堆栈。",
+  "chunk_size": "块大小",
+  "chunk_size_64": "64 KB (高 IOPS)",
+  "chunk_size_256": "256 KB",
+  "chunk_size_1024": "1 MB (均衡)",
+  "chunk_size_4096": "4 MB (高吞吐量)",
+  "export_csv": "导出",
+  "clear_logs": "清除",
+  "table_time": "时间",
+  "table_target": "目标",
+  "table_op": "类型",
+  "table_chunk": "块",
+  "table_speed": "吞吐量",
+  "op_write": "写入",
+  "op_read": "读取",
+  "key_input_placeholder": "在此输入...",
+  "action_retest": "重新测试",
+  "drm_title": "DRM 功能",
+  "collapseHeader": {"title":"折叠标题栏（桌面）","desc":"在桌面屏幕上使用折叠菜单作为标题栏操作。"},
 };

@@ -103,10 +103,10 @@ export const QuickSummaryWidget: React.FC<QuickSummaryWidgetProps> = ({ data, t 
         <ShieldCheck className="text-emerald-500 shrink-0" size={24} />
         <div>
           <h3 className="font-medium text-emerald-800 dark:text-emerald-300">
-            {t?.quickSummary?.allClear || "No Critical Flags Detected"}
+            {t?.quickSummary?.allClear}
           </h3>
           <p className="text-sm text-emerald-600 dark:text-emerald-400">
-            {t?.quickSummary?.allClearDesc || "Your browser environment appears to be standard and secure."}
+            {t?.quickSummary?.allClearDesc}
           </p>
         </div>
       </div>
@@ -123,10 +123,10 @@ export const QuickSummaryWidget: React.FC<QuickSummaryWidgetProps> = ({ data, t 
             </div>
             <div>
               <h3 className="font-medium text-slate-800 dark:text-slate-200 text-sm">
-                {t?.quickSummary?.[flag.titleKey] || flag.titleKey}
+                {t?.quickSummary?.[flag.titleKey]}
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                {t?.quickSummary?.[flag.descKey] || flag.descKey}
+                {t?.quickSummary?.[flag.descKey]}
               </p>
             </div>
           </div>

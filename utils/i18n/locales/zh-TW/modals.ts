@@ -375,4 +375,20 @@ export const modals = {
       "darkreader": "為所有網頁生成深色主題"
     }
   }
+,
+  "ja3Modal": {
+    "title": "SSL/TLS 指紋 (JA3/JA4)",
+    "desc_title": "TLS Client Hello 指紋識別",
+    "desc": "在 HTTPS 握手期間，瀏覽器會發送包含支援的密碼套件、TLS 擴充等資訊的 Client Hello 訊息。JA3/JA4 對這些 TCP/TLS 特徵進行指紋識別，以準確識別真實的瀏覽器引擎或檢測機器人、代理和偽造的用戶代理。",
+    "fetching": "正在分析 TLS 握手...",
+    "retry": "重試",
+    "ja3_title": "JA3 指紋",
+    "ja3_hash": "JA3 雜湊 (MD5)",
+    "ja3_string": "JA3 字串 (原始)",
+    "ja3n_title": "JA3N 指紋",
+    "ja3n_hash": "JA3N 雜湊 (MD5)",
+    "ja3n_string": "JA3N 字串 (原始)",
+    "server_ua": "伺服器檢測到的 User-Agent"
+  }
+
 };

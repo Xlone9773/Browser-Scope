@@ -111,7 +111,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                               if (e.data.success) {
                                   resolve({ score: e.data.score, details: e.data.details });
                               } else {
-                                  reject(new Error(e.data.error || "Web Worker execution failed"));
+                                  reject(new Error(e.data.error));
                               }
                           }
                       };

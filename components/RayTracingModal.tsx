@@ -292,7 +292,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       startLoop();
     } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error(e);
-      setError(t.error_webgpu || "WebGPU Error");
+      setError(t.error_webgpu);
     }
   };
 

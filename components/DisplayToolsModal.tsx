@@ -42,7 +42,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                 onClick={() => setFullScreenColor(null)}
             >
                 <div className={"bg-black/50 text-white px-4 py-2 rounded-full text-xs pointer-events-none select-none backdrop-blur-sm transition-opacity duration-500 " + (showExitTip ? 'opacity-50' : 'opacity-0')}>
-                    {displayT.deadPixel?.click_to_exit || 'Click anywhere to exit'}
+                    {displayT.deadPixel?.click_to_exit}
                 </div>
             </div>
         );
@@ -51,7 +51,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
     return (
         <Modal 
             onClose={onClose}
-            title={t.settings.nav.display || "Display & Screen Tools"} 
+            title={t.settings.nav.display} 
             icon={<Monitor size={24} className="text-indigo-500" />}
             size="3xl"
             fullHeight
@@ -127,8 +127,8 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                         <Eye size={20} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.gamut.title || "Color Gamut"}</h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{displayT.gamut.desc || "Check wide gamut support"}</p>
+                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.gamut.title}</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-0.5">{displayT.gamut.desc}</p>
                     </div>
                 </div>
 
@@ -184,8 +184,8 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                         <Layers size={20} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.gradient.title || "Bit Depth / Banding"}</h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{displayT.gradient.desc || "Check for gradient banding"}</p>
+                        <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.gradient.title}</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{displayT.gradient.desc}</p>
                     </div>
                 </div>
 
@@ -239,7 +239,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                     }
                 `}</style>
                 <div className="flex items-center gap-3 mb-6 relative z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2 rounded-lg inline-flex">
-                    <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.motion?.title || "Motion Blur & Stutter Test"}</h3>
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.motion?.title}</h3>
                 </div>
                 
                 <div className="w-full relative h-16 bg-slate-900 rounded-lg overflow-hidden [container-type:inline-size]">
@@ -248,7 +248,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                     </div>
                 </div>
                 
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 text-center">{displayT.motion?.desc || "Follow the moving block with your eyes. If motion is not smooth, your OS might be dropping frames, or your refresh rate is low."}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 text-center">{displayT.motion?.desc}</p>
             </div>
             
         </div>

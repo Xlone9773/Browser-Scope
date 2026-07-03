@@ -67,7 +67,7 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
 
   return (
     <Modal
-      title={t?.title || "SSL/TLS Fingerprint (JA3/JA4)"}
+      title={t?.title}
       onClose={onClose}
       size="lg"
     >
@@ -75,25 +75,24 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
         <div className="flex items-start gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
           <Shield className="text-indigo-500 shrink-0 mt-1" size={24} />
           <div className="text-sm space-y-1">
-            <h4 className="font-semibold text-slate-800 dark:text-slate-100">{t?.desc_title || "TLS Client Hello Fingerprinting"}</h4>
+            <h4 className="font-semibold text-slate-800 dark:text-slate-100">{t?.desc_title}</h4>
             <p className="text-slate-500 dark:text-slate-400 text-xs">
-              {t?.desc || "During the HTTPS handshake, the browser sends a Client Hello message containing supported cipher suites, TLS extensions, etc. JA3/JA4 fingerprints these TCP/TLS characteristics to accurately identify the real browser engine or detect bots, proxies, and spoofed user agents."}
+              {t?.desc}
             </p>
           </div>
         </div>
-
         {loading ? (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
             <Activity className="animate-spin text-indigo-500" size={32} />
             <span className="text-sm text-slate-500 dark:text-slate-400">
-              {t?.fetching || "Analyzing TLS Handshake..."}
+              {t?.fetching}
             </span>
           </div>
         ) : error ? (
           <div className="bg-rose-50 dark:bg-rose-900/20 p-4 rounded-xl text-rose-600 dark:text-rose-400 text-sm border border-rose-100 dark:border-rose-900/50 text-center">
             {error}
             <div className="mt-3">
-              <Button size="sm" onClick={handleRetry} variant="soft">{t?.retry || "Retry"}</Button>
+              <Button size="sm" onClick={handleRetry} variant="soft">{t?.retry}</Button>
             </div>
           </div>
         ) : data ? (
@@ -102,53 +101,51 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
             <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
               <div className="flex items-center gap-2 mb-3">
                 <Fingerprint className="text-indigo-500" size={18} />
-                <h5 className="font-semibold text-slate-800 dark:text-slate-100">{t?.ja3_title || "JA3 Fingerprint"}</h5>
+                <h5 className="font-semibold text-slate-800 dark:text-slate-100">{t?.ja3_title}</h5>
               </div>
               <div className="space-y-3">
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3_hash || "JA3 Hash (MD5)"}</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3_hash}</span>
                   <div className="font-mono text-sm text-slate-700 dark:text-slate-300 break-all bg-white dark:bg-slate-950 p-2 rounded border border-slate-100 dark:border-slate-800 mt-1 select-all">
-                    {data.ja3_hash || "N/A"}
+                    {data.ja3_hash}
                   </div>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3_string || "JA3 String (Raw)"}</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3_string}</span>
                   <div className="font-mono text-xs text-slate-600 dark:text-slate-400 break-all bg-white dark:bg-slate-950 p-2 rounded border border-slate-100 dark:border-slate-800 mt-1 h-24 overflow-y-auto select-all">
-                    {data.ja3 || "N/A"}
+                    {data.ja3}
                   </div>
                 </div>
               </div>
             </div>
-
             {/* JA3N Section */}
             <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
               <div className="flex items-center gap-2 mb-3">
                 <Hash className="text-emerald-500" size={18} />
-                <h5 className="font-semibold text-slate-800 dark:text-slate-100">{t?.ja3n_title || "JA3N Fingerprint"}</h5>
+                <h5 className="font-semibold text-slate-800 dark:text-slate-100">{t?.ja3n_title}</h5>
               </div>
               <div className="space-y-3">
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3n_hash || "JA3N Hash (MD5)"}</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3n_hash}</span>
                   <div className="font-mono text-sm text-slate-700 dark:text-slate-300 break-all bg-white dark:bg-slate-950 p-2 rounded border border-slate-100 dark:border-slate-800 mt-1 select-all">
-                    {data.ja3n_hash || "N/A"}
+                    {data.ja3n_hash}
                   </div>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3n_string || "JA3N String (Raw)"}</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase">{t?.ja3n_string}</span>
                   <div className="font-mono text-xs text-slate-600 dark:text-slate-400 break-all bg-white dark:bg-slate-950 p-2 rounded border border-slate-100 dark:border-slate-800 mt-1 h-20 overflow-y-auto select-all">
-                    {data.ja3n || "N/A"}
+                    {data.ja3n}
                   </div>
                 </div>
               </div>
             </div>
-
             {/* User Agent context */}
             <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-start gap-3">
                <Server className="text-slate-400 shrink-0 mt-0.5" size={16} />
                <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase block mb-1">{t?.server_ua || "Server Detected User-Agent"}</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase block mb-1">{t?.server_ua}</span>
                   <div className="font-mono text-xs text-slate-600 dark:text-slate-400 break-all">
-                    {data.user_agent || "N/A"}
+                    {data.user_agent}
                   </div>
                </div>
             </div>

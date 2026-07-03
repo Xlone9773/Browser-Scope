@@ -33,9 +33,9 @@ export const SecurityCard: React.FC<SecurityCardProps> = React.memo(({ data, web
            >
                <span className="flex items-center gap-2">
                    <Puzzle size={16} />
-                   {(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).extensionsModal?.title || "Browser Extensions"}
+                   {(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).extensionsModal?.title}
                </span>
-               <span className="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-500">{t.actions?.check || "Check"}</span>
+               <span className="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-500">{t.actions?.check}</span>
            </button>
         </div>
 

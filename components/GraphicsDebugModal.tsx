@@ -220,7 +220,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                         {/* Special Features Section for WebGPU */}
                         {activeTab === 'WebGPU' && webgpuInfo.__features__ && webgpuInfo.__features__.length > 0 && (
                             <div className="md:col-span-2 mt-4">
-                                <h3 className="text-sm font-bold text-slate-500 mb-3 px-1">{(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).supported_features || 'Supported Features'}</h3>
+                                <h3 className="text-sm font-bold text-slate-500 mb-3 px-1">{(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).supported_features}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {webgpuInfo.__features__.map((feat: string) => (
                                         <span key={feat} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-mono rounded border border-indigo-100 dark:border-indigo-800">

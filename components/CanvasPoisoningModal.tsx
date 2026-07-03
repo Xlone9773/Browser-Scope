@@ -52,7 +52,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
     setStatus('running');
     setProgress(0);
     setLogs([]);
-    addLog(t?.start_log || 'Starting Canvas & WebGL Poisoning Test...');
+    addLog(t?.start_log);
     
     let poisoned = false;
     
@@ -61,7 +61,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
     if (canvas) {
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        addLog(t?.testing_canvas || 'Testing 2D Canvas stability...');
+        addLog(t?.testing_canvas);
         let lastHash = '';
         for (let i = 0; i < 10; i++) {
           drawCanvas(ctx, 0); // Always draw exact same thing
@@ -91,7 +91,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
     if (webgl) {
       const gl = webgl.getContext('webgl');
       if (gl) {
-        addLog(t?.testing_webgl || 'Testing WebGL stability...');
+        addLog(t?.testing_webgl);
         let lastHash = '';
         for (let i = 0; i < 10; i++) {
           drawWebGL(gl, 0);
@@ -112,12 +112,12 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
     
     setProgress(100);
     setStatus(poisoned ? 'poisoned' : 'clean');
-    addLog(poisoned ? (t?.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).') : (t?.clean_log || '✅ Environment appears clean.'));
+    addLog(poisoned ? (t?.poisoned_log) : (t?.clean_log));
   };
 
   return (
     <Modal
-      title={t?.title || "Canvas & WebGL Noise & Poisoning Detection"}
+      title={t?.title}
       onClose={onClose}
       size="md"
     >
@@ -125,9 +125,9 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
         <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
           <ShieldAlert className="text-indigo-500 shrink-0" size={24} />
           <div className="text-sm">
-            <h4 className="font-semibold text-slate-800 dark:text-slate-100">{t?.desc_title || "Noise Injection Detection"}</h4>
+            <h4 className="font-semibold text-slate-800 dark:text-slate-100">{t?.desc_title}</h4>
             <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
-              {t?.desc || "Repeatedly renders complex geometric patterns and texts, then compares pixel hashes frame-by-frame. Variances in static renders indicate artificial noise injection (common in privacy extensions)."}
+              {t?.desc}
             </p>
           </div>
         </div>
@@ -149,26 +149,26 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
               {log}
             </div>
           ))}
-          {logs.length === 0 && <span className="text-slate-600">{t?.waiting || "Waiting to start test..."}</span>}
+          {logs.length === 0 && <span className="text-slate-600">{t?.waiting}</span>}
         </div>
 
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t?.status || "Status"}:</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t?.status}:</span>
             <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
               status === 'clean' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
               status === 'poisoned' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' :
               status === 'running' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
               'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
             }`}>
-              {status === 'idle' ? (t?.status_idle || "IDLE") : 
-               status === 'running' ? (t?.status_running || "RUNNING") : 
-               status === 'poisoned' ? (t?.status_poisoned || "POISONED") : 
-               (t?.status_clean || "CLEAN")}
+              {status === 'idle' ? (t?.status_idle) : 
+               status === 'running' ? (t?.status_running) : 
+               status === 'poisoned' ? (t?.status_poisoned) : 
+               (t?.status_clean)}
             </span>
           </div>
           <Button onClick={runTest} disabled={status === 'running'} leftIcon={status === 'running' ? <RefreshCw size={14} className="animate-spin" /> : <Activity size={14} />}>
-            {status === 'running' ? `${t?.testing || "Testing"} (${progress}%)` : (t?.run_test || "Run Poisoning Test")}
+            {status === 'running' ? `${t?.testing} (${progress}%)` : (t?.run_test)}
           </Button>
         </div>
       </div>

@@ -101,7 +101,7 @@ export const KeyboardTab: React.FC<KeyboardTabProps> = ({ t }) => {
                 <input
                     ref={keyboardInputRef}
                     type="text"
-                    placeholder={t.key_input_placeholder || "Type here..."}
+                    placeholder={t.key_input_placeholder}
                     className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-800 dark:text-slate-100 font-medium shadow-sm transition-all"
                     onKeyDown={handleKeyInput}
                     autoComplete="off"

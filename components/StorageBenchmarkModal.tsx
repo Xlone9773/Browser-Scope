@@ -241,14 +241,14 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
                         </div>
                         
                         <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{t.chunk_size || "Chunk Size"}</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{t.chunk_size}</label>
                             <Select 
                                 value={chunkSizeKB}
                                 options={[
-                                    { id: 64, label: t.chunk_size_64 || '64 KB (High IOPS)' },
-                                    { id: 256, label: t.chunk_size_256 || '256 KB' },
-                                    { id: 1024, label: t.chunk_size_1024 || '1 MB (Balanced)' },
-                                    { id: 4096, label: t.chunk_size_4096 || '4 MB (High Throughput)' }
+                                    { id: 64, label: t.chunk_size_64 },
+                                    { id: 256, label: t.chunk_size_256 },
+                                    { id: 1024, label: t.chunk_size_1024 },
+                                    { id: 4096, label: t.chunk_size_4096 }
                                 ]}
                                 onChange={(val) => setChunkSizeKB(Number(val))}
                                 disabled={state === 'writing' || state === 'reading'}
@@ -275,7 +275,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
                         {/* Web Worker Status Badge */}
                         <div className="absolute top-4 left-4 flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/30 rounded-full text-[10px] font-medium text-indigo-400 select-none">
                             <Cpu size={12} className="animate-spin duration-3000" />
-                            <span>{(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).worker_status || "Dedicated Web Worker Active"}</span>
+                            <span>{(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).worker_status}</span>
                         </div>
 
                         {/* Speed Text */}
@@ -322,14 +322,14 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
                                         className="text-xs flex items-center gap-1 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-lg transition-colors font-medium"
                                     >
                                         <Download size={12} />
-                                        {exportStatus ? exportStatus : (t.export_csv || "Export")}
+                                        {exportStatus ? exportStatus : (t.export_csv)}
                                     </button>
                                     <button 
                                         onClick={handleClearLogs}
                                         className="text-xs flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-lg transition-colors font-medium"
                                     >
                                         <Trash2 size={12} />
-                                        {t.clear_logs || "Clear"}
+                                        {t.clear_logs}
                                     </button>
                                 </>
                             )}
@@ -339,19 +339,19 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
                         <table className="w-full text-left text-sm">
                             <thead className="bg-slate-50 dark:bg-slate-900/30 border-b border-slate-100 dark:border-slate-700 text-xs text-slate-500 uppercase">
                                 <tr>
-                                    <th className="px-5 py-3 font-semibold w-20">{t.table_time || "Time"}</th>
-                                    <th className="px-5 py-3 font-semibold w-24">{t.table_target || "Target"}</th>
-                                    <th className="px-5 py-3 font-semibold w-20">{t.table_op || "Type"}</th>
-                                    <th className="px-5 py-3 font-semibold w-20">{t.table_chunk || "Chunk"}</th>
-                                    <th className="px-5 py-3 font-semibold">{t.table_speed || "Throughput"}</th>
-                                    <th className="px-5 py-3 font-semibold text-right">{t.table_latency || t.latency || "Latency (Avg/Peak)"}</th>
+                                    <th className="px-5 py-3 font-semibold w-20">{t.table_time}</th>
+                                    <th className="px-5 py-3 font-semibold w-24">{t.table_target}</th>
+                                    <th className="px-5 py-3 font-semibold w-20">{t.table_op}</th>
+                                    <th className="px-5 py-3 font-semibold w-20">{t.table_chunk}</th>
+                                    <th className="px-5 py-3 font-semibold">{t.table_speed}</th>
+                                    <th className="px-5 py-3 font-semibold text-right">{t.table_latency || t.latency}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                                 {logs.length === 0 && (
                                     <tr>
                                         <td colSpan={6} className="px-5 py-8 text-center text-slate-400 italic">
-                                            No benchmarks run yet.
+                                            {"No benchmarks run yet."}
                                         </td>
                                     </tr>
                                 )}
@@ -365,7 +365,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
                                         </td>
                                         <td className="px-5 py-3">
                                             <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${log.op === 'Write' ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'}`}>
-                                                {log.op === 'Write' ? (t.op_write || 'Write') : (t.op_read || 'Read')}
+                                                {log.op === 'Write' ? (t.op_write) : (t.op_read)}
                                             </span>
                                         </td>
                                         <td className="px-5 py-3 text-xs font-mono text-slate-600 dark:text-slate-400">
