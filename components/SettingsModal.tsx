@@ -42,6 +42,10 @@ interface SettingsModalProps {
   toggleShowTabs: (value: boolean) => void;
   showSearch: boolean;
   toggleShowSearch: (value: boolean) => void;
+  searchScope: 'all' | 'category' | 'title' | 'value';
+  updateSearchScope: (scope: 'all' | 'category' | 'title' | 'value') => void;
+  searchMode: 'fuzzy' | 'exact';
+  updateSearchMode: (mode: 'fuzzy' | 'exact') => void;
   hiddenCards: string[];
   setHiddenCards: (cards: string[]) => void;
   isDevToolsFloating: boolean;
@@ -84,6 +88,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     toggleShowTabs,
     showSearch,
     toggleShowSearch,
+    searchScope,
+    updateSearchScope,
+    searchMode,
+    updateSearchMode,
     hiddenCards,
     setHiddenCards,
     isDevToolsFloating, 
@@ -268,6 +276,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 toggleShowTabs={toggleShowTabs}
                                 showSearch={showSearch}
                                 toggleShowSearch={toggleShowSearch}
+                                searchScope={searchScope}
+                                updateSearchScope={updateSearchScope}
+                                searchMode={searchMode}
+                                updateSearchMode={updateSearchMode}
                                 translationDict={t}
                             />
                         )}

@@ -19,10 +19,36 @@ export const settings = {
             desc: "コンテンツ上部にフィルタリング用のタブを表示します。すべてのタブが空の場合は自動的に非表示になります。"
         },
         showSearch: {
+        
+        
             title: "検索バーを有効にする",
+        
+        
             desc: "タブバーの上部に検索バーを表示し、ダッシュボードのカテゴリやカードのコンテンツを素早くフィルタリングできるようにします。"
+        
+        
         },
-        simpleMode: {
+        
+        
+        
+        searchScope: {
+            title: "搜索范围",
+            desc: "选择搜索关键字的匹配范围。",
+            options: {
+                all: "全部文字",
+                category: "卡片栏目",
+                title: "卡片标题",
+                value: "检测数值"
+            }
+        },
+        searchMode: {
+            title: "搜索模式",
+            desc: "选择模糊匹配或精确匹配。",
+            options: {
+                fuzzy: "模糊匹配",
+                exact: "精确匹配"
+            }
+        },simpleMode: {
             title: "シンプルモード",
             desc: "複雑な技術的詳細を隠し、核心情報のみを表示します。"
         },

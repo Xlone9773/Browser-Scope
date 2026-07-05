@@ -19,10 +19,36 @@ export const settings = {
             desc: "在内容上方显示用于筛选分类的选项卡，若所有选项卡都为空将自动隐藏。"
         },
         showSearch: {
+        
+        
             title: "启用搜索栏",
+        
+        
             desc: "在标签栏上方显示搜索栏，以便快速筛选主面板的类目与卡片内容。"
+        
+        
         },
-        simpleMode: {
+        
+        
+        
+        searchScope: {
+            title: "搜索范围",
+            desc: "选择搜索关键字的匹配范围。",
+            options: {
+                all: "全部文字",
+                category: "卡片栏目",
+                title: "卡片标题",
+                value: "检测数值"
+            }
+        },
+        searchMode: {
+            title: "搜索模式",
+            desc: "选择模糊匹配或精确匹配。",
+            options: {
+                fuzzy: "模糊匹配",
+                exact: "精确匹配"
+            }
+        },simpleMode: {
             title: "极简模式",
             desc: "隐藏部分复杂的技术细节，仅显示核心信息。"
         },

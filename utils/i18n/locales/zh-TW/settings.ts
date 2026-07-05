@@ -19,10 +19,36 @@ export const settings = {
             desc: "在內容上方顯示用於篩選分類的選項卡，若所有選項卡都為空將自動隱藏。"
         },
         showSearch: {
+        
+        
             title: "啟用搜尋欄",
+        
+        
             desc: "在標籤欄上方顯示搜尋欄，以便快速篩選主面板的類目與卡片內容。"
+        
+        
         },
-        simpleMode: {
+        
+        
+        
+        searchScope: {
+            title: "搜索范围",
+            desc: "选择搜索关键字的匹配范围。",
+            options: {
+                all: "全部文字",
+                category: "卡片栏目",
+                title: "卡片标题",
+                value: "检测数值"
+            }
+        },
+        searchMode: {
+            title: "搜索模式",
+            desc: "选择模糊匹配或精确匹配。",
+            options: {
+                fuzzy: "模糊匹配",
+                exact: "精确匹配"
+            }
+        },simpleMode: {
             title: "極簡模式",
             desc: "隱藏部分複雜的技術細節，僅顯示核心資訊。"
         },

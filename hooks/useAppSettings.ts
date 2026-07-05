@@ -56,6 +56,24 @@ export function useAppSettings() {
     const saved = localStorage.getItem("showTabs");
     return saved === null ? true : saved === "true";
   });
+  const [searchScope, setSearchScope] = useState<'all' | 'category' | 'title' | 'value'>(() => {
+    return (localStorage.getItem("searchScope") as any) || 'all';
+  });
+  
+  const updateSearchScope = (scope: 'all' | 'category' | 'title' | 'value') => {
+    setSearchScope(scope);
+    localStorage.setItem("searchScope", scope);
+  };
+
+  const [searchMode, setSearchMode] = useState<'fuzzy' | 'exact'>(() => {
+    return (localStorage.getItem("searchMode") as any) || 'fuzzy';
+  });
+
+  const updateSearchMode = (mode: 'fuzzy' | 'exact') => {
+    setSearchMode(mode);
+    localStorage.setItem("searchMode", mode);
+  };
+
   const [showSearch, setShowSearch] = useState<boolean>(() => {
     const saved = localStorage.getItem("showSearch");
     return saved === null ? true : saved === "true";
@@ -330,6 +348,10 @@ export function useAppSettings() {
     toggleShowTabs,
     showSearch,
     toggleShowSearch,
+    searchScope,
+    updateSearchScope,
+    searchMode,
+    updateSearchMode,
     hiddenCards,
     updateHiddenCards,
   };

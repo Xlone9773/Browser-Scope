@@ -7,6 +7,7 @@ import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 import { ModalLoading } from "./components/ui/ModalLoading";
 import { SectionGroup } from "./components/ui/SectionGroup";
 import { useModalManager } from "./hooks/useModalManager";
+import { useCardIndex } from "./hooks/useCardIndex";
 import { BrowserData } from "./types";
 
 import { AppNotification } from "./components/ui/AppNotification";
@@ -129,6 +130,10 @@ const App: React.FC = () => {
     toggleShowTabs,
     showSearch,
     toggleShowSearch,
+    searchScope,
+    updateSearchScope,
+    searchMode,
+    updateSearchMode,
     hiddenCards,
     updateHiddenCards,
   } = useAppSettings();
@@ -206,6 +211,7 @@ const App: React.FC = () => {
   } = useAppData(t.common.loading_steps || [t.common.loading]);
 
   const browserData = data as BrowserData;
+  const cardIndex = useCardIndex(browserData, t);
 
   const [isOutdated, setIsOutdated] = useState(false);
   useEffect(() => {
@@ -691,6 +697,10 @@ const App: React.FC = () => {
               toggleShowTabs={toggleShowTabs}
               showSearch={showSearch}
               toggleShowSearch={toggleShowSearch}
+              searchScope={searchScope}
+              updateSearchScope={updateSearchScope}
+              searchMode={searchMode}
+              updateSearchMode={updateSearchMode}
               hiddenCards={hiddenCards}
               setHiddenCards={updateHiddenCards}
               isDevToolsFloating={isDevToolsFloating}
@@ -903,29 +913,58 @@ const App: React.FC = () => {
                  setActiveTab("all");
               }
 
+              const fuzzyMatch = (text: string, query: string): boolean => {
+                  const normText = String(text || "").toLowerCase().trim();
+                  const normQuery = String(query || "").toLowerCase().trim();
+                  if (!normQuery) return true;
+                  if (!normText) return false;
+                  const terms = normQuery.split(/\s+/).filter(Boolean);
+                  if (terms.length > 1) {
+                      return terms.every(term => normText.includes(term));
+                  }
+                  let textIdx = 0;
+                  let queryIdx = 0;
+                  while (textIdx < normText.length && queryIdx < normQuery.length) {
+                      if (normText[textIdx] === normQuery[queryIdx]) {
+                          queryIdx++;
+                      }
+                      textIdx++;
+                  }
+                  return queryIdx === normQuery.length;
+              };
+
+              const exactMatch = (text: string, query: string): boolean => {
+                  const normText = String(text || "").toLowerCase().trim();
+                  const normQuery = String(query || "").toLowerCase().trim();
+                  return normText.includes(normQuery);
+              };
+
               const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
                   const keyword = e.target.value.toLowerCase().trim();
                   if (!keyword) {
                       setMatchedCardIds(null);
                       return;
                   }
-                  const matches: string[] = [];
-                  const check = (str: any) => String(str || "").toLowerCase().includes(keyword);
                   
-                  if (check((t as any).groups?.browser) || check("browser") || check("web") || check((t as any).browser?.title)) {
-                      matches.push("browser");
-                  }
-                  if (check((t as any).groups?.environment) || check("environment") || check("trust") || check((t as any).environment?.title)) {
-                      matches.push("environment");
-                  }
-                  if (check((t as any).groups?.system) || check("system") || check("hardware") || check("display") || check(browserData.system.userAgent)) {
-                      matches.push("system", "hardware", "display");
-                  }
-                  if (check((t as any).groups?.network) || check("network") || check("security") || check("fingerprint") || check(browserData.network.webrtcIp)) {
-                      matches.push("network", "security", "fingerprint");
-                  }
-                  if (check((t as any).groups?.advanced) || check("advanced") || check("ai") || check("location") || check("storage") || check("permissions") || check("media")) {
-                      matches.push("ai", "location", "storage", "permissions", "media_devices", "media_capabilities", "user_agent", "pwa", "features");
+                  const matches: string[] = [];
+                  const isFuzzy = searchMode === 'fuzzy';
+                  
+                  for (const [id, data] of Object.entries(cardIndex)) {
+                      let textToSearch = "";
+                      switch (searchScope) {
+                          case 'category': textToSearch = data.category; break;
+                          case 'title': textToSearch = data.title; break;
+                          case 'value': textToSearch = data.value; break;
+                          case 'all': 
+                          default: 
+                              textToSearch = `${data.category} ${data.title} ${data.value}`; 
+                              break;
+                      }
+                      
+                      const isMatch = isFuzzy ? fuzzyMatch(textToSearch, keyword) : exactMatch(textToSearch, keyword);
+                      if (isMatch) {
+                          matches.push(id);
+                      }
                   }
                   
                   setMatchedCardIds(matches);
