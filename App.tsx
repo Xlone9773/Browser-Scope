@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Suspense, useRef } from "react";
-import { Monitor, Smartphone, ShieldAlert, Cpu, Loader2, Search } from "lucide-react";
+import { Monitor, Smartphone, ShieldAlert, Cpu, Loader2, Search, Settings2 } from "lucide-react";
 import { exportAsJson } from "./services/exporter";
 import { translations } from "./utils/i18n/index";
 import { FloatingWindow } from "./components/ui/FloatingWindow";
@@ -9,6 +9,7 @@ import { SectionGroup } from "./components/ui/SectionGroup";
 import { useModalManager } from "./hooks/useModalManager";
 import { useCardIndex } from "./hooks/useCardIndex";
 import { BrowserData } from "./types";
+import { Select } from "./components/ui/Select";
 
 import { AppNotification } from "./components/ui/AppNotification";
 import { useRegisterSW } from "virtual:pwa-register/react";
@@ -136,9 +137,13 @@ const App: React.FC = () => {
     updateSearchMode,
     hiddenCards,
     updateHiddenCards,
+    dismissedNotifications,
+    dismissNotification,
+    restoreAllNotifications,
   } = useAppSettings();
 
   const [matchedCardIds, setMatchedCardIds] = useState<string[] | null>(null);
+  const [showSearchSettings, setShowSearchSettings] = useState(false);
 
   const t = translations[lang];
 
@@ -703,6 +708,8 @@ const App: React.FC = () => {
               updateSearchMode={updateSearchMode}
               hiddenCards={hiddenCards}
               setHiddenCards={updateHiddenCards}
+              restoreAllNotifications={restoreAllNotifications}
+              dismissedNotificationsCount={dismissedNotifications.length}
               isDevToolsFloating={isDevToolsFloating}
               setDevToolsFloating={setIsDevToolsFloating}
               moduleStates={modalStates}
@@ -855,9 +862,9 @@ const App: React.FC = () => {
         />
 
         {/* Notifications */}
-        {(needRefresh || isOutdated) && (
+        {((needRefresh && !dismissedNotifications.includes('update')) || (isOutdated && !dismissedNotifications.includes('outdated'))) && (
           <div className="flex flex-col gap-4 w-full">
-            {needRefresh && (
+            {needRefresh && !dismissedNotifications.includes('update') && (
               <AppNotification 
                 type="success"
                 title={(t as any).notifications?.update?.title || "Update Available"}
@@ -866,16 +873,20 @@ const App: React.FC = () => {
                   label: (t as any).notifications?.update?.action || "Update Now",
                   onClick: () => updateServiceWorker(true)
                 }}
-                onClose={() => setNeedRefresh(false)}
+                onClose={() => {
+                  dismissNotification('update');
+                }}
               />
             )}
 
-            {isOutdated && (
+            {isOutdated && !dismissedNotifications.includes('outdated') && (
               <AppNotification 
                 type="warning"
                 title={(t as any).notifications?.outdated?.title || "Legacy Browser Detected"}
                 message={(t as any).notifications?.outdated?.message || "Your browser version is too old. Some advanced scanning features might be unavailable or inaccurate."}
-                onClose={() => setIsOutdated(false)}
+                onClose={() => {
+                  dismissNotification('outdated');
+                }}
               />
             )}
           </div>
@@ -973,14 +984,60 @@ const App: React.FC = () => {
               return (
                 <div className="sticky top-0 z-20 pt-4 -mt-4 bg-[#f8fafc]/90 dark:bg-slate-900/90 backdrop-blur-md flex flex-col space-y-3 mb-6 border-b border-slate-200 dark:border-slate-800 pb-2">
                   {showSearch && (
-                      <div className="relative px-1">
-                          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                          <input 
-                              type="text"
-                              onChange={handleSearch}
-                              placeholder={((t as any).search || {}).placeholder || "Search categories or keywords..."}
-                              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm text-slate-700 dark:text-slate-100 transition-shadow"
-                          />
+                      <div className="relative px-1 flex items-center gap-2">
+                          <div className="relative flex-1">
+                              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                              <input 
+                                  type="text"
+                                  onChange={handleSearch}
+                                  placeholder={((t as any).search || {}).placeholder || "Search categories or keywords..."}
+                                  className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm text-slate-700 dark:text-slate-100 transition-shadow"
+                              />
+                          </div>
+                          <button
+                              onClick={() => setShowSearchSettings(!showSearchSettings)}
+                              className={`p-2 rounded-xl border transition-colors flex-shrink-0 ${showSearchSettings ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700'}`}
+                          >
+                              <Settings2 size={20} />
+                          </button>
+                      </div>
+                  )}
+                  {showSearch && showSearchSettings && (
+                      <div className="px-1 mt-1 mb-2">
+                          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-top-2">
+                              <div className="flex-1">
+                                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                                      {(t as any).settings?.general?.searchScope?.title || "Search Scope"}
+                                  </label>
+                                  <Select 
+                                      value={searchScope}
+                                      onChange={(val) => updateSearchScope(val as any)}
+                                      options={[
+                                          { id: 'all', label: (t as any).settings?.general?.searchScope?.options?.all || "All Text" },
+                                          { id: 'category', label: (t as any).settings?.general?.searchScope?.options?.category || "Category" },
+                                          { id: 'title', label: (t as any).settings?.general?.searchScope?.options?.title || "Title" },
+                                          { id: 'value', label: (t as any).settings?.general?.searchScope?.options?.value || "Value" }
+                                      ]}
+                                      color={themeColor as any}
+                                      size="sm"
+                                  />
+                              </div>
+                              <div className="flex-1">
+                                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                                      {(t as any).settings?.general?.searchMode?.title || "Search Mode"}
+                                  </label>
+                                  <Select 
+                                      value={searchMode}
+                                      onChange={(val) => updateSearchMode(val as any)}
+                                      options={[
+                                          { id: 'fuzzy', label: (t as any).settings?.general?.searchMode?.options?.fuzzy || "Fuzzy" },
+                                          { id: 'exact', label: (t as any).settings?.general?.searchMode?.options?.exact || "Exact" }
+                                      ]}
+                                      color={themeColor as any}
+                                      size="sm"
+                                  />
+                              </div>
+                          </div>
                       </div>
                   )}
                   {showTabs && availableTabs.length > 1 && (

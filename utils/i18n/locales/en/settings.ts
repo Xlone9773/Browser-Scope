@@ -98,7 +98,13 @@ export const settings = {
             title: "Custom Display Items",
             desc: "Hide specific cards or groups from the main dashboard if you don't need them."
         },
-        udpBypass: {
+        
+        restoreNotifications: {
+            title: "Restore Notifications",
+            desc: "Bring back all previously dismissed notification cards at the top of the dashboard.",
+            button: "Restore All",
+            empty: "No dismissed notifications"
+        },udpBypass: {
             title: "Enable UDP Network (Bypass CORS)",
             desc: "Use UDP mapping API to fetch network tools endpoints entirely bypassing all CORS errors.",
             unsupportedEnv: "Not supported in the current environment",

@@ -32,21 +32,21 @@ export const settings = {
         
         
         searchScope: {
-            title: "搜索范围",
-            desc: "选择搜索关键字的匹配范围。",
+            title: "検索範囲",
+            desc: "検索キーワードの一致範囲を選択します。",
             options: {
-                all: "全部文字",
-                category: "卡片栏目",
-                title: "卡片标题",
-                value: "检测数值"
+                all: "すべて",
+                category: "カテゴリ",
+                title: "タイトル",
+                value: "値"
             }
         },
         searchMode: {
-            title: "搜索模式",
-            desc: "选择模糊匹配或精确匹配。",
+            title: "検索モード",
+            desc: "あいまい検索または完全一致を選択します。",
             options: {
-                fuzzy: "模糊匹配",
-                exact: "精确匹配"
+                fuzzy: "あいまい",
+                exact: "完全一致"
             }
         },simpleMode: {
             title: "シンプルモード",
@@ -98,7 +98,13 @@ export const settings = {
             title: "表示項目をカスタマイズ",
             desc: "必要のない特定のカードやグループをメイン画面から非表示にします。"
         },
-        udpBypass: {
+        
+        restoreNotifications: {
+            title: "通知の復元",
+            desc: "以前に閉じたすべての通知カードをダッシュボード上部に再表示します。",
+            button: "すべて復元",
+            empty: "閉じられた通知はありません"
+        },udpBypass: {
             title: "UDP プロキシを有効にする (CORS バイパス)",
             desc: "UDP マッピング API を使用して、CORS によるネットワーク要求のインターセプトを完全にバイパスします。",
             unsupportedEnv: "現在の実行環境ではUDPを有効にできません",

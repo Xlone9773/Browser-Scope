@@ -98,7 +98,13 @@ export const settings = {
             title: "自定义显示项",
             desc: "如果你不希望在主界面看到某些卡片或者分组，可以在这里按需隐藏。"
         },
-        udpBypass: {
+        
+        restoreNotifications: {
+            title: "恢复通知卡片",
+            desc: "重新显示在仪表盘顶部被您手动关闭的所有通知卡片。",
+            button: "恢复所有通知",
+            empty: "暂无被关闭的通知"
+        },udpBypass: {
             title: "启用 UDP 网络代理 (完全绕过跨域)",
             desc: "使用UDP映射API提取网络工具端点，彻底解决由于CORS产生的任何网络请求拦截。",
             unsupportedEnv: "当前运行环境不支持开启UDP",

@@ -9,6 +9,8 @@ interface GeneralTabProps {
     toggleEnableUdp?: (value: boolean) => void;
     hiddenCards: string[];
     setHiddenCards: (cards: string[]) => void;
+    restoreAllNotifications: () => void;
+    dismissedNotificationsCount: number;
     translationDict: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
 }
 
@@ -47,6 +49,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     toggleEnableUdp,
     hiddenCards,
     setHiddenCards,
+    restoreAllNotifications,
+    dismissedNotificationsCount,
     translationDict
 }) => {
     const [udpSupported, setUdpSupported] = useState<boolean | null>(() => {
@@ -198,6 +202,34 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                             </button>
                         );
                     })}
+                </div>
+            </div>
+
+            {/* Restore Notifications */}
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                <div className="flex flex-col gap-1 max-w-[70%]">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.restoreNotifications?.title || "Restore Notifications"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {t.restoreNotifications?.desc || "Bring back all previously dismissed notification cards."}
+                    </p>
+                </div>
+                <div>
+                    <button
+                        onClick={restoreAllNotifications}
+                        disabled={dismissedNotificationsCount === 0}
+                        className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors border
+                            ${dismissedNotificationsCount === 0 
+                                ? 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                                : 'bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400'
+                            }
+                        `}
+                    >
+                        {dismissedNotificationsCount === 0 
+                            ? (t.restoreNotifications?.empty || "No dismissed notifications")
+                            : (t.restoreNotifications?.button || "Restore All")}
+                    </button>
                 </div>
             </div>
         </div>

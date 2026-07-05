@@ -32,21 +32,21 @@ export const settings = {
         
         
         searchScope: {
-            title: "搜索范围",
-            desc: "选择搜索关键字的匹配范围。",
+            title: "搜尋範圍",
+            desc: "選擇搜尋關鍵字的匹配範圍。",
             options: {
                 all: "全部文字",
-                category: "卡片栏目",
-                title: "卡片标题",
-                value: "检测数值"
+                category: "卡片欄目",
+                title: "卡片標題",
+                value: "檢測數值"
             }
         },
         searchMode: {
-            title: "搜索模式",
-            desc: "选择模糊匹配或精确匹配。",
+            title: "搜尋模式",
+            desc: "選擇模糊匹配或精確匹配。",
             options: {
                 fuzzy: "模糊匹配",
-                exact: "精确匹配"
+                exact: "精確匹配"
             }
         },simpleMode: {
             title: "極簡模式",
@@ -98,7 +98,13 @@ export const settings = {
             title: "自訂顯示項目",
             desc: "如果你不希望在主介面看到某些卡片或分組，可以在這裡按需隱藏。"
         },
-        udpBypass: {
+        
+        restoreNotifications: {
+            title: "恢復通知卡片",
+            desc: "重新顯示在儀表板頂部被您手動關閉的所有通知卡片。",
+            button: "恢復所有通知",
+            empty: "暫無被關閉的通知"
+        },udpBypass: {
             title: "啟用 UDP 網絡代理 (完全繞過跨域)",
             desc: "使用UDP映射API提取網絡工具端點，徹底解決由於CORS產生的任何網絡請求攔截。",
             unsupportedEnv: "目前執行環境不支援開啟UDP",

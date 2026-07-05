@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select } from '../ui/Select';
 import { Switch } from '../ui/Switch';
 
@@ -26,10 +26,6 @@ interface AppearanceTabProps {
     toggleShowTabs: (value: boolean) => void;
     showSearch: boolean;
     toggleShowSearch: (value: boolean) => void;
-    searchScope: 'all' | 'category' | 'title' | 'value';
-    updateSearchScope: (scope: 'all' | 'category' | 'title' | 'value') => void;
-    searchMode: 'fuzzy' | 'exact';
-    updateSearchMode: (mode: 'fuzzy' | 'exact') => void;
     translationDict: any;
 }
 
@@ -57,12 +53,18 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     toggleShowTabs,
     showSearch,
     toggleShowSearch,
-    searchScope,
-    updateSearchScope,
-    searchMode,
-    updateSearchMode,
     translationDict
 }) => {
+    const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsDesktop(window.innerWidth >= 1024);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
         <div className="max-w-2xl mx-auto space-y-4">
             {/* Simple Mode Toggle */}
@@ -117,52 +119,6 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch checked={showSearch} onChange={toggleShowSearch} />
                 </div>
-            </div>
-
-            {/* Search Scope Option */}
-            <div className={`bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-opacity ${!showSearch ? 'opacity-50 pointer-events-none' : ''}`}>
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.searchScope?.title || "Search Scope"}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.searchScope?.desc || "Select what content the search should match against."}
-                    </p>
-                </div>
-                <Select 
-                    value={searchScope}
-                    onChange={(val) => updateSearchScope(val as any)}
-                    options={[
-                        { id: 'all', label: t.searchScope?.options?.all || "All Text (全部文字)" },
-                        { id: 'category', label: t.searchScope?.options?.category || "Category (卡片栏目)" },
-                        { id: 'title', label: t.searchScope?.options?.title || "Title (卡片标题)" },
-                        { id: 'value', label: t.searchScope?.options?.value || "Value (检测数值)" }
-                    ]}
-                    className="w-full sm:w-48"
-                    color={themeColor as any}
-                />
-            </div>
-
-            {/* Search Mode Option */}
-            <div className={`bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-opacity ${!showSearch ? 'opacity-50 pointer-events-none' : ''}`}>
-                <div className="flex flex-col gap-1 pr-4">
-                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.searchMode?.title || "Search Mode"}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.searchMode?.desc || "Choose between fuzzy matching and exact matching."}
-                    </p>
-                </div>
-                <Select 
-                    value={searchMode}
-                    onChange={(val) => updateSearchMode(val as any)}
-                    options={[
-                        { id: 'fuzzy', label: t.searchMode?.options?.fuzzy || "Fuzzy (模糊搜索)" },
-                        { id: 'exact', label: t.searchMode?.options?.exact || "Exact (精确搜索)" }
-                    ]}
-                    className="w-full sm:w-48"
-                    color={themeColor as any}
-                />
             </div>
 
             {/* Theme Color Selection */}
@@ -316,8 +272,8 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
 
             {/* Collapse Header Menu Desktop */}
             <div 
-                className="p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800 max-lg:opacity-50 max-lg:cursor-not-allowed max-lg:bg-slate-50 max-lg:dark:bg-slate-900 max-lg:border-slate-100 max-lg:dark:border-slate-800"
-                onClick={() => { if (window.innerWidth >= 1024) toggleCollapseHeader(!collapseHeader); }}
+                className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${!isDesktop ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
+                onClick={() => { if (isDesktop) toggleCollapseHeader(!collapseHeader); }}
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -328,7 +284,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <Switch checked={collapseHeader} onChange={toggleCollapseHeader} />
+                    <Switch checked={collapseHeader} onChange={toggleCollapseHeader} disabled={!isDesktop} />
                 </div>
             </div>
         </div>

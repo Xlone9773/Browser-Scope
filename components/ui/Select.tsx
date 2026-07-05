@@ -12,7 +12,7 @@ interface SelectProps {
     value: string | number;
     options: SelectOption[];
     onChange: (value: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => void;
-    color?: 'indigo' | 'purple' | 'blue' | 'emerald';
+    color?: 'indigo' | 'purple' | 'blue' | 'emerald' | 'rose' | 'amber' | 'violet' | 'sky' | 'ice' | 'cherry';
     disabled?: boolean;
     className?: string;
     fullWidth?: boolean;
@@ -124,6 +124,30 @@ export const Select: React.FC<SelectProps> = ({
             active: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300', 
             ring: 'focus:ring-emerald-500/50' 
         },
+        rose: { 
+            active: 'bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300', 
+            ring: 'focus:ring-rose-500/50' 
+        },
+        amber: { 
+            active: 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300', 
+            ring: 'focus:ring-amber-500/50' 
+        },
+        violet: { 
+            active: 'bg-violet-50 text-violet-600 dark:bg-violet-900/30 dark:text-violet-300', 
+            ring: 'focus:ring-violet-500/50' 
+        },
+        sky: { 
+            active: 'bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-300', 
+            ring: 'focus:ring-sky-500/50' 
+        },
+        ice: { 
+            active: 'bg-blue-50/70 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300', 
+            ring: 'focus:ring-blue-400/50' 
+        },
+        cherry: { 
+            active: 'bg-rose-50/70 text-rose-500 dark:bg-rose-900/20 dark:text-rose-300', 
+            ring: 'focus:ring-rose-400/50' 
+        }
     };
 
     const sizeStyles = {

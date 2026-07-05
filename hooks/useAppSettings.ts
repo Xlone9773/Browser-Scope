@@ -228,6 +228,28 @@ export function useAppSettings() {
     }
   };
 
+  const [dismissedNotifications, setDismissedNotifications] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("dismissedNotifications");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const dismissNotification = (id: string) => {
+    setDismissedNotifications((prev: string[]) => {
+      const next = [...prev, id];
+      localStorage.setItem("dismissedNotifications", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const restoreAllNotifications = () => {
+    setDismissedNotifications([]);
+    localStorage.removeItem("dismissedNotifications");
+  };
+
   const toggleSimpleMode = (value: boolean) => {
     setSimpleMode(value);
     localStorage.setItem("simpleMode", String(value));
@@ -354,5 +376,8 @@ export function useAppSettings() {
     updateSearchMode,
     hiddenCards,
     updateHiddenCards,
+    dismissedNotifications,
+    dismissNotification,
+    restoreAllNotifications,
   };
 }

@@ -48,6 +48,8 @@ interface SettingsModalProps {
   updateSearchMode: (mode: 'fuzzy' | 'exact') => void;
   hiddenCards: string[];
   setHiddenCards: (cards: string[]) => void;
+  restoreAllNotifications: () => void;
+  dismissedNotificationsCount: number;
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
   moduleStates?: ModuleState[];
@@ -94,6 +96,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     updateSearchMode,
     hiddenCards,
     setHiddenCards,
+    restoreAllNotifications,
+    dismissedNotificationsCount,
     isDevToolsFloating, 
     setDevToolsFloating,
     moduleStates = [],
@@ -276,10 +280,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 toggleShowTabs={toggleShowTabs}
                                 showSearch={showSearch}
                                 toggleShowSearch={toggleShowSearch}
-                                searchScope={searchScope}
-                                updateSearchScope={updateSearchScope}
-                                searchMode={searchMode}
-                                updateSearchMode={updateSearchMode}
                                 translationDict={t}
                             />
                         )}
@@ -293,6 +293,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 toggleEnableUdp={toggleEnableUdp}
                                 hiddenCards={hiddenCards}
                                 setHiddenCards={setHiddenCards}
+                                restoreAllNotifications={restoreAllNotifications}
+                                dismissedNotificationsCount={dismissedNotificationsCount}
                                 translationDict={t}
                             />
                         )}
