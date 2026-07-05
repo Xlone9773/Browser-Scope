@@ -24,6 +24,8 @@ interface AppearanceTabProps {
     toggleCollapseHeader: (value: boolean) => void;
     showTabs: boolean;
     toggleShowTabs: (value: boolean) => void;
+    showSearch: boolean;
+    toggleShowSearch: (value: boolean) => void;
     translationDict: any;
 }
 
@@ -49,6 +51,8 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     toggleCollapseHeader,
     showTabs,
     toggleShowTabs,
+    showSearch,
+    toggleShowSearch,
     translationDict
 }) => {
     return (
@@ -86,6 +90,24 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch checked={showTabs} onChange={toggleShowTabs} />
+                </div>
+            </div>
+
+            {/* Show Search Bar Option */}
+            <div 
+                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
+                onClick={() => toggleShowSearch(!showSearch)}
+            >
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.showSearch?.title || "Enable Search Bar"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {t.showSearch?.desc || "Display a search bar above the tab bar to quickly filter dashboard categories and card content."}
+                    </p>
+                </div>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Switch checked={showSearch} onChange={toggleShowSearch} />
                 </div>
             </div>
 

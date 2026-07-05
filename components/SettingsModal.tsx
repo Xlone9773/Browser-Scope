@@ -40,6 +40,8 @@ interface SettingsModalProps {
   toggleEnableUdp?: (value: boolean) => void;
   showTabs: boolean;
   toggleShowTabs: (value: boolean) => void;
+  showSearch: boolean;
+  toggleShowSearch: (value: boolean) => void;
   hiddenCards: string[];
   setHiddenCards: (cards: string[]) => void;
   isDevToolsFloating: boolean;
@@ -80,6 +82,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     toggleEnableUdp,
     showTabs,
     toggleShowTabs,
+    showSearch,
+    toggleShowSearch,
     hiddenCards,
     setHiddenCards,
     isDevToolsFloating, 
@@ -262,6 +266,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 toggleCollapseHeader={toggleCollapseHeader}
                                 showTabs={showTabs}
                                 toggleShowTabs={toggleShowTabs}
+                                showSearch={showSearch}
+                                toggleShowSearch={toggleShowSearch}
                                 translationDict={t}
                             />
                         )}

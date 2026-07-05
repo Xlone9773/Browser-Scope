@@ -99,5 +99,15 @@ export const common = {
     offline: "Offline",
     installed: "Installed",
     not_installed: "Not Installed"
+  },
+  search: {
+    placeholder: "Search categories, cards, or values...",
+    scope: "Search Scope",
+    scope_all: "All text",
+    scope_cards: "Card contents only",
+    match: "Matching Mode",
+    match_fuzzy: "Fuzzy Match",
+    match_exact: "Exact Match",
+    no_results: "No matching categories or cards found."
   }
 };

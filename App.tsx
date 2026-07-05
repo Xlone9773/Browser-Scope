@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Suspense, useRef } from "react";
-import { Monitor, Smartphone, ShieldAlert, Cpu, Loader2 } from "lucide-react";
+import { Monitor, Smartphone, ShieldAlert, Cpu, Loader2, Search } from "lucide-react";
 import { exportAsJson } from "./services/exporter";
 import { translations } from "./utils/i18n/index";
 import { FloatingWindow } from "./components/ui/FloatingWindow";
@@ -127,9 +127,13 @@ const App: React.FC = () => {
     toggleEnableUdp,
     showTabs,
     toggleShowTabs,
+    showSearch,
+    toggleShowSearch,
     hiddenCards,
     updateHiddenCards,
   } = useAppSettings();
+
+  const [matchedCardIds, setMatchedCardIds] = useState<string[] | null>(null);
 
   const t = translations[lang];
 
@@ -685,6 +689,8 @@ const App: React.FC = () => {
               toggleEnableUdp={toggleEnableUdp}
               showTabs={showTabs}
               toggleShowTabs={toggleShowTabs}
+              showSearch={showSearch}
+              toggleShowSearch={toggleShowSearch}
               hiddenCards={hiddenCards}
               setHiddenCards={updateHiddenCards}
               isDevToolsFloating={isDevToolsFloating}
@@ -869,8 +875,8 @@ const App: React.FC = () => {
         {data && Object.keys(data).length > 0 && (
           <ErrorBoundary name="MainContent">
             
-            {/* Navigation Tabs */}
-            {showTabs && (() => {
+            {/* Navigation Tabs and Search */}
+            {(showTabs || showSearch) && (() => {
               const availableTabs: { id: string; label: string; icon: React.ReactNode }[] = [
                 { id: "all", label: (t as any).groups?.all || "All", icon: null }
               ];
@@ -891,29 +897,71 @@ const App: React.FC = () => {
                 availableTabs.push({ id: "advanced", label: (t as any).groups?.advanced || "Advanced", icon: <Cpu size={16} /> });
               }
 
-              if (availableTabs.length <= 1) return null;
+              if (availableTabs.length <= 1 && !showSearch) return null;
 
-              // Ensure active tab is valid
               if (activeTab !== "all" && !availableTabs.some(tab => tab.id === activeTab)) {
                  setActiveTab("all");
               }
 
+              const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+                  const keyword = e.target.value.toLowerCase().trim();
+                  if (!keyword) {
+                      setMatchedCardIds(null);
+                      return;
+                  }
+                  const matches: string[] = [];
+                  const check = (str: any) => String(str || "").toLowerCase().includes(keyword);
+                  
+                  if (check((t as any).groups?.browser) || check("browser") || check("web") || check((t as any).browser?.title)) {
+                      matches.push("browser");
+                  }
+                  if (check((t as any).groups?.environment) || check("environment") || check("trust") || check((t as any).environment?.title)) {
+                      matches.push("environment");
+                  }
+                  if (check((t as any).groups?.system) || check("system") || check("hardware") || check("display") || check(browserData.system.userAgent)) {
+                      matches.push("system", "hardware", "display");
+                  }
+                  if (check((t as any).groups?.network) || check("network") || check("security") || check("fingerprint") || check(browserData.network.webrtcIp)) {
+                      matches.push("network", "security", "fingerprint");
+                  }
+                  if (check((t as any).groups?.advanced) || check("advanced") || check("ai") || check("location") || check("storage") || check("permissions") || check("media")) {
+                      matches.push("ai", "location", "storage", "permissions", "media_devices", "media_capabilities", "user_agent", "pwa", "features");
+                  }
+                  
+                  setMatchedCardIds(matches);
+              };
+
               return (
-                <div className="sticky top-0 z-20 pt-4 -mt-4 bg-[#f8fafc]/90 dark:bg-slate-900/90 backdrop-blur-md flex space-x-2 mb-6 overflow-x-auto scrollbar-hide pb-2 border-b border-slate-200 dark:border-slate-800">
-                  {availableTabs.map(tab => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-sm font-medium ${
-                        activeTab === tab.id
-                          ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                      }`}
-                    >
-                      {tab.icon}
-                      <span>{tab.label}</span>
-                    </button>
-                  ))}
+                <div className="sticky top-0 z-20 pt-4 -mt-4 bg-[#f8fafc]/90 dark:bg-slate-900/90 backdrop-blur-md flex flex-col space-y-3 mb-6 border-b border-slate-200 dark:border-slate-800 pb-2">
+                  {showSearch && (
+                      <div className="relative px-1">
+                          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                          <input 
+                              type="text"
+                              onChange={handleSearch}
+                              placeholder={((t as any).search || {}).placeholder || "Search categories or keywords..."}
+                              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm text-slate-700 dark:text-slate-100 transition-shadow"
+                          />
+                      </div>
+                  )}
+                  {showTabs && availableTabs.length > 1 && (
+                    <div className="flex space-x-2 overflow-x-auto scrollbar-hide px-1">
+                      {availableTabs.map(tab => (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id as any)}
+                          className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-sm font-medium ${
+                            activeTab === tab.id
+                              ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
+                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                          }`}
+                        >
+                          {tab.icon}
+                          <span>{tab.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })()}
@@ -930,8 +978,23 @@ const App: React.FC = () => {
               >
                 {activeTab === "all" && <QuickSummaryWidget data={browserData} t={t} />}
 
+                {/* Empty State */}
+                {matchedCardIds !== null && matchedCardIds.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-center shadow-sm">
+                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-400 dark:text-slate-600 mb-4">
+                      <Search size={32} />
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">
+                      {((t as any).search || {}).no_results || "No matching categories or cards found."}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md leading-relaxed">
+                      {lang === 'zh-CN' ? "请尝试使用其他关键词，或调整您的搜索范围。" : "Try using different keywords or adjusting your search scope."}
+                    </p>
+                  </div>
+                )}
+
                 {/* Group 0: Environment & Trust */}
-                {!hiddenCards.includes("environment") && (activeTab === "all" || activeTab === "environment") && (
+                {!hiddenCards.includes("environment") && (activeTab === "all" || activeTab === "environment") && (matchedCardIds === null || matchedCardIds.includes("environment")) && (
                   <SectionGroup
                     title={
                       (t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.environment || "Environment & Trust"
@@ -945,7 +1008,7 @@ const App: React.FC = () => {
                 )}
 
                 {/* Group 00: Browser Identity */}
-                {!hiddenCards.includes("browser") && (activeTab === "all" || activeTab === "browser") && (
+                {!hiddenCards.includes("browser") && (activeTab === "all" || activeTab === "browser") && (matchedCardIds === null || matchedCardIds.includes("browser")) && (
                   <SectionGroup
                     title={
                       (t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.browser || "Browser"
@@ -961,12 +1024,13 @@ const App: React.FC = () => {
                 {/* Group 1: Device & System */}
                 {(!hiddenCards.includes("system") ||
                   !hiddenCards.includes("hardware") ||
-                  !hiddenCards.includes("display")) && (activeTab === "all" || activeTab === "system") && (
+                  !hiddenCards.includes("display")) && (activeTab === "all" || activeTab === "system") && 
+                  (matchedCardIds === null || matchedCardIds.includes("system") || matchedCardIds.includes("hardware") || matchedCardIds.includes("display")) && (
                   <SectionGroup
                     title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.system || "Device & System Core"}
                     icon={<Smartphone className="text-indigo-500" />}
                   >
-                    {!hiddenCards.includes("system") && (
+                    {!hiddenCards.includes("system") && (matchedCardIds === null || matchedCardIds.includes("system")) && (
                       <SystemCard
                         data={browserData.system}
                         t={t}
@@ -975,7 +1039,7 @@ const App: React.FC = () => {
                       />
                     )}
 
-                    {!hiddenCards.includes("hardware") && (
+                    {!hiddenCards.includes("hardware") && (matchedCardIds === null || matchedCardIds.includes("hardware")) && (
                       <HardwareCard
                         data={browserData.hardware}
                         t={t}
@@ -989,7 +1053,7 @@ const App: React.FC = () => {
                       />
                     )}
 
-                    {!hiddenCards.includes("display") && (
+                    {!hiddenCards.includes("display") && (matchedCardIds === null || matchedCardIds.includes("display")) && (
                       <DisplayCard
                         data={browserData.display}
                         screenExtended={browserData.hardware.screenExtended}
@@ -1003,12 +1067,13 @@ const App: React.FC = () => {
                 {/* Group 2: Network & Security */}
                 {(!hiddenCards.includes("network") ||
                   !hiddenCards.includes("security") ||
-                  !hiddenCards.includes("fingerprint")) && (activeTab === "all" || activeTab === "network") && (
+                  !hiddenCards.includes("fingerprint")) && (activeTab === "all" || activeTab === "network") && 
+                  (matchedCardIds === null || matchedCardIds.includes("network") || matchedCardIds.includes("security") || matchedCardIds.includes("fingerprint")) && (
                   <SectionGroup
                     title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.network || "Network & Security"}
                     icon={<ShieldAlert className="text-emerald-500" />}
                   >
-                    {!hiddenCards.includes("network") && (
+                    {!hiddenCards.includes("network") && (matchedCardIds === null || matchedCardIds.includes("network")) && (
                       <NetworkCard
                         data={browserData.network}
                         t={t}
@@ -1017,7 +1082,7 @@ const App: React.FC = () => {
                       />
                     )}
 
-                    {!hiddenCards.includes("security") && (
+                    {!hiddenCards.includes("security") && (matchedCardIds === null || matchedCardIds.includes("security")) && (
                       <SecurityCard
                         data={browserData.security}
                         webrtcIp={browserData.network.webrtcIp}
@@ -1027,7 +1092,7 @@ const App: React.FC = () => {
                       />
                     )}
 
-                    {!hiddenCards.includes("fingerprint") && (
+                    {!hiddenCards.includes("fingerprint") && (matchedCardIds === null || matchedCardIds.includes("fingerprint")) && (
                       <FingerprintCard
                         data={browserData.fingerprints}
                         audioSampleRate={browserData.hardware.audioSampleRate}
@@ -1053,12 +1118,13 @@ const App: React.FC = () => {
                   !hiddenCards.includes("permissions") ||
                   !hiddenCards.includes("media_devices") ||
                   !hiddenCards.includes("media_capabilities") ||
-                  !hiddenCards.includes("user_agent")) && (activeTab === "all" || activeTab === "advanced") && (
+                  !hiddenCards.includes("user_agent")) && (activeTab === "all" || activeTab === "advanced") && 
+                  (matchedCardIds === null || matchedCardIds.includes("ai") || matchedCardIds.includes("location") || matchedCardIds.includes("storage") || matchedCardIds.includes("permissions") || matchedCardIds.includes("media_devices") || matchedCardIds.includes("media_capabilities") || matchedCardIds.includes("user_agent")) && (
                   <SectionGroup
                     title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.advanced || "Capabilities & APIs"}
                     icon={<Cpu className="text-amber-500" />}
                   >
-                    {!hiddenCards.includes("ai") && (
+                    {!hiddenCards.includes("ai") && (matchedCardIds === null || matchedCardIds.includes("ai")) && (
                       <AiComputeCard
                         data={browserData.ai}
                         t={t}
@@ -1068,7 +1134,7 @@ const App: React.FC = () => {
                       />
                     )}
 
-                    {!hiddenCards.includes("location") && (
+                    {!hiddenCards.includes("location") && (matchedCardIds === null || matchedCardIds.includes("location")) && (
                       <LocationCard
                         data={browserData.localization}
                         geoData={geoData}
@@ -1082,11 +1148,11 @@ const App: React.FC = () => {
                       />
                     )}
 
-                    {!hiddenCards.includes("storage") && (
+                    {!hiddenCards.includes("storage") && (matchedCardIds === null || matchedCardIds.includes("storage")) && (
                       <StorageCard data={browserData.storage} t={t} />
                     )}
 
-                    {!hiddenCards.includes("permissions") && (
+                    {!hiddenCards.includes("permissions") && (matchedCardIds === null || matchedCardIds.includes("permissions")) && (
                       <PermissionsCard
                         permStatus={permStatus}
                         geoData={geoData}
@@ -1095,7 +1161,7 @@ const App: React.FC = () => {
                       />
                     )}
 
-                    {!hiddenCards.includes("media_devices") && (
+                    {!hiddenCards.includes("media_devices") && (matchedCardIds === null || matchedCardIds.includes("media_devices")) && (
                       <MediaDevicesCard
                         permStatus={permStatus}
                         t={t}
@@ -1105,7 +1171,7 @@ const App: React.FC = () => {
                       />
                     )}
 
-                    {!hiddenCards.includes("media_capabilities") && (
+                    {!hiddenCards.includes("media_capabilities") && (matchedCardIds === null || matchedCardIds.includes("media_capabilities")) && (
                       <MediaCapabilitiesCard
                         data={browserData.media}
                         t={t}
@@ -1115,7 +1181,7 @@ const App: React.FC = () => {
                       />
                     )}
 
-                    {!hiddenCards.includes("user_agent") && (
+                    {!hiddenCards.includes("user_agent") && (matchedCardIds === null || matchedCardIds.includes("user_agent")) && (
                       <UserAgentCard
                         userAgent={browserData.system.userAgent}
                         clientHints={browserData.system.clientHints}
@@ -1125,7 +1191,7 @@ const App: React.FC = () => {
                   </SectionGroup>
                 )}
 
-                {!hiddenCards.includes("pwa") && (activeTab === "all" || activeTab === "advanced") && (
+                {!hiddenCards.includes("pwa") && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("pwa")) && (
                   <div className="anim-slide-up delay-100">
                     <PwaSection
                       isPwaInstalled={browserData.system.isPwaInstalled}
@@ -1135,7 +1201,7 @@ const App: React.FC = () => {
                   </div>
                 )}
 
-                {!hiddenCards.includes("features") && (activeTab === "all" || activeTab === "advanced") && (
+                {!hiddenCards.includes("features") && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("features")) && (
                   <div className="anim-slide-up delay-200">
                     <FeaturesSection features={browserData.features} t={t} />
                   </div>

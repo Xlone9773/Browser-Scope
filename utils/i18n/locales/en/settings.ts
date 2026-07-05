@@ -18,6 +18,10 @@ export const settings = {
             title: "Display Navigation Tabs",
             desc: "Show navigation tabs above the content to filter items. Automatically hides if empty."
         },
+        showSearch: {
+            title: "Enable Search Bar",
+            desc: "Display a search bar above the tab bar to quickly filter dashboard categories and card content."
+        },
         simpleMode: {
             title: "Simple Mode",
             desc: "Hide complex technical details and show only core information."

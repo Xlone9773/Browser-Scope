@@ -56,6 +56,10 @@ export function useAppSettings() {
     const saved = localStorage.getItem("showTabs");
     return saved === null ? true : saved === "true";
   });
+  const [showSearch, setShowSearch] = useState<boolean>(() => {
+    const saved = localStorage.getItem("showSearch");
+    return saved === null ? true : saved === "true";
+  });
   const [hiddenCards, setHiddenCards] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem("hiddenCards");
@@ -289,6 +293,11 @@ export function useAppSettings() {
     localStorage.setItem("showTabs", String(value));
   };
 
+  const toggleShowSearch = (value: boolean) => {
+    setShowSearch(value);
+    localStorage.setItem("showSearch", String(value));
+  };
+
   return {
     lang,
     changeLang,
@@ -319,6 +328,8 @@ export function useAppSettings() {
     toggleEnableUdp,
     showTabs,
     toggleShowTabs,
+    showSearch,
+    toggleShowSearch,
     hiddenCards,
     updateHiddenCards,
   };

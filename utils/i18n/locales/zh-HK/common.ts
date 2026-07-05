@@ -100,5 +100,15 @@ export const common = {
     offline: "離線",
     installed: "已安裝",
     not_installed: "未安裝"
+  },
+  search: {
+    placeholder: "搜尋欄目、卡片或檢測值...",
+    scope: "搜尋範圍",
+    scope_all: "全部文本",
+    scope_cards: "僅卡片內容",
+    match: "匹配模式",
+    match_fuzzy: "模糊搜尋",
+    match_exact: "精確搜尋",
+    no_results: "沒有找到匹配的欄目或卡片。"
   }
 };

@@ -18,6 +18,10 @@ export const settings = {
             title: "顯示導航列",
             desc: "在內容上方顯示用於篩選分類的選項卡，若所有選項卡都為空將自動隱藏。"
         },
+        showSearch: {
+            title: "啟用搜尋欄",
+            desc: "在標籤欄上方顯示搜尋欄，以便快速篩選主面板的類目與卡片內容。"
+        },
         simpleMode: {
             title: "極簡模式",
             desc: "隱藏部分複雜的技術細節，僅顯示核心資訊。"

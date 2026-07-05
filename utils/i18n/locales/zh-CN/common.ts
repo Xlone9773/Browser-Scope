@@ -100,5 +100,15 @@ export const common = {
     offline: "离线",
     installed: "已安装",
     not_installed: "未安装"
+  },
+  search: {
+    placeholder: "搜索栏目、卡片或检测值...",
+    scope: "搜索范围",
+    scope_all: "全部文本",
+    scope_cards: "仅卡片内容",
+    match: "匹配模式",
+    match_fuzzy: "模糊搜索",
+    match_exact: "精确搜索",
+    no_results: "没有找到匹配的栏目或卡片。"
   }
 };

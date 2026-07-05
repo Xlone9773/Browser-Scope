@@ -100,5 +100,15 @@ export const common = {
     offline: "オフライン",
     installed: "インストール済",
     not_installed: "未インストール"
+  },
+  search: {
+    placeholder: "カテゴリ、カード、または検出値を検索...",
+    scope: "検索範囲",
+    scope_all: "すべてのテキスト",
+    scope_cards: "カード内容のみ",
+    match: "マッチングモード",
+    match_fuzzy: "あいまい検索",
+    match_exact: "完全一致",
+    no_results: "該当するカテゴリまたはカードが見つかりません。"
   }
 };
