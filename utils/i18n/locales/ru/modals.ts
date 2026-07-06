@@ -101,6 +101,17 @@ Copyright (c) 2026 BrowserScope Contributors
     linear_accel: "Линейное ускорение",
     gravity: "Гравитация",
     abs_orientation: "Абсолютная ориентация",
+    xaxis: "Ось X",
+    yaxis: "Ось Y",
+    zaxis: "Ось Z",
+    alpha: "Альфа (Alpha)",
+    beta: "Бета (Beta)",
+    gamma: "Гамма (Gamma)",
+    dark: "Темно",
+    room: "Комната",
+    bright: "Ярко",
+    sensor_unavailable: "Датчик недоступен.",
+    data_source_desc: "Данные предоставляются API DeviceMotion, DeviceOrientation и Generic Sensor.",
     close: "Закрыть"
   },
   scoreModal: {

@@ -101,6 +101,17 @@ Copyright (c) 2026 BrowserScope Contributors
     linear_accel: "線形加速度",
     gravity: "重力センサー",
     abs_orientation: "絶対方向",
+    xaxis: "X軸",
+    yaxis: "Y軸",
+    zaxis: "Z軸",
+    alpha: "Alpha",
+    beta: "Beta",
+    gamma: "Gamma",
+    dark: "暗い",
+    room: "室内",
+    bright: "明るい",
+    sensor_unavailable: "センサーは利用できません。",
+    data_source_desc: "データは DeviceMotion、DeviceOrientation、および Generic Sensor API によって提供されます。",
     close: "閉じる"
   },
   scoreModal: {

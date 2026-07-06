@@ -123,6 +123,17 @@ SOFTWARE.`
     linear_accel: "Linear Acceleration",
     gravity: "Gravity",
     abs_orientation: "Absolute Orientation",
+    xaxis: "X-Axis",
+    yaxis: "Y-Axis",
+    zaxis: "Z-Axis",
+    alpha: "Alpha",
+    beta: "Beta",
+    gamma: "Gamma",
+    dark: "Dark",
+    room: "Room",
+    bright: "Bright",
+    sensor_unavailable: "Sensor unavailable.",
+    data_source_desc: "Data provided by DeviceMotion, DeviceOrientation & Generic Sensor APIs.",
     close: "Close"
   },
   scoreModal: {

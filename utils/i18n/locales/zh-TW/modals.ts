@@ -101,6 +101,17 @@ export const modals = {
     linear_accel: "線性加速度",
     gravity: "重力感測器",
     abs_orientation: "絕對方向",
+    xaxis: "X 軸",
+    yaxis: "Y 軸",
+    zaxis: "Z 軸",
+    alpha: "Alpha (偏航角)",
+    beta: "Beta (翻滾角)",
+    gamma: "Gamma (俯仰角)",
+    dark: "黑暗",
+    room: "室內",
+    bright: "明亮",
+    sensor_unavailable: "感測器不可用。",
+    data_source_desc: "數據由 DeviceMotion、DeviceOrientation 與 Generic Sensor API 提供。",
     close: "關閉"
   },
   scoreModal: {

@@ -7,10 +7,16 @@ import { Modal } from './ui/Modal';
 
 interface SensorModalProps {
   onClose: () => void;
-  t: Translation['sensorModal'] & { linear_accel?: string, gravity?: string, abs_orientation?: string };
+  t: Translation['sensorModal'];
 }
 
 export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
+  const isMagnetometerSupported = typeof window !== 'undefined' && 'Magnetometer' in window;
+  const isAmbientLightSupported = typeof window !== 'undefined' && 'AmbientLightSensor' in window;
+  const isLinearAccelSupported = typeof window !== 'undefined' && 'LinearAccelerationSensor' in window;
+  const isGravitySupported = typeof window !== 'undefined' && 'GravitySensor' in window;
+  const isAbsOrientationSupported = typeof window !== 'undefined' && 'AbsoluteOrientationSensor' in window;
+
   const [permissionStatus, setPermissionStatus] = useState<'granted' | 'denied' | 'prompt'>('prompt');
   
   const [accel, setAccel] = useState({ x: 0, y: 0, z: 0 });
@@ -227,7 +233,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         <div className="space-y-4">
                             <div className="space-y-1">
                                 <div className="flex justify-between text-xs text-slate-500">
-                                    <span>X-Axis</span>
+                                    <span>{t.xaxis}</span>
                                     <span className="font-mono">{formatNumber(accel.x, 2, 2)} m/s²</span>
                                 </div>
                                 <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
@@ -239,7 +245,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                             </div>
                             <div className="space-y-1">
                                 <div className="flex justify-between text-xs text-slate-500">
-                                    <span>Y-Axis</span>
+                                    <span>{t.yaxis}</span>
                                     <span className="font-mono">{formatNumber(accel.y, 2, 2)} m/s²</span>
                                 </div>
                                 <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
@@ -251,7 +257,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                             </div>
                             <div className="space-y-1">
                                 <div className="flex justify-between text-xs text-slate-500">
-                                    <span>Z-Axis</span>
+                                    <span>{t.zaxis}</span>
                                     <span className="font-mono">{formatNumber(accel.z, 2, 2)} m/s²</span>
                                 </div>
                                 <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
@@ -275,15 +281,15 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
 
                         <div className="grid grid-cols-3 gap-3 text-center">
                             <div className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700/50">
-                                <div className="text-[10px] text-slate-400 mb-1">Alpha</div>
+                                <div className="text-[10px] text-slate-400 mb-1">{t.alpha}</div>
                                 <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">{formatNumber(gyro.alpha, 0)}°</div>
                             </div>
                             <div className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700/50">
-                                <div className="text-[10px] text-slate-400 mb-1">Beta</div>
+                                <div className="text-[10px] text-slate-400 mb-1">{t.beta}</div>
                                 <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">{formatNumber(gyro.beta, 0)}°</div>
                             </div>
                             <div className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700/50">
-                                <div className="text-[10px] text-slate-400 mb-1">Gamma</div>
+                                <div className="text-[10px] text-slate-400 mb-1">{t.gamma}</div>
                                 <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">{formatNumber(gyro.gamma, 0)}°</div>
                             </div>
                         </div>
@@ -312,7 +318,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         </div>
                         
                         {magnet ? (
-                                <div className="grid grid-cols-3 gap-2">
+                                <div className="grid grid-cols-3 gap-2 h-10 items-center">
                                 <div className="text-center">
                                     <div className="text-[10px] text-slate-400 mb-1">X (µT)</div>
                                     <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{formatNumber(magnet.x, 1, 1)}</div>
@@ -326,9 +332,18 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                     <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{formatNumber(magnet.z, 1, 1)}</div>
                                 </div>
                                 </div>
+                        ) : isMagnetometerSupported ? (
+                            <div className="grid grid-cols-3 gap-2 h-10 items-center animate-pulse">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="text-center">
+                                        <div className="h-2 w-10 bg-slate-200 dark:bg-slate-700 rounded mx-auto mb-2"></div>
+                                        <div className="h-3 w-12 bg-slate-300 dark:bg-slate-600 rounded mx-auto"></div>
+                                    </div>
+                                ))}
+                            </div>
                         ) : (
-                            <div className="h-20 flex items-center justify-center text-center px-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs">
-                                Sensor unavailable.
+                            <div className="h-10 flex items-center justify-center text-center px-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs w-full">
+                                {t.sensor_unavailable}
                             </div>
                         )}
                     </div>
@@ -345,26 +360,36 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         </div>
                         
                         {lux !== null ? (
-                            <div className="flex flex-col items-center justify-center">
-                                <div className="text-3xl font-mono font-bold text-slate-800 dark:text-slate-100 mb-2">
+                            <div className="flex flex-col items-center justify-center h-[75px]">
+                                <div className="text-3xl font-mono font-bold text-slate-800 dark:text-slate-100 mb-2 leading-none">
                                     {formatNumber(lux, 0)} <span className="text-sm text-slate-400 font-sans font-normal">lux</span>
                                 </div>
                                 {/* Visual Bar for Light Level (Logarithmic scale approx 0 to 50000) */}
-                                <div className="w-full h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden relative">
+                                <div className="w-full h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden relative mt-1">
                                     <div 
                                         className="absolute top-0 left-0 h-full bg-gradient-to-r from-slate-700 to-amber-400 dark:from-slate-600 dark:to-amber-300 transition-all duration-300"
                                         style={{ width: `${Math.min((Math.log10(lux + 1) / 4.7) * 100, 100)}%` }}
                                     />
                                 </div>
                                 <div className="flex justify-between w-full text-[10px] text-slate-400 mt-1 px-1">
-                                    <span>Dark</span>
-                                    <span>Room</span>
-                                    <span>Bright</span>
+                                    <span>{t.dark}</span>
+                                    <span>{t.room}</span>
+                                    <span>{t.bright}</span>
+                                </div>
+                            </div>
+                        ) : isAmbientLightSupported ? (
+                            <div className="flex flex-col items-center justify-center w-full h-[75px] animate-pulse">
+                                <div className="h-8 w-24 bg-slate-200 dark:bg-slate-700 rounded mb-3"></div>
+                                <div className="w-full h-3 bg-slate-100 dark:bg-slate-700 rounded-full mb-1"></div>
+                                <div className="flex justify-between w-full mt-1 px-1">
+                                    <div className="h-2 w-6 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                    <div className="h-2 w-6 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                    <div className="h-2 w-6 bg-slate-200 dark:bg-slate-700 rounded"></div>
                                 </div>
                             </div>
                         ) : (
-                            <div className="h-20 flex items-center justify-center text-center px-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs">
-                                Sensor unavailable.
+                            <div className="h-[75px] flex items-center justify-center text-center px-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs w-full">
+                                {t.sensor_unavailable}
                             </div>
                         )}
                     </div>
@@ -379,10 +404,10 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         </div>
                         
                         {linearAccel ? (
-                            <div className="space-y-4">
+                            <div className="space-y-4 h-[116px]">
                                 <div className="space-y-1">
                                     <div className="flex justify-between text-xs text-slate-500">
-                                        <span>X-Axis</span>
+                                        <span>{t.xaxis}</span>
                                         <span className="font-mono">{formatNumber(linearAccel.x, 2, 2)} m/s²</span>
                                     </div>
                                     <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
@@ -394,7 +419,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                 </div>
                                 <div className="space-y-1">
                                     <div className="flex justify-between text-xs text-slate-500">
-                                        <span>Y-Axis</span>
+                                        <span>{t.yaxis}</span>
                                         <span className="font-mono">{formatNumber(linearAccel.y, 2, 2)} m/s²</span>
                                     </div>
                                     <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
@@ -406,7 +431,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                 </div>
                                 <div className="space-y-1">
                                     <div className="flex justify-between text-xs text-slate-500">
-                                        <span>Z-Axis</span>
+                                        <span>{t.zaxis}</span>
                                         <span className="font-mono">{formatNumber(linearAccel.z, 2, 2)} m/s²</span>
                                     </div>
                                     <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
@@ -417,9 +442,21 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                     </div>
                                 </div>
                             </div>
+                        ) : isLinearAccelSupported ? (
+                            <div className="space-y-4 h-[116px] animate-pulse w-full">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="space-y-1">
+                                        <div className="flex justify-between">
+                                            <div className="h-3 w-12 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                            <div className="h-3 w-20 bg-slate-300 dark:bg-slate-600 rounded"></div>
+                                        </div>
+                                        <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full"></div>
+                                    </div>
+                                ))}
+                            </div>
                         ) : (
-                            <div className="h-20 flex items-center justify-center text-center px-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs">
-                                Sensor unavailable.
+                            <div className="h-[116px] flex items-center justify-center text-center px-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs w-full">
+                                {t.sensor_unavailable}
                             </div>
                         )}
                     </div>
@@ -436,7 +473,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         </div>
                         
                         {gravity ? (
-                            <div className="grid grid-cols-3 gap-2">
+                            <div className="grid grid-cols-3 gap-2 h-10 items-center">
                                 <div className="text-center">
                                     <div className="text-[10px] text-slate-400 mb-1">X (m/s²)</div>
                                     <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{formatNumber(gravity.x, 2, 2)}</div>
@@ -450,9 +487,18 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                     <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{formatNumber(gravity.z, 2, 2)}</div>
                                 </div>
                             </div>
+                        ) : isGravitySupported ? (
+                            <div className="grid grid-cols-3 gap-2 h-10 items-center animate-pulse">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="text-center">
+                                        <div className="h-2 w-10 bg-slate-200 dark:bg-slate-700 rounded mx-auto mb-2"></div>
+                                        <div className="h-3 w-12 bg-slate-300 dark:bg-slate-600 rounded mx-auto"></div>
+                                    </div>
+                                ))}
+                            </div>
                         ) : (
-                            <div className="h-20 flex items-center justify-center text-center px-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs">
-                                Sensor unavailable.
+                            <div className="h-10 flex items-center justify-center text-center px-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs w-full">
+                                {t.sensor_unavailable}
                             </div>
                         )}
                     </div>
@@ -469,7 +515,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         </div>
                         
                         {absOrientation ? (
-                            <div className="grid grid-cols-4 gap-2">
+                            <div className="grid grid-cols-4 gap-2 h-10 items-center">
                                 <div className="text-center">
                                     <div className="text-[10px] text-slate-400 mb-1">Qx</div>
                                     <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">{formatNumber(absOrientation[0] || 0, 3, 3)}</div>
@@ -487,16 +533,25 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                     <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">{formatNumber(absOrientation[3] || 0, 3, 3)}</div>
                                 </div>
                             </div>
+                        ) : isAbsOrientationSupported ? (
+                            <div className="grid grid-cols-4 gap-2 h-10 items-center animate-pulse">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="text-center">
+                                        <div className="h-2 w-8 bg-slate-200 dark:bg-slate-700 rounded mx-auto mb-2"></div>
+                                        <div className="h-3 w-10 bg-slate-300 dark:bg-slate-600 rounded mx-auto"></div>
+                                    </div>
+                                ))}
+                            </div>
                         ) : (
-                            <div className="h-20 flex items-center justify-center text-center px-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs">
-                                Sensor unavailable.
+                            <div className="h-10 flex items-center justify-center text-center px-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 text-xs w-full">
+                                {t.sensor_unavailable}
                             </div>
                         )}
                     </div>
                 </div>
                 
                 <div className="mt-4 text-center text-xs text-slate-400">
-                    Data provided by DeviceMotion, DeviceOrientation & Generic Sensor APIs.
+                    {t.data_source_desc}
                 </div>
             </>
         )}
