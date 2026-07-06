@@ -40,17 +40,17 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private handleGlobalError = (event: ErrorEvent) => {
     if (this.props.name === "RootApp" && !this.state.hasError) {
-      const msg = event.message || (event.error && event.error.message) || "";
+      const msg = (event.message || (event.error && event.error.message) || "").toLowerCase();
       if (
-        msg.includes("VConsole") ||
         msg.includes("vconsole") ||
-        msg.includes("WebSocket closed without opened") ||
-        msg.includes("Script error")
+        msg.includes("websocket closed without opened") ||
+        msg.includes("script error") ||
+        msg.includes("resizeobserver loop")
       )
         return;
       this.setState({
         hasError: true,
-        error: event.error || new Error(msg),
+        error: event.error || new Error(event.message || "Unknown error"),
         errorInfo: { componentStack: "Captured by Window Error Listener" },
       });
     }
@@ -58,16 +58,16 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private handleGlobalPromise = (event: PromiseRejectionEvent) => {
     if (this.props.name === "RootApp" && !this.state.hasError) {
-      const msg = event.reason instanceof Error ? event.reason.message : String(event.reason);
+      const msg = (event.reason instanceof Error ? event.reason.message : String(event.reason)).toLowerCase();
       if (
-        msg.includes("VConsole") ||
         msg.includes("vconsole") ||
-        msg.includes("WebSocket closed without opened")
+        msg.includes("websocket closed without opened") ||
+        msg.includes("script error")
       )
         return;
       this.setState({
         hasError: true,
-        error: event.reason instanceof Error ? event.reason : new Error(msg),
+        error: event.reason instanceof Error ? event.reason : new Error(String(event.reason)),
         errorInfo: { componentStack: "Captured by Window Unhandled Rejection Listener" },
       });
     }
