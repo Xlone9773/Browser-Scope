@@ -42,7 +42,15 @@ export async function loadVConsole(store: any /* eslint-disable-line @typescript
       });
     });
     observer.observe(document.documentElement, { attributes: true });
-  } catch { /* ignore */ }
+  } catch (err) {
+    console.error("Failed to load vConsole:", err);
+    if (win.vConsole) {
+      try {
+        win.vConsole.destroy();
+      } catch { /* ignore */ }
+      win.vConsole = undefined;
+    }
+  }
 }
 
 export function unloadVConsole() {
