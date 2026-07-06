@@ -705,7 +705,7 @@ const App: React.FC = () => {
             />
           )}
           {visibility.about && (
-            <Components.about onClose={() => close("about")} t={t.aboutModal} />
+            <Components.about onClose={() => close("about")} t={t.aboutModal} lang={lang} />
           )}
           {visibility.sensor && (
             <Components.sensor
