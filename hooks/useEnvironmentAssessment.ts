@@ -215,7 +215,10 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
             // Wait for permissions
             try {
                 if (navigator.permissions && navigator.permissions.query) {
-                    const notifPerm = await navigator.permissions.query({ name: 'notifications' });
+                    const notifPerm = await Promise.race([
+                        navigator.permissions.query({ name: 'notifications' }),
+                        new Promise<PermissionStatus>((_, reject) => setTimeout(() => reject(new Error('timeout')), 500))
+                    ]);
                     if (Notification.permission === 'denied' && notifPerm.state === 'prompt') {
                         addAnomaly('permission_mismatch', 'Permissions API contradicts Notification API', 'danger', 'trust', 25);
                     }

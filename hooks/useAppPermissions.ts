@@ -37,7 +37,10 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
   const checkPermissionStatus = async (key: PermissionKey, name: string) => {
     try {
       if (navigator.permissions && navigator.permissions.query) {
-        const result = await navigator.permissions.query({ name: name as any /* eslint-disable-line @typescript-eslint/no-explicit-any */ });
+        const result = await Promise.race([
+            navigator.permissions.query({ name: name as any /* eslint-disable-line @typescript-eslint/no-explicit-any */ }),
+            new Promise<PermissionStatus>((_, reject) => setTimeout(() => reject(new Error('timeout')), 500))
+        ]);
         updatePermStatus(key, result.state as PermissionStatusType);
 
         if (key === "geolocation" && result.state === "granted") {

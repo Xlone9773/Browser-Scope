@@ -66,6 +66,13 @@ export const getAllData = async (): Promise<BrowserData> => {
   const webnn = !!nav.ml;
   const webgpuCompute = !!nav.gpu; 
 
+  const withTimeout = <T>(promise: Promise<T>, fallback: T, ms: number = 500): Promise<T> => {
+      return Promise.race([
+          promise,
+          new Promise<T>(resolve => setTimeout(() => resolve(fallback), ms))
+      ]);
+  };
+
   // Async checks - Run in PARALLEL to reduce load time
   const [
       battery,
@@ -75,12 +82,12 @@ export const getAllData = async (): Promise<BrowserData> => {
       drmSupport,
       clientHints // New
   ] = await Promise.all([
-      getBatteryInfo(),
-      getStorageEstimate(),
-      getWebRTCIP(),
-      getSpeechVoicesCount(),
-      checkDrmSupport(),
-      getHighEntropyClientHints()
+      withTimeout(getBatteryInfo(), { level: 'Timeout', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' }),
+      withTimeout(getStorageEstimate(), { quota: 'Unknown', usage: 'Unknown', persisted: false }),
+      withTimeout(getWebRTCIP(), 'Timeout'),
+      withTimeout(getSpeechVoicesCount(), 0),
+      withTimeout(checkDrmSupport(), []),
+      withTimeout(getHighEntropyClientHints(), undefined)
   ]);
 
   const score = calculateFingerprintScore({
