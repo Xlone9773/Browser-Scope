@@ -66,7 +66,10 @@ class LoggerStore {
       second: "2-digit",
       fractionalSecondDigits: 3,
     } as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
-    this.logs = [`[${time}] ${type}: ${detail}`, ...this.logs].slice(0, 500);
+    this.logs = [...this.logs, `[${time}] ${type}: ${detail}`];
+    if (this.logs.length > 500) {
+      this.logs.shift();
+    }
     this.persistLogs();
     this.notifyLogs();
   }
