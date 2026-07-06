@@ -43,6 +43,10 @@ export const dashboard = {
       title: "Update Available",
       message: "A new version of BrowserScope is available for download with the latest fingerprinting definitions.",
       action: "Update Now"
+    },
+    viewport_small: {
+      title: "Display Area Too Small",
+      message: "The current screen display area is too small. Some layouts, charts, or features may have display issues or become difficult to interact with."
     }
   },
 

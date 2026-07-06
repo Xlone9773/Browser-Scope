@@ -35,7 +35,7 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
   isFloating
 }) => {
   return (
-    <div className={`absolute ${isFloating ? "top-full right-2" : "top-10 right-0 text-left"} mt-1 w-64 bg-slate-800 border border-slate-700 rounded shadow-xl z-50 overflow-hidden text-sm animate-in slide-in-from-top-2`}>
+    <div className={`absolute ${isFloating ? "top-full right-2" : "top-10 right-0 text-left"} mt-1 w-64 bg-slate-800 border border-slate-700 rounded shadow-xl z-50 max-h-[70vh] sm:max-h-[80vh] overflow-y-auto text-sm animate-in slide-in-from-top-2 custom-scrollbar`}>
       <div
         className="p-3 border-b border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition"
         onClick={toggleLogging}

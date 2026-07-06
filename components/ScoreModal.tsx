@@ -111,10 +111,10 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
         noPadding={true}
     >
         {({ close: _close }) => (
-            <div className="flex flex-col lg:flex-row h-full bg-slate-50 dark:bg-slate-900 overflow-hidden">
+            <div className="flex flex-col lg:flex-row h-full bg-slate-50 dark:bg-slate-900 overflow-y-auto lg:overflow-hidden">
                 
                 {/* Left Panel: Visuals (Fixed width on desktop) */}
-                <div className="lg:w-[320px] xl:w-[360px] bg-white dark:bg-slate-800 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0 overflow-y-auto">
+                <div className="lg:w-[320px] xl:w-[360px] bg-white dark:bg-slate-800 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0 lg:overflow-y-auto">
                     
                     <div className="p-8 flex flex-col items-center justify-center gap-8 min-h-full lg:min-h-0">
                         {/* Score Circle */}
@@ -172,7 +172,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                 </div>
 
                 {/* Right Panel: Scrollable Grid List */}
-                <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-slate-900/50">
+                <div className="flex-1 flex flex-col lg:h-full overflow-visible lg:overflow-hidden bg-slate-50 dark:bg-slate-900/50">
                     
                     <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm flex justify-between items-center shrink-0">
                         <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
@@ -184,7 +184,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                         </span>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                    <div className="flex-1 lg:overflow-y-auto overflow-visible p-4 custom-scrollbar">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {scoreData.factors.map((factor) => (
                                 <div key={factor.id} className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm flex gap-3 items-start group hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors h-full">

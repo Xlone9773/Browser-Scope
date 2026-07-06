@@ -176,6 +176,19 @@ const App: React.FC = () => {
 
   const [matchedCardIds, setMatchedCardIds] = useState<string[] | null>(null);
   const [showSearchSettings, setShowSearchSettings] = useState(false);
+  const [isViewportTooSmall, setIsViewportTooSmall] = useState(false);
+
+  useEffect(() => {
+    const checkViewportSize = () => {
+      // Threshold: width < 640px or height < 500px as small viewport
+      setIsViewportTooSmall(window.innerWidth < 640 || window.innerHeight < 500);
+    };
+    checkViewportSize();
+    window.addEventListener("resize", checkViewportSize);
+    return () => {
+      window.removeEventListener("resize", checkViewportSize);
+    };
+  }, []);
 
   const t = translations[lang];
 
@@ -961,15 +974,17 @@ const App: React.FC = () => {
         />
 
         {/* Notifications */}
-        {((needRefresh && !dismissedNotifications.includes('update')) || (isOutdated && !dismissedNotifications.includes('outdated'))) && (
+        {((needRefresh && !dismissedNotifications.includes('update')) || 
+          (isOutdated && !dismissedNotifications.includes('outdated')) ||
+          (isViewportTooSmall && !dismissedNotifications.includes('viewport_small'))) && (
           <div className="flex flex-col gap-4 w-full">
             {needRefresh && !dismissedNotifications.includes('update') && (
               <AppNotification 
                 type="success"
-                title={(t as any).notifications?.update?.title || "Update Available"}
-                message={(t as any).notifications?.update?.message || "A new version of BrowserScope is available."}
+                title={t.environment?.notifications?.update?.title || "Update Available"}
+                message={t.environment?.notifications?.update?.message || "A new version of BrowserScope is available."}
                 action={{
-                  label: (t as any).notifications?.update?.action || "Update Now",
+                  label: t.environment?.notifications?.update?.action || "Update Now",
                   onClick: () => updateServiceWorker(true)
                 }}
                 onClose={() => {
@@ -981,10 +996,21 @@ const App: React.FC = () => {
             {isOutdated && !dismissedNotifications.includes('outdated') && (
               <AppNotification 
                 type="warning"
-                title={(t as any).notifications?.outdated?.title || "Legacy Browser Detected"}
-                message={(t as any).notifications?.outdated?.message || "Your browser version is too old. Some advanced scanning features might be unavailable or inaccurate."}
+                title={t.environment?.notifications?.outdated?.title || "Legacy Browser Detected"}
+                message={t.environment?.notifications?.outdated?.message || "Your browser version is too old. Some advanced scanning features might be unavailable or inaccurate."}
                 onClose={() => {
                   dismissNotification('outdated');
+                }}
+              />
+            )}
+
+            {isViewportTooSmall && !dismissedNotifications.includes('viewport_small') && (
+              <AppNotification 
+                type="warning"
+                title={t.environment?.notifications?.viewport_small?.title || "Display Area Too Small"}
+                message={t.environment?.notifications?.viewport_small?.message || "The current screen display area is too small. Some layouts, charts, or features may have display issues or become difficult to interact with."}
+                onClose={() => {
+                  dismissNotification('viewport_small');
                 }}
               />
             )}
