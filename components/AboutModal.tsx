@@ -19,99 +19,14 @@ import { Modal } from './ui/Modal';
 interface AboutModalProps {
   onClose: () => void;
   t: Translation['aboutModal'];
-  lang?: string;
 }
 
-const LICENSE_TRANSLATIONS: Record<string, string> = {
-  en: `MIT License
-
-Copyright (c) 2026 BrowserScope Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.`,
-
-  'zh-CN': `MIT 许可证
-
-版权所有 (c) 2026 BrowserScope 贡献者
-
-特此免费授权任何获得本软件及相关文档文件（以下简称“软件”）副本的人在不受限制的情况下处理本软件的许可，包括但不限于使用、复制、修改、合并、发表、分发、再许可和/或销售本软件副本的权利，并允许向其提供本软件的人做出上述行为，但须符合以下条件：
-
-上述版权声明和本许可声明应包含在本软件的所有副本或实质性部分中。
-
-本软件按“原样”提供，不提供任何形式的明示或暗示保证，包括但不限于对适销性、特定用途适用性和非侵权性的保证。在任何情况下，作者或版权持有人均不对因本软件或本软件的使用或其他交易而引起的、由本软件引起的或与之相关的任何索赔、损害或其他责任（无论是合同诉讼、侵权诉讼还是其他诉讼）承担责任。`,
-
-  'zh-TW': `MIT 許可證
-
-版權所有 (c) 2026 BrowserScope 貢獻者
-
-特此免費授權任何獲得本軟件及相關文檔文件（以下簡稱“軟件”）副本的人在不受限制的情況下處理本軟件的許可，包括但不限於使用、複製、修改、合併、發表、分發、再許可和/或銷售本軟件副本的權利，並允許向其提供本軟件的人做出上述行為，但須符合以下條件：
-
-上述版權聲明和本許可聲明應包含在本軟件的所有副本或實質性部分中。
-
-本軟件按“原樣”提供，不提供任何形式的明示或暗示保證，包括但不限於對適銷性、特定用途適用性和非侵權性的保證。在任何情況下，作者或版權持有人均不對因本軟件或本軟件的使用或其他交易而引起的、由本軟件引起的或與之相關的任何索賠、損害或其他責任（無論是合同訴訟、侵權訴訟還是其他訴訟）承擔責任。`,
-
-  'zh-HK': `MIT 許可證
-
-版權所有 (c) 2026 BrowserScope 貢獻者
-
-特此免費授權任何獲得本軟件及相關文檔文件（以下簡稱“軟件”）副本的人在不受限制的情況下處理本軟件的許可，包括但不限於使用、複製、修改、合併、發表、分發、再許可和/或銷售本軟件副本的權利，並允許向其提供本软件的人做出上述行為，但須符合以下條件：
-
-上述版權聲明和本許可聲明應包含在本軟件的所有副本或實質性部分中。
-
-本軟件按“原樣”提供，不提供任何形式的明示或暗示保證，包括但不限於對適銷性、特定用途適用性和非侵權性的保證。在任何情況下，作者或版權持有人均不對因本軟件或本軟件的使用或其他交易而引起的、由本軟件引起的或與之相關的任何索賠、損害或其他責任（無論是合同訴訟、侵權訴訟還是其他訴訟）承擔責任。`,
-
-  ja: `MIT ライセンス
-
-Copyright (c) 2026 BrowserScope Contributors
-
-以下に定める条件に従い、本ソフトウェアおよび関連文書のファイル（以下「ソフトウェア」）の複製を取得したすべての人に対し、ソフトウェアを無制限に扱う権利を無償で許諾します。これには、ソフトウェアの複製を使用、複写、変更、結合、掲載、頒布、サブライセンス、および/または販売する権利、およびソフトウェアを提供する相手に同じ行為を許可する権利が含まれますが、これらに限定されません。
-
-上記の著作権表示および本許諾表示は、ソフトウェアのすべての複製または主要な部分に記載するものとします。
-
-本ソフトウェアは「現状のまま」提供され、明示または黙示を問わず、商品性、特定の目的への適合性、および権利非侵害に関する保証を含むがこれらに限定されない、いかなる種類の保証も行いません。著作権者またはライセンス保持者は、契約行為、不法行為、またはそれ以外であろうと、ソフトウェアに起因または関連し、あるいはソフトウェアの使用またはその他の取り扱いに起因するいかなる請求、損害、またはその他の責任に対しても責任を負わないものとします。`,
-
-  ru: `Лицензия MIT
-
-Copyright (c) 2026 BrowserScope Contributors
-
-Данная лицензия разрешает лицам, получившим копию данного программного обеспечения и сопутствующей документации (в дальнейшем именуемого «Программное обеспечение»), безвозмездно использовать Программное обеспечение без ограничений, включая неограниченное право на использование, копирование, изменение, слияние, публикацию, распространение, сублицензирование и/или продажу копий Программного обеспечения, а также право разрешать делать это лицам, которым предоставляется данное Программное обеспечение, при соблюдении следующих условий:
-
-Указанное выше уведомление об авторских правах и данные условия лицензии должны быть включены во все копии или значимые части Программного обеспечения.
-
-ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ ГАРАНТИЯМИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ КОНКРЕТНЫМ ЦЕЛЯМ И ОТСУТСТВИЯ НАРУШЕНИЙ ПРАВ. НИ В КОЕМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ ПО ИНЫМ ОБЯЗАТЕЛЬСТВАМ, ВНЕ ЗАВИСИМОСТИ ОТ ДЕЙСТВИЯ ДОГОВОРА, ГРАЖДАНСКОГО ПРАВОНАРУШЕНИЯ ИЛИ ИНОГО СЛУЧАЯ, ВОЗНИКАЮЩИХ ИЗ-ЗА, ВНЕ ИЛИ В СВЯЗИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ ИСПОЛЬЗОВАНИЕМ ИЛИ ИНЫМИ ДЕЙСТВИЯМИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.`
-};
-
-const LICENSE_TITLE_MAP: Record<string, string> = {
-  en: 'LICENSE (MIT)',
-  'zh-CN': '软件许可证 (MIT)',
-  'zh-TW': '軟件許可證 (MIT)',
-  'zh-HK': '軟件許可證 (MIT)',
-  ja: 'ソフトウェアライセンス (MIT)',
-  ru: 'Лицензия на ПО (MIT)'
-};
-
-export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t, lang }) => {
+export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
   const currentVersion = t.updates && t.updates[0] ? t.updates[0].version : '1.6.0';
   const [showLicense, setShowLicense] = useState(false);
 
-  const activeLang = lang && LICENSE_TRANSLATIONS[lang] ? lang : 'en';
-  const currentLicenseText = LICENSE_TRANSLATIONS[activeLang];
-  const currentLicenseTitle = LICENSE_TITLE_MAP[activeLang] || 'LICENSE (MIT)';
+  const currentLicenseText = (t.features?.openSource as any)?.licenseText || '';
+  const currentLicenseTitle = (t.features?.openSource as any)?.licenseTitle || 'LICENSE (MIT)';
 
   return (
     <Modal
