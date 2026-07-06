@@ -188,6 +188,7 @@ export const modals = {
     font_list_title: "已检测到的字体",
     copy: "复制 ID",
     copied: "已复制",
+    regenerate: "重新生成",
     close: "关闭"
   },
   benchmarkModal: {

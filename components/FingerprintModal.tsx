@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Fingerprint, Settings, Copy, Check, Info, Box, Type } from 'lucide-react';
+import { Fingerprint, Settings, Copy, Check, Info, Box, Type, RefreshCw } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
+import { Button } from './ui/Button';
 
 // Simple MurmurHash3 implementation for custom component hashing
 function murmurhash3_32_gc(key: string, seed: number) {
@@ -79,11 +80,14 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
   const [copied, setCopied] = useState(false);
 
   const workerRef = useRef<Worker | null>(null);
+  const isMountedRef = useRef(true);
 
   useEffect(() => {
+    isMountedRef.current = true;
     workerRef.current = new Worker(new URL('../services/app.worker.ts', import.meta.url), { type: 'module' });
 
     return () => {
+      isMountedRef.current = false;
       if (workerRef.current) {
         workerRef.current.terminate();
       }
@@ -93,56 +97,76 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
   // Font Detection Logic
   const detectFonts = useCallback(() => {
       setLoading(true);
-      const startTime = performance.now();
-      
-      const fontList = [
-          'Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Verdana', 'Georgia', 
-          'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', 'Impact',
-          'Microsoft YaHei', 'SimSun', 'SimHei', 'PingFang SC', 'Hiragino Sans GB'
-      ];
-      
-      const baseFonts = ['monospace', 'sans-serif', 'serif'];
-      const testString = "mmmmmmmmmmlli";
-      const testSize = "72px";
-      const h = document.getElementsByTagName("body")[0];
-      
-      const s = document.createElement("span");
-      s.style.fontSize = testSize;
-      s.innerHTML = testString;
-      s.style.visibility = "hidden";
-      s.style.position = "absolute";
-      s.style.left = "-9999px";
-      
-      const defaultWidths: Record<string, number> = {};
-      
-      // Get base widths
-      baseFonts.forEach(base => {
-          s.style.fontFamily = base;
-          h.appendChild(s);
-          defaultWidths[base] = s.offsetWidth;
-          h.removeChild(s);
-      });
-      
-      const detected: string[] = [];
-      
-      fontList.forEach(font => {
-          let matched = false;
-          for (const base of baseFonts) {
-              s.style.fontFamily = `'${font}', ${base}`;
-              h.appendChild(s);
-              const w = s.offsetWidth;
-              h.removeChild(s);
-              if (w !== defaultWidths[base]) {
-                  matched = true;
-                  break;
-              }
+      // Defer the CPU-heavy DOM manipulation to the next tick, allowing React to complete tab-switching transition rendering smoothly.
+      setTimeout(() => {
+          if (!isMountedRef.current) return;
+          const startTime = performance.now();
+          
+          const fontList = [
+              'Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Verdana', 'Georgia', 
+              'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', 'Impact',
+              'Microsoft YaHei', 'SimSun', 'SimHei', 'PingFang SC', 'Hiragino Sans GB'
+          ];
+          
+          const baseFonts = ['monospace', 'sans-serif', 'serif'];
+          const testString = "mmmmmmmmmmlli";
+          const testSize = "72px";
+          const h = document.getElementsByTagName("body")[0];
+          if (!h) {
+              setLoading(false);
+              return;
           }
-          if (matched) detected.push(font);
-      });
-      
-      setDetectedFonts(detected);
-      setTimeTaken(Math.round(performance.now() - startTime));
-      setLoading(false);
+          
+          const s = document.createElement("span");
+          s.style.fontSize = testSize;
+          s.innerHTML = testString;
+          s.style.visibility = "hidden";
+          s.style.position = "absolute";
+          s.style.left = "-9999px";
+          
+          const defaultWidths: Record<string, number> = {};
+          
+          // Get base widths
+          baseFonts.forEach(base => {
+              s.style.fontFamily = base;
+              h.appendChild(s);
+              defaultWidths[base] = s.offsetWidth;
+              h.removeChild(s);
+          });
+          
+          const detected: string[] = [];
+          
+          fontList.forEach(font => {
+              let matched = false;
+              for (const base of baseFonts) {
+                  s.style.fontFamily = `'${font}', ${base}`;
+                  h.appendChild(s);
+                  const w = s.offsetWidth;
+                  h.removeChild(s);
+                  if (w !== defaultWidths[base]) {
+                      matched = true;
+                      break;
+                  }
+              }
+              if (matched) detected.push(font);
+          });
+          
+          if (!isMountedRef.current) return;
+          setDetectedFonts(detected);
+          const elapsed = Math.round(performance.now() - startTime);
+          setTimeTaken(elapsed);
+          setLoading(false);
+
+          // Save to localStorage
+          try {
+              localStorage.setItem('browserscope_fp_fonts_data', JSON.stringify({
+                  detectedFonts: detected,
+                  timeTaken: elapsed
+              }));
+          } catch (err) {
+              console.error('Failed to save fonts cache to localStorage:', err);
+          }
+      }, 50);
   }, []);
 
   // Recalculate hash based on enabled components and salt
@@ -164,14 +188,31 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
 
       const joined = enabledValues.join(':::');
 
+      const saveToCache = (hexHash: string, elapsed: number) => {
+          if (!isMountedRef.current) return;
+          try {
+              const cacheKey = `browserscope_fp_${activeTab}_data`;
+              localStorage.setItem(cacheKey, JSON.stringify({
+                  visitorId: hexHash,
+                  components: currentComponents,
+                  timeTaken: elapsed,
+                  salt: currentSalt
+              }));
+          } catch (err) {
+              console.error(`Failed to save ${activeTab} cache to localStorage:`, err);
+          }
+      };
+
       if (workerRef.current) {
           const handleResult = (e: MessageEvent) => {
               if (e.data.type === 'hash') {
                   workerRef.current?.removeEventListener('message', handleResult);
-                  if (e.data.success) {
+                  if (e.data.success && isMountedRef.current) {
                       setVisitorId(e.data.hexHash);
-                      setTimeTaken(Math.round(performance.now() - start));
+                      const elapsed = Math.round(performance.now() - start);
+                      setTimeTaken(elapsed);
                       setLoading(false);
+                      saveToCache(e.data.hexHash, elapsed);
                   }
               }
           };
@@ -181,17 +222,59 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
           // Fallback if worker isn't loaded yet
           const hash = murmurhash3_32_gc(joined, 31);
           const hexHash = hash.toString(16).padStart(8, '0'); // emulate typical 32bit hash hex
-          setVisitorId(hexHash);
-          setTimeTaken(Math.round(performance.now() - start));
-          setLoading(false);
+          if (isMountedRef.current) {
+              setVisitorId(hexHash);
+              const elapsed = Math.round(performance.now() - start);
+              setTimeTaken(elapsed);
+              setLoading(false);
+              saveToCache(hexHash, elapsed);
+          }
       }
-  }, []);
+  }, [activeTab]);
 
   // Run Fingerprint Logic
-  const runFingerprint = useCallback(async () => {
+  const runFingerprint = useCallback(async (force = false) => {
     if (activeTab === 'fonts') {
+        if (!force) {
+            // Check localStorage cache first
+            try {
+                const cached = localStorage.getItem('browserscope_fp_fonts_data');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && Array.isArray(parsed.detectedFonts)) {
+                        setDetectedFonts(parsed.detectedFonts);
+                        setTimeTaken(parsed.timeTaken || 0);
+                        setLoading(false);
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load fonts cache from localStorage:', err);
+            }
+        }
         detectFonts();
         return;
+    }
+
+    // Check if cached result exists for standard tabs
+    if (!force) {
+        try {
+            const cacheKey = `browserscope_fp_${activeTab}_data`;
+            const cached = localStorage.getItem(cacheKey);
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (parsed && parsed.visitorId && Array.isArray(parsed.components)) {
+                    setComponents(parsed.components);
+                    setVisitorId(parsed.visitorId);
+                    setTimeTaken(parsed.timeTaken || 0);
+                    setSalt(parsed.salt || '');
+                    setLoading(false);
+                    return;
+                }
+            }
+        } catch (err) {
+            console.error(`Failed to load ${activeTab} cache from localStorage:`, err);
+        }
     }
 
     setLoading(true);
@@ -204,7 +287,6 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
 
       if (activeTab === 'v5') {
         // Load v5
-        
         const fpPromise = import('fpjs-v5')
           .then((FingerprintJS) => FingerprintJS.load());
         
@@ -219,7 +301,6 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         }
       } else if (activeTab === 'v4') {
         // Load v4
-        
         const fpPromise = import('@fingerprintjs/fingerprintjs')
           .then((FingerprintJS) => FingerprintJS.load());
         
@@ -234,7 +315,6 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         }
       } else {
         // Load v2 (Fingerprintjs2)
-        
         // @ts-expect-error auto-fixed
         const Fingerprint2 = await import('fingerprintjs2');
         
@@ -242,13 +322,11 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         const componentsV2 = await new Promise<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>((resolve) => {
             if (typeof window.requestIdleCallback === 'function') {
                 requestIdleCallback(() => {
-                    
                     // @ts-expect-error auto-fixed
                     Fingerprint2.default.get((components) => resolve(components));
                 });
             } else {
                 setTimeout(() => {
-                    
                     // @ts-expect-error auto-fixed
                     Fingerprint2.default.get((components) => resolve(components));
                 }, 500);
@@ -260,6 +338,8 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         });
       }
 
+      if (!isMountedRef.current) return;
+
       // Transform to state format
       const comps: Component[] = Object.keys(rawComponents).map(key => ({
           key,
@@ -267,9 +347,9 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
           enabled: true
       }));
 
-      // SECURITY: Explictly drop reference to raw fingerprint result out of memory
+      // SECURITY: Explicitly drop reference to raw fingerprint result out of memory
       // to avoid snapshot bleeding
-      for(const key in rawComponents) {
+      for (const key in rawComponents) {
          delete rawComponents[key];
       }
       Object.keys(rawComponents).forEach(key => delete rawComponents[key]);
@@ -281,8 +361,10 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
 
     } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error("Fingerprint error:", e);
-      setVisitorId("Error loading library");
-      setLoading(false);
+      if (isMountedRef.current) {
+          setVisitorId("Error loading library");
+          setLoading(false);
+      }
     }
   }, [activeTab, salt, detectFonts, calculateHash]);
 
@@ -511,15 +593,23 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 flex justify-end gap-3">
+                <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 flex justify-end gap-3 items-center">
+                    <Button
+                        variant="secondary"
+                        onClick={() => runFingerprint(true)}
+                        disabled={loading}
+                        leftIcon={<RefreshCw size={16} className={loading ? "animate-spin" : ""} />}
+                    >
+                        {t.regenerate || "Regenerate"}
+                    </Button>
                     {activeTab !== 'fonts' && (
-                        <button 
+                        <Button 
+                            variant="primary"
                             onClick={handleCopy}
-                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
+                            leftIcon={copied ? <Check size={16} /> : <Copy size={16} />}
                         >
-                            {copied ? <Check size={16} /> : <Copy size={16} />}
                             {copied ? t.copied : t.copy}
-                        </button>
+                        </Button>
                     )}
                 </div>
             </>

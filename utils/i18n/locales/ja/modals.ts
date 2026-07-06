@@ -178,6 +178,7 @@ Copyright (c) 2026 BrowserScope Contributors
     font_list_title: "検出されたフォント",
     copy: "IDをコピー",
     copied: "コピー完了",
+    regenerate: "再生成",
     close: "閉じる"
   },
   benchmarkModal: {

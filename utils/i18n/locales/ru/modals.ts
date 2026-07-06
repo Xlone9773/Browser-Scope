@@ -178,6 +178,7 @@ Copyright (c) 2026 BrowserScope Contributors
     font_list_title: "Обнаруженные шрифты",
     copy: "Копировать ID",
     copied: "Скопировано",
+    regenerate: "Перегенерировать",
     close: "Закрыть"
   },
   benchmarkModal: {

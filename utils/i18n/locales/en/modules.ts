@@ -238,6 +238,7 @@ export const modules = {
     font_list_title: "Detected Fonts",
     copy: "Copy ID",
     copied: "Copied",
+    regenerate: "Regenerate",
     close: "Close"
   },
 
