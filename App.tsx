@@ -1,4 +1,5 @@
-import React, { useEffect, useState, Suspense, useRef } from "react";
+import React, { useEffect, useState, Suspense, useRef, useMemo } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { Monitor, Smartphone, ShieldAlert, Cpu, Loader2, Search, Settings2 } from "lucide-react";
 import { exportAsJson } from "./services/exporter";
 import { translations } from "./utils/i18n/index";
@@ -98,6 +99,7 @@ const App: React.FC = () => {
     useModalManager();
 
   const [activeTab, setActiveTab] = useState<"all" | "browser" | "environment" | "system" | "network" | "advanced">("all");
+  const [slideDirection, setSlideDirection] = useState(0);
 
   const {
     lang,
@@ -169,6 +171,70 @@ const App: React.FC = () => {
       console.log('SW registration error', error);
     },
   });
+
+
+  const availableTabs = useMemo(() => {
+    const tabs: { id: "all" | "browser" | "environment" | "system" | "network" | "advanced"; label: string; icon: React.ReactNode }[] = [
+      { id: "all", label: (t as any).groups?.all || "All", icon: null }
+    ];
+    if (!hiddenCards.includes("browser")) tabs.push({ id: "browser", label: (t as any).groups?.browser || "Browser", icon: <Monitor size={16} /> });
+    if (!hiddenCards.includes("environment")) tabs.push({ id: "environment", label: (t as any).groups?.environment || "Environment", icon: <ShieldAlert size={16} /> });
+    if (!(hiddenCards.includes("system") && hiddenCards.includes("hardware") && hiddenCards.includes("display"))) tabs.push({ id: "system", label: (t as any).groups?.system || "System", icon: <Smartphone size={16} /> });
+    if (!(hiddenCards.includes("network") && hiddenCards.includes("security") && hiddenCards.includes("fingerprint"))) tabs.push({ id: "network", label: (t as any).groups?.network || "Network", icon: <ShieldAlert size={16} /> });
+    if (!(hiddenCards.includes("ai") && hiddenCards.includes("location") && hiddenCards.includes("storage") && hiddenCards.includes("permissions") && hiddenCards.includes("media_devices") && hiddenCards.includes("media_capabilities") && hiddenCards.includes("user_agent") && hiddenCards.includes("pwa") && hiddenCards.includes("features"))) tabs.push({ id: "advanced", label: (t as any).groups?.advanced || "Advanced", icon: <Cpu size={16} /> });
+    return tabs;
+  }, [t, hiddenCards]);
+
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const activeTabRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (activeTabRef.current && tabsContainerRef.current) {
+      const container = tabsContainerRef.current;
+      const activeBtn = activeTabRef.current;
+      const containerWidth = container.offsetWidth;
+      
+      const scrollLeft = activeBtn.offsetLeft - (containerWidth / 2) + (activeBtn.offsetWidth / 2);
+      
+      container.scrollTo({
+        left: scrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  }, [activeTab]);
+
+  const touchEndY = useRef<number | null>(null);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchEndX.current = null;
+    touchEndY.current = null;
+    touchStartX.current = e.targetTouches[0].clientX;
+    touchStartY.current = e.targetTouches[0].clientY;
+  };
+  const onTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+    touchEndY.current = e.targetTouches[0].clientY;
+  };
+  const onTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null || touchStartY.current === null || touchEndY.current === null) return;
+    const distanceX = touchStartX.current - touchEndX.current;
+    const distanceY = touchStartY.current - touchEndY.current;
+    if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > 50) {
+      const isLeftSwipe = distanceX > 50;
+      const currentIndex = availableTabs.findIndex(tab => tab.id === activeTab);
+      if (currentIndex !== -1) {
+        if (isLeftSwipe && currentIndex < availableTabs.length - 1) {
+          setSlideDirection(1);
+          setActiveTab(availableTabs[currentIndex + 1].id as any);
+        } else if (!isLeftSwipe && currentIndex > 0) {
+          setSlideDirection(-1);
+          setActiveTab(availableTabs[currentIndex - 1].id as any);
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     const handleVisibility = () => {
@@ -898,25 +964,6 @@ const App: React.FC = () => {
             
             {/* Navigation Tabs and Search */}
             {(showTabs || showSearch) && (() => {
-              const availableTabs: { id: string; label: string; icon: React.ReactNode }[] = [
-                { id: "all", label: (t as any).groups?.all || "All", icon: null }
-              ];
-              
-              if (!hiddenCards.includes("browser")) {
-                availableTabs.push({ id: "browser", label: (t as any).groups?.browser || "Browser", icon: <Monitor size={16} /> });
-              }
-              if (!hiddenCards.includes("environment")) {
-                availableTabs.push({ id: "environment", label: (t as any).groups?.environment || "Environment", icon: <ShieldAlert size={16} /> });
-              }
-              if (!(hiddenCards.includes("system") && hiddenCards.includes("hardware") && hiddenCards.includes("display"))) {
-                availableTabs.push({ id: "system", label: (t as any).groups?.system || "System", icon: <Smartphone size={16} /> });
-              }
-              if (!(hiddenCards.includes("network") && hiddenCards.includes("security") && hiddenCards.includes("fingerprint"))) {
-                availableTabs.push({ id: "network", label: (t as any).groups?.network || "Network", icon: <ShieldAlert size={16} /> });
-              }
-              if (!(hiddenCards.includes("ai") && hiddenCards.includes("location") && hiddenCards.includes("storage") && hiddenCards.includes("permissions") && hiddenCards.includes("media_devices") && hiddenCards.includes("media_capabilities") && hiddenCards.includes("user_agent") && hiddenCards.includes("pwa") && hiddenCards.includes("features"))) {
-                availableTabs.push({ id: "advanced", label: (t as any).groups?.advanced || "Advanced", icon: <Cpu size={16} /> });
-              }
 
               if (availableTabs.length <= 1 && !showSearch) return null;
 
@@ -950,6 +997,7 @@ const App: React.FC = () => {
                   return normText.includes(normQuery);
               };
 
+              
               const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
                   const keyword = e.target.value.toLowerCase().trim();
                   if (!keyword) {
@@ -1041,11 +1089,17 @@ const App: React.FC = () => {
                       </div>
                   )}
                   {showTabs && availableTabs.length > 1 && (
-                    <div className="flex space-x-2 overflow-x-auto scrollbar-hide px-1">
+                    <div className="flex space-x-2 overflow-x-auto scrollbar-hide px-1" ref={tabsContainerRef}>
                       {availableTabs.map(tab => (
                         <button
                           key={tab.id}
-                          onClick={() => setActiveTab(tab.id as any)}
+                          ref={activeTab === tab.id ? activeTabRef : null}
+                          onClick={() => {
+                            const newIndex = availableTabs.findIndex(t => t.id === tab.id);
+                            const oldIndex = availableTabs.findIndex(t => t.id === activeTab);
+                            setSlideDirection(newIndex > oldIndex ? 1 : -1);
+                            setActiveTab(tab.id as any);
+                          }}
                           className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-sm font-medium ${
                             activeTab === tab.id
                               ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
@@ -1070,8 +1124,21 @@ const App: React.FC = () => {
               }
             >
               <div
-                className={`space-y-6 ${initialAnimationStyle === "slide-up" ? "anim-slide-up" : initialAnimationStyle === "fade" ? "anim-fade" : initialAnimationStyle === "fly-in" ? "anim-fly-in" : initialAnimationStyle === "zoom" ? "anim-zoom" : ""}`}
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+                className="overflow-hidden"
               >
+                <AnimatePresence mode="wait" initial={false} custom={slideDirection}>
+                  <motion.div
+                    key={activeTab}
+                    custom={slideDirection}
+                    initial={{ opacity: 0, x: slideDirection > 0 ? 30 : slideDirection < 0 ? -30 : 0 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: slideDirection > 0 ? -30 : slideDirection < 0 ? 30 : 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    className={`space-y-6 ${initialAnimationStyle === "slide-up" ? "anim-slide-up" : initialAnimationStyle === "fade" ? "anim-fade" : initialAnimationStyle === "fly-in" ? "anim-fly-in" : initialAnimationStyle === "zoom" ? "anim-zoom" : ""}`}
+                  >
                 {activeTab === "all" && <QuickSummaryWidget data={browserData} t={t} />}
 
                 {/* Empty State */}
@@ -1302,6 +1369,8 @@ const App: React.FC = () => {
                     <FeaturesSection features={browserData.features} t={t} />
                   </div>
                 )}
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </Suspense>
           </ErrorBoundary>
