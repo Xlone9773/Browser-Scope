@@ -104,6 +104,12 @@ export const settings = {
             desc: "以前に閉じたすべての通知カードをダッシュボード上部に再表示します。",
             button: "すべて復元",
             empty: "閉じられた通知はありません"
+        },
+        quickSummaryVisibility: {
+            title: "クイックサマリー",
+            desc: "ダッシュボード上部にセキュリティ指標を含むクイックサマリーウィジェットを再表示します。",
+            restoreBtn: "表示を復元",
+            activeState: "表示中"
         },udpBypass: {
             title: "UDP プロキシを有効にする (CORS バイパス)",
             desc: "UDP マッピング API を使用して、CORS によるネットワーク要求のインターセプトを完全にバイパスします。",

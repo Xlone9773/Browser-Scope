@@ -104,6 +104,12 @@ export const settings = {
             desc: "重新顯示在儀表板頂部被您手動關閉的所有通知卡片。",
             button: "恢復所有通知",
             empty: "暫無被關閉的通知"
+        },
+        quickSummaryVisibility: {
+            title: "快速概要",
+            desc: "重新顯示主介面頂部的快速概要卡片（包含網路狀態、安全指標等）。",
+            restoreBtn: "恢復顯示",
+            activeState: "已恢復顯示"
         },udpBypass: {
             title: "啟用 UDP 網絡代理 (完全繞過跨域)",
             desc: "使用UDP映射API提取網絡工具端點，徹底解決由於CORS產生的任何網絡請求攔截。",

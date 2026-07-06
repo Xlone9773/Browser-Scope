@@ -50,6 +50,9 @@ interface SettingsModalProps {
   setHiddenCards: (cards: string[]) => void;
   restoreAllNotifications: () => void;
   dismissedNotificationsCount: number;
+  showQuickSummary: boolean;
+  toggleShowQuickSummary: (val: boolean) => void;
+  lang: string;
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
   moduleStates?: ModuleState[];
@@ -98,6 +101,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setHiddenCards,
     restoreAllNotifications,
     dismissedNotificationsCount,
+    showQuickSummary,
+    toggleShowQuickSummary,
+    lang,
     isDevToolsFloating, 
     setDevToolsFloating,
     moduleStates = [],
@@ -296,6 +302,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 restoreAllNotifications={restoreAllNotifications}
                                 dismissedNotificationsCount={dismissedNotificationsCount}
                                 translationDict={t}
+                                showQuickSummary={showQuickSummary}
+                                toggleShowQuickSummary={toggleShowQuickSummary}
+                                lang={lang}
                             />
                         )}
 

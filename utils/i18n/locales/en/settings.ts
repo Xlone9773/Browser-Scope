@@ -104,6 +104,12 @@ export const settings = {
             desc: "Bring back all previously dismissed notification cards at the top of the dashboard.",
             button: "Restore All",
             empty: "No dismissed notifications"
+        },
+        quickSummaryVisibility: {
+            title: "Quick Summary",
+            desc: "Bring back the quick summary widget at the top of the main dashboard containing security indices.",
+            restoreBtn: "Restore Display",
+            activeState: "Showing"
         },udpBypass: {
             title: "Enable UDP Network (Bypass CORS)",
             desc: "Use UDP mapping API to fetch network tools endpoints entirely bypassing all CORS errors.",

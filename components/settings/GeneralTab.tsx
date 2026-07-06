@@ -1,5 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
+import { RotateCcw, Check } from 'lucide-react';
+import { Button } from '../ui/Button';
 
 interface GeneralTabProps {
     t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */; // Using any /* eslint-disable-line @typescript-eslint/no-explicit-any */ for t because Translation type was getting complicated with extensions
@@ -12,7 +14,33 @@ interface GeneralTabProps {
     restoreAllNotifications: () => void;
     dismissedNotificationsCount: number;
     translationDict: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    showQuickSummary: boolean;
+    toggleShowQuickSummary: (val: boolean) => void;
+    lang: string;
 }
+
+// Custom Premium Restore Button Component
+interface CustomRestoreButtonProps {
+    onClick: () => void;
+    disabled: boolean;
+    activeText: string;
+    inactiveText: string;
+}
+
+const CustomRestoreButton: React.FC<CustomRestoreButtonProps> = ({ onClick, disabled, activeText, inactiveText }) => {
+    return (
+        <Button
+            variant={disabled ? "secondary" : "soft"}
+            onClick={onClick}
+            disabled={disabled}
+            size="md"
+            leftIcon={disabled ? <Check className="w-4.5 h-4.5 text-emerald-500 shrink-0" /> : <RotateCcw className="w-4.5 h-4.5 shrink-0 transition-transform duration-500 group-hover:rotate-180" />}
+            className="min-w-[140px] font-semibold rounded-xl group select-none active:scale-[0.97] transition-all"
+        >
+            <span className="truncate">{disabled ? activeText : inactiveText}</span>
+        </Button>
+    );
+};
 
 // Custom Switch Component with Spring Animation
 const Switch: React.FC<{ checked: boolean; onChange: (val: boolean) => void; label?: string; disabled?: boolean }> = ({ checked, onChange, label, disabled = false }) => (
@@ -51,7 +79,10 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     setHiddenCards,
     restoreAllNotifications,
     dismissedNotificationsCount,
-    translationDict
+    translationDict,
+    showQuickSummary,
+    toggleShowQuickSummary,
+    lang
 }) => {
     const [udpSupported, setUdpSupported] = useState<boolean | null>(() => {
         const stored = localStorage.getItem('udp_supported');
@@ -205,6 +236,26 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 </div>
             </div>
 
+            {/* Quick Summary Visibility */}
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                <div className="flex flex-col gap-1 max-w-[70%]">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.quickSummaryVisibility?.title || "Quick Summary"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {t.quickSummaryVisibility?.desc || "Bring back the quick summary widget at the top of the main dashboard."}
+                    </p>
+                </div>
+                <div>
+                    <CustomRestoreButton 
+                        onClick={() => toggleShowQuickSummary(true)}
+                        disabled={showQuickSummary}
+                        activeText={t.quickSummaryVisibility?.activeState || "Showing"}
+                        inactiveText={t.quickSummaryVisibility?.restoreBtn || "Restore Display"}
+                    />
+                </div>
+            </div>
+
             {/* Restore Notifications */}
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
                 <div className="flex flex-col gap-1 max-w-[70%]">
@@ -216,20 +267,12 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     </p>
                 </div>
                 <div>
-                    <button
+                    <CustomRestoreButton 
                         onClick={restoreAllNotifications}
                         disabled={dismissedNotificationsCount === 0}
-                        className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors border
-                            ${dismissedNotificationsCount === 0 
-                                ? 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
-                                : 'bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400'
-                            }
-                        `}
-                    >
-                        {dismissedNotificationsCount === 0 
-                            ? (t.restoreNotifications?.empty || "No dismissed notifications")
-                            : (t.restoreNotifications?.button || "Restore All")}
-                    </button>
+                        activeText={t.restoreNotifications?.empty || "No dismissed notifications"}
+                        inactiveText={t.restoreNotifications?.button || "Restore All"}
+                    />
                 </div>
             </div>
         </div>

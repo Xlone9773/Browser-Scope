@@ -142,6 +142,8 @@ const App: React.FC = () => {
     dismissedNotifications,
     dismissNotification,
     restoreAllNotifications,
+    showQuickSummary,
+    toggleShowQuickSummary,
   } = useAppSettings();
 
   const [matchedCardIds, setMatchedCardIds] = useState<string[] | null>(null);
@@ -776,6 +778,9 @@ const App: React.FC = () => {
               setHiddenCards={updateHiddenCards}
               restoreAllNotifications={restoreAllNotifications}
               dismissedNotificationsCount={dismissedNotifications.length}
+              showQuickSummary={showQuickSummary}
+              toggleShowQuickSummary={toggleShowQuickSummary}
+              lang={lang}
               isDevToolsFloating={isDevToolsFloating}
               setDevToolsFloating={setIsDevToolsFloating}
               moduleStates={modalStates}
@@ -1135,7 +1140,7 @@ const App: React.FC = () => {
                   {/* Quick Summary Widget */}
                   <motion.div
                     initial={false}
-                    animate={activeTab === "all" && matchedCardIds === null ? {
+                    animate={(activeTab === "all" && matchedCardIds === null && showQuickSummary) ? {
                       opacity: 1,
                       y: 0,
                       scale: 1,
@@ -1150,7 +1155,7 @@ const App: React.FC = () => {
                     }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
                   >
-                    <QuickSummaryWidget data={browserData} t={t} />
+                    <QuickSummaryWidget data={browserData} t={t} onClose={() => toggleShowQuickSummary(false)} />
                   </motion.div>
 
                   {/* Empty State */}

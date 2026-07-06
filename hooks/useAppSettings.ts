@@ -78,6 +78,16 @@ export function useAppSettings() {
     const saved = localStorage.getItem("showSearch");
     return saved === null ? true : saved === "true";
   });
+  const [showQuickSummary, setShowQuickSummary] = useState<boolean>(() => {
+    const saved = localStorage.getItem("showQuickSummary");
+    return saved === null ? true : saved === "true";
+  });
+
+  const toggleShowQuickSummary = (value: boolean) => {
+    setShowQuickSummary(value);
+    localStorage.setItem("showQuickSummary", String(value));
+  };
+
   const [hiddenCards, setHiddenCards] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem("hiddenCards");
@@ -379,5 +389,7 @@ export function useAppSettings() {
     dismissedNotifications,
     dismissNotification,
     restoreAllNotifications,
+    showQuickSummary,
+    toggleShowQuickSummary,
   };
 }

@@ -104,6 +104,12 @@ export const settings = {
             desc: "重新显示在仪表盘顶部被您手动关闭的所有通知卡片。",
             button: "恢复所有通知",
             empty: "暂无被关闭的通知"
+        },
+        quickSummaryVisibility: {
+            title: "快速概要",
+            desc: "重新显示主界面顶部的快速概要卡片（包含网络状态、安全指标等）。",
+            restoreBtn: "恢复显示",
+            activeState: "已恢复显示"
         },udpBypass: {
             title: "启用 UDP 网络代理 (完全绕过跨域)",
             desc: "使用UDP映射API提取网络工具端点，彻底解决由于CORS产生的任何网络请求拦截。",
