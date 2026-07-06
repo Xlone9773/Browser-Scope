@@ -24,7 +24,10 @@ export const modals = {
         },
         openSource: {
             title: "開源項目",
-            license: "MIT 協議"
+            license: "MIT 協議",
+            viewLicense: "查看許可證",
+            hideLicense: "隱藏許可證",
+            downloadLicense: "下載許可證"
         }
     },
     updates: [

@@ -24,7 +24,10 @@ export const modals = {
         },
         openSource: {
             title: "Open Source",
-            license: "MIT License"
+            license: "MIT License",
+            viewLicense: "View License",
+            hideLicense: "Hide License",
+            downloadLicense: "Download License"
         }
     },
     updates: [

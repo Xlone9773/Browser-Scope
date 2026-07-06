@@ -24,7 +24,10 @@ export const modals = {
         },
         openSource: {
             title: "Открытый код",
-            license: "Лицензия MIT"
+            license: "Лицензия MIT",
+            viewLicense: "Просмотреть лицензию",
+            hideLicense: "Скрыть лицензию",
+            downloadLicense: "Скачать лицензию"
         }
     },
     updates: [

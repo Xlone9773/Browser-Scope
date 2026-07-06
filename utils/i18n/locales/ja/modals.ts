@@ -24,7 +24,10 @@ export const modals = {
         },
         openSource: {
             title: "オープンソース",
-            license: "MIT ライセンス"
+            license: "MIT ライセンス",
+            viewLicense: "ライセンス表示",
+            hideLicense: "ライセンス非表示",
+            downloadLicense: "ライセンスをダウンロード"
         }
     },
     updates: [

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
     Sparkles, 
     ShieldCheck, 
@@ -9,7 +9,9 @@ import {
     GitCommit, 
     Github,
     Fingerprint,
-    Box
+    Box,
+    FileText,
+    Download
 } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
@@ -21,6 +23,7 @@ interface AboutModalProps {
 
 export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
   const currentVersion = t.updates && t.updates[0] ? t.updates[0].version : '1.6.0';
+  const [showLicense, setShowLicense] = useState(false);
 
   return (
     <Modal
@@ -125,18 +128,87 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                             </div>
 
                             {/* Card 5: Open Source */}
-                            <a 
-                                href="https://github.com/Xlone9773/Browser-Scope" 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="bg-slate-900 dark:bg-black p-5 rounded-2xl border border-slate-800 shadow-lg hover:shadow-2xl transition-all flex flex-col justify-center items-center text-center group cursor-pointer hover:-translate-y-1 relative overflow-hidden"
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <Github size={32} className="text-white mb-3 group-hover:scale-110 transition-transform relative z-10" />
-                                <h3 className="font-bold text-white text-base relative z-10">{t.features?.openSource.title}</h3>
-                                <span className="text-[10px] text-slate-400 mt-1 relative z-10">{t.features?.openSource.license}</span>
-                            </a>
+                            <div className="bg-slate-900 dark:bg-black p-5 rounded-2xl border border-slate-800 shadow-lg relative overflow-hidden flex flex-col justify-between h-full min-h-[160px] group hover:shadow-xl transition-all">
+                                <div className="absolute inset-0 bg-gradient-to-br from-slate-800/10 to-indigo-900/10 pointer-events-none" />
+                                
+                                <div className="relative z-10 flex items-start justify-between w-full">
+                                    <div className="flex flex-col text-left">
+                                        <h3 className="font-bold text-white text-base">{t.features?.openSource.title}</h3>
+                                        <span className="text-xs font-mono text-indigo-400 mt-1 flex items-center gap-1">
+                                            <FileText size={12} />
+                                            {t.features?.openSource.license}
+                                        </span>
+                                    </div>
+                                    <a 
+                                        href="https://github.com/Xlone9773/Browser-Scope" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-slate-400 hover:text-white transition-colors"
+                                        title="GitHub Repository"
+                                    >
+                                        <Github size={24} className="group-hover:scale-110 transition-transform" />
+                                    </a>
+                                </div>
+
+                                <div className="relative z-10 mt-6 grid grid-cols-2 gap-2">
+                                    <button
+                                        onClick={() => setShowLicense(!showLicense)}
+                                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors cursor-pointer"
+                                    >
+                                        {showLicense ? (t.features?.openSource as any).hideLicense : (t.features?.openSource as any).viewLicense}
+                                    </button>
+                                    <a
+                                        href="/LICENSE"
+                                        download="LICENSE"
+                                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-medium text-white transition-colors cursor-pointer text-center"
+                                    >
+                                        <Download size={12} />
+                                        {(t.features?.openSource as any).downloadLicense}
+                                    </a>
+                                </div>
+                            </div>
                         </div>
+
+                        {/* Collapsible Full LICENSE Viewer */}
+                        {showLicense && (
+                            <div className="mb-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/60 dark:border-slate-800/60 shadow-lg anim-slide-up duration-300 relative">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <FileText className="text-indigo-500" size={18} />
+                                        <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">LICENSE (MIT)</h4>
+                                    </div>
+                                    <button 
+                                        onClick={() => setShowLicense(false)}
+                                        className="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                                    >
+                                        {(t.features?.openSource as any).hideLicense}
+                                    </button>
+                                </div>
+                                <pre className="font-mono text-[11px] text-slate-600 dark:text-slate-400 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200/50 dark:border-slate-800/50 custom-scrollbar">
+{`MIT License
+
+Copyright (c) 2026 BrowserScope Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.`}
+                                </pre>
+                            </div>
+                        )}
 
                         {/* Timeline / Changelog */}
                         <div className="bg-white/50 dark:bg-slate-900/30 rounded-3xl p-6 md:p-8 border border-slate-200/50 dark:border-slate-800/50">
