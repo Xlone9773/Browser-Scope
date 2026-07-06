@@ -14,6 +14,44 @@ export async function loadEruda(store: any /* eslint-disable-line @typescript-es
       document.body.appendChild(container);
     }
 
+    try {
+      const fetchDesc = Object.getOwnPropertyDescriptor(window, "fetch") || Object.getOwnPropertyDescriptor(Object.getPrototypeOf(window), "fetch");
+      if (fetchDesc && (!fetchDesc.set || !fetchDesc.writable)) {
+        let currentFetch = window.fetch;
+        Object.defineProperty(window, "fetch", {
+          configurable: true,
+          enumerable: true,
+          get() {
+            return currentFetch;
+          },
+          set(val) {
+            currentFetch = val;
+          }
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to prepare window.fetch:", e);
+    }
+
+    try {
+      const xhrDesc = Object.getOwnPropertyDescriptor(window, "XMLHttpRequest") || Object.getOwnPropertyDescriptor(Object.getPrototypeOf(window), "XMLHttpRequest");
+      if (xhrDesc && (!xhrDesc.set || !xhrDesc.writable)) {
+        let currentXHR = window.XMLHttpRequest;
+        Object.defineProperty(window, "XMLHttpRequest", {
+          configurable: true,
+          enumerable: true,
+          get() {
+            return currentXHR;
+          },
+          set(val) {
+            currentXHR = val;
+          }
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to prepare window.XMLHttpRequest:", e);
+    }
+
     const eruda = (await import("eruda")).default;
     eruda.init({
       container: container,

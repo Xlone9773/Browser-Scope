@@ -7,14 +7,42 @@ export async function loadVConsole(store: any /* eslint-disable-line @typescript
     return;
   }
   try {
-    if (!Object.getOwnPropertyDescriptor(window, "fetch")) {
-      const originalFetch = window.fetch;
-      Object.defineProperty(window, "fetch", {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value: originalFetch,
-      });
+    try {
+      const fetchDesc = Object.getOwnPropertyDescriptor(window, "fetch") || Object.getOwnPropertyDescriptor(Object.getPrototypeOf(window), "fetch");
+      if (fetchDesc && (!fetchDesc.set || !fetchDesc.writable)) {
+        let currentFetch = window.fetch;
+        Object.defineProperty(window, "fetch", {
+          configurable: true,
+          enumerable: true,
+          get() {
+            return currentFetch;
+          },
+          set(val) {
+            currentFetch = val;
+          }
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to prepare window.fetch:", e);
+    }
+
+    try {
+      const xhrDesc = Object.getOwnPropertyDescriptor(window, "XMLHttpRequest") || Object.getOwnPropertyDescriptor(Object.getPrototypeOf(window), "XMLHttpRequest");
+      if (xhrDesc && (!xhrDesc.set || !xhrDesc.writable)) {
+        let currentXHR = window.XMLHttpRequest;
+        Object.defineProperty(window, "XMLHttpRequest", {
+          configurable: true,
+          enumerable: true,
+          get() {
+            return currentXHR;
+          },
+          set(val) {
+            currentXHR = val;
+          }
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to prepare window.XMLHttpRequest:", e);
     }
     const VConsole = (await import("vconsole")).default;
     const isDark = document.documentElement.classList.contains("dark");

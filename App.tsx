@@ -23,62 +23,90 @@ import { HardwareCard } from "./components/cards/HardwareCard";
 import { DisplayCard } from "./components/cards/DisplayCard";
 import { QuickSummaryWidget } from "./components/sections/QuickSummaryWidget";
 
-const SecurityCard = React.lazy(() =>
+function lazyWithRetry<T extends React.ComponentType<any>>(
+  importFn: () => Promise<{ default: T }>,
+  retries = 3,
+  delay = 500
+): React.LazyExoticComponent<T> {
+  return React.lazy(() =>
+    importFn().catch((error) => {
+      return new Promise<{ default: T }>((resolve) => {
+        let attempts = 0;
+        const attemptLoad = () => {
+          importFn()
+            .then(resolve)
+            .catch((err) => {
+              attempts++;
+              if (attempts >= retries) {
+                console.error("Critical: Failed to load module dynamically after multiple retries. Falling back to empty component.", err);
+                resolve({ default: (() => null) as unknown as T });
+              } else {
+                setTimeout(attemptLoad, delay);
+              }
+            });
+        };
+        setTimeout(attemptLoad, delay);
+      });
+    })
+  );
+}
+
+const SecurityCard = lazyWithRetry(() =>
   import("./components/cards/SecurityCard").then((m) => ({
     default: m.SecurityCard,
   })),
 );
-const AiComputeCard = React.lazy(() =>
+const AiComputeCard = lazyWithRetry(() =>
   import("./components/cards/AiComputeCard").then((m) => ({
     default: m.AiComputeCard,
   })),
 );
-const FingerprintCard = React.lazy(() =>
+const FingerprintCard = lazyWithRetry(() =>
   import("./components/cards/FingerprintCard").then((m) => ({
     default: m.FingerprintCard,
   })),
 );
-const NetworkCard = React.lazy(() =>
+const NetworkCard = lazyWithRetry(() =>
   import("./components/cards/NetworkCard").then((m) => ({
     default: m.NetworkCard,
   })),
 );
-const StorageCard = React.lazy(() =>
+const StorageCard = lazyWithRetry(() =>
   import("./components/cards/StorageCard").then((m) => ({
     default: m.StorageCard,
   })),
 );
-const LocationCard = React.lazy(() =>
+const LocationCard = lazyWithRetry(() =>
   import("./components/cards/LocationCard").then((m) => ({
     default: m.LocationCard,
   })),
 );
-const PermissionsCard = React.lazy(() =>
+const PermissionsCard = lazyWithRetry(() =>
   import("./components/cards/PermissionsCard").then((m) => ({
     default: m.PermissionsCard,
   })),
 );
-const MediaDevicesCard = React.lazy(() =>
+const MediaDevicesCard = lazyWithRetry(() =>
   import("./components/cards/MediaDevicesCard").then((m) => ({
     default: m.MediaDevicesCard,
   })),
 );
-const MediaCapabilitiesCard = React.lazy(() =>
+const MediaCapabilitiesCard = lazyWithRetry(() =>
   import("./components/cards/MediaCapabilitiesCard").then((m) => ({
     default: m.MediaCapabilitiesCard,
   })),
 );
-const UserAgentCard = React.lazy(() =>
+const UserAgentCard = lazyWithRetry(() =>
   import("./components/cards/UserAgentCard").then((m) => ({
     default: m.UserAgentCard,
   })),
 );
-const PwaSection = React.lazy(() =>
+const PwaSection = lazyWithRetry(() =>
   import("./components/sections/PwaSection").then((m) => ({
     default: m.PwaSection,
   })),
 );
-const FeaturesSection = React.lazy(() =>
+const FeaturesSection = lazyWithRetry(() =>
   import("./components/sections/FeaturesSection").then((m) => ({
     default: m.FeaturesSection,
   })),
