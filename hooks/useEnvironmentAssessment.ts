@@ -124,9 +124,15 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
             }
 
             // Function.prototype.toString tampering
-            const toStringVal = Function.prototype.toString.call(navigator.permissions.query);
-            if (!toStringVal.includes('native code')) {
-                addAnomaly('native_override', 'Native function toString overridden', 'danger', 'trust', 30);
+            if (navigator.permissions && navigator.permissions.query) {
+                try {
+                    const toStringVal = Function.prototype.toString.call(navigator.permissions.query);
+                    if (!toStringVal.includes('native code')) {
+                        addAnomaly('native_override', 'Native function toString overridden', 'danger', 'trust', 30);
+                    }
+                } catch (e) {
+                    addAnomaly('native_override_error', 'Error checking native function toString', 'suspicious', 'trust', 10);
+                }
             }
 
             // 5. Engine stack mismatches
