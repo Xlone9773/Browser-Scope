@@ -153,18 +153,49 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                 <div className="relative z-10 mt-6 grid grid-cols-2 gap-2">
                                     <button
                                         onClick={() => setShowLicense(!showLicense)}
-                                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors cursor-pointer"
+                                        className="flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 rounded-lg text-xs font-semibold text-slate-100 transition-all duration-200 cursor-pointer active:scale-95 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
                                     >
+                                        <FileText size={12} className={showLicense ? "text-indigo-400" : "text-slate-400"} />
                                         {showLicense ? (t.features?.openSource as any).hideLicense : (t.features?.openSource as any).viewLicense}
                                     </button>
-                                    <a
-                                        href="/LICENSE"
-                                        download="LICENSE"
-                                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-medium text-white transition-colors cursor-pointer text-center"
+                                    <button
+                                        onClick={() => {
+                                            const licenseText = `MIT License
+
+Copyright (c) 2026 BrowserScope Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.`;
+                                            const blob = new Blob([licenseText], { type: 'text/plain;charset=utf-8' });
+                                            const url = URL.createObjectURL(blob);
+                                            const link = document.createElement('a');
+                                            link.href = url;
+                                            link.download = 'LICENSE';
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            document.body.removeChild(link);
+                                            URL.revokeObjectURL(url);
+                                        }}
+                                        className="flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white transition-all duration-200 cursor-pointer active:scale-95 shadow-md shadow-indigo-600/10 hover:shadow-indigo-600/20 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     >
                                         <Download size={12} />
                                         {(t.features?.openSource as any).downloadLicense}
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -179,7 +210,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                     </div>
                                     <button 
                                         onClick={() => setShowLicense(false)}
-                                        className="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                                        className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 font-medium transition-colors cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded-md"
                                     >
                                         {(t.features?.openSource as any).hideLicense}
                                     </button>
