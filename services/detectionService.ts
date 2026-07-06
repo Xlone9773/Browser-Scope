@@ -33,7 +33,22 @@ export const getAllData = async (): Promise<BrowserData> => {
   
   // Peripherals
     const screenExtended = (window.screen as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).isExtended || false;
-  const gamepads = navigator.getGamepads ? navigator.getGamepads().filter(g => g !== null).length : 0;
+  let gamepadsCount = 0;
+  try {
+      if (navigator.getGamepads) {
+          const pads = navigator.getGamepads();
+          if (pads && typeof pads.length === 'number') {
+              for (let i = 0; i < pads.length; i++) {
+                  if (pads[i] !== null) {
+                      gamepadsCount++;
+                  }
+              }
+          }
+      }
+  } catch (e) {
+      console.warn("Gamepad API not supported or disabled", e);
+  }
+  const gamepads = gamepadsCount;
 
   // Security
   const isBot = nav.webdriver || false;

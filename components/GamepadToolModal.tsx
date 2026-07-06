@@ -15,11 +15,28 @@ export const GamepadToolModal: React.FC<GamepadToolModalProps> = ({ onClose, t }
   const requestRef = useRef<number | null>(null);
 
   // Gamepad Polling
+  const warnedRef = useRef(false);
+
   useEffect(() => {
       const scanGamepads = () => {
-          const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+          let pads: (Gamepad | null)[] = [];
+          try {
+              if (navigator.getGamepads) {
+                  const rawPads = navigator.getGamepads();
+                  if (rawPads && typeof rawPads.length === 'number') {
+                      for (let i = 0; i < rawPads.length; i++) {
+                          pads.push(rawPads[i]);
+                      }
+                  }
+              }
+          } catch (e) {
+              if (!warnedRef.current) {
+                  console.warn("Gamepad API not supported or disabled", e);
+                  warnedRef.current = true;
+              }
+          }
           // Convert GamepadList to Array and filter out nulls for checking, but keep index structure
-          setGamepads(Array.from(pads));
+          setGamepads(pads);
           requestRef.current = requestAnimationFrame(scanGamepads);
       };
 
