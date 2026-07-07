@@ -38,6 +38,48 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
     >
         {({ close: _close }) => (
             <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
+                {/* Scoped style block for hardware-accelerated animations */}
+                <style>{`
+                  @keyframes float-slow-1 {
+                    0%, 100% {
+                      transform: translate3d(0, 0, 0) scale(1);
+                      opacity: 0.6;
+                    }
+                    50% {
+                      transform: translate3d(24px, -16px, 0) scale(1.1);
+                      opacity: 0.85;
+                    }
+                  }
+                  @keyframes float-slow-2 {
+                    0%, 100% {
+                      transform: translate3d(0, 0, 0) scale(1.05);
+                      opacity: 0.5;
+                    }
+                    50% {
+                      transform: translate3d(-16px, 24px, 0) scale(0.95);
+                      opacity: 0.75;
+                    }
+                  }
+                  @keyframes float-slow-3 {
+                    0%, 100% {
+                      transform: translate3d(0, 0, 0) scale(1);
+                      opacity: 0.4;
+                    }
+                    50% {
+                      transform: translate3d(16px, 16px, 0) scale(1.05);
+                      opacity: 0.65;
+                    }
+                  }
+                  .animate-float-1 {
+                    animation: float-slow-1 12s ease-in-out infinite;
+                  }
+                  .animate-float-2 {
+                    animation: float-slow-2 15s ease-in-out infinite;
+                  }
+                  .animate-float-3 {
+                    animation: float-slow-3 18s ease-in-out infinite;
+                  }
+                `}</style>
                 
                 {/* Scrollable Area containing both Hero and Content for seamless integration */}
                 <div className="flex-1 overflow-y-auto custom-scrollbar relative">
@@ -46,12 +88,12 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                     <div className="relative pt-12 pb-20 px-8 overflow-hidden bg-slate-900 shrink-0">
                         {/* Background Effects */}
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-black" />
-                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 contrast-150 mix-blend-overlay"></div>
+                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 contrast-150 mix-blend-overlay pointer-events-none transform-gpu will-change-transform" />
                         
-                        {/* Animated Orbs */}
-                        <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-pulse" />
-                        <div className="absolute top-1/2 -left-24 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-                        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
+                        {/* Animated Orbs - Optimized using high-performance radial gradients and translate3d hardware acceleration */}
+                        <div className="absolute -top-24 -right-24 w-96 h-96 bg-[radial-gradient(circle,rgba(99,102,241,0.25)_0%,transparent_70%)] rounded-full animate-float-1 will-change-transform transform-gpu pointer-events-none" />
+                        <div className="absolute top-1/3 -left-24 w-72 h-72 bg-[radial-gradient(circle,rgba(168,85,247,0.25)_0%,transparent_70%)] rounded-full animate-float-2 will-change-transform transform-gpu pointer-events-none" />
+                        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-[radial-gradient(circle,rgba(59,130,246,0.15)_0%,transparent_70%)] rounded-full animate-float-3 will-change-transform transform-gpu pointer-events-none" />
 
                         {/* Content */}
                         <div className="relative z-10 flex flex-col items-center text-center">
