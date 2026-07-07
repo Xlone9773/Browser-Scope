@@ -1,7 +1,7 @@
 {
   "name": "browserscope",
   "private": true,
-  "version": "0.0.7",
+  "version": "0.0.8",
   "type": "module",
   "scripts": {
     "clean": "rm -rf dist",
@@ -25,6 +25,7 @@
     "eruda-monitor": "^1.1.2",
     "eruda-timing": "^2.0.1",
     "express": "^5.2.1",
+    "express-async-errors": "^3.1.1",
     "express-rate-limit": "^8.5.2",
     "fingerprintjs2": "2.1.4",
     "fpjs-v5": "npm:@fingerprintjs/fingerprintjs@^5.2.0",
