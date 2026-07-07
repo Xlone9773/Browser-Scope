@@ -1,7 +1,7 @@
 import React, { useEffect, useState, Suspense, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Monitor, Smartphone, ShieldAlert, Cpu, Loader2, Search, Settings2 } from "lucide-react";
-import { exportAsJson } from "./services/exporter";
+import { exportAsJson, exportAsPdf } from "./services/exporter";
 import { translations } from "./utils/i18n/index";
 import { FloatingWindow } from "./components/ui/FloatingWindow";
 import { ErrorBoundary } from "./components/ui/ErrorBoundary";
@@ -177,6 +177,7 @@ const App: React.FC = () => {
   const [matchedCardIds, setMatchedCardIds] = useState<string[] | null>(null);
   const [showSearchSettings, setShowSearchSettings] = useState(false);
   const [isViewportTooSmall, setIsViewportTooSmall] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
 
   useEffect(() => {
     const checkViewportSize = () => {
@@ -654,6 +655,22 @@ const App: React.FC = () => {
     exportAsJson(data, permStatus, geoData);
   };
 
+  const handleExportPDF = () => {
+    if (!data) return;
+    exportAsPdf(
+      data,
+      permStatus,
+      geoData,
+      t,
+      () => setIsExportingPdf(true),
+      () => setIsExportingPdf(false),
+      (err) => {
+        setIsExportingPdf(false);
+        alert(`PDF Export Error: ${err}`);
+      }
+    );
+  };
+
   return (
     <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 scrollbar-hide relative">
       {/* Loading Overlay */}
@@ -686,6 +703,31 @@ const App: React.FC = () => {
               </h3>
               <p className="text-sm font-medium text-slate-500 dark:text-slate-400 animate-pulse font-mono">
                 {loadingText}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PDF Exporting Loader Overlay */}
+      {isExportingPdf && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 backdrop-blur-md">
+          <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex items-center gap-4 max-w-sm w-full mx-4 transform animate-in fade-in zoom-in duration-200">
+            <Loader2 className="animate-spin text-indigo-500 shrink-0" size={28} />
+            <div>
+              <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
+                {lang === "zh-CN" ? "正在生成 PDF 诊断报告..." : 
+                 lang === "zh-TW" || lang === "zh-HK" ? "正在生成 PDF 診斷報告..." :
+                 lang === "ja" ? "PDF診断レポートを作成中..." :
+                 lang === "ru" ? "Создание PDF-отчета..." :
+                 "Generating PDF Diagnostic Report..."}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+                {lang === "zh-CN" ? "正在使用后台 Worker 线程渲染报告" : 
+                 lang === "zh-TW" || lang === "zh-HK" ? "正在使用後台 Worker 線程渲染報告" :
+                 lang === "ja" ? "バックグラウンドの Worker 経由で処理中" :
+                 lang === "ru" ? "Используется фоновый поток" :
+                 "Rendering report using background Worker thread"}
               </p>
             </div>
           </div>
@@ -966,6 +1008,7 @@ const App: React.FC = () => {
           toggleTheme={toggleTheme}
           onRefresh={fetchData}
           onExport={handleExportJSON}
+          onExportPdf={handleExportPDF}
           onOpenSettings={() => open("settings")}
           onOpenAbout={() => open("about")}
           onOpenBenchmark={() => open("benchmark")}

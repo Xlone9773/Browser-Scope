@@ -231,6 +231,7 @@ export const dashboard = {
     run_benchmark: "Тест производительности",
     about: "О программе",
     export_json: "Экспорт JSON",
+    export_pdf: "Экспорт PDF (Фоновый поток)",
     open_sensors: "Детали датчиков",
     open_tools: "Аппаратные тесты",
     open_vision: "Зрение (Vision)",

@@ -231,6 +231,7 @@ export const dashboard = {
     run_benchmark: "ベンチマーク実行",
     about: "アプリについて",
     export_json: "JSONエクスポート",
+    export_pdf: "PDFエクスポート (マルチスレッド)",
     open_sensors: "センサー詳細",
     open_tools: "ハードウェアテスト",
     open_vision: "ビジョン機能 (Vision)",

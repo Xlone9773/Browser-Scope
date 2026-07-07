@@ -232,6 +232,7 @@ export const dashboard = {
     run_benchmark: "性能跑分",
     about: "关于",
     export_json: "导出 JSON",
+    export_pdf: "导出 PDF (多线程)",
     open_sensors: "传感器详情",
     open_tools: "硬件交互测试",
     open_vision: "视觉识别 (Vision)",

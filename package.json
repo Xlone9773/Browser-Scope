@@ -29,6 +29,7 @@
     "fingerprintjs2": "2.1.4",
     "fpjs-v5": "npm:@fingerprintjs/fingerprintjs@^5.2.0",
     "helmet": "^8.2.0",
+    "jspdf": "^4.2.1",
     "long": "5.2.3",
     "lucide-react": "^0.561.0",
     "motion": "^12.42.2",

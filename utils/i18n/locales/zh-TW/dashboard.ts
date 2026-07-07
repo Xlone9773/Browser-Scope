@@ -231,6 +231,7 @@ export const dashboard = {
     run_benchmark: "效能跑分",
     about: "關於",
     export_json: "匯出 JSON",
+    export_pdf: "匯出 PDF (多線程)",
     open_sensors: "感測器詳情",
     open_tools: "硬體互動測試",
     open_vision: "視覺識別 (Vision)",

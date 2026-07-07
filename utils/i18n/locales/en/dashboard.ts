@@ -231,6 +231,7 @@ export const dashboard = {
     run_benchmark: "Run Benchmark",
     about: "About",
     export_json: "Export JSON",
+    export_pdf: "Export PDF (Worker)",
     open_sensors: "Sensors",
     open_tools: "Hardware Tools",
     open_vision: "Vision/QR",

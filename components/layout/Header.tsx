@@ -39,6 +39,7 @@ interface HeaderProps {
   toggleTheme: () => void;
   onRefresh: () => void;
   onExport: () => void;
+  onExportPdf: () => void;
   onOpenSettings: () => void;
   onOpenAbout: () => void;
   onOpenBenchmark: () => void;
@@ -54,6 +55,7 @@ export const Header: React.FC<HeaderProps> = ({
   toggleTheme,
   onRefresh,
   onExport,
+  onExportPdf,
   onOpenSettings,
   onOpenAbout,
   onOpenBenchmark,
@@ -62,12 +64,14 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [pendingLang, setPendingLang] = useState<Language | null>(null);
   const { formatNativeLanguageName } = useFormatter(lang);
 
   const langMenuRef = useRef<HTMLDivElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
+  const exportMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -93,6 +97,12 @@ export const Header: React.FC<HeaderProps> = ({
       ) {
         setIsMoreMenuOpen(false);
       }
+      if (
+        exportMenuRef.current &&
+        !exportMenuRef.current.contains(e.target as Node)
+      ) {
+        setIsExportMenuOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -113,6 +123,11 @@ export const Header: React.FC<HeaderProps> = ({
 
   const handleExport = () => {
     onExport();
+    setIsMoreMenuOpen(false);
+  };
+
+  const handleExportPdf = () => {
+    onExportPdf();
     setIsMoreMenuOpen(false);
   };
 
@@ -270,13 +285,41 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          <Button
-            variant="secondary"
-            onClick={onExport}
-            leftIcon={<Download size={16} />}
-          >
-            <span className="hidden sm:inline">{t.actions.export_json}</span>
-          </Button>
+          <div className="relative" ref={exportMenuRef}>
+            <Button
+              variant="secondary"
+              onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
+              leftIcon={<Download size={16} />}
+              rightIcon={<ChevronDown size={14} className={`transition-transform duration-200 ${isExportMenuOpen ? "rotate-180" : ""}`} />}
+            >
+              <span className="hidden sm:inline">{(t.common as any).export || "Export"}</span>
+            </Button>
+            
+            <div
+              className={`absolute right-0 top-full mt-2 w-48 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl py-1 z-50 transform transition-all duration-200 origin-top-right ${isExportMenuOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"}`}
+            >
+              <button
+                onClick={() => {
+                  onExport();
+                  setIsExportMenuOpen(false);
+                }}
+                className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                <span>{t.actions.export_json}</span>
+              </button>
+              <button
+                onClick={() => {
+                  onExportPdf();
+                  setIsExportMenuOpen(false);
+                }}
+                className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                <span>{(t.actions as any).export_pdf || "Export PDF"}</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* The More menu visible when items are collapsed */}
@@ -329,6 +372,16 @@ export const Header: React.FC<HeaderProps> = ({
                 <Download size={14} />
               </span>
               {t.actions.export_json}
+            </button>
+
+            <button
+              onClick={handleExportPdf}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 text-slate-700 dark:text-slate-300 transition-colors"
+            >
+              <span className="text-slate-400">
+                <Download size={14} className="text-emerald-500" />
+              </span>
+              {(t.actions as any).export_pdf || "Export PDF"}
             </button>
 
             <div className="mt-1 pt-1 border-t border-slate-100 dark:border-slate-700">
