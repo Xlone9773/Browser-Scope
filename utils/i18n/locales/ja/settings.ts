@@ -224,6 +224,8 @@ export const settings = {
     developer: {
         config: {
             simulateCrash: "アプリのクラッシュをシミュレート",
+            clearConsoleCache: "コンソールと PWA キャッシュをクリア",
+            clearConsoleCacheDesc: "Service Worker を強制登録解除し、Cache Storage キャッシュをクリア",
             defaultConsoleTitle: "デフォルトコンソール",
             consoleNone: "なし（システムデフォルト）",
             consoleVConsole: "vConsole",
@@ -433,7 +435,9 @@ export const settings = {
       "snippetShowCookies": "Cookieを表示",
       "snippetToggleBlur": "ボディブラーの切り替え",
       "snippetToggleEditable": "編集可能ページの切り替え",
-      "simulateCrash": "開発クラッシュをシミュレート"
+       "simulateCrash": "開発クラッシュをシミュレート",
+       "clearConsoleCache": "コンソールと PWA キャッシュをクリア",
+       "clearConsoleCacheDesc": "Service Worker を強制登録解除し、Cache Storage キャッシュをクリア"
     }
   }
 

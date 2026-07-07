@@ -1,5 +1,5 @@
 import React from "react";
-import { Bug, Wrench, Skull } from "lucide-react";
+import { Bug, Wrench, Skull, RefreshCw, Loader2 } from "lucide-react";
 import { Translation } from "../../../utils/i18n/types";
 import { Select } from "../../ui/Select";
 
@@ -34,6 +34,30 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
   onCrash,
   isFloating
 }) => {
+  const [isClearing, setIsClearing] = React.useState(false);
+
+  const handleClearCache = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsClearing(true);
+    try {
+      if ("caches" in window) {
+        const cacheKeys = await window.caches.keys();
+        await Promise.all(cacheKeys.map((key) => window.caches.delete(key)));
+      }
+      if ("serviceWorker" in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((reg) => reg.unregister()));
+      }
+      sessionStorage.clear();
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (err) {
+      console.error("Failed to clear developer console cache:", err);
+      setIsClearing(false);
+    }
+  };
+
   return (
     <div className={`absolute ${isFloating ? "top-full right-2" : "top-10 right-0 text-left"} mt-1 w-64 bg-slate-800 border border-slate-700 rounded shadow-xl z-50 max-h-[70vh] sm:max-h-[80vh] overflow-y-auto text-sm animate-in slide-in-from-top-2 custom-scrollbar`}>
       <div
@@ -169,6 +193,23 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
           </div>
         </>
       )}
+      <div className="p-3 bg-slate-800 border-b border-slate-700 flex flex-col gap-2">
+        <button
+          onClick={handleClearCache}
+          disabled={isClearing}
+          className="w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-400 disabled:text-slate-500 disabled:bg-slate-700/20 rounded flex gap-2 items-center justify-center font-bold text-xs font-sans transition-colors border border-indigo-500/30"
+        >
+          {isClearing ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <RefreshCw size={14} />
+          )}
+          {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.clearConsoleCache}
+        </button>
+        <span className="text-[10px] text-slate-500 text-center block leading-normal">
+          {(t.config as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.clearConsoleCacheDesc}
+        </span>
+      </div>
       <div className="p-3 bg-slate-800 border-b border-slate-700">
         <button
           onClick={onCrash}

@@ -224,6 +224,8 @@ export const settings = {
     developer: {
         config: {
             simulateCrash: "模擬應用崩潰",
+            clearConsoleCache: "清除控制台與 PWA 快取",
+            clearConsoleCacheDesc: "強制註銷 Service Worker 並清除 Cache Storage 快取",
             defaultConsoleTitle: "預設控制台",
             consoleNone: "無（系統預設）",
             consoleVConsole: "vConsole",
@@ -433,7 +435,9 @@ export const settings = {
       "snippetShowCookies": "顯示 Cookies",
       "snippetToggleBlur": "切換頁面模糊",
       "snippetToggleEditable": "切換頁面可編輯",
-      "simulateCrash": "模擬開發崩潰"
+       "simulateCrash": "模擬開發崩潰",
+       "clearConsoleCache": "清除控制台與 PWA 快取",
+       "clearConsoleCacheDesc": "強制註銷 Service Worker 並清除 Cache Storage 快取"
     }
   }
 

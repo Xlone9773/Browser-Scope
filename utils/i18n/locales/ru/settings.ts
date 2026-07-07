@@ -224,6 +224,8 @@ export const settings = {
     developer: {
         config: {
             simulateCrash: "Имитация сбоя приложения",
+            clearConsoleCache: "Очистить кэш консоли и PWA",
+            clearConsoleCacheDesc: "Принудительно удалить Service Worker и очистить кэш Cache Storage",
             defaultConsoleTitle: "Консоль по умолчанию",
             consoleNone: "Нет (системная)",
             consoleVConsole: "vConsole",
@@ -433,7 +435,9 @@ export const settings = {
       "snippetShowCookies": "Показать Cookies",
       "snippetToggleBlur": "Переключить размытие",
       "snippetToggleEditable": "Переключить редактируемость страницы",
-      "simulateCrash": "Симулировать сбой"
+       "simulateCrash": "Симулировать сбой",
+       "clearConsoleCache": "Очистить кэш консоли и PWA",
+       "clearConsoleCacheDesc": "Принудительно удалить Service Worker и очистить кэш Cache Storage"
     }
   }
 

@@ -224,6 +224,8 @@ export const settings = {
     developer: {
         config: {
             simulateCrash: "Simulate Dev Crash",
+            clearConsoleCache: "Clear Console & PWA Cache",
+            clearConsoleCacheDesc: "Force reload and clear Service Worker / Cache Storage",
             defaultConsoleTitle: "Default Console",
             consoleNone: "None (System Default)",
             consoleVConsole: "vConsole",
@@ -433,7 +435,9 @@ export const settings = {
       "snippetShowCookies": "Show Cookies",
       "snippetToggleBlur": "Toggle Body Blur",
       "snippetToggleEditable": "Toggle Editable Page",
-      "simulateCrash": "Simulate Dev Crash"
+       "simulateCrash": "Simulate Dev Crash",
+       "clearConsoleCache": "Clear Console & PWA Cache",
+       "clearConsoleCacheDesc": "Force reload and clear Service Worker / Cache Storage"
     }
   }
 
