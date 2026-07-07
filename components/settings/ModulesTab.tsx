@@ -2,7 +2,85 @@ import React from 'react';
 import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
-import { Package, Power, Zap, ShieldCheck, CircleOff, Lock, Trash2 } from 'lucide-react';
+import { 
+    Package, Power, Zap, ShieldCheck, CircleOff, Lock, Trash2,
+    Camera, Mic, Layers, Palette, Binary, Info, Compass, Award, 
+    Fingerprint, Gauge, Wrench, Brain, Gamepad2, Laptop, Eye, 
+    Wifi, Flame, Video, Sliders, Music, HardDrive, Globe, Sun, 
+    Puzzle, Languages, ShieldAlert, KeyRound, Monitor, Volume2, 
+    Activity
+} from 'lucide-react';
+
+const getModuleIcon = (id: string, isSystem?: boolean) => {
+    if (isSystem) return <ShieldCheck size={18} />;
+    
+    switch (id) {
+        case "camera":
+            return <Camera size={18} />;
+        case "audio":
+            return <Mic size={18} />;
+        case "webgl":
+            return <Layers size={18} />;
+        case "canvas":
+            return <Palette size={18} />;
+        case "base64":
+            return <Binary size={18} />;
+        case "about":
+            return <Info size={18} />;
+        case "sensor":
+            return <Compass size={18} />;
+        case "score":
+            return <Award size={18} />;
+        case "fingerprint":
+            return <Fingerprint size={18} />;
+        case "benchmark":
+            return <Gauge size={18} />;
+        case "tools":
+            return <Wrench size={18} />;
+        case "ai":
+            return <Brain size={18} />;
+        case "gamepad":
+            return <Gamepad2 size={18} />;
+        case "webDevice":
+            return <Laptop size={18} />;
+        case "vision":
+            return <Eye size={18} />;
+        case "speed":
+            return <Wifi size={18} />;
+        case "compute":
+            return <Flame size={18} />;
+        case "video":
+            return <Video size={18} />;
+        case "graphics":
+            return <Monitor size={18} />;
+        case "speech":
+            return <Volume2 size={18} />;
+        case "midi":
+            return <Music size={18} />;
+        case "storageBench":
+            return <HardDrive size={18} />;
+        case "heatmap":
+            return <Globe size={18} />;
+        case "rayTracing":
+            return <Sun size={18} />;
+        case "extensions":
+            return <Puzzle size={18} />;
+        case "networkTools":
+            return <Globe size={18} />;
+        case "displayTools":
+            return <Sliders size={18} />;
+        case "googleTranslate":
+            return <Languages size={18} />;
+        case "audioLatency":
+            return <Activity size={18} />;
+        case "poisoning":
+            return <ShieldAlert size={18} />;
+        case "ja3":
+            return <KeyRound size={18} />;
+        default:
+            return <Package size={18} />;
+    }
+};
 
 export interface ModuleState {
     id: string;
@@ -128,7 +206,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                                 <td className="px-5 py-4">
                                     <div className="flex items-center gap-3">
                                         <div className={`p-2 rounded-lg ${mod.isOpen ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                                            {mod.isSystem ? <ShieldCheck size={18} /> : <Package size={18} />}
+                                            {getModuleIcon(mod.id, mod.isSystem)}
                                         </div>
                                         <div className="flex flex-col">
                                             <span className={`font-semibold ${mod.isOpen ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>
