@@ -184,6 +184,133 @@ async function startServer() {
       delete proxyHeaders['origin'];
       delete proxyHeaders['referer'];
 
+      // Extract client's real IP address
+      let clientIp = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || '').split(',')[0].trim();
+      if (clientIp.startsWith('::ffff:')) {
+        clientIp = clientIp.substring(7);
+      }
+      const isLocalIp = !clientIp || clientIp === '::1' || clientIp === '127.0.0.1';
+      const targetIpForLookup = isLocalIp ? '' : clientIp;
+
+      // Handle special IP geolocation queries to prevent always returning Server's IP (Taiwan Taipei)
+      if (typeof url === 'string') {
+        const lowerUrl = url.toLowerCase();
+        
+        // 1. my.ippure.com/v1/info
+        if (lowerUrl.includes("my.ippure.com/v1/info") || lowerUrl.includes("my.ippure.com")) {
+          try {
+            const geoResponse = await fetch(`https://ipwho.is/${targetIpForLookup}`, { signal: controller.signal });
+            const geoData = await geoResponse.json();
+            if (geoData && geoData.success) {
+              const ippureResult = {
+                ip: geoData.ip,
+                asn: geoData.connection?.asn || null,
+                asOrganization: geoData.connection?.org || geoData.connection?.isp || "",
+                country: geoData.country || "",
+                countryCode: geoData.country_code || "",
+                region: geoData.region || "",
+                regionCode: geoData.region_code || "",
+                city: geoData.city || "",
+                timezone: geoData.timezone?.id || "",
+                longitude: String(geoData.longitude || ""),
+                latitude: String(geoData.latitude || ""),
+                userAgent: req.headers['user-agent'] || ""
+              };
+              clearTimeout(timeoutId);
+              return res.json({
+                status: 200,
+                data: JSON.stringify(ippureResult)
+              });
+            }
+          } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+            console.error("Special ippure proxy mapping failed:", err.message);
+          }
+        }
+
+        // 2. ipwho.is
+        if (lowerUrl === "https://ipwho.is/" || lowerUrl === "https://ipwho.is") {
+          try {
+            const geoResponse = await fetch(`https://ipwho.is/${targetIpForLookup}`, { signal: controller.signal });
+            const geoData = await geoResponse.json();
+            clearTimeout(timeoutId);
+            return res.json({
+              status: 200,
+              data: JSON.stringify(geoData)
+            });
+          } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+            console.error("Special ipwho.is proxy mapping failed:", err.message);
+          }
+        }
+
+        // 3. ipapi.co/json
+        if (lowerUrl.includes("ipapi.co/json") || lowerUrl.includes("ipapi.co/json/")) {
+          try {
+            const urlWithIp = targetIpForLookup ? `https://ipapi.co/${targetIpForLookup}/json/` : `https://ipapi.co/json/`;
+            const geoResponse = await fetch(urlWithIp, { signal: controller.signal });
+            const geoData = await geoResponse.json();
+            clearTimeout(timeoutId);
+            return res.json({
+              status: 200,
+              data: JSON.stringify(geoData)
+            });
+          } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+            console.error("Special ipapi.co proxy mapping failed:", err.message);
+          }
+        }
+
+        // 4. api.ipify.org
+        if (lowerUrl.includes("api.ipify.org")) {
+          // No outbound request needed! We already have the client's IP!
+          clearTimeout(timeoutId);
+          const ipAddress = isLocalIp ? "127.0.0.1" : clientIp;
+          const resultData = lowerUrl.includes("format=json") ? JSON.stringify({ ip: ipAddress }) : ipAddress;
+          return res.json({
+            status: 200,
+            data: resultData
+          });
+        }
+
+        // 5. cloudflare trace
+        if (lowerUrl.includes("cloudflare.com/cdn-cgi/trace")) {
+          try {
+            // Fetch cloudflare trace
+            const traceResponse = await fetch(url, { signal: controller.signal });
+            const traceText = await traceResponse.text();
+            
+            // Replace the IP with the real client IP, and LOC with country code from ipwhois
+            const lines = traceText.split('\n');
+            const ipAddress = isLocalIp ? "127.0.0.1" : clientIp;
+            
+            let clientLoc = "XX";
+            try {
+              const geoResponse = await fetch(`https://ipwho.is/${targetIpForLookup}`, { signal: controller.signal });
+              const geoData = await geoResponse.json();
+              if (geoData && geoData.success && geoData.country_code) {
+                clientLoc = geoData.country_code;
+              }
+            } catch (_e) { /* ignore */ }
+
+            const mappedLines = lines.map(line => {
+              if (line.startsWith('ip=')) {
+                return `ip=${ipAddress}`;
+              }
+              if (line.startsWith('loc=')) {
+                return `loc=${clientLoc}`;
+              }
+              return line;
+            });
+
+            clearTimeout(timeoutId);
+            return res.json({
+              status: 200,
+              data: mappedLines.join('\n')
+            });
+          } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+            console.error("Special cloudflare trace proxy mapping failed:", err.message);
+          }
+        }
+      }
+
       if (useUdp) {
          try {
            const parsedUrl = new URL(url);

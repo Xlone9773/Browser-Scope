@@ -52,6 +52,25 @@ export async function loadEruda(store: any /* eslint-disable-line @typescript-es
       console.warn("Failed to prepare window.XMLHttpRequest:", e);
     }
 
+    try {
+      const wsDesc = Object.getOwnPropertyDescriptor(window, "WebSocket") || Object.getOwnPropertyDescriptor(Object.getPrototypeOf(window), "WebSocket");
+      if (wsDesc && (!wsDesc.set || !wsDesc.writable)) {
+        let currentWS = window.WebSocket;
+        Object.defineProperty(window, "WebSocket", {
+          configurable: true,
+          enumerable: true,
+          get() {
+            return currentWS;
+          },
+          set(val) {
+            currentWS = val;
+          }
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to prepare window.WebSocket:", e);
+    }
+
     const eruda = (await import("eruda")).default;
     eruda.init({
       container: container,

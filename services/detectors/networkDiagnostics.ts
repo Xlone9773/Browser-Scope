@@ -110,7 +110,24 @@ export const fetchIpInfoFromSource = async (source: string, enableUdp: boolean =
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const json = await res.json();
             if (!json.success && json.message) throw new Error(json.message);
-            return json;
+            return {
+                ip: json.ip,
+                success: true,
+                type: json.type || 'IPv4',
+                continent: json.continent,
+                country: json.country,
+                countryCode: json.country_code,
+                region: json.region,
+                regionCode: json.region_code,
+                city: json.city,
+                isp: json.connection?.org || json.connection?.isp,
+                asn: json.connection?.asn,
+                timezone: json.timezone?.id || (typeof json.timezone === 'string' ? json.timezone : undefined),
+                longitude: json.longitude ? String(json.longitude) : undefined,
+                latitude: json.latitude ? String(json.latitude) : undefined,
+                postalCode: json.postal,
+                userAgent: json.userAgent
+            };
         } 
         else if (source === 'ipapi') {
             const res = await customFetch('https://ipapi.co/json/', enableUdp, { referrerPolicy: 'no-referrer' });
