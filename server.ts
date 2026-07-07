@@ -11,6 +11,12 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // Trust proxy headers for express-rate-limit behind reverse proxy
+  app.set("trust proxy", 1);
+
+  // Basic security: hide Express signature
+  app.disable("x-powered-by");
+
   // Basic security, performance, and cross-origin setup
   const isProd = process.env.NODE_ENV === "production";
   app.use(helmet({
@@ -98,11 +104,37 @@ async function startServer() {
     crossOriginEmbedderPolicy: false // Disabled to allow external resources
   }));
   app.use(compression());
-  app.use(cors());
 
-  // Enhance stability with increased limits
-  app.use(express.json({ limit: '50mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+  // Dynamic Whitelist CORS Configuration to avoid Wildcard credential errors
+  const whitelist = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173"
+  ];
+  const corsOptions: cors.CorsOptions = {
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, postman, curl)
+      if (!origin) {
+        return callback(null, true);
+      }
+      const isAllowedLocal = whitelist.indexOf(origin) !== -1 || origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:");
+      const isAllowedCloud = origin.includes("run.app") || origin.includes("google.com") || origin.includes("googleusercontent.com");
+      if (isAllowedLocal || isAllowedCloud) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+  };
+  app.use(cors(corsOptions));
+
+  // Parsers must be placed before any route definition
+  app.use(express.json({ limit: "50mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
   app.get("/api/udp-status", async (req, res) => {
     try {
