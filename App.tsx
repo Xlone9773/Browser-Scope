@@ -662,6 +662,7 @@ const App: React.FC = () => {
       permStatus,
       geoData,
       t,
+      lang,
       () => setIsExportingPdf(true),
       () => setIsExportingPdf(false),
       (err) => {
