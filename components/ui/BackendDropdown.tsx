@@ -124,7 +124,7 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
                 <ChevronDown size={12} className={`text-slate-400 transition-transform duration-300 ${isVisible ? 'rotate-180' : ''}`} />
             </button>
 
-            {isOpen && createPortal(
+            {isOpen ? createPortal(
                 <div 
                     id="dropdown-portal-container"
                     className={`
@@ -162,7 +162,7 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
                     </div>
                 </div>,
                 document.body
-            )}
+            ) : null}
         </>
     );
 };

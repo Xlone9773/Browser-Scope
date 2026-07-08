@@ -181,7 +181,7 @@ export const Select: React.FC<SelectProps> = ({
                 <ChevronDown size={size === 'sm' ? 12 : 14} className={`text-slate-400 transition-transform duration-200 ${isVisible ? 'rotate-180' : ''}`} />
             </button>
 
-            {isOpen && createPortal(
+            {isOpen ? createPortal(
                 <div 
                     id="select-portal-container"
                     className={`
@@ -220,7 +220,7 @@ export const Select: React.FC<SelectProps> = ({
                     </div>
                 </div>,
                 document.body
-            )}
+            ) : null}
         </>
     );
 };
