@@ -2,16 +2,26 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-[中文说明](README_zh.md) | **English Version**
-
----
+<div align="center">
 
 # 🌐 BrowserScope - Browser Capability Detector & Omni Toolbox
 
-A highly polished, detail-oriented browser utility platform and robust testing toolbox. It provides deep environment detection, network diagnostics, and device capability evaluation.
+[![GitHub Stars](https://img.shields.io/github/stars/Xlone9773/Browser-Scope?style=flat-square&logo=github&color=indigo)](https://github.com/Xlone9773/Browser-Scope)
+[![GitHub Forks](https://img.shields.io/github/forks/Xlone9773/Browser-Scope?style=flat-square&logo=github&color=blue)](https://github.com/Xlone9773/Browser-Scope)
+[![Repository Size](https://img.shields.io/github/repo-size/Xlone9773/Browser-Scope?style=flat-square&logo=github&color=emerald)](https://github.com/Xlone9773/Browser-Scope)
+[![License](https://img.shields.io/github/license/Xlone9773/Browser-Scope?style=flat-square&logo=github&color=slate)](https://github.com/Xlone9773/Browser-Scope/blob/main/LICENSE)
+[![React Version](https://img.shields.io/badge/react-v19-61dafb?style=flat-square&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/typescript-v5.8-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/tailwind_css-v4.0-38bdf8?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![Express](https://img.shields.io/badge/express-v5.2-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com/)
 
-[![GitHub Stars](https://img.shields.io/github/stars/Xlone9773/Browser-Scope?style=social)](https://github.com/Xlone9773/Browser-Scope)
-[![License](https://img.shields.io/github/license/Xlone9773/Browser-Scope)](https://github.com/Xlone9773/Browser-Scope/blob/main/LICENSE)
+[简体中文](README_zh.md) | [繁體中文(台灣)](README_zhtw.md) | [繁體中文(香港)](README_zhhk.md) | [日本語](README_ja.md) | [Русский](README_ru.md) | **English Version**
+
+</div>
+
+---
+
+A highly polished, detail-oriented browser utility platform and robust testing toolbox. It provides deep environment detection, network diagnostics, and device capability evaluation.
 
 ## ✨ Core Highlights
 

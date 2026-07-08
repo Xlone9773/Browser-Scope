@@ -2,16 +2,26 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-**中文说明** | [English Version](README.md)
-
----
+<div align="center">
 
 # 🌐 BrowserScope - 浏览器高级特性检测与全能工具箱
 
-一个重返“打磨细节”初心的浏览器能力检测与实用工具平台。为您提供深度的浏览器运行环境分析、全面的硬件特性评估以及丰富的网络诊断探针。
+[![GitHub Stars](https://img.shields.io/github/stars/Xlone9773/Browser-Scope?style=flat-square&logo=github&color=indigo)](https://github.com/Xlone9773/Browser-Scope)
+[![GitHub Forks](https://img.shields.io/github/forks/Xlone9773/Browser-Scope?style=flat-square&logo=github&color=blue)](https://github.com/Xlone9773/Browser-Scope)
+[![Repository Size](https://img.shields.io/github/repo-size/Xlone9773/Browser-Scope?style=flat-square&logo=github&color=emerald)](https://github.com/Xlone9773/Browser-Scope)
+[![License](https://img.shields.io/github/license/Xlone9773/Browser-Scope?style=flat-square&logo=github&color=slate)](https://github.com/Xlone9773/Browser-Scope/blob/main/LICENSE)
+[![React Version](https://img.shields.io/badge/react-v19-61dafb?style=flat-square&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/typescript-v5.8-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/tailwind_css-v4.0-38bdf8?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![Express](https://img.shields.io/badge/express-v5.2-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com/)
 
-[![GitHub Stars](https://img.shields.io/github/stars/Xlone9773/Browser-Scope?style=social)](https://github.com/Xlone9773/Browser-Scope)
-[![License](https://img.shields.io/github/license/Xlone9773/Browser-Scope)](https://github.com/Xlone9773/Browser-Scope/blob/main/LICENSE)
+**简体中文** | [繁體中文(台灣)](README_zhtw.md) | [繁體中文(香港)](README_zhhk.md) | [日本語](README_ja.md) | [Русский](README_ru.md) | [English Version](README.md)
+
+</div>
+
+---
+
+一个重返“打磨细节”初心的浏览器能力检测与实用工具平台。为您提供深度的浏览器运行环境分析、全面的硬件特性评估以及丰富的网络诊断探针。
 
 ## ✨ 主要亮点
 
@@ -144,7 +154,7 @@ npm run start
 - **[Transformers.js](https://github.com/xenova/transformers.js)** - 浏览器端直接运行的轻量深度学习推理框架
 - **[html2canvas](https://github.com/niklasvh/html2canvas)** & **[jsPDF](https://github.com/parallax/jsPDF)** - 高保真客户端 PDF 诊断报告文档多线程编译
 - **[Eruda](https://github.com/liriliri/eruda)** & **[vConsole](https://github.com/Tencent/vConsole)** - 移动端优化的虚拟日志输出、网页检查器控制台
-- **[Vite](https://vitejs.dev/)** & **[ESBuild](https://esbuild.github.io/)** - 流畅高速的前端构建工具链与模块热更新
+- **[Vite](https://vitejs.dev/)** & **[ESBuild](https://esbuild.github.io/)** - 换能卓越、热模块重载极速的前端构建工具链
 
 ---
 
