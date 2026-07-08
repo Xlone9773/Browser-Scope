@@ -212,7 +212,13 @@ SOFTWARE.`
     copy: "Copy ID",
     copied: "Copied",
     regenerate: "Regenerate",
-    close: "Close"
+    close: "Close",
+    font_count: "Count",
+    complex_obj: "[Complex Object]",
+    no_components: "No components loaded",
+    active_source: "Active Data Source",
+    items_included: "items included",
+    error_loading: "Error loading library"
   },
   benchmarkModal: {
     title: "Performance Benchmark",

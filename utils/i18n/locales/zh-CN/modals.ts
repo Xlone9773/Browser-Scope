@@ -200,7 +200,13 @@ export const modals = {
     copy: "复制 ID",
     copied: "已复制",
     regenerate: "重新生成",
-    close: "关闭"
+    close: "关闭",
+    font_count: "数量",
+    complex_obj: "[复杂对象]",
+    no_components: "未加载组件",
+    active_source: "活动数据源",
+    items_included: "个项目已包含",
+    error_loading: "载入库失败"
   },
   benchmarkModal: {
     title: "性能基准测试",

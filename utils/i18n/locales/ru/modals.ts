@@ -190,7 +190,13 @@ Copyright (c) 2026 BrowserScope Contributors
     copy: "Копировать ID",
     copied: "Скопировано",
     regenerate: "Перегенерировать",
-    close: "Закрыть"
+    close: "Закрыть",
+    font_count: "Количество",
+    complex_obj: "[Сложный объект]",
+    no_components: "Компоненты не загружены",
+    active_source: "Активный источник данных",
+    items_included: "элементов включено",
+    error_loading: "Ошибка загрузки библиотеки"
   },
   benchmarkModal: {
     title: "Бенчмарк производительности",

@@ -190,7 +190,13 @@ Copyright (c) 2026 BrowserScope Contributors
     copy: "IDをコピー",
     copied: "コピー完了",
     regenerate: "再生成",
-    close: "閉じる"
+    close: "閉じる",
+    font_count: "個数",
+    complex_obj: "[複雑なオブジェクト]",
+    no_components: "コンポーネントがロードされていません",
+    active_source: "有効なデータソース",
+    items_included: "個のアイテムが含まれています",
+    error_loading: "ライブラリのロードエラー"
   },
   benchmarkModal: {
     title: "パフォーマンスベンチマーク",

@@ -190,7 +190,13 @@ export const modals = {
     copy: "複製 ID",
     copied: "已複製",
     regenerate: "重新生成",
-    close: "關閉"
+    close: "關閉",
+    font_count: "數量",
+    complex_obj: "[複雜對象]",
+    no_components: "未載入組件",
+    active_source: "使用中的數據源",
+    items_included: "個項目已包含",
+    error_loading: "載入庫失敗"
   },
   benchmarkModal: {
     title: "效能基準測試",
