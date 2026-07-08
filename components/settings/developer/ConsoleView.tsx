@@ -186,11 +186,9 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
   return (
     <div className="flex flex-col h-full relative">
       <div className="flex-1 overflow-y-auto p-4 bg-slate-900 custom-scrollbar flex flex-col gap-3">
-        {consoleHistory.length === 0 && (
-          <div className="text-slate-600 italic mt-2 opacity-50 select-none">
-            {t.console.resultPlaceholder}
-          </div>
-        )}
+        {consoleHistory.length === 0 ? (<div className="text-slate-600 italic mt-2 opacity-50 select-none">
+          {t.console.resultPlaceholder}
+        </div>) : null}
 
         {consoleHistory.map((entry) => (
           <div
@@ -226,7 +224,6 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
         ))}
         <div ref={consoleEndRef} />
       </div>
-
       <div className="absolute top-2 right-2 flex gap-1">
         <button
           onClick={copyConsoleHistory}
@@ -254,49 +251,45 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
           <Trash2 size={12} />
         </button>
       </div>
-
-      {showPresets && (
-        <div className="absolute bottom-[50px] left-2 right-2 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-10 animate-in slide-in-from-bottom-2 fade-in duration-200 flex flex-col overflow-hidden max-h-60">
-          <div className="px-3 py-2 bg-slate-900/50 border-b border-slate-700 text-[10px] text-slate-400 font-medium uppercase tracking-wider backdrop-blur-sm shrink-0">
-            {t.console.quickCommands}
-          </div>
-          <div className="overflow-y-auto">
-            {PRESET_COMMANDS.map((preset, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-between p-2 hover:bg-slate-700/50 transition-colors group cursor-pointer"
-                onClick={() => applyPreset(preset, false)}
-              >
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="p-1.5 bg-slate-700 text-indigo-400 rounded group-hover:bg-indigo-900/30 group-hover:text-indigo-300 transition-colors">
-                    <preset.icon size={14} />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-slate-200 font-medium truncate">
-                      {(t.console as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).presets?.[preset.id]?.label ||
-                        preset.id}
-                    </span>
-                    <span className="text-[10px] text-slate-500 truncate">
-                      {(t.console as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).presets?.[preset.id]?.desc}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    applyPreset(preset, true);
-                  }}
-                  className="p-1.5 text-slate-400 hover:text-green-400 hover:bg-slate-600 rounded transition-colors"
-                  title={t.console.run}
-                >
-                  <Zap size={14} fill="currentColor" />
-                </button>
-              </div>
-            ))}
-          </div>
+      {showPresets ? (<div className="absolute bottom-[50px] left-2 right-2 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-10 animate-in slide-in-from-bottom-2 fade-in duration-200 flex flex-col overflow-hidden max-h-60">
+        <div className="px-3 py-2 bg-slate-900/50 border-b border-slate-700 text-[10px] text-slate-400 font-medium uppercase tracking-wider backdrop-blur-sm shrink-0">
+          {t.console.quickCommands}
         </div>
-      )}
-
+        <div className="overflow-y-auto">
+          {PRESET_COMMANDS.map((preset, idx) => (
+            <div
+              key={idx}
+              className="flex items-center justify-between p-2 hover:bg-slate-700/50 transition-colors group cursor-pointer"
+              onClick={() => applyPreset(preset, false)}
+            >
+              <div className="flex items-center gap-3 overflow-hidden">
+                <div className="p-1.5 bg-slate-700 text-indigo-400 rounded group-hover:bg-indigo-900/30 group-hover:text-indigo-300 transition-colors">
+                  <preset.icon size={14} />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-200 font-medium truncate">
+                    {((t.console as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).presets?.[preset.id]?.label ||
+                      preset.id}
+                  </span>
+                  <span className="text-[10px] text-slate-500 truncate">
+                    {((t.console as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).presets?.[preset.id]?.desc}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  applyPreset(preset, true);
+                }}
+                className="p-1.5 text-slate-400 hover:text-green-400 hover:bg-slate-600 rounded transition-colors"
+                title={t.console.run}
+              >
+                <Zap size={14} fill="currentColor" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>) : null}
       <div className="p-2 bg-slate-800 flex gap-2 shrink-0 relative z-20 items-center border-t border-slate-700">
         <div className="flex items-center text-slate-400 pl-2">
           <span className="font-bold text-lg">&gt;</span>
@@ -320,15 +313,13 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
               autoFocus
               autoComplete="off"
             />
-            {inputCmd && (
-              <button
-                onClick={clearInput}
-                className="absolute right-0 p-1 text-slate-500 hover:text-slate-300 transition-colors"
-                title={t.console.clearInput}
-              >
-                <X size={14} />
-              </button>
-            )}
+            {inputCmd ? (<button
+              onClick={clearInput}
+              className="absolute right-0 p-1 text-slate-500 hover:text-slate-300 transition-colors"
+              title={t.console.clearInput}
+            >
+              <X size={14} />
+            </button>) : null}
           </div>
         </div>
         <button

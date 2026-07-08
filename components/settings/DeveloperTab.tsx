@@ -110,15 +110,13 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
   const content = (
     <div className="flex flex-col h-full overflow-hidden text-xs font-mono">
       {/* EVENTS VIEW */}
-      {subTab === "events" && <EventsView t={t} logs={logs} />}
+      {subTab === "events" ? <EventsView t={t} logs={logs} /> : null}
 
       {/* INSPECTOR VIEW */}
-      {subTab === "inspector" && <InspectorView />}
+      {subTab === "inspector" ? <InspectorView /> : null}
 
       {/* CONSOLE VIEW */}
-      {subTab === "console" && (
-        <ConsoleView t={t} consoleHistory={consoleHistory} />
-      )}
+      {subTab === "console" ? (<ConsoleView t={t} consoleHistory={consoleHistory} />) : null}
     </div>
   );
 
@@ -214,26 +212,24 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
             )}
           </button>
 
-          {showSettings && (
-            <DeveloperSettingsDropdown
-              t={t}
-              isLoggingEnabled={isLoggingEnabled}
-              toggleLogging={toggleLogging}
-              defaultConsole={defaultConsole}
-              setDefaultConsole={setDefaultConsole}
-              erudaDefaultTab={erudaDefaultTab}
-              setErudaDefaultTab={setErudaDefaultTab}
-              vconsoleDefaultTab={vconsoleDefaultTab}
-              setVconsoleDefaultTab={setVconsoleDefaultTab}
-              erudaSnippets={erudaSnippets}
-              setErudaSnippet={setErudaSnippet}
-              onCrash={() => setCrash(true)}
-              isFloating={true}
-            />
-          )}
+          {showSettings ? (<DeveloperSettingsDropdown
+            t={t}
+            isLoggingEnabled={isLoggingEnabled}
+            toggleLogging={toggleLogging}
+            defaultConsole={defaultConsole}
+            setDefaultConsole={setDefaultConsole}
+            erudaDefaultTab={erudaDefaultTab}
+            setErudaDefaultTab={setErudaDefaultTab}
+            vconsoleDefaultTab={vconsoleDefaultTab}
+            setVconsoleDefaultTab={setVconsoleDefaultTab}
+            erudaSnippets={erudaSnippets}
+            setErudaSnippet={setErudaSnippet}
+            onCrash={() => setCrash(true)}
+            isFloating={true}
+          />) : null}
         </div>
         {content}
-        {!hasAcceptedRisk && warningOverlay}
+        {!hasAcceptedRisk ? warningOverlay : null}
       </div>
     );
   }
@@ -302,33 +298,30 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
           <Maximize2 size={14} />
         </Button>
 
-        {showSettings && (
-          <DeveloperSettingsDropdown
-            t={t}
-            isLoggingEnabled={isLoggingEnabled}
-            toggleLogging={toggleLogging}
-            defaultConsole={defaultConsole}
-            setDefaultConsole={setDefaultConsole}
-            erudaDefaultTab={erudaDefaultTab}
-            setErudaDefaultTab={setErudaDefaultTab}
-            vconsoleDefaultTab={vconsoleDefaultTab}
-            setVconsoleDefaultTab={setVconsoleDefaultTab}
-            erudaSnippets={erudaSnippets}
-            setErudaSnippet={setErudaSnippet}
-            onCrash={() => setCrash(true)}
-          />
-        )}
+        {showSettings ? (<DeveloperSettingsDropdown
+          t={t}
+          isLoggingEnabled={isLoggingEnabled}
+          toggleLogging={toggleLogging}
+          defaultConsole={defaultConsole}
+          setDefaultConsole={setDefaultConsole}
+          erudaDefaultTab={erudaDefaultTab}
+          setErudaDefaultTab={setErudaDefaultTab}
+          vconsoleDefaultTab={vconsoleDefaultTab}
+          setVconsoleDefaultTab={setVconsoleDefaultTab}
+          erudaSnippets={erudaSnippets}
+          setErudaSnippet={setErudaSnippet}
+          onCrash={() => setCrash(true)}
+        />) : null}
       </div>
-
       {/* Docked Content Area */}
       {!isFloating ? (
         <div className="flex-1 bg-slate-900 rounded-lg border border-slate-700 overflow-hidden shadow-inner relative">
           {content}
-          {!hasAcceptedRisk && warningOverlay}
+          {!hasAcceptedRisk ? warningOverlay : null}
         </div>
       ) : (
         /* Placeholder when floating */
-        <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 gap-2">
+        (<div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 gap-2">
           <Maximize2 size={32} className="opacity-20" />
           <p className="text-sm">Tool is currently floating.</p>
           <Button
@@ -339,7 +332,7 @@ export const DeveloperTab: React.FC<DeveloperTabProps> = ({
           >
             {t.actions.dock}
           </Button>
-        </div>
+        </div>)
       )}
     </div>
   );

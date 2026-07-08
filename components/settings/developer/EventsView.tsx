@@ -25,11 +25,9 @@ export const EventsView: React.FC<EventsViewProps> = ({ t, logs }) => {
   return (
     <>
       <div className="flex-1 overflow-y-auto p-4 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-700">
-        {logs.length === 0 && (
-          <div className="text-slate-500 italic">
-            {t.events.placeholder}
-          </div>
-        )}
+        {logs.length === 0 ? (<div className="text-slate-500 italic">
+          {t.events.placeholder}
+        </div>) : null}
         {logs.map((log, idx) => (
           <div
             key={idx}

@@ -161,49 +161,41 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     <Switch checked={timeFormat === '24'} onChange={(val) => setTimeFormat(val ? '24' : '12')} />
                 </div>
             </div>
-
             {/* Enable UDP Toggle */}
-            {toggleEnableUdp && (
-                <div 
-                    className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${!udpSupported ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
-                    onClick={() => { if (udpSupported) toggleEnableUdp(!enableUdp); }}
-                >
-                    <div className="flex flex-col gap-1 pr-4">
-                        <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                                {t.udpBypass?.title}
-                            </h3>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    checkUdpSupport(true);
-                                }}
-                                disabled={udpSupported === null}
-                                className={`px-2 py-0.5 text-xs rounded-md border ${udpSupported === null ? 'bg-slate-100 text-slate-400 border-slate-200 dark:bg-slate-800 dark:border-slate-700' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-900/50'} transition-colors ml-2`}
-                            >
-                                {t.udpBypass?.recheckUdp}
-                            </button>
-                        </div>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                            {t.udpBypass?.desc}
-                        </p>
-                        {!udpSupported && udpSupported !== null && (
-                            <p className="text-xs text-rose-500 font-medium mt-1">
-                                {t.udpBypass?.unsupportedEnv}
-                            </p>
-                        )}
-                        {udpSupported === null && (
-                            <p className="text-xs text-indigo-500 font-medium mt-1 animate-pulse">
-                                {t.udpBypass?.checkingUdp}
-                            </p>
-                        )}
+            {toggleEnableUdp ? (<div 
+                className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${!udpSupported ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
+                onClick={() => { if (udpSupported) toggleEnableUdp(!enableUdp); }}
+            >
+                <div className="flex flex-col gap-1 pr-4">
+                    <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                            {t.udpBypass?.title}
+                        </h3>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                checkUdpSupport(true);
+                            }}
+                            disabled={udpSupported === null}
+                            className={`px-2 py-0.5 text-xs rounded-md border ${udpSupported === null ? 'bg-slate-100 text-slate-400 border-slate-200 dark:bg-slate-800 dark:border-slate-700' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-900/50'} transition-colors ml-2`}
+                        >
+                            {t.udpBypass?.recheckUdp}
+                        </button>
                     </div>
-                    <div onClick={(e) => e.stopPropagation()}>
-                        <Switch checked={!!enableUdp} onChange={() => { if(udpSupported) toggleEnableUdp(!enableUdp); }} disabled={!udpSupported} />
-                    </div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {t.udpBypass?.desc}
+                    </p>
+                    {!udpSupported && udpSupported !== null ? (<p className="text-xs text-rose-500 font-medium mt-1">
+                        {t.udpBypass?.unsupportedEnv}
+                    </p>) : null}
+                    {udpSupported === null ? (<p className="text-xs text-indigo-500 font-medium mt-1 animate-pulse">
+                        {t.udpBypass?.checkingUdp}
+                    </p>) : null}
                 </div>
-            )}
-
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Switch checked={!!enableUdp} onChange={() => { if(udpSupported) toggleEnableUdp(!enableUdp); }} disabled={!udpSupported} />
+                </div>
+            </div>) : null}
             {/* Custom Visibility */}
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                 <div className="flex flex-col gap-1">
@@ -235,7 +227,6 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     })}
                 </div>
             </div>
-
             {/* Quick Summary Visibility */}
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
                 <div className="flex flex-col gap-1 max-w-[70%]">
@@ -255,7 +246,6 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     />
                 </div>
             </div>
-
             {/* Restore Notifications */}
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
                 <div className="flex flex-col gap-1 max-w-[70%]">

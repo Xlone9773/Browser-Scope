@@ -92,7 +92,6 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
                     </div>
                 </div>
             </div>
-
             {/* Service Workers */}
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="flex items-start justify-between">
@@ -113,12 +112,10 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
                         {t.sw.unregisterBtn}
                     </Button>
                 </div>
-                {swCount !== null && (
-                    <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                        <span className="text-sm text-slate-600 dark:text-slate-400">Active Registrations</span>
-                        <span className="font-mono font-bold text-slate-800 dark:text-slate-200">{swCount}</span>
-                    </div>
-                )}
+                {swCount !== null ? (<div className="mt-4 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                    <span className="text-sm text-slate-600 dark:text-slate-400">Active Registrations</span>
+                    <span className="font-mono font-bold text-slate-800 dark:text-slate-200">{swCount}</span>
+                </div>) : null}
             </div>
         </div>
     );

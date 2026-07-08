@@ -189,7 +189,6 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                     </Button>
                 </div>
             </div>
-
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
                 <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
@@ -212,9 +211,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                                             <span className={`font-semibold ${mod.isOpen ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>
                                                 {mod.name}
                                             </span>
-                                            {mod.isSystem && (
-                                                <span className="text-[10px] text-slate-400 leading-none">{t?.status?.system}</span>
-                                            )}
+                                            {mod.isSystem ? (<span className="text-[10px] text-slate-400 leading-none">{t?.status?.system}</span>) : null}
                                         </div>
                                     </div>
                                 </td>
@@ -253,7 +250,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                                     ) : (
                                         <Button
                                             onClick={() => mod.onUnload ? mod.onUnload() : mod.setOpen(false)}
-                                            disabled={!mod.isOpen && !mod.isLoaded}
+                                            disabled={!mod.isOpen ? !mod.isLoaded : null}
                                             variant={mod.isOpen ? "danger-soft" : "secondary"}
                                             size="xs"
                                             leftIcon={mod.isOpen ? <Power size={14} /> : <Trash2 size={14} />}

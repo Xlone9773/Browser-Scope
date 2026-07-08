@@ -91,19 +91,14 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
           >
             {needRefresh ? t?.applyUpdate : t?.forcePull}
           </Button>
-          {lastCheckTime && (
-            <div className="text-xs text-slate-400">
-              {t?.lastChecked} {formatLastChecked(lastCheckTime)}
-            </div>
-          )}
-          {toastMessage && (
-            <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium animate-in fade-in slide-in-from-top-1">
-              {toastMessage}
-            </div>
-          )}
+          {lastCheckTime ? (<div className="text-xs text-slate-400">
+            {t?.lastChecked} {formatLastChecked(lastCheckTime)}
+          </div>) : null}
+          {toastMessage ? (<div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium animate-in fade-in slide-in-from-top-1">
+            {toastMessage}
+          </div>) : null}
         </div>
       </div>
-
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
           <div className="flex items-center gap-2 font-medium text-slate-800 dark:text-slate-200">
@@ -115,7 +110,6 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
           </div>
         </div>
       </div>
-
       <div className="mt-6">
         <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 px-1 flex items-center gap-2">
           <Zap size={16} />
@@ -130,7 +124,6 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
           ))}
         </div>
       </div>
-
       <div className="mt-6">
         <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 px-1 flex items-center gap-2">
           <Package size={16} />

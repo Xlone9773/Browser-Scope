@@ -84,7 +84,6 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <Switch checked={simpleMode} onChange={toggleSimpleMode} />
                 </div>
             </div>
-
             {/* Show Tabs Option (NEW) */}
             <div 
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
@@ -102,7 +101,6 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <Switch checked={showTabs} onChange={toggleShowTabs} />
                 </div>
             </div>
-
             {/* Show Search Bar Option */}
             <div 
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
@@ -120,7 +118,6 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <Switch checked={showSearch} onChange={toggleShowSearch} />
                 </div>
             </div>
-
             {/* Theme Color Selection */}
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex flex-col gap-1 pr-4">
@@ -150,12 +147,11 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                             style={{ backgroundColor: theme.hex }}
                             title={theme.id}
                         >
-                            {themeColor === theme.id && <div className="w-2 h-2 rounded-full bg-white dark:bg-slate-900" />}
+                            {themeColor === theme.id ? <div className="w-2 h-2 rounded-full bg-white dark:bg-slate-900" /> : null}
                         </button>
                     ))}
                 </div>
             </div>
-
             {/* Animation Style Selection */}
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex flex-col gap-1 pr-4">
@@ -179,7 +175,6 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     color={themeColor as any}
                 />
             </div>
-
             {/* Disable Blur */}
             <div 
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
@@ -197,7 +192,6 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <Switch checked={disableBlur} onChange={toggleDisableBlur} />
                 </div>
             </div>
-
             {/* Hide Scrollbar Toggle */}
             <div 
                 className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${globalHideScrollbar ? 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800 opacity-50 cursor-not-allowed' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
@@ -215,7 +209,6 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <Switch checked={hideScrollbar || globalHideScrollbar} onChange={(val) => { if (!globalHideScrollbar) toggleHideScrollbar(val); }} disabled={globalHideScrollbar} />
                 </div>
             </div>
-
             {/* Global Hide Scrollbar Toggle */}
             <div 
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
@@ -233,7 +226,6 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <Switch checked={globalHideScrollbar} onChange={toggleGlobalHideScrollbar} />
                 </div>
             </div>
-
             {/* Disable Animations */}
             <div 
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
@@ -251,7 +243,6 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <Switch checked={disableAnimations} onChange={toggleDisableAnimations} />
                 </div>
             </div>
-
             {/* Fast Animations */}
             <div 
                 className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${disableAnimations ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
@@ -269,7 +260,6 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <Switch checked={fastAnimations} onChange={toggleFastAnimations} disabled={disableAnimations} />
                 </div>
             </div>
-
             {/* Collapse Header Menu Desktop */}
             <div 
                 className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${!isDesktop ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
