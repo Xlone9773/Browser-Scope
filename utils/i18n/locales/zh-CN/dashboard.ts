@@ -233,6 +233,7 @@ export const dashboard = {
     about: "关于",
     export_json: "导出 JSON",
     export_pdf: "导出 PDF (多线程)",
+    export_image: "导出仪表盘图片 (PNG)",
     open_sensors: "传感器详情",
     open_tools: "硬件交互测试",
     open_vision: "视觉识别 (Vision)",

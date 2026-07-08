@@ -232,6 +232,7 @@ export const dashboard = {
     about: "О программе",
     export_json: "Экспорт JSON",
     export_pdf: "Экспорт PDF (Фоновый поток)",
+    export_image: "Экспорт дашборда как PNG",
     open_sensors: "Детали датчиков",
     open_tools: "Аппаратные тесты",
     open_vision: "Зрение (Vision)",

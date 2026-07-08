@@ -116,3 +116,94 @@ export const exportAsPdf = (
         worker.terminate();
     };
 };
+
+// Remove unused function sanitizeCssForSvg
+
+export const exportAsImage = async (
+    containerId: string,
+    theme: string,
+    onStart?: () => void,
+    onSuccess?: () => void,
+    onError?: (error: string) => void
+) => {
+    if (onStart) onStart();
+
+    const timestampStr = generateFilenameTimestamp();
+    const filename = `browserscope-${timestampStr}.png`;
+
+    try {
+        const element = document.getElementById(containerId);
+        if (!element) {
+            throw new Error(`Element with id "${containerId}" not found`);
+        }
+
+        const htmlToImage = await import("html-to-image");
+
+        // Use standard html-to-image to generate the snapshot
+        const isDark = document.documentElement.classList.contains("dark") || theme === "dark";
+        const backgroundColor = isDark ? "#0f172a" : "#f8fafc";
+        
+        // Suppress specific html-to-image console.error messages about cross-origin stylesheets
+        const originalConsoleError = console.error;
+        console.error = (...args: any[]) => {
+            if (typeof args[0] === 'string' && (
+                args[0].includes('Error inlining remote css file') ||
+                args[0].includes('Error loading remote stylesheet') ||
+                args[0].includes('Error while reading CSS rules from')
+            )) {
+                return; // Ignore html-to-image CORS stylesheet errors
+            }
+            originalConsoleError.apply(console, args);
+        };
+
+        let dataUrl;
+        try {
+            dataUrl = await htmlToImage.toPng(element, {
+                backgroundColor,
+                pixelRatio: 2, // Retinal high resolution
+                style: {
+                    transform: 'none',
+                },
+                filter: (node: HTMLElement) => {
+                    // Ignore elements that shouldn't be captured
+                    if (node?.hasAttribute && node.hasAttribute('data-html2canvas-ignore')) {
+                        return false;
+                    }
+                    if (node?.classList && node.classList.contains('html2canvas-ignore')) {
+                        return false;
+                    }
+                    return true;
+                }
+            });
+        } finally {
+            // Restore console.error
+            console.error = originalConsoleError;
+        }
+
+        // Convert base64 dataUrl to Blob
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        
+        triggerDownload(blob, filename);
+        if (onSuccess) onSuccess();
+
+    } catch (error: any) {
+        console.error("[ImageExport] Export exception thrown:", error);
+        if (onError) onError(error?.message || "Failed to trigger image export");
+    }
+};
+
+/**
+ * Triggers a browser-compliant silent file download of the generated binary blob.
+ */
+const triggerDownload = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
+

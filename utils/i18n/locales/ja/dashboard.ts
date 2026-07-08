@@ -232,6 +232,7 @@ export const dashboard = {
     about: "アプリについて",
     export_json: "JSONエクスポート",
     export_pdf: "PDFエクスポート (マルチスレッド)",
+    export_image: "ダッシュボード画像をエクスポート (PNG)",
     open_sensors: "センサー詳細",
     open_tools: "ハードウェアテスト",
     open_vision: "ビジョン機能 (Vision)",

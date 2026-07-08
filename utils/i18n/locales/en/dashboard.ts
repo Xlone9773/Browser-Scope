@@ -232,6 +232,7 @@ export const dashboard = {
     about: "About",
     export_json: "Export JSON",
     export_pdf: "Export PDF (Worker)",
+    export_image: "Export Dashboard Image (PNG)",
     open_sensors: "Sensors",
     open_tools: "Hardware Tools",
     open_vision: "Vision/QR",

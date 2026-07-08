@@ -1,7 +1,7 @@
 import React, { useEffect, useState, Suspense, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Monitor, Smartphone, ShieldAlert, Cpu, Loader2, Search, Settings2 } from "lucide-react";
-import { exportAsJson, exportAsPdf } from "./services/exporter";
+import { exportAsJson, exportAsPdf, exportAsImage } from "./services/exporter";
 import { translations } from "./utils/i18n/index";
 import { FloatingWindow } from "./components/ui/FloatingWindow";
 import { ErrorBoundary } from "./components/ui/ErrorBoundary";
@@ -178,6 +178,7 @@ const App: React.FC = () => {
   const [showSearchSettings, setShowSearchSettings] = useState(false);
   const [isViewportTooSmall, setIsViewportTooSmall] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingImage, setIsExportingImage] = useState(false);
 
   useEffect(() => {
     const checkViewportSize = () => {
@@ -672,6 +673,20 @@ const App: React.FC = () => {
     );
   };
 
+  const handleExportImage = () => {
+    if (!data) return;
+    exportAsImage(
+      "dashboard-container",
+      theme,
+      () => setIsExportingImage(true),
+      () => setIsExportingImage(false),
+      (err) => {
+        setIsExportingImage(false);
+        alert(`Image Export Error: ${err}`);
+      }
+    );
+  };
+
   return (
     <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 scrollbar-hide relative">
       {/* Loading Overlay */}
@@ -729,6 +744,31 @@ const App: React.FC = () => {
                  lang === "ja" ? "バックグラウンドの Worker 経由で処理中" :
                  lang === "ru" ? "Используется фоновый поток" :
                  "Rendering report using background Worker thread"}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Exporting Loader Overlay */}
+      {isExportingImage && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 backdrop-blur-md">
+          <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex items-center gap-4 max-w-sm w-full mx-4 transform animate-in fade-in zoom-in duration-200">
+            <Loader2 className="animate-spin text-indigo-500 shrink-0" size={28} />
+            <div>
+              <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
+                {lang === "zh-CN" ? "正在导出仪表盘图片..." : 
+                 lang === "zh-TW" || lang === "zh-HK" ? "正在匯出儀表板圖片..." :
+                 lang === "ja" ? "ダッシュボード画像をエクスポート中..." :
+                 lang === "ru" ? "Экспорт изображения..." :
+                 "Exporting Dashboard Image..."}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+                {lang === "zh-CN" ? "正在使用 html2canvas 渲染高清晰度 PNG" : 
+                 lang === "zh-TW" || lang === "zh-HK" ? "正在使用 html2canvas 渲染高清晰度 PNG" :
+                 lang === "ja" ? "html2canvas で高解像度PNGをレンダリング中" :
+                 lang === "ru" ? "Рендеринг PNG высокого разрешения..." :
+                 "Rendering high-resolution PNG using html2canvas"}
               </p>
             </div>
           </div>
@@ -1000,7 +1040,7 @@ const App: React.FC = () => {
         </Suspense>
       </ErrorBoundary>
 
-      <div className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">
+      <div id="dashboard-container" className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">
         <Header
           t={t}
           lang={lang}
@@ -1010,6 +1050,7 @@ const App: React.FC = () => {
           onRefresh={fetchData}
           onExport={handleExportJSON}
           onExportPdf={handleExportPDF}
+          onExportImage={handleExportImage}
           onOpenSettings={() => open("settings")}
           onOpenAbout={() => open("about")}
           onOpenBenchmark={() => open("benchmark")}

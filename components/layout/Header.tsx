@@ -40,6 +40,7 @@ interface HeaderProps {
   onRefresh: () => void;
   onExport: () => void;
   onExportPdf: () => void;
+  onExportImage: () => void;
   onOpenSettings: () => void;
   onOpenAbout: () => void;
   onOpenBenchmark: () => void;
@@ -56,6 +57,7 @@ export const Header: React.FC<HeaderProps> = ({
   onRefresh,
   onExport,
   onExportPdf,
+  onExportImage,
   onOpenSettings,
   onOpenAbout,
   onOpenBenchmark,
@@ -131,6 +133,11 @@ export const Header: React.FC<HeaderProps> = ({
     setIsMoreMenuOpen(false);
   };
 
+  const handleExportImage = () => {
+    onExportImage();
+    setIsMoreMenuOpen(false);
+  };
+
   const handleAbout = () => {
     onOpenAbout();
     setIsMoreMenuOpen(false);
@@ -168,7 +175,7 @@ export const Header: React.FC<HeaderProps> = ({
           {t.meta.subtitle}
         </p>
       </div>
-      <div className="flex gap-2 sm:gap-3 flex-wrap items-center">
+      <div data-html2canvas-ignore="true" className="flex gap-2 sm:gap-3 flex-wrap items-center">
         <Button
           variant="soft"
           onClick={onOpenBenchmark}
@@ -318,6 +325,16 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
                 <span>{(t.actions as any).export_pdf || "Export PDF"}</span>
               </button>
+              <button
+                onClick={() => {
+                  onExportImage();
+                  setIsExportMenuOpen(false);
+                }}
+                className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                <span>{(t.actions as any).export_image || "Export Image"}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -382,6 +399,16 @@ export const Header: React.FC<HeaderProps> = ({
                 <Download size={14} className="text-emerald-500" />
               </span>
               {(t.actions as any).export_pdf || "Export PDF"}
+            </button>
+
+            <button
+              onClick={handleExportImage}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 text-slate-700 dark:text-slate-300 transition-colors"
+            >
+              <span className="text-slate-400">
+                <Download size={14} className="text-purple-500" />
+              </span>
+              {(t.actions as any).export_image || "Export Image"}
             </button>
 
             <div className="mt-1 pt-1 border-t border-slate-100 dark:border-slate-700">
