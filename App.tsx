@@ -690,362 +690,284 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 scrollbar-hide relative">
       {/* Loading Overlay */}
-      {showLoader && (
+      {showLoader ? (<div
+        className={`fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 ease-out backdrop-blur-xl ${
+          fadeLoader ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+        style={{
+          background:
+            "radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)",
+          backgroundColor: "rgba(var(--bg-slate-50), 0.8)",
+        }}
+      >
         <div
-          className={`fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 ease-out backdrop-blur-xl ${
-            fadeLoader ? "opacity-0 pointer-events-none" : "opacity-100"
+          className={`bg-white/80 dark:bg-slate-800/80 p-8 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex flex-col items-center gap-6 max-w-sm w-full mx-4 backdrop-blur-md transition-all duration-500 ease-out transform ${
+            fadeLoader ? "scale-95 translate-y-4" : "scale-100 translate-y-0"
           }`}
-          style={{
-            background:
-              "radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)",
-            backgroundColor: "rgba(var(--bg-slate-50), 0.8)",
-          }}
         >
-          <div
-            className={`bg-white/80 dark:bg-slate-800/80 p-8 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex flex-col items-center gap-6 max-w-sm w-full mx-4 backdrop-blur-md transition-all duration-500 ease-out transform ${
-              fadeLoader ? "scale-95 translate-y-4" : "scale-100 translate-y-0"
-            }`}
-          >
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full border-4 border-slate-200 dark:border-slate-700"></div>
-              <div className="absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Monitor className="text-indigo-500" size={24} />
-              </div>
-            </div>
-            <div className="text-center">
-              <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
-                BrowserScope
-              </h3>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 animate-pulse font-mono">
-                {loadingText}
-              </p>
+          <div className="relative">
+            <div className="w-16 h-16 rounded-full border-4 border-slate-200 dark:border-slate-700"></div>
+            <div className="absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Monitor className="text-indigo-500" size={24} />
             </div>
           </div>
+          <div className="text-center">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
+              BrowserScope
+            </h3>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 animate-pulse font-mono">
+              {loadingText}
+            </p>
+          </div>
         </div>
-      )}
-
+      </div>) : null}
       {/* PDF Exporting Loader Overlay */}
-      {isExportingPdf && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 backdrop-blur-md">
-          <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex items-center gap-4 max-w-sm w-full mx-4 transform animate-in fade-in zoom-in duration-200">
-            <Loader2 className="animate-spin text-indigo-500 shrink-0" size={28} />
-            <div>
-              <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
-                {lang === "zh-CN" ? "正在生成 PDF 诊断报告..." : 
-                 lang === "zh-TW" || lang === "zh-HK" ? "正在生成 PDF 診斷報告..." :
-                 lang === "ja" ? "PDF診断レポートを作成中..." :
-                 lang === "ru" ? "Создание PDF-отчета..." :
-                 "Generating PDF Diagnostic Report..."}
-              </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
-                {lang === "zh-CN" ? "正在使用后台 Worker 线程渲染报告" : 
-                 lang === "zh-TW" || lang === "zh-HK" ? "正在使用後台 Worker 線程渲染報告" :
-                 lang === "ja" ? "バックグラウンドの Worker 経由で処理中" :
-                 lang === "ru" ? "Используется фоновый поток" :
-                 "Rendering report using background Worker thread"}
-              </p>
-            </div>
+      {isExportingPdf ? (<div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 backdrop-blur-md">
+        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex items-center gap-4 max-w-sm w-full mx-4 transform animate-in fade-in zoom-in duration-200">
+          <Loader2 className="animate-spin text-indigo-500 shrink-0" size={28} />
+          <div>
+            <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
+              {lang === "zh-CN" ? "正在生成 PDF 诊断报告..." : 
+               lang === "zh-TW" || lang === "zh-HK" ? "正在生成 PDF 診斷報告..." :
+               lang === "ja" ? "PDF診断レポートを作成中..." :
+               lang === "ru" ? "Создание PDF-отчета..." :
+               "Generating PDF Diagnostic Report..."}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+              {lang === "zh-CN" ? "正在使用后台 Worker 线程渲染报告" : 
+               lang === "zh-TW" || lang === "zh-HK" ? "正在使用後台 Worker 線程渲染報告" :
+               lang === "ja" ? "バックグラウンドの Worker 経由で処理中" :
+               lang === "ru" ? "Используется фоновый поток" :
+               "Rendering report using background Worker thread"}
+            </p>
           </div>
         </div>
-      )}
-
+      </div>) : null}
       {/* Image Exporting Loader Overlay */}
-      {isExportingImage && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 backdrop-blur-md">
-          <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex items-center gap-4 max-w-sm w-full mx-4 transform animate-in fade-in zoom-in duration-200">
-            <Loader2 className="animate-spin text-indigo-500 shrink-0" size={28} />
-            <div>
-              <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
-                {lang === "zh-CN" ? "正在导出仪表盘图片..." : 
-                 lang === "zh-TW" || lang === "zh-HK" ? "正在匯出儀表板圖片..." :
-                 lang === "ja" ? "ダッシュボード画像をエクスポート中..." :
-                 lang === "ru" ? "Экспорт изображения..." :
-                 "Exporting Dashboard Image..."}
-              </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
-                {lang === "zh-CN" ? "正在使用 html2canvas 渲染高清晰度 PNG" : 
-                 lang === "zh-TW" || lang === "zh-HK" ? "正在使用 html2canvas 渲染高清晰度 PNG" :
-                 lang === "ja" ? "html2canvas で高解像度PNGをレンダリング中" :
-                 lang === "ru" ? "Рендеринг PNG высокого разрешения..." :
-                 "Rendering high-resolution PNG using html2canvas"}
-              </p>
-            </div>
+      {isExportingImage ? (<div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 backdrop-blur-md">
+        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex items-center gap-4 max-w-sm w-full mx-4 transform animate-in fade-in zoom-in duration-200">
+          <Loader2 className="animate-spin text-indigo-500 shrink-0" size={28} />
+          <div>
+            <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
+              {lang === "zh-CN" ? "正在导出仪表盘图片..." : 
+               lang === "zh-TW" || lang === "zh-HK" ? "正在匯出儀表板圖片..." :
+               lang === "ja" ? "ダッシュボード画像をエクスポート中..." :
+               lang === "ru" ? "Экспорт изображения..." :
+               "Exporting Dashboard Image..."}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+              {lang === "zh-CN" ? "正在使用 html2canvas 渲染高清晰度 PNG" : 
+               lang === "zh-TW" || lang === "zh-HK" ? "正在使用 html2canvas 渲染高清晰度 PNG" :
+               lang === "ja" ? "html2canvas で高解像度PNGをレンダリング中" :
+               lang === "ru" ? "Рендеринг PNG высокого разрешения..." :
+               "Rendering high-resolution PNG using html2canvas"}
+            </p>
           </div>
         </div>
-      )}
-
+      </div>) : null}
       {/* Lazy Loaded Modals wrapped in Suspense and ErrorBoundary */}
       <ErrorBoundary name="Modals">
         <Suspense
           fallback={
             <ModalLoading
-              initializingText={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).common?.modal_loading?.initializing}
-              loadingText={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).common?.modal_loading?.loading_module}
+              initializingText={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).common?.modal_loading?.initializing}
+              loadingText={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).common?.modal_loading?.loading_module}
             />
           }
         >
-          {isDevToolsFloating && (
-            <FloatingWindow
-              title={developerTabTitle}
-              onClose={() => setIsDevToolsFloating(false)}
-              initialWidth={600}
-              initialHeight={400}
-            >
-              <Components.developer
-                t={t.settings.developer}
-                isFloating={true}
-                toggleFloat={() => setIsDevToolsFloating(false)}
-              />
-            </FloatingWindow>
-          )}
+          {isDevToolsFloating ? (<FloatingWindow
+            title={developerTabTitle}
+            onClose={() => setIsDevToolsFloating(false)}
+            initialWidth={600}
+            initialHeight={400}
+          >
+            <Components.developer
+              t={t.settings.developer}
+              isFloating={true}
+              toggleFloat={() => setIsDevToolsFloating(false)}
+            />
+          </FloatingWindow>) : null}
 
-          {visibility.camera && (
-            <Components.camera
-              onClose={() => close("camera")}
-              t={t.cameraTool}
-            />
-          )}
-          {visibility.audio && (
-            <Components.audio onClose={() => close("audio")} t={t.audioTool} />
-          )}
-          {visibility.webgl && (
-            <Components.webgl
-              extensions={data?.fingerprints.webglExtensions || []}
-              onClose={() => close("webgl")}
-              t={t.webglTool}
-            />
-          )}
-          {visibility.canvas && (
-            <Components.canvas
-              imageSrc={data?.fingerprints.canvasImage || ""}
-              onClose={() => close("canvas")}
-              t={t.imageDetails}
-            />
-          )}
-          {visibility.base64 && (
-            <Components.base64
-              data={data?.fingerprints.canvasImage || ""}
-              onClose={() => close("base64")}
-              t={t.base64Tool}
-            />
-          )}
-          {visibility.about && (
-            <Components.about onClose={() => close("about")} t={t.aboutModal} />
-          )}
-          {visibility.sensor && (
-            <Components.sensor
-              onClose={() => close("sensor")}
-              t={t.sensorModal}
-            />
-          )}
-          {visibility.score && data && (
-            <Components.score
-              scoreData={data.fingerprints.score}
-              onClose={() => close("score")}
-              t={t.scoreModal}
-            />
-          )}
-          {visibility.fingerprint && (
-            <Components.fingerprint
-              onClose={() => close("fingerprint")}
-              t={t.fingerprintModal}
-            />
-          )}
-          {visibility.speed && (
-            <Components.speed onClose={() => close("speed")} t={t.speedTest} />
-          )}
-          {visibility.compute && (
-            <Components.compute
-              onClose={() => close("compute")}
-              t={t.computeStress}
-            />
-          )}
+          {visibility.camera ? (<Components.camera
+            onClose={() => close("camera")}
+            t={t.cameraTool}
+          />) : null}
+          {visibility.audio ? (<Components.audio onClose={() => close("audio")} t={t.audioTool} />) : null}
+          {visibility.webgl ? (<Components.webgl
+            extensions={data?.fingerprints.webglExtensions || []}
+            onClose={() => close("webgl")}
+            t={t.webglTool}
+          />) : null}
+          {visibility.canvas ? (<Components.canvas
+            imageSrc={data?.fingerprints.canvasImage || ""}
+            onClose={() => close("canvas")}
+            t={t.imageDetails}
+          />) : null}
+          {visibility.base64 ? (<Components.base64
+            data={data?.fingerprints.canvasImage || ""}
+            onClose={() => close("base64")}
+            t={t.base64Tool}
+          />) : null}
+          {visibility.about ? (<Components.about onClose={() => close("about")} t={t.aboutModal} />) : null}
+          {visibility.sensor ? (<Components.sensor
+            onClose={() => close("sensor")}
+            t={t.sensorModal}
+          />) : null}
+          {visibility.score && data ? (<Components.score
+            scoreData={data.fingerprints.score}
+            onClose={() => close("score")}
+            t={t.scoreModal}
+          />) : null}
+          {visibility.fingerprint ? (<Components.fingerprint
+            onClose={() => close("fingerprint")}
+            t={t.fingerprintModal}
+          />) : null}
+          {visibility.speed ? (<Components.speed onClose={() => close("speed")} t={t.speedTest} />) : null}
+          {visibility.compute ? (<Components.compute
+            onClose={() => close("compute")}
+            t={t.computeStress}
+          />) : null}
 
-          {visibility.settings && (
-            <Components.settings
-              onClose={() => close("settings")}
-              t={
-                t
-              } /* Pass root translation object to support modular settings */
-              themeColor={themeColor}
-              setThemeColor={updateThemeColor}
-              animationStyle={animationStyle}
-              setAnimationStyle={updateAnimationStyle}
-              simpleMode={simpleMode}
-              toggleSimpleMode={toggleSimpleMode}
-              hideScrollbar={hideScrollbar}
-              toggleHideScrollbar={toggleHideScrollbar}
-              globalHideScrollbar={globalHideScrollbar}
-              toggleGlobalHideScrollbar={toggleGlobalHideScrollbar}
-              timeFormat={timeFormat}
-              setTimeFormat={updateTimeFormat}
-              disableBlur={disableBlur}
-              toggleDisableBlur={toggleDisableBlur}
-              disableAnimations={disableAnimations}
-              toggleDisableAnimations={toggleDisableAnimations}
-              fastAnimations={fastAnimations}
-              toggleFastAnimations={toggleFastAnimations}
-              collapseHeader={collapseHeader}
-              toggleCollapseHeader={toggleCollapseHeader}
-              enableUdp={enableUdp}
-              toggleEnableUdp={toggleEnableUdp}
-              showTabs={showTabs}
-              toggleShowTabs={toggleShowTabs}
-              showSearch={showSearch}
-              toggleShowSearch={toggleShowSearch}
-              searchScope={searchScope}
-              updateSearchScope={updateSearchScope}
-              searchMode={searchMode}
-              updateSearchMode={updateSearchMode}
-              hiddenCards={hiddenCards}
-              setHiddenCards={updateHiddenCards}
-              restoreAllNotifications={restoreAllNotifications}
-              dismissedNotificationsCount={dismissedNotifications.length}
-              showQuickSummary={showQuickSummary}
-              toggleShowQuickSummary={toggleShowQuickSummary}
-              lang={lang}
-              isDevToolsFloating={isDevToolsFloating}
-              setDevToolsFloating={setIsDevToolsFloating}
-              moduleStates={modalStates}
-              appVersion={packageJson.version}
-              updateServiceWorker={updateServiceWorker}
-              manualCheckUpdate={manualCheckUpdate}
-              lastCheckTime={lastCheckTime}
-              isCheckingUpdate={isCheckingUpdate}
-              needRefresh={needRefresh}
-            />
-          )}
+          {visibility.settings ? (<Components.settings
+            onClose={() => close("settings")}
+            t={
+              t
+            } /* Pass root translation object to support modular settings */
+            themeColor={themeColor}
+            setThemeColor={updateThemeColor}
+            animationStyle={animationStyle}
+            setAnimationStyle={updateAnimationStyle}
+            simpleMode={simpleMode}
+            toggleSimpleMode={toggleSimpleMode}
+            hideScrollbar={hideScrollbar}
+            toggleHideScrollbar={toggleHideScrollbar}
+            globalHideScrollbar={globalHideScrollbar}
+            toggleGlobalHideScrollbar={toggleGlobalHideScrollbar}
+            timeFormat={timeFormat}
+            setTimeFormat={updateTimeFormat}
+            disableBlur={disableBlur}
+            toggleDisableBlur={toggleDisableBlur}
+            disableAnimations={disableAnimations}
+            toggleDisableAnimations={toggleDisableAnimations}
+            fastAnimations={fastAnimations}
+            toggleFastAnimations={toggleFastAnimations}
+            collapseHeader={collapseHeader}
+            toggleCollapseHeader={toggleCollapseHeader}
+            enableUdp={enableUdp}
+            toggleEnableUdp={toggleEnableUdp}
+            showTabs={showTabs}
+            toggleShowTabs={toggleShowTabs}
+            showSearch={showSearch}
+            toggleShowSearch={toggleShowSearch}
+            searchScope={searchScope}
+            updateSearchScope={updateSearchScope}
+            searchMode={searchMode}
+            updateSearchMode={updateSearchMode}
+            hiddenCards={hiddenCards}
+            setHiddenCards={updateHiddenCards}
+            restoreAllNotifications={restoreAllNotifications}
+            dismissedNotificationsCount={dismissedNotifications.length}
+            showQuickSummary={showQuickSummary}
+            toggleShowQuickSummary={toggleShowQuickSummary}
+            lang={lang}
+            isDevToolsFloating={isDevToolsFloating}
+            setDevToolsFloating={setIsDevToolsFloating}
+            moduleStates={modalStates}
+            appVersion={packageJson.version}
+            updateServiceWorker={updateServiceWorker}
+            manualCheckUpdate={manualCheckUpdate}
+            lastCheckTime={lastCheckTime}
+            isCheckingUpdate={isCheckingUpdate}
+            needRefresh={needRefresh}
+          />) : null}
 
-          {visibility.benchmark && (
-            <Components.benchmark
-              onClose={() => close("benchmark")}
-              t={t.benchmarkModal}
-            />
-          )}
-          {visibility.tools && (
-            <Components.tools
-              onClose={() => close("tools")}
-              t={t.hardwareToolsModal}
-              values={t.values}
-              labels={t.labels}
-            />
-          )}
+          {visibility.benchmark ? (<Components.benchmark
+            onClose={() => close("benchmark")}
+            t={t.benchmarkModal}
+          />) : null}
+          {visibility.tools ? (<Components.tools
+            onClose={() => close("tools")}
+            t={t.hardwareToolsModal}
+            values={t.values}
+            labels={t.labels}
+          />) : null}
 
-          {visibility.ai && (
-            <Components.ai onClose={() => close("ai")} t={t.aiPlayground} />
-          )}
-          {visibility.gamepad && (
-            <Components.gamepad
-              onClose={() => close("gamepad")}
-              t={t.gamepadTool}
-            />
-          )}
-          {visibility.webDevice && (
-            <Components.webDevice
-              onClose={() => close("webDevice")}
-              t={t.webDevice}
-            />
-          )}
-          {visibility.vision && (
-            <Components.vision
-              onClose={() => close("vision")}
-              t={t.visionModal}
-            />
-          )}
-          {visibility.video && (
-            <Components.video
-              onClose={() => close("video")}
-              t={t.hardwareToolsModal}
-              values={t.values}
-              labels={t.labels}
-            />
-          )}
-          {visibility.graphics && (
-            <Components.graphics
-              onClose={() => close("graphics")}
-              t={t.graphicsModal}
-            />
-          )}
-          {visibility.speech && (
-            <Components.speech
-              onClose={() => close("speech")}
-              t={t.speechModal}
-            />
-          )}
-          {visibility.midi && (
-            <Components.midi onClose={() => close("midi")} t={t.midiModal} />
-          )}
-          {visibility.storageBench && (
-            <Components.storageBench
-              onClose={() => close("storageBench")}
-              t={t.storageBenchmark}
-            />
-          )}
-          {visibility.heatmap && (
-            <Components.heatmap
-              onClose={() => close("heatmap")}
-              t={t.heatmap}
-            />
-          )}
-          {visibility.rayTracing && (
-            <Components.rayTracing
-              onClose={() => close("rayTracing")}
-              t={t.rayTracing}
-            />
-          )}
-          {visibility.extensions && (
-            <Components.extensions
-              onClose={() => close("extensions")}
-              t={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).extensionsModal}
-            />
-          )}
-          {visibility.networkTools && (
-            <Components.networkTools
-              onClose={() => close("networkTools")}
-              t={t}
-              enableUdp={enableUdp}
-            />
-          )}
-          {visibility.displayTools && (
-            <Components.displayTools
-              onClose={() => close("displayTools")}
-              t={t}
-            />
-          )}
-          {visibility.googleTranslate && (
-            <Components.googleTranslate
-              onClose={() => close("googleTranslate")}
-              t={t}
-            />
-          )}
-          {visibility.audioLatency && (
-            <Components.audioLatency
-              onClose={() => close("audioLatency")}
-              t={t}
-            />
-          )}
-          {visibility.poisoning && (
-            <Components.poisoning
-              onClose={() => close("poisoning")}
-              t={(t as any).poisoning}
-            />
-          )}
-          {visibility.ja3 && (
-            <Components.ja3
-              onClose={() => close("ja3")}
-              t={(t as any).ja3}
-            />
-          )}
-          {visibility.attributions && (
-            <Components.attributions
-              onClose={() => close("attributions")}
-              t={(t as any).attributionsModal}
-            />
-          )}
+          {visibility.ai ? (<Components.ai onClose={() => close("ai")} t={t.aiPlayground} />) : null}
+          {visibility.gamepad ? (<Components.gamepad
+            onClose={() => close("gamepad")}
+            t={t.gamepadTool}
+          />) : null}
+          {visibility.webDevice ? (<Components.webDevice
+            onClose={() => close("webDevice")}
+            t={t.webDevice}
+          />) : null}
+          {visibility.vision ? (<Components.vision
+            onClose={() => close("vision")}
+            t={t.visionModal}
+          />) : null}
+          {visibility.video ? (<Components.video
+            onClose={() => close("video")}
+            t={t.hardwareToolsModal}
+            values={t.values}
+            labels={t.labels}
+          />) : null}
+          {visibility.graphics ? (<Components.graphics
+            onClose={() => close("graphics")}
+            t={t.graphicsModal}
+          />) : null}
+          {visibility.speech ? (<Components.speech
+            onClose={() => close("speech")}
+            t={t.speechModal}
+          />) : null}
+          {visibility.midi ? (<Components.midi onClose={() => close("midi")} t={t.midiModal} />) : null}
+          {visibility.storageBench ? (<Components.storageBench
+            onClose={() => close("storageBench")}
+            t={t.storageBenchmark}
+          />) : null}
+          {visibility.heatmap ? (<Components.heatmap
+            onClose={() => close("heatmap")}
+            t={t.heatmap}
+          />) : null}
+          {visibility.rayTracing ? (<Components.rayTracing
+            onClose={() => close("rayTracing")}
+            t={t.rayTracing}
+          />) : null}
+          {visibility.extensions ? (<Components.extensions
+            onClose={() => close("extensions")}
+            t={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).extensionsModal}
+          />) : null}
+          {visibility.networkTools ? (<Components.networkTools
+            onClose={() => close("networkTools")}
+            t={t}
+            enableUdp={enableUdp}
+          />) : null}
+          {visibility.displayTools ? (<Components.displayTools
+            onClose={() => close("displayTools")}
+            t={t}
+          />) : null}
+          {visibility.googleTranslate ? (<Components.googleTranslate
+            onClose={() => close("googleTranslate")}
+            t={t}
+          />) : null}
+          {visibility.audioLatency ? (<Components.audioLatency
+            onClose={() => close("audioLatency")}
+            t={t}
+          />) : null}
+          {visibility.poisoning ? (<Components.poisoning
+            onClose={() => close("poisoning")}
+            t={(t as any).poisoning}
+          />) : null}
+          {visibility.ja3 ? (<Components.ja3
+            onClose={() => close("ja3")}
+            t={(t as any).ja3}
+          />) : null}
+          {visibility.attributions ? (<Components.attributions
+            onClose={() => close("attributions")}
+            t={(t as any).attributionsModal}
+          />) : null}
         </Suspense>
       </ErrorBoundary>
-
       <div id="dashboard-container" className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">
         <Header
           t={t}
@@ -1066,593 +988,546 @@ const App: React.FC = () => {
 
         {/* Notifications */}
         {((needRefresh && !dismissedNotifications.includes('update')) || 
-          (isOutdated && !dismissedNotifications.includes('outdated')) ||
-          (isViewportTooSmall && !dismissedNotifications.includes('viewport_small'))) && (
-          <div className="flex flex-col gap-4 w-full">
-            {needRefresh && !dismissedNotifications.includes('update') && (
-              <AppNotification 
-                type="success"
-                title={t.environment?.notifications?.update?.title || "Update Available"}
-                message={t.environment?.notifications?.update?.message || "A new version of BrowserScope is available."}
-                action={{
-                  label: t.environment?.notifications?.update?.action || "Update Now",
-                  onClick: () => updateServiceWorker(true)
-                }}
-                onClose={() => {
-                  dismissNotification('update');
-                }}
-              />
-            )}
-
-            {isOutdated && !dismissedNotifications.includes('outdated') && (
-              <AppNotification 
-                type="warning"
-                title={t.environment?.notifications?.outdated?.title || "Legacy Browser Detected"}
-                message={t.environment?.notifications?.outdated?.message || "Your browser version is too old. Some advanced scanning features might be unavailable or inaccurate."}
-                onClose={() => {
-                  dismissNotification('outdated');
-                }}
-              />
-            )}
-
-            {isViewportTooSmall && !dismissedNotifications.includes('viewport_small') && (
-              <AppNotification 
-                type="warning"
-                title={t.environment?.notifications?.viewport_small?.title || "Display Area Too Small"}
-                message={t.environment?.notifications?.viewport_small?.message || "The current screen display area is too small. Some layouts, charts, or features may have display issues or become difficult to interact with."}
-                onClose={() => {
-                  dismissNotification('viewport_small');
-                }}
-              />
-            )}
-          </div>
-        )}
+          (isOutdated && !dismissedNotifications.includes('outdated')) || (isViewportTooSmall && !dismissedNotifications.includes('viewport_small'))) ? (<div className="flex flex-col gap-4 w-full">
+          {needRefresh && !dismissedNotifications.includes('update') ? (<AppNotification 
+            type="success"
+            title={t.environment?.notifications?.update?.title || "Update Available"}
+            message={t.environment?.notifications?.update?.message || "A new version of BrowserScope is available."}
+            action={{
+              label: t.environment?.notifications?.update?.action || "Update Now",
+              onClick: () => updateServiceWorker(true)
+            }}
+            onClose={() => {
+              dismissNotification('update');
+            }}
+          />) : null}
+          {isOutdated && !dismissedNotifications.includes('outdated') ? (<AppNotification 
+            type="warning"
+            title={t.environment?.notifications?.outdated?.title || "Legacy Browser Detected"}
+            message={t.environment?.notifications?.outdated?.message || "Your browser version is too old. Some advanced scanning features might be unavailable or inaccurate."}
+            onClose={() => {
+              dismissNotification('outdated');
+            }}
+          />) : null}
+          {isViewportTooSmall && !dismissedNotifications.includes('viewport_small') ? (<AppNotification 
+            type="warning"
+            title={t.environment?.notifications?.viewport_small?.title || "Display Area Too Small"}
+            message={t.environment?.notifications?.viewport_small?.message || "The current screen display area is too small. Some layouts, charts, or features may have display issues or become difficult to interact with."}
+            onClose={() => {
+              dismissNotification('viewport_small');
+            }}
+          />) : null}
+        </div>) : null}
 
         {/* Main Content - Only render if data exists */}
-        {data && Object.keys(data).length > 0 && (
-          <ErrorBoundary name="MainContent">
+        {data && Object.keys(data).length > 0 ? (<ErrorBoundary name="MainContent">
+          {/* Navigation Tabs and Search */}
+          {(showTabs || showSearch) ? (() => {
+
+            if (availableTabs.length <= 1 && !showSearch) return null;
+
+            if (activeTab !== "all" && !availableTabs.some(tab => tab.id === activeTab)) {
+               setActiveTab("all");
+            }
+
+            const fuzzyMatch = (text: string, query: string): boolean => {
+                const normText = String(text || "").toLowerCase().trim();
+                const normQuery = String(query || "").toLowerCase().trim();
+                if (!normQuery) return true;
+                if (!normText) return false;
+                const terms = normQuery.split(/\s+/).filter(Boolean);
+                if (terms.length > 1) {
+                    return terms.every(term => normText.includes(term));
+                }
+                let textIdx = 0;
+                let queryIdx = 0;
+                while (textIdx < normText.length && queryIdx < normQuery.length) {
+                    if (normText[textIdx] === normQuery[queryIdx]) {
+                        queryIdx++;
+                    }
+                    textIdx++;
+                }
+                return queryIdx === normQuery.length;
+            };
+
+            const exactMatch = (text: string, query: string): boolean => {
+                const normText = String(text || "").toLowerCase().trim();
+                const normQuery = String(query || "").toLowerCase().trim();
+                return normText.includes(normQuery);
+            };
+
             
-            {/* Navigation Tabs and Search */}
-            {(showTabs || showSearch) && (() => {
+            const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+                const keyword = e.target.value.toLowerCase().trim();
+                if (!keyword) {
+                    setMatchedCardIds(null);
+                    return;
+                }
+                
+                const matches: string[] = [];
+                const isFuzzy = searchMode === 'fuzzy';
+                
+                for (const [id, data] of Object.entries(cardIndex)) {
+                    let textToSearch = "";
+                    switch (searchScope) {
+                        case 'category': textToSearch = data.category; break;
+                        case 'title': textToSearch = data.title; break;
+                        case 'value': textToSearch = data.value; break;
+                        case 'all': 
+                        default: 
+                            textToSearch = `${data.category} ${data.title} ${data.value}`; 
+                            break;
+                    }
+                    
+                    const isMatch = isFuzzy ? fuzzyMatch(textToSearch, keyword) : exactMatch(textToSearch, keyword);
+                    if (isMatch) {
+                        matches.push(id);
+                    }
+                }
+                
+                setMatchedCardIds(matches);
+            };
 
-              if (availableTabs.length <= 1 && !showSearch) return null;
-
-              if (activeTab !== "all" && !availableTabs.some(tab => tab.id === activeTab)) {
-                 setActiveTab("all");
-              }
-
-              const fuzzyMatch = (text: string, query: string): boolean => {
-                  const normText = String(text || "").toLowerCase().trim();
-                  const normQuery = String(query || "").toLowerCase().trim();
-                  if (!normQuery) return true;
-                  if (!normText) return false;
-                  const terms = normQuery.split(/\s+/).filter(Boolean);
-                  if (terms.length > 1) {
-                      return terms.every(term => normText.includes(term));
-                  }
-                  let textIdx = 0;
-                  let queryIdx = 0;
-                  while (textIdx < normText.length && queryIdx < normQuery.length) {
-                      if (normText[textIdx] === normQuery[queryIdx]) {
-                          queryIdx++;
-                      }
-                      textIdx++;
-                  }
-                  return queryIdx === normQuery.length;
-              };
-
-              const exactMatch = (text: string, query: string): boolean => {
-                  const normText = String(text || "").toLowerCase().trim();
-                  const normQuery = String(query || "").toLowerCase().trim();
-                  return normText.includes(normQuery);
-              };
-
-              
-              const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-                  const keyword = e.target.value.toLowerCase().trim();
-                  if (!keyword) {
-                      setMatchedCardIds(null);
-                      return;
-                  }
-                  
-                  const matches: string[] = [];
-                  const isFuzzy = searchMode === 'fuzzy';
-                  
-                  for (const [id, data] of Object.entries(cardIndex)) {
-                      let textToSearch = "";
-                      switch (searchScope) {
-                          case 'category': textToSearch = data.category; break;
-                          case 'title': textToSearch = data.title; break;
-                          case 'value': textToSearch = data.value; break;
-                          case 'all': 
-                          default: 
-                              textToSearch = `${data.category} ${data.title} ${data.value}`; 
-                              break;
-                      }
-                      
-                      const isMatch = isFuzzy ? fuzzyMatch(textToSearch, keyword) : exactMatch(textToSearch, keyword);
-                      if (isMatch) {
-                          matches.push(id);
-                      }
-                  }
-                  
-                  setMatchedCardIds(matches);
-              };
-
-              return (
-                <div className="sticky top-0 z-20 pt-4 -mt-4 bg-[#f8fafc]/90 dark:bg-slate-900/90 backdrop-blur-md flex flex-col space-y-3 mb-6 border-b border-slate-200 dark:border-slate-800 pb-2">
-                  {showSearch && (
-                      <div className="relative px-1 flex items-center gap-2">
-                          <div className="relative flex-1">
-                              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                              <input 
-                                  type="text"
-                                  onChange={handleSearch}
-                                  placeholder={((t as any).search || {}).placeholder || "Search categories or keywords..."}
-                                  className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm text-slate-700 dark:text-slate-100 transition-shadow"
-                              />
-                          </div>
-                          <button
-                              onClick={() => setShowSearchSettings(!showSearchSettings)}
-                              className={`p-2 rounded-xl border transition-colors flex-shrink-0 ${showSearchSettings ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700'}`}
-                          >
-                              <Settings2 size={20} />
-                          </button>
+            return (
+              <div className="sticky top-0 z-20 pt-4 -mt-4 bg-[#f8fafc]/90 dark:bg-slate-900/90 backdrop-blur-md flex flex-col space-y-3 mb-6 border-b border-slate-200 dark:border-slate-800 pb-2">
+                {showSearch ? (<div className="relative px-1 flex items-center gap-2">
+                  <div className="relative flex-1">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                      <input 
+                          type="text"
+                          onChange={handleSearch}
+                          placeholder={((t as any).search || {}).placeholder || "Search categories or keywords..."}
+                          className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm text-slate-700 dark:text-slate-100 transition-shadow"
+                      />
+                  </div>
+                  <button
+                      onClick={() => setShowSearchSettings(!showSearchSettings)}
+                      className={`p-2 rounded-xl border transition-colors flex-shrink-0 ${showSearchSettings ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700'}`}
+                  >
+                      <Settings2 size={20} />
+                  </button>
+                </div>) : null}
+                {showSearch && showSearchSettings ? (<div className="px-1 mt-1 mb-2">
+                  <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-top-2">
+                      <div className="flex-1">
+                          <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                              {(t as any).settings?.general?.searchScope?.title || "Search Scope"}
+                          </label>
+                          <Select 
+                              value={searchScope}
+                              onChange={(val) => updateSearchScope(val as any)}
+                              options={[
+                                  { id: 'all', label: (t as any).settings?.general?.searchScope?.options?.all || "All Text" },
+                                  { id: 'category', label: (t as any).settings?.general?.searchScope?.options?.category || "Category" },
+                                  { id: 'title', label: (t as any).settings?.general?.searchScope?.options?.title || "Title" },
+                                  { id: 'value', label: (t as any).settings?.general?.searchScope?.options?.value || "Value" }
+                              ]}
+                              color={themeColor as any}
+                              size="sm"
+                          />
                       </div>
-                  )}
-                  {showSearch && showSearchSettings && (
-                      <div className="px-1 mt-1 mb-2">
-                          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-top-2">
-                              <div className="flex-1">
-                                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                                      {(t as any).settings?.general?.searchScope?.title || "Search Scope"}
-                                  </label>
-                                  <Select 
-                                      value={searchScope}
-                                      onChange={(val) => updateSearchScope(val as any)}
-                                      options={[
-                                          { id: 'all', label: (t as any).settings?.general?.searchScope?.options?.all || "All Text" },
-                                          { id: 'category', label: (t as any).settings?.general?.searchScope?.options?.category || "Category" },
-                                          { id: 'title', label: (t as any).settings?.general?.searchScope?.options?.title || "Title" },
-                                          { id: 'value', label: (t as any).settings?.general?.searchScope?.options?.value || "Value" }
-                                      ]}
-                                      color={themeColor as any}
-                                      size="sm"
-                                  />
-                              </div>
-                              <div className="flex-1">
-                                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                                      {(t as any).settings?.general?.searchMode?.title || "Search Mode"}
-                                  </label>
-                                  <Select 
-                                      value={searchMode}
-                                      onChange={(val) => updateSearchMode(val as any)}
-                                      options={[
-                                          { id: 'fuzzy', label: (t as any).settings?.general?.searchMode?.options?.fuzzy || "Fuzzy" },
-                                          { id: 'exact', label: (t as any).settings?.general?.searchMode?.options?.exact || "Exact" }
-                                      ]}
-                                      color={themeColor as any}
-                                      size="sm"
-                                  />
-                              </div>
-                          </div>
+                      <div className="flex-1">
+                          <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                              {(t as any).settings?.general?.searchMode?.title || "Search Mode"}
+                          </label>
+                          <Select 
+                              value={searchMode}
+                              onChange={(val) => updateSearchMode(val as any)}
+                              options={[
+                                  { id: 'fuzzy', label: (t as any).settings?.general?.searchMode?.options?.fuzzy || "Fuzzy" },
+                                  { id: 'exact', label: (t as any).settings?.general?.searchMode?.options?.exact || "Exact" }
+                              ]}
+                              color={themeColor as any}
+                              size="sm"
+                          />
                       </div>
-                  )}
-                  {showTabs && availableTabs.length > 1 && (
-                    <div className="flex space-x-2 overflow-x-auto scrollbar-hide px-1" ref={tabsContainerRef}>
-                      {availableTabs.map(tab => (
-                        <button
-                          key={tab.id}
-                          ref={activeTab === tab.id ? activeTabRef : null}
-                          onClick={() => {
-                            const newIndex = availableTabs.findIndex(t => t.id === tab.id);
-                            const oldIndex = availableTabs.findIndex(t => t.id === activeTab);
-                            setSlideDirection(newIndex > oldIndex ? 1 : -1);
-                            setActiveTab(tab.id as any);
-                          }}
-                          className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-sm font-medium ${
-                            activeTab === tab.id
-                              ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
-                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                          }`}
-                        >
-                          {tab.icon}
-                          <span>{tab.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-
-            <Suspense
-              fallback={
-                <div className="flex justify-center p-12">
-                  <Loader2 className="animate-spin text-indigo-500" size={32} />
-                </div>
-              }
+                  </div>
+                </div>) : null}
+                {showTabs && availableTabs.length > 1 ? (<div className="flex space-x-2 overflow-x-auto scrollbar-hide px-1" ref={tabsContainerRef}>
+                  {availableTabs.map(tab => (
+                    <button
+                      key={tab.id}
+                      ref={activeTab === tab.id ? activeTabRef : null}
+                      onClick={() => {
+                        const newIndex = availableTabs.findIndex(t => t.id === tab.id);
+                        const oldIndex = availableTabs.findIndex(t => t.id === activeTab);
+                        setSlideDirection(newIndex > oldIndex ? 1 : -1);
+                        setActiveTab(tab.id as any);
+                      }}
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-sm font-medium ${
+                        activeTab === tab.id
+                          ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                      }`}
+                    >
+                      {tab.icon}
+                      <span>{tab.label}</span>
+                    </button>
+                  ))}
+                </div>) : null}
+              </div>
+            );
+          })() : null}
+          <Suspense
+            fallback={
+              <div className="flex justify-center p-12">
+                <Loader2 className="animate-spin text-indigo-500" size={32} />
+              </div>
+            }
+          >
+            <div
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+              className="overflow-hidden"
             >
               <div
-                onTouchStart={onTouchStart}
-                onTouchMove={onTouchMove}
-                onTouchEnd={onTouchEnd}
-                className="overflow-hidden"
+                className={`space-y-6 ${initialAnimationStyle === "slide-up" ? "anim-slide-up" : initialAnimationStyle === "fade" ? "anim-fade" : initialAnimationStyle === "fly-in" ? "anim-fly-in" : initialAnimationStyle === "zoom" ? "anim-zoom" : ""}`}
               >
-                <div
-                  className={`space-y-6 ${initialAnimationStyle === "slide-up" ? "anim-slide-up" : initialAnimationStyle === "fade" ? "anim-fade" : initialAnimationStyle === "fly-in" ? "anim-fly-in" : initialAnimationStyle === "zoom" ? "anim-zoom" : ""}`}
+                {/* Quick Summary Widget */}
+                <motion.div
+                  initial={false}
+                  animate={(activeTab === "all" && matchedCardIds === null && showQuickSummary) ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    display: "block"
+                  } : {
+                    opacity: 0,
+                    y: 15,
+                    scale: 0.98,
+                    transitionEnd: {
+                      display: "none"
+                    }
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
                 >
-                  {/* Quick Summary Widget */}
-                  <motion.div
-                    initial={false}
-                    animate={(activeTab === "all" && matchedCardIds === null && showQuickSummary) ? {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      display: "block"
-                    } : {
-                      opacity: 0,
-                      y: 15,
-                      scale: 0.98,
-                      transitionEnd: {
-                        display: "none"
-                      }
-                    }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  >
-                    <QuickSummaryWidget data={browserData} t={t} onClose={() => toggleShowQuickSummary(false)} />
-                  </motion.div>
+                  <QuickSummaryWidget data={browserData} t={t} onClose={() => toggleShowQuickSummary(false)} />
+                </motion.div>
 
-                  {/* Empty State */}
-                  <motion.div
-                    initial={false}
-                    animate={matchedCardIds !== null && matchedCardIds.length === 0 ? {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      display: "block"
-                    } : {
-                      opacity: 0,
-                      y: 15,
-                      scale: 0.98,
-                      transitionEnd: {
-                        display: "none"
-                      }
-                    }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  >
-                    <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-center shadow-sm">
-                      <div className="w-16 h-16 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-400 dark:text-slate-600 mb-4">
-                        <Search size={32} />
-                      </div>
-                      <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">
-                        {((t as any).search || {}).no_results || "No matching categories or cards found."}
-                      </h3>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md leading-relaxed">
-                        {lang === 'zh-CN' ? "请尝试使用其他关键词，或调整您的搜索范围。" : "Try using different keywords or adjusting your search scope."}
-                      </p>
+                {/* Empty State */}
+                <motion.div
+                  initial={false}
+                  animate={matchedCardIds !== null && matchedCardIds.length === 0 ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    display: "block"
+                  } : {
+                    opacity: 0,
+                    y: 15,
+                    scale: 0.98,
+                    transitionEnd: {
+                      display: "none"
+                    }
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-center shadow-sm">
+                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-400 dark:text-slate-600 mb-4">
+                      <Search size={32} />
                     </div>
-                  </motion.div>
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">
+                      {((t as any).search || {}).no_results || "No matching categories or cards found."}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md leading-relaxed">
+                      {lang === 'zh-CN' ? "请尝试使用其他关键词，或调整您的搜索范围。" : "Try using different keywords or adjusting your search scope."}
+                    </p>
+                  </div>
+                </motion.div>
 
-                  {/* Group 0: Environment & Trust */}
-                  <motion.div
-                    initial={false}
-                    animate={(!hiddenCards.includes("environment") && (activeTab === "all" || activeTab === "environment") && (matchedCardIds === null || matchedCardIds.includes("environment"))) ? {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      display: "block"
-                    } : {
-                      opacity: 0,
-                      y: 15,
-                      scale: 0.98,
-                      transitionEnd: {
-                        display: "none"
-                      }
-                    }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
+                {/* Group 0: Environment & Trust */}
+                <motion.div
+                  initial={false}
+                  animate={(!hiddenCards.includes("environment") && (activeTab === "all" || activeTab === "environment") && (matchedCardIds === null || matchedCardIds.includes("environment"))) ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    display: "block"
+                  } : {
+                    opacity: 0,
+                    y: 15,
+                    scale: 0.98,
+                    transitionEnd: {
+                      display: "none"
+                    }
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <SectionGroup
+                    title={
+                      ((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.environment || "Environment & Trust"
+                    }
+                    icon={<ShieldAlert className="text-emerald-500" />}
                   >
-                    <SectionGroup
-                      title={
-                        (t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.environment || "Environment & Trust"
-                      }
-                      icon={<ShieldAlert className="text-emerald-500" />}
-                    >
-                      <div className="col-span-1 md:col-span-2 lg:col-span-3">
-                        <EnvironmentCard t={t} />
-                      </div>
-                    </SectionGroup>
-                  </motion.div>
-
-                  {/* Group 00: Browser Identity */}
-                  <motion.div
-                    initial={false}
-                    animate={(!hiddenCards.includes("browser") && (activeTab === "all" || activeTab === "browser") && (matchedCardIds === null || matchedCardIds.includes("browser"))) ? {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      display: "block"
-                    } : {
-                      opacity: 0,
-                      y: 15,
-                      scale: 0.98,
-                      transitionEnd: {
-                        display: "none"
-                      }
-                    }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  >
-                    <SectionGroup
-                      title={
-                        (t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.browser || "Browser"
-                      }
-                      icon={<Monitor className="text-indigo-500" />}
-                    >
-                      <div className="col-span-1 md:col-span-2 lg:col-span-3">
-                        <BrowserCard systemData={browserData.system} t={t} />
-                      </div>
-                    </SectionGroup>
-                  </motion.div>
-
-                  {/* Group 1: Device & System */}
-                  <motion.div
-                    initial={false}
-                    animate={((!hiddenCards.includes("system") || !hiddenCards.includes("hardware") || !hiddenCards.includes("display")) && (activeTab === "all" || activeTab === "system") && (matchedCardIds === null || matchedCardIds.includes("system") || matchedCardIds.includes("hardware") || matchedCardIds.includes("display"))) ? {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      display: "block"
-                    } : {
-                      opacity: 0,
-                      y: 15,
-                      scale: 0.98,
-                      transitionEnd: {
-                        display: "none"
-                      }
-                    }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  >
-                    <SectionGroup
-                      title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.system || "Device & System Core"}
-                      icon={<Smartphone className="text-indigo-500" />}
-                    >
-                      {!hiddenCards.includes("system") && (matchedCardIds === null || matchedCardIds.includes("system")) && (
-                        <SystemCard
-                          data={browserData.system}
-                          t={t}
-                          simpleMode={simpleMode}
-                          lang={lang}
-                        />
-                      )}
-
-                      {!hiddenCards.includes("hardware") && (matchedCardIds === null || matchedCardIds.includes("hardware")) && (
-                        <HardwareCard
-                          data={browserData.hardware}
-                          t={t}
-                          onOpenGamepad={() => open("gamepad")}
-                          onOpenWebDevice={() => open("webDevice")}
-                          onOpenSensors={() => open("sensor")}
-                          onOpenTools={() => open("tools")}
-                          onOpenVision={() => open("vision")}
-                          onOpenGraphics={() => open("graphics")}
-                          onOpenMidi={() => requestPermission("midi")}
-                        />
-                      )}
-
-                      {!hiddenCards.includes("display") && (matchedCardIds === null || matchedCardIds.includes("display")) && (
-                        <DisplayCard
-                          data={browserData.display}
-                          screenExtended={browserData.hardware.screenExtended}
-                          t={t}
-                          simpleMode={simpleMode}
-                        />
-                      )}
-                    </SectionGroup>
-                  </motion.div>
-
-                  {/* Group 2: Network & Security */}
-                  <motion.div
-                    initial={false}
-                    animate={((!hiddenCards.includes("network") || !hiddenCards.includes("security") || !hiddenCards.includes("fingerprint")) && (activeTab === "all" || activeTab === "network") && (matchedCardIds === null || matchedCardIds.includes("network") || matchedCardIds.includes("security") || matchedCardIds.includes("fingerprint"))) ? {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      display: "block"
-                    } : {
-                      opacity: 0,
-                      y: 15,
-                      scale: 0.98,
-                      transitionEnd: {
-                        display: "none"
-                      }
-                    }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  >
-                    <SectionGroup
-                      title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.network || "Network & Security"}
-                      icon={<ShieldAlert className="text-emerald-500" />}
-                    >
-                      {!hiddenCards.includes("network") && (matchedCardIds === null || matchedCardIds.includes("network")) && (
-                        <NetworkCard
-                          data={browserData.network}
-                          t={t}
-                          simpleMode={simpleMode}
-                          onOpenSpeedTest={() => open("speed")}
-                        />
-                      )}
-
-                      {!hiddenCards.includes("security") && (matchedCardIds === null || matchedCardIds.includes("security")) && (
-                        <SecurityCard
-                          data={browserData.security}
-                          webrtcIp={browserData.network.webrtcIp}
-                          t={t}
-                          simpleMode={simpleMode}
-                          onOpenExtensions={() => open("extensions")}
-                        />
-                      )}
-
-                      {!hiddenCards.includes("fingerprint") && (matchedCardIds === null || matchedCardIds.includes("fingerprint")) && (
-                        <FingerprintCard
-                          data={browserData.fingerprints}
-                          audioSampleRate={browserData.hardware.audioSampleRate}
-                          t={t}
-                          simpleMode={simpleMode}
-                          onOpenScore={() => open("score")}
-                          onOpenCanvas={() => open("canvas")}
-                          onOpenBase64={() => open("base64")}
-                          onOpenWebgl={() => open("webgl")}
-                          onOpenFingerprintModal={() => open("fingerprint")}
-                          onOpenAudioLatency={() => open("audioLatency")}
-                          onOpenPoisoning={() => open("poisoning")}
-                          onOpenJa3={() => open("ja3")}
-                        />
-                      )}
-                    </SectionGroup>
-                  </motion.div>
-
-                  {/* Group 3: Advanced Capabilities & APIs */}
-                  <motion.div
-                    initial={false}
-                    animate={((!hiddenCards.includes("ai") || !hiddenCards.includes("location") || !hiddenCards.includes("storage") || !hiddenCards.includes("permissions") || !hiddenCards.includes("media_devices") || !hiddenCards.includes("media_capabilities") || !hiddenCards.includes("user_agent")) && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("ai") || matchedCardIds.includes("location") || matchedCardIds.includes("storage") || matchedCardIds.includes("permissions") || matchedCardIds.includes("media_devices") || matchedCardIds.includes("media_capabilities") || matchedCardIds.includes("user_agent"))) ? {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      display: "block"
-                    } : {
-                      opacity: 0,
-                      y: 15,
-                      scale: 0.98,
-                      transitionEnd: {
-                        display: "none"
-                      }
-                    }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  >
-                    <SectionGroup
-                      title={(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.advanced || "Capabilities & APIs"}
-                      icon={<Cpu className="text-amber-500" />}
-                    >
-                      {!hiddenCards.includes("ai") && (matchedCardIds === null || matchedCardIds.includes("ai")) && (
-                        <AiComputeCard
-                          data={browserData.ai}
-                          t={t}
-                          onOpenPlayground={() => open("ai")}
-                          onOpenStress={() => open("compute")}
-                          onRetest={handleAiRetest}
-                        />
-                      )}
-
-                      {!hiddenCards.includes("location") && (matchedCardIds === null || matchedCardIds.includes("location")) && (
-                        <LocationCard
-                          data={browserData.localization}
-                          geoData={geoData}
-                          permStatus={permStatus.geolocation}
-                          t={t}
-                          onRequestPermission={() =>
-                            requestPermission("geolocation")
-                          }
-                          timeFormat={timeFormat}
-                          lang={lang}
-                        />
-                      )}
-
-                      {!hiddenCards.includes("storage") && (matchedCardIds === null || matchedCardIds.includes("storage")) && (
-                        <StorageCard data={browserData.storage} t={t} />
-                      )}
-
-                      {!hiddenCards.includes("permissions") && (matchedCardIds === null || matchedCardIds.includes("permissions")) && (
-                        <PermissionsCard
-                          permStatus={permStatus}
-                          geoData={geoData}
-                          t={t}
-                          onRequestPermission={requestPermission}
-                        />
-                      )}
-
-                      {!hiddenCards.includes("media_devices") && (matchedCardIds === null || matchedCardIds.includes("media_devices")) && (
-                        <MediaDevicesCard
-                          permStatus={permStatus}
-                          t={t}
-                          onRequestPermission={requestPermission}
-                          onOpenCamera={() => open("camera")}
-                          onOpenMic={() => open("audio")}
-                        />
-                      )}
-
-                      {!hiddenCards.includes("media_capabilities") && (matchedCardIds === null || matchedCardIds.includes("media_capabilities")) && (
-                        <MediaCapabilitiesCard
-                          data={browserData.media}
-                          t={t}
-                          onOpenVideoTest={() => open("video")}
-                          onOpenSpeech={() => open("speech")}
-                          onOpenAudioLatency={() => open("audioLatency")}
-                        />
-                      )}
-
-                      {!hiddenCards.includes("user_agent") && (matchedCardIds === null || matchedCardIds.includes("user_agent")) && (
-                        <UserAgentCard
-                          userAgent={browserData.system.userAgent}
-                          clientHints={browserData.system.clientHints}
-                          t={t}
-                        />
-                      )}
-                    </SectionGroup>
-                  </motion.div>
-
-                  {/* PWA Section */}
-                  <motion.div
-                    initial={false}
-                    animate={(!hiddenCards.includes("pwa") && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("pwa"))) ? {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      display: "block"
-                    } : {
-                      opacity: 0,
-                      y: 15,
-                      scale: 0.98,
-                      transitionEnd: {
-                        display: "none"
-                      }
-                    }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  >
-                    <div className="anim-slide-up delay-100">
-                      <PwaSection
-                        isPwaInstalled={browserData.system.isPwaInstalled}
-                        features={browserData.pwaFeatures}
-                        t={t}
-                      />
+                    <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                      <EnvironmentCard t={t} />
                     </div>
-                  </motion.div>
+                  </SectionGroup>
+                </motion.div>
 
-                  {/* Features Section */}
-                  <motion.div
-                    initial={false}
-                    animate={(!hiddenCards.includes("features") && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("features"))) ? {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      display: "block"
-                    } : {
-                      opacity: 0,
-                      y: 15,
-                      scale: 0.98,
-                      transitionEnd: {
-                        display: "none"
-                      }
-                    }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
+                {/* Group 00: Browser Identity */}
+                <motion.div
+                  initial={false}
+                  animate={(!hiddenCards.includes("browser") && (activeTab === "all" || activeTab === "browser") && (matchedCardIds === null || matchedCardIds.includes("browser"))) ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    display: "block"
+                  } : {
+                    opacity: 0,
+                    y: 15,
+                    scale: 0.98,
+                    transitionEnd: {
+                      display: "none"
+                    }
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <SectionGroup
+                    title={
+                      ((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.browser || "Browser"
+                    }
+                    icon={<Monitor className="text-indigo-500" />}
                   >
-                    <div className="anim-slide-up delay-200">
-                      <FeaturesSection features={browserData.features} t={t} />
+                    <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                      <BrowserCard systemData={browserData.system} t={t} />
                     </div>
-                  </motion.div>
-                </div>
+                  </SectionGroup>
+                </motion.div>
+
+                {/* Group 1: Device & System */}
+                <motion.div
+                  initial={false}
+                  animate={((!hiddenCards.includes("system") || !hiddenCards.includes("hardware") || !hiddenCards.includes("display")) && (activeTab === "all" || activeTab === "system") && (matchedCardIds === null || matchedCardIds.includes("system") || matchedCardIds.includes("hardware") || matchedCardIds.includes("display"))) ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    display: "block"
+                  } : {
+                    opacity: 0,
+                    y: 15,
+                    scale: 0.98,
+                    transitionEnd: {
+                      display: "none"
+                    }
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <SectionGroup
+                    title={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.system || "Device & System Core"}
+                    icon={<Smartphone className="text-indigo-500" />}
+                  >
+                    {!hiddenCards.includes("system") && (matchedCardIds === null || matchedCardIds.includes("system")) ? (<SystemCard
+                      data={browserData.system}
+                      t={t}
+                      simpleMode={simpleMode}
+                      lang={lang}
+                    />) : null}
+
+                    {!hiddenCards.includes("hardware") && (matchedCardIds === null || matchedCardIds.includes("hardware")) ? (<HardwareCard
+                      data={browserData.hardware}
+                      t={t}
+                      onOpenGamepad={() => open("gamepad")}
+                      onOpenWebDevice={() => open("webDevice")}
+                      onOpenSensors={() => open("sensor")}
+                      onOpenTools={() => open("tools")}
+                      onOpenVision={() => open("vision")}
+                      onOpenGraphics={() => open("graphics")}
+                      onOpenMidi={() => requestPermission("midi")}
+                    />) : null}
+
+                    {!hiddenCards.includes("display") && (matchedCardIds === null || matchedCardIds.includes("display")) ? (<DisplayCard
+                      data={browserData.display}
+                      screenExtended={browserData.hardware.screenExtended}
+                      t={t}
+                      simpleMode={simpleMode}
+                    />) : null}
+                  </SectionGroup>
+                </motion.div>
+
+                {/* Group 2: Network & Security */}
+                <motion.div
+                  initial={false}
+                  animate={((!hiddenCards.includes("network") || !hiddenCards.includes("security") || !hiddenCards.includes("fingerprint")) && (activeTab === "all" || activeTab === "network") && (matchedCardIds === null || matchedCardIds.includes("network") || matchedCardIds.includes("security") || matchedCardIds.includes("fingerprint"))) ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    display: "block"
+                  } : {
+                    opacity: 0,
+                    y: 15,
+                    scale: 0.98,
+                    transitionEnd: {
+                      display: "none"
+                    }
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <SectionGroup
+                    title={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.network || "Network & Security"}
+                    icon={<ShieldAlert className="text-emerald-500" />}
+                  >
+                    {!hiddenCards.includes("network") && (matchedCardIds === null || matchedCardIds.includes("network")) ? (<NetworkCard
+                      data={browserData.network}
+                      t={t}
+                      simpleMode={simpleMode}
+                      onOpenSpeedTest={() => open("speed")}
+                    />) : null}
+
+                    {!hiddenCards.includes("security") && (matchedCardIds === null || matchedCardIds.includes("security")) ? (<SecurityCard
+                      data={browserData.security}
+                      webrtcIp={browserData.network.webrtcIp}
+                      t={t}
+                      simpleMode={simpleMode}
+                      onOpenExtensions={() => open("extensions")}
+                    />) : null}
+
+                    {!hiddenCards.includes("fingerprint") && (matchedCardIds === null || matchedCardIds.includes("fingerprint")) ? (<FingerprintCard
+                      data={browserData.fingerprints}
+                      audioSampleRate={browserData.hardware.audioSampleRate}
+                      t={t}
+                      simpleMode={simpleMode}
+                      onOpenScore={() => open("score")}
+                      onOpenCanvas={() => open("canvas")}
+                      onOpenBase64={() => open("base64")}
+                      onOpenWebgl={() => open("webgl")}
+                      onOpenFingerprintModal={() => open("fingerprint")}
+                      onOpenAudioLatency={() => open("audioLatency")}
+                      onOpenPoisoning={() => open("poisoning")}
+                      onOpenJa3={() => open("ja3")}
+                    />) : null}
+                  </SectionGroup>
+                </motion.div>
+
+                {/* Group 3: Advanced Capabilities & APIs */}
+                <motion.div
+                  initial={false}
+                  animate={((!hiddenCards.includes("ai") || !hiddenCards.includes("location") || !hiddenCards.includes("storage") || !hiddenCards.includes("permissions") || !hiddenCards.includes("media_devices") || !hiddenCards.includes("media_capabilities") || !hiddenCards.includes("user_agent")) && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("ai") || matchedCardIds.includes("location") || matchedCardIds.includes("storage") || matchedCardIds.includes("permissions") || matchedCardIds.includes("media_devices") || matchedCardIds.includes("media_capabilities") || matchedCardIds.includes("user_agent"))) ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    display: "block"
+                  } : {
+                    opacity: 0,
+                    y: 15,
+                    scale: 0.98,
+                    transitionEnd: {
+                      display: "none"
+                    }
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <SectionGroup
+                    title={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.advanced || "Capabilities & APIs"}
+                    icon={<Cpu className="text-amber-500" />}
+                  >
+                    {!hiddenCards.includes("ai") && (matchedCardIds === null || matchedCardIds.includes("ai")) ? (<AiComputeCard
+                      data={browserData.ai}
+                      t={t}
+                      onOpenPlayground={() => open("ai")}
+                      onOpenStress={() => open("compute")}
+                      onRetest={handleAiRetest}
+                    />) : null}
+
+                    {!hiddenCards.includes("location") && (matchedCardIds === null || matchedCardIds.includes("location")) ? (<LocationCard
+                      data={browserData.localization}
+                      geoData={geoData}
+                      permStatus={permStatus.geolocation}
+                      t={t}
+                      onRequestPermission={() =>
+                        requestPermission("geolocation")
+                      }
+                      timeFormat={timeFormat}
+                      lang={lang}
+                    />) : null}
+
+                    {!hiddenCards.includes("storage") && (matchedCardIds === null || matchedCardIds.includes("storage")) ? (<StorageCard data={browserData.storage} t={t} />) : null}
+
+                    {!hiddenCards.includes("permissions") && (matchedCardIds === null || matchedCardIds.includes("permissions")) ? (<PermissionsCard
+                      permStatus={permStatus}
+                      geoData={geoData}
+                      t={t}
+                      onRequestPermission={requestPermission}
+                    />) : null}
+
+                    {!hiddenCards.includes("media_devices") && (matchedCardIds === null || matchedCardIds.includes("media_devices")) ? (<MediaDevicesCard
+                      permStatus={permStatus}
+                      t={t}
+                      onRequestPermission={requestPermission}
+                      onOpenCamera={() => open("camera")}
+                      onOpenMic={() => open("audio")}
+                    />) : null}
+
+                    {!hiddenCards.includes("media_capabilities") && (matchedCardIds === null || matchedCardIds.includes("media_capabilities")) ? (<MediaCapabilitiesCard
+                      data={browserData.media}
+                      t={t}
+                      onOpenVideoTest={() => open("video")}
+                      onOpenSpeech={() => open("speech")}
+                      onOpenAudioLatency={() => open("audioLatency")}
+                    />) : null}
+
+                    {!hiddenCards.includes("user_agent") && (matchedCardIds === null || matchedCardIds.includes("user_agent")) ? (<UserAgentCard
+                      userAgent={browserData.system.userAgent}
+                      clientHints={browserData.system.clientHints}
+                      t={t}
+                    />) : null}
+                  </SectionGroup>
+                </motion.div>
+
+                {/* PWA Section */}
+                <motion.div
+                  initial={false}
+                  animate={(!hiddenCards.includes("pwa") && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("pwa"))) ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    display: "block"
+                  } : {
+                    opacity: 0,
+                    y: 15,
+                    scale: 0.98,
+                    transitionEnd: {
+                      display: "none"
+                    }
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <div className="anim-slide-up delay-100">
+                    <PwaSection
+                      isPwaInstalled={browserData.system.isPwaInstalled}
+                      features={browserData.pwaFeatures}
+                      t={t}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Features Section */}
+                <motion.div
+                  initial={false}
+                  animate={(!hiddenCards.includes("features") && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("features"))) ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    display: "block"
+                  } : {
+                    opacity: 0,
+                    y: 15,
+                    scale: 0.98,
+                    transitionEnd: {
+                      display: "none"
+                    }
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <div className="anim-slide-up delay-200">
+                    <FeaturesSection features={browserData.features} t={t} />
+                  </div>
+                </motion.div>
               </div>
-            </Suspense>
-          </ErrorBoundary>
-        )}
+            </div>
+          </Suspense>
+        </ErrorBoundary>) : null}
 
         <Footer 
           text={t.meta.footer} 
