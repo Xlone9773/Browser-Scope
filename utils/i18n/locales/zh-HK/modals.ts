@@ -414,6 +414,33 @@ export const modals = {
     "ja3n_hash": "JA3N 雜湊 (MD5)",
     "ja3n_string": "JA3N 字串 (原始)",
     "server_ua": "伺服器檢測到的 User-Agent"
+  },
+  "attributionsModal": {
+    "title": "軟體與資產歸屬聲明",
+    "subtitle": "記錄並致謝為 BrowserScope 瀏覽器分析儀表盤提供支援的第三方開源庫、開發框架及設計字型。",
+    "search_placeholder": "搜尋庫、依賴項或字型...",
+    "tab_all": "全部資產",
+    "tab_libraries": "開源庫與框架",
+    "tab_fonts": "排版與字型",
+    "view_license": "查看許可證正文",
+    "hide_license": "隱藏許可證正文",
+    "license_type": "開源協定",
+    "role_label": "功能與整合角色",
+    "visit_site": "訪問開源倉庫",
+    "empty_search": "未找到匹配 \"{query}\" 的歸屬資訊",
+    "font_role": "高易讀性字型，用於系統介面、版面配置、大標題與數據視覺化面板。",
+    "lib_role_react": "現代響應式 UI 渲染引擎及狀態管理架構，構建高內聚的互動組件。",
+    "lib_role_fingerprint": "多代高級瀏覽器指紋特徵識別引擎，用於計算熵值及設備一致性驗證。",
+    "lib_role_transformers": "基於 WebAssembly 的瀏覽器端神經網路推理引擎，執行本地端側 AI 模型。",
+    "lib_role_lucide": "清晰精細、完全可伸縮的 SVG 系統介面圖示與元數據圖示。",
+    "lib_role_motion": "基於硬體加速的系統元素流暢動畫、入場過渡與互動動效。",
+    "lib_role_screenshot": "基於 canvas 渲染底層 DOM 節點，生成可供導出的高保真儀表盤螢幕截圖報告。",
+    "lib_role_jspdf": "高保真用戶端 PDF 診斷報告文件多執行緒編譯。",
+    "lib_role_devtools": "行動端優化的虛擬記錄輸出、DOM 節點審查及網頁檢查器主控台工具箱。",
+    "lib_role_pwa": "離線優先資產預快取與 Service Worker 用戶端生命週期管理。",
+    "lib_role_server": "Express 伺服器端介面路由分发、API 限流以及安全 HTTP 頭防護。",
+    "lib_role_charts": "響應式互動圖表、儀表盤、圖表與網路診斷指標視覺化向量。",
+    "close": "關閉"
   }
 
 };

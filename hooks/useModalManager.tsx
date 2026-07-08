@@ -7,6 +7,7 @@ const WebGLExtensionsModal = lazy(() => import('../components/WebGLExtensionsMod
 const CanvasModal = lazy(() => import('../components/CanvasModal').then(m => ({ default: m.CanvasModal })));
 const Base64Modal = lazy(() => import('../components/Base64Modal').then(m => ({ default: m.Base64Modal })));
 const AboutModal = lazy(() => import('../components/AboutModal').then(m => ({ default: m.AboutModal })));
+const AttributionsModal = lazy(() => import('../components/AttributionsModal').then(m => ({ default: m.AttributionsModal })));
 const SensorModal = lazy(() => import('../components/SensorModal').then(m => ({ default: m.SensorModal })));
 const ScoreModal = lazy(() => import('../components/ScoreModal').then(m => ({ default: m.ScoreModal })));
 const FingerprintModal = lazy(() => import('../components/FingerprintModal').then(m => ({ default: m.FingerprintModal })));
@@ -42,6 +43,7 @@ const loadFunctions: Record<string, () => Promise<any>> = {
   canvas: () => import('../components/CanvasModal'),
   base64: () => import('../components/Base64Modal'),
   about: () => import('../components/AboutModal'),
+  attributions: () => import('../components/AttributionsModal'),
   sensor: () => import('../components/SensorModal'),
   score: () => import('../components/ScoreModal'),
   fingerprint: () => import('../components/FingerprintModal'),
@@ -78,6 +80,7 @@ const COMPONENTS: Record<string, React.ComponentType<any>> = {
   canvas: CanvasModal,
   base64: Base64Modal,
   about: AboutModal,
+  attributions: AttributionsModal,
   sensor: SensorModal,
   score: ScoreModal,
   fingerprint: FingerprintModal,
@@ -152,6 +155,7 @@ export const useModalManager = () => {
     const handleOpenStorageBenchmark = () => open("storageBench");
     const handleOpenRayTracing = () => open("rayTracing");
     const handleOpenAudioLatency = () => open("audioLatency");
+    const handleOpenAttributions = () => open("attributions");
 
     window.addEventListener("close-all-modals", handleCloseAll);
     window.addEventListener("open-heatmap", handleOpenHeatmap);
@@ -163,6 +167,7 @@ export const useModalManager = () => {
     );
     window.addEventListener("open-ray-tracing", handleOpenRayTracing);
     window.addEventListener("open-audio-latency", handleOpenAudioLatency);
+    window.addEventListener("open-attributions", handleOpenAttributions);
 
     return () => {
             window.removeEventListener("close-all-modals", handleCloseAll);
@@ -175,6 +180,7 @@ export const useModalManager = () => {
       );
       window.removeEventListener("open-ray-tracing", handleOpenRayTracing);
       window.removeEventListener("open-audio-latency", handleOpenAudioLatency);
+      window.removeEventListener("open-attributions", handleOpenAttributions);
     };
   }, [closeAll, open]);
 

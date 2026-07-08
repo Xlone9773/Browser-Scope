@@ -434,6 +434,33 @@ SOFTWARE.`
     "ja3n_hash": "JA3N Hash (MD5)",
     "ja3n_string": "JA3N String (Raw)",
     "server_ua": "Server Detected User-Agent"
+  },
+  "attributionsModal": {
+    "title": "Software & Asset Attributions",
+    "subtitle": "Documenting third-party open source open-source libraries, frameworks, and typography that empower the BrowserScope analytics dashboard.",
+    "search_placeholder": "Search libraries, packages or fonts...",
+    "tab_all": "All Assets",
+    "tab_libraries": "Libraries & Packages",
+    "tab_fonts": "Typography & Fonts",
+    "view_license": "View License Text",
+    "hide_license": "Hide License Text",
+    "license_type": "License",
+    "role_label": "Role & Integration",
+    "visit_site": "Visit Repository",
+    "empty_search": "No attributions found matching \"{query}\"",
+    "font_role": "High-legibility typography for the user interface, layout, headings, and data visualization.",
+    "lib_role_react": "Modern reactive rendering engine and state architecture for modular interactive widgets.",
+    "lib_role_fingerprint": "Multi-generational visitor identification engines to calculate entropy and verify device consistency.",
+    "lib_role_transformers": "In-browser WebAssembly-based neural inference framework to evaluate local AI models on client CPU/GPU.",
+    "lib_role_lucide": "Crisp, fully scalable SVG interface icons and metadata representations.",
+    "lib_role_motion": "Hardware-accelerated fluid component layout, entrance, and transition animations.",
+    "lib_role_screenshot": "High-fidelity canvas rendering of active DOM trees to generate exportable screenshot reports.",
+    "lib_role_jspdf": "Multi-threaded client-side compilation of PDF document matrices.",
+    "lib_role_devtools": "Mobile-optimized browser logs and inspect element debugging console suites.",
+    "lib_role_pwa": "Offline-first asset precaching and service worker client management.",
+    "lib_role_server": "Express server API routing, rate limiting, and secure HTTP header sanitization.",
+    "lib_role_charts": "Responsive interactive charts, gauges, graphs, and network telemetry telemetry vectors.",
+    "close": "Close"
   }
 
 };

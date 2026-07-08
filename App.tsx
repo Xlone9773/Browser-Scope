@@ -1037,6 +1037,12 @@ const App: React.FC = () => {
               t={(t as any).ja3}
             />
           )}
+          {visibility.attributions && (
+            <Components.attributions
+              onClose={() => close("attributions")}
+              t={(t as any).attributionsModal}
+            />
+          )}
         </Suspense>
       </ErrorBoundary>
 
@@ -1648,7 +1654,11 @@ const App: React.FC = () => {
           </ErrorBoundary>
         )}
 
-        <Footer text={t.meta.footer} />
+        <Footer 
+          text={t.meta.footer} 
+          onOpenAttributions={() => open("attributions")}
+          label={(t as any).attributionsModal?.title || "Attributions"}
+        />
       </div>
     </div>
   );

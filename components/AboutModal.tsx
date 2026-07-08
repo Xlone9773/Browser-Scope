@@ -221,6 +221,18 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                         {(t.features?.openSource as any).downloadLicense}
                                     </button>
                                 </div>
+                                <button
+                                    onClick={() => {
+                                        onClose();
+                                        setTimeout(() => {
+                                            window.dispatchEvent(new CustomEvent('open-attributions'));
+                                        }, 150);
+                                    }}
+                                    className="relative z-10 w-full mt-2 flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700/85 border border-slate-700 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition-all duration-200 cursor-pointer active:scale-95 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                >
+                                    <Layers size={12} className="text-indigo-400" />
+                                    {t.desc && /[\u4e00-\u9fa5]/.test(t.desc) ? '查看第三方软件与字体归属声明' : 'View Third-Party Attributions & Fonts'}
+                                </button>
                             </div>
                         </div>
 

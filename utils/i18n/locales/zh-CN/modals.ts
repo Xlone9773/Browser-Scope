@@ -424,6 +424,33 @@ export const modals = {
     "ja3n_hash": "JA3N 哈希 (MD5)",
     "ja3n_string": "JA3N 字符串 (原始)",
     "server_ua": "服务器检测到的 User-Agent"
+  },
+  "attributionsModal": {
+    "title": "软件与资产归属声明",
+    "subtitle": "记录并致谢为 BrowserScope 浏览器分析仪表盘提供支持的第三方开源库、开发框架及设计字体。",
+    "search_placeholder": "搜索库、依赖项或字体...",
+    "tab_all": "全部资产",
+    "tab_libraries": "开源库与框架",
+    "tab_fonts": "排版与字体",
+    "view_license": "查看许可证正文",
+    "hide_license": "隐藏许可证正文",
+    "license_type": "开源协议",
+    "role_label": "功能与集成角色",
+    "visit_site": "访问开源仓库",
+    "empty_search": "未找到匹配 \"{query}\" 的归属信息",
+    "font_role": "高易读性字体，用于系统界面、布局、大标题与数据可视化面板。",
+    "lib_role_react": "现代响应式 UI 渲染引擎及状态管理架构，构建高内聚的交互组件。",
+    "lib_role_fingerprint": "多代高级浏览器指纹特征识别引擎，用于计算熵值及设备一致性验证。",
+    "lib_role_transformers": "基于 WebAssembly 的浏览器端神经网络推理引擎，执行本地端侧 AI 模型。",
+    "lib_role_lucide": "清晰精细、完全可伸缩的 SVG 系统界面图标与元数据图示。",
+    "lib_role_motion": "基于硬件加速的系统元素流畅动画、入场过渡与交互动效。",
+    "lib_role_screenshot": "基于 canvas 渲染底层 DOM 节点，生成可供导出的高保真仪表盘屏幕截图报告。",
+    "lib_role_jspdf": "高保真客户端 PDF 诊断报告文档多线程编译。",
+    "lib_role_devtools": "移动端优化的虚拟日志输出、DOM 节点审查及网页检查器控制台工具箱。",
+    "lib_role_pwa": "离线优先资产预缓存与 Service Worker 客户端生命周期管理。",
+    "lib_role_server": "Express 服务器端接口路由分发、API 限流以及安全 HTTP 头防护。",
+    "lib_role_charts": "响应式交互图表、仪表盘、图表与网络诊断指标可视化矢量。",
+    "close": "关闭"
   }
 
 };
