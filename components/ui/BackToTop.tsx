@@ -9,6 +9,7 @@ interface BackToTopProps {
 export const BackToTop: React.FC<BackToTopProps> = ({ label }) => {
   const [isNarrow, setIsNarrow] = useState(false);
   const [showButton, setShowButton] = useState(false);
+  const [hasOpenModal, setHasOpenModal] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -22,16 +23,29 @@ export const BackToTop: React.FC<BackToTopProps> = ({ label }) => {
       setShowButton(isPastViewport);
     };
 
+    const checkModals = () => {
+      const modalExists = document.querySelector('[role="dialog"]') !== null;
+      setHasOpenModal(modalExists);
+    };
+
     // Initial evaluation
     handleResize();
     handleScroll();
+    checkModals();
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll, { passive: true });
 
+    // Setup MutationObserver on document.body to reactively hide the button when modals are opened
+    const observer = new MutationObserver(() => {
+      checkModals();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
     };
   }, []);
 
@@ -42,8 +56,8 @@ export const BackToTop: React.FC<BackToTopProps> = ({ label }) => {
     });
   };
 
-  // Only show the button when on a narrow device and scrolled past viewport height
-  const isVisible = isNarrow && showButton;
+  // Only show the button when on a narrow device, scrolled past viewport height, and no modal is open in the foreground
+  const isVisible = isNarrow && showButton && !hasOpenModal;
 
   return (
     <AnimatePresence>

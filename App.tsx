@@ -9,6 +9,7 @@ import { ModalLoading } from "./components/ui/ModalLoading";
 import { SectionGroup } from "./components/ui/SectionGroup";
 import { useModalManager } from "./hooks/useModalManager";
 import { useCardIndex } from "./hooks/useCardIndex";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { BrowserData } from "./types";
 import { Select } from "./components/ui/Select";
 
@@ -124,7 +125,7 @@ import { useAppData } from "./hooks/useAppData";
 import packageJson from "./package.json";
 
 const App: React.FC = () => {
-  const { visibility, open, close, unload, loadedModules, Components } =
+  const { visibility, open, close, unload, loadedModules, Components, closeAll } =
     useModalManager();
 
   const [activeTab, setActiveTab] = useState<"all" | "browser" | "environment" | "system" | "network" | "advanced">("all");
@@ -688,6 +689,18 @@ const App: React.FC = () => {
     );
   };
 
+  useKeyboardShortcuts({
+    lang,
+    open,
+    closeAll,
+    toggleTheme,
+    fetchData,
+    handleExportJSON,
+    handleExportPDF,
+    handleExportImage,
+    visibility,
+  });
+
   return (
     <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 scrollbar-hide relative">
       {/* Loading Overlay */}
@@ -966,6 +979,10 @@ const App: React.FC = () => {
           {visibility.attributions ? (<Components.attributions
             onClose={() => close("attributions")}
             t={(t as any).attributionsModal}
+          />) : null}
+          {visibility.shortcuts ? (<Components.shortcuts
+            onClose={() => close("shortcuts")}
+            lang={lang}
           />) : null}
         </Suspense>
       </ErrorBoundary>

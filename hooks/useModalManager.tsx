@@ -35,6 +35,7 @@ const GoogleTranslateModal = lazy(() => import('../components/GoogleTranslateMod
 const AudioLatencyProbingModal = lazy(() => import('../components/AudioLatencyProbingModal').then(m => ({ default: m.AudioLatencyProbingModal })));
 const CanvasPoisoningModal = lazy(() => import('../components/CanvasPoisoningModal').then(m => ({ default: m.CanvasPoisoningModal })));
 const Ja3FingerprintModal = lazy(() => import('../components/Ja3FingerprintModal').then(m => ({ default: m.Ja3FingerprintModal })));
+const KeyboardShortcutsModal = lazy(() => import('../components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })));
 
 const loadFunctions: Record<string, () => Promise<any>> = {
   camera: () => import('../components/CameraModal'),
@@ -71,6 +72,7 @@ const loadFunctions: Record<string, () => Promise<any>> = {
   audioLatency: () => import('../components/AudioLatencyProbingModal'),
   poisoning: () => import('../components/CanvasPoisoningModal'),
   ja3: () => import('../components/Ja3FingerprintModal'),
+  shortcuts: () => import('../components/KeyboardShortcutsModal'),
 };
 
 const COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -108,6 +110,7 @@ const COMPONENTS: Record<string, React.ComponentType<any>> = {
   audioLatency: AudioLatencyProbingModal,
   poisoning: CanvasPoisoningModal,
   ja3: Ja3FingerprintModal,
+  shortcuts: KeyboardShortcutsModal,
 };
 
 export const useModalManager = () => {
@@ -156,6 +159,7 @@ export const useModalManager = () => {
     const handleOpenRayTracing = () => open("rayTracing");
     const handleOpenAudioLatency = () => open("audioLatency");
     const handleOpenAttributions = () => open("attributions");
+    const handleOpenShortcuts = () => open("shortcuts");
 
     window.addEventListener("close-all-modals", handleCloseAll);
     window.addEventListener("open-heatmap", handleOpenHeatmap);
@@ -168,6 +172,7 @@ export const useModalManager = () => {
     window.addEventListener("open-ray-tracing", handleOpenRayTracing);
     window.addEventListener("open-audio-latency", handleOpenAudioLatency);
     window.addEventListener("open-attributions", handleOpenAttributions);
+    window.addEventListener("open-shortcuts", handleOpenShortcuts);
 
     return () => {
             window.removeEventListener("close-all-modals", handleCloseAll);
@@ -181,6 +186,7 @@ export const useModalManager = () => {
       window.removeEventListener("open-ray-tracing", handleOpenRayTracing);
       window.removeEventListener("open-audio-latency", handleOpenAudioLatency);
       window.removeEventListener("open-attributions", handleOpenAttributions);
+      window.removeEventListener("open-shortcuts", handleOpenShortcuts);
     };
   }, [closeAll, open]);
 
