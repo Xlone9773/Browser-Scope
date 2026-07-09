@@ -9,6 +9,7 @@ export const common = {
     menu: "メニュー",
     language: "言語",
     fullscreen: "全画面表示",
+    backToTop: "トップに戻る",
     exit_fullscreen: "全画面を終了",
     loading: "システム機能をスキャン中...",
     error_boundary: {

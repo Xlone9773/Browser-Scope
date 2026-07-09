@@ -9,6 +9,7 @@ export const common = {
     menu: "選單",
     language: "語言",
     fullscreen: "全螢幕",
+    backToTop: "返回頂部",
     exit_fullscreen: "退出全螢幕",
     loading: "正在掃描系統能力...",
     error_boundary: {

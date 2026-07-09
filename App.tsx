@@ -13,6 +13,7 @@ import { BrowserData } from "./types";
 import { Select } from "./components/ui/Select";
 
 import { AppNotification } from "./components/ui/AppNotification";
+import { BackToTop } from "./components/ui/BackToTop";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
@@ -1534,6 +1535,8 @@ const App: React.FC = () => {
           onOpenAttributions={() => open("attributions")}
           label={(t as any).attributionsModal?.title || "Attributions"}
         />
+
+        <BackToTop label={t.common?.backToTop || "Back to Top"} />
       </div>
     </div>
   );

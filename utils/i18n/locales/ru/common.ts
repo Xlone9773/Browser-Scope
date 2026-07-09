@@ -9,6 +9,7 @@ export const common = {
     menu: "Меню",
     language: "Язык",
     fullscreen: "Полноэкранный",
+    backToTop: "Наверх",
     exit_fullscreen: "Выйти из полноэкранного",
     loading: "Сканирование возможностей системы...",
     error_boundary: {

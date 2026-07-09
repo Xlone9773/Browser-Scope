@@ -9,6 +9,7 @@ export const common = {
     menu: "Menu",
     language: "Language",
     fullscreen: "Fullscreen",
+    backToTop: "Back to Top",
     exit_fullscreen: "Exit Fullscreen",
     loading: "Initializing...",
     error_boundary: {
