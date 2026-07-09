@@ -982,7 +982,7 @@ const App: React.FC = () => {
           />) : null}
           {visibility.shortcuts ? (<Components.shortcuts
             onClose={() => close("shortcuts")}
-            lang={lang}
+            t={(t as any).keyboardShortcutsModal}
           />) : null}
         </Suspense>
       </ErrorBoundary>

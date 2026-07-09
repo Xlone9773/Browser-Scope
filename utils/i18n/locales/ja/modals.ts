@@ -447,6 +447,34 @@ Copyright (c) 2026 BrowserScope Contributors
     "lib_role_server": "ExpressサーバーでのAPIルーティング、レート制限、およびセキュアなHTTPヘッダー保護。",
     "lib_role_charts": "レスポンシブなインタラクティブチャート、ゲージ、グラフ、およびネットワーク診断メトリクスの可視化。",
     "close": "閉じる"
+  },
+  "keyboardShortcutsModal": {
+    "title": "キーボードショートカット",
+    "desc": "グローバルショートカットキーを使用して、操作効率を大幅に向上させます。",
+    "categories": {
+      "general": "全般・基本操作",
+      "navigation": "ナビゲーション・診断ツール",
+      "export": "データのエクスポート"
+    },
+    "keys": {
+      "theme": "テーマの切り替え（ダーク / ライト）",
+      "refresh": "再スキャン・データの更新",
+      "help": "このヘルプ画面を開く / 閉じる",
+      "close": "現在のモーダルを閉じる",
+      "settings": "設定画面を開く",
+      "benchmark": "ベンチマークスコアの実行",
+      "ai": "AI プレイグラウンドを開く",
+      "network": "ネットワークツール（Ping/ポート）",
+      "display": "ディスプレイテストツール",
+      "hardware": "高度なハードウェアテスト",
+      "translate": "Google 翻訳ツール",
+      "exportJson": "JSONデータの書き出し",
+      "exportPdf": "PDF診断レポートの保存",
+      "exportImage": "ダッシュボード画像の保存",
+      "esc": "Esc",
+      "alt": "Alt",
+      "shift": "Shift"
+    }
   }
 
 };

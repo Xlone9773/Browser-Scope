@@ -467,6 +467,34 @@ SOFTWARE.`
     "lib_role_server": "Express server API routing, rate limiting, and secure HTTP header sanitization.",
     "lib_role_charts": "Responsive interactive charts, gauges, graphs, and network telemetry telemetry vectors.",
     "close": "Close"
+  },
+  "keyboardShortcutsModal": {
+    "title": "Keyboard Shortcuts",
+    "desc": "Boost your efficiency with global keyboard shortcuts.",
+    "categories": {
+      "general": "General & Universal Actions",
+      "navigation": "Quick Navigation & Diagnostics",
+      "export": "Data Exporting"
+    },
+    "keys": {
+      "theme": "Toggle Dark / Light Theme",
+      "refresh": "Rescan & Refresh System Data",
+      "help": "Open / Close Shortcuts Help",
+      "close": "Close Current Modal / Back",
+      "settings": "Open Settings Panel",
+      "benchmark": "Run System Benchmarks",
+      "ai": "Enter AI Playground / Lab",
+      "network": "Network Diagnostics (Ping/UDP)",
+      "display": "Display Testing Tools",
+      "hardware": "Advanced Hardware Tools",
+      "translate": "Google Translate Panel",
+      "exportJson": "Export Diagnostic JSON Data",
+      "exportPdf": "Export High-Fidelity PDF Report",
+      "exportImage": "Export High-Res Dashboard Image",
+      "esc": "Esc",
+      "alt": "Alt",
+      "shift": "Shift"
+    }
   }
 
 };

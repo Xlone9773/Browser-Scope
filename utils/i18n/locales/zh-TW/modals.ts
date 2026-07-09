@@ -447,6 +447,34 @@ export const modals = {
     "lib_role_server": "Express 伺服器端介面路由分發、API 限流以及安全 HTTP 頭防護。",
     "lib_role_charts": "響應式互動圖表、儀表盤、圖表與網路診斷指標視覺化向量。",
     "close": "關閉"
+  },
+  "keyboardShortcutsModal": {
+    "title": "鍵盤快捷鍵",
+    "desc": "使用全域鍵盤快捷鍵，大幅提升操作效率。",
+    "categories": {
+      "general": "全域與通用操作",
+      "navigation": "快捷導航與測試工具",
+      "export": "數據匯出"
+    },
+    "keys": {
+      "theme": "切換主題（深色 / 淺色）",
+      "refresh": "重新掃描並刷新數據",
+      "help": "打開 / 關閉此快捷鍵幫助",
+      "close": "關閉當前彈窗 / 返回",
+      "settings": "打開設置中心",
+      "benchmark": "運行系統性能跑分",
+      "ai": "進入 AI 實驗室 / Playground",
+      "network": "網絡工具（Ping/端口/UDP）",
+      "display": "顯示器測試工具",
+      "hardware": "硬體高級測試",
+      "translate": "Google 網頁翻譯",
+      "exportJson": "匯出 JSON 诊断數據",
+      "exportPdf": "匯出高保真 PDF 報告",
+      "exportImage": "匯出儀表板高清長圖",
+      "esc": "Esc",
+      "alt": "Alt",
+      "shift": "Shift"
+    }
   }
 
 };

@@ -457,6 +457,34 @@ export const modals = {
     "lib_role_server": "Express 服务器端接口路由分发、API 限流以及安全 HTTP 头防护。",
     "lib_role_charts": "响应式交互图表、仪表盘、图表与网络诊断指标可视化矢量。",
     "close": "关闭"
+  },
+  "keyboardShortcutsModal": {
+    "title": "键盘快捷键",
+    "desc": "使用全局键盘快捷键，大幅提升操作效率。",
+    "categories": {
+      "general": "全局与通用操作",
+      "navigation": "快捷导航与测试工具",
+      "export": "数据导出"
+    },
+    "keys": {
+      "theme": "切换主题（深色 / 浅色）",
+      "refresh": "重新扫描并刷新数据",
+      "help": "打开 / 关闭此快捷键帮助",
+      "close": "关闭当前弹窗 / 返回",
+      "settings": "打开设置中心",
+      "benchmark": "运行系统性能跑分",
+      "ai": "进入 AI 实验室 / Playground",
+      "network": "网络工具（Ping/端口/UDP）",
+      "display": "显示器测试工具",
+      "hardware": "硬件高级测试",
+      "translate": "谷歌网页翻译",
+      "exportJson": "导出 JSON 诊断数据",
+      "exportPdf": "导出高保真 PDF 报告",
+      "exportImage": "导出仪表盘高清长图",
+      "esc": "Esc",
+      "alt": "Alt",
+      "shift": "Shift"
+    }
   }
 
 };
