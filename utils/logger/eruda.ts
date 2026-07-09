@@ -1,7 +1,19 @@
-export async function loadEruda(store: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-  if ((window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda) {
+export interface ErudaStore {
+  erudaDefaultTab: string;
+  erudaSnippets: {
+    clear_local?: boolean;
+    clear_session?: boolean;
+    show_cookies?: boolean;
+    toggle_blur?: boolean;
+    toggle_editable?: boolean;
+    [key: string]: boolean | undefined;
+  };
+}
+
+export async function loadEruda(store: ErudaStore) {
+  if (window.eruda) {
     try {
-      (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda.show();
+      window.eruda.show();
     } catch { /* ignore */ }
     return;
   }
@@ -93,7 +105,7 @@ export async function loadEruda(store: any /* eslint-disable-line @typescript-es
     try { const erudaFps = (await import("eruda-fps")).default; eruda.add(erudaFps); } catch { /* ignore */ }
 
     // Only assign global reference after successful base initialization and plugin registration
-    (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda = eruda;
+    window.eruda = eruda as unknown as ErudaInstance;
 
     try { eruda.show(store.erudaDefaultTab); } catch { /* ignore */ }
 
@@ -186,14 +198,14 @@ export async function loadEruda(store: any /* eslint-disable-line @typescript-es
           const isCurrentlyDark =
             document.documentElement.classList.contains("dark");
           if (
-            (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda &&
-            typeof (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda.position === "function"
+            window.eruda &&
+            typeof window.eruda.position === "function"
           ) {
             try {
-              (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda._devTools._theme = isCurrentlyDark
+              window.eruda._devTools._theme = isCurrentlyDark
                 ? "Dark"
                 : "Light";
-              (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda._devTools.emit(
+              window.eruda._devTools.emit(
                 "themeChange",
                 isCurrentlyDark ? "Dark" : "Light",
               );
@@ -206,21 +218,21 @@ export async function loadEruda(store: any /* eslint-disable-line @typescript-es
   } catch (err) {
     console.error("Failed to load Eruda:", err);
     // Defensive cleanup on error so subsequent loads are not permanently blocked by stale reference
-    if ((window as any).eruda) {
+    if (window.eruda) {
       try {
-        (window as any).eruda.destroy();
+        window.eruda.destroy();
       } catch { /* ignore */ }
-      (window as any).eruda = undefined;
+      window.eruda = undefined;
     }
   }
 }
 
 export function unloadEruda() {
-  if ((window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda) {
+  if (window.eruda) {
     try {
-      (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda.destroy();
+      window.eruda.destroy();
     } catch { /* ignore */ }
-    (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda = undefined;
+    window.eruda = undefined;
     const erudaNode = document.getElementById("eruda-container");
     if (erudaNode) {
       erudaNode.remove();

@@ -82,7 +82,7 @@ if (typeof window !== "undefined") {
 if (typeof console !== "undefined") {
   const originalError = console.error;
   beforeAll(() => {
-    console.error = (...args: any[]) => {
+    console.error = (...args: unknown[]) => {
       if (
         typeof args[0] === 'string' &&
         args[0].includes('Not implemented: HTMLFormElement.prototype.submit')

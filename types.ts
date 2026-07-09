@@ -239,10 +239,31 @@ declare global {
     static getSupportedFormats(): Promise<string[]>;
     detect(image: ImageBitmapSource): Promise<DetectedBarcode[]>;
   }
+
+  interface ErudaDevTools {
+    _theme: string;
+    emit(event: string, value: string): void;
+  }
+
+  interface ErudaSnippets {
+    add(name: string, fn: () => void, desc?: string): void;
+  }
+
+  interface ErudaInstance {
+    init(options: { container: HTMLElement; useShadowDom?: boolean }): void;
+    show(tab?: string): void;
+    destroy(): void;
+    add(plugin: unknown): void;
+    get(name: 'snippets'): ErudaSnippets | undefined;
+    get(name: string): unknown;
+    position?: () => void;
+    _devTools: ErudaDevTools;
+  }
   
   interface Window {
       BarcodeDetector: typeof BarcodeDetector;
       FaceDetector: unknown;
       TextDetector: unknown;
+      eruda?: ErudaInstance;
   }
 }
