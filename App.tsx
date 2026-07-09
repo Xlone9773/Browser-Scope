@@ -949,7 +949,7 @@ const App: React.FC = () => {
           />) : null}
           {visibility.extensions ? (<Components.extensions
             onClose={() => close("extensions")}
-            t={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).extensionsModal}
+            t={t.extensionsModal}
           />) : null}
           {visibility.networkTools ? (<Components.networkTools
             onClose={() => close("networkTools")}
@@ -970,19 +970,19 @@ const App: React.FC = () => {
           />) : null}
           {visibility.poisoning ? (<Components.poisoning
             onClose={() => close("poisoning")}
-            t={(t as any).poisoning}
+            t={t.poisoning}
           />) : null}
           {visibility.ja3 ? (<Components.ja3
             onClose={() => close("ja3")}
-            t={(t as any).ja3}
+            t={t.ja3}
           />) : null}
           {visibility.attributions ? (<Components.attributions
             onClose={() => close("attributions")}
-            t={(t as any).attributionsModal}
+            t={t.attributionsModal}
           />) : null}
           {visibility.shortcuts ? (<Components.shortcuts
             onClose={() => close("shortcuts")}
-            t={(t as any).keyboardShortcutsModal}
+            t={t.keyboardShortcutsModal}
           />) : null}
         </Suspense>
       </ErrorBoundary>
