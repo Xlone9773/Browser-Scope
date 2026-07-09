@@ -30,7 +30,7 @@ export const SectionGroup: React.FC<SectionGroupProps> = ({ title, icon, childre
                 </button>
             </div>
             
-            <div className={`transition-all duration-500 ease-in-out origin-top ${isExpanded ? 'opacity-100 scale-y-100 max-h-[5000px]' : 'opacity-0 scale-y-0 max-h-0 overflow-hidden'}`}>
+            <div className={`transition-all duration-500 ease-in-out origin-top ${isExpanded ? 'opacity-100 scale-y-100 max-h-[20000px]' : 'opacity-0 scale-y-0 max-h-0 overflow-hidden'}`}>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {children}
                 </div>
