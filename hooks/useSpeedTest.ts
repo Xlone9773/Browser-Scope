@@ -247,7 +247,7 @@ export const useSpeedTest = () => {
         }
 
         // Determine Download URL
-        let downloadUrl = '';
+        let downloadUrl: string;
         if (config.backend === 'custom') {
             downloadUrl = config.customUrl!;
         } else if (backendConfig.isDynamic) {

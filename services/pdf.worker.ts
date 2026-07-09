@@ -29,29 +29,29 @@ interface ExportWorkerMessage {
 
 const FONT_MIRRORS: Record<string, string[]> = {
     "ru": [
-        "/fonts/Roboto-Regular.ttf",
         "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
-        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/roboto/static/Roboto-Regular.ttf"
+        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/roboto/static/Roboto-Regular.ttf",
+        "/fonts/Roboto-Regular.ttf"
     ],
     "zh-CN": [
-        "/fonts/ZCOOLXiaoWei-Regular.ttf",
         "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
+        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
+        "/fonts/ZCOOLXiaoWei-Regular.ttf"
     ],
     "zh-TW": [
-        "/fonts/ZCOOLXiaoWei-Regular.ttf",
         "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
+        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
+        "/fonts/ZCOOLXiaoWei-Regular.ttf"
     ],
     "zh-HK": [
-        "/fonts/ZCOOLXiaoWei-Regular.ttf",
         "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
+        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
+        "/fonts/ZCOOLXiaoWei-Regular.ttf"
     ],
     "ja": [
-        "/fonts/SawarabiGothic-Regular.ttf",
         "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf"
+        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf",
+        "/fonts/SawarabiGothic-Regular.ttf"
     ]
 };
 
@@ -510,8 +510,24 @@ async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
             const res = await fetch(finalUrl);
             if (res.ok) {
                 const buffer = await res.arrayBuffer();
-                if (buffer.byteLength > 0) {
-                    return buffer;
+                if (buffer.byteLength > 4) {
+                    const view = new DataView(buffer);
+                    const tag = view.getUint32(0, false);
+                    if (tag === 0x00010000 || tag === 0x4F54544F || tag === 0x74746366) {
+                        if (buffer.byteLength > 12) {
+                            const bytes = new Uint8Array(buffer, 0, 12);
+                            let isCorrupted = false;
+                            for (let i = 0; i < bytes.length - 2; i++) {
+                                if (bytes[i] === 0xEF && bytes[i+1] === 0xBF && bytes[i+2] === 0xBD) {
+                                    isCorrupted = true;
+                                    break;
+                                }
+                            }
+                            if (!isCorrupted) return buffer;
+                        } else {
+                            return buffer;
+                        }
+                    }
                 }
             }
             throw new Error(`HTTP status ${res.status}`);
