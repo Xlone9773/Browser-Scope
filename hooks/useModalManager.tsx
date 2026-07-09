@@ -37,45 +37,7 @@ const CanvasPoisoningModal = lazy(() => import('../components/CanvasPoisoningMod
 const Ja3FingerprintModal = lazy(() => import('../components/Ja3FingerprintModal').then(m => ({ default: m.Ja3FingerprintModal })));
 const KeyboardShortcutsModal = lazy(() => import('../components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })));
 
-const loadFunctions: Record<string, () => Promise<any>> = {
-  camera: () => import('../components/CameraModal'),
-  audio: () => import('../components/AudioRecorderModal'),
-  webgl: () => import('../components/WebGLExtensionsModal'),
-  canvas: () => import('../components/CanvasModal'),
-  base64: () => import('../components/Base64Modal'),
-  about: () => import('../components/AboutModal'),
-  attributions: () => import('../components/AttributionsModal'),
-  sensor: () => import('../components/SensorModal'),
-  score: () => import('../components/ScoreModal'),
-  fingerprint: () => import('../components/FingerprintModal'),
-  settings: () => import('../components/SettingsModal'),
-  networkTools: () => import('../components/NetworkToolsModal'),
-  displayTools: () => import('../components/DisplayToolsModal'),
-  benchmark: () => import('../components/BenchmarkModal'),
-  tools: () => import('../components/HardwareToolsModal'),
-  ai: () => import('../components/AiPlaygroundModal'),
-  gamepad: () => import('../components/GamepadToolModal'),
-  webDevice: () => import('../components/WebDeviceModal'),
-  vision: () => import('../components/VisionModal'),
-  speed: () => import('../components/SpeedTestModal'),
-  compute: () => import('../components/ComputeStressModal'),
-  developer: () => import('../components/settings/DeveloperTab'),
-  video: () => import('../components/VideoDecodeModal'),
-  graphics: () => import('../components/GraphicsDebugModal'),
-  speech: () => import('../components/SpeechExplorerModal'),
-  midi: () => import('../components/MidiModal'),
-  storageBench: () => import('../components/StorageBenchmarkModal'),
-  heatmap: () => import('../components/NetworkHeatmapModal'),
-  rayTracing: () => import('../components/RayTracingModal'),
-  extensions: () => import('../components/ExtensionsModal'),
-  googleTranslate: () => import('../components/GoogleTranslateModal'),
-  audioLatency: () => import('../components/AudioLatencyProbingModal'),
-  poisoning: () => import('../components/CanvasPoisoningModal'),
-  ja3: () => import('../components/Ja3FingerprintModal'),
-  shortcuts: () => import('../components/KeyboardShortcutsModal'),
-};
-
-const COMPONENTS: Record<string, React.ComponentType<any>> = {
+const COMPONENTS = {
   camera: CameraModal,
   audio: AudioRecorderModal,
   webgl: WebGLExtensionsModal,
