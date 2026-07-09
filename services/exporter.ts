@@ -1,4 +1,5 @@
 import { BrowserData, GeoPosition } from '../types';
+import { Translation } from '../utils/i18n/types';
 import { generateFilenameTimestamp } from '../utils/formatters';
 
 export const exportAsJson = (
@@ -61,7 +62,7 @@ export const exportAsPdf = (
     data: BrowserData,
     permStatus: Record<string, string>,
     geoData: GeoPosition | null,
-    t: any,
+    t: Translation,
     lang: string,
     onStart?: () => void,
     onSuccess?: () => void,
@@ -145,7 +146,7 @@ export const exportAsImage = async (
         
         // Suppress specific html-to-image console.error messages about cross-origin stylesheets
         const originalConsoleError = console.error;
-        console.error = (...args: any[]) => {
+        console.error = (...args: unknown[]) => {
             if (typeof args[0] === 'string' && (
                 args[0].includes('Error inlining remote css file') ||
                 args[0].includes('Error loading remote stylesheet') ||
@@ -187,9 +188,10 @@ export const exportAsImage = async (
         triggerDownload(blob, filename);
         if (onSuccess) onSuccess();
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("[ImageExport] Export exception thrown:", error);
-        if (onError) onError(error?.message || "Failed to trigger image export");
+        const errMsg = error instanceof Error ? error.message : "Failed to trigger image export";
+        if (onError) onError(errMsg);
     }
 };
 

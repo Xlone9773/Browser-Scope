@@ -1,12 +1,28 @@
 import { jsPDF } from "jspdf";
-import { BrowserData, GeoPosition } from "../types";
+import { BrowserData, GeoPosition, ExportPayload } from "../types";
 
 interface ExportWorkerMessage {
     type?: "pdf" | "json";
     data: BrowserData;
     permStatus: Record<string, string>;
     geoData: GeoPosition | null;
-    t: any;
+    t: {
+        sections?: {
+            system?: string;
+            hardware?: string;
+            display?: string;
+            network?: string;
+            fingerprints?: string;
+            ai_compute?: string;
+            storage?: string;
+            media_sup?: string;
+        };
+        system?: { title?: string };
+        hardware?: { title?: string };
+        display?: { title?: string };
+        network?: { title?: string };
+        fingerprints?: { title?: string };
+    };
     filename: string;
     lang?: string;
 }
@@ -483,7 +499,7 @@ async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
         throw new Error(`No font URLs defined for language: ${lang}`);
     }
 
-    let lastError: any = null;
+    let lastError: unknown = null;
     for (const url of urls) {
         try {
             let finalUrl = url;
@@ -517,7 +533,7 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
             if (cleanData.fingerprints && cleanData.fingerprints.canvasImage) {
                 delete cleanData.fingerprints.canvasImage;
             }
-            const exportPayload = {
+            const exportPayload: ExportPayload = {
                 meta: {
                     appName: "BrowserScope",
                     version: "1.5.0",
@@ -919,7 +935,8 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
 
         // Send back to the main thread
         self.postMessage({ type: "success", blob: pdfBlob, filename });
-    } catch (err: any) {
-        self.postMessage({ type: "error", message: err?.message || "PDF generation worker error" });
+    } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : "PDF generation worker error";
+        self.postMessage({ type: "error", message: errMsg });
     }
 };

@@ -233,6 +233,17 @@ export interface BarcodeDetectorOptions {
   formats?: string[];
 }
 
+export interface ExportPayload {
+  meta: {
+    appName: string;
+    version: string;
+    exportTime: string;
+  };
+  permissions: Record<string, string>;
+  geolocation: GeoPosition | string;
+  data: BrowserData;
+}
+
 declare global {
   class BarcodeDetector {
     constructor(options?: BarcodeDetectorOptions);
