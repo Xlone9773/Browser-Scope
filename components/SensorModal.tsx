@@ -65,79 +65,75 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
 
   // Setup Magnetometer & Ambient Light
   useEffect(() => {
-      let magSensor: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = null;
-      let lightSensor: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = null;
-      let linearAccelSensor: any = null;
-      let gravitySensor: any = null;
-      let absOrientationSensor: any = null;
+      let magSensor: Magnetometer | null = null;
+      let lightSensor: AmbientLightSensor | null = null;
+      let linearAccelSensor: LinearAccelerationSensor | null = null;
+      let gravitySensor: GravitySensor | null = null;
+      let absOrientationSensor: AbsoluteOrientationSensor | null = null;
 
       // Magnetometer
-      if ('Magnetometer' in window) {
+      if ('Magnetometer' in window && window.Magnetometer) {
           try {
-              
-                            // @ts-expect-error fixed implicitly typed external libraries
-                            magSensor = new Magnetometer({ frequency: 10 });
+              magSensor = new window.Magnetometer({ frequency: 10 });
               magSensor.addEventListener('reading', () => {
-                  setMagnet({ x: magSensor.x, y: magSensor.y, z: magSensor.z });
+                  if (magSensor) setMagnet({ x: magSensor.x, y: magSensor.y, z: magSensor.z });
               });
-              magSensor.addEventListener('error', (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => console.debug('Magnetometer error', e));
+              magSensor.addEventListener('error', (e: unknown) => console.debug('Magnetometer error', e));
               magSensor.start();
-          } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+          } catch (error: unknown) {
               console.debug("Magnetometer init error", error);
           }
       } 
 
       // Ambient Light Sensor
-      if ('AmbientLightSensor' in window) {
+      if ('AmbientLightSensor' in window && window.AmbientLightSensor) {
           try {
-              
-                            // @ts-expect-error fixed implicitly typed external libraries
-                            lightSensor = new AmbientLightSensor();
+              lightSensor = new window.AmbientLightSensor();
               lightSensor.addEventListener('reading', () => {
-                  setLux(lightSensor.illuminance);
+                  if (lightSensor) setLux(lightSensor.illuminance);
               });
-              lightSensor.addEventListener('error', (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => console.debug('AmbientLightSensor error', e));
+              lightSensor.addEventListener('error', (e: unknown) => console.debug('AmbientLightSensor error', e));
               lightSensor.start();
-          } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+          } catch (error: unknown) {
               console.debug("AmbientLightSensor init error", error);
           }
       }
       
       // Linear Acceleration
-      if ('LinearAccelerationSensor' in window) {
+      if ('LinearAccelerationSensor' in window && window.LinearAccelerationSensor) {
           try {
-              linearAccelSensor = new (window as any).LinearAccelerationSensor({ frequency: 10 });
+              linearAccelSensor = new window.LinearAccelerationSensor({ frequency: 10 });
               linearAccelSensor.addEventListener('reading', () => {
-                  setLinearAccel({ x: linearAccelSensor.x, y: linearAccelSensor.y, z: linearAccelSensor.z });
+                  if (linearAccelSensor) setLinearAccel({ x: linearAccelSensor.x, y: linearAccelSensor.y, z: linearAccelSensor.z });
               });
               linearAccelSensor.start();
-          } catch (e: any) {
+          } catch (e: unknown) {
               console.debug("LinearAccelerationSensor init error", e);
           }
       }
 
       // Gravity Sensor
-      if ('GravitySensor' in window) {
+      if ('GravitySensor' in window && window.GravitySensor) {
           try {
-              gravitySensor = new (window as any).GravitySensor({ frequency: 10 });
+              gravitySensor = new window.GravitySensor({ frequency: 10 });
               gravitySensor.addEventListener('reading', () => {
-                  setGravity({ x: gravitySensor.x, y: gravitySensor.y, z: gravitySensor.z });
+                  if (gravitySensor) setGravity({ x: gravitySensor.x, y: gravitySensor.y, z: gravitySensor.z });
               });
               gravitySensor.start();
-          } catch (e: any) {
+          } catch (e: unknown) {
               console.debug("GravitySensor init error", e);
           }
       }
 
       // AbsoluteOrientationSensor
-      if ('AbsoluteOrientationSensor' in window) {
+      if ('AbsoluteOrientationSensor' in window && window.AbsoluteOrientationSensor) {
           try {
-              absOrientationSensor = new (window as any).AbsoluteOrientationSensor({ frequency: 10 });
+              absOrientationSensor = new window.AbsoluteOrientationSensor({ frequency: 10 });
               absOrientationSensor.addEventListener('reading', () => {
-                  setAbsOrientation(absOrientationSensor.quaternion);
+                  if (absOrientationSensor) setAbsOrientation(absOrientationSensor.quaternion);
               });
               absOrientationSensor.start();
-          } catch (e: any) {
+          } catch (e: unknown) {
               console.debug("AbsoluteOrientationSensor init error", e);
           }
       }

@@ -12,6 +12,7 @@ export const common = {
     backToTop: "Back to Top",
     exit_fullscreen: "Exit Fullscreen",
     loading: "Initializing...",
+    export: "Export",
     error_boundary: {
         title: "Component Crashed",
         message: "An unexpected error occurred rendering this module.",

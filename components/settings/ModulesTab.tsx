@@ -122,7 +122,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
         });
     };
 
-    const getImpactColor = (impact: string) => {
+    const getImpactColor = (impact: string): 'error' | 'warning' | 'success' | 'neutral' => {
         switch(impact) {
             case 'High': return 'error';
             case 'Medium': return 'warning';
@@ -237,7 +237,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                                     )}
                                 </td>
                                 <td className="px-5 py-4">
-                                    <Badge variant={getImpactColor(mod.impact) as any} icon={<Zap size={10} />}>
+                                    <Badge variant={getImpactColor(mod.impact)} icon={<Zap size={10} />}>
                                         {getImpactLabel(mod.impact)}
                                     </Badge>
                                 </td>

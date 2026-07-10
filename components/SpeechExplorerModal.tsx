@@ -141,7 +141,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
                 <Select 
                     value={selectedLang}
                     options={languages}
-                    onChange={setSelectedLang}
+                    onChange={(val) => setSelectedLang(val as string)}
                     color="indigo"
                 />
             </div>

@@ -121,8 +121,8 @@ export const Slider: React.FC<SliderProps> = ({
                     `}
                     style={{ 
                         left: `${percentage}%`,
-                        ['--pct' as any]: percentage
-                    }}
+                        '--pct': percentage
+                    } as React.CSSProperties}
                 />
             </div>
         </div>

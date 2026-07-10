@@ -299,7 +299,7 @@ export const Header: React.FC<HeaderProps> = ({
               leftIcon={<Download size={16} />}
               rightIcon={<ChevronDown size={14} className={`transition-transform duration-200 ${isExportMenuOpen ? "rotate-180" : ""}`} />}
             >
-              <span className="hidden sm:inline">{(t.common as any).export || "Export"}</span>
+              <span className="hidden sm:inline">{t.common.export}</span>
             </Button>
             
             <div
@@ -323,7 +323,7 @@ export const Header: React.FC<HeaderProps> = ({
                 className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 text-slate-700 dark:text-slate-300 transition-colors"
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                <span>{(t.actions as any).export_pdf || "Export PDF"}</span>
+                <span>{t.actions.export_pdf}</span>
               </button>
               <button
                 onClick={() => {
@@ -333,7 +333,7 @@ export const Header: React.FC<HeaderProps> = ({
                 className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 text-slate-700 dark:text-slate-300 transition-colors"
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
-                <span>{(t.actions as any).export_image || "Export Image"}</span>
+                <span>{t.actions.export_image}</span>
               </button>
             </div>
           </div>
@@ -398,7 +398,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-slate-400">
                 <Download size={14} className="text-emerald-500" />
               </span>
-              {(t.actions as any).export_pdf || "Export PDF"}
+              {t.actions.export_pdf}
             </button>
 
             <button
@@ -408,7 +408,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-slate-400">
                 <Download size={14} className="text-purple-500" />
               </span>
-              {(t.actions as any).export_image || "Export Image"}
+              {t.actions.export_image}
             </button>
 
             <div className="mt-1 pt-1 border-t border-slate-100 dark:border-slate-700">

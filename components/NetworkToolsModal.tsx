@@ -252,7 +252,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                                     <Select 
                                         value={activeIpv4Source}
                                         options={IPV4_SOURCES}
-                                        onChange={setActiveIpv4Source}
+                                        onChange={(val) => setActiveIpv4Source(val as string)}
                                         size="sm"
                                         fullWidth={false}
                                         className="w-[200px]"
@@ -325,7 +325,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                                 <Select 
                                     value={activeIpv6Source}
                                     options={IPV6_SOURCES}
-                                    onChange={setActiveIpv6Source}
+                                    onChange={(val) => setActiveIpv6Source(val as string)}
                                     size="sm"
                                     fullWidth={true}
                                 />

@@ -160,6 +160,40 @@ declare global {
     ml?: unknown;
   }
 
+  interface Sensor extends EventTarget {
+    readonly activated: boolean;
+    readonly hasReading: boolean;
+    readonly timestamp?: number;
+    start(): void;
+    stop(): void;
+  }
+
+  interface Magnetometer extends Sensor {
+    readonly x: number;
+    readonly y: number;
+    readonly z: number;
+  }
+
+  interface AmbientLightSensor extends Sensor {
+    readonly illuminance: number;
+  }
+
+  interface LinearAccelerationSensor extends Sensor {
+    readonly x: number;
+    readonly y: number;
+    readonly z: number;
+  }
+
+  interface GravitySensor extends Sensor {
+    readonly x: number;
+    readonly y: number;
+    readonly z: number;
+  }
+
+  interface AbsoluteOrientationSensor extends Sensor {
+    readonly quaternion: [number, number, number, number];
+  }
+
   interface Window {
     ai?: {
       canCreateTextSession: () => Promise<string>;
@@ -177,5 +211,10 @@ declare global {
       STORAGE?: number;
     };
     model?: unknown;
+    Magnetometer?: new (options?: { frequency?: number }) => Magnetometer;
+    AmbientLightSensor?: new (options?: { frequency?: number }) => AmbientLightSensor;
+    LinearAccelerationSensor?: new (options?: { frequency?: number }) => LinearAccelerationSensor;
+    GravitySensor?: new (options?: { frequency?: number }) => GravitySensor;
+    AbsoluteOrientationSensor?: new (options?: { frequency?: number }) => AbsoluteOrientationSensor;
   }
 }

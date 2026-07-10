@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Select } from '../ui/Select';
+import { Select, SelectColor } from '../ui/Select';
 import { Switch } from '../ui/Switch';
+import { Translation } from '../../utils/i18n/types';
 
 interface AppearanceTabProps {
-    t: any;
-    themeColor: string;
+    t: Translation['settings']['general'];
+    themeColor: SelectColor;
     setThemeColor: (color: string) => void;
     animationStyle: string;
     setAnimationStyle: (style: string) => void;
@@ -26,7 +27,7 @@ interface AppearanceTabProps {
     toggleShowTabs: (value: boolean) => void;
     showSearch: boolean;
     toggleShowSearch: (value: boolean) => void;
-    translationDict: any;
+    translationDict: Translation;
 }
 
 export const AppearanceTab: React.FC<AppearanceTabProps> = ({ 
@@ -164,7 +165,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
                 <Select 
                     value={animationStyle}
-                    onChange={setAnimationStyle}
+                    onChange={(val) => setAnimationStyle(val as string)}
                     options={[
                         { id: 'slide-up', label: translationDict.settings?.general?.animationStyle?.options?.slideUp },
                         { id: 'fade', label: translationDict.settings?.general?.animationStyle?.options?.fade },
@@ -172,7 +173,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                         { id: 'zoom', label: translationDict.settings?.general?.animationStyle?.options?.zoom }
                     ]}
                     className="w-full sm:w-48"
-                    color={themeColor as any}
+                    color={themeColor}
                 />
             </div>
             {/* Disable Blur */}

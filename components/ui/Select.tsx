@@ -8,11 +8,13 @@ export interface SelectOption {
     label: string;
 }
 
-interface SelectProps {
+export type SelectColor = 'indigo' | 'purple' | 'blue' | 'emerald' | 'rose' | 'amber' | 'violet' | 'sky' | 'ice' | 'cherry';
+
+export interface SelectProps {
     value: string | number;
     options: SelectOption[];
-    onChange: (value: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => void;
-    color?: 'indigo' | 'purple' | 'blue' | 'emerald' | 'rose' | 'amber' | 'violet' | 'sky' | 'ice' | 'cherry';
+    onChange: (value: unknown) => void;
+    color?: SelectColor;
     disabled?: boolean;
     className?: string;
     fullWidth?: boolean;

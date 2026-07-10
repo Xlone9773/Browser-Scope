@@ -148,8 +148,11 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
       // Latency detection
       if (typeof ctx.outputLatency === "number") {
         setOutputLatency(ctx.outputLatency);
-      } else if ((ctx as any).outputLatency) {
-        setOutputLatency(parseFloat((ctx as any).outputLatency));
+      } else if ('outputLatency' in ctx) {
+        const outLatVal = (ctx as unknown as { outputLatency: unknown }).outputLatency;
+        if (outLatVal !== undefined && outLatVal !== null) {
+          setOutputLatency(typeof outLatVal === "number" ? outLatVal : parseFloat(String(outLatVal)));
+        }
       }
 
       if (typeof ctx.baseLatency === "number") {
@@ -166,8 +169,9 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
       } else {
         setActiveLayout("stereo");
       }
-    } catch (e: any) {
-      setErrorMsg(`Failed to initialize Web Audio API: ${e.message}`);
+    } catch (e: unknown) {
+      const errMsg = e instanceof Error ? e.message : String(e);
+      setErrorMsg(`Failed to initialize Web Audio API: ${errMsg}`);
     }
 
     return () => {
@@ -517,7 +521,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
                 options={layoutOptions}
                 onChange={(val) => {
                   stopAllAudio();
-                  setActiveLayout(val);
+                  setActiveLayout(val as string);
                 }}
                 size="sm"
                 fullWidth={false}

@@ -11,7 +11,7 @@ import { useModalManager } from "./hooks/useModalManager";
 import { useCardIndex } from "./hooks/useCardIndex";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { BrowserData } from "./types";
-import { Select } from "./components/ui/Select";
+import { Select, SelectColor } from "./components/ui/Select";
 
 import { AppNotification } from "./components/ui/AppNotification";
 import { BackToTop } from "./components/ui/BackToTop";
@@ -25,6 +25,7 @@ import { HardwareCard } from "./components/cards/HardwareCard";
 import { DisplayCard } from "./components/cards/DisplayCard";
 import { QuickSummaryWidget } from "./components/sections/QuickSummaryWidget";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function lazyWithRetry<T extends React.ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
   retries = 3,
@@ -274,10 +275,10 @@ const App: React.FC = () => {
       if (currentIndex !== -1) {
         if (isLeftSwipe && currentIndex < availableTabs.length - 1) {
           setSlideDirection(1);
-          setActiveTab(availableTabs[currentIndex + 1].id as any);
+          setActiveTab(availableTabs[currentIndex + 1].id);
         } else if (!isLeftSwipe && currentIndex > 0) {
           setSlideDirection(-1);
-          setActiveTab(availableTabs[currentIndex - 1].id as any);
+          setActiveTab(availableTabs[currentIndex - 1].id);
         }
       }
     }
@@ -353,10 +354,10 @@ const App: React.FC = () => {
   const settingsTitle = t.settings?.title;
   const developerTabTitle = t.settings?.nav?.developer;
 
-  const modalStates: any[] = [
+  const modalStates: ModuleState[] = [
     {
       id: "settings",
-      name: settingsTitle,
+      name: settingsTitle || "Settings",
       isOpen: visibility.settings,
       setOpen: (v: boolean) => (v ? open("settings") : close("settings")),
       impact: "Low",
@@ -1133,14 +1134,14 @@ const App: React.FC = () => {
                           </label>
                           <Select 
                               value={searchScope}
-                              onChange={(val) => updateSearchScope(val as any)}
+                              onChange={(val) => updateSearchScope(val as 'all' | 'category' | 'title' | 'value')}
                               options={[
                                   { id: 'all', label: t.settings?.general?.searchScope?.options?.all || "All Text" },
                                   { id: 'category', label: t.settings?.general?.searchScope?.options?.category || "Category" },
                                   { id: 'title', label: t.settings?.general?.searchScope?.options?.title || "Title" },
                                   { id: 'value', label: t.settings?.general?.searchScope?.options?.value || "Value" }
                               ]}
-                              color={themeColor as any}
+                              color={themeColor as SelectColor}
                               size="sm"
                           />
                       </div>
@@ -1150,12 +1151,12 @@ const App: React.FC = () => {
                           </label>
                           <Select 
                               value={searchMode}
-                              onChange={(val) => updateSearchMode(val as any)}
+                              onChange={(val) => updateSearchMode(val as 'fuzzy' | 'exact')}
                               options={[
                                   { id: 'fuzzy', label: t.settings?.general?.searchMode?.options?.fuzzy || "Fuzzy" },
                                   { id: 'exact', label: t.settings?.general?.searchMode?.options?.exact || "Exact" }
                               ]}
-                              color={themeColor as any}
+                              color={themeColor as SelectColor}
                               size="sm"
                           />
                       </div>
@@ -1170,7 +1171,7 @@ const App: React.FC = () => {
                         const newIndex = availableTabs.findIndex(t => t.id === tab.id);
                         const oldIndex = availableTabs.findIndex(t => t.id === activeTab);
                         setSlideDirection(newIndex > oldIndex ? 1 : -1);
-                        setActiveTab(tab.id as any);
+                        setActiveTab(tab.id);
                       }}
                       className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-sm font-medium ${
                         activeTab === tab.id

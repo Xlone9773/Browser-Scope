@@ -4,8 +4,10 @@ import { ModuleState } from './ModulesTab';
 import packageJson from '../../package.json';
 import { Button } from '../ui/Button';
 
+import { Translation } from '../../utils/i18n/types';
+
 interface VersionsTabProps {
-  t: any;
+  t: Translation['settings']['versions'];
   appVersion?: string;
   modules: ModuleState[];
   updateServiceWorker?: (reloadPage?: boolean) => Promise<void>;

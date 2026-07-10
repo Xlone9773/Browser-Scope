@@ -12,6 +12,7 @@ export const common = {
     backToTop: "返回顶部",
     exit_fullscreen: "退出全屏",
     loading: "正在扫描系统能力...",
+    export: "导出",
     error_boundary: {
         title: "组件崩溃",
         message: "渲染该模块时发生了未预期的错误。",

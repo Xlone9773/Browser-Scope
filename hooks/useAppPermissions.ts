@@ -39,7 +39,7 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
     try {
       if (navigator.permissions && navigator.permissions.query) {
         const result = await Promise.race([
-            navigator.permissions.query({ name: name as any /* eslint-disable-line @typescript-eslint/no-explicit-any */ }),
+            navigator.permissions.query({ name: name as PermissionName }),
             new Promise<PermissionStatus>((_, reject) => setTimeout(() => reject(new Error('timeout')), 500))
         ]);
         updatePermStatus(key, result.state as PermissionStatusType);
@@ -123,7 +123,7 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
       }
     } catch (error: unknown) {
       console.error(`Error requesting permission for ${type}:`, getErrorMessage(error));
-      const errName = error && typeof error === 'object' && 'name' in error ? String((error as any).name) : '';
+      const errName = error && typeof error === 'object' && 'name' in error ? String((error as Record<string, unknown>).name) : '';
       if (
         errName === "NotAllowedError" ||
         errName === "PermissionDeniedError"

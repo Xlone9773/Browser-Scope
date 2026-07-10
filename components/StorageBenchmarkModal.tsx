@@ -219,7 +219,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
                                         { id: 'cache', label: t.cache },
                                         { id: 'opfs', label: opfsSupported ? t.opfs : `${t.opfs} (Unsupported)` }
                                     ]}
-                                    onChange={setTarget}
+                                    onChange={(val) => setTarget(val as TargetType)}
                                     disabled={state === 'writing' || state === 'reading' || (target === 'opfs' && !opfsSupported)}
                                 />
                             </div>

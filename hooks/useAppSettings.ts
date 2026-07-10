@@ -57,7 +57,11 @@ export function useAppSettings() {
     return saved === null ? true : saved === "true";
   });
   const [searchScope, setSearchScope] = useState<'all' | 'category' | 'title' | 'value'>(() => {
-    return (localStorage.getItem("searchScope") as any) || 'all';
+    const saved = localStorage.getItem("searchScope");
+    if (saved === 'all' || saved === 'category' || saved === 'title' || saved === 'value') {
+      return saved;
+    }
+    return 'all';
   });
   
   const updateSearchScope = (scope: 'all' | 'category' | 'title' | 'value') => {
@@ -66,7 +70,11 @@ export function useAppSettings() {
   };
 
   const [searchMode, setSearchMode] = useState<'fuzzy' | 'exact'>(() => {
-    return (localStorage.getItem("searchMode") as any) || 'fuzzy';
+    const saved = localStorage.getItem("searchMode");
+    if (saved === 'fuzzy' || saved === 'exact') {
+      return saved;
+    }
+    return 'fuzzy';
   });
 
   const updateSearchMode = (mode: 'fuzzy' | 'exact') => {

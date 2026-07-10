@@ -6,6 +6,7 @@ import { Modal } from './ui/Modal';
 
 import { GeneralTab } from './settings/GeneralTab';
 import { AppearanceTab } from './settings/AppearanceTab';
+import { SelectColor } from './ui/Select';
 import { StorageTab } from './settings/StorageTab';
 import { ResourcesTab } from './settings/ResourcesTab';
 import { DeveloperTab } from './settings/DeveloperTab';
@@ -263,7 +264,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           
                           {activeTab === 'appearance' ? (<AppearanceTab 
                               t={settings.general} 
-                              themeColor={themeColor}
+                              themeColor={themeColor as SelectColor}
                               setThemeColor={setThemeColor}
                               animationStyle={animationStyle}
                               setAnimationStyle={setAnimationStyle}

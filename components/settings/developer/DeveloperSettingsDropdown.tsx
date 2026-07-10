@@ -118,7 +118,7 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
         </div>
         <Select
           value={vconsoleDefaultTab}
-          onChange={(val: string) => setVconsoleDefaultTab(val)}
+          onChange={(val: unknown) => setVconsoleDefaultTab(val as string)}
           fullWidth
           options={[
             { id: "default", label: ((t.config as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.vconsoleTabs?.default },
@@ -141,7 +141,7 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
           </div>
           <Select
             value={erudaDefaultTab}
-            onChange={(val: string) => setErudaDefaultTab(val)}
+            onChange={(val: unknown) => setErudaDefaultTab(val as string)}
             fullWidth
             options={[
               { id: "console", label: ((t.config as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.erudaTabs?.console },

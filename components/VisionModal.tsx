@@ -382,7 +382,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                         <Select 
                             value={selectedDeviceId}
                             options={deviceOptions}
-                            onChange={handleDeviceChange}
+                            onChange={(val) => handleDeviceChange(val as string)}
                             color="indigo"
                         />
                     </div>

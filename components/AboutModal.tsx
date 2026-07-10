@@ -25,8 +25,9 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
   const currentVersion = t.updates && t.updates[0] ? t.updates[0].version : '1.6.0';
   const [showLicense, setShowLicense] = useState(false);
 
-  const currentLicenseText = (t.features?.openSource as any)?.licenseText || '';
-  const currentLicenseTitle = (t.features?.openSource as any)?.licenseTitle || 'LICENSE (MIT)';
+  const openSource = (t.features?.openSource || {}) as Record<string, string>;
+  const currentLicenseText = openSource.licenseText || '';
+  const currentLicenseTitle = openSource.licenseTitle || 'LICENSE (MIT)';
 
   return (
     <Modal
@@ -201,7 +202,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                         className="flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 rounded-lg text-xs font-semibold text-slate-100 transition-all duration-200 cursor-pointer active:scale-95 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
                                     >
                                         <FileText size={12} className={showLicense ? "text-indigo-400" : "text-slate-400"} />
-                                        {showLicense ? (t.features?.openSource as any).hideLicense : (t.features?.openSource as any).viewLicense}
+                                        {showLicense ? openSource.hideLicense : openSource.viewLicense}
                                     </button>
                                     <button
                                         onClick={() => {
@@ -218,7 +219,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                         className="flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white transition-all duration-200 cursor-pointer active:scale-95 shadow-md shadow-indigo-600/10 hover:shadow-indigo-600/20 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     >
                                         <Download size={12} />
-                                        {(t.features?.openSource as any).downloadLicense}
+                                        {openSource.downloadLicense}
                                     </button>
                                 </div>
                                 <button
@@ -248,7 +249,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                         onClick={() => setShowLicense(false)}
                                         className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 font-medium transition-colors cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded-md"
                                     >
-                                        {(t.features?.openSource as any).hideLicense}
+                                        {openSource.hideLicense}
                                     </button>
                                 </div>
                                 <pre className="font-mono text-[11px] text-slate-600 dark:text-slate-400 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200/50 dark:border-slate-800/50 custom-scrollbar">

@@ -123,7 +123,7 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                             <Select 
                                 value={backend} 
                                 options={presetOptions}
-                                onChange={(val) => setBackend(val)}
+                                onChange={(val) => setBackend(val as string)}
                                 color="indigo"
                             />
                         </div>

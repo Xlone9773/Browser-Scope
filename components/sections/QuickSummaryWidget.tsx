@@ -5,7 +5,7 @@ import { ShieldAlert, ShieldCheck, Info, AlertTriangle, X } from 'lucide-react';
 
 interface QuickSummaryWidgetProps {
   data: BrowserData;
-  t: any;
+  t: Translation;
   onClose?: () => void;
 }
 
@@ -139,10 +139,10 @@ export const QuickSummaryWidget: React.FC<QuickSummaryWidgetProps> = ({ data, t,
             </div>
             <div>
               <h3 className="font-medium text-slate-800 dark:text-slate-200 text-sm">
-                {t?.quickSummary?.[flag.titleKey]}
+                {(t?.quickSummary as Record<string, string>)?.[flag.titleKey]}
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                {t?.quickSummary?.[flag.descKey]}
+                {(t?.quickSummary as Record<string, string>)?.[flag.descKey]}
               </p>
             </div>
           </div>

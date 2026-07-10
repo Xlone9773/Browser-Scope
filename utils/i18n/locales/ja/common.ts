@@ -12,6 +12,7 @@ export const common = {
     backToTop: "トップに戻る",
     exit_fullscreen: "全画面を終了",
     loading: "システム機能をスキャン中...",
+    export: "エクスポート",
     error_boundary: {
         title: "コンポーネントのクラッシュ",
         message: "このモジュールのレンダリング中に予期しないエラーが発生しました。",
