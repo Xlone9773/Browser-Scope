@@ -60,18 +60,14 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
 
   // Web Bluetooth
   const scanBluetooth = async () => {
-      
-            // @ts-expect-error fixed implicitly typed external libraries
-            if (!navigator.bluetooth) {
+      if (!navigator.bluetooth) {
           setError(t.bt_not_supported);
           return;
       }
       setScanning(true);
       setError(null);
       try {
-          
-                    // @ts-expect-error fixed implicitly typed external libraries
-                    const device = await navigator.bluetooth.requestDevice({
+          const device = await navigator.bluetooth.requestDevice({
               acceptAllDevices: true,
               optionalServices: ['battery_service', 'device_information']
           });
@@ -106,18 +102,14 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
 
   // Web USB
   const scanUsb = async () => {
-      
-            // @ts-expect-error fixed implicitly typed external libraries
-            if (!navigator.usb) {
+      if (!navigator.usb) {
           setError(t.usb_not_supported);
           return;
       }
       setScanning(true);
       setError(null);
       try {
-          
-                    // @ts-expect-error fixed implicitly typed external libraries
-                    const device = await navigator.usb.requestDevice({ filters: [] });
+          const device = await navigator.usb.requestDevice({ filters: [] });
           setUsbDevices(prev => prev.find(d => d.id === (device.serialNumber || `${device.vendorId}-${device.productId}`)) ? prev : [...prev, {
               id: device.serialNumber || `${device.vendorId}-${device.productId}`,
               name: device.productName,
@@ -132,18 +124,14 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
 
   // Web Serial
   const scanSerial = async () => {
-      
-            // @ts-expect-error fixed implicitly typed external libraries
-            if (!navigator.serial) {
+      if (!navigator.serial) {
           setError(t.serial_not_supported);
           return;
       }
       setScanning(true);
       setError(null);
       try {
-          
-                    // @ts-expect-error fixed implicitly typed external libraries
-                    const port = await navigator.serial.requestPort();
+          const port = await navigator.serial.requestPort();
           const info = port.getInfo();
           setSerialDevices(prev => prev.find(d => d.id === `${info.usbVendorId}-${info.usbProductId}`) ? prev : [...prev, {
               id: `${info.usbVendorId}-${info.usbProductId}`,

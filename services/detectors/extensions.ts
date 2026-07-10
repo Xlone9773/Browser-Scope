@@ -64,7 +64,7 @@ export const detectExtensions = (): DetectedExtension[] => {
   check('tampermonkey', 'Tampermonkey', 'Userscript manager', 'Utility', () => !!w.GM_info || !!w.GM);
 
   // Privacy / Adblock (Heuristics without fetch)
-  check('brave-shields', 'Brave Shields', 'Built-in Brave Ad/Tracker Blocker', 'Privacy', () => !!(navigator as any  ).brave && typeof (navigator as any   as Record<string, { isBrave: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ }>).brave.isBrave === 'function');
+  check('brave-shields', 'Brave Shields', 'Built-in Brave Ad/Tracker Blocker', 'Privacy', () => !!navigator.brave && typeof navigator.brave.isBrave === 'function');
   check('ghostery', 'Ghostery', 'Tracker Blocker', 'Privacy', () => !!w.Ghostery);
 
   return extensions;

@@ -216,7 +216,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
       
       // Setup Audio Context for Visualizer if not already setup
       if (!audioContextRef.current) {
-          const AudioContext = window.AudioContext || (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).webkitAudioContext;
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
           const audioCtx = new AudioContext();
           setSampleRate(audioCtx.sampleRate);
           

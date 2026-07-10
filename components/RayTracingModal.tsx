@@ -228,8 +228,8 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
 
   const initWebGPU = async () => {
     try {
-      if (!(navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu) throw new Error("WebGPU not supported");
-      const adapter = await (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu.requestAdapter({ powerPreference: 'high-performance' });
+      if (!navigator.gpu) throw new Error("WebGPU not supported");
+      const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
       if (!adapter) throw new Error("No adapter found");
       const device = await adapter.requestDevice();
       deviceRef.current = device;
@@ -241,10 +241,10 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       contextRef.current = context;
 
       // GPUTextureUsage logic with fallback
-      const TEXTURE_USAGE_STORAGE = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUTextureUsage?.STORAGE_BINDING || 0x08;
-      const TEXTURE_USAGE_COPY_SRC = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUTextureUsage?.COPY_SRC || 0x01;
-      const TEXTURE_USAGE_COPY_DST = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUTextureUsage?.COPY_DST || 0x02;
-      const TEXTURE_USAGE_RENDER_ATTACHMENT = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUTextureUsage?.RENDER_ATTACHMENT || 0x10;
+      const TEXTURE_USAGE_STORAGE = window.GPUTextureUsage?.STORAGE_BINDING || 0x08;
+      const TEXTURE_USAGE_COPY_SRC = window.GPUTextureUsage?.COPY_SRC || 0x01;
+      const TEXTURE_USAGE_COPY_DST = window.GPUTextureUsage?.COPY_DST || 0x02;
+      const TEXTURE_USAGE_RENDER_ATTACHMENT = window.GPUTextureUsage?.RENDER_ATTACHMENT || 0x10;
 
       // Force 'rgba8unorm' to match the storage texture and avoid bgra8unorm_storage requirement
       const format = 'rgba8unorm';
@@ -275,8 +275,8 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       // Total size: ~64 bytes is safe.
       const uniformBufferSize = 128; 
       // GPUBufferUsage logic with fallback
-      const BUFFER_USAGE_UNIFORM = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUBufferUsage?.UNIFORM || 0x0040;
-      const BUFFER_USAGE_COPY_DST = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUBufferUsage?.COPY_DST || 0x0008;
+      const BUFFER_USAGE_UNIFORM = window.GPUBufferUsage?.UNIFORM || 0x0040;
+      const BUFFER_USAGE_COPY_DST = window.GPUBufferUsage?.COPY_DST || 0x0008;
 
       const uniformBuffer = device.createBuffer({
         size: uniformBufferSize,

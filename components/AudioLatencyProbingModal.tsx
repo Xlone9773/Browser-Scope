@@ -132,7 +132,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
   // Initialize Web Audio Context to get initial parameters
   useEffect(() => {
     try {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       if (!AudioContextClass) {
         setErrorMsg("Web Audio API is not supported in this browser.");
         return;

@@ -84,7 +84,7 @@ export const getMediaSupport = (): { video: CodecInfo[], audio: CodecInfo[], ima
 };
 
 export const getAudioContextInfo = () => {
-    const AudioContextClass = window.AudioContext || (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).webkitAudioContext;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) return { rate: 'Not Supported', latency: 'Not Supported', channels: 'Unknown' };
     try {
         const ctx = new AudioContextClass();

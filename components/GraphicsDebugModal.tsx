@@ -95,8 +95,8 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
       // 2. WebGPU Limits
       const gpuData: Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */> = {};
       try {
-          if ((navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu) {
-              const adapter = await (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu.requestAdapter();
+          if (navigator.gpu) {
+              const adapter = await navigator.gpu.requestAdapter();
               if (adapter) {
                   const limits = adapter.limits;
                   // Enumerate limits object

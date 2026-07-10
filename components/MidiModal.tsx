@@ -30,7 +30,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
 
   // Initialize Web Audio
   useEffect(() => {
-      const AudioContext = window.AudioContext || (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).webkitAudioContext;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (AudioContext) {
           audioContextRef.current = new AudioContext();
       }

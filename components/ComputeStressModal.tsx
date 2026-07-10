@@ -75,12 +75,12 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   // Init WebGPU & Check Features
   useEffect(() => {
     const init = async () => {
-        if (!(navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu) {
+        if (!navigator.gpu) {
             setIsWebGPUSupported(false);
             return;
         }
         try {
-            const adapter = await (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gpu.requestAdapter({ powerPreference: 'high-performance' });
+            const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
             if (!adapter) {
                 setIsWebGPUSupported(false);
                 return;
@@ -248,7 +248,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           buffer.unmap();
           return buffer;
       };
-      const USAGE_STORAGE = (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).GPUBufferUsage?.STORAGE || 128;
+      const USAGE_STORAGE = window.GPUBufferUsage?.STORAGE || 128;
 
       const gpuBufferFirstMatrix = createBuffer(firstMatrix, USAGE_STORAGE);
       const gpuBufferSecondMatrix = createBuffer(secondMatrix, USAGE_STORAGE);

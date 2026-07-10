@@ -21,12 +21,12 @@ export const InspectorView: React.FC = () => {
       } catch { /* ignore */ }
     }
     if (key === "navigator") {
-      if ((navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).userAgentData)
-        result["userAgentData"] = (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).userAgentData;
-      if ((navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).connection)
-        result["connection"] = (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).connection;
-      if ((navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).deviceMemory)
-        result["deviceMemory"] = (navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).deviceMemory;
+      if (navigator.userAgentData)
+        result["userAgentData"] = navigator.userAgentData;
+      if (navigator.connection)
+        result["connection"] = navigator.connection;
+      if (navigator.deviceMemory)
+        result["deviceMemory"] = navigator.deviceMemory;
     }
 
     return JSON.stringify(result, null, 2);

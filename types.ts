@@ -20,31 +20,7 @@ export interface BatteryManager extends EventTarget {
 }
 
 // Extend the Navigator interface for non-standard or experimental APIs
-export interface ExtendedNavigator extends Navigator {
-  deviceMemory?: number;
-  connection?: NetworkInformation;
-  mozConnection?: NetworkInformation;
-  webkitConnection?: NetworkInformation;
-  standalone?: boolean;
-  userAgentData?: {
-    brands: { brand: string; version: string }[];
-    mobile: boolean;
-    platform: string;
-    getHighEntropyValues: (hints: string[]) => Promise<unknown>;
-  };
-  gpu?: unknown;
-  bluetooth?: unknown;
-  usb?: unknown;
-  xr?: unknown;
-  nfc?: unknown;
-  windowControlsOverlay?: unknown;
-  hid?: unknown;
-  serial?: unknown;
-  presentation?: unknown;
-  globalPrivacyControl?: boolean;
-  webdriver: boolean;
-  ml: unknown; // WebNN (Required to match Navigator interface)
-}
+export type ExtendedNavigator = Navigator;
 
 export interface CodecInfo {
     name: string;
