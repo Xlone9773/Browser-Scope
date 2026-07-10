@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Brain, Sparkles, Activity, MessageSquare, Type, Languages, RefreshCw, Zap, CloudDownload } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
+import { getErrorMessage } from '../utils/error';
 
 interface AiPlaygroundModalProps {
   onClose: () => void;
@@ -72,8 +73,8 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
           setModelStatus('ready');
           setProgress(null);
 
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-          console.error("Model load failed", e);
+      } catch (e: unknown) {
+          console.error("Model load failed", getErrorMessage(e));
           setProgress({ status: 'error' });
           setModelStatus('idle');
       }
@@ -125,8 +126,8 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
           
           setResult(output);
           setMetrics(prev => ({ ...prev, inferenceTime: (end - start).toFixed(2) + ' ms' }));
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-          console.error(e);
+      } catch (e: unknown) {
+          console.error("Inference failed", getErrorMessage(e));
       }
       setIsComputing(false);
   };

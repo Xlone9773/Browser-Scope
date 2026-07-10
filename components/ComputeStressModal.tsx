@@ -7,6 +7,7 @@ import { Select } from './ui/Select';
 import { MATMUL_SHADER_F32, MATMUL_SHADER_F16 } from './compute/shaders';
 import { ParticleSystem } from './compute/ParticleSystem';
 import { Modal } from './ui/Modal';
+import { getErrorMessage } from '../utils/error';
 
 interface ComputeStressModalProps {
   onClose: () => void;
@@ -102,8 +103,8 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
             deviceRef.current = device;
             
             setIsWebGPUSupported(true);
-        } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-            console.error("WebGPU Init Error", e);
+        } catch (e: unknown) {
+            console.error("WebGPU Init Error", getErrorMessage(e));
             setIsWebGPUSupported(false);
         }
     };

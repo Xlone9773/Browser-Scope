@@ -4,6 +4,7 @@ import { Play, Cpu, Zap, Activity, Code, Box, Image as ImageIcon, Calculator, Da
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
 import { Modal } from './ui/Modal';
+import { getErrorMessage } from '../utils/error';
 
 interface BenchmarkModalProps {
   onClose: () => void;
@@ -209,8 +210,8 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   break;
               }
           }
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-          console.error(e);
+      } catch (e: unknown) {
+          console.error("Benchmark failed", getErrorMessage(e));
           return { score: 0, details: "Failed" };
       }
 

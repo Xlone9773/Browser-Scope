@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { GeoPosition } from "../types";
+import { getErrorMessage } from "../utils/error";
 
 export type PermissionStatusType =
   | "idle"
@@ -63,8 +64,8 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
           updatePermStatus(key, result.state as PermissionStatusType);
         };
       }
-    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-      console.debug(`Permission query failed for ${name}`, e);
+    } catch (e: unknown) {
+      console.debug(`Permission query failed for ${name}`, getErrorMessage(e));
     }
   };
 
@@ -120,11 +121,12 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
           updatePermStatus("midi", "error");
         }
       }
-    } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-      console.error(`Error requesting permission for ${type}:`, error);
+    } catch (error: unknown) {
+      console.error(`Error requesting permission for ${type}:`, getErrorMessage(error));
+      const errName = error && typeof error === 'object' && 'name' in error ? String((error as any).name) : '';
       if (
-        error.name === "NotAllowedError" ||
-        error.name === "PermissionDeniedError"
+        errName === "NotAllowedError" ||
+        errName === "PermissionDeniedError"
       ) {
         updatePermStatus(type, "denied");
       } else {
