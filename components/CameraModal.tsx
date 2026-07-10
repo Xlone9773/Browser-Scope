@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Camera as CameraIcon, Download, RefreshCw, Video, Square, FlipHorizontal, Activity } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
+import { Select } from './ui/Select';
 
 interface CameraModalProps {
   onClose: () => void;
@@ -195,6 +196,19 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
     getDevices();
   }, [getDevices]);
 
+  const getBase64Size = (base64Str: string | null): string => {
+    if (!base64Str) return '';
+    const parts = base64Str.split(',');
+    if (parts.length < 2) return '';
+    const base64Content = parts[1];
+    const sizeInBytes = Math.round((base64Content.length * 3) / 4);
+    const sizeInKB = sizeInBytes / 1024;
+    if (sizeInKB > 1024) {
+      return `${(sizeInKB / 1024).toFixed(2)} MB`;
+    }
+    return `${sizeInKB.toFixed(2)} KB`;
+  };
+
   const captureImage = () => {
     if (videoRef.current && canvasRef.current && resolution) {
       const video = videoRef.current;
@@ -211,7 +225,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
             ctx.scale(-1, 1);
         }
         ctx.drawImage(video, 0, 0, resolution.width, resolution.height);
-        const dataUrl = canvas.toDataURL('image/png');
+        // Using image/jpeg with 0.9 quality instead of PNG dramatically reduces size from ~10MB to <3MB for 13MP while keeping exceptional quality
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
         setImage(dataUrl);
       }
     }
@@ -279,7 +294,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
     const link = document.createElement('a');
     if (type === 'image' && image) {
       link.href = image;
-      link.download = `camera-capture-${new Date().getTime()}.png`;
+      link.download = `camera-capture-${new Date().getTime()}.jpg`;
     } else if (type === 'video' && videoUrl) {
       link.href = videoUrl;
       let ext = 'webm';
@@ -320,21 +335,13 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                    {t.select_device}
                  </label>
                  <div className="relative">
-                   <select 
+                   <Select 
                      value={selectedDeviceId} 
-                     onChange={(e) => setSelectedDeviceId(e.target.value)}
-                     className="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none"
+                     options={devices.map(device => ({ id: device.deviceId, label: device.label }))}
+                     onChange={(val) => setSelectedDeviceId(val as string)}
                      disabled={isRecording}
-                   >
-                     {devices.map(device => (
-                       <option key={device.deviceId} value={device.deviceId}>
-                         {device.label}
-                       </option>
-                     ))}
-                   </select>
-                   <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                     <RefreshCw size={14} />
-                   </div>
+                     color="indigo"
+                   />
                  </div>
                </div>
                
@@ -349,7 +356,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                         </span>
                      </div>
                      <span className="font-mono text-sm font-semibold text-indigo-600 dark:text-indigo-400">
-                        {resolution ? `${resolution.width} x ${resolution.height}` : '-'}
+                        {resolution ? `${resolution.width} x ${resolution.height} (${((resolution.width * resolution.height) / 1000000).toFixed(1)} MP)` : '-'}
                      </span>
                   </div>
                   {maxResolution && (
@@ -359,7 +366,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                             <Activity size={10} className="text-emerald-500" />
                         </div>
                         <span className="font-mono text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                            {`${maxResolution.width} x ${maxResolution.height}`}
+                            {`${maxResolution.width} x ${maxResolution.height} (${((maxResolution.width * maxResolution.height) / 1000000).toFixed(1)} MP)`}
                         </span>
                     </div>
                   )}
@@ -374,7 +381,15 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                 <p>{error}</p>
               </div>
             ) : image ? (
-               <img src={image} alt="Capture" className="w-full h-full object-contain" />
+               <div className="relative w-full h-full">
+                  <img src={image} alt="Capture" className="w-full h-full object-contain" />
+                  <div className="absolute top-4 left-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm shadow-md flex flex-col gap-0.5 border border-white/10 select-none">
+                     <span className="font-semibold text-[10px] text-indigo-300 uppercase tracking-wider">Captured Photo Details</span>
+                     <span className="font-mono text-xs">Format: JPEG (90% Quality)</span>
+                     <span className="font-mono text-xs">Resolution: {resolution ? `${resolution.width} x ${resolution.height} (${((resolution.width * resolution.height) / 1000000).toFixed(1)} MP)` : ''}</span>
+                     <span className="font-mono text-xs font-semibold text-green-400">File Size: {getBase64Size(image)}</span>
+                  </div>
+               </div>
             ) : videoUrl ? (
                <video 
                  controls 
