@@ -181,6 +181,9 @@ export const tools = {
     serial_not_supported: "WebSerial API не поддерживается"
   },
   hardwareToolsModal: {
+    gpu_title: "Трассировка лучей WebGPU",
+    gpu_desc: "Запустите тест трассировки путей в реальном времени прямо в браузере. Этот тест использует вычислительные шейдеры WebGPU для симуляции физики света (отражения, преломления, тени) на вашем GPU.",
+    btn_launch: "Запустить тест",
 
     tab_drm: "DRM",
     drm_title: "Возможности DRM (EME)",

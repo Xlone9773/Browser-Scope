@@ -181,6 +181,9 @@ export const tools = {
     serial_not_supported: "目前瀏覽器不支援 WebSerial API"
   },
   hardwareToolsModal: {
+    gpu_title: "WebGPU 光線追蹤",
+    gpu_desc: "在您的瀏覽器中直接運行即時路徑追蹤基準測試。此測試利用 WebGPU 計算著色器模擬 GPU 上的光線物理效果（反射、折射、陰影）。",
+    btn_launch: "啟動基準測試",
 
     tab_drm: "數位版權 (DRM)",
     drm_title: "DRM 及 EME 檢測",

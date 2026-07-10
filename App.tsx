@@ -222,13 +222,13 @@ const App: React.FC = () => {
 
   const availableTabs = useMemo(() => {
     const tabs: { id: "all" | "browser" | "environment" | "system" | "network" | "advanced"; label: string; icon: React.ReactNode }[] = [
-      { id: "all", label: (t as any).groups?.all || "All", icon: null }
+      { id: "all", label: t.groups?.all || "All", icon: null }
     ];
-    if (!hiddenCards.includes("browser")) tabs.push({ id: "browser", label: (t as any).groups?.browser || "Browser", icon: <Monitor size={16} /> });
-    if (!hiddenCards.includes("environment")) tabs.push({ id: "environment", label: (t as any).groups?.environment || "Environment", icon: <ShieldAlert size={16} /> });
-    if (!(hiddenCards.includes("system") && hiddenCards.includes("hardware") && hiddenCards.includes("display"))) tabs.push({ id: "system", label: (t as any).groups?.system || "System", icon: <Smartphone size={16} /> });
-    if (!(hiddenCards.includes("network") && hiddenCards.includes("security") && hiddenCards.includes("fingerprint"))) tabs.push({ id: "network", label: (t as any).groups?.network || "Network", icon: <ShieldAlert size={16} /> });
-    if (!(hiddenCards.includes("ai") && hiddenCards.includes("location") && hiddenCards.includes("storage") && hiddenCards.includes("permissions") && hiddenCards.includes("media_devices") && hiddenCards.includes("media_capabilities") && hiddenCards.includes("user_agent") && hiddenCards.includes("pwa") && hiddenCards.includes("features"))) tabs.push({ id: "advanced", label: (t as any).groups?.advanced || "Advanced", icon: <Cpu size={16} /> });
+    if (!hiddenCards.includes("browser")) tabs.push({ id: "browser", label: t.groups?.browser || "Browser", icon: <Monitor size={16} /> });
+    if (!hiddenCards.includes("environment")) tabs.push({ id: "environment", label: t.groups?.environment || "Environment", icon: <ShieldAlert size={16} /> });
+    if (!(hiddenCards.includes("system") && hiddenCards.includes("hardware") && hiddenCards.includes("display"))) tabs.push({ id: "system", label: t.groups?.system || "System", icon: <Smartphone size={16} /> });
+    if (!(hiddenCards.includes("network") && hiddenCards.includes("security") && hiddenCards.includes("fingerprint"))) tabs.push({ id: "network", label: t.groups?.network || "Network", icon: <ShieldAlert size={16} /> });
+    if (!(hiddenCards.includes("ai") && hiddenCards.includes("location") && hiddenCards.includes("storage") && hiddenCards.includes("permissions") && hiddenCards.includes("media_devices") && hiddenCards.includes("media_capabilities") && hiddenCards.includes("user_agent") && hiddenCards.includes("pwa") && hiddenCards.includes("features"))) tabs.push({ id: "advanced", label: t.groups?.advanced || "Advanced", icon: <Cpu size={16} /> });
     return tabs;
   }, [t, hiddenCards]);
 
@@ -626,7 +626,7 @@ const App: React.FC = () => {
     },
     {
        id: "poisoning",
-       name: (t as any).poisoning?.title || "Noise & Poisoning Detection",
+       name: t.poisoning?.title || "Noise & Poisoning Detection",
        isOpen: visibility.poisoning,
        setOpen: (v: boolean) => (v ? open("poisoning") : close("poisoning")),
        impact: "Low",
@@ -635,7 +635,7 @@ const App: React.FC = () => {
     },
     {
        id: "ja3",
-       name: (t as any).ja3?.title || "JA3/JA4 Fingerprint",
+       name: t.ja3?.title || "JA3/JA4 Fingerprint",
        isOpen: visibility.ja3,
        setOpen: (v: boolean) => (v ? open("ja3") : close("ja3")),
        impact: "Low",
@@ -785,8 +785,8 @@ const App: React.FC = () => {
         <Suspense
           fallback={
             <ModalLoading
-              initializingText={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).common?.modal_loading?.initializing}
-              loadingText={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).common?.modal_loading?.loading_module}
+              initializingText={t.common?.modal_loading?.initializing}
+              loadingText={t.common?.modal_loading?.loading_module}
             />
           }
         >
@@ -1114,7 +1114,7 @@ const App: React.FC = () => {
                       <input 
                           type="text"
                           onChange={handleSearch}
-                          placeholder={((t as any).search || {}).placeholder || "Search categories or keywords..."}
+                          placeholder={t.search?.placeholder || "Search categories or keywords..."}
                           className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm text-slate-700 dark:text-slate-100 transition-shadow"
                       />
                   </div>
@@ -1129,16 +1129,16 @@ const App: React.FC = () => {
                   <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-top-2">
                       <div className="flex-1">
                           <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                              {(t as any).settings?.general?.searchScope?.title || "Search Scope"}
+                              {t.settings?.general?.searchScope?.title || "Search Scope"}
                           </label>
                           <Select 
                               value={searchScope}
                               onChange={(val) => updateSearchScope(val as any)}
                               options={[
-                                  { id: 'all', label: (t as any).settings?.general?.searchScope?.options?.all || "All Text" },
-                                  { id: 'category', label: (t as any).settings?.general?.searchScope?.options?.category || "Category" },
-                                  { id: 'title', label: (t as any).settings?.general?.searchScope?.options?.title || "Title" },
-                                  { id: 'value', label: (t as any).settings?.general?.searchScope?.options?.value || "Value" }
+                                  { id: 'all', label: t.settings?.general?.searchScope?.options?.all || "All Text" },
+                                  { id: 'category', label: t.settings?.general?.searchScope?.options?.category || "Category" },
+                                  { id: 'title', label: t.settings?.general?.searchScope?.options?.title || "Title" },
+                                  { id: 'value', label: t.settings?.general?.searchScope?.options?.value || "Value" }
                               ]}
                               color={themeColor as any}
                               size="sm"
@@ -1146,14 +1146,14 @@ const App: React.FC = () => {
                       </div>
                       <div className="flex-1">
                           <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                              {(t as any).settings?.general?.searchMode?.title || "Search Mode"}
+                              {t.settings?.general?.searchMode?.title || "Search Mode"}
                           </label>
                           <Select 
                               value={searchMode}
                               onChange={(val) => updateSearchMode(val as any)}
                               options={[
-                                  { id: 'fuzzy', label: (t as any).settings?.general?.searchMode?.options?.fuzzy || "Fuzzy" },
-                                  { id: 'exact', label: (t as any).settings?.general?.searchMode?.options?.exact || "Exact" }
+                                  { id: 'fuzzy', label: t.settings?.general?.searchMode?.options?.fuzzy || "Fuzzy" },
+                                  { id: 'exact', label: t.settings?.general?.searchMode?.options?.exact || "Exact" }
                               ]}
                               color={themeColor as any}
                               size="sm"
@@ -1246,7 +1246,7 @@ const App: React.FC = () => {
                       <Search size={32} />
                     </div>
                     <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">
-                      {((t as any).search || {}).no_results || "No matching categories or cards found."}
+                      {t.search?.no_results || "No matching categories or cards found."}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md leading-relaxed">
                       {lang === 'zh-CN' ? "请尝试使用其他关键词，或调整您的搜索范围。" : "Try using different keywords or adjusting your search scope."}
@@ -1274,7 +1274,7 @@ const App: React.FC = () => {
                 >
                   <SectionGroup
                     title={
-                      ((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.environment || "Environment & Trust"
+                      t.groups?.environment || "Environment & Trust"
                     }
                     icon={<ShieldAlert className="text-emerald-500" />}
                   >
@@ -1304,7 +1304,7 @@ const App: React.FC = () => {
                 >
                   <SectionGroup
                     title={
-                      ((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.browser || "Browser"
+                      t.groups?.browser || "Browser"
                     }
                     icon={<Monitor className="text-indigo-500" />}
                   >
@@ -1333,7 +1333,7 @@ const App: React.FC = () => {
                   transition={{ duration: 0.2, ease: "easeOut" }}
                 >
                   <SectionGroup
-                    title={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.system || "Device & System Core"}
+                    title={t.groups?.system || "Device & System Core"}
                     icon={<Smartphone className="text-indigo-500" />}
                   >
                     {!hiddenCards.includes("system") && (matchedCardIds === null || matchedCardIds.includes("system")) ? (<SystemCard
@@ -1383,7 +1383,7 @@ const App: React.FC = () => {
                   transition={{ duration: 0.2, ease: "easeOut" }}
                 >
                   <SectionGroup
-                    title={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.network || "Network & Security"}
+                    title={t.groups?.network || "Network & Security"}
                     icon={<ShieldAlert className="text-emerald-500" />}
                   >
                     {!hiddenCards.includes("network") && (matchedCardIds === null || matchedCardIds.includes("network")) ? (<NetworkCard
@@ -1437,7 +1437,7 @@ const App: React.FC = () => {
                   transition={{ duration: 0.2, ease: "easeOut" }}
                 >
                   <SectionGroup
-                    title={((t as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).groups?.advanced || "Capabilities & APIs"}
+                    title={t.groups?.advanced || "Capabilities & APIs"}
                     icon={<Cpu className="text-amber-500" />}
                   >
                     {!hiddenCards.includes("ai") && (matchedCardIds === null || matchedCardIds.includes("ai")) ? (<AiComputeCard
@@ -1550,7 +1550,7 @@ const App: React.FC = () => {
         <Footer 
           text={t.meta.footer} 
           onOpenAttributions={() => open("attributions")}
-          label={(t as any).attributionsModal?.title || "Attributions"}
+          label={t.attributionsModal?.title || "Attributions"}
         />
 
         <BackToTop label={t.common?.backToTop || "Back to Top"} />

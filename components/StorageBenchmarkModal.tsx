@@ -275,7 +275,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
                         {/* Web Worker Status Badge */}
                         <div className="absolute top-4 left-4 flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/30 rounded-full text-[10px] font-medium text-indigo-400 select-none">
                             <Cpu size={12} className="animate-spin duration-3000" />
-                            <span>{(t as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).worker_status}</span>
+                            <span>{t.worker_status}</span>
                         </div>
 
                         {/* Speed Text */}

@@ -79,7 +79,7 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
             <div 
                 className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 hover:text-indigo-600 dark:hover:text-indigo-400 group cursor-pointer transition-all duration-200 px-2 -mx-2 rounded"
                 onClick={onOpenAudioLatency}
-                title={(t as any).audioLatencyProbing?.title}
+                title={t.audioLatencyProbing?.title}
             >
                 <span className="text-sm text-slate-500 dark:text-slate-400 font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                     {t.labels.audio_latency}
@@ -97,11 +97,11 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
             >
                 <span className="text-sm text-slate-500 dark:text-slate-400 font-medium group-hover:text-rose-600 dark:group-hover:text-rose-400 flex items-center gap-1">
                     <ShieldAlert size={14} />
-                    {(t as any).poisoning?.title}
+                    {t.poisoning?.title}
                 </span>
                 <div className="flex items-center gap-1.5 text-right">
                     <span className="text-xs text-rose-500 dark:text-rose-400 font-medium group-hover:text-rose-600 dark:group-hover:text-rose-400">
-                        {(t as any).poisoning?.detect}
+                        {t.poisoning?.detect}
                     </span>
                     <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 group-hover:text-rose-500 transition-colors" />
                 </div>
@@ -112,11 +112,11 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
             >
                 <span className="text-sm text-slate-500 dark:text-slate-400 font-medium group-hover:text-emerald-600 dark:group-hover:text-emerald-400 flex items-center gap-1">
                     <Fingerprint size={14} />
-                    {(t as Record<string, any>).ja3?.title}
+                    {t.ja3?.title}
                 </span>
                 <div className="flex items-center gap-1.5 text-right">
                     <span className="text-xs text-emerald-500 dark:text-emerald-400 font-medium group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
-                        {(t as Record<string, any>).ja3?.detect}
+                        {t.ja3?.detect}
                     </span>
                     <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 transition-colors" />
                 </div>

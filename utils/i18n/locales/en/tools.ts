@@ -182,6 +182,9 @@ export const tools = {
     serial_not_supported: "WebSerial API not supported in this browser"
   },
   hardwareToolsModal: {
+    gpu_title: "WebGPU Ray Tracing",
+    gpu_desc: "Run a real-time Path Tracing benchmark directly in your browser. This test utilizes WebGPU Compute Shaders to simulate light physics (reflections, refractions, shadows) on your GPU.",
+    btn_launch: "Launch Benchmark",
 
     tab_drm: "DRM",
     drm_title: "DRM Capabilities (EME)",

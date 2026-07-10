@@ -329,6 +329,8 @@ SOFTWARE.`
   aiPlayground: {
     title: "AI Playground",
     desc: "Run lightweight AI models locally in your browser via WebAssembly. Privacy first - no data leaves your device.",
+    select_task: "Select Model Task",
+    perf_metrics: "Performance Metrics",
     tasks: {
         sentiment: {
             title: "Sentiment Analysis",

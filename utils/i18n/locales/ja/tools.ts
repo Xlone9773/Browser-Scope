@@ -181,6 +181,9 @@ export const tools = {
     serial_not_supported: "WebSerial APIはサポートされていません"
   },
   hardwareToolsModal: {
+    gpu_title: "WebGPU レイトレーシング",
+    gpu_desc: "ブラウザでリアルタイムのパストレーシングベンチマークを直接実行します。このテストは、WebGPU コンピュートシェーダーを使用して、GPU 上の光の物理現象（反射、屈折、影）をシミュレートします。",
+    btn_launch: "ベンチマークを開始",
 
     tab_drm: "DRM",
     drm_title: "DRM と EME の検出",
