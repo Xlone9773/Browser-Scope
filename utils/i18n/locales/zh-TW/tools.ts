@@ -65,7 +65,11 @@ export const tools = {
     no_devices: "未找到視訊輸入裝置",
     permission_denied: "相機權限被拒絕",
     error_hardware: "硬體被佔用或無法讀取",
-    error_generic: "發生未知錯誤"
+    error_generic: "發生未知錯誤",
+    photo_details: "已擷取相片詳細資料",
+    format_jpeg: "格式：JPEG (90% 品質)",
+    resolution: "解析度：",
+    file_size: "檔案大小："
   },
   audioTool: {
     title: "麥克風測試",

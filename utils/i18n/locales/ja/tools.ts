@@ -65,7 +65,11 @@ export const tools = {
     no_devices: "ビデオ入力デバイスが見つかりません",
     permission_denied: "カメラの権限が拒否されました",
     error_hardware: "ハードウェアが使用中か読み取れません",
-    error_generic: "不明なエラーが発生しました"
+    error_generic: "不明なエラーが発生しました",
+    photo_details: "キャプチャした写真の詳細",
+    format_jpeg: "フォーマット：JPEG (品質 90%)",
+    resolution: "解像度：",
+    file_size: "ファイルサイズ："
   },
   audioTool: {
     title: "マイクテスト",

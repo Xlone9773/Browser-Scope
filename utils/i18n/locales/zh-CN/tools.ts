@@ -65,7 +65,11 @@ export const tools = {
     no_devices: "未找到视频输入设备",
     permission_denied: "摄像头权限被拒绝",
     error_hardware: "硬件被占用或无法读取",
-    error_generic: "发生未知错误"
+    error_generic: "发生未知错误",
+    photo_details: "已捕获照片详细信息",
+    format_jpeg: "格式：JPEG (90% 质量)",
+    resolution: "分辨率：",
+    file_size: "文件大小："
   },
   audioTool: {
     title: "麦克风测试",

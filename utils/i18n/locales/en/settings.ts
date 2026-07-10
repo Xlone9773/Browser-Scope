@@ -116,6 +116,14 @@ export const settings = {
             unsupportedEnv: "Not supported in the current environment",
             checkingUdp: "Checking UDP support...",
             recheckUdp: "Recheck"
+        },
+        exportSettings: {
+            title: "Export & Import Settings",
+            desc: "Export your current settings and preferences, or import them to quickly configure the application after migrating platforms.",
+            exportBtn: "Export",
+            importBtn: "Import",
+            importSuccess: "Settings imported successfully! The page will now reload.",
+            importError: "Invalid settings file."
         }
     },
     network: {

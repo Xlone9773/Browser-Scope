@@ -65,7 +65,11 @@ export const tools = {
     no_devices: "Устройства видеоввода не найдены",
     permission_denied: "Доступ к камере запрещен",
     error_hardware: "Оборудование занято или недоступно",
-    error_generic: "Произошла неизвестная ошибка"
+    error_generic: "Произошла неизвестная ошибка",
+    photo_details: "Сведения о снятом фото",
+    format_jpeg: "Формат: JPEG (Качество 90%)",
+    resolution: "Разрешение:",
+    file_size: "Размер файла:"
   },
   audioTool: {
     title: "Тест Микрофона",

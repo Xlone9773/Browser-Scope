@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from 'react';
-import { RotateCcw, Check } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { RotateCcw, Check, Download, Upload } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface GeneralTabProps {
@@ -142,6 +142,59 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             setHiddenCards([...hiddenCards, id]);
         }
     };
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleExportSettings = () => {
+        const data: Record<string, string> = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key) {
+                data[key] = localStorage.getItem(key) || '';
+            }
+        }
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `browserscope-settings-${new Date().getTime()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    const handleImportSettings = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const parsed = JSON.parse(e.target?.result as string);
+                if (typeof parsed === 'object' && parsed !== null) {
+                    for (const key in parsed) {
+                        if (typeof parsed[key] === 'string') {
+                            localStorage.setItem(key, parsed[key]);
+                        }
+                    }
+                    alert(t.exportSettings?.importSuccess || 'Settings imported successfully! The page will now reload.');
+                    window.location.reload();
+                } else {
+                    throw new Error('Invalid format');
+                }
+            } catch (err) {
+                console.error('Failed to parse settings file', err);
+                alert(t.exportSettings?.importError || 'Invalid settings file.');
+            }
+        };
+        reader.readAsText(file);
+        
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
     return (
         <div className="max-w-2xl mx-auto space-y-4">
             {/* Time Format Toggle */}
@@ -263,6 +316,43 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         activeText={t.restoreNotifications?.empty || "No dismissed notifications"}
                         inactiveText={t.restoreNotifications?.button || "Restore All"}
                     />
+                </div>
+            </div>
+            
+            {/* Export & Import Settings */}
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex flex-col gap-1 max-w-[70%]">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.exportSettings?.title || "Export & Import Settings"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {t.exportSettings?.desc || "Export your current settings and preferences, or import them to quickly configure the application after migrating platforms."}
+                    </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                    <input 
+                        type="file" 
+                        accept="application/json" 
+                        ref={fileInputRef} 
+                        style={{ display: 'none' }} 
+                        onChange={handleImportSettings} 
+                    />
+                    <Button 
+                        variant="soft" 
+                        onClick={() => fileInputRef.current?.click()}
+                        leftIcon={<Upload size={16} />}
+                        className="font-medium"
+                    >
+                        {t.exportSettings?.importBtn || "Import"}
+                    </Button>
+                    <Button 
+                        variant="primary" 
+                        onClick={handleExportSettings}
+                        leftIcon={<Download size={16} />}
+                        className="font-medium"
+                    >
+                        {t.exportSettings?.exportBtn || "Export"}
+                    </Button>
                 </div>
             </div>
         </div>

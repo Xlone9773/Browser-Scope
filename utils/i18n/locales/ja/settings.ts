@@ -116,6 +116,14 @@ export const settings = {
             unsupportedEnv: "現在の実行環境ではUDPを有効にできません",
             checkingUdp: "UDP サポートを確認中...",
             recheckUdp: "再確認"
+        },
+        exportSettings: {
+            title: "設定のエクスポートとインポート",
+            desc: "現在の設定や環境をエクスポートするか、インポートしてプラットフォーム移行後にすばやく構成します。",
+            exportBtn: "エクスポート",
+            importBtn: "インポート",
+            importSuccess: "設定のインポートが完了しました。ページを再読み込みします。",
+            importError: "無効な設定ファイルです。"
         }
     },
     network: {

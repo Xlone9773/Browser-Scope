@@ -116,6 +116,14 @@ export const settings = {
             unsupportedEnv: "當前運行環境不支援開啟UDP",
             checkingUdp: "正在檢查 UDP 支援...",
             recheckUdp: "重新檢查"
+        },
+        exportSettings: {
+            title: "匯出與匯入設定",
+            desc: "匯出您目前的各項設定與偏好，或匯入設定以在遷移平台後快速配置。",
+            exportBtn: "匯出",
+            importBtn: "匯入",
+            importSuccess: "設定匯入成功！頁面即將重新載入。",
+            importError: "無效的設定檔案。"
         }
     },
     network: {

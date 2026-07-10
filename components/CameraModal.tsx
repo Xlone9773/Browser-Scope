@@ -65,9 +65,9 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
       const allDevices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = allDevices
         .filter(device => device.kind === 'videoinput')
-        .map(device => ({
-          deviceId: device.deviceId,
-          label: device.label || `Camera ${device.deviceId.slice(0, 5)}...`
+        .map((device, index) => ({
+          deviceId: device.deviceId || `camera-${index}`,
+          label: device.label || `Camera ${index + 1}`
         }));
       
       setDevices(videoDevices);
@@ -194,6 +194,10 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   // Initial load
   useEffect(() => {
     getDevices();
+    navigator.mediaDevices.addEventListener('devicechange', getDevices);
+    return () => {
+      navigator.mediaDevices.removeEventListener('devicechange', getDevices);
+    };
   }, [getDevices]);
 
   const getBase64Size = (base64Str: string | null): string => {
@@ -214,8 +218,11 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
       const video = videoRef.current;
       const canvas = canvasRef.current;
       
-      canvas.width = resolution.width;
-      canvas.height = resolution.height;
+      const width = video.videoWidth || resolution.width;
+      const height = video.videoHeight || resolution.height;
+      
+      canvas.width = width;
+      canvas.height = height;
       
       const ctx = canvas.getContext('2d');
       if (ctx) {
@@ -224,7 +231,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
             ctx.translate(canvas.width, 0);
             ctx.scale(-1, 1);
         }
-        ctx.drawImage(video, 0, 0, resolution.width, resolution.height);
+        ctx.drawImage(video, 0, 0, width, height);
         // Using image/jpeg with 0.9 quality instead of PNG dramatically reduces size from ~10MB to <3MB for 13MP while keeping exceptional quality
         const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
         setImage(dataUrl);
@@ -359,7 +366,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                         {resolution ? `${resolution.width} x ${resolution.height} (${((resolution.width * resolution.height) / 1000000).toFixed(1)} MP)` : '-'}
                      </span>
                   </div>
-                  {maxResolution && (
+                  {maxResolution ? (
                     <div className="flex-1 bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 flex flex-col justify-center">
                         <div className="flex items-center gap-2 mb-0.5">
                             <span className="text-xs text-slate-400">{t.max_res}</span>
@@ -369,7 +376,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                             {`${maxResolution.width} x ${maxResolution.height} (${((maxResolution.width * maxResolution.height) / 1000000).toFixed(1)} MP)`}
                         </span>
                     </div>
-                  )}
+                  ) : null}
                </div>
             </div>
           )}
@@ -384,10 +391,10 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                <div className="relative w-full h-full">
                   <img src={image} alt="Capture" className="w-full h-full object-contain" />
                   <div className="absolute top-4 left-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm shadow-md flex flex-col gap-0.5 border border-white/10 select-none">
-                     <span className="font-semibold text-[10px] text-indigo-300 uppercase tracking-wider">Captured Photo Details</span>
-                     <span className="font-mono text-xs">Format: JPEG (90% Quality)</span>
-                     <span className="font-mono text-xs">Resolution: {resolution ? `${resolution.width} x ${resolution.height} (${((resolution.width * resolution.height) / 1000000).toFixed(1)} MP)` : ''}</span>
-                     <span className="font-mono text-xs font-semibold text-green-400">File Size: {getBase64Size(image)}</span>
+                     <span className="font-semibold text-[10px] text-indigo-300 uppercase tracking-wider">{t.photo_details}</span>
+                     <span className="font-mono text-xs">{t.format_jpeg}</span>
+                     <span className="font-mono text-xs">{t.resolution} {resolution ? `${resolution.width} x ${resolution.height} (${((resolution.width * resolution.height) / 1000000).toFixed(1)} MP)` : ''}</span>
+                     <span className="font-mono text-xs font-semibold text-green-400">{t.file_size} {getBase64Size(image)}</span>
                   </div>
                </div>
             ) : videoUrl ? (
@@ -407,12 +414,12 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                      className="w-full h-full object-contain transition-transform duration-300"
                      style={{ transform: isMirrored ? 'scaleX(-1)' : 'none' }}
                    />
-                   {isRecording && (
+                   {isRecording ? (
                        <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-red-600/90 text-white rounded-full text-xs font-bold animate-pulse">
                            <div className="w-2 h-2 bg-white rounded-full" />
                            REC
                        </div>
-                   )}
+                   ) : null}
                    {/* Mirror Toggle Overlay */}
                    <button 
                        onClick={() => setIsMirrored(!isMirrored)}
@@ -469,7 +476,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                   <RefreshCw size={18} />
                   {t.retake}
                </button>
-               {image && (
+               {image ? (
                    <button 
                       onClick={() => downloadMedia('image')}
                       className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-medium shadow-md shadow-emerald-100 hover:bg-emerald-700 transition-colors flex items-center gap-2"
@@ -477,8 +484,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                       <Download size={18} />
                       {t.download_photo}
                    </button>
-               )}
-               {videoUrl && (
+               ) : null}
+               {videoUrl ? (
                    <button 
                       onClick={() => downloadMedia('video')}
                       className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-medium shadow-md shadow-emerald-100 hover:bg-emerald-700 transition-colors flex items-center gap-2"
@@ -486,7 +493,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                       <Download size={18} />
                       {t.download_video}
                    </button>
-               )}
+               ) : null}
              </>
           )}
         </div>

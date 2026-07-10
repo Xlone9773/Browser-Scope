@@ -116,6 +116,14 @@ export const settings = {
             unsupportedEnv: "当前运行环境不支持开启UDP",
             checkingUdp: "正在检查 UDP 支持...",
             recheckUdp: "重新检查"
+        },
+        exportSettings: {
+            title: "导出和导入设置",
+            desc: "导出您当前的各项设置和偏好，或导入设置以在迁移平台后快速配置。",
+            exportBtn: "导出",
+            importBtn: "导入",
+            importSuccess: "设置导入成功！页面即将重新加载。",
+            importError: "无效的设置文件。"
         }
     },
     network: {

@@ -65,7 +65,11 @@ export const tools = {
     no_devices: "No video devices found",
     permission_denied: "Camera permission denied",
     error_hardware: "Hardware in use or unreadable",
-    error_generic: "Unknown error occurred"
+    error_generic: "Unknown error occurred",
+    photo_details: "Captured Photo Details",
+    format_jpeg: "Format: JPEG (90% Quality)",
+    resolution: "Resolution:",
+    file_size: "File Size:"
   },
   audioTool: {
     title: "Microphone Test",
