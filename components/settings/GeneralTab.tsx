@@ -82,7 +82,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     translationDict,
     showQuickSummary,
     toggleShowQuickSummary,
-    lang
+    lang: _lang
 }) => {
     const [udpSupported, setUdpSupported] = useState<boolean | null>(() => {
         const stored = localStorage.getItem('udp_supported');
