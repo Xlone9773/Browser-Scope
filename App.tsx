@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Suspense, useRef, useMemo } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { Monitor, Smartphone, ShieldAlert, Cpu, Loader2, Search, Settings2 } from "lucide-react";
 import { exportAsJson, exportAsPdf, exportAsImage } from "./services/exporter";
 import { translations } from "./utils/i18n/index";
@@ -33,7 +33,7 @@ function lazyWithRetry<T extends React.ComponentType<BrowserSafeAny>>(
   delay = 500
 ): React.LazyExoticComponent<T> {
   return React.lazy(() =>
-    (importFn().catch((error) => {
+    (importFn().catch((_error) => {
       return new Promise<{ default: T }>((resolve) => {
         let attempts = 0;
         const attemptLoad = () => {
@@ -120,8 +120,6 @@ import { ModuleState } from "./components/settings/ModulesTab";
 import { useAppSettings } from "./hooks/useAppSettings";
 import {
   useAppPermissions,
-  PermissionKey,
-  PermissionStatusType,
 } from "./hooks/useAppPermissions";
 import { useAppData } from "./hooks/useAppData";
 import packageJson from "./package.json";
@@ -131,7 +129,7 @@ const App: React.FC = () => {
     useModalManager();
 
   const [activeTab, setActiveTab] = useState<"all" | "browser" | "environment" | "system" | "network" | "advanced">("all");
-  const [slideDirection, setSlideDirection] = useState(0);
+  const [_slideDirection, setSlideDirection] = useState<number>(0);
 
   const {
     lang,
@@ -199,11 +197,11 @@ const App: React.FC = () => {
   const t = translations[lang];
 
   const swReg = useRef<ServiceWorkerRegistration | undefined>(undefined);
-  const [lastCheckTime, setLastCheckTime] = useState<number>(Date.now());
+  const [lastCheckTime, setLastCheckTime] = useState<number>(() => Date.now());
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
 
   const {
-    needRefresh: [needRefresh, setNeedRefresh],
+    needRefresh: [needRefresh],
     updateServiceWorker,
   } = useRegisterSW({
     onRegistered(r) {
@@ -333,18 +331,18 @@ const App: React.FC = () => {
   const browserData = data as BrowserData;
   const cardIndex = useCardIndex(browserData, t);
 
-  const [isOutdated, setIsOutdated] = useState(false);
-  useEffect(() => {
+  const isOutdated = useMemo(() => {
     if (data && data.system && data.system.browserName && data.system.browserVersion) {
       const name = data.system.browserName.toLowerCase();
       const version = parseInt(data.system.browserVersion, 10);
       if (!isNaN(version)) {
-        if (name.includes('chrome') && version < 100) setIsOutdated(true);
-        if (name.includes('firefox') && version < 100) setIsOutdated(true);
-        if (name.includes('safari') && version < 15) setIsOutdated(true);
-        if (name.includes('edge') && version < 100) setIsOutdated(true);
+        if (name.includes('chrome') && version < 100) return true;
+        if (name.includes('firefox') && version < 100) return true;
+        if (name.includes('safari') && version < 15) return true;
+        if (name.includes('edge') && version < 100) return true;
       }
     }
+    return false;
   }, [data]);
 
   const { permStatus, geoData, checkPermissionStatus, requestPermission } =
@@ -653,7 +651,7 @@ const App: React.FC = () => {
     checkPermissionStatus("camera", "camera");
     checkPermissionStatus("microphone", "microphone");
     checkPermissionStatus("midi", "midi");
-  }, [fetchData]);
+  }, [fetchData, checkPermissionStatus]);
 
   const handleExportJSON = () => {
     if (!data) return;
@@ -1088,7 +1086,7 @@ const App: React.FC = () => {
                 const isFuzzy = searchMode === 'fuzzy';
                 
                 for (const [id, data] of Object.entries(cardIndex)) {
-                    let textToSearch = "";
+                    let textToSearch: string;
                     switch (searchScope) {
                         case 'category': textToSearch = data.category; break;
                         case 'title': textToSearch = data.title; break;

@@ -252,13 +252,14 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
   const lastTimeRef = useRef(0);
   const isRunningRef = useRef(false);
   const isUnmountedRef = useRef(false);
+  const initWebGPURef = useRef<(() => Promise<void>) | null>(null);
   
   // Camera State
   const cameraAngleRef = useRef(0);
   const isDraggingRef = useRef(false);
   const lastMouseXRef = useRef(0);
 
-  const initWebGPU = async () => {
+  async function initWebGPU() {
     try {
       if (!navigator.gpu) throw new Error("WebGPU not supported");
       const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
@@ -328,7 +329,11 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
     }
   };
 
-  const startLoop = () => {
+  useEffect(() => {
+    initWebGPURef.current = initWebGPU;
+  });
+
+  function startLoop() {
     if (isRunningRef.current) return;
     isRunningRef.current = true;
     setIsRunning(true);
@@ -408,7 +413,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
     rafRef.current = requestAnimationFrame(render);
   };
 
-  const stopLoop = () => {
+  function stopLoop() {
     if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
@@ -422,7 +427,9 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
     let localIsUnmounted = false;
     
     const init = async () => {
-        await initWebGPU();
+        if (initWebGPURef.current) {
+            await initWebGPURef.current();
+        }
         if (localIsUnmounted) {
             stopLoop();
         }

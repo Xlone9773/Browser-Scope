@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Mic, Play, Globe, CheckCircle, Search, User } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
@@ -12,12 +12,23 @@ interface SpeechExplorerModalProps {
 
 export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClose, t }) => {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [filteredVoices, setFilteredVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [languages, setLanguages] = useState<{id: string, label: string}[]>([]);
   const [selectedLang, setSelectedLang] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [playingVoiceURI, setPlayingVoiceURI] = useState<string | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const filteredVoices = useMemo(() => {
+      let res = voices;
+      if (selectedLang !== 'all') {
+          res = res.filter(v => v.lang === selectedLang);
+      }
+      if (searchTerm) {
+          const lower = searchTerm.toLowerCase();
+          res = res.filter(v => v.name.toLowerCase().includes(lower) || v.lang.toLowerCase().includes(lower));
+      }
+      return res;
+  }, [voices, selectedLang, searchTerm]);
 
   useEffect(() => {
       const loadVoices = () => {
@@ -51,17 +62,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
       };
   }, []);
 
-  useEffect(() => {
-      let res = voices;
-      if (selectedLang !== 'all') {
-          res = res.filter(v => v.lang === selectedLang);
-      }
-      if (searchTerm) {
-          const lower = searchTerm.toLowerCase();
-          res = res.filter(v => v.name.toLowerCase().includes(lower) || v.lang.toLowerCase().includes(lower));
-      }
-      setFilteredVoices(res);
-  }, [voices, selectedLang, searchTerm]);
+
 
   const playSample = (voice: SpeechSynthesisVoice) => {
       window.speechSynthesis.cancel();

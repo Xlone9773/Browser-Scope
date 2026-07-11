@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Cpu, Zap, Activity, Code, Box, Image as ImageIcon, Calculator, Database, RotateCw, Loader2 } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
@@ -84,7 +84,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   };
 
   // --- Core Benchmark Logic ---
-  const runBenchmarkTask = async (id: TestItem['id']): Promise<{score: number, details: string}> => {
+  const runBenchmarkTask = useCallback(async (id: TestItem['id']): Promise<{score: number, details: string}> => {
       await new Promise(r => setTimeout(r, 50)); // UI Breath
       
       const start = performance.now();
@@ -216,7 +216,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
       }
 
       return { score, details };
-  };
+  }, []);
 
   const handleRunSingle = async (id: TestItem['id']) => {
       if (isRunningRef.current) return;

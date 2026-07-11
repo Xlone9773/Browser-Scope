@@ -48,7 +48,7 @@ export class ParticleSystem {
         const speedMultiplier = 1 + intensity * 5;
         
         // Color mapping based on intensity: Blue -> Cyan -> White -> Orange -> Red
-        let r = 0, g = 0, b = 0;
+        let r: number, g: number, b: number;
         if (intensity < 0.2) { r=50; g=100; b=255; } // Blue
         else if (intensity < 0.5) { r=0; g=255; b=255; } // Cyan
         else if (intensity < 0.8) { r=255; g=255; b=255; } // White

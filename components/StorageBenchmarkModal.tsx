@@ -35,17 +35,12 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
   const [progress, setProgress] = useState(0);
   const [currentSpeed, setCurrentSpeed] = useState(0);
   const [logs, setLogs] = useState<ResultLog[]>([]);
-  const [opfsSupported, setOpfsSupported] = useState(false);
+  const [opfsSupported] = useState(() => {
+      return typeof window !== 'undefined' && navigator.storage && typeof navigator.storage.getDirectory === 'function';
+  });
   const [exportStatus, setExportStatus] = useState<string | null>(null);
 
   const workerRef = useRef<Worker | null>(null);
-
-  // Check OPFS Support
-  useEffect(() => {
-      if (typeof window !== 'undefined' && navigator.storage && typeof navigator.storage.getDirectory === 'function') {
-          setOpfsSupported(true);
-      }
-  }, []);
 
   const handleClose = () => {
       stopTest();

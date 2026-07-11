@@ -1,5 +1,5 @@
 
-import React, { useState, useTransition, Suspense, lazy } from 'react';
+import React, { useState, Suspense } from 'react';
 import { Database, Activity, Sliders, Monitor, Terminal, Loader2, Package, Layers, Palette } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
@@ -94,10 +94,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     toggleShowTabs,
     showSearch,
     toggleShowSearch,
-    searchScope,
-    updateSearchScope,
-    searchMode,
-    updateSearchMode,
+    searchScope: _searchScope,
+    updateSearchScope: _updateSearchScope,
+    searchMode: _searchMode,
+    updateSearchMode: _updateSearchMode,
     hiddenCards,
     setHiddenCards,
     restoreAllNotifications,
@@ -121,7 +121,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       if (saved && ['general', 'appearance', 'storage', 'res', 'dev', 'mod', 'ver'].includes(saved)) {
         return saved as 'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver';
       }
-    } catch (e) {
+    } catch (_e) {
       // Ignored
     }
     return 'appearance';
@@ -131,7 +131,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       setActiveTab(tab);
       try {
          sessionStorage.setItem('browserscope_settings_last_tab', tab);
-      } catch(e) {}
+      } catch(_e) {}
   };
 
   // Access structured settings

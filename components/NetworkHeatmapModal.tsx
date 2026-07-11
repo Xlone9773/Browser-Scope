@@ -193,14 +193,19 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
 
   // Reset when changing regions
   useEffect(() => {
-      if (selectedRegion) {
-          stopTrace(); 
-          setTraceData(new Array(60).fill(0));
-          setTraceStats({ count: 0, lossCount: 0, min: Infinity, max: 0, avg: 0, jitter: 0, last: 0 });
-      } else {
+      const timer = setTimeout(() => {
+          if (selectedRegion) {
+              stopTrace(); 
+              setTraceData(new Array(60).fill(0));
+              setTraceStats({ count: 0, lossCount: 0, min: Infinity, max: 0, avg: 0, jitter: 0, last: 0 });
+          } else {
+              stopTrace();
+          }
+      }, 0);
+      return () => {
+          clearTimeout(timer);
           stopTrace();
-      }
-      return () => stopTrace();
+      };
   }, [selectedRegion]);
 
 

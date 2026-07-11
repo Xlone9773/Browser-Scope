@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Mic, Square, Download, Play, Pause, RefreshCw, Activity } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
@@ -95,8 +95,9 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
 
   // Visualizer Loop
   const isVisualizerActiveRef = useRef(false);
+  const drawVisualizerRef = useRef<() => void>(() => {});
 
-  const drawVisualizer = () => {
+  const drawVisualizer = useCallback(() => {
     if (!canvasRef.current || !analyzerRef.current || !dataArrayRef.current) return;
 
     if (isUnmounted.current || !isVisualizerActiveRef.current) return;
@@ -135,8 +136,12 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
     }
 
     // Schedule next frame
-    animationRef.current = requestAnimationFrame(drawVisualizer);
-  };
+    animationRef.current = requestAnimationFrame(drawVisualizerRef.current);
+  }, []);
+
+  useEffect(() => {
+    drawVisualizerRef.current = drawVisualizer;
+  }, [drawVisualizer]);
 
   // Start visualizer only when recording or playing
   useEffect(() => {
@@ -158,7 +163,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
               cancelAnimationFrame(animationRef.current);
           }
       }
-  }, [isRecording, isPlaying]);
+  }, [isRecording, isPlaying, drawVisualizer]);
 
   // Audio Playback Node setup
   useEffect(() => {

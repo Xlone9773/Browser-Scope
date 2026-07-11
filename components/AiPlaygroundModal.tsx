@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Brain, Sparkles, Activity, MessageSquare, Type, Languages, RefreshCw, Zap, CloudDownload } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
@@ -80,19 +80,17 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
       }
   };
 
-  // Switch Task Effect - NO LONGER AUTO DOWNLOADS
-  useEffect(() => {
-      // Check if we already have this task loaded
-      if (loadedTaskRef.current === activeTask && pipelineRef.current) {
+  const handleTaskChange = (task: TaskType) => {
+      setActiveTask(task);
+      setResult(null);
+      setMetrics({});
+      setProgress(null);
+      if (loadedTaskRef.current === task && pipelineRef.current) {
           setModelStatus('ready');
       } else {
           setModelStatus('idle');
       }
-      
-      setResult(null);
-      setMetrics({});
-      setProgress(null);
-  }, [activeTask]);
+  };
 
   const handleLoadClick = () => {
       loadModel(activeTask);
@@ -182,7 +180,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                         {(['sentiment', 'generation', 'translation'] as TaskType[]).map(task => (
                             <button
                                 key={task}
-                                onClick={() => setActiveTask(task)}
+                                onClick={() => handleTaskChange(task)}
                                 disabled={isComputing || modelStatus === 'loading'}
                                 className={`flex items-center gap-3 p-3 rounded-lg text-left transition-all ${
                                     activeTask === task 

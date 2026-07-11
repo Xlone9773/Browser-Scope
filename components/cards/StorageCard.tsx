@@ -23,8 +23,6 @@ export const StorageCard: React.FC<StorageCardProps> = React.memo(({ data, t }) 
 
   // Parse quota and usage for progress bar
   let percentage = 0;
-  let usageBytes = 0;
-  let quotaBytes = 0;
 
   // Simple heuristic parsing
   const parseSize = (str: string) => {
@@ -35,8 +33,8 @@ export const StorageCard: React.FC<StorageCardProps> = React.memo(({ data, t }) 
   };
 
   if (data.quota !== 'Unknown' && data.usage !== 'Unknown') {
-      quotaBytes = parseSize(data.quota);
-      usageBytes = parseSize(data.usage);
+      const quotaBytes = parseSize(data.quota);
+      const usageBytes = parseSize(data.usage);
       if (quotaBytes > 0) {
           percentage = Math.min((usageBytes / quotaBytes) * 100, 100);
       }

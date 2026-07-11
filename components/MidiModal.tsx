@@ -56,6 +56,8 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorsRef = useRef<Map<number, CustomOscillatorNode>>(new Map());
   const logContainerRef = useRef<HTMLDivElement>(null);
+  const handleMidiMessageRef = useRef(handleMidiMessage);
+  handleMidiMessageRef.current = handleMidiMessage;
 
   // Initialize Web Audio
   useEffect(() => {
@@ -86,7 +88,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
 
                   // Attach listeners to all inputs
                   midiAccess.inputs.forEach((input: MIDIInput) => {
-                      input.onmidimessage = handleMidiMessage;
+                      input.onmidimessage = (e) => handleMidiMessageRef.current(e);
                   });
               } else {
                   addLog("Web MIDI API not supported in this browser.");
@@ -218,7 +220,6 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   const keyElements: React.JSX.Element[] = [];
   
   // Render White Keys First
-  xPos = 0;
   for (let i = startKey; i <= endKey; i++) {
       const isBlack = [1, 3, 6, 8, 10].includes(i % 12);
       if (!isBlack) {

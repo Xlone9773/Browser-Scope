@@ -197,7 +197,10 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
 
     useEffect(() => {
         if (!cachedVideoResults || !cachedAudioResults || !cachedDrmResults) {
-            runTests();
+            const timer = setTimeout(() => {
+                runTests();
+            }, 0);
+            return () => clearTimeout(timer);
         }
     }, []);
 

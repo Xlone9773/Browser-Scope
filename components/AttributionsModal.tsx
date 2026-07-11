@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { 
   Search, 
   Code, 
@@ -15,7 +15,7 @@ import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { Badge } from './ui/Badge';
 import { Card } from './ui/Card';
-import { attributionsData, AttributionItem } from '../data/attributions';
+import { attributionsData } from '../data/attributions';
 
 interface AttributionsModalProps {
   onClose: () => void;
@@ -54,9 +54,9 @@ export const AttributionsModal: React.FC<AttributionsModalProps> = ({ onClose, t
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   // Helper to map role keys to localized text
-  const getLocalizedRole = (roleKey: string): string => {
+  const getLocalizedRole = useCallback((roleKey: string): string => {
     return (t as Record<string, string>)[roleKey] || t.font_role;
-  };
+  }, [t]);
 
   // Filter and search items
   const filteredItems = useMemo(() => {
@@ -81,7 +81,7 @@ export const AttributionsModal: React.FC<AttributionsModalProps> = ({ onClose, t
         item.url.toLowerCase().includes(query)
       );
     });
-  }, [activeTab, searchQuery, t]);
+  }, [activeTab, searchQuery, getLocalizedRole]);
 
   const toggleExpand = (id: string) => {
     setExpandedId(prev => (prev === id ? null : id));

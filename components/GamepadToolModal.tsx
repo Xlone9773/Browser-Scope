@@ -19,7 +19,7 @@ export const GamepadToolModal: React.FC<GamepadToolModalProps> = ({ onClose, t }
 
   useEffect(() => {
       const scanGamepads = () => {
-          let pads: (Gamepad | null)[] = [];
+          const pads: (Gamepad | null)[] = [];
           try {
               if (navigator.getGamepads) {
                   const rawPads = navigator.getGamepads();

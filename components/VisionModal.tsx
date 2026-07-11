@@ -18,9 +18,9 @@ interface VideoDevice {
 
 export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
   // Capability State
-  const [hasNativeBarcode, setHasNativeBarcode] = useState(false);
-  const [hasNativeFace, setHasNativeFace] = useState(false);
-  const [hasNativeText, setHasNativeText] = useState(false);
+  const [hasNativeBarcode] = useState(() => typeof window !== 'undefined' && 'BarcodeDetector' in window);
+  const [hasNativeFace] = useState(() => typeof window !== 'undefined' && 'FaceDetector' in window);
+  const [hasNativeText] = useState(() => typeof window !== 'undefined' && 'TextDetector' in window);
   const [supportedFormats, setSupportedFormats] = useState<string[]>([]);
 
   // Camera State
@@ -33,7 +33,9 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
   const [cameraError, setCameraError] = useState<string | null>(null);
 
   // Detection State
-  const [mode, setMode] = useState<'native' | 'polyfill'>('native');
+  const [mode, setMode] = useState<'native' | 'polyfill'>(() => 
+      (typeof window !== 'undefined' && 'BarcodeDetector' in window) ? 'native' : 'polyfill'
+  );
   const [isAutoScan, setIsAutoScan] = useState(true); // Toggle between Auto and Manual
   const [isProcessing, setIsProcessing] = useState(false); // For manual capture loading state
   const [lastResult, setLastResult] = useState<string>('');
@@ -46,24 +48,23 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
   const lastTime = useRef(0);
   const rafId = useRef<number | null>(null);
 
+  const stopCameraRef = useRef<() => void>(() => {});
+  const detectLoopRef = useRef<() => void>(() => {});
+  const initPolyfillLoopRef = useRef<() => void>(() => {});
+
+  useEffect(() => {
+    stopCameraRef.current = stopCamera;
+    detectLoopRef.current = detectLoop;
+    initPolyfillLoopRef.current = initPolyfillLoop;
+  });
+
   // Check Capabilities on Mount
   useEffect(() => {
-    
-    if ('BarcodeDetector' in window) {
-      setHasNativeBarcode(true);
-      
+    if (typeof window !== 'undefined' && 'BarcodeDetector' in window) {
       BarcodeDetector.getSupportedFormats().then(formats => {
         setSupportedFormats(formats);
       }).catch(() => {});
-    } else {
-        // Default to polyfill if native not supported
-        setMode('polyfill');
     }
-
-    
-    if ('FaceDetector' in window) setHasNativeFace(true);
-    
-    if ('TextDetector' in window) setHasNativeText(true);
   }, []);
 
   const handleClose = () => {
@@ -73,7 +74,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
 
   // Cleanup on unmount
   useEffect(() => {
-      return () => stopCamera();
+      return () => stopCameraRef.current();
   }, []);
 
   // Enumerate Devices
@@ -102,8 +103,13 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
   // Listen for device changes
   useEffect(() => {
       navigator.mediaDevices.addEventListener('devicechange', getDevices);
-      getDevices(); // Initial check
-      return () => navigator.mediaDevices.removeEventListener('devicechange', getDevices);
+      const timer = setTimeout(() => {
+          getDevices(); // Initial check
+      }, 0);
+      return () => {
+          clearTimeout(timer);
+          navigator.mediaDevices.removeEventListener('devicechange', getDevices);
+      };
   }, [getDevices]);
 
   // Start Camera
@@ -186,8 +192,8 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
               videoRef.current?.play().catch(e => console.error("Play failed", e));
               
               if (isAutoScan) {
-                  if (mode === 'native') detectLoop();
-                  else initPolyfillLoop();
+                  if (mode === 'native') detectLoopRef.current();
+                  else initPolyfillLoopRef.current();
               }
           };
       } else {

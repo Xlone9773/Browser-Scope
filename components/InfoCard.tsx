@@ -13,7 +13,7 @@ interface InfoItemProps {
 
 // Memoized InfoItem to prevent re-renders of list items
 const InfoItem = memo<InfoItemProps>(({ label, value, subValue, isFeature }) => {
-  let displayValue: React.ReactNode = value ?? 'N/A';
+  let displayValue: React.ReactNode;
 
   if (typeof value === 'boolean') {
     displayValue = value ? (
@@ -29,11 +29,11 @@ const InfoItem = memo<InfoItemProps>(({ label, value, subValue, isFeature }) => 
           displayValue = <Badge variant="neutral">{value}</Badge>;
       } else {
           // Default text style for strings
-          displayValue = <span className="text-sm text-slate-800 dark:text-slate-200 break-all">{value}</span>;
+          displayValue = <span className="text-sm text-slate-800 dark:text-slate-200 break-all">{value ?? 'N/A'}</span>;
       }
   } else {
       // Standard text value
-      displayValue = <span className="text-sm text-slate-800 dark:text-slate-200 break-all">{value}</span>;
+      displayValue = <span className="text-sm text-slate-800 dark:text-slate-200 break-all">{value ?? 'N/A'}</span>;
   }
 
   return (

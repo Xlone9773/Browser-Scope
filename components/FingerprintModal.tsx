@@ -7,13 +7,13 @@ import { Button } from './ui/Button';
 
 // Simple MurmurHash3 implementation for custom component hashing
 function murmurhash3_32_gc(key: string, seed: number) {
-  let remainder, bytes, h1, h1b, c1, _c1b, c2, _c2b, k1, i;
+  let h1, h1b, _c1b, _c2b, k1, i;
 
-  remainder = key.length & 3; // key.length % 4
-  bytes = key.length - remainder;
+  const remainder = key.length & 3; // key.length % 4
+  const bytes = key.length - remainder;
   h1 = seed;
-  c1 = 0xcc9e2d51;
-  c2 = 0x1b873593;
+  const c1 = 0xcc9e2d51;
+  const c2 = 0x1b873593;
   i = 0;
 
   while (i < bytes) {
@@ -36,6 +36,7 @@ function murmurhash3_32_gc(key: string, seed: number) {
 
   k1 = 0;
 
+  /* eslint-disable no-fallthrough */
   switch (remainder) {
       case 3: k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
       case 2: k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
@@ -46,6 +47,7 @@ function murmurhash3_32_gc(key: string, seed: number) {
       k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
       h1 ^= k1;
   }
+  /* eslint-enable no-fallthrough */
 
   h1 ^= key.length;
 
@@ -368,12 +370,15 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
           setLoading(false);
       }
     }
-  }, [activeTab, salt, detectFonts, calculateHash]);
+  }, [activeTab, salt, detectFonts, calculateHash, t.error_loading]);
 
   // Effect to run on tab change
   useEffect(() => {
-      runFingerprint();
-  }, [activeTab]); 
+      const timer = setTimeout(() => {
+          runFingerprint();
+      }, 0);
+      return () => clearTimeout(timer);
+  }, [activeTab, runFingerprint]); 
 
   // Handle Toggle Component
   const toggleComponent = (key: string) => {

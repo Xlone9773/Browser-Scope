@@ -57,9 +57,12 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
       if (availableSizes.length > 0) {
           const isValid = availableSizes.some(s => s.id === downloadSize);
           if (!isValid) {
-              // Default to 100MB if available, else first option
-              const defaultOption = availableSizes.find(s => s.id === 100 * 1024 * 1024) || availableSizes[0];
-              setDownloadSize(defaultOption.id);
+              const timer = setTimeout(() => {
+                  // Default to 100MB if available, else first option
+                  const defaultOption = availableSizes.find(s => s.id === 100 * 1024 * 1024) || availableSizes[0];
+                  setDownloadSize(defaultOption.id);
+              }, 0);
+              return () => clearTimeout(timer);
           }
       }
   }, [availableSizes, downloadSize]);

@@ -2,14 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Volume2,
   Radio,
-  Activity,
   Zap,
   Play,
   Pause,
   AlertCircle,
   RefreshCw,
-  Sliders,
-  Settings,
 } from "lucide-react";
 import { Translation } from "../utils/i18n/types";
 import { Modal } from "./ui/Modal";
@@ -69,7 +66,6 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
   const [maxHardwareChannels, setMaxHardwareChannels] = useState<number>(2);
   const [outputLatency, setOutputLatency] = useState<number | null>(null);
   const [baseLatency, setBaseLatency] = useState<number | null>(null);
-  const [sampleRate, setSampleRate] = useState<number>(44100);
   const [isPlayingSyncTest, setIsPlayingSyncTest] = useState<boolean>(false);
   const [latencyOffset, setLatencyOffset] = useState<number>(0);
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | null>(null);
@@ -131,50 +127,52 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
 
   // Initialize Web Audio Context to get initial parameters
   useEffect(() => {
-    try {
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContextClass) {
-        setErrorMsg("Web Audio API is not supported in this browser.");
-        return;
-      }
-      const ctx = new AudioContextClass();
-      audioContextRef.current = ctx;
-
-      // Extract details
-      const maxCh = ctx.destination.maxChannelCount || 2;
-      setMaxHardwareChannels(maxCh);
-      setSampleRate(ctx.sampleRate);
-
-      // Latency detection
-      if (typeof ctx.outputLatency === "number") {
-        setOutputLatency(ctx.outputLatency);
-      } else if ('outputLatency' in ctx) {
-        const outLatVal = (ctx as unknown as { outputLatency: unknown }).outputLatency;
-        if (outLatVal !== undefined && outLatVal !== null) {
-          setOutputLatency(typeof outLatVal === "number" ? outLatVal : parseFloat(String(outLatVal)));
+    const timer = setTimeout(() => {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
+          setErrorMsg("Web Audio API is not supported in this browser.");
+          return;
         }
-      }
+        const ctx = new AudioContextClass();
+        audioContextRef.current = ctx;
 
-      if (typeof ctx.baseLatency === "number") {
-        setBaseLatency(ctx.baseLatency);
-      }
+        // Extract details
+        const maxCh = ctx.destination.maxChannelCount || 2;
+        setMaxHardwareChannels(maxCh);
 
-      // Automatically switch layout based on hardware if possible
-      if (maxCh >= 8) {
-        setActiveLayout("7.1");
-      } else if (maxCh >= 6) {
-        setActiveLayout("5.1");
-      } else if (maxCh >= 4) {
-        setActiveLayout("quad");
-      } else {
-        setActiveLayout("stereo");
+        // Latency detection
+        if (typeof ctx.outputLatency === "number") {
+          setOutputLatency(ctx.outputLatency);
+        } else if ('outputLatency' in ctx) {
+          const outLatVal = (ctx as unknown as { outputLatency: unknown }).outputLatency;
+          if (outLatVal !== undefined && outLatVal !== null) {
+            setOutputLatency(typeof outLatVal === "number" ? outLatVal : parseFloat(String(outLatVal)));
+          }
+        }
+
+        if (typeof ctx.baseLatency === "number") {
+          setBaseLatency(ctx.baseLatency);
+        }
+
+        // Automatically switch layout based on hardware if possible
+        if (maxCh >= 8) {
+          setActiveLayout("7.1");
+        } else if (maxCh >= 6) {
+          setActiveLayout("5.1");
+        } else if (maxCh >= 4) {
+          setActiveLayout("quad");
+        } else {
+          setActiveLayout("stereo");
+        }
+      } catch (e: unknown) {
+        const errMsg = e instanceof Error ? e.message : String(e);
+        setErrorMsg(`Failed to initialize Web Audio API: ${errMsg}`);
       }
-    } catch (e: unknown) {
-      const errMsg = e instanceof Error ? e.message : String(e);
-      setErrorMsg(`Failed to initialize Web Audio API: ${errMsg}`);
-    }
+    }, 0);
 
     return () => {
+      clearTimeout(timer);
       stopAllAudio();
       if (audioContextRef.current) {
         audioContextRef.current.close().catch(() => {});
@@ -274,7 +272,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
         active.osc.stop();
         active.osc.disconnect();
         active.gain.disconnect();
-      } catch (e) {}
+      } catch (_e) {}
       activeOscillatorsRef.current.delete(speakerId);
     }
   };

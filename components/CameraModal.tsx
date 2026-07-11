@@ -192,13 +192,16 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
     return () => {
       stopCameraStream();
     };
-  }, [selectedDeviceId, stopCameraStream]);
+  }, [selectedDeviceId, stopCameraStream, t.error_generic, t.error_hardware, t.no_devices, t.permission_denied]);
 
   // Initial load
   useEffect(() => {
-    getDevices();
+    const timer = setTimeout(() => {
+      getDevices();
+    }, 0);
     navigator.mediaDevices.addEventListener('devicechange', getDevices);
     return () => {
+      clearTimeout(timer);
       navigator.mediaDevices.removeEventListener('devicechange', getDevices);
     };
   }, [getDevices]);

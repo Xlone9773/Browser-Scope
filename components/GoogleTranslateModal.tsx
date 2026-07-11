@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { X, Languages, Globe, LogOut } from "lucide-react";
+import React, { useState } from "react";
+import { Languages, Globe, LogOut } from "lucide-react";
 import { Modal as BaseModal } from "./ui/Modal";
 
 interface GoogleTranslateModalProps {
@@ -53,18 +53,17 @@ export const GoogleTranslateModal: React.FC<GoogleTranslateModalProps> = ({
   onClose,
   t,
 }) => {
-  const [currentLang, setCurrentLang] = useState<string>("auto");
-
-  useEffect(() => {
+  const [currentLang, setCurrentLang] = useState<string>(() => {
     // Check if googtrans cookie exists
-    const match = document.cookie.match(new RegExp("(^| )googtrans=([^;]+)"));
+    const match = typeof document !== 'undefined' ? document.cookie.match(new RegExp("(^| )googtrans=([^;]+)")) : null;
     if (match) {
       const parts = match[2].split("/"); // e.g. /auto/en -> ["", "auto", "en"]
       if (parts.length > 2) {
-        setCurrentLang(parts[2]);
+        return parts[2];
       }
     }
-  }, []);
+    return "auto";
+  });
 
   const changeLanguage = (langCode: string) => {
     // We can simulate changing the google translate select

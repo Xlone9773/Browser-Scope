@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Image as ImageIcon, FileText } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
@@ -12,18 +12,19 @@ interface CanvasModalProps {
 
 export const CanvasModal: React.FC<CanvasModalProps> = ({ imageSrc, onClose, t }) => {
   const [dimensions, setDimensions] = useState<{width: number, height: number} | null>(null);
-  const [fileSize, setFileSize] = useState<string>('');
 
-  useEffect(() => {
+  const fileSize = useMemo(() => {
       // Calculate file size from base64 string
       // Formula: (length * 3) / 4 - padding
       const sizeInBytes = Math.ceil((imageSrc.length - 'data:image/png;base64,'.length) * 3 / 4);
       if (sizeInBytes > 1024) {
-          setFileSize(`${(sizeInBytes / 1024).toFixed(2)} KB`);
+          return `${(sizeInBytes / 1024).toFixed(2)} KB`;
       } else {
-          setFileSize(`${sizeInBytes} B`);
+          return `${sizeInBytes} B`;
       }
+  }, [imageSrc]);
 
+  useEffect(() => {
       // Get dimensions
       const img = new Image();
       img.onload = () => {

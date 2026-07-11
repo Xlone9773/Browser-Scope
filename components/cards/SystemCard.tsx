@@ -24,8 +24,6 @@ export const SystemCard: React.FC<SystemCardProps> = React.memo(({ data, t, simp
       return name === code ? code : name;
   });
 
-  const hasClientHints = !!data.clientHints && Object.keys(data.clientHints).length > 0;
-
   return (
     <InfoCard title={t.sections.system} icon={Smartphone}>
       <InfoItem label={t.labels.os} value={data.os} />
