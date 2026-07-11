@@ -4,7 +4,7 @@ import { Modal as BaseModal } from "./ui/Modal";
 
 interface GoogleTranslateModalProps {
   onClose: () => void;
-  t: unknown;
+  t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
 }
 
 const SUPPORTED_LANGS = [

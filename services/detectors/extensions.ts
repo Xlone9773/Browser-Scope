@@ -6,9 +6,42 @@ export interface DetectedExtension {
   category: string;
 }
 
+type WindowWithExtensions = Window & {
+  __REACT_DEVTOOLS_GLOBAL_HOOK__?: unknown;
+  __VUE_DEVTOOLS_GLOBAL_HOOK__?: unknown;
+  __REDUX_DEVTOOLS_EXTENSION__?: unknown;
+  __APOLLO_CLIENT__?: unknown;
+  EmberEnv?: unknown;
+  ethereum?: {
+    isMetaMask?: boolean;
+    isCoinbaseWallet?: boolean;
+    isBraveWallet?: boolean;
+  };
+  phantom?: {
+    solana?: {
+      isPhantom?: boolean;
+    };
+  };
+  BinanceChain?: unknown;
+  suiWallet?: unknown;
+  ronin?: unknown;
+  keplr?: unknown;
+  aptos?: unknown;
+  martian?: unknown;
+  okxwallet?: unknown;
+  trustwallet?: unknown;
+  tronWeb?: unknown;
+  tonkeeper?: unknown;
+  rabby?: unknown;
+  uniswapWallet?: unknown;
+  bitkeep?: unknown;
+  GM_info?: unknown;
+  GM?: unknown;
+  Ghostery?: unknown;
+};
+
 export const detectExtensions = (): DetectedExtension[] => {
-  const w = window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
-  const _d = document as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+  const w = window as unknown as WindowWithExtensions;
 
   const extensions: DetectedExtension[] = [];
 

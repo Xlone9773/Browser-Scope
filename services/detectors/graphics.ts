@@ -67,7 +67,7 @@ export const getShaderPrecisionFormat = (): { vertexHigh: string, fragmentHigh: 
         const _fHigh = getFormat(ctx.FRAGMENT_SHADER, ctx.HIGH_FLOAT);
         
         // Simpler string rep
-        const simple = (f: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
+        const simple = (f: WebGLShaderPrecisionFormat | null) => {
             if (!f) return 'Low';
             if (f.precision >= 23) return 'High (23-bit+)';
             if (f.precision >= 16) return 'Medium (16-bit+)';

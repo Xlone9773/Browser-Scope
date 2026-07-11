@@ -70,8 +70,10 @@ const customFetch = async (url: string, enableUdp: boolean, options: RequestInit
 
     try {
         return await fetch(url, options);
-    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-        if (err.message === 'Failed to fetch' || err.name === 'TypeError') {
+    } catch (err: unknown) {
+        const errorName = err instanceof Error ? err.name : '';
+        const errorMessage = err instanceof Error ? err.message : '';
+        if (errorMessage === 'Failed to fetch' || errorName === 'TypeError') {
             console.warn(`Direct fetch failed for ${url}, falling back to server proxy...`);
             return doProxyFetch();
         }
@@ -173,7 +175,7 @@ export const fetchIpInfoFromSource = async (source: string, enableUdp: boolean =
                 isp: 'Ipify'
             };
         }
-    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (e: unknown) {
         console.error("IP fetch failed", e);
         return { error: "Detection failed. Check network or AdBlock." };
     }
@@ -238,7 +240,7 @@ export const runWebRTCScan = (onCandidate: (c: WebRTCCandidate) => void): Promis
                 resolve();
             }, 5000);
 
-        } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+        } catch (e: unknown) {
             console.error("WebRTC Error", e);
             resolve();
         }

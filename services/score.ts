@@ -16,7 +16,13 @@ interface ScoreInput {
     webRTC: string;
     drmCount: number;
     touchPoints: number;
-    clientHints?: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    clientHints?: {
+        architecture?: string;
+        bitness?: string;
+        model?: string;
+        platformVersion?: string;
+        fullVersionList?: { brand: string; version: string }[];
+    };
     hdr: boolean;
     timezone?: string;
     languages?: string;

@@ -1,5 +1,20 @@
-export async function loadVConsole(store: unknown) {
-  const win = window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+export interface VConsoleStore {
+  vconsoleDefaultTab: string;
+}
+
+export interface VConsoleInstance {
+  show(): void;
+  showPlugin(tab: string): void;
+  destroy(): void;
+  setOption(key: string, value: string): void;
+}
+
+type WindowWithVConsole = Window & typeof globalThis & {
+  vConsole?: VConsoleInstance;
+};
+
+export async function loadVConsole(store: VConsoleStore) {
+  const win = window as unknown as WindowWithVConsole;
   if (win.vConsole) {
     try {
       win.vConsole.show();
@@ -44,14 +59,15 @@ export async function loadVConsole(store: unknown) {
     } catch (e) {
       console.warn("Failed to prepare window.XMLHttpRequest:", e);
     }
-    const VConsole = (await import("vconsole")).default;
+    const VConsoleDefault = (await import("vconsole")).default;
+    const VConsole = VConsoleDefault as unknown as new (options: { theme: string }) => VConsoleInstance;
     const isDark = document.documentElement.classList.contains("dark");
-    win.vConsole = new (VConsole as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)({
+    win.vConsole = new VConsole({
       theme: isDark ? "dark" : "light",
     });
     try {
       if (store.vconsoleDefaultTab && store.vconsoleDefaultTab !== "default") {
-        setTimeout(() => win.vConsole.showPlugin(store.vconsoleDefaultTab), 100);
+        setTimeout(() => win.vConsole?.showPlugin(store.vconsoleDefaultTab), 100);
       }
     } catch { /* ignore */ }
 
@@ -82,7 +98,7 @@ export async function loadVConsole(store: unknown) {
 }
 
 export function unloadVConsole() {
-  const win = window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+  const win = window as unknown as WindowWithVConsole;
   if (win.vConsole) {
     try {
       win.vConsole.destroy();

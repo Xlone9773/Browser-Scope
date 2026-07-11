@@ -58,7 +58,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
           const config = MODELS[task];
           // Explicit cast to avoid type mismatch with specific string literals expected by the library
           const pipe = await pipeline(config.id as any /* eslint-disable-line @typescript-eslint/no-explicit-any */, config.model, {
-              progress_callback: (data: unknown) => {
+              progress_callback: (data: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
                   if (data.status === 'progress' || data.status === 'initiate') {
                       setProgress(data);
                   }

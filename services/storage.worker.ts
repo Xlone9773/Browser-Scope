@@ -1,3 +1,11 @@
+interface FileSystemSyncAccessHandle {
+    write(buffer: BufferSource, options?: { at: number }): number;
+    read(buffer: BufferSource, options?: { at: number }): number;
+    close(): void;
+    flush(): void;
+    getSize(): number;
+}
+
 function generateData(size: number) {
     const arr = new Uint8Array(size);
     for(let i=0; i<size; i+=1024) arr[i] = i % 255;
@@ -7,13 +15,13 @@ function generateData(size: number) {
 function openDB(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open('BrowserScopeBench', 1);
-        req.onupgradeneeded = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
-            const db = e.target.result;
+        req.onupgradeneeded = (e: IDBVersionChangeEvent) => {
+            const db = (e.target as IDBOpenDBRequest).result;
             if (!db.objectStoreNames.contains('store')) {
                 db.createObjectStore('store', { keyPath: ['id', 'chunk'] });
             }
         };
-        req.onsuccess = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => resolve(e.target.result);
+        req.onsuccess = (e: Event) => resolve((e.target as IDBOpenDBRequest).result);
         req.onerror = () => reject(req.error);
     });
 }
@@ -51,7 +59,7 @@ async function cleanup(filename: string, tgt: string) {
                 }
             }
         }
-    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (e: unknown) {
         // Ignore overall error
         console.error("Cleanup error:", e);
     }
@@ -138,11 +146,12 @@ self.onmessage = async function(e: MessageEvent) {
             const root = await navigator.storage.getDirectory();
             const handle = await root.getFileHandle(filename, { create: true });
             
-            let writable: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+            let writable: FileSystemSyncAccessHandle | FileSystemWritableFileStream | undefined;
             let isSync = false;
-            if ((handle as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).createSyncAccessHandle) {
+            const opfsHandle = handle as FileSystemFileHandle & { createSyncAccessHandle?: () => Promise<FileSystemSyncAccessHandle> };
+            if (opfsHandle.createSyncAccessHandle) {
                 try {
-                    writable = await (handle as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).createSyncAccessHandle();
+                    writable = await opfsHandle.createSyncAccessHandle();
                     isSync = true;
                 } catch(_e) {
                     writable = await handle.createWritable();
@@ -158,11 +167,11 @@ self.onmessage = async function(e: MessageEvent) {
                 const arrayBuffer = await chunk.arrayBuffer();
                 
                 const txStart = performance.now();
-                if (isSync) {
-                    writable.write(new Uint8Array(arrayBuffer), { at: offset });
+                if (isSync && writable) {
+                    (writable as FileSystemSyncAccessHandle).write(new Uint8Array(arrayBuffer), { at: offset });
                     offset += arrayBuffer.byteLength;
-                } else {
-                    await writable.write(chunk);
+                } else if (writable) {
+                    await (writable as FileSystemWritableFileStream).write(chunk);
                 }
                 writeLatencies.push(performance.now() - txStart);
                 
@@ -177,11 +186,11 @@ self.onmessage = async function(e: MessageEvent) {
                     progress: Math.floor(((i + 1) / chunks) * 50)
                 });
             }
-            if (isSync) {
-                writable.flush();
-                writable.close();
-            } else {
-                await writable.close();
+            if (isSync && writable) {
+                (writable as FileSystemSyncAccessHandle).flush();
+                (writable as FileSystemSyncAccessHandle).close();
+            } else if (writable) {
+                await (writable as FileSystemWritableFileStream).close();
             }
         }
 
@@ -261,8 +270,9 @@ self.onmessage = async function(e: MessageEvent) {
         else if (target === 'opfs') {
             const root = await navigator.storage.getDirectory();
             const handle = await root.getFileHandle(filename);
-            if ((handle as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).createSyncAccessHandle) {
-                const accessHandle = await (handle as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).createSyncAccessHandle();
+            const opfsHandle = handle as FileSystemFileHandle & { createSyncAccessHandle?: () => Promise<FileSystemSyncAccessHandle> };
+            if (opfsHandle.createSyncAccessHandle) {
+                const accessHandle = await opfsHandle.createSyncAccessHandle();
                 const fileLength = accessHandle.getSize();
                 const buffer = new Uint8Array(CHUNK_SIZE);
                 let readBytes = 0;
@@ -296,7 +306,7 @@ self.onmessage = async function(e: MessageEvent) {
                     const { done, value } = await reader.read();
                     if (done) break;
                     readLatencies.push(performance.now() - chunkStart);
-                    readBytes += (value as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).length;
+                    readBytes += (value as Uint8Array).length;
                     
                     const now = performance.now();
                     const elapsed = (now - startRead) / 1000;
@@ -336,8 +346,9 @@ self.onmessage = async function(e: MessageEvent) {
         await cleanup(filename, target);
         self.postMessage({ type: 'done' });
 
-    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (err: unknown) {
         await cleanup(filename, target);
-        self.postMessage({ type: 'error', message: err.message || "Unknown error inside Web Worker" });
+        const errMsg = err instanceof Error ? err.message : "Unknown error inside Web Worker";
+        self.postMessage({ type: 'error', message: errMsg });
     }
 };

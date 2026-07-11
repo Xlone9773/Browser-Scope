@@ -110,7 +110,8 @@ self.onmessage = function (e: MessageEvent) {
       const details = throughput + ' MB/s (' + duration.toFixed(0) + 'ms)';
       self.postMessage({ id, score, details, success: true });
     }
-  } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-    self.postMessage({ id, type, success: false, error: err.message });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    self.postMessage({ id, type, success: false, error: errorMsg });
   }
 };

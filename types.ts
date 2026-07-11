@@ -20,7 +20,9 @@ export interface BatteryManager extends EventTarget {
 }
 
 // Extend the Navigator interface for non-standard or experimental APIs
-export type ExtendedNavigator = Navigator;
+export interface ExtendedNavigator extends Navigator {
+  nfc?: unknown;
+}
 
 export interface CodecInfo {
     name: string;

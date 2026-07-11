@@ -92,15 +92,15 @@ export const getHighEntropyClientHints = async () => {
     try {
         // Request specific hints
         const hints = ['architecture', 'model', 'platformVersion', 'bitness', 'fullVersionList'];
-        const values = await nav.userAgentData.getHighEntropyValues(hints) as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+        const values = await nav.userAgentData.getHighEntropyValues(hints) as Record<string, unknown>;
         return {
-            architecture: values.architecture,
-            model: values.model,
-            platformVersion: values.platformVersion,
-            bitness: values.bitness,
-            fullVersionList: values.fullVersionList
+            architecture: values.architecture as string | undefined,
+            model: values.model as string | undefined,
+            platformVersion: values.platformVersion as string | undefined,
+            bitness: values.bitness as string | undefined,
+            fullVersionList: values.fullVersionList as { brand: string; version: string }[] | undefined
         };
-    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (e: unknown) {
         console.warn("UA-CH blocked or failed", e);
         return undefined;
     }
@@ -111,7 +111,7 @@ export const getPWAFeatures = (): FeatureItem[] => {
     { name: 'Web App Manifest', key: 'manifest', supported: !!document.querySelector('link[rel="manifest"]'), description: 'Defines PWA branding and behavior' },
     { name: 'Standalone Mode', key: 'standalone', supported: window.matchMedia && window.matchMedia('(display-mode: standalone)').matches, description: 'Running as installed app' },
     { name: 'Service Worker', key: 'serviceWorker', supported: 'serviceWorker' in navigator, description: 'Offline capabilities & PWA support' },
-    { name: 'Background Sync', key: 'bgSync', supported: 'serviceWorker' in navigator && 'sync' in ((navigator as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).serviceWorker || {}), description: 'Defer actions until user has connectivity' },
+    { name: 'Background Sync', key: 'bgSync', supported: 'serviceWorker' in navigator && 'sync' in ((navigator as unknown as { serviceWorker?: Record<string, unknown> }).serviceWorker || {}), description: 'Defer actions until user has connectivity' },
     { name: 'Push API', key: 'pushApi', supported: 'PushManager' in window, description: 'Receive push notifications from server' },
     { name: 'Notification API', key: 'notification', supported: 'Notification' in window, description: 'System level notifications' },
     { name: 'App Badges', key: 'appBadges', supported: 'setAppBadge' in navigator, description: 'Set badges on app icon' },
@@ -165,7 +165,7 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'WebSocket', key: 'webSocket', supported: 'WebSocket' in window, description: 'Two-way socket connection' },
     { name: 'Server-Sent Events', key: 'sse', supported: 'EventSource' in window, description: 'Server push notifications' },
     { name: 'Pointer Lock', key: 'pointerLock', supported: typeof document !== 'undefined' && 'exitPointerLock' in document, description: 'Lock mouse cursor' },
-    { name: 'Fullscreen API', key: 'fullscreen', supported: typeof document !== 'undefined' && !!(document.fullscreenEnabled || (document as any  ).webkitFullscreenEnabled || (document as any   as Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */>).mozFullScreenEnabled), description: 'Native full screen' },
+    { name: 'Fullscreen API', key: 'fullscreen', supported: typeof document !== 'undefined' && !!(document.fullscreenEnabled || (document as unknown as { webkitFullscreenEnabled?: boolean }).webkitFullscreenEnabled || (document as unknown as { mozFullScreenEnabled?: boolean }).mozFullScreenEnabled), description: 'Native full screen' },
     { name: 'Page Visibility', key: 'pageVisibility', supported: typeof document !== 'undefined' && 'hidden' in document, description: 'Detect tab backgrounding' },
     { name: 'Drag and Drop', key: 'dragAndDrop', supported: typeof document !== 'undefined' && 'draggable' in document.createElement('span'), description: 'Native DND features' },
     { name: 'Canvas API', key: 'canvas', supported: typeof document !== 'undefined' && !!document.createElement('canvas').getContext, description: '2D dynamic rendering' },

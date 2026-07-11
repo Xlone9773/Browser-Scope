@@ -4,7 +4,7 @@ import { ShieldCheck, ShieldAlert, AlertTriangle, Info, Bot, Fingerprint, Cpu } 
 import { useEnvironmentAssessment, AnomalyCategory } from '../../hooks/useEnvironmentAssessment';
 
 interface EnvironmentCardProps {
-    t: unknown;
+    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
 }
 
 export const EnvironmentCard: React.FC<EnvironmentCardProps> = React.memo(({ t }) => {

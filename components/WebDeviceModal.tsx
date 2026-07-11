@@ -34,7 +34,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
       setError(null);
   };
 
-  const handleError = (e: unknown, defaultMsg: string) => {
+  const handleError = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, defaultMsg: string) => {
     console.error(e);
     if (!e || typeof e !== 'object') {
         setError(defaultMsg);
@@ -80,7 +80,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   if (!rx.test(nameToTest)) {
                      throw new Error(`Device name "${nameToTest}" does not match regex filter`);
                   }
-              } catch (regExErr: unknown) {
+              } catch (regExErr: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
                                     throw new Error(`Regex check failed: ${regExErr.message}`);
               }
           } else {
@@ -94,7 +94,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               name: device.name || 'Unnamed BT Device',
               raw: device
           }]);
-      } catch (e: unknown) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, 'Scan failed');
       }
       setScanning(false);
@@ -116,7 +116,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               details: `Vendor: ${device.vendorId}, Product: ${device.productId}`,
               raw: device
           }]);
-      } catch (e: unknown) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, 'USB request failed');
       }
       setScanning(false);
@@ -139,7 +139,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               details: `Vendor: ${info.usbVendorId}, Product: ${info.usbProductId}`,
               raw: port
           }]);
-      } catch (e: unknown) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, 'Serial port request failed');
       }
       setScanning(false);
@@ -176,7 +176,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   raw: credential
               }]);
           }
-      } catch (e: unknown) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, 'Registration failed');
       }
       setScanning(false);
@@ -190,7 +190,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           const challenge = new Uint8Array(32);
           window.crypto.getRandomValues(challenge);
           
-          const options: unknown = {
+          const options: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = {
               publicKey: {
                   challenge,
                   rpId: window.location.hostname,
@@ -215,7 +215,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   raw: credential
               }]);
           }
-      } catch (e: unknown) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, 'Authentication failed');
       }
       setScanning(false);
@@ -234,7 +234,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                     // @ts-expect-error fixed implicitly typed external libraries
                     const ndef = new NDEFReader();
           await ndef.scan();
-          ndef.addEventListener("reading", ({ message, serialNumber }: unknown) => {
+          ndef.addEventListener("reading", ({ message, serialNumber }: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
               setNfcDevices(prev => {
                   const existing = prev.find(d => d.id === serialNumber);
                   const newRecs = message.records.length;
@@ -251,11 +251,11 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               setScanning(false);
           });
           
-          ndef.addEventListener("error", (e: unknown) => {
+          ndef.addEventListener("error", (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
               handleError(e, "NFC scan error");
               setScanning(false);
           });
-      } catch (e: unknown) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, "NFC scan failed");
           setScanning(false);
       }
@@ -280,7 +280,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                 details: `Successfully wrote test message`,
                 raw: null
           }]);
-      } catch (e: unknown) {
+      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
           handleError(e, "NFC write failed");
       }
       setScanning(false);

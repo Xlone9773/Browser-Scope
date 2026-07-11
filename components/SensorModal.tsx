@@ -163,7 +163,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
               } else {
                   setPermissionStatus('denied');
               }
-          } catch (e: unknown) {
+          } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
               console.error(e);
           }
       } else {

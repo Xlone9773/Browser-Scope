@@ -140,8 +140,8 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                 
                                 // @ts-expect-error fixed implicitly typed external libraries
                                 null.test();
-            } catch (e: unknown) {
-                if (e instanceof Error && e.stack) {
+            } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+                if (e.stack) {
                     const stackString = e.stack.toString();
                     if (navigator.userAgent.includes('Chrome') && stackString.includes('@')) {
                         addAnomaly('engine_mismatch', 'JS Engine error stack mismatch', 'danger', 'trust', 30);

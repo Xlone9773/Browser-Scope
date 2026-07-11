@@ -20,8 +20,8 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
     useEffect(() => {
         const runTests = async () => {
             setIsTesting(true);
-            const tempVideoResults: unknown[] = [];
-            const tempAudioResults: unknown[] = [];
+            const tempVideoResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] = [];
+            const tempAudioResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] = [];
             
             let done = 0;
             const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length);
@@ -40,7 +40,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                     try {
                         
                         if (navigator.mediaCapabilities) {
-                            const config: unknown = {
+                            const config: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = {
                                 type: 'file', 
                                 video: {
                                     contentType: codec.type,
@@ -145,11 +145,11 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
         }
     };
 
-    const getFilteredResults = (results: unknown[]) => {
+    const getFilteredResults = (results: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]) => {
         if (!showSupportedOnly) return results;
         return results.map(row => ({
             ...row,
-            tests: row.tests.filter((t: unknown) => t.supported)
+            tests: row.tests.filter((t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => t.supported)
         })).filter(row => row.tests.length > 0);
     };
 
@@ -212,7 +212,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                                 </div>
                                 
                                 <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
-                                    {row.tests.map((test: unknown, idx: number) => (
+                                    {row.tests.map((test: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, idx: number) => (
                                         <div key={idx} className={`p-3 flex flex-col gap-1.5 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
                                             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
                                             {test.error ? (
@@ -268,7 +268,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                                 </div>
                                 
                                 <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
-                                    {row.tests.map((test: unknown, idx: number) => (
+                                    {row.tests.map((test: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, idx: number) => (
                                         <div key={idx} className={`p-3 flex flex-col gap-1 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
                                             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
                                             {!test.supported ? (

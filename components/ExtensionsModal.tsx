@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from './ui/Modal';
 import { detectExtensions, DetectedExtension } from '../services/detectors/extensions';
+import { Translation } from '../utils/i18n/types';
 
-export const ExtensionsModal = ({ onClose, t }: { onClose: () => void; t?: unknown }) => {
+export const ExtensionsModal = ({ onClose, t }: { onClose: () => void; t?: Translation['extensionsModal'] }) => {
   const [extensions, setExtensions] = useState<DetectedExtension[]>([]);
 
   useEffect(() => {
@@ -23,6 +24,10 @@ export const ExtensionsModal = ({ onClose, t }: { onClose: () => void; t?: unkno
     names: {},
     descs: {}
   };
+
+  const names = (trans.names || {}) as Record<string, string>;
+  const categories = (trans.categories || {}) as Record<string, string>;
+  const descs = (trans.descs || {}) as Record<string, string>;
 
   return (
     <Modal title={trans.title} onClose={onClose} noPadding>
@@ -46,14 +51,14 @@ export const ExtensionsModal = ({ onClose, t }: { onClose: () => void; t?: unkno
               <div key={ext.id} className="bg-white dark:bg-slate-800/80 rounded-xl p-4 border border-slate-200 dark:border-slate-700/50 flex flex-col">
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="font-medium text-slate-900 dark:text-slate-200">
-                    {trans.names?.[ext.id] || ext.name}
+                    {names[ext.id] || ext.name}
                   </h3>
                   <span className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 rounded whitespace-nowrap">
-                    {trans.categories?.[ext.category] || ext.category}
+                    {categories[ext.category] || ext.category}
                   </span>
                 </div>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-2 flex-grow">
-                  {trans.descs?.[ext.id] || ext.description}
+                  {descs[ext.id] || ext.description}
                 </p>
                 <div className="flex gap-2">
                   <span className="text-xs px-2 py-1 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 rounded flex items-center gap-1 w-fit mt-auto">

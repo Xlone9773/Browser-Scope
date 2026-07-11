@@ -1,7 +1,14 @@
-import { loadVConsole } from "./vconsole";
-import { loadEruda } from "./eruda";
+import { loadVConsole, VConsoleStore } from "./vconsole";
+import { loadEruda, ErudaStore } from "./eruda";
 
-export function setupInterceptors(loggerStore: unknown) {
+export interface LoggerStoreInterface extends VConsoleStore, ErudaStore {
+  activeConsole: "none" | "vconsole" | "eruda";
+  isLoggingEnabled: boolean;
+  addConsole(type: "output" | "error" | "warn" | "info" | "input", content: string): void;
+  addLog(type: string, detail: string): void;
+}
+
+export function setupInterceptors(loggerStore: LoggerStoreInterface) {
   if (typeof window === "undefined") return;
   if (loggerStore.activeConsole === "vconsole") {
     loadVConsole(loggerStore);
@@ -18,7 +25,7 @@ export function setupInterceptors(loggerStore: unknown) {
     args
       .map((a) => {
         try {
-          return typeof a === "object" ? JSON.stringify(a) : String(a);
+          return typeof a === "object" && a !== null ? JSON.stringify(a) : String(a);
         } catch {
           return String(a);
         }

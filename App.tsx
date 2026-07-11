@@ -347,7 +347,7 @@ const App: React.FC = () => {
   }, [data]);
 
   const { permStatus, geoData, checkPermissionStatus, requestPermission } =
-    useAppPermissions((modalId) => open(modalId as string));
+    useAppPermissions((modalId) => open(modalId as any /* eslint-disable-line @typescript-eslint/no-explicit-any */));
 
   const [isDevToolsFloating, setIsDevToolsFloating] = useState(false);
 
@@ -642,24 +642,6 @@ const App: React.FC = () => {
        impact: "Low",
        onUnload: () => unload("ja3"),
        isLoaded: loadedModules.has("ja3"),
-    },
-    {
-       id: "attributions",
-       name: ((t as unknown as Record<string, unknown>).attributions as Record<string, string>)?.title || "Software & Asset Attributions",
-       isOpen: visibility.attributions,
-       setOpen: (v: boolean) => (v ? open("attributions") : close("attributions")),
-       impact: "Low",
-       onUnload: () => unload("attributions"),
-       isLoaded: loadedModules.has("attributions"),
-    },
-    {
-       id: "shortcuts",
-       name: ((t as unknown as Record<string, unknown>).shortcuts as Record<string, string>)?.title || "Keyboard Shortcuts",
-       isOpen: visibility.shortcuts,
-       setOpen: (v: boolean) => (v ? open("shortcuts") : close("shortcuts")),
-       impact: "Low",
-       onUnload: () => unload("shortcuts"),
-       isLoaded: loadedModules.has("shortcuts"),
     },
   ];
 

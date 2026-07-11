@@ -4,6 +4,7 @@ import { Globe, RefreshCw, Activity, Network, MapPin, Zap, Info, AlertCircle, Wi
 import { Select } from './ui/Select';
 import { Button } from './ui/Button';
 import { Modal } from './ui/Modal';
+import { Translation } from '../utils/i18n/types';
 import { 
     fetchIpInfoFromSource, 
     detectIpv6, 
@@ -16,7 +17,7 @@ import {
 
 interface NetworkToolsModalProps {
     onClose: () => void;
-    t: unknown;
+    t: Translation;
     enableUdp?: boolean;
 }
 
@@ -204,7 +205,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
         setCheckingProto(false);
     };
 
-    const renderBentoItem = (icon: unknown, label: string, value: string | number | undefined | null | boolean, colorClass = 'text-slate-800 dark:text-slate-200', colSpan = 'col-span-1') => {
+    const renderBentoItem = (icon: React.ComponentType<{ size?: number; className?: string }>, label: string, value: string | number | undefined | null | boolean, colorClass = 'text-slate-800 dark:text-slate-200', colSpan = 'col-span-1') => {
         if (value === undefined || value === null || value === '') return null;
         
         const displayValue = typeof value === 'boolean' ? (value ? networkT.ip.yes : networkT.ip.no) : value;

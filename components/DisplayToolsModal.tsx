@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 import { Monitor, Eye, Layers, Sun } from 'lucide-react';
 
 import { Modal } from './ui/Modal';
+import { Translation } from '../utils/i18n/types';
 
 interface DisplayToolsModalProps {
     onClose: () => void;
-    t: unknown; // Using any /* eslint-disable-line @typescript-eslint/no-explicit-any */ for simplicity since we don't know the exact type, or Translation['settings']['display'] if passed
+    t: Translation;
 }
 
 export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t }) => {

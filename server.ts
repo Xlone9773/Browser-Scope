@@ -222,8 +222,9 @@ async function startServer() {
                 data: JSON.stringify(ippureResult)
               });
             }
-          } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-            console.error("Special ippure proxy mapping failed:", err.message);
+          } catch (err: unknown) {
+            const errMsg = err instanceof Error ? err.message : String(err);
+            console.error("Special ippure proxy mapping failed:", errMsg);
           }
         }
 
@@ -237,8 +238,9 @@ async function startServer() {
               status: 200,
               data: JSON.stringify(geoData)
             });
-          } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-            console.error("Special ipwho.is proxy mapping failed:", err.message);
+          } catch (err: unknown) {
+            const errMsg = err instanceof Error ? err.message : String(err);
+            console.error("Special ipwho.is proxy mapping failed:", errMsg);
           }
         }
 
@@ -253,8 +255,9 @@ async function startServer() {
               status: 200,
               data: JSON.stringify(geoData)
             });
-          } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-            console.error("Special ipapi.co proxy mapping failed:", err.message);
+          } catch (err: unknown) {
+            const errMsg = err instanceof Error ? err.message : String(err);
+            console.error("Special ipapi.co proxy mapping failed:", errMsg);
           }
         }
 
@@ -305,8 +308,9 @@ async function startServer() {
               status: 200,
               data: mappedLines.join('\n')
             });
-          } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-            console.error("Special cloudflare trace proxy mapping failed:", err.message);
+          } catch (err: unknown) {
+            const errMsg = err instanceof Error ? err.message : String(err);
+            console.error("Special cloudflare trace proxy mapping failed:", errMsg);
           }
         }
       }
@@ -339,9 +343,10 @@ async function startServer() {
              udpPingSent: true,
              message: "UDP packet sent. Data fetched completely bypassing CORS."
            });
-         } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+         } catch (e: unknown) {
            clearTimeout(timeoutId);
-           return res.status(500).json({ error: e.message || "UDP proxy failed" });
+           const errMsg = e instanceof Error ? e.message : "UDP proxy failed";
+           return res.status(500).json({ error: errMsg });
          }
       }
 
@@ -360,15 +365,17 @@ async function startServer() {
          status: response.status,
          data: text
       });
-    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (e: unknown) {
       clearTimeout(timeoutId);
-      console.error("Proxy error:", e.name, e.message);
-      res.status(500).json({ error: e.name === 'AbortError' ? 'Request Timeout' : e.message || "Proxy error" });
+      const errName = e instanceof Error ? e.name : '';
+      const errMsg = e instanceof Error ? e.message : '';
+      console.error("Proxy error:", errName, errMsg);
+      res.status(500).json({ error: errName === 'AbortError' ? 'Request Timeout' : errMsg || "Proxy error" });
     }
   });
 
   // Global Error Handler for stability
-  app.use((err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  app.use((err: unknown, req: express.Request, res: express.Response, _next: express.NextFunction) => {
     console.error('Unhandled Server Error:', err);
     res.status(500).json({ error: 'Internal Server Error' });
   });

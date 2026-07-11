@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ConsoleEntry } from "./logger/types";
 import { loadEruda, unloadEruda } from "./logger/eruda";
-import { loadVConsole, unloadVConsole } from "./logger/vconsole";
+import { loadVConsole, unloadVConsole, VConsoleInstance } from "./logger/vconsole";
 import { setupInterceptors } from "./logger/interceptors";
 
 export type { ConsoleEntry };
@@ -12,9 +12,9 @@ class LoggerStore {
   public isLoggingEnabled: boolean =
     localStorage.getItem("developer_logging_enabled") !== "false";
   public activeConsole: "none" | "vconsole" | "eruda" =
-    (localStorage.getItem("developer_active_console") as any /* eslint-disable-line @typescript-eslint/no-explicit-any */) || "none";
+    (localStorage.getItem("developer_active_console") as "none" | "vconsole" | "eruda" | null) || "none";
   public defaultConsole: "vconsole" | "eruda" =
-    (localStorage.getItem("developer_default_console") as any /* eslint-disable-line @typescript-eslint/no-explicit-any */) || "vconsole";
+    (localStorage.getItem("developer_default_console") as "vconsole" | "eruda" | null) || "vconsole";
   public erudaDefaultTab: string =
     localStorage.getItem("developer_eruda_default_tab") || "console";
   public vconsoleDefaultTab: string =
@@ -65,7 +65,7 @@ class LoggerStore {
       minute: "2-digit",
       second: "2-digit",
       fractionalSecondDigits: 3,
-    } as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
+    } as Intl.DateTimeFormatOptions);
     this.logs = [...this.logs, `[${time}] ${type}: ${detail}`];
     if (this.logs.length > 500) {
       this.logs.shift();
@@ -128,9 +128,9 @@ class LoggerStore {
   setErudaDefaultTab(tab: string) {
     this.erudaDefaultTab = tab;
     localStorage.setItem("developer_eruda_default_tab", tab);
-    if (this.activeConsole === "eruda" && (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda) {
+    if (this.activeConsole === "eruda" && window.eruda) {
       try {
-        (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).eruda.show(tab);
+        window.eruda.show(tab);
       } catch { /* ignore */ }
     }
     this.notifySettings();
@@ -139,9 +139,10 @@ class LoggerStore {
   setVconsoleDefaultTab(tab: string) {
     this.vconsoleDefaultTab = tab;
     localStorage.setItem("developer_vconsole_default_tab", tab);
-    if (this.activeConsole === "vconsole" && (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).vConsole) {
+    const win = window as Window & { vConsole?: VConsoleInstance };
+    if (this.activeConsole === "vconsole" && win.vConsole) {
       try {
-        (window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).vConsole.showPlugin(tab);
+        win.vConsole.showPlugin(tab);
       } catch { /* ignore */ }
     }
     this.notifySettings();
