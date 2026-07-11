@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface KeyboardShortcutsProps {
   lang: "en" | "zh-CN" | "zh-TW" | "zh-HK" | "ja" | "ru";
@@ -12,19 +12,26 @@ interface KeyboardShortcutsProps {
   visibility: Record<string, boolean>;
 }
 
-export const useKeyboardShortcuts = ({
-  lang,
-  open,
-  closeAll,
-  toggleTheme,
-  fetchData,
-  handleExportJSON,
-  handleExportPDF,
-  handleExportImage,
-  visibility,
-}: KeyboardShortcutsProps) => {
+export const useKeyboardShortcuts = (props: KeyboardShortcutsProps) => {
+  const propsRef = useRef(props);
+
+  useEffect(() => {
+    propsRef.current = props;
+  }, [props]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const {
+        open,
+        closeAll,
+        toggleTheme,
+        fetchData,
+        handleExportJSON,
+        handleExportPDF,
+        handleExportImage,
+        visibility,
+      } = propsRef.current;
+
       // Ignore shortcuts if the user is typing in form controls
       const activeElement = document.activeElement;
       if (activeElement) {
@@ -125,15 +132,5 @@ export const useKeyboardShortcuts = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [
-    lang,
-    open,
-    closeAll,
-    toggleTheme,
-    fetchData,
-    handleExportJSON,
-    handleExportPDF,
-    handleExportImage,
-    visibility,
-  ]);
+  }, []);
 };
