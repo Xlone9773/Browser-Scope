@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, GitCommit, Search, RefreshCw, Layers, Zap } from 'lucide-react';
+import { Package, GitCommit, RefreshCw, Layers, Zap } from 'lucide-react';
 import { ModuleState } from './ModulesTab';
 import packageJson from '../../package.json';
 import { Button } from '../ui/Button';

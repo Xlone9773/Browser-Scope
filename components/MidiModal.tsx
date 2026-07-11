@@ -12,10 +12,39 @@ interface MidiModalProps {
 
 type Waveform = 'sine' | 'square' | 'sawtooth' | 'triangle';
 
+interface MIDIPort {
+  id: string;
+  name?: string;
+  manufacturer?: string;
+  state: 'connected' | 'disconnected';
+  type: 'input' | 'output';
+}
+
+interface MIDIInput extends MIDIPort {
+  onmidimessage: ((event: MIDIMessageEvent) => void) | null;
+}
+
+interface MIDIOutput extends MIDIPort {
+  send(data: number[] | Uint8Array, timestamp?: number): void;
+}
+
+interface MIDIMessageEvent extends Event {
+  data: Uint8Array;
+}
+
+interface MIDIAccess extends EventTarget {
+  inputs: Map<string, MIDIInput>;
+  outputs: Map<string, MIDIOutput>;
+  onstatechange: ((event: Event) => void) | null;
+}
+
+interface CustomOscillatorNode extends OscillatorNode {
+  gainNode?: GainNode;
+}
+
 export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
-  // Fix: Use 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */' for MIDI types as WebMidi namespace is not available in global scope without specific typings
-  const [inputs, setInputs] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
-  const [_outputs, setOutputs] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
+  const [inputs, setInputs] = useState<MIDIInput[]>([]);
+  const [_outputs, setOutputs] = useState<MIDIOutput[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   
   // Audio Config
@@ -25,7 +54,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
 
   // Refs for audio context to persist
   const audioContextRef = useRef<AudioContext | null>(null);
-  const oscillatorsRef = useRef<Map<number, OscillatorNode>>(new Map());
+  const oscillatorsRef = useRef<Map<number, CustomOscillatorNode>>(new Map());
   const logContainerRef = useRef<HTMLDivElement>(null);
 
   // Initialize Web Audio
@@ -43,10 +72,9 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   useEffect(() => {
       const initMIDI = async () => {
           try {
-              
-              if (navigator.requestMIDIAccess) {
-                  
-                  const midiAccess = await navigator.requestMIDIAccess();
+              const nav = navigator as unknown as { requestMIDIAccess?: () => Promise<MIDIAccess> };
+              if (nav.requestMIDIAccess) {
+                  const midiAccess = await nav.requestMIDIAccess();
                   
                   const updateDevices = () => {
                       setInputs(Array.from(midiAccess.inputs.values()));
@@ -57,13 +85,13 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
                   midiAccess.onstatechange = updateDevices;
 
                   // Attach listeners to all inputs
-                  midiAccess.inputs.forEach((input: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
+                  midiAccess.inputs.forEach((input: MIDIInput) => {
                       input.onmidimessage = handleMidiMessage;
                   });
               } else {
                   addLog("Web MIDI API not supported in this browser.");
               }
-          } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+          } catch (e: unknown) {
               addLog(`MIDI Access Failed: ${e}`);
           }
       };
@@ -78,13 +106,11 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   }, [logs]);
 
   function addLog(msg: string) {
-      // Fix: Cast options to 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */' because fractionalSecondDigits might not be in the TS definition for DateTimeFormatOptions
-      const time = new Date().toLocaleTimeString([], { hour12: false, fractionalSecondDigits: 2 } as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
+      const time = new Date().toLocaleTimeString([], { hour12: false, fractionalSecondDigits: 2 } as Intl.DateTimeFormatOptions);
       setLogs(prev => [`[${time}] ${msg}`, ...prev].slice(0, 50));
   };
 
-  // Fix: Use 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */' for event type
-  function handleMidiMessage(event: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+  function handleMidiMessage(event: MIDIMessageEvent) {
       const [status, data1, data2] = event.data;
       const command = status & 0xf0;
       // const channel = status & 0x0f;
@@ -130,8 +156,8 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
       osc.start();
 
       oscillatorsRef.current.set(midiNote, osc);
-      // Store gain node on osc object hackily or separate map if needed for release envelope
-      (osc as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gainNode = gainNode;
+      // Store gain node on osc object safely via interface
+      (osc as CustomOscillatorNode).gainNode = gainNode;
 
       setActiveNotes(prev => new Set(prev).add(midiNote));
   };
@@ -141,12 +167,14 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
       if (osc) {
           const ctx = audioContextRef.current;
           if (ctx) {
-              const gainNode = (osc as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).gainNode as GainNode;
-              // Release envelope
-              gainNode.gain.cancelScheduledValues(ctx.currentTime);
-              gainNode.gain.setValueAtTime(gainNode.gain.value, ctx.currentTime);
-              gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-              osc.stop(ctx.currentTime + 0.1);
+              const gainNode = (osc as CustomOscillatorNode).gainNode;
+              if (gainNode) {
+                  // Release envelope
+                  gainNode.gain.cancelScheduledValues(ctx.currentTime);
+                  gainNode.gain.setValueAtTime(gainNode.gain.value, ctx.currentTime);
+                  gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+                  osc.stop(ctx.currentTime + 0.1);
+              }
           } else {
               osc.stop();
           }

@@ -31,15 +31,22 @@ export interface WebRTCCandidate {
     raw: string;
 }
 
-const customFetch = async (url: string, enableUdp: boolean, options: RequestInit = {}): Promise<any /* eslint-disable-line @typescript-eslint/no-explicit-any */> => {
-    const doProxyFetch = async () => {
+interface CustomFetchResponse {
+    ok: boolean;
+    status: number;
+    json(): Promise<unknown>;
+    text(): Promise<string>;
+}
+
+const customFetch = async (url: string, enableUdp: boolean, options: RequestInit = {}): Promise<CustomFetchResponse> => {
+    const doProxyFetch = async (): Promise<CustomFetchResponse> => {
         const res = await fetch('/api/proxy', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url, method: options.method || 'GET', useUdp: true })
         });
         
-        let proxyData;
+        let proxyData: { status: number; data: string; error?: string };
         try {
             proxyData = await res.json();
         } catch (_err) {
@@ -69,7 +76,8 @@ const customFetch = async (url: string, enableUdp: boolean, options: RequestInit
     }
 
     try {
-        return await fetch(url, options);
+        const response = await fetch(url, options);
+        return response as CustomFetchResponse;
     } catch (err: unknown) {
         const errorName = err instanceof Error ? err.name : '';
         const errorMessage = err instanceof Error ? err.message : '';
@@ -86,65 +94,67 @@ export const fetchIpInfoFromSource = async (source: string, enableUdp: boolean =
         if (source === 'ippure') {
             const res = await customFetch('https://my.ippure.com/v1/info', enableUdp, { referrerPolicy: 'no-referrer' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const json = await res.json();
+            const json = (await res.json()) as Record<string, unknown>;
             return {
-                ip: json.ip,
+                ip: json.ip as string,
                 success: true,
                 type: 'IPv4/IPv6', 
-                country: json.country,
-                countryCode: json.countryCode,
-                region: json.region,
-                regionCode: json.regionCode,
-                city: json.city,
-                isp: json.asOrganization,
-                asn: json.asn,
-                timezone: json.timezone,
-                longitude: json.longitude,
-                latitude: json.latitude,
-                postalCode: json.postalCode,
-                fraudScore: json.fraudScore,
-                isResidential: json.isResidential,
-                isBroadcast: json.isBroadcast,
-                userAgent: json.userAgent,
+                country: json.country as string,
+                countryCode: json.countryCode as string,
+                region: json.region as string,
+                regionCode: json.regionCode as string,
+                city: json.city as string,
+                isp: json.asOrganization as string,
+                asn: json.asn as number,
+                timezone: json.timezone as string,
+                longitude: json.longitude as string,
+                latitude: json.latitude as string,
+                postalCode: json.postalCode as string,
+                fraudScore: json.fraudScore as number,
+                isResidential: json.isResidential as boolean,
+                isBroadcast: json.isBroadcast as boolean,
+                userAgent: json.userAgent as string,
             };
         } else if (source === 'ipwhois') {
             const res = await customFetch('https://ipwho.is/', enableUdp, { referrerPolicy: 'no-referrer' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const json = await res.json();
-            if (!json.success && json.message) throw new Error(json.message);
+            const json = (await res.json()) as Record<string, unknown>;
+            if (!json.success && json.message) throw new Error(json.message as string);
+            const connection = json.connection as Record<string, unknown> | undefined;
+            const timezone = json.timezone as Record<string, unknown> | undefined;
             return {
-                ip: json.ip,
+                ip: json.ip as string,
                 success: true,
-                type: json.type || 'IPv4',
-                continent: json.continent,
-                country: json.country,
-                countryCode: json.country_code,
-                region: json.region,
-                regionCode: json.region_code,
-                city: json.city,
-                isp: json.connection?.org || json.connection?.isp,
-                asn: json.connection?.asn,
-                timezone: json.timezone?.id || (typeof json.timezone === 'string' ? json.timezone : undefined),
+                type: (json.type as string) || 'IPv4',
+                continent: json.continent as string,
+                country: json.country as string,
+                countryCode: json.country_code as string,
+                region: json.region as string,
+                regionCode: json.region_code as string,
+                city: json.city as string,
+                isp: (connection?.org || connection?.isp) as string,
+                asn: connection?.asn as number,
+                timezone: (timezone?.id || (typeof json.timezone === 'string' ? json.timezone : undefined)) as string,
                 longitude: json.longitude ? String(json.longitude) : undefined,
                 latitude: json.latitude ? String(json.latitude) : undefined,
-                postalCode: json.postal,
-                userAgent: json.userAgent
+                postalCode: json.postal as string,
+                userAgent: json.userAgent as string
             };
         } 
         else if (source === 'ipapi') {
             const res = await customFetch('https://ipapi.co/json/', enableUdp, { referrerPolicy: 'no-referrer' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const json = await res.json();
-            if (json.error) throw new Error(json.reason || 'API Error');
+            const json = (await res.json()) as Record<string, unknown>;
+            if (json.error) throw new Error((json.reason as string) || 'API Error');
             return {
-                ip: json.ip,
+                ip: json.ip as string,
                 success: true,
-                type: json.version || 'IPv4',
-                continent: json.continent_code,
-                country: json.country_name,
-                region: json.region,
-                city: json.city,
-                isp: json.org
+                type: (json.version as string) || 'IPv4',
+                continent: json.continent_code as string,
+                country: json.country_name as string,
+                region: json.region as string,
+                city: json.city as string,
+                isp: json.org as string
             };
         }
         else if (source === 'cloudflare') {
@@ -167,9 +177,9 @@ export const fetchIpInfoFromSource = async (source: string, enableUdp: boolean =
         else { // ipify default
             const res = await customFetch('https://api.ipify.org?format=json', enableUdp);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const json = await res.json();
+            const json = (await res.json()) as Record<string, unknown>;
             return {
-                ip: json.ip,
+                ip: json.ip as string,
                 success: true,
                 type: 'IPv4',
                 isp: 'Ipify'
@@ -200,8 +210,8 @@ export const detectIpv6 = async (source: string, enableUdp: boolean = false): Pr
         if (source === 'icanhazip') {
             return (await res.text()).trim();
         } else {
-            const data = await res.json();
-            return data.ip;
+            const data = (await res.json()) as Record<string, unknown>;
+            return data.ip as string;
         }
     } catch (_err) {
         return 'fail';
@@ -251,7 +261,7 @@ export const detectDns = async (enableUdp: boolean = false): Promise<{ ip: strin
     try {
         const res = await customFetch('https://edns.ip-api.com/json', enableUdp);
         if (!res.ok) throw new Error("API Unreachable");
-        const data = await res.json();
+        const data = (await res.json()) as { dns?: { ip?: string; geo?: string } } | undefined;
         
         if (data && data.dns) {
             return {
@@ -283,9 +293,9 @@ export const detectProtocols = async (): Promise<{ h2: string; h3: string }> => 
             if (entries.length > 0) {
                 
                                 // @ts-expect-error fixed implicitly typed external libraries
-                                return entries[entries.length - 1].nextHopProtocol || 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */';
+                                return entries[entries.length - 1].nextHopProtocol || 'any';
             }
-            return 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */';
+            return 'any';
         };
 
         return {

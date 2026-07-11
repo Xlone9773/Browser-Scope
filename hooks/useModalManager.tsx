@@ -1,4 +1,4 @@
-import React, { useState, useCallback, lazy, useEffect } from 'react';
+import React, { useState, useCallback, lazy } from 'react';
 
 // Lazy load components
 const CameraModal = lazy(() => import('../components/CameraModal').then(m => ({ default: m.CameraModal })));

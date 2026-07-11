@@ -6,11 +6,43 @@ import { Modal } from './ui/Modal';
 import { Slider } from './ui/Slider';
 
 // Fix for missing WebGPU types
-type GPUCanvasContext = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
-type GPUDevice = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
-type GPUComputePipeline = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
-type GPUBuffer = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
-type _GPUBindGroup = any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+interface GPUDeviceLocal {
+  queue: {
+    writeBuffer(buffer: unknown, bufferOffset: number, data: BufferSource): void;
+    submit(commandBuffers: unknown[]): void;
+  };
+  createBindGroup(descriptor: Record<string, unknown>): unknown;
+  createCommandEncoder(): {
+    beginComputePass(): {
+      setPipeline(pipeline: unknown): void;
+      setBindGroup(index: number, bindGroup: unknown): void;
+      dispatchWorkgroups(workgroupCountX: number, workgroupCountY?: number, workgroupCountZ?: number): void;
+      end(): void;
+    };
+    copyTextureToTexture(source: Record<string, unknown>, destination: Record<string, unknown>, copySize: unknown[]): void;
+    finish(): unknown;
+  };
+  createTexture(descriptor: Record<string, unknown>): {
+    createView(): unknown;
+  };
+  createShaderModule(descriptor: Record<string, unknown>): unknown;
+  createComputePipeline(descriptor: Record<string, unknown>): {
+    getBindGroupLayout(index: number): unknown;
+  };
+  createBuffer(descriptor: Record<string, unknown>): unknown;
+  destroy(): void;
+}
+
+interface GPUCanvasContextLocal {
+  configure(configuration: Record<string, unknown>): void;
+  getCurrentTexture(): unknown;
+}
+
+type GPUCanvasContext = GPUCanvasContextLocal;
+type GPUDevice = GPUDeviceLocal;
+type GPUComputePipeline = { getBindGroupLayout(index: number): unknown };
+type GPUBuffer = unknown;
+type _GPUBindGroup = unknown;
 
 interface RayTracingModalProps {
   onClose: () => void;
@@ -214,7 +246,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
   const deviceRef = useRef<GPUDevice | null>(null);
   const pipelineRef = useRef<GPUComputePipeline | null>(null);
   const uniformBufferRef = useRef<GPUBuffer | null>(null);
-  const computeTextureRef = useRef<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
+  const computeTextureRef = useRef<{ createView(): unknown } | null>(null);
   const rafRef = useRef<number | null>(null);
   const frameCountRef = useRef(0);
   const lastTimeRef = useRef(0);
@@ -232,11 +264,11 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
       if (!adapter) throw new Error("No adapter found");
       const device = await adapter.requestDevice();
-      deviceRef.current = device;
+      deviceRef.current = device as unknown as GPUDeviceLocal;
 
       const canvas = canvasRef.current;
       if (!canvas) return;
-      const context = canvas.getContext('webgpu' as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
+      const context = (canvas as HTMLCanvasElement).getContext('webgpu' as '2d') as unknown as GPUCanvasContextLocal;
       if (!context) throw new Error("WebGPU context creation failed");
       contextRef.current = context;
 
@@ -248,27 +280,27 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
 
       // Force 'rgba8unorm' to match the storage texture and avoid bgra8unorm_storage requirement
       const format = 'rgba8unorm';
-      (context as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).configure({
-        device,
+      context.configure({
+        device: device as unknown as Record<string, unknown>,
         format,
         alphaMode: 'premultiplied',
         usage: TEXTURE_USAGE_COPY_DST | TEXTURE_USAGE_RENDER_ATTACHMENT 
       });
 
-      const computeTexture = device.createTexture({
+      const computeTexture = (device as unknown as GPUDeviceLocal).createTexture({
         size: [canvas.width, canvas.height, 1],
         format: format,
         usage: TEXTURE_USAGE_STORAGE | TEXTURE_USAGE_COPY_SRC
       });
-      computeTextureRef.current = computeTexture;
+      computeTextureRef.current = computeTexture as unknown as { createView(): unknown };
 
-      const shaderModule = device.createShaderModule({ code: SHADER_CODE });
+      const shaderModule = (device as unknown as GPUDeviceLocal).createShaderModule({ code: SHADER_CODE });
       
-      const pipeline = device.createComputePipeline({
+      const pipeline = (device as unknown as GPUDeviceLocal).createComputePipeline({
         layout: 'auto',
         compute: { module: shaderModule, entryPoint: 'main' }
       });
-      pipelineRef.current = pipeline;
+      pipelineRef.current = pipeline as unknown as GPUComputePipeline;
 
       // Uniform Buffer (size needs to be aligned to 16 bytes)
       // vec2 resolution (8) + time (4) + frame (4) + vec3 camPos (12+4pad) + vec3 camTarget (12+4pad) + rough (4) + metal (4) + vec3 color (12+4pad)
@@ -290,7 +322,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       }
 
       startLoop();
-    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (e: unknown) {
       console.error(e);
       setError(t.error_webgpu);
     }

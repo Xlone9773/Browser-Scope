@@ -60,7 +60,7 @@ function murmurhash3_32_gc(key: string, seed: number) {
 
 interface Component {
   key: string;
-  value: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+  value: unknown;
   enabled: boolean;
 }
 
@@ -283,7 +283,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
     setVisitorId('');
 
     try {
-      const rawComponents: Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */> = {};
+      const rawComponents: Record<string, unknown> = {};
 
       if (activeTab === 'v5') {
         // Load v5
@@ -295,7 +295,8 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         
         // Convert v5 components object to our format
         if (result.components) {
-            Object.entries(result.components).forEach(([key, val]: [string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */]) => {
+            const compsMap = result.components as Record<string, { value: unknown }>;
+            Object.entries(compsMap).forEach(([key, val]) => {
                 rawComponents[key] = val.value;
             });
         }
@@ -309,7 +310,8 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         
         // Convert v4 components object to our format
         if (result.components) {
-            Object.entries(result.components).forEach(([key, val]: [string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */]) => {
+            const compsMap = result.components as Record<string, { value: unknown }>;
+            Object.entries(compsMap).forEach(([key, val]) => {
                 rawComponents[key] = val.value;
             });
         }
@@ -319,7 +321,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         const Fingerprint2 = await import('fingerprintjs2');
         
         // V2 uses a callback pattern usually, but we wrap in promise
-        const componentsV2 = await new Promise<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>((resolve) => {
+        const componentsV2 = await new Promise<{ key: string; value: unknown }[]>((resolve) => {
             if (typeof window.requestIdleCallback === 'function') {
                 requestIdleCallback(() => {
                     // @ts-expect-error auto-fixed
@@ -359,7 +361,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
       // Initial Hash Calculation
       calculateHash(comps, salt, startTime);
 
-    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (e: unknown) {
       console.error("Fingerprint error:", e);
       if (isMountedRef.current) {
           setVisitorId(t.error_loading || "Error loading library");

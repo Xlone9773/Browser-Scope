@@ -4,6 +4,10 @@ import { Mic, Square, Download, Play, Pause, RefreshCw, Activity } from 'lucide-
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 
+interface ConnectedAudioElement extends HTMLAudioElement {
+  hasSourceConnected?: boolean;
+}
+
 interface AudioRecorderModalProps {
   onClose: () => void;
   t: Translation['audioTool'];
@@ -159,17 +163,18 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
   // Audio Playback Node setup
   useEffect(() => {
       if (audioUrl && audioPlayerRef.current && audioContextRef.current && analyzerRef.current) {
+          const player = audioPlayerRef.current as ConnectedAudioElement;
           // Check to prevent creating MediaElementSource twice on the same element
-          if (!(audioPlayerRef.current as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).hasSourceConnected) {
+          if (!player.hasSourceConnected) {
               const audioCtx = audioContextRef.current;
               // Add a new track source
-              const source = audioCtx.createMediaElementSource(audioPlayerRef.current);
+              const source = audioCtx.createMediaElementSource(player);
               source.connect(analyzerRef.current);
               // Important: We MUST connect it to destination to hear it, but we only create ONE analyzer!
               // For microphone record, we didn't connect analyzer to destination.
               // To hear playback, we can connect the element source straight to destination as well.
               source.connect(audioCtx.destination);
-              (audioPlayerRef.current as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).hasSourceConnected = true;
+              player.hasSourceConnected = true;
           }
       }
   }, [audioUrl]);
@@ -262,11 +267,11 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
           setAudioBlob(null);
           setAudioUrl(null);
           
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (e: unknown) {
           console.error("Recorder error:", e);
       }
 
-    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (err: unknown) {
       console.error("Error accessing microphone:", err);
       setError(t.error_mic);
     }

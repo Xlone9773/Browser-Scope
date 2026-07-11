@@ -130,7 +130,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                     if (!toStringVal.includes('native code')) {
                         addAnomaly('native_override', 'Native function toString overridden', 'danger', 'trust', 30);
                     }
-                } catch (e) {
+                } catch {
                     addAnomaly('native_override_error', 'Error checking native function toString', 'suspicious', 'trust', 10);
                 }
             }
@@ -140,9 +140,10 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                 
                                 // @ts-expect-error fixed implicitly typed external libraries
                                 null.test();
-            } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-                if (e.stack) {
-                    const stackString = e.stack.toString();
+            } catch (e: unknown) {
+                const errObj = e instanceof Error ? e : (typeof e === 'object' && e !== null ? e as Record<string, unknown> : {});
+                if (errObj.stack) {
+                    const stackString = String(errObj.stack);
                     if (navigator.userAgent.includes('Chrome') && stackString.includes('@')) {
                         addAnomaly('engine_mismatch', 'JS Engine error stack mismatch', 'danger', 'trust', 30);
                     }

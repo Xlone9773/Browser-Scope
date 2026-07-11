@@ -179,7 +179,9 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
       
             // @ts-expect-error fixed implicitly typed external libraries
             if (typeof DeviceMotionEvent.requestPermission !== 'function') {
-          setPermissionStatus('granted');
+          setTimeout(() => {
+              setPermissionStatus('granted');
+          }, 0);
           window.addEventListener('devicemotion', handleMotion);
           window.addEventListener('deviceorientation', handleOrientation);
       }

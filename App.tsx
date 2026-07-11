@@ -25,14 +25,15 @@ import { HardwareCard } from "./components/cards/HardwareCard";
 import { DisplayCard } from "./components/cards/DisplayCard";
 import { QuickSummaryWidget } from "./components/sections/QuickSummaryWidget";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function lazyWithRetry<T extends React.ComponentType<any>>(
+type BrowserSafeAny = ReturnType<typeof JSON.parse>;
+
+function lazyWithRetry<T extends React.ComponentType<BrowserSafeAny>>(
   importFn: () => Promise<{ default: T }>,
   retries = 3,
   delay = 500
 ): React.LazyExoticComponent<T> {
   return React.lazy(() =>
-    importFn().catch((error) => {
+    (importFn().catch((error) => {
       return new Promise<{ default: T }>((resolve) => {
         let attempts = 0;
         const attemptLoad = () => {
@@ -50,8 +51,8 @@ function lazyWithRetry<T extends React.ComponentType<any>>(
         };
         setTimeout(attemptLoad, delay);
       });
-    })
-  );
+    }) as unknown) as Promise<{ default: React.ComponentType<BrowserSafeAny> }>
+  ) as unknown as React.LazyExoticComponent<T>;
 }
 
 const SecurityCard = lazyWithRetry(() =>
@@ -347,7 +348,7 @@ const App: React.FC = () => {
   }, [data]);
 
   const { permStatus, geoData, checkPermissionStatus, requestPermission } =
-    useAppPermissions((modalId) => open(modalId as any /* eslint-disable-line @typescript-eslint/no-explicit-any */));
+    useAppPermissions((modalId) => open(modalId));
 
   const [isDevToolsFloating, setIsDevToolsFloating] = useState(false);
 

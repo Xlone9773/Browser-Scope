@@ -13,8 +13,8 @@ type ParameterCategory = 'WebGL' | 'WebGPU' | 'Features';
 
 export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose, t }) => {
   const [activeTab, setActiveTab] = useState<ParameterCategory>('WebGL');
-  const [webglInfo, setWebglInfo] = useState<Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */>>({});
-  const [webgpuInfo, setWebgpuInfo] = useState<Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */>>({});
+  const [webglInfo, setWebglInfo] = useState<Record<string, unknown>>({});
+  const [webgpuInfo, setWebgpuInfo] = useState<Record<string, unknown>>({});
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [copied, setCopied] = useState(false);
@@ -24,7 +24,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
       setLoading(true);
       
       // 1. WebGL Limits
-      const glData: Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */> = {};
+      const glData: Record<string, unknown> = {};
       try {
         const canvas = document.createElement('canvas');
         const gl = canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -93,7 +93,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
       setWebglInfo(glData);
 
       // 2. WebGPU Limits
-      const gpuData: Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */> = {};
+      const gpuData: Record<string, unknown> = {};
       try {
           if (navigator.gpu) {
               const adapter = await navigator.gpu.requestAdapter();
@@ -218,11 +218,11 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                             </div>
                         ))}
                         {/* Special Features Section for WebGPU */}
-                        {activeTab === 'WebGPU' && webgpuInfo.__features__ && webgpuInfo.__features__.length > 0 && (
+                        {activeTab === 'WebGPU' && Array.isArray(webgpuInfo.__features__) && (webgpuInfo.__features__ as string[]).length > 0 && (
                             <div className="md:col-span-2 mt-4">
                                 <h3 className="text-sm font-bold text-slate-500 mb-3 px-1">{t.supported_features}</h3>
                                 <div className="flex flex-wrap gap-2">
-                                    {webgpuInfo.__features__.map((feat: string) => (
+                                    {(webgpuInfo.__features__ as string[]).map((feat: string) => (
                                         <span key={feat} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-mono rounded border border-indigo-100 dark:border-indigo-800">
                                             {feat}
                                         </span>

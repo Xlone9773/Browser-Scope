@@ -74,7 +74,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
       if (videoDevices.length > 0 && !selectedDeviceId) {
         setSelectedDeviceId(videoDevices[0].deviceId);
       }
-    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (err: unknown) {
       console.error("Error enumerating devices:", err);
       setError(t.no_devices);
     }
@@ -88,12 +88,14 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
 
     const startCamera = async () => {
       // Helper to map error to message
-      const handleError = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
-           if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+      const handleError = (e: unknown) => {
+           const errObj = e instanceof Error ? e : (typeof e === 'object' && e !== null ? e as Record<string, unknown> : {});
+           const errName = errObj.name || '';
+           if (errName === 'NotAllowedError' || errName === 'PermissionDeniedError') {
                setError(t.permission_denied);
-           } else if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
+           } else if (errName === 'NotFoundError' || errName === 'DevicesNotFoundError') {
                setError(t.no_devices);
-           } else if (e.name === 'NotReadableError' || e.name === 'TrackStartError') {
+           } else if (errName === 'NotReadableError' || errName === 'TrackStartError') {
                setError(t.error_hardware);
            } else {
                setError(t.error_generic);
@@ -144,10 +146,11 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
              }
           }
         }
-      } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (err: unknown) {
         console.error("Error accessing camera:", err);
         // Try without audio if it failed (maybe mic permission denied or mic not found)
-        if (err.name === 'NotAllowedError' || err.name === 'NotFoundError') {
+        const errName = err instanceof Error ? err.name : (typeof err === 'object' && err !== null ? (err as Record<string, unknown>).name : '');
+        if (errName === 'NotAllowedError' || errName === 'NotFoundError') {
              try {
                  localStream = await navigator.mediaDevices.getUserMedia({
                     video: { 
@@ -175,11 +178,11 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                      }
                  }
                  return; // Successfully recovered without audio
-             } catch (retryErr: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+             } catch (retryErr: unknown) {
                                   handleError(retryErr);
              }
         } else {
-            handleError(err);
+             handleError(err);
         }
       }
     };
@@ -285,7 +288,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
           recorder.start();
           mediaRecorderRef.current = recorder;
           setIsRecording(true);
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (e: unknown) {
           console.error("Recording error:", e);
       }
   };

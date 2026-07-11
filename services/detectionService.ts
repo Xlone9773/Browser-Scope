@@ -114,10 +114,10 @@ export const getAllData = async (): Promise<BrowserData> => {
 
   // Detect Intl Features
   const intlSupport = {
-      listFormat: typeof (Intl as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).ListFormat !== 'undefined',
+      listFormat: 'ListFormat' in Intl,
       relativeTimeFormat: typeof Intl.RelativeTimeFormat !== 'undefined',
-      displayNames: typeof (Intl as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).DisplayNames !== 'undefined',
-      segmenter: typeof (Intl as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).Segmenter !== 'undefined',
+      displayNames: 'DisplayNames' in Intl,
+      segmenter: 'Segmenter' in Intl,
       pluralRules: typeof Intl.PluralRules !== 'undefined',
       collator: typeof Intl.Collator !== 'undefined'
   };

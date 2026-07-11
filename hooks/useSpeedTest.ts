@@ -107,7 +107,7 @@ export const SPEED_TEST_PRESETS: SpeedTestPreset[] = [
     // Europe
     { 
         id: 'hetzner_de', 
-        name: 'Hetzner (Germany /* eslint-disable-line @typescript-eslint/no-explicit-any *//Falkenstein)', 
+        name: 'Hetzner (Germany/Falkenstein)', 
         url: 'https://fsn1-speed.hetzner.com/{{size}}.bin', 
         isDynamic: false, 
         supportsUpload: false,
@@ -440,11 +440,12 @@ export const useSpeedTest = () => {
             setTestState('done');
             setMetrics(prev => ({ ...prev, current: 0 }));
 
-        } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-            if (e.name !== 'AbortError') {
+        } catch (e: unknown) {
+            const errObj = e instanceof Error ? e : (typeof e === 'object' && e !== null ? e as Record<string, unknown> : {});
+            if (errObj.name !== 'AbortError') {
                 console.error("Speed test error", e);
                 setTestState('error');
-                setErrorMsg(e.message || "Network Error");
+                setErrorMsg((errObj.message as string) || "Network Error");
             }
         }
     }, [testState, updateHistory]);

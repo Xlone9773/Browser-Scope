@@ -9,16 +9,33 @@ interface WebDeviceModalProps {
   t: Translation['webDevice'];
 }
 
+interface WebDeviceItem {
+  id: string;
+  name: string;
+  details?: string;
+  raw: unknown;
+}
+
+interface WebAuthnRawCredential {
+  rawId?: ArrayBuffer;
+}
+
+interface BluetoothRawDevice {
+  gatt?: {
+    connected?: boolean;
+  };
+}
+
 export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) => {
   const [activeTab, setActiveTab] = useState<'bluetooth' | 'usb' | 'serial' | 'webauthn' | 'nfc'>('usb');
   const [btRegex, setBtRegex] = useState<string>('');
 
   // Universal Device State
-  const [usbDevices, setUsbDevices] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
-  const [btDevices, setBtDevices] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
-  const [serialDevices, setSerialDevices] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
-  const [webAuthnDevices, setWebAuthnDevices] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
-  const [nfcDevices, setNfcDevices] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
+  const [usbDevices, setUsbDevices] = useState<WebDeviceItem[]>([]);
+  const [btDevices, setBtDevices] = useState<WebDeviceItem[]>([]);
+  const [serialDevices, setSerialDevices] = useState<WebDeviceItem[]>([]);
+  const [webAuthnDevices, setWebAuthnDevices] = useState<WebDeviceItem[]>([]);
+  const [nfcDevices, setNfcDevices] = useState<WebDeviceItem[]>([]);
 
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,23 +51,24 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
       setError(null);
   };
 
-  const handleError = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, defaultMsg: string) => {
+  const handleError = (e: unknown, defaultMsg: string) => {
     console.error(e);
     if (!e || typeof e !== 'object') {
         setError(defaultMsg);
         return;
     }
-    const msgLower = (e.message || '').toLowerCase();
-    if (e.name === 'NotFoundError') {
+    const errObj = e as Record<string, unknown>;
+    const msgLower = (String(errObj.message || '')).toLowerCase();
+    if (errObj.name === 'NotFoundError') {
         setError(t.err_not_found);
         return;
     }
-    let msg = e.message || defaultMsg;
-    if (e.name === 'NotAllowedError') {
+    let msg = String(errObj.message || defaultMsg);
+    if (errObj.name === 'NotAllowedError') {
         msg = t.err_not_allowed;
-    } else if (e.name === 'NotSupportedError' || msgLower.includes('not supported') || msgLower.includes('not implement')) {
+    } else if (errObj.name === 'NotSupportedError' || msgLower.includes('not supported') || msgLower.includes('not implement')) {
         msg = t.err_not_supported;
-    } else if (e.name === 'SecurityError') {
+    } else if (errObj.name === 'SecurityError') {
         msg = t.err_security;
     } else if (msgLower.includes('user gesture')) {
         msg = t.err_user_gesture;
@@ -80,8 +98,9 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   if (!rx.test(nameToTest)) {
                      throw new Error(`Device name "${nameToTest}" does not match regex filter`);
                   }
-              } catch (regExErr: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-                                    throw new Error(`Regex check failed: ${regExErr.message}`);
+              } catch (regExErr: unknown) {
+                  const errMsg = regExErr instanceof Error ? regExErr.message : String(regExErr);
+                  throw new Error(`Regex check failed: ${errMsg}`);
               }
           } else {
               // Built-in hardcoded filtering to avoid messy irrelevant devices if no custom regex provided
@@ -94,7 +113,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               name: device.name || 'Unnamed BT Device',
               raw: device
           }]);
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (e: unknown) {
           handleError(e, 'Scan failed');
       }
       setScanning(false);
@@ -112,11 +131,11 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           const device = await navigator.usb.requestDevice({ filters: [] });
           setUsbDevices(prev => prev.find(d => d.id === (device.serialNumber || `${device.vendorId}-${device.productId}`)) ? prev : [...prev, {
               id: device.serialNumber || `${device.vendorId}-${device.productId}`,
-              name: device.productName,
+              name: device.productName || "Unknown USB Device",
               details: `Vendor: ${device.vendorId}, Product: ${device.productId}`,
               raw: device
           }]);
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (e: unknown) {
           handleError(e, 'USB request failed');
       }
       setScanning(false);
@@ -139,7 +158,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               details: `Vendor: ${info.usbVendorId}, Product: ${info.usbProductId}`,
               raw: port
           }]);
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (e: unknown) {
           handleError(e, 'Serial port request failed');
       }
       setScanning(false);
@@ -176,7 +195,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   raw: credential
               }]);
           }
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (e: unknown) {
           handleError(e, 'Registration failed');
       }
       setScanning(false);
@@ -190,21 +209,24 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           const challenge = new Uint8Array(32);
           window.crypto.getRandomValues(challenge);
           
-          const options: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = {
-              publicKey: {
-                  challenge,
-                  rpId: window.location.hostname,
-                  userVerification: "preferred",
-                  timeout: 60000
-              }
+          const publicKeyOpts: PublicKeyCredentialRequestOptions = {
+              challenge,
+              rpId: window.location.hostname,
+              userVerification: "preferred",
+              timeout: 60000
           };
 
           if (allowedId) {
-              options.publicKey.allowCredentials = [{
+              publicKeyOpts.allowCredentials = [{
                   id: allowedId,
                   type: "public-key"
               }];
           }
+
+          const options: CredentialRequestOptions = {
+              publicKey: publicKeyOpts
+          };
+
           const credential = await navigator.credentials.get(options);
           
           if (credential) {
@@ -215,7 +237,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   raw: credential
               }]);
           }
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (e: unknown) {
           handleError(e, 'Authentication failed');
       }
       setScanning(false);
@@ -231,10 +253,11 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
       setError(null);
       try {
           
-                    // @ts-expect-error fixed implicitly typed external libraries
-                    const ndef = new NDEFReader();
+          // @ts-expect-error fixed implicitly typed external libraries
+          const ndef = new NDEFReader();
           await ndef.scan();
-          ndef.addEventListener("reading", ({ message, serialNumber }: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
+          ndef.addEventListener("reading", (event: Event) => {
+              const { message, serialNumber } = event as unknown as { message: { records: { recordType: string; data?: DataView }[] }; serialNumber: string };
               setNfcDevices(prev => {
                   const existing = prev.find(d => d.id === serialNumber);
                   const newRecs = message.records.length;
@@ -251,11 +274,11 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               setScanning(false);
           });
           
-          ndef.addEventListener("error", (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
+          ndef.addEventListener("error", (e: Event) => {
               handleError(e, "NFC scan error");
               setScanning(false);
           });
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (e: unknown) {
           handleError(e, "NFC scan failed");
           setScanning(false);
       }
@@ -280,7 +303,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                 details: `Successfully wrote test message`,
                 raw: null
           }]);
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (e: unknown) {
           handleError(e, "NFC write failed");
       }
       setScanning(false);
@@ -415,42 +438,46 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                         </div>
                     ) : (
                         <div className="space-y-2">
-                            {currentDevices.map((dev, idx) => (
-                                <div
-                                    key={dev.id || idx}
-                                    className={`p-3 rounded-lg flex items-center justify-between border transition-all ${activeTab === 'webauthn' && dev.raw?.rawId ? 'hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-purple-200 dark:border-purple-800' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 border-slate-100 dark:border-slate-700'}`}
-                                    onClick={() => {
-                                        if (activeTab === 'webauthn' && dev.raw?.rawId && dev.name === 'Registered Passkey (New)') {
-                                            testWebAuthnAuth(dev.raw.rawId);
-                                        }
-                                    }}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-full ${
-                                            activeTab === 'usb' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500' :
-                                            activeTab === 'bluetooth' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-500' :
-                                            activeTab === 'webauthn' ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-500' :
-                                            activeTab === 'nfc' ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-500' :
-                                            'bg-amber-50 dark:bg-amber-900/20 text-amber-500'
-                                        }`}>
-                                            {activeTab === 'usb' && <Usb size={16} />}
-                                            {activeTab === 'bluetooth' && <Bluetooth size={16} />}
-                                            {activeTab === 'serial' && <Settings2 size={16} />}
-                                            {activeTab === 'webauthn' && <Key size={16} />}
-                                            {activeTab === 'nfc' && <Nfc size={16} />}
-                                        </div>
-                                        <div>
-                                            <div className="font-bold text-slate-700 dark:text-slate-200 text-sm">{dev.name}</div>
-                                            <div className="text-xs text-slate-400 font-mono">
-                                                {dev.details || dev.id}
+                            {currentDevices.map((dev, idx) => {
+                                const webauthnRaw = dev.raw as WebAuthnRawCredential | undefined;
+                                const bluetoothRaw = dev.raw as BluetoothRawDevice | undefined;
+                                return (
+                                    <div
+                                        key={dev.id || idx}
+                                        className={`p-3 rounded-lg flex items-center justify-between border transition-all ${activeTab === 'webauthn' && webauthnRaw?.rawId ? 'hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-purple-200 dark:border-purple-800' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 border-slate-100 dark:border-slate-700'}`}
+                                        onClick={() => {
+                                            if (activeTab === 'webauthn' && webauthnRaw?.rawId && dev.name === 'Registered Passkey (New)') {
+                                                testWebAuthnAuth(webauthnRaw.rawId);
+                                            }
+                                        }}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className={`p-2 rounded-full ${
+                                                activeTab === 'usb' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500' :
+                                                activeTab === 'bluetooth' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-500' :
+                                                activeTab === 'webauthn' ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-500' :
+                                                activeTab === 'nfc' ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-500' :
+                                                'bg-amber-50 dark:bg-amber-900/20 text-amber-500'
+                                            }`}>
+                                                {activeTab === 'usb' && <Usb size={16} />}
+                                                {activeTab === 'bluetooth' && <Bluetooth size={16} />}
+                                                {activeTab === 'serial' && <Settings2 size={16} />}
+                                                {activeTab === 'webauthn' && <Key size={16} />}
+                                                {activeTab === 'nfc' && <Nfc size={16} />}
+                                            </div>
+                                            <div>
+                                                <div className="font-bold text-slate-700 dark:text-slate-200 text-sm">{dev.name}</div>
+                                                <div className="text-xs text-slate-400 font-mono">
+                                                    {dev.details || dev.id}
+                                                </div>
                                             </div>
                                         </div>
+                                        {bluetoothRaw?.gatt?.connected && (
+                                            <span className="px-2 py-1 bg-green-100 text-green-700 text-[10px] rounded-full font-bold">Connected</span>
+                                        )}
                                     </div>
-                                    {dev.raw?.gatt?.connected && (
-                                        <span className="px-2 py-1 bg-green-100 text-green-700 text-[10px] rounded-full font-bold">Connected</span>
-                                    )}
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>
