@@ -250,11 +250,11 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                                     ) : (
                                         <Button
                                             onClick={() => mod.onUnload ? mod.onUnload() : mod.setOpen(false)}
-                                            disabled={!mod.isOpen ? !mod.isLoaded : undefined}
+                                            disabled={(!mod.isOpen && !mod.isLoaded) ? true : false}
                                             variant={mod.isOpen ? "danger-soft" : "secondary"}
                                             size="xs"
                                             leftIcon={mod.isOpen ? <Power size={14} /> : <Trash2 size={14} />}
-                                            className={!mod.isOpen && !mod.isLoaded ? "opacity-0" : "transition-opacity"}
+                                            className={(!mod.isOpen && !mod.isLoaded) ? "opacity-0" : "transition-opacity"}
                                         >
                                             {t?.actions?.unload}
                                         </Button>

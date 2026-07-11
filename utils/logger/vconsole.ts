@@ -1,4 +1,4 @@
-export async function loadVConsole(store: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+export async function loadVConsole(store: unknown) {
   const win = window as any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
   if (win.vConsole) {
     try {

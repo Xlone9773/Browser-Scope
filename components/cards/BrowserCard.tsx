@@ -5,7 +5,7 @@ import { BrowserData } from '../../types';
 
 interface BrowserCardProps {
     systemData: BrowserData['system'];
-    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    t: unknown;
 }
 
 export const BrowserCard: React.FC<BrowserCardProps> = ({ systemData, t }) => {

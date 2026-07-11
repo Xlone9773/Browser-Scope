@@ -20,16 +20,16 @@ const loadCache = () => {
     return null;
 };
 
-const saveCache = (video: any  [], audio: any  [], drm: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]) => {
+const saveCache = (video: unknown[], audio: unknown[], drm: unknown[]) => {
     try {
         localStorage.setItem(CACHE_KEY, JSON.stringify({ video, audio, drm }));
     } catch { /* ignore */ }
 };
 
 const memCache = loadCache();
-let cachedVideoResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] | null = memCache?.video || null;
-let cachedAudioResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] | null = memCache?.audio || null;
-let cachedDrmResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] | null = memCache?.drm || null;
+let cachedVideoResults: unknown[] | null = memCache?.video || null;
+let cachedAudioResults: unknown[] | null = memCache?.audio || null;
+let cachedDrmResults: unknown[] | null = memCache?.drm || null;
 
 interface VideoDecodeModalProps {
     onClose: () => void;
@@ -51,8 +51,8 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
     const runTests = async () => {
         setIsTesting(true);
         setProgress(0);
-        const tempVideoResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] = [];
-        const tempAudioResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] = [];
+        const tempVideoResults: unknown[] = [];
+        const tempAudioResults: unknown[] = [];
         
         let done = 0;
             const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length) + 3; // 3 DRM systems
@@ -101,7 +101,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                     try {
                         
                         if (navigator.mediaCapabilities) {
-                            const config: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = {
+                            const config: unknown = {
                                 type: 'file', 
                                 video: {
                                     contentType: codec.type,
@@ -213,11 +213,11 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
         }
     };
 
-    const getFilteredResults = (results: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]) => {
+    const getFilteredResults = (results: unknown[]) => {
         if (!showSupportedOnly) return results;
         return results.map(row => ({
             ...row,
-            tests: row.tests.filter((t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => t.supported)
+            tests: row.tests.filter((t: unknown) => t.supported)
         })).filter(row => row.tests.length > 0);
     };
 
@@ -323,7 +323,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                                         </div>
                                         
                                         <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
-                                            {row.tests.map((test: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, idx: number) => (
+                                            {row.tests.map((test: unknown, idx: number) => (
                                                 <div key={idx} className={`p-3 flex flex-col gap-1.5 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
                                                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
                                                     {test.error ? (
@@ -380,7 +380,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                                         </div>
                                         
                                         <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
-                                            {row.tests.map((test: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, idx: number) => (
+                                            {row.tests.map((test: unknown, idx: number) => (
                                                 <div key={idx} className={`p-3 flex flex-col gap-1 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
                                                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
                                                     {!test.supported ? (

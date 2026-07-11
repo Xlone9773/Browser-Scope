@@ -3,8 +3,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import { RotateCcw, Check, Download, Upload } from 'lucide-react';
 import { Button } from '../ui/Button';
 
+type NestedRecord = { [key: string]: string | NestedRecord | undefined };
+
 interface GeneralTabProps {
-    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */; // Using any /* eslint-disable-line @typescript-eslint/no-explicit-any */ for t because Translation type was getting complicated with extensions
+    t: NestedRecord;
     timeFormat: '12' | '24';
     setTimeFormat: (format: '12' | '24') => void;
     enableUdp?: boolean;
@@ -13,7 +15,7 @@ interface GeneralTabProps {
     setHiddenCards: (cards: string[]) => void;
     restoreAllNotifications: () => void;
     dismissedNotificationsCount: number;
-    translationDict: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    translationDict: NestedRecord;
     showQuickSummary: boolean;
     toggleShowQuickSummary: (val: boolean) => void;
     lang: string;

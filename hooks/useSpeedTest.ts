@@ -440,11 +440,11 @@ export const useSpeedTest = () => {
             setTestState('done');
             setMetrics(prev => ({ ...prev, current: 0 }));
 
-        } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-            if (e.name !== 'AbortError') {
+        } catch (e: unknown) {
+            if (e instanceof Error && e.name !== 'AbortError') {
                 console.error("Speed test error", e);
                 setTestState('error');
-                setErrorMsg(e.message || "Network Error");
+                setErrorMsg(e instanceof Error ? e.message : "Network Error");
             }
         }
     }, [testState, updateHistory]);

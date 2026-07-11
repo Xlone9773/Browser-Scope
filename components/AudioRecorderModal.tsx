@@ -262,11 +262,11 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
           setAudioBlob(null);
           setAudioUrl(null);
           
-      } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (e: unknown) {
           console.error("Recorder error:", e);
       }
 
-    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (err: unknown) {
       console.error("Error accessing microphone:", err);
       setError(t.error_mic);
     }

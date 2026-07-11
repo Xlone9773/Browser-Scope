@@ -16,7 +16,7 @@ import {
 
 interface NetworkToolsModalProps {
     onClose: () => void;
-    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    t: unknown;
     enableUdp?: boolean;
 }
 
@@ -204,7 +204,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
         setCheckingProto(false);
     };
 
-    const renderBentoItem = (icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, label: string, value: string | number | undefined | null | boolean, colorClass = 'text-slate-800 dark:text-slate-200', colSpan = 'col-span-1') => {
+    const renderBentoItem = (icon: unknown, label: string, value: string | number | undefined | null | boolean, colorClass = 'text-slate-800 dark:text-slate-200', colSpan = 'col-span-1') => {
         if (value === undefined || value === null || value === '') return null;
         
         const displayValue = typeof value === 'boolean' ? (value ? networkT.ip.yes : networkT.ip.no) : value;

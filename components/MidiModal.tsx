@@ -57,13 +57,13 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
                   midiAccess.onstatechange = updateDevices;
 
                   // Attach listeners to all inputs
-                  midiAccess.inputs.forEach((input: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
+                  midiAccess.inputs.forEach((input: unknown) => {
                       input.onmidimessage = handleMidiMessage;
                   });
               } else {
                   addLog("Web MIDI API not supported in this browser.");
               }
-          } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+          } catch (e: unknown) {
               addLog(`MIDI Access Failed: ${e}`);
           }
       };
@@ -84,7 +84,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   };
 
   // Fix: Use 'any /* eslint-disable-line @typescript-eslint/no-explicit-any */' for event type
-  function handleMidiMessage(event: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+  function handleMidiMessage(event: unknown) {
       const [status, data1, data2] = event.data;
       const command = status & 0xf0;
       // const channel = status & 0x0f;

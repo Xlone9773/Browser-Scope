@@ -60,7 +60,7 @@ function murmurhash3_32_gc(key: string, seed: number) {
 
 interface Component {
   key: string;
-  value: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+  value: unknown;
   enabled: boolean;
 }
 
@@ -359,7 +359,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
       // Initial Hash Calculation
       calculateHash(comps, salt, startTime);
 
-    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (e: unknown) {
       console.error("Fingerprint error:", e);
       if (isMountedRef.current) {
           setVisitorId(t.error_loading || "Error loading library");

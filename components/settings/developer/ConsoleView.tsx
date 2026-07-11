@@ -122,8 +122,8 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
       }
       if (output === undefined) output = "undefined";
       loggerStore.addConsole("output", output);
-    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-      loggerStore.addConsole("error", e.message || String(e));
+    } catch (e: unknown) {
+      loggerStore.addConsole("error", e instanceof Error ? e.message : String(e));
     }
   };
 

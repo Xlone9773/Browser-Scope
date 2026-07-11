@@ -6,7 +6,7 @@ import { Modal } from './ui/Modal';
 
 interface DisplayToolsModalProps {
     onClose: () => void;
-    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */; // Using any /* eslint-disable-line @typescript-eslint/no-explicit-any */ for simplicity since we don't know the exact type, or Translation['settings']['display'] if passed
+    t: unknown; // Using any /* eslint-disable-line @typescript-eslint/no-explicit-any */ for simplicity since we don't know the exact type, or Translation['settings']['display'] if passed
 }
 
 export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t }) => {

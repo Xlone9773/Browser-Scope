@@ -164,7 +164,7 @@ ${errorInfo?.componentStack}`;
     window.location.reload();
   };
 
-  private getAnalysis(error: Error | null, t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+  private getAnalysis(error: Error | null, t: unknown) {
     if (!error) return t.analysis_no_error;
     const msg = error.message.toLowerCase();
     if (

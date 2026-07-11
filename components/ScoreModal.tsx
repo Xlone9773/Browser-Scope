@@ -7,7 +7,7 @@ import { Modal } from './ui/Modal';
 interface ScoreModalProps {
   scoreData: FingerprintScore;
   onClose: () => void;
-  t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+  t: unknown;
 }
 
 export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t }) => {

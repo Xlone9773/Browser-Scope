@@ -94,7 +94,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
           // Fallback if ServiceWorker is not available or getRegistration fails
           const n = new Notification(title, { body, icon: notifIcon });
           n.onclick = () => { window.focus(); };
-      } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (error: unknown) {
           console.error('Notification error:', error);
           const n = new Notification(title, { body, icon: notifIcon });
           n.onclick = () => { window.focus(); };
@@ -198,7 +198,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                                     <div className="w-32 min-w-[128px] shrink-0">
                                         <Select 
                                             value={act.type}
-                                            onChange={(val: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
+                                            onChange={(val: unknown) => {
                                                 const newActions = [...notifActions];
                                                 newActions[idx] = { ...newActions[idx], type: val };
                                                 setNotifActions(newActions);
