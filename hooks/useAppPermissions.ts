@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { GeoPosition } from "../types";
 import { getErrorMessage } from "../utils/error";
 
@@ -35,14 +35,14 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
     setPermStatus((prev) => ({ ...prev, [key]: status }));
   };
 
-  const checkPermissionStatus = async (key: PermissionKey, name: string) => {
+  const checkPermissionStatus = useCallback(async (key: PermissionKey, name: string) => {
     try {
       if (navigator.permissions && navigator.permissions.query) {
         const result = await Promise.race([
             navigator.permissions.query({ name: name as PermissionName }),
             new Promise<PermissionStatus>((_, reject) => setTimeout(() => reject(new Error('timeout')), 500))
         ]);
-        updatePermStatus(key, result.state as PermissionStatusType);
+        setPermStatus((prev) => ({ ...prev, [key]: result.state as PermissionStatusType }));
 
         if (key === "geolocation" && result.state === "granted") {
           navigator.geolocation.getCurrentPosition(
@@ -61,13 +61,13 @@ export function useAppPermissions(openModal: (modalId: string) => void) {
         }
 
         result.onchange = () => {
-          updatePermStatus(key, result.state as PermissionStatusType);
+          setPermStatus((prev) => ({ ...prev, [key]: result.state as PermissionStatusType }));
         };
       }
     } catch (e: unknown) {
       console.debug(`Permission query failed for ${name}`, getErrorMessage(e));
     }
-  };
+  }, []);
 
   const requestPermission = async (type: PermissionKey) => {
     try {

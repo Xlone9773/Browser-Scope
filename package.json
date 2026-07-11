@@ -4,7 +4,7 @@
   "version": "0.0.8",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "scripts": {
     "clean": "rm -rf dist",
