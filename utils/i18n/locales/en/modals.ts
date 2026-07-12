@@ -173,7 +173,14 @@ SOFTWARE.`
         webrtc_leak: "WebRTC Leak",
         screen_advanced: "Screen Advanced",
         drm_support: "DRM Systems",
-        touch_support: "Touch Support"
+        touch_support: "Touch Support",
+        installed_fonts: "Installed Fonts",
+        system_timezone: "System Timezone",
+        language_preferences: "Language Preferences",
+        dnt_enabled: "Do Not Track (DNT)",
+        gamepads_connected: "Gamepads Connected",
+        screen_orientation: "Screen Orientation",
+        network_type: "Network Connection Type"
     },
     values: {
         val_unique: "Unique/Rare Value",
@@ -200,7 +207,10 @@ SOFTWARE.`
         desc_webrtc_leak: "Real local or public IP leaked via WebRTC.",
         desc_webrtc_safe: "WebRTC IP handling is obfuscated or disabled.",
         desc_screen_advanced: "Combination of color depth, HDR and DPR is unique.",
-        desc_drm_unique: "Supported DRM systems narrow down OS/Browser combo."
+        desc_drm_unique: "Supported DRM systems narrow down OS/Browser combo.",
+        desc_generic: "Generic or common property value.",
+        desc_dnt_unique: "Do Not Track (DNT) is enabled, which may increase device uniqueness.",
+        desc_dnt_generic: "Do Not Track (DNT) is disabled or not set."
     }
   },
   fingerprintModal: {

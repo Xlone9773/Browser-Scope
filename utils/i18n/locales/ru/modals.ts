@@ -151,7 +151,14 @@ Copyright (c) 2026 BrowserScope Contributors
         webrtc_leak: "Утечка WebRTC",
         screen_advanced: "Расширенный экран",
         drm_support: "Поддержка DRM",
-        touch_support: "Поддержка тача"
+        touch_support: "Поддержка тача",
+        installed_fonts: "Установленные шрифты",
+        system_timezone: "Системный часовой пояс",
+        language_preferences: "Языковые предпочтения",
+        dnt_enabled: "Запрет отслеживания (DNT)",
+        gamepads_connected: "Подключенные геймпады",
+        screen_orientation: "Ориентация экрана",
+        network_type: "Тип сетевого подключения"
     },
     values: {
         val_unique: "Уникальное/Редкое",
@@ -178,7 +185,10 @@ Copyright (c) 2026 BrowserScope Contributors
         desc_webrtc_leak: "Реальный локальный или публичный IP утек через WebRTC.",
         desc_webrtc_safe: "Обработка IP в WebRTC обфусцирована или отключена.",
         desc_screen_advanced: "Комбинация глубины цвета, HDR и DPR уникальна.",
-        desc_drm_unique: "Поддерживаемые системы DRM сужают круг OS/Браузера."
+        desc_drm_unique: "Поддерживаемые системы DRM сужают круг OS/Браузера.",
+        desc_generic: "Общее или обычное значение свойства.",
+        desc_dnt_unique: "Включен запрет отслеживания (DNT), что может повысить уникальность устройства.",
+        desc_dnt_generic: "Запрет отслеживания (DNT) выключен или не установлен."
     }
   },
   fingerprintModal: {

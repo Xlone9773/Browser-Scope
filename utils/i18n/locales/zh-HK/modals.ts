@@ -1,4 +1,3 @@
-
 export const modals = {
   aboutModal: {
     title: "關於 BrowserScope",
@@ -37,7 +36,7 @@ export const modals = {
 
 上述版權聲明和本許可聲明應包含在本軟件的所有副本或實質性部分中。
 
-本軟件按“原樣”提供，不提供任何形式的明示或暗示保證，包括但不限於對適銷性、特定用途適用性和非侵权性的保證。在任何情況下，作者或版權持有人均不對因本軟件或本軟件的使用或其他交易而引起的、由本軟件引起的或與之相關的任何索賠、損害或其他責任（無論是合同訴訟、侵權訴訟還是其他訴訟）承擔責任。`
+本軟件按“原樣”提供，不提供任何形式的明示或暗示保證，包括但不限於對適銷性、特定用途適用性和非侵权性的保證。在任何情況下，作者或版權持有人均不對因本軟件或本軟件的使用或其他交易而引起的、由本軟件引起的或與之相關的任何索賠、損害或其他責任（無論是合同訴讼、侵權訴讼還是其他訴讼）承擔責任。`
         }
     },
     updates: [
@@ -65,7 +64,7 @@ export const modals = {
         {
             version: "1.5.0",
             date: "2024-04-05",
-            changes: ["新增開發者工具箱 (控制台/檢查器)", "增強媒體解碼檢測 (HDR/杜比/色深)", "支援切換 IP 查詢來源", "支援懸浮視窗模式"]
+            changes: ["新增開發者工具箱 (控制台/檢查器)", "增強媒體解碼檢測 (HDR/杜比/色深)", "支援切換 IP 來源", "支援懸浮視窗模式"]
         },
         {
             version: "1.4.0",
@@ -75,31 +74,31 @@ export const modals = {
         {
             version: "1.3.0",
             date: "2024-03-20",
-            changes: ["新增進階硬件互動工具 (壓感/視訊解碼)", "優化流動端佈局", "增加俄語支援"]
+            changes: ["新增進階硬體互動工具 (壓感/視訊解碼)", "優化行動端佈局", "增加俄語支援"]
         },
         {
             version: "1.2.0",
             date: "2024-03-15",
-            changes: ["新增網絡診斷工具 (WebRTC/DNS/協定檢測)", "新增屏幕色域與 HDR 测试", "優化指紋評分演算法"]
+            changes: ["新增網絡診斷工具 (WebRTC/DNS/協定檢測)", "新增螢幕色域與 HDR 測試", "優化指紋評分演算法"]
         },
         {
             version: "1.1.0",
             date: "2024-03-10",
-            changes: ["新增 AI 效能評估遊樂場", "支援藍牙與手掣檢測", "增加設定面板"]
+            changes: ["新增 AI 效能評估遊樂場", "支援藍牙與手柄檢測", "增加設定面板"]
         }
     ],
     close: "關閉"
   },
   sensorModal: {
-    sensor_title: "裝置感測器",
-    sensor_permission_desc: "需要您的授權才能存取裝置感測器數據（如陀螺儀）。",
+    sensor_title: "裝置感應器",
+    sensor_permission_desc: "需要您的授權才能存取裝置感應器數據（如陀螺儀）。",
     sensor_allow: "允許存取",
     accelerometer: "加速度計",
     gyroscope: "陀螺儀",
     magnetometer: "磁力計",
     ambient_light: "環境光",
     linear_accel: "線性加速度",
-    gravity: "重力傳感器",
+    gravity: "重力感應器",
     abs_orientation: "絕對方向",
     xaxis: "X 軸",
     yaxis: "Y 軸",
@@ -110,7 +109,7 @@ export const modals = {
     dark: "黑暗",
     room: "室內",
     bright: "明亮",
-    sensor_unavailable: "傳感器不可用。",
+    sensor_unavailable: "感應器不可用。",
     data_source_desc: "數據由 DeviceMotion、DeviceOrientation 與 Generic Sensor API 提供。",
     close: "關閉"
   },
@@ -151,7 +150,14 @@ export const modals = {
         webrtc_leak: "WebRTC 洩漏",
         screen_advanced: "進階屏幕參數",
         drm_support: "DRM 支援",
-        touch_support: "觸控支援"
+        touch_support: "觸控支援",
+        installed_fonts: "已安裝字型",
+        system_timezone: "系統時區",
+        language_preferences: "語言偏好",
+        dnt_enabled: "請勿追蹤 (DNT)",
+        gamepads_connected: "連接的遊戲手柄",
+        screen_orientation: "屏幕方向",
+        network_type: "網絡連接類型"
     },
     values: {
         val_unique: "獨特/罕見值",
@@ -178,7 +184,10 @@ export const modals = {
         desc_webrtc_leak: "WebRTC 洩漏了真實的局域網或公網 IP。",
         desc_webrtc_safe: "WebRTC IP 已被混淆或禁用。",
         desc_screen_advanced: "色深、HDR 和像素比的組合較為獨特。",
-        desc_drm_unique: "支援的 DRM 系統組合縮小了識別範圍。"
+        desc_drm_unique: "支援的 DRM 系統組合縮小了識別範圍。",
+        desc_generic: "常見或通用的屬性特徵。",
+        desc_dnt_unique: "請勿追蹤 (DNT) 屬性已啟用，可能會增加設備的獨特性。",
+        desc_dnt_generic: "請勿追蹤 (DNT) 未啟用或為預設狀態。"
     }
   },
   fingerprintModal: {
@@ -415,8 +424,7 @@ export const modals = {
       "grammarly": "寫作助手與文法檢查",
       "darkreader": "為所有網頁生成深色主題"
     }
-  }
-,
+  },
   "ja3Modal": {
     "title": "SSL/TLS 指紋 (JA3/JA4)",
     "desc_title": "TLS Client Hello 指紋識別",
@@ -455,7 +463,7 @@ export const modals = {
     "lib_role_devtools": "行動端優化的虛擬記錄輸出、DOM 節點審查及網頁檢查器主控台工具箱。",
     "lib_role_pwa": "離線優先資產預快取與 Service Worker 用戶端生命週期管理。",
     "lib_role_server": "Express 伺服器端介面路由分发、API 限流以及安全 HTTP 頭防護。",
-    "lib_role_charts": "響應式互動圖表、儀表盤、圖表與網路診斷指標視覺化向量。",
+    "lib_role_charts": "響應式互動圖表、儀表盤、圖表與網絡診斷指標視覺化向量。",
     "close": "關閉"
   },
   "keyboardShortcutsModal": {
@@ -478,7 +486,7 @@ export const modals = {
       "display": "顯示器測試工具",
       "hardware": "硬體高級測試",
       "translate": "Google 網頁翻譯",
-      "exportJson": "匯出 JSON 诊断數據",
+      "exportJson": "匯出 JSON 診斷數據",
       "exportPdf": "匯出高保真 PDF 報告",
       "exportImage": "匯出儀表板高清長圖",
       "esc": "Esc",
@@ -486,5 +494,4 @@ export const modals = {
       "shift": "Shift"
     }
   }
-
 };

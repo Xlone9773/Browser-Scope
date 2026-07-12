@@ -151,7 +151,14 @@ export const modals = {
         webrtc_leak: "WebRTC 洩漏",
         screen_advanced: "進階螢幕參數",
         drm_support: "DRM 支援",
-        touch_support: "觸控支援"
+        touch_support: "觸控支援",
+        installed_fonts: "已安裝字型",
+        system_timezone: "系統時區",
+        language_preferences: "語言偏好",
+        dnt_enabled: "請勿追蹤 (DNT)",
+        gamepads_connected: "連接的遊戲手柄",
+        screen_orientation: "螢幕方向",
+        network_type: "網絡連接類型"
     },
     values: {
         val_unique: "獨特/罕見值",
@@ -178,7 +185,10 @@ export const modals = {
         desc_webrtc_leak: "WebRTC 洩漏了真實的局域網或公網 IP。",
         desc_webrtc_safe: "WebRTC IP 已被混淆或禁用。",
         desc_screen_advanced: "色深、HDR 和像素比的組合較為獨特。",
-        desc_drm_unique: "支援的 DRM 系統組合縮小了識別範圍。"
+        desc_drm_unique: "支援的 DRM 系統組合縮小了識別範圍。",
+        desc_generic: "常見或通用的屬性特徵。",
+        desc_dnt_unique: "請勿追蹤 (DNT) 屬性已啟用，可能會增加設備的獨特性。",
+        desc_dnt_generic: "請勿追蹤 (DNT) 未啟用或為預設狀態。"
     }
   },
   fingerprintModal: {

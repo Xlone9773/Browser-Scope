@@ -151,7 +151,14 @@ Copyright (c) 2026 BrowserScope Contributors
         webrtc_leak: "WebRTCリーク",
         screen_advanced: "高度な画面設定",
         drm_support: "DRMサポート",
-        touch_support: "タッチサポート"
+        touch_support: "タッチサポート",
+        installed_fonts: "インストール済みフォント",
+        system_timezone: "システムタイムゾーン",
+        language_preferences: "言語設定",
+        dnt_enabled: "トラッキング拒否 (DNT)",
+        gamepads_connected: "接続されたゲームパッド",
+        screen_orientation: "画面の向き",
+        network_type: "ネットワーク接続タイプ"
     },
     values: {
         val_unique: "ユニーク/希少な値",
@@ -178,7 +185,10 @@ Copyright (c) 2026 BrowserScope Contributors
         desc_webrtc_leak: "WebRTC経由で実際のローカルまたはパブリックIPが漏洩しています。",
         desc_webrtc_safe: "WebRTCのIP処理は難読化または無効化されています。",
         desc_screen_advanced: "色深度、HDR、DPRの組み合わせがユニークです。",
-        desc_drm_unique: "サポートされているDRMシステムによりOS/ブラウザの組み合わせが絞り込まれます。"
+        desc_drm_unique: "サポートされているDRMシステムによりOS/ブラウザの組み合わせが絞り込まれます。",
+        desc_generic: "一般的または共通のプロパティ値。",
+        desc_dnt_unique: "トラッキング拒否 (DNT) が有効になっており、デバイスの一意性が高まる可能性があります。",
+        desc_dnt_generic: "トラッキング拒否 (DNT) が無効、または設定されていません。"
     }
   },
   fingerprintModal: {
