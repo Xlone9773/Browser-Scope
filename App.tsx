@@ -1,128 +1,28 @@
-import React, { useEffect, useState, Suspense, useRef, useMemo } from "react";
-import { motion } from "motion/react";
-import { Monitor, Smartphone, ShieldAlert, Cpu, Loader2, Search, Settings2 } from "lucide-react";
+import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { Monitor, Smartphone, ShieldAlert, Cpu } from "lucide-react";
 import { exportAsJson, exportAsPdf, exportAsImage } from "./services/exporter";
 import { translations } from "./utils/i18n/index";
-import { FloatingWindow } from "./components/ui/FloatingWindow";
 import { ErrorBoundary } from "./components/ui/ErrorBoundary";
-import { ModalLoading } from "./components/ui/ModalLoading";
-import { SectionGroup } from "./components/ui/SectionGroup";
 import { useModalManager } from "./hooks/useModalManager";
 import { useCardIndex } from "./hooks/useCardIndex";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { BrowserData } from "./types";
-import { Select, SelectColor } from "./components/ui/Select";
-
 import { AppNotification } from "./components/ui/AppNotification";
 import { BackToTop } from "./components/ui/BackToTop";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
-import { BrowserCard } from "./components/cards/BrowserCard";
-import { EnvironmentCard } from "./components/cards/EnvironmentCard";
-import { SystemCard } from "./components/cards/SystemCard";
-import { HardwareCard } from "./components/cards/HardwareCard";
-import { DisplayCard } from "./components/cards/DisplayCard";
-import { QuickSummaryWidget } from "./components/sections/QuickSummaryWidget";
-
-type BrowserSafeAny = ReturnType<typeof JSON.parse>;
-
-function lazyWithRetry<T extends React.ComponentType<BrowserSafeAny>>(
-  importFn: () => Promise<{ default: T }>,
-  retries = 3,
-  delay = 500
-): React.LazyExoticComponent<T> {
-  return React.lazy(() =>
-    (importFn().catch((_error) => {
-      return new Promise<{ default: T }>((resolve) => {
-        let attempts = 0;
-        const attemptLoad = () => {
-          importFn()
-            .then(resolve)
-            .catch((err) => {
-              attempts++;
-              if (attempts >= retries) {
-                console.error("Critical: Failed to load module dynamically after multiple retries. Falling back to empty component.", err);
-                resolve({ default: (() => null) as unknown as T });
-              } else {
-                setTimeout(attemptLoad, delay);
-              }
-            });
-        };
-        setTimeout(attemptLoad, delay);
-      });
-    }) as unknown) as Promise<{ default: React.ComponentType<BrowserSafeAny> }>
-  ) as unknown as React.LazyExoticComponent<T>;
-}
-
-const SecurityCard = lazyWithRetry(() =>
-  import("./components/cards/SecurityCard").then((m) => ({
-    default: m.SecurityCard,
-  })),
-);
-const AiComputeCard = lazyWithRetry(() =>
-  import("./components/cards/AiComputeCard").then((m) => ({
-    default: m.AiComputeCard,
-  })),
-);
-const FingerprintCard = lazyWithRetry(() =>
-  import("./components/cards/FingerprintCard").then((m) => ({
-    default: m.FingerprintCard,
-  })),
-);
-const NetworkCard = lazyWithRetry(() =>
-  import("./components/cards/NetworkCard").then((m) => ({
-    default: m.NetworkCard,
-  })),
-);
-const StorageCard = lazyWithRetry(() =>
-  import("./components/cards/StorageCard").then((m) => ({
-    default: m.StorageCard,
-  })),
-);
-const LocationCard = lazyWithRetry(() =>
-  import("./components/cards/LocationCard").then((m) => ({
-    default: m.LocationCard,
-  })),
-);
-const PermissionsCard = lazyWithRetry(() =>
-  import("./components/cards/PermissionsCard").then((m) => ({
-    default: m.PermissionsCard,
-  })),
-);
-const MediaDevicesCard = lazyWithRetry(() =>
-  import("./components/cards/MediaDevicesCard").then((m) => ({
-    default: m.MediaDevicesCard,
-  })),
-);
-const MediaCapabilitiesCard = lazyWithRetry(() =>
-  import("./components/cards/MediaCapabilitiesCard").then((m) => ({
-    default: m.MediaCapabilitiesCard,
-  })),
-);
-const UserAgentCard = lazyWithRetry(() =>
-  import("./components/cards/UserAgentCard").then((m) => ({
-    default: m.UserAgentCard,
-  })),
-);
-const PwaSection = lazyWithRetry(() =>
-  import("./components/sections/PwaSection").then((m) => ({
-    default: m.PwaSection,
-  })),
-);
-const FeaturesSection = lazyWithRetry(() =>
-  import("./components/sections/FeaturesSection").then((m) => ({
-    default: m.FeaturesSection,
-  })),
-);
 import { ModuleState } from "./components/settings/ModulesTab";
-
 import { useAppSettings } from "./hooks/useAppSettings";
-import {
-  useAppPermissions,
-} from "./hooks/useAppPermissions";
+import { useAppPermissions } from "./hooks/useAppPermissions";
 import { useAppData } from "./hooks/useAppData";
 import packageJson from "./package.json";
+
+// Import newly extracted sub-components
+import { LoadingOverlay } from "./components/layout/LoadingOverlay";
+import { ModalContainer } from "./components/layout/ModalContainer";
+import { SearchBarAndTabs } from "./components/layout/SearchBarAndTabs";
+import { DashboardGrid } from "./components/layout/DashboardGrid";
 
 const App: React.FC = () => {
   const { visibility, open, close, unload, loadedModules, Components, closeAll } =
@@ -184,7 +84,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const checkViewportSize = () => {
-      // Threshold: width < 640px or height < 500px as small viewport
       setIsViewportTooSmall(window.innerWidth < 640 || window.innerHeight < 500);
     };
     checkViewportSize();
@@ -205,54 +104,87 @@ const App: React.FC = () => {
     updateServiceWorker,
   } = useRegisterSW({
     onRegistered(r) {
-      console.log('SW Registered');
+      console.log("SW Registered");
       if (r) {
         swReg.current = r;
-        setInterval(() => {
+        const interval = setInterval(() => {
           r.update();
           setLastCheckTime(Date.now());
         }, 60 * 60 * 1000); // 1 hour check
+        return () => clearInterval(interval);
       }
     },
     onRegisterError(error) {
-      console.log('SW registration error', error);
+      console.log("SW registration error", error);
     },
   });
 
-
   const availableTabs = useMemo(() => {
-    const tabs: { id: "all" | "browser" | "environment" | "system" | "network" | "advanced"; label: string; icon: React.ReactNode }[] = [
-      { id: "all", label: t.groups?.all || "All", icon: null }
-    ];
-    if (!hiddenCards.includes("browser")) tabs.push({ id: "browser", label: t.groups?.browser || "Browser", icon: <Monitor size={16} /> });
-    if (!hiddenCards.includes("environment")) tabs.push({ id: "environment", label: t.groups?.environment || "Environment", icon: <ShieldAlert size={16} /> });
-    if (!(hiddenCards.includes("system") && hiddenCards.includes("hardware") && hiddenCards.includes("display"))) tabs.push({ id: "system", label: t.groups?.system || "System", icon: <Smartphone size={16} /> });
-    if (!(hiddenCards.includes("network") && hiddenCards.includes("security") && hiddenCards.includes("fingerprint"))) tabs.push({ id: "network", label: t.groups?.network || "Network", icon: <ShieldAlert size={16} /> });
-    if (!(hiddenCards.includes("ai") && hiddenCards.includes("location") && hiddenCards.includes("storage") && hiddenCards.includes("permissions") && hiddenCards.includes("media_devices") && hiddenCards.includes("media_capabilities") && hiddenCards.includes("user_agent") && hiddenCards.includes("pwa") && hiddenCards.includes("features"))) tabs.push({ id: "advanced", label: t.groups?.advanced || "Advanced", icon: <Cpu size={16} /> });
+    const tabs: {
+      id: "all" | "browser" | "environment" | "system" | "network" | "advanced";
+      label: string;
+      icon: React.ReactNode;
+    }[] = [{ id: "all", label: t.groups?.all || "All", icon: null }];
+
+    if (!hiddenCards.includes("browser")) {
+      tabs.push({ id: "browser", label: t.groups?.browser || "Browser", icon: <Monitor size={16} /> });
+    }
+    if (!hiddenCards.includes("environment")) {
+      tabs.push({ id: "environment", label: t.groups?.environment || "Environment", icon: <ShieldAlert size={16} /> });
+    }
+    if (!(hiddenCards.includes("system") && hiddenCards.includes("hardware") && hiddenCards.includes("display"))) {
+      tabs.push({ id: "system", label: t.groups?.system || "System", icon: <Smartphone size={16} /> });
+    }
+    if (!(hiddenCards.includes("network") && hiddenCards.includes("security") && hiddenCards.includes("fingerprint"))) {
+      tabs.push({ id: "network", label: t.groups?.network || "Network", icon: <ShieldAlert size={16} /> });
+    }
+    if (
+      !(
+        hiddenCards.includes("ai") &&
+        hiddenCards.includes("location") &&
+        hiddenCards.includes("storage") &&
+        hiddenCards.includes("permissions") &&
+        hiddenCards.includes("media_devices") &&
+        hiddenCards.includes("media_capabilities") &&
+        hiddenCards.includes("user_agent") &&
+        hiddenCards.includes("pwa") &&
+        hiddenCards.includes("features")
+      )
+    ) {
+      tabs.push({ id: "advanced", label: t.groups?.advanced || "Advanced", icon: <Cpu size={16} /> });
+    }
     return tabs;
   }, [t, hiddenCards]);
+
+  useEffect(() => {
+    if (activeTab !== "all" && !availableTabs.some((tab) => tab.id === activeTab)) {
+      const timer = setTimeout(() => {
+        setActiveTab("all");
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [availableTabs, activeTab]);
 
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+  const touchEndY = useRef<number | null>(null);
   const tabsContainerRef = useRef<HTMLDivElement>(null);
   const activeTabRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (activeTabRef.current && tabsContainerRef.current) {
       const container = tabsContainerRef.current;
       const activeBtn = activeTabRef.current;
       const containerWidth = container.offsetWidth;
-      
-      const scrollLeft = activeBtn.offsetLeft - (containerWidth / 2) + (activeBtn.offsetWidth / 2);
-      
+      const scrollLeft = activeBtn.offsetLeft - containerWidth / 2 + activeBtn.offsetWidth / 2;
+
       container.scrollTo({
         left: scrollLeft,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   }, [activeTab]);
-
-  const touchEndY = useRef<number | null>(null);
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchEndX.current = null;
@@ -260,17 +192,26 @@ const App: React.FC = () => {
     touchStartX.current = e.targetTouches[0].clientX;
     touchStartY.current = e.targetTouches[0].clientY;
   };
+
   const onTouchMove = (e: React.TouchEvent) => {
     touchEndX.current = e.targetTouches[0].clientX;
     touchEndY.current = e.targetTouches[0].clientY;
   };
+
   const onTouchEnd = () => {
-    if (touchStartX.current === null || touchEndX.current === null || touchStartY.current === null || touchEndY.current === null) return;
+    if (
+      touchStartX.current === null ||
+      touchEndX.current === null ||
+      touchStartY.current === null ||
+      touchEndY.current === null
+    ) {
+      return;
+    }
     const distanceX = touchStartX.current - touchEndX.current;
     const distanceY = touchStartY.current - touchEndY.current;
     if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > 50) {
       const isLeftSwipe = distanceX > 50;
-      const currentIndex = availableTabs.findIndex(tab => tab.id === activeTab);
+      const currentIndex = availableTabs.findIndex((tab) => tab.id === activeTab);
       if (currentIndex !== -1) {
         if (isLeftSwipe && currentIndex < availableTabs.length - 1) {
           setSlideDirection(1);
@@ -285,20 +226,18 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handleVisibility = () => {
-      // Check for updates automatically when user returns to app
-      // Throttle checking to not happen more than once every 10 mins
-      if (document.visibilityState === 'visible' && swReg.current) {
+      if (document.visibilityState === "visible" && swReg.current) {
         if (Date.now() - lastCheckTime > 10 * 60 * 1000) {
           swReg.current.update();
           setLastCheckTime(Date.now());
         }
       }
     };
-    window.addEventListener('visibilitychange', handleVisibility);
-    return () => window.removeEventListener('visibilitychange', handleVisibility);
+    window.addEventListener("visibilitychange", handleVisibility);
+    return () => window.removeEventListener("visibilitychange", handleVisibility);
   }, [lastCheckTime]);
 
-  const manualCheckUpdate = async () => {
+  const manualCheckUpdate = async (): Promise<string> => {
     setIsCheckingUpdate(true);
     try {
       if (needRefresh) {
@@ -319,34 +258,112 @@ const App: React.FC = () => {
     }
   };
 
-  const {
-    data,
-    showLoader,
-    fadeLoader,
-    loadingText,
-    fetchData,
-    handleAiRetest,
-  } = useAppData(t.common.loading_steps || [t.common.loading]);
+  const { data, showLoader, fadeLoader, loadingText, fetchData, handleAiRetest } = useAppData(
+    t.common.loading_steps || [t.common.loading]
+  );
 
   const browserData = data as BrowserData;
   const cardIndex = useCardIndex(browserData, t);
+
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleSearch = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const keyword = e.target.value;
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      searchTimeoutRef.current = setTimeout(() => {
+        const query = keyword.toLowerCase().trim();
+        if (!query) {
+          setMatchedCardIds(null);
+          return;
+        }
+
+        const matches: string[] = [];
+        const isFuzzy = searchMode === "fuzzy";
+
+        const fuzzyMatch = (text: string, q: string): boolean => {
+          const normText = String(text || "").toLowerCase().trim();
+          const normQuery = String(q || "").toLowerCase().trim();
+          if (!normQuery) return true;
+          if (!normText) return false;
+          const terms = normQuery.split(/\s+/).filter(Boolean);
+          if (terms.length > 1) {
+            return terms.every((term) => normText.includes(term));
+          }
+          let textIdx = 0;
+          let queryIdx = 0;
+          while (textIdx < normText.length && queryIdx < normQuery.length) {
+            if (normText[textIdx] === normQuery[queryIdx]) {
+              queryIdx++;
+            }
+            textIdx++;
+          }
+          return queryIdx === normQuery.length;
+        };
+
+        const exactMatch = (text: string, q: string): boolean => {
+          const normText = String(text || "").toLowerCase().trim();
+          const normQuery = String(q || "").toLowerCase().trim();
+          return normText.includes(normQuery);
+        };
+
+        for (const [id, cData] of Object.entries(cardIndex)) {
+          let textToSearch: string;
+          switch (searchScope) {
+            case "category":
+              textToSearch = cData.category;
+              break;
+            case "title":
+              textToSearch = cData.title;
+              break;
+            case "value":
+              textToSearch = cData.value;
+              break;
+            case "all":
+            default:
+              textToSearch = `${cData.category} ${cData.title} ${cData.value}`;
+              break;
+          }
+
+          const isMatch = isFuzzy ? fuzzyMatch(textToSearch, query) : exactMatch(textToSearch, query);
+          if (isMatch) {
+            matches.push(id);
+          }
+        }
+
+        setMatchedCardIds(matches);
+      }, 150);
+    },
+    [cardIndex, searchMode, searchScope]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const isOutdated = useMemo(() => {
     if (data && data.system && data.system.browserName && data.system.browserVersion) {
       const name = data.system.browserName.toLowerCase();
       const version = parseInt(data.system.browserVersion, 10);
       if (!isNaN(version)) {
-        if (name.includes('chrome') && version < 100) return true;
-        if (name.includes('firefox') && version < 100) return true;
-        if (name.includes('safari') && version < 15) return true;
-        if (name.includes('edge') && version < 100) return true;
+        if (name.includes("chrome") && version < 100) return true;
+        if (name.includes("firefox") && version < 100) return true;
+        if (name.includes("safari") && version < 15) return true;
+        if (name.includes("edge") && version < 100) return true;
       }
     }
     return false;
   }, [data]);
 
-  const { permStatus, geoData, checkPermissionStatus, requestPermission } =
-    useAppPermissions((modalId) => open(modalId));
+  const { permStatus, geoData, checkPermissionStatus, requestPermission } = useAppPermissions((modalId) =>
+    open(modalId)
+  );
 
   const [isDevToolsFloating, setIsDevToolsFloating] = useState(false);
 
@@ -364,283 +381,283 @@ const App: React.FC = () => {
       isLoaded: true,
     },
     {
-       id: "camera",
-       name: t.cameraTool?.title || "Camera Tool",
-       isOpen: visibility.camera,
-       setOpen: (v: boolean) => (v ? open("camera") : close("camera")),
-       impact: "High",
-       onUnload: () => unload("camera"),
-       isLoaded: loadedModules.has("camera"),
+      id: "camera",
+      name: t.cameraTool?.title || "Camera Tool",
+      isOpen: visibility.camera,
+      setOpen: (v: boolean) => (v ? open("camera") : close("camera")),
+      impact: "High",
+      onUnload: () => unload("camera"),
+      isLoaded: loadedModules.has("camera"),
     },
     {
-       id: "audio",
-       name: t.audioTool?.title || "Audio Recorder",
-       isOpen: visibility.audio,
-       setOpen: (v: boolean) => (v ? open("audio") : close("audio")),
-       impact: "Medium",
-       onUnload: () => unload("audio"),
-       isLoaded: loadedModules.has("audio"),
+      id: "audio",
+      name: t.audioTool?.title || "Audio Recorder",
+      isOpen: visibility.audio,
+      setOpen: (v: boolean) => (v ? open("audio") : close("audio")),
+      impact: "Medium",
+      onUnload: () => unload("audio"),
+      isLoaded: loadedModules.has("audio"),
     },
     {
-       id: "webgl",
-       name: t.webglTool?.title || "WebGL Extensions",
-       isOpen: visibility.webgl,
-       setOpen: (v: boolean) => (v ? open("webgl") : close("webgl")),
-       impact: "Low",
-       onUnload: () => unload("webgl"),
-       isLoaded: loadedModules.has("webgl"),
+      id: "webgl",
+      name: t.webglTool?.title || "WebGL Extensions",
+      isOpen: visibility.webgl,
+      setOpen: (v: boolean) => (v ? open("webgl") : close("webgl")),
+      impact: "Low",
+      onUnload: () => unload("webgl"),
+      isLoaded: loadedModules.has("webgl"),
     },
     {
-       id: "canvas",
-       name: "Canvas Detail",
-       isOpen: visibility.canvas,
-       setOpen: (v: boolean) => (v ? open("canvas") : close("canvas")),
-       impact: "Low",
-       onUnload: () => unload("canvas"),
-       isLoaded: loadedModules.has("canvas"),
+      id: "canvas",
+      name: "Canvas Detail",
+      isOpen: visibility.canvas,
+      setOpen: (v: boolean) => (v ? open("canvas") : close("canvas")),
+      impact: "Low",
+      onUnload: () => unload("canvas"),
+      isLoaded: loadedModules.has("canvas"),
     },
     {
-       id: "base64",
-       name: t.base64Tool?.title || "Base64 Inspector",
-       isOpen: visibility.base64,
-       setOpen: (v: boolean) => (v ? open("base64") : close("base64")),
-       impact: "Low",
-       onUnload: () => unload("base64"),
-       isLoaded: loadedModules.has("base64"),
+      id: "base64",
+      name: t.base64Tool?.title || "Base64 Inspector",
+      isOpen: visibility.base64,
+      setOpen: (v: boolean) => (v ? open("base64") : close("base64")),
+      impact: "Low",
+      onUnload: () => unload("base64"),
+      isLoaded: loadedModules.has("base64"),
     },
     {
-       id: "about",
-       name: t.aboutModal?.title || "About",
-       isOpen: visibility.about,
-       setOpen: (v: boolean) => (v ? open("about") : close("about")),
-       impact: "Low",
-       onUnload: () => unload("about"),
-       isLoaded: loadedModules.has("about"),
+      id: "about",
+      name: t.aboutModal?.title || "About",
+      isOpen: visibility.about,
+      setOpen: (v: boolean) => (v ? open("about") : close("about")),
+      impact: "Low",
+      onUnload: () => unload("about"),
+      isLoaded: loadedModules.has("about"),
     },
     {
-       id: "sensor",
-       name: t.sensorModal?.sensor_title || "Sensors",
-       isOpen: visibility.sensor,
-       setOpen: (v: boolean) => (v ? open("sensor") : close("sensor")),
-       impact: "Medium",
-       onUnload: () => unload("sensor"),
-       isLoaded: loadedModules.has("sensor"),
+      id: "sensor",
+      name: t.sensorModal?.sensor_title || "Sensors",
+      isOpen: visibility.sensor,
+      setOpen: (v: boolean) => (v ? open("sensor") : close("sensor")),
+      impact: "Medium",
+      onUnload: () => unload("sensor"),
+      isLoaded: loadedModules.has("sensor"),
     },
     {
-       id: "score",
-       name: t.scoreModal?.score_details_title || "Score Details",
-       isOpen: visibility.score,
-       setOpen: (v: boolean) => (v ? open("score") : close("score")),
-       impact: "Low",
-       onUnload: () => unload("score"),
-       isLoaded: loadedModules.has("score"),
+      id: "score",
+      name: t.scoreModal?.score_details_title || "Score Details",
+      isOpen: visibility.score,
+      setOpen: (v: boolean) => (v ? open("score") : close("score")),
+      impact: "Low",
+      onUnload: () => unload("score"),
+      isLoaded: loadedModules.has("score"),
     },
     {
-       id: "fingerprint",
-       name: t.fingerprintModal?.title || "Fingerprint Inspector",
-       isOpen: visibility.fingerprint,
-       setOpen: (v: boolean) => (v ? open("fingerprint") : close("fingerprint")),
-       impact: "Medium",
-       onUnload: () => unload("fingerprint"),
-       isLoaded: loadedModules.has("fingerprint"),
+      id: "fingerprint",
+      name: t.fingerprintModal?.title || "Fingerprint Inspector",
+      isOpen: visibility.fingerprint,
+      setOpen: (v: boolean) => (v ? open("fingerprint") : close("fingerprint")),
+      impact: "Medium",
+      onUnload: () => unload("fingerprint"),
+      isLoaded: loadedModules.has("fingerprint"),
     },
     {
-       id: "benchmark",
-       name: t.benchmarkModal?.title || "Benchmark",
-       isOpen: visibility.benchmark,
-       setOpen: (v: boolean) => (v ? open("benchmark") : close("benchmark")),
-       impact: "High",
-       onUnload: () => unload("benchmark"),
-       isLoaded: loadedModules.has("benchmark"),
+      id: "benchmark",
+      name: t.benchmarkModal?.title || "Benchmark",
+      isOpen: visibility.benchmark,
+      setOpen: (v: boolean) => (v ? open("benchmark") : close("benchmark")),
+      impact: "High",
+      onUnload: () => unload("benchmark"),
+      isLoaded: loadedModules.has("benchmark"),
     },
     {
-       id: "tools",
-       name: t.hardwareToolsModal?.title || "Hardware Tools",
-       isOpen: visibility.tools,
-       setOpen: (v: boolean) => (v ? open("tools") : close("tools")),
-       impact: "Medium",
-       onUnload: () => unload("tools"),
-       isLoaded: loadedModules.has("tools"),
+      id: "tools",
+      name: t.hardwareToolsModal?.title || "Hardware Tools",
+      isOpen: visibility.tools,
+      setOpen: (v: boolean) => (v ? open("tools") : close("tools")),
+      impact: "Medium",
+      onUnload: () => unload("tools"),
+      isLoaded: loadedModules.has("tools"),
     },
     {
-       id: "ai",
-       name: t.aiPlayground?.title || "AI Playground",
-       isOpen: visibility.ai,
-       setOpen: (v: boolean) => (v ? open("ai") : close("ai")),
-       impact: "High",
-       onUnload: () => unload("ai"),
-       isLoaded: loadedModules.has("ai"),
+      id: "ai",
+      name: t.aiPlayground?.title || "AI Playground",
+      isOpen: visibility.ai,
+      setOpen: (v: boolean) => (v ? open("ai") : close("ai")),
+      impact: "High",
+      onUnload: () => unload("ai"),
+      isLoaded: loadedModules.has("ai"),
     },
     {
-       id: "gamepad",
-       name: t.gamepadTool?.title || "Gamepad API Test",
-       isOpen: visibility.gamepad,
-       setOpen: (v: boolean) => (v ? open("gamepad") : close("gamepad")),
-       impact: "Medium",
-       onUnload: () => unload("gamepad"),
-       isLoaded: loadedModules.has("gamepad"),
+      id: "gamepad",
+      name: t.gamepadTool?.title || "Gamepad API Test",
+      isOpen: visibility.gamepad,
+      setOpen: (v: boolean) => (v ? open("gamepad") : close("gamepad")),
+      impact: "Medium",
+      onUnload: () => unload("gamepad"),
+      isLoaded: loadedModules.has("gamepad"),
     },
     {
-       id: "webDevice",
-       name: t.webDevice?.title || "Web Device API",
-       isOpen: visibility.webDevice,
-       setOpen: (v: boolean) => (v ? open("webDevice") : close("webDevice")),
-       impact: "Medium",
-       onUnload: () => unload("webDevice"),
-       isLoaded: loadedModules.has("webDevice"),
+      id: "webDevice",
+      name: t.webDevice?.title || "Web Device API",
+      isOpen: visibility.webDevice,
+      setOpen: (v: boolean) => (v ? open("webDevice") : close("webDevice")),
+      impact: "Medium",
+      onUnload: () => unload("webDevice"),
+      isLoaded: loadedModules.has("webDevice"),
     },
     {
-       id: "vision",
-       name: t.visionModal?.title || "Computer Vision Tests",
-       isOpen: visibility.vision,
-       setOpen: (v: boolean) => (v ? open("vision") : close("vision")),
-       impact: "High",
-       onUnload: () => unload("vision"),
-       isLoaded: loadedModules.has("vision"),
+      id: "vision",
+      name: t.visionModal?.title || "Computer Vision Tests",
+      isOpen: visibility.vision,
+      setOpen: (v: boolean) => (v ? open("vision") : close("vision")),
+      impact: "High",
+      onUnload: () => unload("vision"),
+      isLoaded: loadedModules.has("vision"),
     },
     {
-       id: "speed",
-       name: t.speedTest?.title || "Speed Test",
-       isOpen: visibility.speed,
-       setOpen: (v: boolean) => (v ? open("speed") : close("speed")),
-       impact: "Medium",
-       onUnload: () => unload("speed"),
-       isLoaded: loadedModules.has("speed"),
+      id: "speed",
+      name: t.speedTest?.title || "Speed Test",
+      isOpen: visibility.speed,
+      setOpen: (v: boolean) => (v ? open("speed") : close("speed")),
+      impact: "Medium",
+      onUnload: () => unload("speed"),
+      isLoaded: loadedModules.has("speed"),
     },
     {
-       id: "compute",
-       name: t.computeStress?.title || "Compute Stress Test",
-       isOpen: visibility.compute,
-       setOpen: (v: boolean) => (v ? open("compute") : close("compute")),
-       impact: "High",
-       onUnload: () => unload("compute"),
-       isLoaded: loadedModules.has("compute"),
+      id: "compute",
+      name: t.computeStress?.title || "Compute Stress Test",
+      isOpen: visibility.compute,
+      setOpen: (v: boolean) => (v ? open("compute") : close("compute")),
+      impact: "High",
+      onUnload: () => unload("compute"),
+      isLoaded: loadedModules.has("compute"),
     },
     {
-       id: "video",
-       name: t.actions?.open_video_test || "Video Decoder Analysis",
-       isOpen: visibility.video,
-       setOpen: (v: boolean) => (v ? open("video") : close("video")),
-       impact: "High",
-       onUnload: () => unload("video"),
-       isLoaded: loadedModules.has("video"),
+      id: "video",
+      name: t.actions?.open_video_test || "Video Decoder Analysis",
+      isOpen: visibility.video,
+      setOpen: (v: boolean) => (v ? open("video") : close("video")),
+      impact: "High",
+      onUnload: () => unload("video"),
+      isLoaded: loadedModules.has("video"),
     },
     {
-       id: "graphics",
-       name: t.graphicsModal?.title || "Graphics Debug",
-       isOpen: visibility.graphics,
-       setOpen: (v: boolean) => (v ? open("graphics") : close("graphics")),
-       impact: "Medium",
-       onUnload: () => unload("graphics"),
-       isLoaded: loadedModules.has("graphics"),
+      id: "graphics",
+      name: t.graphicsModal?.title || "Graphics Debug",
+      isOpen: visibility.graphics,
+      setOpen: (v: boolean) => (v ? open("graphics") : close("graphics")),
+      impact: "Medium",
+      onUnload: () => unload("graphics"),
+      isLoaded: loadedModules.has("graphics"),
     },
     {
-       id: "speech",
-       name: t.speechModal?.title || "Speech synthesis APIs",
-       isOpen: visibility.speech,
-       setOpen: (v: boolean) => (v ? open("speech") : close("speech")),
-       impact: "Medium",
-       onUnload: () => unload("speech"),
-       isLoaded: loadedModules.has("speech"),
+      id: "speech",
+      name: t.speechModal?.title || "Speech synthesis APIs",
+      isOpen: visibility.speech,
+      setOpen: (v: boolean) => (v ? open("speech") : close("speech")),
+      impact: "Medium",
+      onUnload: () => unload("speech"),
+      isLoaded: loadedModules.has("speech"),
     },
     {
-       id: "midi",
-       name: t.midiModal?.title || "Web MIDI API Analysis",
-       isOpen: visibility.midi,
-       setOpen: (v: boolean) => (v ? open("midi") : close("midi")),
-       impact: "Low",
-       onUnload: () => unload("midi"),
-       isLoaded: loadedModules.has("midi"),
+      id: "midi",
+      name: t.midiModal?.title || "Web MIDI API Analysis",
+      isOpen: visibility.midi,
+      setOpen: (v: boolean) => (v ? open("midi") : close("midi")),
+      impact: "Low",
+      onUnload: () => unload("midi"),
+      isLoaded: loadedModules.has("midi"),
     },
     {
-       id: "storageBench",
-       name: t.storageBenchmark?.title || "Storage Benchmark",
-       isOpen: visibility.storageBench,
-       setOpen: (v: boolean) => (v ? open("storageBench") : close("storageBench")),
-       impact: "High",
-       onUnload: () => unload("storageBench"),
-       isLoaded: loadedModules.has("storageBench"),
+      id: "storageBench",
+      name: t.storageBenchmark?.title || "Storage Benchmark",
+      isOpen: visibility.storageBench,
+      setOpen: (v: boolean) => (v ? open("storageBench") : close("storageBench")),
+      impact: "High",
+      onUnload: () => unload("storageBench"),
+      isLoaded: loadedModules.has("storageBench"),
     },
     {
-       id: "heatmap",
-       name: t.heatmap?.title || "Global Network Heatmap",
-       isOpen: visibility.heatmap,
-       setOpen: (v: boolean) => (v ? open("heatmap") : close("heatmap")),
-       impact: "Medium",
-       onUnload: () => unload("heatmap"),
-       isLoaded: loadedModules.has("heatmap"),
+      id: "heatmap",
+      name: t.heatmap?.title || "Global Network Heatmap",
+      isOpen: visibility.heatmap,
+      setOpen: (v: boolean) => (v ? open("heatmap") : close("heatmap")),
+      impact: "Medium",
+      onUnload: () => unload("heatmap"),
+      isLoaded: loadedModules.has("heatmap"),
     },
     {
-       id: "rayTracing",
-       name: t.rayTracing?.title || "WebGL Ray Tracing Test",
-       isOpen: visibility.rayTracing,
-       setOpen: (v: boolean) => (v ? open("rayTracing") : close("rayTracing")),
-       impact: "High",
-       onUnload: () => unload("rayTracing"),
-       isLoaded: loadedModules.has("rayTracing"),
+      id: "rayTracing",
+      name: t.rayTracing?.title || "WebGL Ray Tracing Test",
+      isOpen: visibility.rayTracing,
+      setOpen: (v: boolean) => (v ? open("rayTracing") : close("rayTracing")),
+      impact: "High",
+      onUnload: () => unload("rayTracing"),
+      isLoaded: loadedModules.has("rayTracing"),
     },
     {
-       id: "extensions",
-       name: "Browser Extensions",
-       isOpen: visibility.extensions,
-       setOpen: (v: boolean) => (v ? open("extensions") : close("extensions")),
-       impact: "Low",
-       onUnload: () => unload("extensions"),
-       isLoaded: loadedModules.has("extensions"),
+      id: "extensions",
+      name: "Browser Extensions",
+      isOpen: visibility.extensions,
+      setOpen: (v: boolean) => (v ? open("extensions") : close("extensions")),
+      impact: "Low",
+      onUnload: () => unload("extensions"),
+      isLoaded: loadedModules.has("extensions"),
     },
     {
-       id: "networkTools",
-       name: t.settings?.nav?.network || "Network Tools",
-       isOpen: visibility.networkTools,
-       setOpen: (v: boolean) => (v ? open("networkTools") : close("networkTools")),
-       impact: "Medium",
-       onUnload: () => unload("networkTools"),
-       isLoaded: loadedModules.has("networkTools"),
+      id: "networkTools",
+      name: t.settings?.nav?.network || "Network Tools",
+      isOpen: visibility.networkTools,
+      setOpen: (v: boolean) => (v ? open("networkTools") : close("networkTools")),
+      impact: "Medium",
+      onUnload: () => unload("networkTools"),
+      isLoaded: loadedModules.has("networkTools"),
     },
     {
-       id: "displayTools",
-       name: t.settings?.nav?.display || "Display Tools",
-       isOpen: visibility.displayTools,
-       setOpen: (v: boolean) => (v ? open("displayTools") : close("displayTools")),
-       impact: "Low",
-       onUnload: () => unload("displayTools"),
-       isLoaded: loadedModules.has("displayTools"),
+      id: "displayTools",
+      name: t.settings?.nav?.display || "Display Tools",
+      isOpen: visibility.displayTools,
+      setOpen: (v: boolean) => (v ? open("displayTools") : close("displayTools")),
+      impact: "Low",
+      onUnload: () => unload("displayTools"),
+      isLoaded: loadedModules.has("displayTools"),
     },
     {
-       id: "googleTranslate",
-       name: t.common?.googleTranslate || "Google Translate",
-       isOpen: visibility.googleTranslate,
-       setOpen: (v: boolean) => (v ? open("googleTranslate") : close("googleTranslate")),
-       impact: "Low",
-       onUnload: () => unload("googleTranslate"),
-       isLoaded: loadedModules.has("googleTranslate"),
+      id: "googleTranslate",
+      name: t.common?.googleTranslate || "Google Translate",
+      isOpen: visibility.googleTranslate,
+      setOpen: (v: boolean) => (v ? open("googleTranslate") : close("googleTranslate")),
+      impact: "Low",
+      onUnload: () => unload("googleTranslate"),
+      isLoaded: loadedModules.has("googleTranslate"),
     },
     {
-       id: "audioLatency",
-       name: t.audioLatencyProbing?.title || "Audio Output Latency & Channel Probing",
-       isOpen: visibility.audioLatency,
-       setOpen: (v: boolean) => (v ? open("audioLatency") : close("audioLatency")),
-       impact: "Low",
-       onUnload: () => unload("audioLatency"),
-       isLoaded: loadedModules.has("audioLatency"),
+      id: "audioLatency",
+      name: t.audioLatencyProbing?.title || "Audio Output Latency & Channel Probing",
+      isOpen: visibility.audioLatency,
+      setOpen: (v: boolean) => (v ? open("audioLatency") : close("audioLatency")),
+      impact: "Low",
+      onUnload: () => unload("audioLatency"),
+      isLoaded: loadedModules.has("audioLatency"),
     },
     {
-       id: "poisoning",
-       name: t.poisoning?.title || "Noise & Poisoning Detection",
-       isOpen: visibility.poisoning,
-       setOpen: (v: boolean) => (v ? open("poisoning") : close("poisoning")),
-       impact: "Low",
-       onUnload: () => unload("poisoning"),
-       isLoaded: loadedModules.has("poisoning"),
+      id: "poisoning",
+      name: t.poisoning?.title || "Noise & Poisoning Detection",
+      isOpen: visibility.poisoning,
+      setOpen: (v: boolean) => (v ? open("poisoning") : close("poisoning")),
+      impact: "Low",
+      onUnload: () => unload("poisoning"),
+      isLoaded: loadedModules.has("poisoning"),
     },
     {
-       id: "ja3",
-       name: t.ja3?.title || "JA3/JA4 Fingerprint",
-       isOpen: visibility.ja3,
-       setOpen: (v: boolean) => (v ? open("ja3") : close("ja3")),
-       impact: "Low",
-       onUnload: () => unload("ja3"),
-       isLoaded: loadedModules.has("ja3"),
+      id: "ja3",
+      name: t.ja3?.title || "JA3/JA4 Fingerprint",
+      isOpen: visibility.ja3,
+      setOpen: (v: boolean) => (v ? open("ja3") : close("ja3")),
+      impact: "Low",
+      onUnload: () => unload("ja3"),
+      isLoaded: loadedModules.has("ja3"),
     },
   ];
 
@@ -703,289 +720,70 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 scrollbar-hide relative">
-      {/* Loading Overlay */}
-      {showLoader ? (<div
-        className={`fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 ease-out backdrop-blur-xl ${
-          fadeLoader ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
-        style={{
-          background:
-            "radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)",
-          backgroundColor: "rgba(var(--bg-slate-50), 0.8)",
-        }}
-      >
-        <div
-          className={`bg-white/80 dark:bg-slate-800/80 p-8 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex flex-col items-center gap-6 max-w-sm w-full mx-4 backdrop-blur-md transition-all duration-500 ease-out transform ${
-            fadeLoader ? "scale-95 translate-y-4" : "scale-100 translate-y-0"
-          }`}
-        >
-          <div className="relative">
-            <div className="w-16 h-16 rounded-full border-4 border-slate-200 dark:border-slate-700"></div>
-            <div className="absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Monitor className="text-indigo-500" size={24} />
-            </div>
-          </div>
-          <div className="text-center">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
-              BrowserScope
-            </h3>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 animate-pulse font-mono">
-              {loadingText}
-            </p>
-          </div>
-        </div>
-      </div>) : null}
-      {/* PDF Exporting Loader Overlay */}
-      {isExportingPdf ? (<div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 backdrop-blur-md">
-        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex items-center gap-4 max-w-sm w-full mx-4 transform animate-in fade-in zoom-in duration-200">
-          <Loader2 className="animate-spin text-indigo-500 shrink-0" size={28} />
-          <div>
-            <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
-              {lang === "zh-CN" ? "正在生成 PDF 诊断报告..." : 
-               lang === "zh-TW" || lang === "zh-HK" ? "正在生成 PDF 診斷報告..." :
-               lang === "ja" ? "PDF診断レポートを作成中..." :
-               lang === "ru" ? "Создание PDF-отчета..." :
-               "Generating PDF Diagnostic Report..."}
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
-              {lang === "zh-CN" ? "正在使用后台 Worker 线程渲染报告" : 
-               lang === "zh-TW" || lang === "zh-HK" ? "正在使用後台 Worker 線程渲染報告" :
-               lang === "ja" ? "バックグラウンドの Worker 経由で処理中" :
-               lang === "ru" ? "Используется фоновый поток" :
-               "Rendering report using background Worker thread"}
-            </p>
-          </div>
-        </div>
-      </div>) : null}
-      {/* Image Exporting Loader Overlay */}
-      {isExportingImage ? (<div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 backdrop-blur-md">
-        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 flex items-center gap-4 max-w-sm w-full mx-4 transform animate-in fade-in zoom-in duration-200">
-          <Loader2 className="animate-spin text-indigo-500 shrink-0" size={28} />
-          <div>
-            <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
-              {lang === "zh-CN" ? "正在导出仪表盘图片..." : 
-               lang === "zh-TW" || lang === "zh-HK" ? "正在匯出儀表板圖片..." :
-               lang === "ja" ? "ダッシュボード画像をエクスポート中..." :
-               lang === "ru" ? "Экспорт изображения..." :
-               "Exporting Dashboard Image..."}
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
-              {lang === "zh-CN" ? "正在使用 html2canvas 渲染高清晰度 PNG" : 
-               lang === "zh-TW" || lang === "zh-HK" ? "正在使用 html2canvas 渲染高清晰度 PNG" :
-               lang === "ja" ? "html2canvas で高解像度PNGをレンダリング中" :
-               lang === "ru" ? "Рендеринг PNG высокого разрешения..." :
-               "Rendering high-resolution PNG using html2canvas"}
-            </p>
-          </div>
-        </div>
-      </div>) : null}
-      {/* Lazy Loaded Modals wrapped in Suspense and ErrorBoundary */}
-      <ErrorBoundary name="Modals">
-        <Suspense
-          fallback={
-            <ModalLoading
-              initializingText={t.common?.modal_loading?.initializing}
-              loadingText={t.common?.modal_loading?.loading_module}
-            />
-          }
-        >
-          {isDevToolsFloating ? (<FloatingWindow
-            title={developerTabTitle}
-            onClose={() => setIsDevToolsFloating(false)}
-            initialWidth={600}
-            initialHeight={400}
-          >
-            <Components.developer
-              t={t.settings.developer}
-              isFloating={true}
-              toggleFloat={() => setIsDevToolsFloating(false)}
-            />
-          </FloatingWindow>) : null}
+      <LoadingOverlay
+        showLoader={showLoader}
+        fadeLoader={fadeLoader}
+        loadingText={loadingText}
+        isExportingPdf={isExportingPdf}
+        isExportingImage={isExportingImage}
+        lang={lang}
+      />
 
-          {visibility.camera ? (<Components.camera
-            onClose={() => close("camera")}
-            t={t.cameraTool}
-          />) : null}
-          {visibility.audio ? (<Components.audio onClose={() => close("audio")} t={t.audioTool} />) : null}
-          {visibility.webgl ? (<Components.webgl
-            extensions={data?.fingerprints.webglExtensions || []}
-            onClose={() => close("webgl")}
-            t={t.webglTool}
-          />) : null}
-          {visibility.canvas ? (<Components.canvas
-            imageSrc={data?.fingerprints.canvasImage || ""}
-            onClose={() => close("canvas")}
-            t={t.imageDetails}
-          />) : null}
-          {visibility.base64 ? (<Components.base64
-            data={data?.fingerprints.canvasImage || ""}
-            onClose={() => close("base64")}
-            t={t.base64Tool}
-          />) : null}
-          {visibility.about ? (<Components.about onClose={() => close("about")} t={t.aboutModal} />) : null}
-          {visibility.sensor ? (<Components.sensor
-            onClose={() => close("sensor")}
-            t={t.sensorModal}
-          />) : null}
-          {visibility.score && data ? (<Components.score
-            scoreData={data.fingerprints.score}
-            onClose={() => close("score")}
-            t={t.scoreModal}
-          />) : null}
-          {visibility.fingerprint ? (<Components.fingerprint
-            onClose={() => close("fingerprint")}
-            t={t.fingerprintModal}
-          />) : null}
-          {visibility.speed ? (<Components.speed onClose={() => close("speed")} t={t.speedTest} />) : null}
-          {visibility.compute ? (<Components.compute
-            onClose={() => close("compute")}
-            t={t.computeStress}
-          />) : null}
+      <ModalContainer
+        visibility={visibility}
+        Components={Components}
+        close={close}
+        data={data}
+        t={t}
+        themeColor={themeColor}
+        updateThemeColor={updateThemeColor}
+        animationStyle={animationStyle}
+        updateAnimationStyle={updateAnimationStyle}
+        simpleMode={simpleMode}
+        toggleSimpleMode={toggleSimpleMode}
+        hideScrollbar={hideScrollbar}
+        toggleHideScrollbar={toggleHideScrollbar}
+        globalHideScrollbar={globalHideScrollbar}
+        toggleGlobalHideScrollbar={toggleGlobalHideScrollbar}
+        timeFormat={timeFormat}
+        setTimeFormat={updateTimeFormat}
+        disableBlur={disableBlur}
+        toggleDisableBlur={toggleDisableBlur}
+        disableAnimations={disableAnimations}
+        toggleDisableAnimations={toggleDisableAnimations}
+        fastAnimations={fastAnimations}
+        toggleFastAnimations={toggleFastAnimations}
+        collapseHeader={collapseHeader}
+        toggleCollapseHeader={toggleCollapseHeader}
+        enableUdp={enableUdp}
+        toggleEnableUdp={toggleEnableUdp}
+        showTabs={showTabs}
+        toggleShowTabs={toggleShowTabs}
+        showSearch={showSearch}
+        toggleShowSearch={toggleShowSearch}
+        searchScope={searchScope}
+        updateSearchScope={updateSearchScope}
+        searchMode={searchMode}
+        updateSearchMode={updateSearchMode}
+        hiddenCards={hiddenCards}
+        setHiddenCards={updateHiddenCards}
+        restoreAllNotifications={restoreAllNotifications}
+        dismissedNotificationsCount={dismissedNotifications.length}
+        showQuickSummary={showQuickSummary}
+        toggleShowQuickSummary={toggleShowQuickSummary}
+        lang={lang}
+        isDevToolsFloating={isDevToolsFloating}
+        setIsDevToolsFloating={setIsDevToolsFloating}
+        modalStates={modalStates}
+        appVersion={packageJson.version}
+        updateServiceWorker={updateServiceWorker}
+        manualCheckUpdate={manualCheckUpdate}
+        lastCheckTime={lastCheckTime}
+        isCheckingUpdate={isCheckingUpdate}
+        needRefresh={needRefresh}
+        developerTabTitle={developerTabTitle}
+      />
 
-          {visibility.settings ? (<Components.settings
-            onClose={() => close("settings")}
-            t={
-              t
-            } /* Pass root translation object to support modular settings */
-            themeColor={themeColor}
-            setThemeColor={updateThemeColor}
-            animationStyle={animationStyle}
-            setAnimationStyle={updateAnimationStyle}
-            simpleMode={simpleMode}
-            toggleSimpleMode={toggleSimpleMode}
-            hideScrollbar={hideScrollbar}
-            toggleHideScrollbar={toggleHideScrollbar}
-            globalHideScrollbar={globalHideScrollbar}
-            toggleGlobalHideScrollbar={toggleGlobalHideScrollbar}
-            timeFormat={timeFormat}
-            setTimeFormat={updateTimeFormat}
-            disableBlur={disableBlur}
-            toggleDisableBlur={toggleDisableBlur}
-            disableAnimations={disableAnimations}
-            toggleDisableAnimations={toggleDisableAnimations}
-            fastAnimations={fastAnimations}
-            toggleFastAnimations={toggleFastAnimations}
-            collapseHeader={collapseHeader}
-            toggleCollapseHeader={toggleCollapseHeader}
-            enableUdp={enableUdp}
-            toggleEnableUdp={toggleEnableUdp}
-            showTabs={showTabs}
-            toggleShowTabs={toggleShowTabs}
-            showSearch={showSearch}
-            toggleShowSearch={toggleShowSearch}
-            searchScope={searchScope}
-            updateSearchScope={updateSearchScope}
-            searchMode={searchMode}
-            updateSearchMode={updateSearchMode}
-            hiddenCards={hiddenCards}
-            setHiddenCards={updateHiddenCards}
-            restoreAllNotifications={restoreAllNotifications}
-            dismissedNotificationsCount={dismissedNotifications.length}
-            showQuickSummary={showQuickSummary}
-            toggleShowQuickSummary={toggleShowQuickSummary}
-            lang={lang}
-            isDevToolsFloating={isDevToolsFloating}
-            setDevToolsFloating={setIsDevToolsFloating}
-            moduleStates={modalStates}
-            appVersion={packageJson.version}
-            updateServiceWorker={updateServiceWorker}
-            manualCheckUpdate={manualCheckUpdate}
-            lastCheckTime={lastCheckTime}
-            isCheckingUpdate={isCheckingUpdate}
-            needRefresh={needRefresh}
-          />) : null}
-
-          {visibility.benchmark ? (<Components.benchmark
-            onClose={() => close("benchmark")}
-            t={t.benchmarkModal}
-          />) : null}
-          {visibility.tools ? (<Components.tools
-            onClose={() => close("tools")}
-            t={t.hardwareToolsModal}
-            values={t.values}
-            labels={t.labels}
-          />) : null}
-
-          {visibility.ai ? (<Components.ai onClose={() => close("ai")} t={t.aiPlayground} />) : null}
-          {visibility.gamepad ? (<Components.gamepad
-            onClose={() => close("gamepad")}
-            t={t.gamepadTool}
-          />) : null}
-          {visibility.webDevice ? (<Components.webDevice
-            onClose={() => close("webDevice")}
-            t={t.webDevice}
-          />) : null}
-          {visibility.vision ? (<Components.vision
-            onClose={() => close("vision")}
-            t={t.visionModal}
-          />) : null}
-          {visibility.video ? (<Components.video
-            onClose={() => close("video")}
-            t={t.hardwareToolsModal}
-            values={t.values}
-            labels={t.labels}
-          />) : null}
-          {visibility.graphics ? (<Components.graphics
-            onClose={() => close("graphics")}
-            t={t.graphicsModal}
-          />) : null}
-          {visibility.speech ? (<Components.speech
-            onClose={() => close("speech")}
-            t={t.speechModal}
-          />) : null}
-          {visibility.midi ? (<Components.midi onClose={() => close("midi")} t={t.midiModal} />) : null}
-          {visibility.storageBench ? (<Components.storageBench
-            onClose={() => close("storageBench")}
-            t={t.storageBenchmark}
-          />) : null}
-          {visibility.heatmap ? (<Components.heatmap
-            onClose={() => close("heatmap")}
-            t={t.heatmap}
-          />) : null}
-          {visibility.rayTracing ? (<Components.rayTracing
-            onClose={() => close("rayTracing")}
-            t={t.rayTracing}
-          />) : null}
-          {visibility.extensions ? (<Components.extensions
-            onClose={() => close("extensions")}
-            t={t.extensionsModal}
-          />) : null}
-          {visibility.networkTools ? (<Components.networkTools
-            onClose={() => close("networkTools")}
-            t={t}
-            enableUdp={enableUdp}
-          />) : null}
-          {visibility.displayTools ? (<Components.displayTools
-            onClose={() => close("displayTools")}
-            t={t}
-          />) : null}
-          {visibility.googleTranslate ? (<Components.googleTranslate
-            onClose={() => close("googleTranslate")}
-            t={t}
-          />) : null}
-          {visibility.audioLatency ? (<Components.audioLatency
-            onClose={() => close("audioLatency")}
-            t={t}
-          />) : null}
-          {visibility.poisoning ? (<Components.poisoning
-            onClose={() => close("poisoning")}
-            t={t.poisoning}
-          />) : null}
-          {visibility.ja3 ? (<Components.ja3
-            onClose={() => close("ja3")}
-            t={t.ja3}
-          />) : null}
-          {visibility.attributions ? (<Components.attributions
-            onClose={() => close("attributions")}
-            t={t.attributionsModal}
-          />) : null}
-          {visibility.shortcuts ? (<Components.shortcuts
-            onClose={() => close("shortcuts")}
-            t={t.keyboardShortcutsModal}
-          />) : null}
-        </Suspense>
-      </ErrorBoundary>
       <div id="dashboard-container" className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">
         <Header
           t={t}
@@ -1005,550 +803,103 @@ const App: React.FC = () => {
         />
 
         {/* Notifications */}
-        {((needRefresh && !dismissedNotifications.includes('update')) || 
-          (isOutdated && !dismissedNotifications.includes('outdated')) || (isViewportTooSmall && !dismissedNotifications.includes('viewport_small'))) ? (<div className="flex flex-col gap-4 w-full">
-          {needRefresh && !dismissedNotifications.includes('update') ? (<AppNotification 
-            type="success"
-            title={t.environment?.notifications?.update?.title || "Update Available"}
-            message={t.environment?.notifications?.update?.message || "A new version of BrowserScope is available."}
-            action={{
-              label: t.environment?.notifications?.update?.action || "Update Now",
-              onClick: () => updateServiceWorker(true)
-            }}
-            onClose={() => {
-              dismissNotification('update');
-            }}
-          />) : null}
-          {isOutdated && !dismissedNotifications.includes('outdated') ? (<AppNotification 
-            type="warning"
-            title={t.environment?.notifications?.outdated?.title || "Legacy Browser Detected"}
-            message={t.environment?.notifications?.outdated?.message || "Your browser version is too old. Some advanced scanning features might be unavailable or inaccurate."}
-            onClose={() => {
-              dismissNotification('outdated');
-            }}
-          />) : null}
-          {isViewportTooSmall && !dismissedNotifications.includes('viewport_small') ? (<AppNotification 
-            type="warning"
-            title={t.environment?.notifications?.viewport_small?.title || "Display Area Too Small"}
-            message={t.environment?.notifications?.viewport_small?.message || "The current screen display area is too small. Some layouts, charts, or features may have display issues or become difficult to interact with."}
-            onClose={() => {
-              dismissNotification('viewport_small');
-            }}
-          />) : null}
-        </div>) : null}
+        {((needRefresh && !dismissedNotifications.includes("update")) ||
+          (isOutdated && !dismissedNotifications.includes("outdated")) ||
+          (isViewportTooSmall && !dismissedNotifications.includes("viewport_small"))) ? (
+          <div className="flex flex-col gap-4 w-full">
+            {needRefresh && !dismissedNotifications.includes("update") ? (
+              <AppNotification
+                type="success"
+                title={t.environment?.notifications?.update?.title || "Update Available"}
+                message={t.environment?.notifications?.update?.message || "A new version of BrowserScope is available."}
+                action={{
+                  label: t.environment?.notifications?.update?.action || "Update Now",
+                  onClick: () => updateServiceWorker(true),
+                }}
+                onClose={() => {
+                  dismissNotification("update");
+                }}
+              />
+            ) : null}
+            {isOutdated && !dismissedNotifications.includes("outdated") ? (
+              <AppNotification
+                type="warning"
+                title={t.environment?.notifications?.outdated?.title || "Legacy Browser Detected"}
+                message={
+                  t.environment?.notifications?.outdated?.message ||
+                  "Your browser version is too old. Some advanced scanning features might be unavailable or inaccurate."
+                }
+                onClose={() => {
+                  dismissNotification("outdated");
+                }}
+              />
+            ) : null}
+            {isViewportTooSmall && !dismissedNotifications.includes("viewport_small") ? (
+              <AppNotification
+                type="warning"
+                title={t.environment?.notifications?.viewport_small?.title || "Display Area Too Small"}
+                message={
+                  t.environment?.notifications?.viewport_small?.message ||
+                  "The current screen display area is too small. Some layouts, charts, or features may have display issues or become difficult to interact with."
+                }
+                onClose={() => {
+                  dismissNotification("viewport_small");
+                }}
+              />
+            ) : null}
+          </div>
+        ) : null}
 
         {/* Main Content - Only render if data exists */}
-        {data && Object.keys(data).length > 0 ? (<ErrorBoundary name="MainContent">
-          {/* Navigation Tabs and Search */}
-          {(showTabs || showSearch) ? (() => {
+        {data && Object.keys(data).length > 0 ? (
+          <ErrorBoundary name="MainContent">
+            <SearchBarAndTabs
+              showSearch={showSearch}
+              showTabs={showTabs}
+              showSearchSettings={showSearchSettings}
+              setShowSearchSettings={setShowSearchSettings}
+              handleSearch={handleSearch}
+              searchScope={searchScope}
+              updateSearchScope={updateSearchScope}
+              searchMode={searchMode}
+              updateSearchMode={updateSearchMode}
+              availableTabs={availableTabs}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              setSlideDirection={setSlideDirection}
+              tabsContainerRef={tabsContainerRef}
+              activeTabRef={activeTabRef}
+              themeColor={themeColor}
+              t={t}
+            />
 
-            if (availableTabs.length <= 1 && !showSearch) return null;
-
-            if (activeTab !== "all" && !availableTabs.some(tab => tab.id === activeTab)) {
-               setActiveTab("all");
-            }
-
-            const fuzzyMatch = (text: string, query: string): boolean => {
-                const normText = String(text || "").toLowerCase().trim();
-                const normQuery = String(query || "").toLowerCase().trim();
-                if (!normQuery) return true;
-                if (!normText) return false;
-                const terms = normQuery.split(/\s+/).filter(Boolean);
-                if (terms.length > 1) {
-                    return terms.every(term => normText.includes(term));
-                }
-                let textIdx = 0;
-                let queryIdx = 0;
-                while (textIdx < normText.length && queryIdx < normQuery.length) {
-                    if (normText[textIdx] === normQuery[queryIdx]) {
-                        queryIdx++;
-                    }
-                    textIdx++;
-                }
-                return queryIdx === normQuery.length;
-            };
-
-            const exactMatch = (text: string, query: string): boolean => {
-                const normText = String(text || "").toLowerCase().trim();
-                const normQuery = String(query || "").toLowerCase().trim();
-                return normText.includes(normQuery);
-            };
-
-            
-            const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-                const keyword = e.target.value.toLowerCase().trim();
-                if (!keyword) {
-                    setMatchedCardIds(null);
-                    return;
-                }
-                
-                const matches: string[] = [];
-                const isFuzzy = searchMode === 'fuzzy';
-                
-                for (const [id, data] of Object.entries(cardIndex)) {
-                    let textToSearch: string;
-                    switch (searchScope) {
-                        case 'category': textToSearch = data.category; break;
-                        case 'title': textToSearch = data.title; break;
-                        case 'value': textToSearch = data.value; break;
-                        case 'all': 
-                        default: 
-                            textToSearch = `${data.category} ${data.title} ${data.value}`; 
-                            break;
-                    }
-                    
-                    const isMatch = isFuzzy ? fuzzyMatch(textToSearch, keyword) : exactMatch(textToSearch, keyword);
-                    if (isMatch) {
-                        matches.push(id);
-                    }
-                }
-                
-                setMatchedCardIds(matches);
-            };
-
-            return (
-              <div className="sticky top-0 z-20 pt-4 -mt-4 bg-[#f8fafc]/90 dark:bg-slate-900/90 backdrop-blur-md flex flex-col space-y-3 mb-6 border-b border-slate-200 dark:border-slate-800 pb-2">
-                {showSearch ? (<div className="relative px-1 flex items-center gap-2">
-                  <div className="relative flex-1">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                      <input 
-                          type="text"
-                          onChange={handleSearch}
-                          placeholder={t.search?.placeholder || "Search categories or keywords..."}
-                          className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm text-slate-700 dark:text-slate-100 transition-shadow"
-                      />
-                  </div>
-                  <button
-                      onClick={() => setShowSearchSettings(!showSearchSettings)}
-                      className={`p-2 rounded-xl border transition-colors flex-shrink-0 ${showSearchSettings ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700'}`}
-                  >
-                      <Settings2 size={20} />
-                  </button>
-                </div>) : null}
-                {showSearch && showSearchSettings ? (<div className="px-1 mt-1 mb-2">
-                  <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-top-2">
-                      <div className="flex-1">
-                          <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                              {t.settings?.general?.searchScope?.title || "Search Scope"}
-                          </label>
-                          <Select 
-                              value={searchScope}
-                              onChange={(val) => updateSearchScope(val as 'all' | 'category' | 'title' | 'value')}
-                              options={[
-                                  { id: 'all', label: t.settings?.general?.searchScope?.options?.all || "All Text" },
-                                  { id: 'category', label: t.settings?.general?.searchScope?.options?.category || "Category" },
-                                  { id: 'title', label: t.settings?.general?.searchScope?.options?.title || "Title" },
-                                  { id: 'value', label: t.settings?.general?.searchScope?.options?.value || "Value" }
-                              ]}
-                              color={themeColor as SelectColor}
-                              size="sm"
-                          />
-                      </div>
-                      <div className="flex-1">
-                          <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                              {t.settings?.general?.searchMode?.title || "Search Mode"}
-                          </label>
-                          <Select 
-                              value={searchMode}
-                              onChange={(val) => updateSearchMode(val as 'fuzzy' | 'exact')}
-                              options={[
-                                  { id: 'fuzzy', label: t.settings?.general?.searchMode?.options?.fuzzy || "Fuzzy" },
-                                  { id: 'exact', label: t.settings?.general?.searchMode?.options?.exact || "Exact" }
-                              ]}
-                              color={themeColor as SelectColor}
-                              size="sm"
-                          />
-                      </div>
-                  </div>
-                </div>) : null}
-                {showTabs && availableTabs.length > 1 ? (<div className="flex space-x-2 overflow-x-auto scrollbar-hide px-1" ref={tabsContainerRef}>
-                  {availableTabs.map(tab => (
-                    <button
-                      key={tab.id}
-                      ref={activeTab === tab.id ? activeTabRef : null}
-                      onClick={() => {
-                        const newIndex = availableTabs.findIndex(t => t.id === tab.id);
-                        const oldIndex = availableTabs.findIndex(t => t.id === activeTab);
-                        setSlideDirection(newIndex > oldIndex ? 1 : -1);
-                        setActiveTab(tab.id);
-                      }}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-sm font-medium ${
-                        activeTab === tab.id
-                          ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                      }`}
-                    >
-                      {tab.icon}
-                      <span>{tab.label}</span>
-                    </button>
-                  ))}
-                </div>) : null}
-              </div>
-            );
-          })() : null}
-          <Suspense
-            fallback={
-              <div className="flex justify-center p-12">
-                <Loader2 className="animate-spin text-indigo-500" size={32} />
-              </div>
-            }
-          >
-            <div
+            <DashboardGrid
+              browserData={browserData}
+              t={t}
+              lang={lang}
+              themeColor={themeColor}
+              timeFormat={timeFormat}
+              simpleMode={simpleMode}
+              hiddenCards={hiddenCards}
+              matchedCardIds={matchedCardIds}
+              activeTab={activeTab}
+              geoData={geoData}
+              permStatus={permStatus}
+              open={open}
+              requestPermission={requestPermission}
+              handleAiRetest={handleAiRetest}
+              showQuickSummary={showQuickSummary}
+              toggleShowQuickSummary={toggleShowQuickSummary}
+              initialAnimationStyle={initialAnimationStyle}
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}
-              className="overflow-hidden"
-            >
-              <div
-                className={`space-y-6 ${initialAnimationStyle === "slide-up" ? "anim-slide-up" : initialAnimationStyle === "fade" ? "anim-fade" : initialAnimationStyle === "fly-in" ? "anim-fly-in" : initialAnimationStyle === "zoom" ? "anim-zoom" : ""}`}
-              >
-                {/* Quick Summary Widget */}
-                <motion.div
-                  initial={false}
-                  animate={(activeTab === "all" && matchedCardIds === null && showQuickSummary) ? {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    display: "block"
-                  } : {
-                    opacity: 0,
-                    y: 15,
-                    scale: 0.98,
-                    transitionEnd: {
-                      display: "none"
-                    }
-                  }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <QuickSummaryWidget data={browserData} t={t} onClose={() => toggleShowQuickSummary(false)} />
-                </motion.div>
+            />
+          </ErrorBoundary>
+        ) : null}
 
-                {/* Empty State */}
-                <motion.div
-                  initial={false}
-                  animate={matchedCardIds !== null && matchedCardIds.length === 0 ? {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    display: "block"
-                  } : {
-                    opacity: 0,
-                    y: 15,
-                    scale: 0.98,
-                    transitionEnd: {
-                      display: "none"
-                    }
-                  }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-center shadow-sm">
-                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-400 dark:text-slate-600 mb-4">
-                      <Search size={32} />
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">
-                      {t.search?.no_results || "No matching categories or cards found."}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md leading-relaxed">
-                      {lang === 'zh-CN' ? "请尝试使用其他关键词，或调整您的搜索范围。" : "Try using different keywords or adjusting your search scope."}
-                    </p>
-                  </div>
-                </motion.div>
-
-                {/* Group 0: Environment & Trust */}
-                <motion.div
-                  initial={false}
-                  animate={(!hiddenCards.includes("environment") && (activeTab === "all" || activeTab === "environment") && (matchedCardIds === null || matchedCardIds.includes("environment"))) ? {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    display: "block"
-                  } : {
-                    opacity: 0,
-                    y: 15,
-                    scale: 0.98,
-                    transitionEnd: {
-                      display: "none"
-                    }
-                  }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <SectionGroup
-                    title={
-                      t.groups?.environment || "Environment & Trust"
-                    }
-                    icon={<ShieldAlert className="text-emerald-500" />}
-                  >
-                    <div className="col-span-1 md:col-span-2 lg:col-span-3">
-                      <EnvironmentCard t={t} />
-                    </div>
-                  </SectionGroup>
-                </motion.div>
-
-                {/* Group 00: Browser Identity */}
-                <motion.div
-                  initial={false}
-                  animate={(!hiddenCards.includes("browser") && (activeTab === "all" || activeTab === "browser") && (matchedCardIds === null || matchedCardIds.includes("browser"))) ? {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    display: "block"
-                  } : {
-                    opacity: 0,
-                    y: 15,
-                    scale: 0.98,
-                    transitionEnd: {
-                      display: "none"
-                    }
-                  }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <SectionGroup
-                    title={
-                      t.groups?.browser || "Browser"
-                    }
-                    icon={<Monitor className="text-indigo-500" />}
-                  >
-                    <div className="col-span-1 md:col-span-2 lg:col-span-3">
-                      <BrowserCard systemData={browserData.system} t={t} />
-                    </div>
-                  </SectionGroup>
-                </motion.div>
-
-                {/* Group 1: Device & System */}
-                <motion.div
-                  initial={false}
-                  animate={((!hiddenCards.includes("system") || !hiddenCards.includes("hardware") || !hiddenCards.includes("display")) && (activeTab === "all" || activeTab === "system") && (matchedCardIds === null || matchedCardIds.includes("system") || matchedCardIds.includes("hardware") || matchedCardIds.includes("display"))) ? {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    display: "block"
-                  } : {
-                    opacity: 0,
-                    y: 15,
-                    scale: 0.98,
-                    transitionEnd: {
-                      display: "none"
-                    }
-                  }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <SectionGroup
-                    title={t.groups?.system || "Device & System Core"}
-                    icon={<Smartphone className="text-indigo-500" />}
-                  >
-                    {!hiddenCards.includes("system") && (matchedCardIds === null || matchedCardIds.includes("system")) ? (<SystemCard
-                      data={browserData.system}
-                      t={t}
-                      simpleMode={simpleMode}
-                      lang={lang}
-                    />) : null}
-
-                    {!hiddenCards.includes("hardware") && (matchedCardIds === null || matchedCardIds.includes("hardware")) ? (<HardwareCard
-                      data={browserData.hardware}
-                      t={t}
-                      onOpenGamepad={() => open("gamepad")}
-                      onOpenWebDevice={() => open("webDevice")}
-                      onOpenSensors={() => open("sensor")}
-                      onOpenTools={() => open("tools")}
-                      onOpenVision={() => open("vision")}
-                      onOpenGraphics={() => open("graphics")}
-                      onOpenMidi={() => requestPermission("midi")}
-                    />) : null}
-
-                    {!hiddenCards.includes("display") && (matchedCardIds === null || matchedCardIds.includes("display")) ? (<DisplayCard
-                      data={browserData.display}
-                      screenExtended={browserData.hardware.screenExtended}
-                      t={t}
-                      simpleMode={simpleMode}
-                    />) : null}
-                  </SectionGroup>
-                </motion.div>
-
-                {/* Group 2: Network & Security */}
-                <motion.div
-                  initial={false}
-                  animate={((!hiddenCards.includes("network") || !hiddenCards.includes("security") || !hiddenCards.includes("fingerprint")) && (activeTab === "all" || activeTab === "network") && (matchedCardIds === null || matchedCardIds.includes("network") || matchedCardIds.includes("security") || matchedCardIds.includes("fingerprint"))) ? {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    display: "block"
-                  } : {
-                    opacity: 0,
-                    y: 15,
-                    scale: 0.98,
-                    transitionEnd: {
-                      display: "none"
-                    }
-                  }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <SectionGroup
-                    title={t.groups?.network || "Network & Security"}
-                    icon={<ShieldAlert className="text-emerald-500" />}
-                  >
-                    {!hiddenCards.includes("network") && (matchedCardIds === null || matchedCardIds.includes("network")) ? (<NetworkCard
-                      data={browserData.network}
-                      t={t}
-                      simpleMode={simpleMode}
-                      onOpenSpeedTest={() => open("speed")}
-                    />) : null}
-
-                    {!hiddenCards.includes("security") && (matchedCardIds === null || matchedCardIds.includes("security")) ? (<SecurityCard
-                      data={browserData.security}
-                      webrtcIp={browserData.network.webrtcIp}
-                      t={t}
-                      simpleMode={simpleMode}
-                      onOpenExtensions={() => open("extensions")}
-                    />) : null}
-
-                    {!hiddenCards.includes("fingerprint") && (matchedCardIds === null || matchedCardIds.includes("fingerprint")) ? (<FingerprintCard
-                      data={browserData.fingerprints}
-                      audioSampleRate={browserData.hardware.audioSampleRate}
-                      t={t}
-                      simpleMode={simpleMode}
-                      onOpenScore={() => open("score")}
-                      onOpenCanvas={() => open("canvas")}
-                      onOpenBase64={() => open("base64")}
-                      onOpenWebgl={() => open("webgl")}
-                      onOpenFingerprintModal={() => open("fingerprint")}
-                      onOpenAudioLatency={() => open("audioLatency")}
-                      onOpenPoisoning={() => open("poisoning")}
-                      onOpenJa3={() => open("ja3")}
-                    />) : null}
-                  </SectionGroup>
-                </motion.div>
-
-                {/* Group 3: Advanced Capabilities & APIs */}
-                <motion.div
-                  initial={false}
-                  animate={((!hiddenCards.includes("ai") || !hiddenCards.includes("location") || !hiddenCards.includes("storage") || !hiddenCards.includes("permissions") || !hiddenCards.includes("media_devices") || !hiddenCards.includes("media_capabilities") || !hiddenCards.includes("user_agent")) && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("ai") || matchedCardIds.includes("location") || matchedCardIds.includes("storage") || matchedCardIds.includes("permissions") || matchedCardIds.includes("media_devices") || matchedCardIds.includes("media_capabilities") || matchedCardIds.includes("user_agent"))) ? {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    display: "block"
-                  } : {
-                    opacity: 0,
-                    y: 15,
-                    scale: 0.98,
-                    transitionEnd: {
-                      display: "none"
-                    }
-                  }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <SectionGroup
-                    title={t.groups?.advanced || "Capabilities & APIs"}
-                    icon={<Cpu className="text-amber-500" />}
-                  >
-                    {!hiddenCards.includes("ai") && (matchedCardIds === null || matchedCardIds.includes("ai")) ? (<AiComputeCard
-                      data={browserData.ai}
-                      t={t}
-                      onOpenPlayground={() => open("ai")}
-                      onOpenStress={() => open("compute")}
-                      onRetest={handleAiRetest}
-                    />) : null}
-
-                    {!hiddenCards.includes("location") && (matchedCardIds === null || matchedCardIds.includes("location")) ? (<LocationCard
-                      data={browserData.localization}
-                      geoData={geoData}
-                      permStatus={permStatus.geolocation}
-                      t={t}
-                      onRequestPermission={() =>
-                        requestPermission("geolocation")
-                      }
-                      timeFormat={timeFormat}
-                      lang={lang}
-                    />) : null}
-
-                    {!hiddenCards.includes("storage") && (matchedCardIds === null || matchedCardIds.includes("storage")) ? (<StorageCard data={browserData.storage} t={t} />) : null}
-
-                    {!hiddenCards.includes("permissions") && (matchedCardIds === null || matchedCardIds.includes("permissions")) ? (<PermissionsCard
-                      permStatus={permStatus}
-                      geoData={geoData}
-                      t={t}
-                      onRequestPermission={requestPermission}
-                    />) : null}
-
-                    {!hiddenCards.includes("media_devices") && (matchedCardIds === null || matchedCardIds.includes("media_devices")) ? (<MediaDevicesCard
-                      permStatus={permStatus}
-                      t={t}
-                      onRequestPermission={requestPermission}
-                      onOpenCamera={() => open("camera")}
-                      onOpenMic={() => open("audio")}
-                    />) : null}
-
-                    {!hiddenCards.includes("media_capabilities") && (matchedCardIds === null || matchedCardIds.includes("media_capabilities")) ? (<MediaCapabilitiesCard
-                      data={browserData.media}
-                      t={t}
-                      onOpenVideoTest={() => open("video")}
-                      onOpenSpeech={() => open("speech")}
-                      onOpenAudioLatency={() => open("audioLatency")}
-                    />) : null}
-
-                    {!hiddenCards.includes("user_agent") && (matchedCardIds === null || matchedCardIds.includes("user_agent")) ? (<UserAgentCard
-                      userAgent={browserData.system.userAgent}
-                      clientHints={browserData.system.clientHints}
-                      t={t}
-                    />) : null}
-                  </SectionGroup>
-                </motion.div>
-
-                {/* PWA Section */}
-                <motion.div
-                  initial={false}
-                  animate={(!hiddenCards.includes("pwa") && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("pwa"))) ? {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    display: "block"
-                  } : {
-                    opacity: 0,
-                    y: 15,
-                    scale: 0.98,
-                    transitionEnd: {
-                      display: "none"
-                    }
-                  }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <div className="anim-slide-up delay-100">
-                    <PwaSection
-                      isPwaInstalled={browserData.system.isPwaInstalled}
-                      features={browserData.pwaFeatures}
-                      t={t}
-                    />
-                  </div>
-                </motion.div>
-
-                {/* Features Section */}
-                <motion.div
-                  initial={false}
-                  animate={(!hiddenCards.includes("features") && (activeTab === "all" || activeTab === "advanced") && (matchedCardIds === null || matchedCardIds.includes("features"))) ? {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    display: "block"
-                  } : {
-                    opacity: 0,
-                    y: 15,
-                    scale: 0.98,
-                    transitionEnd: {
-                      display: "none"
-                    }
-                  }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <div className="anim-slide-up delay-200">
-                    <FeaturesSection features={browserData.features} t={t} />
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-          </Suspense>
-        </ErrorBoundary>) : null}
-
-        <Footer 
-          text={t.meta.footer} 
+        <Footer
+          text={t.meta.footer}
           onOpenAttributions={() => open("attributions")}
           label={t.attributionsModal?.title || "Attributions"}
         />
@@ -1558,4 +909,5 @@ const App: React.FC = () => {
     </div>
   );
 };
+
 export default App;
