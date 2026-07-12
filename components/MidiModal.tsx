@@ -338,15 +338,17 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
             </div>
 
             {/* Main Area: Piano */}
-            <div className="flex-1 overflow-x-auto overflow-y-hidden bg-slate-100 dark:bg-slate-950 relative shadow-inner flex items-center justify-center custom-scrollbar select-none">
-                <div className="relative h-[180px] my-auto shadow-2xl rounded-b-lg origin-center" style={{ width: containerWidth }}>
-                    {keyElements}
-                    {/* Synth Line Decoration */}
-                    <div className="absolute -top-1 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-30" />
+            <div className="flex-1 overflow-x-auto overflow-y-hidden bg-slate-100 dark:bg-slate-950 relative shadow-inner flex custom-scrollbar select-none">
+                <div className="min-w-full w-max flex-1 flex relative p-8">
+                    {/* Background Grid */}
+                    <div className="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+                    
+                    <div className="relative h-[180px] m-auto shadow-2xl rounded-b-lg origin-center shrink-0 z-10" style={{ width: containerWidth }}>
+                        {keyElements}
+                        {/* Synth Line Decoration */}
+                        <div className="absolute -top-1 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-30" />
+                    </div>
                 </div>
-                
-                {/* Background Grid */}
-                <div className="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
             </div>
 
             {/* Log Console */}
