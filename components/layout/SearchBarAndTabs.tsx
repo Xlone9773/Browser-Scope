@@ -29,7 +29,7 @@ interface SearchBarAndTabsProps {
   t: BrowserSafeAny;
 }
 
-export const SearchBarAndTabs: React.FC<SearchBarAndTabsProps> = ({
+export const SearchBarAndTabs: React.FC<SearchBarAndTabsProps> = React.memo(({
   showSearch,
   showTabs,
   showSearchSettings,
@@ -147,4 +147,4 @@ export const SearchBarAndTabs: React.FC<SearchBarAndTabsProps> = ({
       ) : null}
     </div>
   );
-};
+});

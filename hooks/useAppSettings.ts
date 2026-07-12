@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Language } from "../utils/i18n/index";
 import { applyTheme, getSavedTheme, Theme } from "../appearance/theme";
 
@@ -8,11 +8,11 @@ export function useAppSettings() {
     return (saved as Language) || "zh-CN";
   });
 
-  const changeLang = (newLang: Language) => {
+  const changeLang = useCallback((newLang: Language) => {
     setLang(newLang);
     localStorage.setItem("language", newLang);
     document.documentElement.lang = newLang;
-  };
+  }, []);
 
   const [theme, setTheme] = useState<Theme>("system");
   const [themeColor, setThemeColor] = useState<string>(
@@ -64,10 +64,10 @@ export function useAppSettings() {
     return 'all';
   });
   
-  const updateSearchScope = (scope: 'all' | 'category' | 'title' | 'value') => {
+  const updateSearchScope = useCallback((scope: 'all' | 'category' | 'title' | 'value') => {
     setSearchScope(scope);
     localStorage.setItem("searchScope", scope);
-  };
+  }, []);
 
   const [searchMode, setSearchMode] = useState<'fuzzy' | 'exact'>(() => {
     const saved = localStorage.getItem("searchMode");
@@ -77,10 +77,10 @@ export function useAppSettings() {
     return 'fuzzy';
   });
 
-  const updateSearchMode = (mode: 'fuzzy' | 'exact') => {
+  const updateSearchMode = useCallback((mode: 'fuzzy' | 'exact') => {
     setSearchMode(mode);
     localStorage.setItem("searchMode", mode);
-  };
+  }, []);
 
   const [showSearch, setShowSearch] = useState<boolean>(() => {
     const saved = localStorage.getItem("showSearch");
@@ -91,10 +91,10 @@ export function useAppSettings() {
     return saved === null ? true : saved === "true";
   });
 
-  const toggleShowQuickSummary = (value: boolean) => {
+  const toggleShowQuickSummary = useCallback((value: boolean) => {
     setShowQuickSummary(value);
     localStorage.setItem("showQuickSummary", String(value));
-  };
+  }, []);
 
   const [hiddenCards, setHiddenCards] = useState<string[]>(() => {
     try {
@@ -202,27 +202,29 @@ export function useAppSettings() {
     }
   }, [disableAnimations, fastAnimations]);
 
-  const toggleTheme = () => {
-    let newTheme: Theme;
-    if (theme === "system") newTheme = "light";
-    else if (theme === "light") newTheme = "dark";
-    else newTheme = "system";
+  const toggleTheme = useCallback(() => {
+    setTheme((prevTheme) => {
+      let newTheme: Theme;
+      if (prevTheme === "system") newTheme = "light";
+      else if (prevTheme === "light") newTheme = "dark";
+      else newTheme = "system";
 
-    const updateTheme = () => {
-      setTheme(newTheme);
-      applyTheme(newTheme);
-    };
+      const updateTheme = () => {
+        applyTheme(newTheme);
+      };
 
-    if (!document.startViewTransition || disableAnimations) {
-      updateTheme();
-    } else {
-      document.startViewTransition(() => {
+      if (!document.startViewTransition || disableAnimations) {
         updateTheme();
-      });
-    }
-  };
+      } else {
+        document.startViewTransition(() => {
+          updateTheme();
+        });
+      }
+      return newTheme;
+    });
+  }, [disableAnimations]);
 
-  const updateHiddenCards = (cards: string[]) => {
+  const updateHiddenCards = useCallback((cards: string[]) => {
     setHiddenCards(cards);
     localStorage.setItem("hiddenCards", JSON.stringify(cards));
 
@@ -240,11 +242,14 @@ export function useAppSettings() {
       "user_agent",
     ];
     const hasAllAdvanced = advancedCards.every((c) => cards.includes(c));
-    if (simpleMode !== hasAllAdvanced) {
-      setSimpleMode(hasAllAdvanced);
-      localStorage.setItem("simpleMode", String(hasAllAdvanced));
-    }
-  };
+    setSimpleMode((prevSimple) => {
+      if (prevSimple !== hasAllAdvanced) {
+        localStorage.setItem("simpleMode", String(hasAllAdvanced));
+        return hasAllAdvanced;
+      }
+      return prevSimple;
+    });
+  }, []);
 
   const [dismissedNotifications, setDismissedNotifications] = useState<string[]>(() => {
     try {
@@ -255,20 +260,20 @@ export function useAppSettings() {
     }
   });
 
-  const dismissNotification = (id: string) => {
+  const dismissNotification = useCallback((id: string) => {
     setDismissedNotifications((prev: string[]) => {
       const next = [...prev, id];
       localStorage.setItem("dismissedNotifications", JSON.stringify(next));
       return next;
     });
-  };
+  }, []);
 
-  const restoreAllNotifications = () => {
+  const restoreAllNotifications = useCallback(() => {
     setDismissedNotifications([]);
     localStorage.removeItem("dismissedNotifications");
-  };
+  }, []);
 
-  const toggleSimpleMode = (value: boolean) => {
+  const toggleSimpleMode = useCallback((value: boolean) => {
     setSimpleMode(value);
     localStorage.setItem("simpleMode", String(value));
 
@@ -285,76 +290,77 @@ export function useAppSettings() {
       "features",
       "user_agent",
     ];
-    if (value) {
-      const newHidden = Array.from(new Set([...hiddenCards, ...advancedCards]));
-      setHiddenCards(newHidden);
+    setHiddenCards((prevHidden) => {
+      let newHidden: string[];
+      if (value) {
+        newHidden = Array.from(new Set([...prevHidden, ...advancedCards]));
+      } else {
+        newHidden = prevHidden.filter((c) => !advancedCards.includes(c));
+      }
       localStorage.setItem("hiddenCards", JSON.stringify(newHidden));
-    } else {
-      const newHidden = hiddenCards.filter((c) => !advancedCards.includes(c));
-      setHiddenCards(newHidden);
-      localStorage.setItem("hiddenCards", JSON.stringify(newHidden));
-    }
-  };
+      return newHidden;
+    });
+  }, []);
 
-  const updateThemeColor = (color: string) => {
+  const updateThemeColor = useCallback((color: string) => {
     setThemeColor(color);
     localStorage.setItem("themeColor", color);
-  };
+  }, []);
 
-  const updateAnimationStyle = (style: string) => {
+  const updateAnimationStyle = useCallback((style: string) => {
     setAnimationStyle(style);
     localStorage.setItem("animationStyle", style);
-  };
+  }, []);
 
-  const toggleHideScrollbar = (value: boolean) => {
+  const toggleHideScrollbar = useCallback((value: boolean) => {
     setHideScrollbar(value);
     localStorage.setItem("hideScrollbar", String(value));
-  };
+  }, []);
 
-  const toggleGlobalHideScrollbar = (value: boolean) => {
+  const toggleGlobalHideScrollbar = useCallback((value: boolean) => {
     setGlobalHideScrollbar(value);
     localStorage.setItem("globalHideScrollbar", String(value));
-  };
+  }, []);
 
-  const updateTimeFormat = (format: "12" | "24") => {
+  const updateTimeFormat = useCallback((format: "12" | "24") => {
     setTimeFormat(format);
     localStorage.setItem("timeFormat", format);
-  };
+  }, []);
 
-  const toggleDisableBlur = (value: boolean) => {
+  const toggleDisableBlur = useCallback((value: boolean) => {
     setDisableBlur(value);
     localStorage.setItem("disableBlur", String(value));
-  };
+  }, []);
 
-  const toggleDisableAnimations = (value: boolean) => {
+  const toggleDisableAnimations = useCallback((value: boolean) => {
     setDisableAnimations(value);
     localStorage.setItem("disableAnimations", String(value));
-  };
+  }, []);
 
-  const toggleFastAnimations = (value: boolean) => {
+  const toggleFastAnimations = useCallback((value: boolean) => {
     setFastAnimations(value);
     localStorage.setItem("fastAnimations", String(value));
-  };
+  }, []);
 
-  const toggleCollapseHeader = (value: boolean) => {
+  const toggleCollapseHeader = useCallback((value: boolean) => {
     setCollapseHeader(value);
     localStorage.setItem("collapseHeader", String(value));
-  };
+  }, []);
 
-  const toggleEnableUdp = (value: boolean) => {
+  const toggleEnableUdp = useCallback((value: boolean) => {
     setEnableUdp(value);
     localStorage.setItem("enableUdp", String(value));
-  };
+  }, []);
 
-  const toggleShowTabs = (value: boolean) => {
+  const toggleShowTabs = useCallback((value: boolean) => {
     setShowTabs(value);
     localStorage.setItem("showTabs", String(value));
-  };
+  }, []);
 
-  const toggleShowSearch = (value: boolean) => {
+  const toggleShowSearch = useCallback((value: boolean) => {
     setShowSearch(value);
     localStorage.setItem("showSearch", String(value));
-  };
+  }, []);
 
   return {
     lang,

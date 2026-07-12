@@ -8,7 +8,7 @@ interface BrowserCardProps {
     t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
 }
 
-export const BrowserCard: React.FC<BrowserCardProps> = ({ systemData, t }) => {
+export const BrowserCard: React.FC<BrowserCardProps> = React.memo(({ systemData, t }) => {
     const cardT = t.browserCard || {
         title: 'Browser Identity',
         subtitle: 'Current actively used browser estimated by features',
@@ -33,4 +33,4 @@ export const BrowserCard: React.FC<BrowserCardProps> = ({ systemData, t }) => {
             </div>
         </InfoCard>
     );
-};
+});

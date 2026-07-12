@@ -186,19 +186,19 @@ const App: React.FC = () => {
     }
   }, [activeTab]);
 
-  const onTouchStart = (e: React.TouchEvent) => {
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
     touchEndX.current = null;
     touchEndY.current = null;
     touchStartX.current = e.targetTouches[0].clientX;
     touchStartY.current = e.targetTouches[0].clientY;
-  };
+  }, []);
 
-  const onTouchMove = (e: React.TouchEvent) => {
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
     touchEndX.current = e.targetTouches[0].clientX;
     touchEndY.current = e.targetTouches[0].clientY;
-  };
+  }, []);
 
-  const onTouchEnd = () => {
+  const onTouchEnd = useCallback(() => {
     if (
       touchStartX.current === null ||
       touchEndX.current === null ||
@@ -222,7 +222,7 @@ const App: React.FC = () => {
         }
       }
     }
-  };
+  }, [availableTabs, activeTab]);
 
   useEffect(() => {
     const handleVisibility = () => {

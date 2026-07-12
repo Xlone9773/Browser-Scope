@@ -120,7 +120,7 @@ interface DashboardGridProps {
   onTouchEnd: () => void;
 }
 
-export const DashboardGrid: React.FC<DashboardGridProps> = ({
+export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
   browserData,
   t,
   lang,
@@ -517,4 +517,4 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       </div>
     </Suspense>
   );
-};
+});

@@ -48,7 +48,7 @@ interface HeaderProps {
   onOpenTranslate: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({
+export const Header: React.FC<HeaderProps> = React.memo(({
   t,
   lang,
   setLang,
@@ -468,4 +468,4 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
     </header>
   );
-};
+});

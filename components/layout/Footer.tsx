@@ -7,7 +7,7 @@ interface FooterProps {
   label?: string;
 }
 
-export const Footer: React.FC<FooterProps> = ({ text, onOpenAttributions, label = "Third-Party Attributions" }) => {
+export const Footer: React.FC<FooterProps> = React.memo(({ text, onOpenAttributions, label = "Third-Party Attributions" }) => {
   return (
     <footer className="text-center py-8 text-xs text-slate-400 dark:text-slate-500 flex flex-col items-center gap-2">
         <p className="font-medium">{text}</p>
@@ -21,4 +21,4 @@ export const Footer: React.FC<FooterProps> = ({ text, onOpenAttributions, label 
         )}
     </footer>
   );
-};
+});
