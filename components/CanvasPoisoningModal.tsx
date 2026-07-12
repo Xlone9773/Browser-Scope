@@ -134,11 +134,13 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
       if (ctx) {
         addLog(t?.testing_canvas);
         let lastHash = '';
+        let canvasPoisoned = false;
         for (let i = 0; i < 10; i++) {
           drawCanvas(ctx, 0);
           const dataURL = canvas.toDataURL();
           const hash = hashString(dataURL);
           if (i > 0 && hash !== lastHash) {
+            canvasPoisoned = true;
             poisoned = true;
             addLog(`❌ Canvas mismatch at iteration ${i}: ${lastHash} != ${hash}`);
             break;
@@ -147,16 +149,10 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
           setProgress((prev) => prev + 3);
           await new Promise(r => setTimeout(r, 40));
         }
-        if (!poisoned) {
+        if (!canvasPoisoned) {
           addLog('✅ Canvas appears stable (no random noise).');
         }
       }
-    }
-    
-    if (poisoned) {
-       setStatus('poisoned');
-       setProgress(100);
-       return;
     }
     
     // 2. WebGL Test
@@ -166,11 +162,13 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
       if (gl) {
         addLog(t?.testing_webgl);
         let lastHash = '';
+        let webglPoisoned = false;
         for (let i = 0; i < 10; i++) {
           drawWebGL(gl, 0);
           const dataURL = webgl.toDataURL();
           const hash = hashString(dataURL);
           if (i > 0 && hash !== lastHash) {
+            webglPoisoned = true;
             poisoned = true;
             addLog(`❌ WebGL mismatch at iteration ${i}: ${lastHash} != ${hash}`);
             break;
@@ -179,16 +177,10 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
           setProgress((prev) => prev + 3);
           await new Promise(r => setTimeout(r, 40));
         }
-        if (!poisoned) {
+        if (!webglPoisoned) {
           addLog('✅ WebGL appears stable (no random noise).');
         }
       }
-    }
-
-    if (poisoned) {
-       setStatus('poisoned');
-       setProgress(100);
-       return;
     }
 
     // 3. Audio & Latency Test
