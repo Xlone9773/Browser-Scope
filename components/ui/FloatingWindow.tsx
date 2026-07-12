@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Move, Minus } from 'lucide-react';
 
@@ -11,7 +11,7 @@ interface FloatingWindowProps {
     initialHeight?: number;
 }
 
-type DragMode = 'move' | 'resize-nw' | 'resize-ne' | 'resize-sw' | 'resize-se' | null;
+type DragMode = 'move' | 'resize-nw' | 'resize-ne' | 'resize-sw' | 'resize-se';
 
 export const FloatingWindow: React.FC<FloatingWindowProps> = ({ 
     title, 
@@ -22,40 +22,50 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
 }) => {
     // Initial position centered
     const [rect, setRect] = useState({
-        x: Math.max(50, window.innerWidth / 2 - initialWidth / 2),
-        y: Math.max(50, window.innerHeight / 2 - initialHeight / 2),
+        x: typeof window !== 'undefined' ? Math.max(50, window.innerWidth / 2 - initialWidth / 2) : 50,
+        y: typeof window !== 'undefined' ? Math.max(50, window.innerHeight / 2 - initialHeight / 2) : 50,
         w: initialWidth,
         h: initialHeight
     });
 
-    // Use Refs for values needed inside event listeners to avoid closure staleness
-    // and to prevent re-binding listeners on every render.
-    const rectRef = useRef(rect);
-    const dragModeRef = useRef<DragMode>(null);
+    const windowRef = useRef<HTMLDivElement | null>(null);
+    const dragModeRef = useRef<DragMode | null>(null);
     const startPosRef = useRef({ x: 0, y: 0 });
     const startRectRef = useRef({ x: 0, y: 0, w: 0, h: 0 });
 
-    // Sync ref with state
-    useEffect(() => {
-        rectRef.current = rect;
-    }, [rect]);
+    const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>, mode: DragMode) => {
+        if (dragModeRef.current !== null) {
+            return null;
+        }
 
-    const handlePointerDown = (e: React.PointerEvent, mode: DragMode) => {
         e.preventDefault();
         e.stopPropagation();
         
-        dragModeRef.current = mode;
-        startPosRef.current = { x: e.clientX, y: e.clientY };
-        startRectRef.current = { ...rectRef.current };
-
         const target = e.currentTarget;
         target.setPointerCapture(e.pointerId);
+        
+        dragModeRef.current = mode;
+        startPosRef.current = { x: e.clientX, y: e.clientY };
+        
+        if (windowRef.current !== null) {
+            const rectDOM = windowRef.current.getBoundingClientRect();
+            startRectRef.current = { 
+                x: rectDOM.left, 
+                y: rectDOM.top, 
+                w: rectDOM.width, 
+                h: rectDOM.height 
+            };
+        } else {
+            startRectRef.current = { ...rect };
+        }
 
         document.body.style.userSelect = 'none';
-        document.body.style.cursor = mode === 'move' ? 'move' : (mode?.includes('nw') || mode?.includes('se') ? 'nwse-resize' : 'nesw-resize');
+        document.body.style.cursor = mode === 'move' ? 'move' : (mode.includes('nw') || mode.includes('se') ? 'nwse-resize' : 'nesw-resize');
 
         const handleMove = (ev: PointerEvent) => {
-            if (!dragModeRef.current) return;
+            if (dragModeRef.current === null) {
+                return null;
+            }
             ev.preventDefault();
 
             const dx = ev.clientX - startPosRef.current.x;
@@ -88,7 +98,15 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
                 }
             }
 
-            setRect(newRect);
+            // Direct DOM manipulation for zero-latency dragging
+            if (windowRef.current !== null) {
+                windowRef.current.style.left = `${newRect.x}px`;
+                windowRef.current.style.top = `${newRect.y}px`;
+                windowRef.current.style.width = `${newRect.w}px`;
+                windowRef.current.style.height = `${newRect.h}px`;
+            }
+            
+            return null;
         };
 
         const handleUp = (ev: PointerEvent) => {
@@ -96,25 +114,44 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
             dragModeRef.current = null;
             document.body.style.userSelect = '';
             document.body.style.cursor = '';
-            window.removeEventListener('pointermove', handleMove as EventListener);
-            window.removeEventListener('pointerup', handleUp as EventListener);
-            window.removeEventListener('pointercancel', handleUp as EventListener);
+            window.removeEventListener('pointermove', handleMove);
+            window.removeEventListener('pointerup', handleUp);
+            window.removeEventListener('pointercancel', handleUp);
+            
+            if (windowRef.current !== null) {
+                setRect({
+                    x: parseFloat(windowRef.current.style.left) || startRectRef.current.x,
+                    y: parseFloat(windowRef.current.style.top) || startRectRef.current.y,
+                    w: parseFloat(windowRef.current.style.width) || startRectRef.current.w,
+                    h: parseFloat(windowRef.current.style.height) || startRectRef.current.h,
+                });
+            }
+            
+            return null;
         };
 
-        window.addEventListener('pointermove', handleMove as EventListener, { passive: false });
-        window.addEventListener('pointerup', handleUp as EventListener);
-        window.addEventListener('pointercancel', handleUp as EventListener);
+        window.addEventListener('pointermove', handleMove, { passive: false });
+        window.addEventListener('pointerup', handleUp);
+        window.addEventListener('pointercancel', handleUp);
+        
+        return null;
+    }, [rect]);
+
+    const handleStopPropagation = (e: React.PointerEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        return null;
     };
 
-    return createPortal(
+    return typeof document !== 'undefined' ? createPortal(
         <div 
+            ref={windowRef}
             contentEditable={false}
             className="fixed z-[9999] bg-slate-900/95 backdrop-blur-md border border-slate-700 rounded-lg shadow-2xl flex flex-col overflow-hidden ring-1 ring-white/10 transition-shadow duration-200"
             style={{
-                left: rect.x,
-                top: rect.y,
-                width: rect.w,
-                height: rect.h,
+                left: `${rect.x}px`,
+                top: `${rect.y}px`,
+                width: `${rect.w}px`,
+                height: `${rect.h}px`,
                 boxShadow: '0 20px 50px -12px rgba(0, 0, 0, 0.5)'
             }}
         >
@@ -127,7 +164,7 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
                     <Move size={14} className="opacity-50 group-hover:opacity-100 transition-opacity" />
                     <span className="text-xs font-bold tracking-wide uppercase">{title}</span>
                 </div>
-                <div className="flex items-center gap-1" onPointerDown={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-1" onPointerDown={handleStopPropagation}>
                     <button 
                         onClick={onClose}
                         className="p-1.5 hover:bg-slate-700 rounded text-slate-400 hover:text-white transition-colors"
@@ -144,7 +181,6 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
             </div>
 
             {/* Resize Handles */}
-            {/* Corners */}
             <div 
                 className="absolute top-0 left-0 w-4 h-4 cursor-nwse-resize touch-none z-50 opacity-0 hover:opacity-100 bg-white/10 transition-opacity rounded-br"
                 onPointerDown={(e) => handlePointerDown(e, 'resize-nw')}
@@ -158,7 +194,6 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
                 onPointerDown={(e) => handlePointerDown(e, 'resize-sw')}
             />
             
-            {/* Visible Resize Handle Bottom Right */}
             <div 
                 className="absolute bottom-0 right-0 w-5 h-5 cursor-nwse-resize touch-none z-50 flex items-end justify-end p-1 hover:bg-white/5"
                 onPointerDown={(e) => handlePointerDown(e, 'resize-se')}
@@ -169,5 +204,6 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
             </div>
         </div>,
         document.body
-    );
+    ) : null;
 };
+
