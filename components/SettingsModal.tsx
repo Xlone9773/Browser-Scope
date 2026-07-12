@@ -305,7 +305,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               lang={lang}
                           />) : null}
 
-                          {activeTab === 'storage' ? (<StorageTab t={settings.storage} />) : null}
+                          {activeTab === 'storage' ? (<StorageTab t={settings.storage} lang={lang} />) : null}
 
                           {activeTab === 'res' ? (<ResourcesTab t={settings.resources} />) : null}
 

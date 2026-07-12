@@ -223,7 +223,24 @@ export const settings = {
             desc: "バックグラウンドで実行中のService Workerスクリプトを管理します。",
             unregisterBtn: "すべて登録解除"
         },
-        usageLabel: "ストレージ使用率"
+        usageLabel: "ストレージ使用率",
+        fonts: {
+            title: "フォントキャッシュ管理",
+            desc: "アプリケーションのビルドサイズを大幅に削減するため、診断レポートのPDFエクスポートで使用される非英語フォントはグローバルCDNからオンデマンドで取得されるようになりました。ここでフォントを事前ダウンロードしてオフラインで使用できるようにしたり、削除してブラウザのキャッシュ容量を解放したりできます。",
+            name: "フォント名",
+            languages: "対象言語",
+            status: "ステータス",
+            cached: "キャッシュ済み ({size})",
+            notCached: "未キャッシュ (CDNから取得)",
+            downloading: "ダウンロード中...",
+            downloadBtn: "ダウンロード",
+            deleteBtn: "削除",
+            sizeUnknown: "サイズ不明",
+            downloadSuccess: "フォントが正常にダウンロードされました！",
+            deleteSuccess: "フォントが正常に削除されました！",
+            downloadFailed: "フォントのダウンロードに失敗しました。",
+            deleteFailed: "フォントの削除に失敗しました。"
+        }
     },
     resources: {
         title: "外部リソース読み込みリスト",

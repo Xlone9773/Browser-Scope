@@ -1,22 +1,131 @@
-
-import React, { useState, useEffect } from 'react';
-import { Database, RefreshCw, Trash2 } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Database, RefreshCw, Trash2, Type, DownloadCloud, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
 
 interface StorageTabProps {
     t: Translation['settings']['storage'];
+    lang?: string;
 }
 
-export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
-    const [localStorageCount, setLocalStorageCount] = useState(0);
-    const [sessionStorageCount, setSessionStorageCount] = useState(0);
+interface FontItem {
+    key: string;
+    name: string;
+    languages: string;
+    langLabel: Record<string, string>;
+    mirrors: string[];
+}
+
+const FONTS_LIST: FontItem[] = [
+    {
+        key: 'roboto',
+        name: 'Roboto Regular',
+        languages: 'ru',
+        langLabel: {
+            en: 'Russian / Cyrillic (ru)',
+            'zh-CN': '俄语 / 西里尔文 (ru)',
+            'zh-TW': '俄語 / 西里爾文 (ru)',
+            'zh-HK': '俄語 / 西里爾文 (ru)',
+            ja: 'ロシア語 / キリル文字 (ru)',
+            ru: 'Русский / Кириллица (ru)'
+        },
+        mirrors: [
+            "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
+            "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/roboto/static/Roboto-Regular.ttf"
+        ]
+    },
+    {
+        key: 'zcoolxiaowei',
+        name: 'ZCOOL XiaoWei',
+        languages: 'zh-CN, zh-TW, zh-HK',
+        langLabel: {
+            en: 'Chinese (Simplified & Traditional) (zh-CN, zh-TW, zh-HK)',
+            'zh-CN': '中文 (简体与繁体) (zh-CN, zh-TW, zh-HK)',
+            'zh-TW': '中文 (簡體與繁體) (zh-CN, zh-TW, zh-HK)',
+            'zh-HK': '中文 (簡體與繁體) (zh-CN, zh-TW, zh-HK)',
+            ja: '中国語 (簡体字・繁体字) (zh-CN, zh-TW, zh-HK)',
+            ru: 'Китайский (упрощенный и традиционный) (zh-CN, zh-TW, zh-HK)'
+        },
+        mirrors: [
+            "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
+            "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
+        ]
+    },
+    {
+        key: 'sawarabigothic',
+        name: 'Sawarabi Gothic',
+        languages: 'ja',
+        langLabel: {
+            en: 'Japanese (ja)',
+            'zh-CN': '日语 (ja)',
+            'zh-TW': '日語 (ja)',
+            'zh-HK': '日語 (ja)',
+            ja: '日本語 (ja)',
+            ru: 'Японский (ja)'
+        },
+        mirrors: [
+            "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf",
+            "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf"
+        ]
+    }
+];
+
+const CACHE_NAME = "browserscope-fonts";
+
+export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en' }) => {
+    const [localStorageCount, setLocalStorageCount] = useState(() => typeof window !== 'undefined' ? localStorage.length : 0);
+    const [sessionStorageCount, setSessionStorageCount] = useState(() => typeof window !== 'undefined' ? sessionStorage.length : 0);
     const [swCount, setSwCount] = useState<number | null>(null);
 
+    // Font states
+    const [fontStatuses, setFontStatuses] = useState<Record<string, { isCached: boolean; size: string | null }>>({});
+    const [downloadingKeys, setDownloadingKeys] = useState<Record<string, boolean>>({});
+    const [deletingKeys, setDeletingKeys] = useState<Record<string, boolean>>({});
+    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+    const triggerToast = useCallback((message: string, type: 'success' | 'error') => {
+        setToast({ message, type });
+        const timer = setTimeout(() => setToast(null), 3500);
+        return () => clearTimeout(timer);
+    }, []);
+
+    const updateFontStatuses = useCallback(async () => {
+        try {
+            if (!('caches' in window)) return;
+            const cache = await window.caches.open(CACHE_NAME);
+            const updated: Record<string, { isCached: boolean; size: string | null }> = {};
+            
+            for (const font of FONTS_LIST) {
+                const match = await cache.match(font.key);
+                if (match) {
+                    try {
+                        const clone = match.clone();
+                        const blob = await clone.blob();
+                        const sizeInMb = (blob.size / (1024 * 1024)).toFixed(2);
+                        updated[font.key] = {
+                            isCached: true,
+                            size: `${sizeInMb} MB`
+                        };
+                    } catch {
+                        updated[font.key] = {
+                            isCached: true,
+                            size: t.fonts?.sizeUnknown || 'Size unknown'
+                        };
+                    }
+                } else {
+                    updated[font.key] = {
+                        isCached: false,
+                        size: null
+                    };
+                }
+            }
+            setFontStatuses(updated);
+        } catch (err) {
+            console.error("Failed to read font cache:", err);
+        }
+    }, [t]);
+
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLocalStorageCount(localStorage.length);
-        setSessionStorageCount(sessionStorage.length);
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations()
               .then(regs => {
@@ -27,7 +136,12 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
                   setSwCount(null);
               });
         }
-    }, []);
+        
+        const timer = setTimeout(() => {
+            updateFontStatuses();
+        }, 0);
+        return () => clearTimeout(timer);
+    }, [updateFontStatuses]);
 
     const clearStorage = () => {
         localStorage.clear();
@@ -51,12 +165,62 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
         }
     };
 
-    // Calculate heuristic usage percentage if possible (mocked data often in BrowserScope)
-    // In a real app this would come from the parent prop usually, but here we can't easily sync live
-    // so we skip the progress bar or keep it simple.
-    // However, since we don't pass `data.usage` prop here anymore, we'll focus on the actions.
-    // If you want the visualizer back, it needs `data` prop from App/SettingsModal.
-    // For now, let's keep it clean as a management tab.
+    const handleDownloadFont = async (fontKey: string, mirrors: string[]) => {
+        if (!('caches' in window)) return;
+        setDownloadingKeys(prev => ({ ...prev, [fontKey]: true }));
+        let success = false;
+
+        for (const url of mirrors) {
+            try {
+                const res = await fetch(url);
+                if (res.ok) {
+                    const buffer = await res.arrayBuffer();
+                    if (buffer.byteLength > 4) {
+                        const cache = await window.caches.open(CACHE_NAME);
+                        await cache.put(fontKey, new Response(buffer, {
+                            headers: {
+                                'Content-Type': 'font/ttf',
+                                'Content-Length': String(buffer.byteLength)
+                            }
+                        }));
+                        success = true;
+                        break;
+                    }
+                }
+            } catch (err) {
+                console.warn(`Failed to manually fetch font from mirror: ${url}`, err);
+            }
+        }
+
+        setDownloadingKeys(prev => ({ ...prev, [fontKey]: false }));
+        if (success) {
+            await updateFontStatuses();
+            triggerToast(t.fonts?.downloadSuccess || "Font downloaded successfully!", "success");
+        } else {
+            triggerToast(t.fonts?.downloadFailed || "Failed to download font.", "error");
+        }
+    };
+
+    const handleDeleteFont = async (fontKey: string) => {
+        if (!('caches' in window)) return;
+        setDeletingKeys(prev => ({ ...prev, [fontKey]: true }));
+        let success = false;
+
+        try {
+            const cache = await window.caches.open(CACHE_NAME);
+            success = await cache.delete(fontKey);
+        } catch (err) {
+            console.error("Failed to delete font from cache:", err);
+        }
+
+        setDeletingKeys(prev => ({ ...prev, [fontKey]: false }));
+        if (success) {
+            await updateFontStatuses();
+            triggerToast(t.fonts?.deleteSuccess || "Font deleted successfully!", "success");
+        } else {
+            triggerToast(t.fonts?.deleteFailed || "Failed to delete font.", "error");
+        }
+    };
 
     return (
         <div className="max-w-2xl mx-auto space-y-6">
@@ -92,6 +256,88 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
                     </div>
                 </div>
             </div>
+
+            {/* Fonts Cache Section */}
+            {t.fonts && (
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm space-y-4">
+                    <div className="flex items-start gap-3">
+                        <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
+                            <Type size={20} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.fonts.title}</h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                {t.fonts.desc}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="divide-y divide-slate-100 dark:divide-slate-700">
+                        {FONTS_LIST.map((font) => {
+                            const status = fontStatuses[font.key] || { isCached: false, size: null };
+                            const isDownloading = downloadingKeys[font.key];
+                            const isDeleting = deletingKeys[font.key];
+                            const displayLang = font.langLabel[lang] || font.langLabel.en;
+
+                            return (
+                                <div key={font.key} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-semibold text-slate-800 dark:text-slate-100 text-sm">
+                                                {font.name}
+                                            </span>
+                                            {status.isCached ? (
+                                                <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 px-2 py-0.5 rounded-full font-medium">
+                                                    <CheckCircle2 size={10} />
+                                                    {t.fonts.cached.replace('{size}', status.size || '')}
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 text-[10px] bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400 px-2 py-0.5 rounded-full font-medium">
+                                                    <AlertCircle size={10} />
+                                                    {t.fonts.notCached}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                                            <span className="font-medium text-slate-600 dark:text-slate-300">{t.fonts.languages}: </span>
+                                            <span className="font-mono bg-slate-50 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-600 dark:text-indigo-400">
+                                                {displayLang}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 self-end sm:self-center">
+                                        {status.isCached ? (
+                                            <Button
+                                                variant="danger-soft"
+                                                size="sm"
+                                                onClick={() => handleDeleteFont(font.key)}
+                                                isLoading={isDeleting}
+                                                disabled={isDownloading || isDeleting}
+                                                leftIcon={<Trash2 size={14} />}
+                                            >
+                                                {t.fonts.deleteBtn}
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="secondary"
+                                                size="sm"
+                                                onClick={() => handleDownloadFont(font.key, font.mirrors)}
+                                                isLoading={isDownloading}
+                                                disabled={isDownloading || isDeleting}
+                                                leftIcon={<DownloadCloud size={14} />}
+                                            >
+                                                {isDownloading ? t.fonts.downloading : t.fonts.downloadBtn}
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
             {/* Service Workers */}
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="flex items-start justify-between">
@@ -117,6 +363,20 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t }) => {
                     <span className="font-mono font-bold text-slate-800 dark:text-slate-200">{swCount}</span>
                 </div>) : null}
             </div>
+
+            {/* Toast Overlay */}
+            {toast && (
+                <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-xl border shadow-lg animate-in fade-in slide-in-from-bottom-2 ${
+                    toast.type === 'success' 
+                        ? 'bg-emerald-50 dark:bg-emerald-950/90 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200' 
+                        : 'bg-rose-50 dark:bg-rose-950/90 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200'
+                }`}>
+                    <span className="text-sm font-medium">{toast.message}</span>
+                    <button onClick={() => setToast(null)} className="hover:opacity-75 transition-opacity text-slate-400 dark:text-slate-300">
+                        <X size={14} />
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

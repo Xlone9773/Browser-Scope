@@ -223,7 +223,24 @@ export const settings = {
             desc: "管理后台运行的 Service Worker 脚本。",
             unregisterBtn: "注销所有"
         },
-        usageLabel: "存储空间使用率"
+        usageLabel: "存储空间使用率",
+        fonts: {
+            title: "字体缓存管理",
+            desc: "为显著减小应用包体积，诊断报告导出的各种非英文字体已改为从全球 CDN 按需拉取。在此您可以预先下载字体以便离线生成 PDF，或将其删除以释放浏览器缓存空间。",
+            name: "字体名称",
+            languages: "适用语言",
+            status: "状态",
+            cached: "已缓存 ({size})",
+            notCached: "未缓存 (CDN 载入)",
+            downloading: "正在下载...",
+            downloadBtn: "下载",
+            deleteBtn: "删除",
+            sizeUnknown: "未知大小",
+            downloadSuccess: "字体下载成功！",
+            deleteSuccess: "字体已成功清除！",
+            downloadFailed: "下载字体失败，请检查网络。",
+            deleteFailed: "删除字体失败。"
+        }
     },
     resources: {
         title: "外部资源加载列表",

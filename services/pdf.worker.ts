@@ -27,31 +27,35 @@ interface ExportWorkerMessage {
     lang?: string;
 }
 
+const CACHE_NAME = "browserscope-fonts";
+const FONT_KEYS: Record<string, string> = {
+    "ru": "roboto",
+    "zh-CN": "zcoolxiaowei",
+    "zh-TW": "zcoolxiaowei",
+    "zh-HK": "zcoolxiaowei",
+    "ja": "sawarabigothic"
+};
+
 const FONT_MIRRORS: Record<string, string[]> = {
     "ru": [
         "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
-        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/roboto/static/Roboto-Regular.ttf",
-        "/fonts/Roboto-Regular.ttf"
+        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/roboto/static/Roboto-Regular.ttf"
     ],
     "zh-CN": [
         "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "/fonts/ZCOOLXiaoWei-Regular.ttf"
+        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
     ],
     "zh-TW": [
         "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "/fonts/ZCOOLXiaoWei-Regular.ttf"
+        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
     ],
     "zh-HK": [
         "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "/fonts/ZCOOLXiaoWei-Regular.ttf"
+        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
     ],
     "ja": [
         "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf",
-        "/fonts/SawarabiGothic-Regular.ttf"
+        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf"
     ]
 };
 
@@ -494,6 +498,23 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
+    const cacheKey = FONT_KEYS[lang];
+    if (cacheKey) {
+        try {
+            const cache = await caches.open(CACHE_NAME);
+            const cachedResponse = await cache.match(cacheKey);
+            if (cachedResponse) {
+                const buffer = await cachedResponse.arrayBuffer();
+                if (buffer.byteLength > 4) {
+                    console.log(`[PDF Worker] Loaded font from Cache Storage: ${cacheKey}`);
+                    return buffer;
+                }
+            }
+        } catch (err) {
+            console.warn(`[PDF Worker] Failed to check Cache Storage for: ${cacheKey}`, err);
+        }
+    }
+
     const urls = FONT_MIRRORS[lang];
     if (!urls || urls.length === 0) {
         throw new Error(`No font URLs defined for language: ${lang}`);
@@ -523,7 +544,23 @@ async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
                                     break;
                                 }
                             }
-                            if (!isCorrupted) return buffer;
+                            if (!isCorrupted) {
+                                if (cacheKey) {
+                                    try {
+                                        const cache = await caches.open(CACHE_NAME);
+                                        await cache.put(cacheKey, new Response(buffer.slice(0), {
+                                            headers: {
+                                                'Content-Type': 'font/ttf',
+                                                'Content-Length': String(buffer.byteLength)
+                                            }
+                                        }));
+                                        console.log(`[PDF Worker] Cached font to Cache Storage: ${cacheKey}`);
+                                    } catch (cacheErr) {
+                                        console.warn(`[PDF Worker] Failed to save font to cache: ${cacheKey}`, cacheErr);
+                                    }
+                                }
+                                return buffer;
+                            }
                         } else {
                             return buffer;
                         }

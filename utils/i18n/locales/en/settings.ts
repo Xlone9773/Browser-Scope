@@ -223,7 +223,24 @@ export const settings = {
             desc: "Manage background Service Worker scripts.",
             unregisterBtn: "Unregister All"
         },
-        usageLabel: "Storage Usage"
+        usageLabel: "Storage Usage",
+        fonts: {
+            title: "Font Cache Management",
+            desc: "To reduce application build size, diagnostic PDF report fonts are fetched from global CDNs. You can pre-download them for offline generation or delete them to free up cache space.",
+            name: "Font Name",
+            languages: "Target Languages",
+            status: "Status",
+            cached: "Cached ({size})",
+            notCached: "Not Cached",
+            downloading: "Downloading...",
+            downloadBtn: "Download",
+            deleteBtn: "Delete",
+            sizeUnknown: "Unknown size",
+            downloadSuccess: "Font downloaded successfully!",
+            deleteSuccess: "Font deleted successfully!",
+            downloadFailed: "Failed to download font.",
+            deleteFailed: "Failed to delete font."
+        }
     },
     resources: {
         title: "External Resources",

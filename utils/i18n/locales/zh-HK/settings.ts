@@ -223,7 +223,24 @@ export const settings = {
             desc: "管理後台運行的 Service Worker 腳本。",
             unregisterBtn: "登出所有"
         },
-        usageLabel: "儲存空間使用率"
+        usageLabel: "儲存空間使用率",
+        fonts: {
+            title: "字型快取管理",
+            desc: "為顯著減小應用程式體積，診斷報告匯出的各種非英文字型已改為從全球 CDN 按需拉取。在此您可以預先下載字型以便離線產生 PDF，或將其刪除以釋放瀏覽器快取空間。",
+            name: "字型名稱",
+            languages: "適用語言",
+            status: "狀態",
+            cached: "已快取 ({size})",
+            notCached: "未快取 (CDN 載入)",
+            downloading: "正在下載...",
+            downloadBtn: "下載",
+            deleteBtn: "刪除",
+            sizeUnknown: "未知大小",
+            downloadSuccess: "字型下載成功！",
+            deleteSuccess: "字型已成功清除！",
+            downloadFailed: "下載字型失敗，請檢查網路。",
+            deleteFailed: "刪除字型失敗。"
+        }
     },
     resources: {
         title: "外部資源載入列表",
