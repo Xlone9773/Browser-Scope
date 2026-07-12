@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { ShieldAlert, Activity, RefreshCw } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
@@ -8,14 +8,19 @@ interface CanvasPoisoningModalProps {
   t: Record<string, string>;
 }
 
-export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onClose, t }) => {
+interface ExtendedWindow {
+  webkitAudioContext?: typeof AudioContext;
+  webkitOfflineAudioContext?: typeof OfflineAudioContext;
+}
+
+export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.memo(({ onClose, t }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const webglRef = useRef<HTMLCanvasElement>(null);
   const [status, setStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
   const [progress, setProgress] = useState(0);
   const [logs, setLogs] = useState<string[]>([]);
   
-  const addLog = (msg: string) => setLogs(prev => [...prev, msg]);
+  const addLog = useCallback((msg: string) => setLogs(prev => [...prev, msg]), []);
 
   const hashString = (str: string) => {
     let hash = 0;
@@ -28,7 +33,6 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
 
   const drawCanvas = (ctx: CanvasRenderingContext2D, offset: number) => {
     ctx.clearRect(0, 0, 200, 50);
-    // Draw some complex gradients and texts
     const gradient = ctx.createLinearGradient(0, 0, 200, 50);
     gradient.addColorStop(0, '#ff0000');
     gradient.addColorStop(0.5, '#00ff00');
@@ -48,6 +52,73 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
     gl.clear(gl.COLOR_BUFFER_BIT);
   };
 
+  const isHooked = (fn: (...args: unknown[]) => unknown) => {
+    try {
+      return !/\{\s*\[native code\]\s*\}/.test(fn.toString());
+    } catch {
+      return true;
+    }
+  };
+
+  const checkAudioHooks = () => {
+    const extWindow = window as unknown as ExtendedWindow;
+    const checks = [
+      { obj: window.AudioContext?.prototype, prop: 'baseLatency', name: 'AudioContext.baseLatency' },
+      { obj: window.AudioContext?.prototype, prop: 'outputLatency', name: 'AudioContext.outputLatency' },
+      { obj: extWindow.webkitAudioContext?.prototype, prop: 'baseLatency', name: 'webkitAudioContext.baseLatency' },
+      { obj: window.OfflineAudioContext?.prototype, prop: 'startRendering', name: 'OfflineAudioContext.startRendering' },
+      { obj: window.AudioBuffer?.prototype, prop: 'getChannelData', name: 'AudioBuffer.getChannelData' }
+    ];
+
+    for (const check of checks) {
+      if (!check.obj) continue;
+      try {
+        const desc = Object.getOwnPropertyDescriptor(check.obj, check.prop);
+        if (desc) {
+          if (desc.get && isHooked(desc.get as (...args: unknown[]) => unknown)) {
+            return { hooked: true, name: check.name };
+          }
+          if (desc.value && typeof desc.value === 'function' && isHooked(desc.value as (...args: unknown[]) => unknown)) {
+            return { hooked: true, name: check.name };
+          }
+        }
+      } catch {
+        return { hooked: true, name: check.name };
+      }
+    }
+    return { hooked: false };
+  };
+
+  const renderAudio = async (): Promise<Float32Array | null> => {
+    try {
+      const extWindow = window as unknown as ExtendedWindow;
+      const AudioCtx = window.OfflineAudioContext || extWindow.webkitOfflineAudioContext;
+      if (!AudioCtx) return null;
+      
+      const ctx = new AudioCtx(1, 44100 * 0.05, 44100); 
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, 0);
+      osc.frequency.exponentialRampToValueAtTime(880, 0.04);
+      
+      gain.gain.setValueAtTime(1, 0);
+      gain.gain.linearRampToValueAtTime(0.01, 0.04);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start(0);
+      const renderedBuffer = await ctx.startRendering();
+      if (!renderedBuffer) return null;
+      
+      return renderedBuffer.getChannelData(0).slice(0, 150);
+    } catch {
+      return null;
+    }
+  };
+
   const runTest = async () => {
     setStatus('running');
     setProgress(0);
@@ -56,7 +127,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
     
     let poisoned = false;
     
-    // Canvas Test
+    // 1. Canvas Test
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext('2d');
@@ -64,7 +135,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
         addLog(t?.testing_canvas);
         let lastHash = '';
         for (let i = 0; i < 10; i++) {
-          drawCanvas(ctx, 0); // Always draw exact same thing
+          drawCanvas(ctx, 0);
           const dataURL = canvas.toDataURL();
           const hash = hashString(dataURL);
           if (i > 0 && hash !== lastHash) {
@@ -73,10 +144,12 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
             break;
           }
           lastHash = hash;
-          setProgress((prev) => prev + 5);
-          await new Promise(r => setTimeout(r, 50));
+          setProgress((prev) => prev + 3);
+          await new Promise(r => setTimeout(r, 40));
         }
-        if (!poisoned) addLog('✅ Canvas appears stable (no random noise).');
+        if (!poisoned) {
+          addLog('✅ Canvas appears stable (no random noise).');
+        }
       }
     }
     
@@ -86,7 +159,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
        return;
     }
     
-    // WebGL Test
+    // 2. WebGL Test
     const webgl = webglRef.current;
     if (webgl) {
       const gl = webgl.getContext('webgl');
@@ -103,10 +176,82 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
             break;
           }
           lastHash = hash;
-          setProgress((prev) => prev + 5);
-          await new Promise(r => setTimeout(r, 50));
+          setProgress((prev) => prev + 3);
+          await new Promise(r => setTimeout(r, 40));
         }
-        if (!poisoned) addLog('✅ WebGL appears stable (no random noise).');
+        if (!poisoned) {
+          addLog('✅ WebGL appears stable (no random noise).');
+        }
+      }
+    }
+
+    if (poisoned) {
+       setStatus('poisoned');
+       setProgress(100);
+       return;
+    }
+
+    // 3. Audio & Latency Test
+    addLog(t?.testing_audio || 'Testing Web Audio stability and latency...');
+    
+    // A. Hook detection
+    const hookResult = checkAudioHooks();
+    if (hookResult.hooked) {
+      poisoned = true;
+      addLog(t?.audio_hooked || `❌ Suspicious Proxy/Hook detected on core Audio APIs (${hookResult.name}).`);
+    } else {
+      // B. Dynamic rendering noise detection
+      let lastAudioHash = '';
+      let audioStable = true;
+      for (let i = 0; i < 10; i++) {
+        const samples = await renderAudio();
+        if (samples) {
+          let sampleStr = '';
+          for (let s = 0; s < samples.length; s += 5) {
+            sampleStr += samples[s].toFixed(5) + ',';
+          }
+          const hash = hashString(sampleStr);
+          if (i > 0 && hash !== lastAudioHash) {
+            audioStable = false;
+            addLog(`❌ Audio buffer mismatch at iteration ${i}: ${lastAudioHash} != ${hash}`);
+            break;
+          }
+          lastAudioHash = hash;
+        } else {
+          break;
+        }
+        setProgress((prev) => Math.min(95, prev + 3));
+        await new Promise(r => setTimeout(r, 40));
+      }
+
+      // C. Latency bounds check
+      try {
+        const extWindow = window as unknown as ExtendedWindow;
+        const AudioContextClass = window.AudioContext || extWindow.webkitAudioContext;
+        if (AudioContextClass) {
+          const tempCtx = new AudioContextClass();
+          const baseLat = tempCtx.baseLatency;
+          const outLat = tempCtx.outputLatency;
+          
+          if (typeof baseLat === 'number' && (baseLat < 0 || baseLat > 2.0)) {
+            audioStable = false;
+            addLog(`❌ Suspicious baseLatency value: ${baseLat}`);
+          }
+          if (typeof outLat === 'number' && (outLat < 0 || outLat > 2.0)) {
+            audioStable = false;
+            addLog(`❌ Suspicious outputLatency value: ${outLat}`);
+          }
+          tempCtx.close();
+        }
+      } catch {
+        // Ignore initialization errors for context if not supported in the sandbox
+      }
+
+      if (!audioStable) {
+        poisoned = true;
+        addLog(t?.audio_poisoned || '❌ Audio buffer or latency tampering detected (anti-fingerprinting active).');
+      } else {
+        addLog(t?.audio_stable || '✅ Audio APIs stable, no waveform or latency tampering detected.');
       }
     }
     
@@ -174,4 +319,4 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = ({ onCl
       </div>
     </Modal>
   );
-};
+});

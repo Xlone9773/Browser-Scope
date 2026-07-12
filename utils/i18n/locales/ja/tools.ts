@@ -322,6 +322,10 @@ export const tools = {
     start_log: "Canvas および WebGL ポイズニングテストを開始...",
     testing_canvas: "2D Canvas の安定性をテスト中...",
     testing_webgl: "WebGL の安定性をテスト中...",
+    testing_audio: "Web Audioの安定性と遅延をテスト中...",
+    audio_poisoned: "❌ オーディオバッファまたは遅延の改ざんを検出（指紋防止機能が有効）。",
+    audio_stable: "✅ オーディオAPIは安定しており、遅延や波形の改ざんは検出されませんでした。",
+    audio_hooked: "❌ コアオーディオAPI（遅延/レンダリング）に不審なProxy/Hookを検出しました。",
     poisoned_log: "⚠️ 環境はおそらくポイズニングされています（ノイズインジェクションを検出）。",
     clean_log: "✅ 環境はクリーンなようです（ランダムノイズは検出されませんでした）。"
   },

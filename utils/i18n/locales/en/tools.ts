@@ -323,6 +323,10 @@ export const tools = {
     start_log: "Starting Canvas & WebGL Poisoning Test...",
     testing_canvas: "Testing 2D Canvas stability...",
     testing_webgl: "Testing WebGL stability...",
+    testing_audio: "Testing Web Audio stability and latency...",
+    audio_poisoned: "❌ Audio buffer or latency tampering detected (anti-fingerprinting active).",
+    audio_stable: "✅ Audio APIs stable, no waveform or latency tampering detected.",
+    audio_hooked: "❌ Suspicious Proxy/Hook detected on core Audio APIs (Latency/Rendering).",
     poisoned_log: "⚠️ Environment is likely poisoned (Noise Injection detected).",
     clean_log: "✅ Environment appears clean."
   },

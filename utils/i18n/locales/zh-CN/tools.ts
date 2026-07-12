@@ -323,6 +323,10 @@ export const tools = {
     start_log: "开始 Canvas 和 WebGL 投毒检测...",
     testing_canvas: "测试 2D Canvas 稳定性...",
     testing_webgl: "测试 WebGL 稳定性...",
+    testing_audio: "测试 Web Audio 稳定性与延迟...",
+    audio_poisoned: "❌ 检测到音频缓冲/延迟数据被篡改（防指纹干扰开启）。",
+    audio_stable: "✅ 音频接口数据稳定，未检测到延迟或波形干扰。",
+    audio_hooked: "❌ 检测到音频 API (Latency/Render) 核心方法被 Proxy/Hook 劫持。",
     poisoned_log: "⚠️ 环境很可能已被投毒（检测到噪音注入）。",
     clean_log: "✅ 环境似乎是干净的（未检测到随机噪音）。"
   },
