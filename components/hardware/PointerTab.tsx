@@ -57,15 +57,14 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
             ctx.stroke();
         };
 
-        let lastX = 0;
-        let lastY = 0;
-        let isDrawing = false;
+        const pointers = new Map<number, { lastX: number, lastY: number }>();
 
         const handlePointerDown = (e: PointerEvent) => {
-            isDrawing = true;
             const rect = canvas.getBoundingClientRect();
-            lastX = e.clientX - rect.left;
-            lastY = e.clientY - rect.top;
+            const lastX = e.clientX - rect.left;
+            const lastY = e.clientY - rect.top;
+            
+            pointers.set(e.pointerId, { lastX, lastY });
             
             // Capture for dragging outside canvas
             canvas.setPointerCapture(e.pointerId);
@@ -76,8 +75,18 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
         const handlePointerMove = (e: PointerEvent) => {
             updateData(e);
             
-            if (!isDrawing) return;
-            // if (e.pressure === 0 && e.pointerType !== 'mouse') return; // Some pens report 0 on hover
+            const pointer = pointers.get(e.pointerId);
+            if (!pointer) return;
+            
+            // Handle hover state
+            if (e.pointerType === 'mouse' && e.buttons === 0) {
+                return;
+            }
+            if (e.pointerType !== 'mouse' && e.pressure === 0) {
+                pointer.lastX = e.clientX - canvas.getBoundingClientRect().left;
+                pointer.lastY = e.clientY - canvas.getBoundingClientRect().top;
+                return;
+            }
 
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -87,14 +96,18 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
             let p = e.pressure;
             if (e.pointerType === 'mouse' && e.buttons === 1) p = 0.5;
             
-            drawLine(lastX, lastY, x, y, p, e.pointerType);
-            lastX = x;
-            lastY = y;
+            drawLine(pointer.lastX, pointer.lastY, x, y, p, e.pointerType);
+            pointer.lastX = x;
+            pointer.lastY = y;
         };
 
         const handlePointerUp = (e: PointerEvent) => {
-            isDrawing = false;
+            pointers.delete(e.pointerId);
             updateData(e); // keep final data visible
+        };
+
+        const handlePointerCancel = (e: PointerEvent) => {
+            pointers.delete(e.pointerId);
         };
 
         const updateData = (e: PointerEvent) => {
@@ -112,11 +125,13 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
         canvas.addEventListener('pointerdown', handlePointerDown);
         canvas.addEventListener('pointermove', handlePointerMove);
         canvas.addEventListener('pointerup', handlePointerUp);
+        canvas.addEventListener('pointercancel', handlePointerCancel);
         
         return () => {
             canvas.removeEventListener('pointerdown', handlePointerDown);
             canvas.removeEventListener('pointermove', handlePointerMove);
             canvas.removeEventListener('pointerup', handlePointerUp);
+            canvas.removeEventListener('pointercancel', handlePointerCancel);
         };
     }, []);
 
