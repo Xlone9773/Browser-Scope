@@ -90,25 +90,45 @@ export const getShaderPrecisionFormat = (): { vertexHigh: string, fragmentHigh: 
 export const getCanvasFingerprint = (): { hash: string; dataUri: string } => {
   try {
     const canvas = document.createElement('canvas');
-    // Optimization: willReadFrequently hints browser to optimize for frequent readbacks (software rasterization usually)
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    canvas.width = 280;
+    canvas.height = 60;
+    canvas.style.display = 'none';
+    
+    // Optimization: willReadFrequently hints browser to optimize for frequent readbacks
+    let ctx = null;
+    try {
+      ctx = canvas.getContext('2d', { willReadFrequently: true });
+    } catch {
+      // Fallback for extreme situations / older browsers where willReadFrequently throws
+      ctx = canvas.getContext('2d');
+    }
+    
     if (!ctx) return { hash: 'Not Supported', dataUri: '' };
-    canvas.width = 280; canvas.height = 60;
+    
     ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.textBaseline = "alphabetic"; ctx.font = "16px 'Arial'";
+    ctx.textBaseline = "alphabetic"; ctx.font = "16px 'Arial', sans-serif";
     ctx.fillStyle = "#f60"; ctx.fillRect(100, 5, 60, 20);
-    ctx.fillStyle = "#069"; ctx.fillText("BrowserScope v1.0", 2, 20);
-    ctx.fillStyle = "rgba(102, 204, 0, 0.7)"; ctx.font = "18px 'Times New Roman'";
+    ctx.fillStyle = "#069"; ctx.fillText("BrowserScope v2.1.0", 2, 20);
+    ctx.fillStyle = "rgba(102, 204, 0, 0.7)"; ctx.font = "18px 'Times New Roman', serif";
     ctx.fillText("Fingerprint", 5, 45);
+    
     ctx.beginPath(); ctx.arc(200, 30, 20, 0, Math.PI * 2, true);
     ctx.arc(200, 30, 10, 0, Math.PI * 2, true);
     ctx.fillStyle = "rgba(200, 0, 200, 0.5)"; ctx.fill("evenodd");
+    
     ctx.beginPath(); ctx.moveTo(240, 10); ctx.lineTo(260, 50); ctx.lineTo(220, 50);
     ctx.closePath(); ctx.strokeStyle = "#f0f"; ctx.lineWidth = 3; ctx.stroke();
-    const dataUri = canvas.toDataURL();
+    
+    const dataUri = canvas.toDataURL('image/png') || '';
+    if (!dataUri || dataUri === 'data:,') {
+      return { hash: 'Render Failed', dataUri: '' };
+    }
+    
     const b64 = dataUri.replace("data:image/png;base64,", "");
     return { hash: simpleHash(b64), dataUri: dataUri };
-  } catch { return { hash: 'Error', dataUri: '' }; }
+  } catch (err) { 
+    return { hash: 'Error', dataUri: '' }; 
+  }
 };
 
 export const getWebGLFingerprint = (): string => {
