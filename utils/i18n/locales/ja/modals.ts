@@ -118,9 +118,19 @@ Copyright (c) 2026 BrowserScope Contributors
     score_details_title: "指紋スコア詳細",
     tracking_potential: "追跡リスク",
     score_explanation: "このスコアは、現在のブラウザ環境が一意に識別される可能性を表します。スコアが高いほど、デバイスの指紋がユニークであり、Webサイトによる追跡が容易になります。",
+    category_weights: "カテゴリーの重要度",
     contributing_factors: "スコア影響因子",
     value_label: "値",
     close: "閉じる",
+    signals_count: "個のシグナル",
+    raw_score: "生のスコア",
+    pts: "点",
+    ratings: {
+        LOW: "低リスク",
+        MEDIUM: "中リスク",
+        HIGH: "高リスク",
+        CRITICAL: "重大なリスク"
+    },
     categories: {
         hardware: "ハードウェア",
         browser: "ブラウザ",

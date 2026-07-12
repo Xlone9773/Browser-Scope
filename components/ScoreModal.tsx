@@ -134,7 +134,9 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                 <span className={`text-5xl font-black ${getScoreColor(scoreData.totalScore)}`}>{scoreData.totalScore}</span>
-                                <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{scoreData.rating}</span>
+                                <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">
+                                    {t.ratings?.[scoreData.rating] || scoreData.rating}
+                                </span>
                             </div>
                         </div>
 
@@ -164,9 +166,21 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
 
                         {/* Explanation Text */}
                         <div className="text-center px-2">
-                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
                                 {t.score_explanation}
                             </p>
+                            
+                            {/* Weights Breakdown */}
+                            <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-600 dark:text-slate-400 bg-white/50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-200 dark:border-slate-700 mt-2">
+                                <div className="text-left font-bold text-slate-700 dark:text-slate-300 col-span-2 border-b border-slate-200 dark:border-slate-700 pb-1 mb-1">
+                                    {t.category_weights || "Category Weights"}
+                                </div>
+                                <div className="flex justify-between"><span>{t.categories?.hardware || "Hardware"}:</span> <span>30%</span></div>
+                                <div className="flex justify-between"><span>{t.categories?.browser || "Browser"}:</span> <span>30%</span></div>
+                                <div className="flex justify-between"><span>{t.categories?.network || "Network"}:</span> <span>15%</span></div>
+                                <div className="flex justify-between"><span>{t.categories?.media || "Media"}:</span> <span>15%</span></div>
+                                <div className="flex justify-between col-span-2"><span>{t.categories?.screen || "Screen"}:</span> <span>10%</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -180,7 +194,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                             {t.contributing_factors}
                         </h4>
                         <span className="text-xs font-medium text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full">
-                            {scoreData.factors.length} Signals
+                            {scoreData.factors.length} {t.signals_count || "Signals"}
                         </span>
                     </div>
 
@@ -191,29 +205,33 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                                     
                                     {/* Icon */}
                                     <div className={`p-2 rounded-lg mt-0.5 shrink-0 ${
-                                        factor.score > 0 
+                                        factor.weightedScore > 0 
                                         ? 'bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400' 
                                         : 'bg-emerald-50 text-emerald-500 dark:bg-emerald-900/20 dark:text-emerald-400'
                                     }`}>
-                                        {factor.category === 'hardware' && <Cpu size={16} />}
-                                        {factor.category === 'browser' && <Globe size={16} />}
-                                        {factor.category === 'network' && <Wifi size={16} />}
-                                        {factor.category === 'media' && <Layers size={16} />}
-                                        {factor.category === 'screen' && <Monitor size={16} />}
+                                        {factor.category === 'hardware' ? <Cpu size={16} /> : null}
+                                        {factor.category === 'browser' ? <Globe size={16} /> : null}
+                                        {factor.category === 'network' ? <Wifi size={16} /> : null}
+                                        {factor.category === 'media' ? <Layers size={16} /> : null}
+                                        {factor.category === 'screen' ? <Monitor size={16} /> : null}
                                     </div>
-
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start mb-1">
                                             <span className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate pr-2">
                                                 {getFactorLabel(factor.id)}
                                             </span>
-                                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap ${
-                                                factor.score > 0 
-                                                ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400' 
-                                                : 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400'
-                                            }`}>
-                                                +{factor.score}
-                                            </span>
+                                            <div className="flex flex-col items-end">
+                                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap ${
+                                                    factor.weightedScore > 0 
+                                                    ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400' 
+                                                    : 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400'
+                                                }`}>
+                                                    +{factor.weightedScore.toFixed(2)} {t.pts || "pts"}
+                                                </span>
+                                                <span className="text-[9px] text-slate-400 mt-0.5">
+                                                    {t.raw_score || "Raw"}: {factor.score}/{factor.maxScore}
+                                                </span>
+                                            </div>
                                         </div>
                                         
                                         <div className="mb-2">
@@ -222,11 +240,11 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                                             </span>
                                         </div>
                                         
-                                        {factor.description && (
+                                        {factor.description ? (
                                             <p className="text-[10px] text-slate-400 leading-tight">
                                                 {getFactorDesc(factor.description)}
                                             </p>
-                                        )}
+                                        ) : null}
 
                                         {/* Mini Impact Bar */}
                                         <div className="w-full bg-slate-100 dark:bg-slate-700 h-1 rounded-full overflow-hidden mt-2">

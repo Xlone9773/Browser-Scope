@@ -27,11 +27,41 @@ interface ScoreInput {
     timezone?: string;
     languages?: string;
     fontsCount?: number;
+    doNotTrack?: string | null;
+    gamepads?: number;
 }
 
 export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore => {
     const factors: ScoreFactor[] = [];
     
+    const weights = {
+        hardware: 0.30,
+        browser: 0.30,
+        network: 0.15,
+        media: 0.15,
+        screen: 0.10
+    };
+
+    const addFactor = (
+        id: string, value: string | number, score: number, maxScore: number, 
+        category: 'hardware' | 'browser' | 'screen' | 'media' | 'network', 
+        description: string
+    ) => {
+        const weight = weights[category];
+        const weightedScore = parseFloat((score * weight).toFixed(2));
+        const weightedMaxScore = parseFloat((maxScore * weight).toFixed(2));
+        factors.push({
+            id,
+            value,
+            score,
+            maxScore,
+            weightedScore,
+            weightedMaxScore,
+            description,
+            category
+        });
+    };
+
     // Category buckets (0-100 scale for each)
     let catHardware = 0;
     let catBrowser = 0;
@@ -39,39 +69,44 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     let catMedia = 0;
     let catNetwork = 0;
 
-    // --- BROWSER CATEGORY (Canvas, WebGL, UA, Fonts, Lang) ---
-    // Canvas Hash (High entropy)
+    // --- BROWSER CATEGORY (Max 100) ---
+    // Canvas Hash (20)
     if (input.canvasHash && input.canvasHash !== 'Error' && input.canvasHash !== 'Not Supported') {
         catBrowser += 20;
-        factors.push({ id: 'canvas_hash', value: 'val_unique', score: 20, maxScore: 20, description: 'desc_canvas_unique', category: 'browser' });
+        addFactor('canvas_hash', 'val_unique', 20, 20, 'browser', 'desc_canvas_unique');
     } else {
-        factors.push({ id: 'canvas_hash', value: 'val_generic', score: 0, maxScore: 20, description: 'desc_canvas_generic', category: 'browser' });
+        addFactor('canvas_hash', 'val_generic', 0, 20, 'browser', 'desc_canvas_generic');
     }
 
-    // WebGL Hash (High entropy)
+    // WebGL Hash (20)
     if (input.webglHash && input.webglHash !== 'Error' && input.webglHash !== 'Not Supported') {
         catBrowser += 20;
-        factors.push({ id: 'webgl_hash', value: 'val_unique', score: 20, maxScore: 20, description: 'desc_webgl_unique', category: 'browser' });
+        addFactor('webgl_hash', 'val_unique', 20, 20, 'browser', 'desc_webgl_unique');
+    } else {
+        addFactor('webgl_hash', 'val_generic', 0, 20, 'browser', 'desc_webgl_generic');
     }
     
-    // Fonts
+    // Fonts (15)
     if (input.fontsCount && input.fontsCount > 0) {
-        const fontScore = Math.min(20, (input.fontsCount / 100) * 10); // up to 20
+        const fontScore = Math.min(15, (input.fontsCount / 100) * 15);
         catBrowser += fontScore;
-        factors.push({ id: 'installed_fonts', value: `${input.fontsCount} Fonts`, score: Math.round(fontScore), maxScore: 20, description: 'desc_hardware_unique', category: 'browser' });
+        addFactor('installed_fonts', `${input.fontsCount} Fonts`, Math.round(fontScore), 15, 'browser', 'desc_hardware_unique');
+    } else {
+        catBrowser += 15;
+        addFactor('installed_fonts', 'Unknown', 15, 15, 'browser', 'desc_generic');
     }
 
-    // Languages & Timezone (High uniqueness combined)
+    // Languages & Timezone (20 combined)
     if (input.timezone) {
         catBrowser += 10;
-        factors.push({ id: 'system_timezone', value: input.timezone, score: 10, maxScore: 10, description: 'desc_locale_unique', category: 'browser' });
+        addFactor('system_timezone', input.timezone, 10, 10, 'browser', 'desc_locale_unique');
     }
     if (input.languages && input.languages.includes(',')) {
         catBrowser += 10;
-        factors.push({ id: 'language_preferences', value: 'val_specific', score: 10, maxScore: 10, description: 'desc_locale_unique', category: 'browser' });
+        addFactor('language_preferences', 'val_specific', 10, 10, 'browser', 'desc_locale_unique');
     }
 
-    // User Agent & Hints
+    // User Agent & Hints (20)
     if (input.userAgent.length > 50) {
         let uaScore = 10;
         let uaDesc = 'desc_ua_unique';
@@ -80,73 +115,108 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
             uaDesc = 'desc_ua_ch';
         }
         catBrowser += uaScore;
-        factors.push({ id: 'user_agent', value: 'val_specific', score: uaScore, maxScore: 20, description: uaDesc, category: 'browser' });
+        addFactor('user_agent', 'val_specific', uaScore, 20, 'browser', uaDesc);
     }
 
-    // --- HARDWARE CATEGORY (CPU, GPU, RAM, Battery) ---
-    // Concurrency & Memory
+    // Do Not Track (5)
+    if (input.doNotTrack === "1" || input.doNotTrack === "true" || input.doNotTrack === "yes") {
+        catBrowser += 5;
+        addFactor('dnt_enabled', 'val_specific', 5, 5, 'browser', 'desc_dnt_unique');
+    } else {
+        addFactor('dnt_enabled', 'val_generic', 0, 5, 'browser', 'desc_dnt_generic');
+    }
+
+    // --- HARDWARE CATEGORY (Max 100) ---
+    // Concurrency & Memory (25)
     if (input.cpu !== 'Unknown' && input.memory !== 'Unknown') {
-        catHardware += 30;
-        factors.push({ id: 'hardware_concurrency', value: `${input.cpu} Cores, ${input.memory}GB RAM`, score: 30, maxScore: 30, description: 'desc_hardware_unique', category: 'hardware' });
+        catHardware += 25;
+        addFactor('hardware_concurrency', `${input.cpu} Cores, ${input.memory}GB RAM`, 25, 25, 'hardware', 'desc_hardware_unique');
+    } else {
+        addFactor('hardware_concurrency', 'Unknown', 0, 25, 'hardware', 'desc_generic');
     }
 
-    // GPU Renderer (Very specific)
+    // GPU Renderer (35)
     if (input.gpuRenderer && input.gpuRenderer !== 'Unknown' && input.gpuRenderer.length > 10) {
-        catHardware += 30;
-        factors.push({ id: 'gpu_renderer', value: input.gpuRenderer, score: 30, maxScore: 30, description: 'desc_gpu_unique', category: 'hardware' });
+        catHardware += 35;
+        addFactor('gpu_renderer', input.gpuRenderer, 35, 35, 'hardware', 'desc_gpu_unique');
+    } else {
+        addFactor('gpu_renderer', 'Unknown', 0, 35, 'hardware', 'desc_generic');
     }
 
-    // Battery (API often blocked, if available it's unique)
+    // Battery (15)
     if (input.battery && input.battery !== 'Unknown' && input.battery !== 'Not Supported') {
-        catHardware += 20;
-        factors.push({ id: 'battery_status', value: 'val_readable', score: 20, maxScore: 20, description: 'desc_battery_unique', category: 'hardware' });
+        catHardware += 15;
+        addFactor('battery_status', 'val_readable', 15, 15, 'hardware', 'desc_battery_unique');
+    } else {
+        addFactor('battery_status', 'val_generic', 0, 15, 'hardware', 'desc_battery_generic');
     }
 
-    // Touch
+    // Touch (15)
     if (input.touchPoints > 0) {
-        catHardware += 20;
-        factors.push({ id: 'touch_support', value: `${input.touchPoints} Points`, score: 20, maxScore: 20, category: 'hardware' });
+        catHardware += 15;
+        addFactor('touch_support', `${input.touchPoints} Points`, 15, 15, 'hardware', 'desc_hardware_unique');
+    } else {
+        addFactor('touch_support', '0 Points', 0, 15, 'hardware', 'desc_generic');
     }
 
-    // --- SCREEN CATEGORY ---
-    // Resolution
+    // Gamepads (10)
+    if (input.gamepads && input.gamepads > 0) {
+        catHardware += 10;
+        addFactor('gamepads_connected', `${input.gamepads} Connected`, 10, 10, 'hardware', 'desc_hardware_unique');
+    } else {
+        addFactor('gamepads_connected', '0 Connected', 0, 10, 'hardware', 'desc_generic');
+    }
+
+    // --- SCREEN CATEGORY (Max 100) ---
+    // Resolution (40)
     if (input.screenRes && input.screenRes !== 'Unknown') {
         catScreen += 40;
-        factors.push({ id: 'resolution', value: input.screenRes, score: 40, maxScore: 40, description: 'desc_res_unique', category: 'screen' });
+        addFactor('resolution', input.screenRes, 40, 40, 'screen', 'desc_res_unique');
+    } else {
+        addFactor('resolution', 'Unknown', 0, 40, 'screen', 'desc_generic');
     }
     
-    // Depth & Pixel Ratio
+    // Depth & Pixel Ratio (40)
     if (input.colorDepth > 24 || input.pixelRatio > 1 || input.hdr) {
         catScreen += 40;
-        factors.push({ id: 'screen_advanced', value: `DPR ${input.pixelRatio}`, score: 40, maxScore: 40, description: 'desc_screen_advanced', category: 'screen' });
+        addFactor('screen_advanced', `DPR ${input.pixelRatio}`, 40, 40, 'screen', 'desc_screen_advanced');
+    } else {
+        addFactor('screen_advanced', 'Generic', 0, 40, 'screen', 'desc_generic');
     }
-    // Remaining 20 points for multi-monitor/orientation (implicit in resolution often)
-    catScreen += 20; 
 
-    // --- MEDIA CATEGORY ---
-    // Audio Context
+    // Remaining 20 points for multi-monitor/orientation
+    catScreen += 20; 
+    addFactor('screen_orientation', 'val_specific', 20, 20, 'screen', 'desc_screen_advanced');
+
+    // --- MEDIA CATEGORY (Max 100) ---
+    // Audio Context (40)
     if (input.audioRate && input.audioRate !== 'Unknown') {
         catMedia += 40;
-        factors.push({ id: 'audio_context', value: input.audioRate, score: 40, maxScore: 40, description: 'desc_audio_unique', category: 'media' });
+        addFactor('audio_context', input.audioRate, 40, 40, 'media', 'desc_audio_unique');
+    } else {
+        addFactor('audio_context', 'Unknown', 0, 40, 'media', 'desc_generic');
     }
 
-    // DRM (Widevine etc)
+    // DRM (60)
     if (input.drmCount > 0) {
         catMedia += 60;
-        factors.push({ id: 'drm_support', value: `${input.drmCount} Systems`, score: 60, maxScore: 60, description: 'desc_drm_unique', category: 'media' });
+        addFactor('drm_support', `${input.drmCount} Systems`, 60, 60, 'media', 'desc_drm_unique');
+    } else {
+        addFactor('drm_support', '0 Systems', 0, 60, 'media', 'desc_generic');
     }
 
-    // --- NETWORK CATEGORY ---
-    // WebRTC Leak
+    // --- NETWORK CATEGORY (Max 100) ---
+    // WebRTC Leak (80)
     if (input.webRTC && input.webRTC !== 'Hidden' && input.webRTC !== 'Not Supported') {
-        catNetwork += 80; // High impact if local IP leaks
-        factors.push({ id: 'webrtc_leak', value: input.webRTC, score: 80, maxScore: 80, description: 'desc_webrtc_leak', category: 'network' });
+        catNetwork += 80;
+        addFactor('webrtc_leak', input.webRTC, 80, 80, 'network', 'desc_webrtc_leak');
     } else {
-        factors.push({ id: 'webrtc_leak', value: 'val_protected', score: 0, maxScore: 80, description: 'desc_webrtc_safe', category: 'network' });
+        addFactor('webrtc_leak', 'val_protected', 0, 80, 'network', 'desc_webrtc_safe');
     }
     
-    // Basic connection info
-    catNetwork += 20; // Base score for having connection
+    // Basic connection info (20)
+    catNetwork += 20;
+    addFactor('network_type', 'val_specific', 20, 20, 'network', 'desc_generic');
 
     // Normalize Categories to 100
     const normalize = (val: number) => Math.min(Math.round(val), 100);
@@ -159,14 +229,14 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     };
 
     // Weighted Average Total
-    // Hardware and Browser are most persistent
-    const totalScore = Math.round(
-        (scores.hardware * 0.3) + 
-        (scores.browser * 0.3) + 
-        (scores.network * 0.15) + 
-        (scores.media * 0.15) + 
-        (scores.screen * 0.1)
-    );
+    let calculatedTotal = 0;
+    calculatedTotal += scores.hardware * weights.hardware;
+    calculatedTotal += scores.browser * weights.browser;
+    calculatedTotal += scores.network * weights.network;
+    calculatedTotal += scores.media * weights.media;
+    calculatedTotal += scores.screen * weights.screen;
+    
+    const totalScore = Math.round(calculatedTotal);
 
     let rating = 'Low';
     if (totalScore > 80) rating = 'Critical';

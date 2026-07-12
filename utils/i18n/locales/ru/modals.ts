@@ -118,9 +118,19 @@ Copyright (c) 2026 BrowserScope Contributors
     score_details_title: "Детали оценки отпечатка",
     tracking_potential: "Риск отслеживания",
     score_explanation: "Эта оценка представляет вероятность уникальной идентификации вашей текущей браузерной среды. Чем выше балл, тем уникальнее отпечаток вашего устройства и тем легче сайтам отслеживать вас.",
+    category_weights: "Вес категорий",
     contributing_factors: "Влияющие факторы",
     value_label: "Значение",
     close: "Закрыть",
+    signals_count: "сигналов",
+    raw_score: "Исходный балл",
+    pts: "б.",
+    ratings: {
+        LOW: "Низкий риск",
+        MEDIUM: "Средний риск",
+        HIGH: "Высокий риск",
+        CRITICAL: "Критический риск"
+    },
     categories: {
         hardware: "Аппаратное обеспечение",
         browser: "Браузер",

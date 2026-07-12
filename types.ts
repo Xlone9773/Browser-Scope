@@ -54,6 +54,8 @@ export interface ScoreFactor {
     value: string | number;
     score: number;
     maxScore: number;
+    weightedScore: number;
+    weightedMaxScore: number;
     description?: string;
     category: 'hardware' | 'browser' | 'screen' | 'media' | 'network';
 }

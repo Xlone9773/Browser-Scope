@@ -128,9 +128,19 @@ export const modals = {
     score_details_title: "指纹评分详情",
     tracking_potential: "追踪风险",
     score_explanation: "此分数表示您当前的浏览器环境被唯一识别的可能性。分数越高，您的设备指纹越独特，越容易被网站追踪。",
+    category_weights: "评分维度权重",
     contributing_factors: "评分影响因子",
     value_label: "检测值",
     close: "关闭",
+    signals_count: "个信号",
+    raw_score: "原始得分",
+    pts: "分",
+    ratings: {
+        LOW: "低风险",
+        MEDIUM: "中等风险",
+        HIGH: "高风险",
+        CRITICAL: "极高风险"
+    },
     categories: {
         hardware: "硬件特征",
         browser: "浏览器",

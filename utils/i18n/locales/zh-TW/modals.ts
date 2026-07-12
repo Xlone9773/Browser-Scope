@@ -118,9 +118,19 @@ export const modals = {
     score_details_title: "指紋評分詳情",
     tracking_potential: "追蹤風險",
     score_explanation: "此分數表示您目前的瀏覽器環境被唯一識別的可能性。分數越高，您的裝置指紋越獨特，越容易被網站追蹤。",
+    category_weights: "評分維度權重",
     contributing_factors: "評分影響因子",
     value_label: "數值",
     close: "關閉",
+    signals_count: "個訊號",
+    raw_score: "原始分數",
+    pts: "分",
+    ratings: {
+        LOW: "低風險",
+        MEDIUM: "中等風險",
+        HIGH: "高風險",
+        CRITICAL: "極高風險"
+    },
     categories: {
         hardware: "硬體",
         browser: "瀏覽器",

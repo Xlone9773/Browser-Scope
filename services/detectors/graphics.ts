@@ -95,7 +95,7 @@ export const getCanvasFingerprint = (): { hash: string; dataUri: string } => {
     canvas.style.display = 'none';
     
     // Optimization: willReadFrequently hints browser to optimize for frequent readbacks
-    let ctx = null;
+    let ctx: CanvasRenderingContext2D | null = null;
     try {
       ctx = canvas.getContext('2d', { willReadFrequently: true });
     } catch {
@@ -126,7 +126,7 @@ export const getCanvasFingerprint = (): { hash: string; dataUri: string } => {
     
     const b64 = dataUri.replace("data:image/png;base64,", "");
     return { hash: simpleHash(b64), dataUri: dataUri };
-  } catch (err) { 
+  } catch (_err) { 
     return { hash: 'Error', dataUri: '' }; 
   }
 };

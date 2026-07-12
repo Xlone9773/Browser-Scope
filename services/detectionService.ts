@@ -107,7 +107,9 @@ export const getAllData = async (): Promise<BrowserData> => {
       clientHints: clientHints,
       hdr: window.matchMedia('(dynamic-range: high)').matches,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      languages: navigator.languages ? navigator.languages.join(',') : navigator.language
+      languages: navigator.languages ? navigator.languages.join(',') : navigator.language,
+      doNotTrack: navigator.doNotTrack || null,
+      gamepads: gamepadsCount
   });
 
   const isPwaInstalled = window.matchMedia('(display-mode: standalone)').matches;

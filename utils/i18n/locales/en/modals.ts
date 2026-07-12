@@ -140,9 +140,19 @@ SOFTWARE.`
     score_details_title: "Fingerprint Score Details",
     tracking_potential: "Tracking Potential",
     score_explanation: "This score represents the likelihood of your browser being uniquely identified. Higher scores mean your device fingerprint is more unique.",
+    category_weights: "Category Weights",
     contributing_factors: "Contributing Factors",
     value_label: "Value",
     close: "Close",
+    signals_count: "Signals",
+    raw_score: "Raw Score",
+    pts: "pts",
+    ratings: {
+        LOW: "Low Risk",
+        MEDIUM: "Medium Risk",
+        HIGH: "High Risk",
+        CRITICAL: "Critical Risk"
+    },
     categories: {
         hardware: "Hardware",
         browser: "Browser",
