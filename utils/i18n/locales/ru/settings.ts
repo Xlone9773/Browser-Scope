@@ -124,6 +124,23 @@ export const settings = {
             importBtn: "Импорт",
             importSuccess: "Настройки успешно импортированы! Страница будет перезагружена.",
             importError: "Неверный файл настроек."
+        },
+        appExportSettings: {
+            title: "Настройки экспорта",
+            desc: "Управление форматом и качеством экспорта панели инструментов.",
+            imageScale: "Масштаб изображения",
+            pdfFormat: "Формат страницы PDF",
+            scales: {
+                scale1: "1x - Исходное разрешение",
+                scale2: "2x - Разрешение Retina",
+                scale3: "3x - Ultra HD",
+                scale4: "4x - Extreme HD"
+            },
+            formats: {
+                a4: "A4 (210 × 297 мм)",
+                letter: "Letter (8.5 × 11 дюймов)",
+                legal: "Legal (8.5 × 14 дюймов)"
+            }
         }
     },
     network: {

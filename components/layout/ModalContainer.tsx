@@ -58,6 +58,10 @@ interface ModalContainerProps {
   isCheckingUpdate: boolean;
   needRefresh: boolean;
   developerTabTitle: string;
+  imageExportScale: number;
+  updateImageExportScale: (value: number) => void;
+  pdfExportFormat: 'a4' | 'letter' | 'legal';
+  updatePdfExportFormat: (value: 'a4' | 'letter' | 'legal') => void;
 }
 
 export const ModalContainer: React.FC<ModalContainerProps> = ({
@@ -113,6 +117,10 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   isCheckingUpdate,
   needRefresh,
   developerTabTitle,
+  imageExportScale,
+  updateImageExportScale,
+  pdfExportFormat,
+  updatePdfExportFormat,
 }) => {
   return (
     <ErrorBoundary name="Modals">
@@ -252,6 +260,10 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
             lastCheckTime={lastCheckTime}
             isCheckingUpdate={isCheckingUpdate}
             needRefresh={needRefresh}
+            imageExportScale={imageExportScale}
+            updateImageExportScale={updateImageExportScale}
+            pdfExportFormat={pdfExportFormat}
+            updatePdfExportFormat={updatePdfExportFormat}
           />
         ) : null}
 

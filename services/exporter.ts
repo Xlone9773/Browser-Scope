@@ -64,6 +64,7 @@ export const exportAsPdf = (
     geoData: GeoPosition | null,
     t: Translation,
     lang: string,
+    format: 'a4' | 'letter' | 'legal',
     onStart?: () => void,
     onSuccess?: () => void,
     onError?: (error: string) => void
@@ -84,7 +85,8 @@ export const exportAsPdf = (
         geoData,
         t,
         filename,
-        lang
+        lang,
+        format
     });
 
     // Handle background response
@@ -123,6 +125,7 @@ export const exportAsPdf = (
 export const exportAsImage = async (
     containerId: string,
     theme: string,
+    scale: number,
     onStart?: () => void,
     onSuccess?: () => void,
     onError?: (error: string) => void
@@ -161,7 +164,7 @@ export const exportAsImage = async (
         try {
             dataUrl = await htmlToImage.toPng(element, {
                 backgroundColor,
-                pixelRatio: 2, // Retinal high resolution
+                pixelRatio: scale || 2, // Retinal high resolution
                 style: {
                     transform: 'none',
                 },

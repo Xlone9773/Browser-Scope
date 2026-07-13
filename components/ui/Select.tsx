@@ -216,7 +216,7 @@ export const Select: React.FC<SelectProps> = ({
                                 `}
                             >
                                 <span className="truncate">{opt.label}</span>
-                                {value === opt.id && <Check size={size === 'sm' ? 12 : 14} className="shrink-0 ml-2" />}
+                                {value === opt.id ? <Check size={size === 'sm' ? 12 : 14} className="shrink-0 ml-2" /> : null}
                             </button>
                         ))}
                     </div>

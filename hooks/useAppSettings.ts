@@ -357,6 +357,22 @@ export function useAppSettings() {
     localStorage.setItem("showTabs", String(value));
   }, []);
 
+  const [imageExportScale, setImageExportScale] = useState<number>(
+    () => Number(localStorage.getItem("imageExportScale")) || 2,
+  );
+  const updateImageExportScale = useCallback((value: number) => {
+    setImageExportScale(value);
+    localStorage.setItem("imageExportScale", String(value));
+  }, []);
+
+  const [pdfExportFormat, setPdfExportFormat] = useState<'a4' | 'letter' | 'legal'>(
+    () => (localStorage.getItem("pdfExportFormat") as 'a4' | 'letter' | 'legal') || 'a4',
+  );
+  const updatePdfExportFormat = useCallback((value: 'a4' | 'letter' | 'legal') => {
+    setPdfExportFormat(value);
+    localStorage.setItem("pdfExportFormat", value);
+  }, []);
+
   const toggleShowSearch = useCallback((value: boolean) => {
     setShowSearch(value);
     localStorage.setItem("showSearch", String(value));
@@ -394,6 +410,10 @@ export function useAppSettings() {
     toggleShowTabs,
     showSearch,
     toggleShowSearch,
+    imageExportScale,
+    updateImageExportScale,
+    pdfExportFormat,
+    updatePdfExportFormat,
     searchScope,
     updateSearchScope,
     searchMode,

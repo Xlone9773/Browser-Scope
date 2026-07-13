@@ -124,6 +124,23 @@ export const settings = {
             importBtn: "インポート",
             importSuccess: "設定のインポートが完了しました。ページを再読み込みします。",
             importError: "無効な設定ファイルです。"
+        },
+        appExportSettings: {
+            title: "「エクスポート」機能設定",
+            desc: "ダッシュボードの「エクスポート」機能のフォーマットと解像度を制御します。",
+            imageScale: "画像アップスケーリング率",
+            pdfFormat: "PDF ページ形式",
+            scales: {
+                scale1: "1x - オリジナル解像度",
+                scale2: "2x - Retina 高画質",
+                scale3: "3x - ウルトラ HD",
+                scale4: "4x - エクストリーム HD"
+            },
+            formats: {
+                a4: "A4 (210 × 297 mm)",
+                letter: "レター (8.5 × 11 インチ)",
+                legal: "リーガル (8.5 × 14 インチ)"
+            }
         }
     },
     network: {

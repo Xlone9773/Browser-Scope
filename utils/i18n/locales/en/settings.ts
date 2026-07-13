@@ -124,6 +124,23 @@ export const settings = {
             importBtn: "Import",
             importSuccess: "Settings imported successfully! The page will now reload.",
             importError: "Invalid settings file."
+        },
+        appExportSettings: {
+            title: "Export Options",
+            desc: "Control the format and quality of dashboard exports.",
+            imageScale: "Image Scale",
+            pdfFormat: "PDF Format",
+            scales: {
+                scale1: "1x - Original",
+                scale2: "2x - Retina",
+                scale3: "3x - Ultra HD",
+                scale4: "4x - Extreme HD"
+            },
+            formats: {
+                a4: "A4 (210 × 297 mm)",
+                letter: "Letter (8.5 × 11 in)",
+                legal: "Legal (8.5 × 14 in)"
+            }
         }
     },
     network: {

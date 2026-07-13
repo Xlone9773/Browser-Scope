@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { RotateCcw, Check, Download, Upload } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { Select } from '../ui/Select';
 
 interface GeneralTabProps {
     t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */; // Using any /* eslint-disable-line @typescript-eslint/no-explicit-any */ for t because Translation type was getting complicated with extensions
@@ -17,6 +18,10 @@ interface GeneralTabProps {
     showQuickSummary: boolean;
     toggleShowQuickSummary: (val: boolean) => void;
     lang: string;
+    imageExportScale?: number;
+    updateImageExportScale?: (value: number) => void;
+    pdfExportFormat?: 'a4' | 'letter' | 'legal';
+    updatePdfExportFormat?: (value: 'a4' | 'letter' | 'legal') => void;
 }
 
 // Custom Premium Restore Button Component
@@ -82,7 +87,11 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     translationDict,
     showQuickSummary,
     toggleShowQuickSummary,
-    lang: _lang
+    lang: _lang,
+    imageExportScale,
+    updateImageExportScale,
+    pdfExportFormat,
+    updatePdfExportFormat
 }) => {
     const [udpSupported, setUdpSupported] = useState<boolean | null>(() => {
         const stored = localStorage.getItem('udp_supported');
@@ -319,6 +328,51 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                 </div>
             </div>
             
+            {/* Application Export Settings */}
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                <div className="flex flex-col gap-1">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.appExportSettings?.title || "「导出」功能设置"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {t.appExportSettings?.desc || "控制仪表盘「导出」功能的格式与清晰度。"}
+                    </p>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                            {t.appExportSettings?.imageScale || "图片上采样率"}
+                        </label>
+                        <Select 
+                            value={imageExportScale || 2}
+                            onChange={(value: unknown) => updateImageExportScale ? updateImageExportScale(Number(value)) : null}
+                            options={[
+                                { id: 1, label: t.appExportSettings?.scales?.scale1 || '1x' },
+                                { id: 2, label: t.appExportSettings?.scales?.scale2 || '2x' },
+                                { id: 3, label: t.appExportSettings?.scales?.scale3 || '3x' },
+                                { id: 4, label: t.appExportSettings?.scales?.scale4 || '4x' }
+                            ]}
+                        />
+                    </div>
+                    
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                            {t.appExportSettings?.pdfFormat || "PDF 页面格式"}
+                        </label>
+                        <Select 
+                            value={pdfExportFormat || 'a4'}
+                            onChange={(value: unknown) => updatePdfExportFormat ? updatePdfExportFormat(value as 'a4' | 'letter' | 'legal') : null}
+                            options={[
+                                { id: 'a4', label: t.appExportSettings?.formats?.a4 || 'A4' },
+                                { id: 'letter', label: t.appExportSettings?.formats?.letter || 'Letter' },
+                                { id: 'legal', label: t.appExportSettings?.formats?.legal || 'Legal' }
+                            ]}
+                        />
+                    </div>
+                </div>
+            </div>
+
             {/* Export & Import Settings */}
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex flex-col gap-1 max-w-[70%]">

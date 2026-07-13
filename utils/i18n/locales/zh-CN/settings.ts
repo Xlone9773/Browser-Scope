@@ -124,6 +124,23 @@ export const settings = {
             importBtn: "导入",
             importSuccess: "设置导入成功！页面即将重新加载。",
             importError: "无效的设置文件。"
+        },
+        appExportSettings: {
+            title: "「导出」功能设置",
+            desc: "控制仪表盘「导出」功能的格式与清晰度。",
+            imageScale: "图片上采样率",
+            pdfFormat: "PDF 页面格式",
+            scales: {
+                scale1: "1x - 原始分辨率",
+                scale2: "2x - 视网膜高清",
+                scale3: "3x - 超清",
+                scale4: "4x - 极清"
+            },
+            formats: {
+                a4: "A4 (210 × 297 毫米)",
+                letter: "Letter (8.5 × 11 英寸)",
+                legal: "Legal (8.5 × 14 英寸)"
+            }
         }
     },
     network: {

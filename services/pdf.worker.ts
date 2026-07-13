@@ -25,6 +25,7 @@ interface ExportWorkerMessage {
     };
     filename: string;
     lang?: string;
+    format?: 'a4' | 'letter' | 'legal';
 }
 
 const CACHE_NAME = "browserscope-fonts";
@@ -578,7 +579,7 @@ async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
 
 self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
     try {
-        const { type = "pdf", data, permStatus, geoData, t, filename, lang = "en" } = event.data;
+        const { type = "pdf", data, permStatus, geoData, t, filename, lang = "en", format = "a4" } = event.data;
 
         // If JSON export type requested, serialize on background thread and post back immediately
         if (type === "json") {
@@ -602,17 +603,27 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
             return;
         }
 
-        // Initialize jsPDF (A4 size: 210mm x 297mm, units: mm)
+        // Initialize jsPDF
         const doc = new jsPDF({
             orientation: "portrait",
             unit: "mm",
-            format: "a4"
+            format: format
         });
 
-        const pageWidth = 210;
-        const pageHeight = 297;
+        // Use dimensions based on the selected format
+        let pageWidth = 210;
+        let pageHeight = 297;
+        
+        if (format === 'letter') {
+            pageWidth = 215.9; // 8.5 inch
+            pageHeight = 279.4; // 11 inch
+        } else if (format === 'legal') {
+            pageWidth = 215.9; // 8.5 inch
+            pageHeight = 355.6; // 14 inch
+        }
+
         const marginX = 15;
-        const contentWidth = pageWidth - (marginX * 2); // 180mm
+        const contentWidth = pageWidth - (marginX * 2);
 
         let currentY = 20;
         let activeFontName = "helvetica";

@@ -124,6 +124,23 @@ export const settings = {
             importBtn: "匯入",
             importSuccess: "設定匯入成功！頁面即將重新載入。",
             importError: "無效的設定檔案。"
+        },
+        appExportSettings: {
+            title: "「匯出」功能設定",
+            desc: "控制儀表板「匯出」功能的格式與清晰度。",
+            imageScale: "圖片上採樣率",
+            pdfFormat: "PDF 頁面格式",
+            scales: {
+                scale1: "1x - 原始解析度",
+                scale2: "2x - 視網膜高清",
+                scale3: "3x - 超清",
+                scale4: "4x - 極清"
+            },
+            formats: {
+                a4: "A4 (210 × 297 毫米)",
+                letter: "Letter (8.5 × 11 英吋)",
+                legal: "Legal (8.5 × 14 英吋)"
+            }
         }
     },
     network: {

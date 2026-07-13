@@ -74,6 +74,10 @@ const App: React.FC = () => {
     restoreAllNotifications,
     showQuickSummary,
     toggleShowQuickSummary,
+    imageExportScale,
+    updateImageExportScale,
+    pdfExportFormat,
+    updatePdfExportFormat,
   } = useAppSettings();
 
   const [matchedCardIds, setMatchedCardIds] = useState<string[] | null>(null);
@@ -683,6 +687,7 @@ const App: React.FC = () => {
       geoData,
       t,
       lang,
+      pdfExportFormat || 'a4',
       () => setIsExportingPdf(true),
       () => setIsExportingPdf(false),
       (err) => {
@@ -697,6 +702,7 @@ const App: React.FC = () => {
     exportAsImage(
       "dashboard-container",
       theme,
+      imageExportScale || 2,
       () => setIsExportingImage(true),
       () => setIsExportingImage(false),
       (err) => {
@@ -782,6 +788,10 @@ const App: React.FC = () => {
         isCheckingUpdate={isCheckingUpdate}
         needRefresh={needRefresh}
         developerTabTitle={developerTabTitle}
+        imageExportScale={imageExportScale}
+        updateImageExportScale={updateImageExportScale}
+        pdfExportFormat={pdfExportFormat}
+        updatePdfExportFormat={updatePdfExportFormat}
       />
 
       <div id="dashboard-container" className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">

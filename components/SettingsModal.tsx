@@ -43,6 +43,10 @@ interface SettingsModalProps {
   toggleShowTabs: (value: boolean) => void;
   showSearch: boolean;
   toggleShowSearch: (value: boolean) => void;
+  imageExportScale: number;
+  updateImageExportScale: (value: number) => void;
+  pdfExportFormat: 'a4' | 'letter' | 'legal';
+  updatePdfExportFormat: (value: 'a4' | 'letter' | 'legal') => void;
   searchScope: 'all' | 'category' | 'title' | 'value';
   updateSearchScope: (scope: 'all' | 'category' | 'title' | 'value') => void;
   searchMode: 'fuzzy' | 'exact';
@@ -94,6 +98,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     toggleShowTabs,
     showSearch,
     toggleShowSearch,
+    imageExportScale,
+    updateImageExportScale,
+    pdfExportFormat,
+    updatePdfExportFormat,
     searchScope: _searchScope,
     updateSearchScope: _updateSearchScope,
     searchMode: _searchMode,
@@ -303,6 +311,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               showQuickSummary={showQuickSummary}
                               toggleShowQuickSummary={toggleShowQuickSummary}
                               lang={lang}
+                              imageExportScale={imageExportScale}
+                              updateImageExportScale={updateImageExportScale}
+                              pdfExportFormat={pdfExportFormat}
+                              updatePdfExportFormat={updatePdfExportFormat}
                           />) : null}
 
                           {activeTab === 'storage' ? (<StorageTab t={settings.storage} lang={lang} />) : null}
