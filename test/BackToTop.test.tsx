@@ -109,7 +109,9 @@ describe("BackToTop component tests", () => {
     expect(btn).toBeInTheDocument();
 
     // 3. Click the button to trigger scrollTo
-    fireEvent.click(btn);
+    act(() => {
+      fireEvent.click(btn);
+    });
     expect(scrollToMock).toHaveBeenCalledWith({
       top: 0,
       behavior: "smooth",
