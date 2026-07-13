@@ -573,31 +573,9 @@ async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
     throw lastError || new Error("Failed to fetch font from all mirrors");
 }
 
-self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
+export const generatePdfBlob = async (options: { data: BrowserData; permStatus: Record<string, string>; geoData: GeoPosition | null; t: any; filename: string; lang?: string; format?: "a4" | "letter" | "legal" }): Promise<Blob> => {
     try {
-        const { type = "pdf", data, permStatus, geoData, t, filename, lang = "en", format = "a4" } = event.data;
-
-        // If JSON export type requested, serialize on background thread and post back immediately
-        if (type === "json") {
-            const cleanData = JSON.parse(JSON.stringify(data));
-            if (cleanData.fingerprints && cleanData.fingerprints.canvasImage) {
-                delete cleanData.fingerprints.canvasImage;
-            }
-            const exportPayload: ExportPayload = {
-                meta: {
-                    appName: "BrowserScope",
-                    version: "1.5.0",
-                    exportTime: new Date().toISOString()
-                },
-                permissions: permStatus,
-                geolocation: geoData || 'Permission not granted or unavailable',
-                data: cleanData
-            };
-            const jsonString = JSON.stringify(exportPayload, null, 2);
-            const jsonBlob = new Blob([jsonString], { type: "application/json" });
-            self.postMessage({ type: "success", blob: jsonBlob, filename });
-            return;
-        }
+        const { data, permStatus, geoData, t, filename, lang = "en", format = "a4" } = options;
 
         // Initialize jsPDF
         const doc = new jsPDF({
@@ -992,11 +970,9 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
 
         // Generate PDF as Blob
         const pdfBlob = doc.output("blob");
-
-        // Send back to the main thread
-        self.postMessage({ type: "success", blob: pdfBlob, filename });
+        
+        return pdfBlob;
     } catch (err: unknown) {
-        const errMsg = err instanceof Error ? err.message : "PDF generation worker error";
-        self.postMessage({ type: "error", message: errMsg });
+        throw err;
     }
 };
