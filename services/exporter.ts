@@ -47,9 +47,10 @@ export const exportAsJson = (
         URL.revokeObjectURL(url);
         
         if (onSuccess) onSuccess();
-    } catch (err: any) {
+    } catch (err) {
         console.error("JSON Export failed:", err);
-        if (onError) onError(err?.message || "Failed to stringify JSON data");
+        const errMsg = err instanceof Error ? err.message : "Failed to stringify JSON data";
+        if (onError) onError(errMsg);
     }
 };
 
@@ -92,11 +93,11 @@ export const exportAsPdf = async (
         URL.revokeObjectURL(url);
         
         if (onSuccess) onSuccess();
-    } catch (error: any) {
+    } catch (error) {
         console.error("PDF Export failed:", error);
         
-        const errMessage = error?.message || "PDF generation failed";
-        const errStack = error?.stack || "No stack trace available";
+        const errMessage = error instanceof Error ? error.message : "PDF generation failed";
+        const errStack = error instanceof Error && error.stack ? error.stack : "No stack trace available";
         
         if (onError) onError(`${errMessage}\n\nStack:\n${errStack}`);
     }
@@ -194,4 +195,3 @@ const triggerDownload = (blob: Blob, filename: string) => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 };
-

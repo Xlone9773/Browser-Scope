@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef, useMemo, useCallback } from "react"
 import { Monitor, Smartphone, ShieldAlert, Cpu } from "lucide-react";
 import { exportAsJson, exportAsPdf, exportAsImage } from "./services/exporter";
 import { translations } from "./utils/i18n/index";
-import { ErrorBoundary } from "./components/ui/ErrorBoundary";
-import { useModalManager } from "./hooks/useModalManager";
 import { useCardIndex } from "./hooks/useCardIndex";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { BrowserData } from "./types";
@@ -85,7 +83,6 @@ const App: React.FC = () => {
   const [isViewportTooSmall, setIsViewportTooSmall] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [isExportingImage, setIsExportingImage] = useState(false);
-  const [exportError, setExportError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkViewportSize = () => {
@@ -682,7 +679,6 @@ const App: React.FC = () => {
 
   const handleExportPDF = () => {
     if (!data) return;
-    setExportError(null);
     exportAsPdf(
       data,
       permStatus,
@@ -694,14 +690,13 @@ const App: React.FC = () => {
       () => setIsExportingPdf(false),
       (err) => {
         setIsExportingPdf(false);
-        setExportError(`PDF Export Error:\n\n${err}`);
+        alert(`PDF Export Error: ${err}`);
       }
     );
   };
 
   const handleExportImage = () => {
     if (!data) return;
-    setExportError(null);
     exportAsImage(
       "dashboard-container",
       theme,
@@ -710,7 +705,7 @@ const App: React.FC = () => {
       () => setIsExportingImage(false),
       (err) => {
         setIsExportingImage(false);
-        setExportError(`Image Export Error:\n\n${err}`);
+        alert(`Image Export Error: ${err}`);
       }
     );
   };
@@ -865,7 +860,7 @@ const App: React.FC = () => {
 
         {/* Main Content - Only render if data exists */}
         {data && Object.keys(data).length > 0 ? (
-          <ErrorBoundary name="MainContent">
+          <>
             <SearchBarAndTabs
               showSearch={showSearch}
               showTabs={showTabs}
@@ -908,43 +903,8 @@ const App: React.FC = () => {
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}
             />
-          </ErrorBoundary>
+          </>
         ) : null}
-
-        {exportError && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-700">
-              <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-rose-50 dark:bg-rose-950/20">
-                <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400">
-                  <ShieldAlert size={20} />
-                  <h3 className="font-semibold">Export Error</h3>
-                </div>
-                <button 
-                  onClick={() => setExportError(null)}
-                  className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                </button>
-              </div>
-              <div className="p-6 overflow-y-auto">
-                <p className="text-slate-700 dark:text-slate-300 mb-4 font-medium">
-                  An error occurred during the export process. This is often caused by memory constraints or unsupported font structures.
-                </p>
-                <div className="bg-slate-100 dark:bg-slate-900 rounded-lg p-4 font-mono text-xs text-rose-600 dark:text-rose-400 overflow-x-auto whitespace-pre-wrap select-text">
-                  {exportError}
-                </div>
-              </div>
-              <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-                <button
-                  onClick={() => setExportError(null)}
-                  className="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 rounded-lg font-medium transition-colors"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         <Footer
           text={t.meta.footer}

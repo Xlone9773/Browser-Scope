@@ -1,6 +1,33 @@
+// @ts-expect-error Disable missing types for jspdf
 import { jsPDF } from "jspdf/dist/jspdf.umd.min.js";
-import { BrowserData, GeoPosition } from "../types";
-import { Translation } from "../utils/i18n/types";
+import { BrowserData, GeoPosition, ExportPayload } from "../types";
+
+interface ExportWorkerMessage {
+    type?: "pdf" | "json";
+    data: BrowserData;
+    permStatus: Record<string, string>;
+    geoData: GeoPosition | null;
+    t: {
+        sections?: {
+            system?: string;
+            hardware?: string;
+            display?: string;
+            network?: string;
+            fingerprints?: string;
+            ai_compute?: string;
+            storage?: string;
+            media_sup?: string;
+        };
+        system?: { title?: string };
+        hardware?: { title?: string };
+        display?: { title?: string };
+        network?: { title?: string };
+        fingerprints?: { title?: string };
+    };
+    filename: string;
+    lang?: string;
+    format?: 'a4' | 'letter' | 'legal';
+}
 
 const CACHE_NAME = "browserscope-fonts";
 const FONT_KEYS: Record<string, string> = {
@@ -546,21 +573,33 @@ async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
     throw lastError || new Error("Failed to fetch font from all mirrors");
 }
 
-export const generatePdfBlob = async (options: { 
-    data: BrowserData; 
-    permStatus: Record<string, string>; 
-    geoData: GeoPosition | null; 
-    t: Translation; 
-    filename: string; 
-    lang?: string; 
-    format?: "a4" | "letter" | "legal" 
-}): Promise<Blob> => {
-    const { data, permStatus, geoData, t, filename, lang = "en", format = "a4" } = options;
+self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
+    try {
+        const { type = "pdf", data, permStatus, geoData, t, filename, lang = "en", format = "a4" } = event.data;
 
-    // Use filename in a comment or log to avoid unused variable warning
-    console.log(`[PDF Generator] Generating PDF blob for: ${filename}`);
+        // If JSON export type requested, serialize on background thread and post back immediately
+        if (type === "json") {
+            const cleanData = JSON.parse(JSON.stringify(data));
+            if (cleanData.fingerprints && cleanData.fingerprints.canvasImage) {
+                delete cleanData.fingerprints.canvasImage;
+            }
+            const exportPayload: ExportPayload = {
+                meta: {
+                    appName: "BrowserScope",
+                    version: "1.5.0",
+                    exportTime: new Date().toISOString()
+                },
+                permissions: permStatus,
+                geolocation: geoData || 'Permission not granted or unavailable',
+                data: cleanData
+            };
+            const jsonString = JSON.stringify(exportPayload, null, 2);
+            const jsonBlob = new Blob([jsonString], { type: "application/json" });
+            self.postMessage({ type: "success", blob: jsonBlob, filename });
+            return;
+        }
 
-    // Initialize jsPDF
+        // Initialize jsPDF
         const doc = new jsPDF({
             orientation: "portrait",
             unit: "mm",
@@ -756,7 +795,7 @@ export const generatePdfBlob = async (options: {
         };
 
         // --- 1. SYSTEM INFORMATION ---
-        drawSectionHeader(t.sections?.system || "System Information");
+        drawSectionHeader(t.sections?.system || t.system?.title || "System Information");
         drawGridRow(
             "OS", data.system?.os || tLocal.unknown,
             "Platform", data.system?.platform || tLocal.unknown
@@ -790,7 +829,7 @@ export const generatePdfBlob = async (options: {
         currentY += 4;
 
         // --- 2. HARDWARE SPECIFICATIONS ---
-        drawSectionHeader(t.sections?.hardware || "Hardware Specifications");
+        drawSectionHeader(t.sections?.hardware || t.hardware?.title || "Hardware Specifications");
         drawGridRow(
             "CPU Cores", String(data.hardware?.cpuCores || tLocal.unknown),
             "Memory", `${data.hardware?.memory || tLocal.unknown} GB`
@@ -811,7 +850,7 @@ export const generatePdfBlob = async (options: {
         currentY += 4;
 
         // --- 3. DISPLAY PROFILE ---
-        drawSectionHeader(t.sections?.display || "Display Profile");
+        drawSectionHeader(t.sections?.display || t.display?.title || "Display Profile");
         drawGridRow(
             tLocal.screen_res, data.display?.resolution || tLocal.unknown,
             tLocal.avail_size, data.display?.availableSize || tLocal.unknown
@@ -828,7 +867,7 @@ export const generatePdfBlob = async (options: {
         currentY += 4;
 
         // --- 4. NETWORK DIAGNOSTICS ---
-        drawSectionHeader(t.sections?.network || "Network Diagnostics");
+        drawSectionHeader(t.sections?.network || t.network?.title || "Network Diagnostics");
         drawGridRow(
             tLocal.online_status, data.network?.online ? tLocal.yes : tLocal.no,
             tLocal.conn_type, data.network?.effectiveType || tLocal.unknown
@@ -842,7 +881,7 @@ export const generatePdfBlob = async (options: {
         currentY += 4;
 
         // --- 5. FINGERPRINTS & SECURITY ---
-        drawSectionHeader(t.sections?.fingerprints || "Fingerprints & Security");
+        drawSectionHeader(t.sections?.fingerprints || t.fingerprints?.title || "Fingerprints & Security");
         drawFullRow(tLocal.canvas_hash, data.fingerprints?.canvasHash || tLocal.not_detected);
         drawFullRow(tLocal.webgl_hash, data.fingerprints?.webglHash || tLocal.not_detected);
         
@@ -953,6 +992,11 @@ export const generatePdfBlob = async (options: {
 
         // Generate PDF as Blob
         const pdfBlob = doc.output("blob");
-        
-        return pdfBlob;
+
+        // Send back to the main thread
+        self.postMessage({ type: "success", blob: pdfBlob, filename });
+    } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : "PDF generation worker error";
+        self.postMessage({ type: "error", message: errMsg });
+    }
 };
