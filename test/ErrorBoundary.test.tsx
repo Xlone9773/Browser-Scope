@@ -1,6 +1,6 @@
 import React from "react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from "vitest";
+import { render, screen } from "@testing-library/react";
 import { ErrorBoundary } from "../components/ui/ErrorBoundary";
 
 const Bomb = ({ shouldThrow }: { shouldThrow?: boolean }) => {
@@ -11,7 +11,7 @@ const Bomb = ({ shouldThrow }: { shouldThrow?: boolean }) => {
 };
 
 describe("ErrorBoundary UI component tests", () => {
-  let consoleErrorSpy: any;
+  let consoleErrorSpy: MockInstance;
 
   beforeEach(() => {
     // Suppress console.error in tests to avoid messy output from the intentional error

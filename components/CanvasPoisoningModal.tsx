@@ -143,7 +143,6 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
             canvasPoisoned = true;
             poisoned = true;
             addLog(`❌ Canvas mismatch at iteration ${i}: ${lastHash} != ${hash}`);
-            break;
           }
           lastHash = hash;
           setProgress((prev) => prev + 3);
@@ -171,7 +170,6 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
             webglPoisoned = true;
             poisoned = true;
             addLog(`❌ WebGL mismatch at iteration ${i}: ${lastHash} != ${hash}`);
-            break;
           }
           lastHash = hash;
           setProgress((prev) => prev + 3);
@@ -191,32 +189,30 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
     if (hookResult.hooked) {
       poisoned = true;
       addLog(t?.audio_hooked || `❌ Suspicious Proxy/Hook detected on core Audio APIs (${hookResult.name}).`);
-    } else {
-      // B. Dynamic rendering noise detection
-      let lastAudioHash = '';
-      let audioStable = true;
-      for (let i = 0; i < 10; i++) {
-        const samples = await renderAudio();
-        if (samples) {
-          let sampleStr = '';
-          for (let s = 0; s < samples.length; s += 5) {
-            sampleStr += samples[s].toFixed(5) + ',';
-          }
-          const hash = hashString(sampleStr);
-          if (i > 0 && hash !== lastAudioHash) {
-            audioStable = false;
-            addLog(`❌ Audio buffer mismatch at iteration ${i}: ${lastAudioHash} != ${hash}`);
-            break;
-          }
-          lastAudioHash = hash;
-        } else {
-          break;
+    }
+    
+    // B. Dynamic rendering noise detection
+    let lastAudioHash = '';
+    let audioStable = true;
+    for (let i = 0; i < 10; i++) {
+      const samples = await renderAudio();
+      if (samples) {
+        let sampleStr = '';
+        for (let s = 0; s < samples.length; s += 5) {
+          sampleStr += samples[s].toFixed(5) + ',';
         }
-        setProgress((prev) => Math.min(95, prev + 3));
-        await new Promise(r => setTimeout(r, 40));
+        const hash = hashString(sampleStr);
+        if (i > 0 && hash !== lastAudioHash) {
+          audioStable = false;
+          addLog(`❌ Audio buffer mismatch at iteration ${i}: ${lastAudioHash} != ${hash}`);
+        }
+        lastAudioHash = hash;
       }
+      setProgress((prev) => Math.min(95, prev + 3));
+      await new Promise(r => setTimeout(r, 40));
+    }
 
-      // C. Latency bounds check
+    // C. Latency bounds check
       try {
         const extWindow = window as unknown as ExtendedWindow;
         const AudioContextClass = window.AudioContext || extWindow.webkitAudioContext;
@@ -245,7 +241,6 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
       } else {
         addLog(t?.audio_stable || '✅ Audio APIs stable, no waveform or latency tampering detected.');
       }
-    }
     
     setProgress(100);
     setStatus(poisoned ? 'poisoned' : 'clean');
