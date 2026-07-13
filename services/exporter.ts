@@ -34,6 +34,7 @@ export const exportAsJson = (
         if (type === 'success' && blob && respFilename) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
+            link.classList.add("notranslate");
             link.href = url;
             link.download = respFilename;
             document.body.appendChild(link);
@@ -96,6 +97,7 @@ export const exportAsPdf = (
         if (type === 'success' && blob && respFilename) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
+            link.classList.add("notranslate");
             link.href = url;
             link.download = respFilename;
             document.body.appendChild(link);
@@ -204,6 +206,7 @@ export const exportAsImage = async (
 const triggerDownload = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
+            link.classList.add("notranslate");
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);

@@ -1,4 +1,5 @@
-import { jsPDF } from "jspdf";
+// @ts-ignore
+import { jsPDF } from "jspdf/dist/jspdf.umd.min.js";
 import { BrowserData, GeoPosition, ExportPayload } from "../types";
 
 interface ExportWorkerMessage {
