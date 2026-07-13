@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef, useMemo, useCallback } from "react"
 import { Monitor, Smartphone, ShieldAlert, Cpu } from "lucide-react";
 import { exportAsJson, exportAsPdf, exportAsImage } from "./services/exporter";
 import { translations } from "./utils/i18n/index";
+import { ErrorBoundary } from "./components/ui/ErrorBoundary";
+import { useModalManager } from "./hooks/useModalManager";
 import { useCardIndex } from "./hooks/useCardIndex";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { BrowserData } from "./types";
@@ -860,7 +862,7 @@ const App: React.FC = () => {
 
         {/* Main Content - Only render if data exists */}
         {data && Object.keys(data).length > 0 ? (
-          <>
+          <ErrorBoundary name="MainContent">
             <SearchBarAndTabs
               showSearch={showSearch}
               showTabs={showTabs}
@@ -903,7 +905,7 @@ const App: React.FC = () => {
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}
             />
-          </>
+          </ErrorBoundary>
         ) : null}
 
         <Footer

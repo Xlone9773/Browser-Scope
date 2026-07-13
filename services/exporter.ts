@@ -1,4 +1,3 @@
-import { generatePdfBlob } from "./pdf";
 import { BrowserData, GeoPosition } from '../types';
 import { Translation } from '../utils/i18n/types';
 import { generateFilenameTimestamp } from '../utils/formatters';
@@ -16,46 +15,50 @@ export const exportAsJson = (
     const timestampStr = generateFilenameTimestamp();
     const filename = `browserscope-${timestampStr}.json`;
 
-    try {
-        const cleanData = JSON.parse(JSON.stringify(data));
-        if (cleanData.fingerprints && cleanData.fingerprints.canvasImage) {
-            delete cleanData.fingerprints.canvasImage;
+    // Instantiate a dedicated worker on-the-fly for the JSON export
+    const worker = new Worker(new URL('./pdf.worker.ts', import.meta.url), { type: 'module' });
+
+    // Post data to web worker with type: 'json'
+    worker.postMessage({
+        type: 'json',
+        data,
+        permStatus,
+        geoData,
+        filename
+    });
+
+    // Handle background response
+    worker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; filename?: string; message?: string }>) => {
+        const { type, blob, filename: respFilename, message } = event.data;
+        
+        if (type === 'success' && blob && respFilename) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = respFilename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            if (onSuccess) onSuccess();
+        } else {
+            console.error("JSON Export failed inside worker:", message);
+            if (onError) onError(message || "Worker generation failed");
         }
         
-        const exportPayload = {
-            meta: {
-                appName: "BrowserScope",
-                version: "1.5.0",
-                exportTime: new Date().toISOString()
-            },
-            permissions: permStatus,
-            geolocation: geoData || 'Permission not granted or unavailable',
-            data: cleanData
-        };
-        
-        const jsonString = JSON.stringify(exportPayload, null, 2);
-        const blob = new Blob([jsonString], { type: "application/json" });
-        
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.classList.add("notranslate");
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        if (onSuccess) onSuccess();
-    } catch (err) {
-        console.error("JSON Export failed:", err);
-        const errMsg = err instanceof Error ? err.message : "Failed to stringify JSON data";
-        if (onError) onError(errMsg);
-    }
+        // Terminate worker immediately to avoid leaks
+        worker.terminate();
+    };
+
+    worker.onerror = (err) => {
+        console.error("JSON Export worker runtime error:", err);
+        if (onError) onError("Worker execution failed");
+        worker.terminate();
+    };
 };
 
-
-export const exportAsPdf = async (
+export const exportAsPdf = (
     data: BrowserData,
     permStatus: Record<string, string>,
     geoData: GeoPosition | null,
@@ -71,36 +74,50 @@ export const exportAsPdf = async (
     const timestampStr = generateFilenameTimestamp();
     const filename = `browserscope-${timestampStr}.pdf`;
 
-    try {
-        const pdfBlob = await generatePdfBlob({
-            data,
-            permStatus,
-            geoData,
-            t,
-            filename,
-            lang,
-            format
-        });
+    // Instantiate a dedicated worker on-the-fly for this task
+    const worker = new Worker(new URL('./pdf.worker.ts', import.meta.url), { type: 'module' });
+
+    // Post data to web worker with type: 'pdf' and selected language
+    worker.postMessage({
+        type: 'pdf',
+        data,
+        permStatus,
+        geoData,
+        t,
+        filename,
+        lang,
+        format
+    });
+
+    // Handle background response
+    worker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; filename?: string; message?: string }>) => {
+        const { type, blob, filename: respFilename, message } = event.data;
         
-        const url = URL.createObjectURL(pdfBlob);
-        const link = document.createElement('a');
-        link.classList.add("notranslate");
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        if (type === 'success' && blob && respFilename) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = respFilename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            if (onSuccess) onSuccess();
+        } else {
+            console.error("PDF Export failed inside worker:", message);
+            if (onError) onError(message || "Worker generation failed");
+        }
         
-        if (onSuccess) onSuccess();
-    } catch (error) {
-        console.error("PDF Export failed:", error);
-        
-        const errMessage = error instanceof Error ? error.message : "PDF generation failed";
-        const errStack = error instanceof Error && error.stack ? error.stack : "No stack trace available";
-        
-        if (onError) onError(`${errMessage}\n\nStack:\n${errStack}`);
-    }
+        // Terminate worker immediately to avoid leaks
+        worker.terminate();
+    };
+
+    worker.onerror = (err) => {
+        console.error("PDF Export worker runtime error:", err);
+        if (onError) onError("Worker execution failed");
+        worker.terminate();
+    };
 };
 
 // Remove unused function sanitizeCssForSvg
@@ -187,7 +204,6 @@ export const exportAsImage = async (
 const triggerDownload = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-            link.classList.add("notranslate");
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);
@@ -195,3 +211,4 @@ const triggerDownload = (blob: Blob, filename: string) => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 };
+

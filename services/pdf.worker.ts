@@ -1,5 +1,4 @@
-// @ts-expect-error Disable missing types for jspdf
-import { jsPDF } from "jspdf/dist/jspdf.umd.min.js";
+import { jsPDF } from "jspdf";
 import { BrowserData, GeoPosition, ExportPayload } from "../types";
 
 interface ExportWorkerMessage {
@@ -70,7 +69,7 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         level: "Level",
         permissions: "Permissions",
         geolocation_data: "Geolocation Data",
-        user_agent: "",
+        user_agent: "User Agent",
         pwa_installed: "PWA Installed",
         cookies_enabled: "Cookies Enabled",
         yes: "Yes",
@@ -99,8 +98,8 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         secure_context_lbl: "Secure Context",
         active: "Active",
         inactive: "Inactive",
-        suspicious_bot: "Suspicious ",
-        pass_human: "Pass ",
+        suspicious_bot: "Suspicious (Bot)",
+        pass_human: "Pass (Human)",
         // AI
         ai_title: "AI & Computational Readiness",
         wasm_support: "WebAssembly Support",
@@ -135,13 +134,13 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
     "zh-CN": {
         report_title: "BrowserScope 浏览器安全与硬件诊断报告",
         generated: "生成时间",
-        secure_context: "安全网络环境 ",
+        secure_context: "安全网络环境 (HTTPS)",
         trust_score: "信任评分",
         level: "评级级别",
         permissions: "系统权限",
         geolocation_data: "地理定位数据",
-        user_agent: "浏览器 ",
-        pwa_installed: "渐进式应用安装",
+        user_agent: "浏览器 User Agent",
+        pwa_installed: "PWA 渐进式应用安装",
         cookies_enabled: "Cookie 启用状态",
         yes: "已启用/是",
         no: "未启用/否",
@@ -175,11 +174,11 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         ai_title: "AI 与计算就绪度",
         wasm_support: "WebAssembly 支持",
         wasm_simd: "Wasm SIMD 加速",
-        webnn: "WebNN API ",
+        webnn: "WebNN API (神经网络)",
         window_ai: "Window AI 浏览器原生大模型",
         webgpu_compute: "WebGPU 通用计算支持",
         ai_score: "AI 性能跑分",
-        ai_flops: "估计浮点运算性能",
+        ai_flops: "估计浮点运算性能 (FLOPs)",
         ai_level: "算力分级评估",
         // Storage
         storage_title: "本地存储空间状态",
@@ -200,18 +199,18 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         video_codecs: "支持的视频编解码器",
         audio_codecs: "支持的音频编解码器",
         image_formats: "支持的图片格式",
-        drm_systems: "数字版权管理  支持"
+        drm_systems: "数字版权管理 (DRM) 支持"
     },
     "zh-TW": {
         report_title: "BrowserScope 瀏覽器安全與硬體診斷報告",
         generated: "生成時間",
-        secure_context: "安全網路環境 ",
+        secure_context: "安全網路環境 (HTTPS)",
         trust_score: "信任評分",
         level: "評級級別",
         permissions: "系統權限",
         geolocation_data: "地理定位數據",
-        user_agent: "瀏覽器 ",
-        pwa_installed: "漸進式應用安裝",
+        user_agent: "瀏覽器 User Agent",
+        pwa_installed: "PWA 漸進式應用安裝",
         cookies_enabled: "Cookie 啟用狀態",
         yes: "已啟用/是",
         no: "未啟用/否",
@@ -249,7 +248,7 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         window_ai: "Window AI 瀏覽器原生大模型",
         webgpu_compute: "WebGPU 通用計算支援",
         ai_score: "AI 性能跑分",
-        ai_flops: "估計浮點運算性能",
+        ai_flops: "估計浮點運算性能 (FLOPs)",
         ai_level: "算力分級評估",
         // Storage
         storage_title: "本地儲存空間狀態",
@@ -270,18 +269,18 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         video_codecs: "支援的視訊編解碼器",
         audio_codecs: "支援的音訊編解碼器",
         image_formats: "支援的圖片格式",
-        drm_systems: "數位版權管理  支援"
+        drm_systems: "數位版權管理 (DRM) 支援"
     },
     "zh-HK": {
         report_title: "BrowserScope 瀏覽器安全與硬件診斷報告",
         generated: "生成時間",
-        secure_context: "安全網絡環境 ",
+        secure_context: "安全網絡環境 (HTTPS)",
         trust_score: "信任評分",
         level: "評級級別",
         permissions: "系統權限",
         geolocation_data: "地理定位數據",
-        user_agent: "瀏覽器 ",
-        pwa_installed: "漸進式應用安裝",
+        user_agent: "瀏覽器 User Agent",
+        pwa_installed: "PWA 漸進式應用安裝",
         cookies_enabled: "Cookie 啟用狀態",
         yes: "已啟用/是",
         no: "未啟用/否",
@@ -319,7 +318,7 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         window_ai: "Window AI 瀏覽器原生大模型",
         webgpu_compute: "WebGPU 通用計算支援",
         ai_score: "AI 性能跑分",
-        ai_flops: "估計浮點運算性能",
+        ai_flops: "估計浮點運算性能 (FLOPs)",
         ai_level: "算力分級評估",
         // Storage
         storage_title: "本地儲存空間狀態",
@@ -340,17 +339,17 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         video_codecs: "支援的視訊編解碼器",
         audio_codecs: "支援的音訊編解碼器",
         image_formats: "支援的圖片格式",
-        drm_systems: "數位版權管理  支援"
+        drm_systems: "數位版權管理 (DRM) 支援"
     },
     ja: {
         report_title: "BrowserScope ブラウザ診断＆ハードウェア分析レポート",
         generated: "生成日時",
-        secure_context: "セキュアな環境 ",
+        secure_context: "セキュアな環境 (HTTPS)",
         trust_score: "信頼スコア",
         level: "評価レベル",
         permissions: "システム権限設定",
         geolocation_data: "位置情報データ",
-        user_agent: "ブラウザ ",
+        user_agent: "ブラウザ User Agent",
         pwa_installed: "PWA アプリのインストール",
         cookies_enabled: "Cookie 有効化",
         yes: "有効/はい",
@@ -389,7 +388,7 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         window_ai: "Window AI ブラウザ内蔵モデル",
         webgpu_compute: "WebGPU コンピュート",
         ai_score: "AI 性能測定スコア",
-        ai_flops: "推定浮点演算性能",
+        ai_flops: "推定浮点演算性能 (FLOPs)",
         ai_level: "算力レベル評価",
         // Storage
         storage_title: "ローカルストレージ状態",
@@ -410,17 +409,17 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         video_codecs: "対応ビデオコーデック",
         audio_codecs: "対応オーディオコーデック",
         image_formats: "対応画像フォーマット",
-        drm_systems: "デジタル著作権管理 "
+        drm_systems: "デジタル著作権管理 (DRM)"
     },
     ru: {
         report_title: "Диагностический отчет BrowserScope",
         generated: "Создан",
-        secure_context: "Безопасное соединение ",
+        secure_context: "Безопасное соединение (HTTPS)",
         trust_score: "Оценка доверия",
         level: "Уровень",
         permissions: "Разрешения системы",
         geolocation_data: "Геолокация",
-        user_agent: " браузера",
+        user_agent: "User Agent браузера",
         pwa_installed: "PWA Установлено",
         cookies_enabled: "Cookies включены",
         yes: "Да",
@@ -459,7 +458,7 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         window_ai: "Встроенный ИИ (Window AI)",
         webgpu_compute: "Вычисления WebGPU",
         ai_score: "Оценка ИИ",
-        ai_flops: "Оценка производительности",
+        ai_flops: "Оценка производительности (FLOPs)",
         ai_level: "Уровень производительности вычислений",
         // Storage
         storage_title: "Статус хранилища данных",
@@ -488,8 +487,13 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
     const bytes = new Uint8Array(buffer);
     let binary = "";
     const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
+    const chunk_size = 8192; // 8KB chunks are 100% safe from stack overflow on all mobile/desktop engines
+    for (let i = 0; i < len; i += chunk_size) {
+        const chunk = bytes.subarray(i, i + chunk_size);
+        binary += String.fromCharCode.apply(
+            null,
+            Array.from(chunk)
+        );
     }
     return btoa(binary);
 }
