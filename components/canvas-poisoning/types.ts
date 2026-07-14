@@ -74,6 +74,44 @@ export interface PoisoningTranslations {
   media_poisoned_detected?: string;
   media_stable?: string;
   run_media_test?: string;
+
+  // Hardware translations:
+  tab_hardware?: string;
+  hardware_detection_title?: string;
+  hardware_detection_desc?: string;
+  run_hardware_test?: string;
+  testing_hardware?: string;
+  hardware_cores?: string;
+  hardware_memory?: string;
+  hardware_memory_gb?: string;
+  hardware_testing_concurrency?: string;
+  hardware_benchmark_result?: string;
+  hardware_concurrency_suspicious?: string;
+  hardware_concurrency_normal?: string;
+  hardware_concurrency_hooked?: string;
+  hardware_memory_suspicious?: string;
+  hardware_memory_normal?: string;
+  hardware_declared_specs?: string;
+  hardware_workers_not_supported?: string;
+  hardware_concurrency_completed?: string;
+  hardware_benchmark_complete?: string;
+  hardware_performance_capped?: string;
+  hardware_low_memory_detected?: string;
+  hardware_memory_normal_log?: string;
+  hardware_unknown_spec?: string;
+  hardware_thrs?: string;
+  hardware_speedup_label?: string;
+  hardware_ops_label?: string;
+  hardware_detected_saturation?: string;
+  hardware_physical_cores?: string;
+  
+  // All tab translations
+  tab_all?: string;
+  all_detection_title?: string;
+  all_detection_desc?: string;
+  run_all_tests?: string;
+  testing_all_steps?: string;
+  all_test_summary_title?: string;
 }
 
 export interface ExtendedWindow {

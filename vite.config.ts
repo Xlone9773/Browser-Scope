@@ -92,11 +92,21 @@ export default defineConfig(({ mode }) => {
         cssCodeSplit: true,
         rollupOptions: {
           output: {
-            manualChunks: {
-              'react-vendor': ['react', 'react-dom'],
-              'ai-vendor': ['@xenova/transformers'],
-              'device-vendor': ['@fingerprintjs/fingerprintjs', 'fingerprintjs2', 'fpjs-v5'],
-              'ui-vendor': ['lucide-react']
+            manualChunks(id) {
+              if (id.includes('node_modules')) {
+                if (id.includes('react/') || id.includes('react-dom/')) {
+                  return 'react-vendor';
+                }
+                if (id.includes('@xenova/transformers')) {
+                  return 'ai-vendor';
+                }
+                if (id.includes('@fingerprintjs/fingerprintjs') || id.includes('fingerprintjs2') || id.includes('fpjs-v5')) {
+                  return 'device-vendor';
+                }
+                if (id.includes('lucide-react')) {
+                  return 'ui-vendor';
+                }
+              }
             }
           }
         }
