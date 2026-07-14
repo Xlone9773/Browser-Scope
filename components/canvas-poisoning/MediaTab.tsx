@@ -1,6 +1,6 @@
 // src/components/canvas-poisoning/MediaTab.tsx
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ShieldAlert, RefreshCw, Activity } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { PoisoningTranslations } from './types';
@@ -11,9 +11,41 @@ interface MediaTabProps {
 }
 
 export const MediaTab: React.FC<MediaTabProps> = React.memo(({ t }) => {
-  const [mediaStatus, setMediaStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
-  const [mediaProgress, setMediaProgress] = useState(0);
-  const [mediaLogs, setMediaLogs] = useState<string[]>([]);
+  const [mediaStatus, setMediaStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_media_status');
+      if (val === 'running') return 'idle';
+      return (val as 'idle' | 'running' | 'poisoned' | 'clean') || 'idle';
+    } catch {
+      return 'idle';
+    }
+  });
+  const [mediaProgress, setMediaProgress] = useState(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_media_progress');
+      return val ? parseInt(val, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [mediaLogs, setMediaLogs] = useState<string[]>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_media_logs');
+      return val ? JSON.parse(val) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('browserscope_poisoning_media_status', mediaStatus);
+      sessionStorage.setItem('browserscope_poisoning_media_progress', String(mediaProgress));
+      sessionStorage.setItem('browserscope_poisoning_media_logs', JSON.stringify(mediaLogs));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [mediaStatus, mediaProgress, mediaLogs]);
 
   const addMediaLog = useCallback((msg: string) => {
     setMediaLogs((prev) => [...prev, msg]);

@@ -1,6 +1,6 @@
 // src/components/canvas-poisoning/RenderAudioTab.tsx
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ShieldAlert, RefreshCw, Activity } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { PoisoningTranslations, ExtendedWindow } from './types';
@@ -14,9 +14,41 @@ export const RenderAudioTab: React.FC<RenderAudioTabProps> = React.memo(({ t }) 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const webglRef = useRef<HTMLCanvasElement>(null);
 
-  const [status, setStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
-  const [progress, setProgress] = useState(0);
-  const [logs, setLogs] = useState<string[]>([]);
+  const [status, setStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_renderaudio_status');
+      if (val === 'running') return 'idle';
+      return (val as 'idle' | 'running' | 'poisoned' | 'clean') || 'idle';
+    } catch {
+      return 'idle';
+    }
+  });
+  const [progress, setProgress] = useState(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_renderaudio_progress');
+      return val ? parseInt(val, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [logs, setLogs] = useState<string[]>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_renderaudio_logs');
+      return val ? JSON.parse(val) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('browserscope_poisoning_renderaudio_status', status);
+      sessionStorage.setItem('browserscope_poisoning_renderaudio_progress', String(progress));
+      sessionStorage.setItem('browserscope_poisoning_renderaudio_logs', JSON.stringify(logs));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [status, progress, logs]);
 
   const addLog = useCallback((msg: string) => {
     setLogs((prev) => [...prev, msg]);

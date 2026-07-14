@@ -1,6 +1,6 @@
 // src/components/canvas-poisoning/GeometryTab.tsx
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ShieldAlert, RefreshCw, Activity } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { PoisoningTranslations } from './types';
@@ -11,9 +11,41 @@ interface GeometryTabProps {
 }
 
 export const GeometryTab: React.FC<GeometryTabProps> = React.memo(({ t }) => {
-  const [geomStatus, setGeomStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
-  const [geomProgress, setGeomProgress] = useState(0);
-  const [geomLogs, setGeomLogs] = useState<string[]>([]);
+  const [geomStatus, setGeomStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_geometry_status');
+      if (val === 'running') return 'idle';
+      return (val as 'idle' | 'running' | 'poisoned' | 'clean') || 'idle';
+    } catch {
+      return 'idle';
+    }
+  });
+  const [geomProgress, setGeomProgress] = useState(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_geometry_progress');
+      return val ? parseInt(val, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [geomLogs, setGeomLogs] = useState<string[]>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_geometry_logs');
+      return val ? JSON.parse(val) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('browserscope_poisoning_geometry_status', geomStatus);
+      sessionStorage.setItem('browserscope_poisoning_geometry_progress', String(geomProgress));
+      sessionStorage.setItem('browserscope_poisoning_geometry_logs', JSON.stringify(geomLogs));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [geomStatus, geomProgress, geomLogs]);
 
   const addGeomLog = useCallback((msg: string) => {
     setGeomLogs((prev) => [...prev, msg]);

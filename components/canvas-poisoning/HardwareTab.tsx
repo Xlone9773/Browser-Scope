@@ -1,6 +1,6 @@
 // src/components/canvas-poisoning/HardwareTab.tsx
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ShieldAlert, RefreshCw, Activity, Cpu, HardDrive } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { PoisoningTranslations } from './types';
@@ -29,11 +29,59 @@ const workerCode = `
 `;
 
 export const HardwareTab: React.FC<HardwareTabProps> = React.memo(({ t }) => {
-  const [hwStatus, setHwStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
-  const [hwProgress, setHwProgress] = useState(0);
-  const [hwLogs, setHwLogs] = useState<string[]>([]);
-  const [benchmarkData, setBenchmarkData] = useState<BenchmarkResult[]>([]);
-  const [detectedCores, setDetectedCores] = useState<number | null>(null);
+  const [hwStatus, setHwStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_hardware_status');
+      if (val === 'running') return 'idle';
+      return (val as 'idle' | 'running' | 'poisoned' | 'clean') || 'idle';
+    } catch {
+      return 'idle';
+    }
+  });
+  const [hwProgress, setHwProgress] = useState(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_hardware_progress');
+      return val ? parseInt(val, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [hwLogs, setHwLogs] = useState<string[]>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_hardware_logs');
+      return val ? JSON.parse(val) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [benchmarkData, setBenchmarkData] = useState<BenchmarkResult[]>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_hardware_benchmarkData');
+      return val ? JSON.parse(val) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [detectedCores, setDetectedCores] = useState<number | null>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_hardware_detectedCores');
+      return val ? parseInt(val, 10) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('browserscope_poisoning_hardware_status', hwStatus);
+      sessionStorage.setItem('browserscope_poisoning_hardware_progress', String(hwProgress));
+      sessionStorage.setItem('browserscope_poisoning_hardware_logs', JSON.stringify(hwLogs));
+      sessionStorage.setItem('browserscope_poisoning_hardware_benchmarkData', JSON.stringify(benchmarkData));
+      sessionStorage.setItem('browserscope_poisoning_hardware_detectedCores', detectedCores !== null ? String(detectedCores) : '');
+    } catch (e) {
+      console.error(e);
+    }
+  }, [hwStatus, hwProgress, hwLogs, benchmarkData, detectedCores]);
 
   const addHwLog = useCallback((msg: string) => {
     setHwLogs((prev) => [...prev, msg]);

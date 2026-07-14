@@ -1,6 +1,6 @@
 // src/components/canvas-poisoning/AllTab.tsx
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { 
   ShieldAlert, 
   RefreshCw, 
@@ -56,17 +56,80 @@ const workerCode = `
 `;
 
 export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
-  const [status, setStatus] = useState<'idle' | 'running' | 'completed'>('idle');
-  const [activeStep, setActiveStep] = useState(0);
-  const [currentModuleText, setCurrentModuleText] = useState('');
-  const [globalProgress, setGlobalProgress] = useState(0);
-  const [runningLogs, setRunningLogs] = useState<string[]>([]);
-  const [results, setResults] = useState<AllResults | null>(null);
-  const [selectedResultModule, setSelectedResultModule] = useState<keyof AllResults | null>(null);
+  const [status, setStatus] = useState<'idle' | 'running' | 'completed'>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_all_status');
+      if (val === 'running') return 'idle';
+      return (val as 'idle' | 'running' | 'completed') || 'idle';
+    } catch {
+      return 'idle';
+    }
+  });
+  const [activeStep, setActiveStep] = useState<number>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_all_activeStep');
+      return val ? parseInt(val, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [currentModuleText, setCurrentModuleText] = useState<string>(() => {
+    try {
+      return sessionStorage.getItem('browserscope_poisoning_all_currentModuleText') || '';
+    } catch {
+      return '';
+    }
+  });
+  const [globalProgress, setGlobalProgress] = useState<number>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_all_globalProgress');
+      return val ? parseInt(val, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [runningLogs, setRunningLogs] = useState<string[]>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_all_runningLogs');
+      return val ? JSON.parse(val) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [results, setResults] = useState<AllResults | null>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_all_results');
+      return val ? JSON.parse(val) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [selectedResultModule, setSelectedResultModule] = useState<keyof AllResults | null>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_all_selectedResultModule');
+      return (val as keyof AllResults | null) || null;
+    } catch {
+      return null;
+    }
+  });
   const [logSearchQuery, setLogSearchQuery] = useState('');
   const [copiedLogModule, setCopiedLogModule] = useState<string | null>(null);
 
   const logContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('browserscope_poisoning_all_status', status);
+      sessionStorage.setItem('browserscope_poisoning_all_activeStep', String(activeStep));
+      sessionStorage.setItem('browserscope_poisoning_all_currentModuleText', currentModuleText);
+      sessionStorage.setItem('browserscope_poisoning_all_globalProgress', String(globalProgress));
+      sessionStorage.setItem('browserscope_poisoning_all_runningLogs', JSON.stringify(runningLogs));
+      sessionStorage.setItem('browserscope_poisoning_all_results', results ? JSON.stringify(results) : '');
+      sessionStorage.setItem('browserscope_poisoning_all_selectedResultModule', selectedResultModule || '');
+    } catch (e) {
+      console.error(e);
+    }
+  }, [status, activeStep, currentModuleText, globalProgress, runningLogs, results, selectedResultModule]);
 
   const addGlobalLog = useCallback((msg: string) => {
     setRunningLogs((prev) => {

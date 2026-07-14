@@ -1,6 +1,6 @@
 // src/components/canvas-poisoning/FontsTab.tsx
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ShieldAlert, RefreshCw, Activity } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { PoisoningTranslations } from './types';
@@ -11,9 +11,41 @@ interface FontsTabProps {
 }
 
 export const FontsTab: React.FC<FontsTabProps> = React.memo(({ t }) => {
-  const [fontStatus, setFontStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
-  const [fontProgress, setFontProgress] = useState(0);
-  const [fontLogs, setFontLogs] = useState<string[]>([]);
+  const [fontStatus, setFontStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_fonts_status');
+      if (val === 'running') return 'idle';
+      return (val as 'idle' | 'running' | 'poisoned' | 'clean') || 'idle';
+    } catch {
+      return 'idle';
+    }
+  });
+  const [fontProgress, setFontProgress] = useState(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_fonts_progress');
+      return val ? parseInt(val, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [fontLogs, setFontLogs] = useState<string[]>(() => {
+    try {
+      const val = sessionStorage.getItem('browserscope_poisoning_fonts_logs');
+      return val ? JSON.parse(val) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('browserscope_poisoning_fonts_status', fontStatus);
+      sessionStorage.setItem('browserscope_poisoning_fonts_progress', String(fontProgress));
+      sessionStorage.setItem('browserscope_poisoning_fonts_logs', JSON.stringify(fontLogs));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [fontStatus, fontProgress, fontLogs]);
 
   const addFontLog = useCallback((msg: string) => {
     setFontLogs((prev) => [...prev, msg]);
