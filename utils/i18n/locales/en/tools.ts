@@ -352,7 +352,19 @@ export const tools = {
     testing_font_query: "Detecting local font query interface (queryLocalFonts)...",
     font_query_blocked: "⚠️ Local Font Query (queryLocalFonts) threw an error or is disabled, indicating high privacy restrictions.",
     font_query_allowed: "✅ Local Font Query (queryLocalFonts) is accessible or behaves normally.",
-    run_font_test: "Run Font Test"
+    run_font_test: "Run Font Test",
+    tab_geometry: "Geometry & Layout",
+    geometry_detection_title: "Geometry Boundary & DOMRect Poisoning Detection",
+    geometry_detection_desc: "Renders complex nested graphics and 3D CSS layouts, high-frequency reading getBoundingClientRect and getClientRects without reflow. Non-identical consecutive results indicate geometry boundary tampering or dynamic offset farbling.",
+    testing_geometry: "Testing high-frequency nested geometry measurements and poisoning...",
+    rects_hooked: "❌ Suspicious Proxy/Hook detected on getBoundingClientRect or getClientRects methods.",
+    rect_farbling_detected: "❌ ClientRects/DOMRect Farbling detected (getBoundingClientRect measurements fluctuate dynamically in static state, typical of Brave or Cromite).",
+    geometry_stable: "✅ Geometry boundaries and DOMRect measurements are perfectly stable, no farbling detected.",
+    run_geometry_test: "Run Geometry Test",
+    query_local_fonts_hooked: "❌ Suspicious Proxy/Hook detected on queryLocalFonts API.",
+    query_local_fonts_unsupported: "ℹ️ queryLocalFonts is not supported or is disabled by browser security model.",
+    font_widths_stable: "✅ High-precision width measurements are stable.",
+    font_differentiation_detected: "✅ Font differentiation detected (local font library access is active)."
   },
   ja3: {
     title: "JA3/JA4 Fingerprint",

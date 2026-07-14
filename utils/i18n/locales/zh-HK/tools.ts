@@ -351,7 +351,19 @@ export const tools = {
     testing_font_query: "正在檢測本地字型查詢介面 (queryLocalFonts)...",
     font_query_blocked: "⚠️ Local Font Query (queryLocalFonts) 拋出錯誤或被禁用，表明可能存在高級隱私限制。",
     font_query_allowed: "✅ Local Font Query (queryLocalFonts) 可用或行為符合正常規範。",
-    run_font_test: "運行字型檢測"
+    run_font_test: "運行字型檢測",
+    tab_geometry: "幾何與邊界",
+    geometry_detection_title: "幾何邊界與 DOMRect 投毒檢測",
+    geometry_detection_desc: "通過在頁面中渲染複雜的嵌套圖形和 3D CSS 布局，高頻且無 Reflow 狀態下讀取 getBoundingClientRect 的幾何邊界座標。如果多次讀取結果不一致或核心方法被劫持，表明存在防指紋的幾何投毒干擾。",
+    testing_geometry: "測試高頻幾何邊界 getBoundingClientRect 測距與投毒檢測...",
+    rects_hooked: "❌ 檢測到 Element.prototype.getBoundingClientRect 或 getClientRects 方法被 Proxy/Hook 劫持。",
+    rect_farbling_detected: "❌ 檢測到 DOMRect 幾何測距投毒干擾（getBoundingClientRect 連續讀取數據存在微像素動態偏置抖动，常見於 Brave 或 Cromite 防指紋模式）。",
+    geometry_stable: "✅ 幾何邊界與 DOMRect 測距非常穩定，未檢測到動態偏置投毒或方法劫持。",
+    run_geometry_test: "運行幾何檢測",
+    query_local_fonts_hooked: "❌ 檢測到 queryLocalFonts API 核心方法被 Proxy/Hook 劫持。",
+    query_local_fonts_unsupported: "ℹ️ 當前瀏覽器安全模型不支援或已禁用 queryLocalFonts 本地字型查詢介面。",
+    font_widths_stable: "✅ 高精度字型寬度測寬穩定，未檢測到動態 Farbling 擾動。",
+    font_differentiation_detected: "✅ 檢測到本地字型庫差異測寬正常（本地字型檢索可用）。"
   },
   ja3: {
     title: "JA3/JA4 TLS 指紋",

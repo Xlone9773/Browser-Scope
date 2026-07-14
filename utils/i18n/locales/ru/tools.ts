@@ -351,7 +351,19 @@ export const tools = {
     testing_font_query: "Проверка интерфейса локальных запросов шрифтов (queryLocalFonts)...",
     font_query_blocked: "⚠️ Локальный запрос шрифтов (queryLocalFonts) вызвал ошибку или отключен, что указывает на строгие настройки приватности.",
     font_query_allowed: "✅ Локальный запрос шрифтов (queryLocalFonts) доступен или работает корректно.",
-    run_font_test: "Запустить тест шрифтов"
+    run_font_test: "Запустить тест шрифтов",
+    tab_geometry: "Геометрия и Макет",
+    geometry_detection_title: "Обнаружение отравления геометрии и DOMRect",
+    geometry_detection_desc: "Отрисовывает сложные вложенные графические элементы и 3D CSS-макеты, с высокой частотой считывая getBoundingClientRect без рефлоу. Постоянные расхождения при статическом чтении указывают на вмешательство в геометрические границы или динамический шум.",
+    testing_geometry: "Тестирование высокочастотных геометрических измерений и отравления ClientRects...",
+    rects_hooked: "❌ Обнаружен подозрительный Proxy/Hook в методах getBoundingClientRect или getClientRects.",
+    rect_farbling_detected: "❌ Обнаружено вмешательство ClientRects/DOMRect Farbling (измерения getBoundingClientRect колеблются в статическом состоянии, что характерно для Brave или Cromite).",
+    geometry_stable: "✅ Геометрические границы и измерения DOMRect стабильны, динамических искажений не обнаружено.",
+    run_geometry_test: "Запустить тест геометрии",
+    query_local_fonts_hooked: "❌ Обнаружен подозрительный Proxy/Hook в queryLocalFonts API.",
+    query_local_fonts_unsupported: "ℹ️ queryLocalFonts не поддерживается или отключен моделью безопасности браузера.",
+    font_widths_stable: "✅ Высокоточные измерения ширины стабильны, динамических искажений Farbling не обнаружено.",
+    font_differentiation_detected: "✅ Обнаружено нормальное различие шрифтов (доступ к локальной библиотеке шрифтов активен)."
   },
   ja3: {
     title: "JA3/JA4 TLS Отпечаток",

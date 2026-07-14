@@ -351,7 +351,19 @@ export const tools = {
     testing_font_query: "ローカルフォントクエリインターフェース (queryLocalFonts) を検出中...",
     font_query_blocked: "⚠️ Local Font Query (queryLocalFonts) がエラーをスローしたか無効化されています。高度なプライバシー制限の可能性があります。",
     font_query_allowed: "✅ Local Font Query (queryLocalFonts) が利用可能、または正常に動作しています。",
-    run_font_test: "フォント検出を実行"
+    run_font_test: "フォント検出を実行",
+    tab_geometry: "ジオメトリとレイアウト",
+    geometry_detection_title: "ジオメトリ境界と DOMRect ポイズニングの検出",
+    geometry_detection_desc: "複雑なネストされたグラフィックスや3D CSSレイアウトをレンダリングし、リフローなしで getBoundingClientRect を高頻度で連続読み取りします。結果に揺らぎやメソッドのフックがある場合、ジオメトリ指紋のポイズニングと判定します。",
+    testing_geometry: "ネストされたジオメトリの高精度測定およびポイズニングテストを実行中...",
+    rects_hooked: "❌ getBoundingClientRect または getClientRects メソッドに不審な Proxy/Hook が検出されました。",
+    rect_farbling_detected: "❌ ClientRects/DOMRect Farbling を検出（静的読み取り時に getBoundingClientRect の測定値に微小な揺らぎが存在します。通常、Brave や Cromite で有効です）。",
+    geometry_stable: "✅ ジオメトリ境界と DOMRect 測定幅は非常に安定しており、ノイズやポイズニングは検出されませんでした。",
+    run_geometry_test: "ジオメトリ検出を実行",
+    query_local_fonts_hooked: "❌ queryLocalFonts API コアメソッドに不審な Proxy/Hook が検出されました。",
+    query_local_fonts_unsupported: "ℹ️ queryLocalFonts は、現在のブラウザのセキュリティモデルによってサポートされていないか、無効化されています。",
+    font_widths_stable: "✅ 高精度なフォント幅の測定は安定しており、動的な Farbling ノイズは検出されませんでした。",
+    font_differentiation_detected: "✅ ローカルフォントライブラリの差異測定は正常です（ローカルフォントのクエリが利用可能）。"
   },
   ja3: {
     title: "JA3/JA4 TLS フィンガープリント",
