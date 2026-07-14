@@ -15,7 +15,9 @@
     "preview": "vite preview",
     "lint": "eslint . && tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "4.5.1",
@@ -58,14 +60,17 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.0.0",
+    "@vitest/ui": "^4.1.10",
     "esbuild": "^0.28.0",
     "eslint": "^10.4.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "husky": "^9.1.7",
     "jscodeshift": "^17.3.0",
     "jsdom": "^29.1.1",
     "lightningcss": "^1.32.0",
+    "lint-staged": "^17.0.8",
     "tailwindcss": "^4.3.0",
     "terser": "^5.48.0",
     "tsx": "^4.22.3",
@@ -78,5 +83,11 @@
   },
   "overrides": {
     "protobufjs": "^7.6.5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "tsc --noEmit"
+    ]
   }
 }
