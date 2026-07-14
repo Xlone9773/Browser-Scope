@@ -32,7 +32,8 @@ export default defineConfig(({ mode }) => {
           filename: 'sw.js',
           registerType: 'autoUpdate',
           injectManifest: {
-            globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm}']
+            globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm}'],
+            maximumFileSizeToCacheInBytes: 6000000, // 6MB limit to accommodate full-bundle single JS file caching
           },
           devOptions: {
             enabled: false,
@@ -71,6 +72,7 @@ export default defineConfig(({ mode }) => {
         target: 'esnext',
         minify: 'terser',
         cssMinify: 'lightningcss',
+        assetsInlineLimit: 100000000, // 100MB limit to ensure all assets are inlined
         terserOptions: {
           compress: {
             drop_console: mode === 'production',
@@ -89,25 +91,10 @@ export default defineConfig(({ mode }) => {
           }
         },
         sourcemap: mode !== 'production',
-        cssCodeSplit: true,
+        cssCodeSplit: false, // Bundle all CSS into a single style sheet
         rollupOptions: {
           output: {
-            manualChunks(id) {
-              if (id.includes('node_modules')) {
-                if (id.includes('react/') || id.includes('react-dom/')) {
-                  return 'react-vendor';
-                }
-                if (id.includes('@xenova/transformers')) {
-                  return 'ai-vendor';
-                }
-                if (id.includes('@fingerprintjs/fingerprintjs') || id.includes('fingerprintjs2') || id.includes('fpjs-v5')) {
-                  return 'device-vendor';
-                }
-                if (id.includes('lucide-react')) {
-                  return 'ui-vendor';
-                }
-              }
-            }
+            codeSplitting: false, // Disables code splitting to generate a single-bundle output in Vite 8.1 (Rolldown)
           }
         }
       }
