@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { ShieldAlert, Activity, RefreshCw, Tv, Type } from 'lucide-react';
+import { ShieldAlert, Activity, RefreshCw, Tv, Type, Video } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 
@@ -65,6 +65,18 @@ interface PoisoningTranslations {
   rect_farbling_detected?: string;
   geometry_stable?: string;
   run_geometry_test?: string;
+
+  // Media translations:
+  tab_media?: string;
+  media_detection_title?: string;
+  media_detection_desc?: string;
+  testing_media?: string;
+  media_hooked?: string;
+  media_not_supported?: string;
+  media_empty?: string;
+  media_poisoned_detected?: string;
+  media_stable?: string;
+  run_media_test?: string;
 }
 
 interface CanvasPoisoningModalProps {
@@ -80,7 +92,7 @@ interface ExtendedWindow {
 export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.memo(({ onClose, t }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const webglRef = useRef<HTMLCanvasElement>(null);
-  const [activeTab, setActiveTab] = useState<'render_audio' | 'fonts' | 'geometry'>('render_audio');
+  const [activeTab, setActiveTab] = useState<'render_audio' | 'fonts' | 'geometry' | 'media'>('render_audio');
 
   // Tab 1: Render & Audio state
   const [status, setStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
@@ -96,10 +108,16 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
   const [geomStatus, setGeomStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
   const [geomProgress, setGeomProgress] = useState(0);
   const [geomLogs, setGeomLogs] = useState<string[]>([]);
+
+  // Tab 4: Media state
+  const [mediaStatus, setMediaStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
+  const [mediaProgress, setMediaProgress] = useState(0);
+  const [mediaLogs, setMediaLogs] = useState<string[]>([]);
   
   const addLog = useCallback((msg: string) => setLogs(prev => [...prev, msg]), []);
   const addFontLog = useCallback((msg: string) => setFontLogs(prev => [...prev, msg]), []);
   const addGeomLog = useCallback((msg: string) => setGeomLogs(prev => [...prev, msg]), []);
+  const addMediaLog = useCallback((msg: string) => setMediaLogs(prev => [...prev, msg]), []);
 
   const hashString = (str: string) => {
     let hash = 0;
@@ -670,6 +688,150 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
     }
   };
 
+  const runMediaTest = async () => {
+    setMediaStatus('running');
+    setMediaProgress(0);
+    setMediaLogs([]);
+
+    addMediaLog(t.testing_media || 'Testing media device enumeration stability and proxy hooks...');
+    await new Promise<void>(resolve => setTimeout(resolve, 50));
+    setMediaProgress(20);
+
+    let isPoisoned = false;
+
+    // 1. Hook detection on navigator.mediaDevices.enumerateDevices
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+        addMediaLog(t.media_not_supported || '⚠️ navigator.mediaDevices is not supported by your current browser environment.');
+        setMediaStatus('idle');
+        setMediaProgress(100);
+        return;
+      }
+
+      const enumerateDevicesFn = navigator.mediaDevices.enumerateDevices;
+      if (isHooked(enumerateDevicesFn as unknown as (...args: never[]) => unknown)) {
+        isPoisoned = true;
+        addMediaLog(t.media_hooked || '❌ Suspicious Proxy/Hook detected on navigator.mediaDevices.enumerateDevices method.');
+      }
+    } catch {
+      // Ignore
+    }
+
+    setMediaProgress(40);
+    await new Promise<void>(resolve => setTimeout(resolve, 50));
+
+    // 2. Query enumerateDevices multiple times to check for dynamic randomization/ordering changes (Farbling)
+    interface SimpleDevice {
+      kind: string;
+      deviceId: string;
+      label: string;
+    }
+    const runs: SimpleDevice[][] = [];
+    let hasError = false;
+
+    for (let i = 0; i < 5; i++) {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        runs.push(devices.map(d => ({ kind: d.kind, deviceId: d.deviceId, label: d.label })));
+      } catch {
+        hasError = true;
+      }
+      await new Promise<void>(resolve => setTimeout(resolve, 30));
+      setMediaProgress(40 + (i + 1) * 8); // Progress up to 80%
+    }
+
+    if (hasError) {
+      addMediaLog('⚠️ Error occurred while calling enumerateDevices.');
+    }
+
+    if (runs.length === 0 || runs[0].length === 0) {
+      addMediaLog(t.media_empty || 'ℹ️ No media devices found or media access permissions are not granted.');
+    } else {
+      const firstRun = runs[0];
+      addMediaLog(`📊 Retrieved device list across consecutive queries (${runs.length} runs).`);
+      addMediaLog(`🔍 Initial query: Found ${firstRun.length} devices (${firstRun.map(d => `${d.kind}:${d.deviceId.substring(0, 6)}...`).join(', ')})`);
+
+      // Compare consecutive runs
+      let dynamicFluctuation = false;
+      for (let i = 1; i < runs.length; i++) {
+        const currentRun = runs[i];
+        if (currentRun.length !== firstRun.length) {
+          dynamicFluctuation = true;
+          addMediaLog(`❌ Run ${i + 1}: Device count changed from ${firstRun.length} to ${currentRun.length}.`);
+          break;
+        }
+        for (let j = 0; j < firstRun.length; j++) {
+          if (firstRun[j].deviceId !== currentRun[j].deviceId || firstRun[j].kind !== currentRun[j].kind) {
+            dynamicFluctuation = true;
+            addMediaLog(`❌ Run ${i + 1}: Device at index ${j} changed from [${firstRun[j].kind}:${firstRun[j].deviceId.substring(0, 6)}] to [${currentRun[j].kind}:${currentRun[j].deviceId.substring(0, 6)}].`);
+            break;
+          }
+        }
+        if (dynamicFluctuation) break;
+      }
+
+      if (dynamicFluctuation) {
+        isPoisoned = true;
+        addMediaLog(t.media_poisoned_detected || '❌ Media Device ID Farbling/Poisoning detected (device IDs or device order fluctuates dynamically between consecutive reads, typical of anti-fingerprinting browsers).');
+      } else {
+        addMediaLog('✅ High-frequency consecutive deviceId and order readings are perfectly stable.');
+      }
+
+      // 3. Persistent ID comparison via localStorage (设备 ID 固化比对)
+      try {
+        const serializedFirstRun = JSON.stringify(firstRun.map(d => ({ kind: d.kind, deviceId: d.deviceId })));
+        const storedFirstRun = localStorage.getItem('browserscope_first_media_devices');
+        if (storedFirstRun) {
+          const parsedStored: { kind: string; deviceId: string }[] = JSON.parse(storedFirstRun);
+          let match = true;
+          if (parsedStored.length !== firstRun.length) {
+            match = false;
+          } else {
+            for (let j = 0; j < firstRun.length; j++) {
+              if (parsedStored[j].deviceId !== firstRun[j].deviceId || parsedStored[j].kind !== firstRun[j].kind) {
+                match = false;
+                break;
+              }
+            }
+          }
+
+          if (!match) {
+            const hasActualIdPrev = parsedStored.some(d => d.deviceId && d.deviceId !== 'default');
+            const hasActualIdCurr = firstRun.some(d => d.deviceId && d.deviceId !== 'default');
+            
+            if (hasActualIdPrev && hasActualIdCurr) {
+              isPoisoned = true;
+              addMediaLog('❌ Persistent Device ID mismatch detected: Current deviceIds/order differ from the originally stored fingerprint in localStorage, indicating ID reset or randomization across refreshes (typically Brave/Cromite farbling).');
+            } else {
+              addMediaLog('ℹ️ Media device IDs differ from previous run, but this might be due to a change in permission state or no active device ID present.');
+              if (hasActualIdCurr) {
+                localStorage.setItem('browserscope_first_media_devices', serializedFirstRun);
+                addMediaLog('💾 Saved active media devices fingerprint to localStorage for future session comparisons.');
+              }
+            }
+          } else {
+            addMediaLog('✅ Current Media Device fingerprint matches originally stored localStorage baseline perfectly.');
+          }
+        } else {
+          localStorage.setItem('browserscope_first_media_devices', serializedFirstRun);
+          addMediaLog('💾 No prior baseline found in localStorage. Saved current media devices fingerprint for future session comparisons.');
+        }
+      } catch {
+        // Ignore storage errors
+      }
+    }
+
+    setMediaProgress(100);
+
+    if (isPoisoned) {
+      setMediaStatus('poisoned');
+      addMediaLog(t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).');
+    } else {
+      setMediaStatus('clean');
+      addMediaLog(t.media_stable || '✅ Media device enumeration and deviceId hashes are stable, no poisoning or hooks detected.');
+    }
+  };
+
   return (
     <Modal
       title={t.title || 'Noise & Poisoning Detection'}
@@ -711,6 +873,17 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
         >
           <ShieldAlert size={16} />
           <span>{t.tab_geometry || 'Geometry & Layout'}</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('media')}
+          className={`flex-1 py-3 font-medium text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 ${
+            activeTab === 'media'
+              ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white dark:bg-slate-800'
+              : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+          }`}
+        >
+          <Video size={16} />
+          <span>{t.tab_media || 'Media Devices'}</span>
         </button>
       </div>
 
@@ -809,7 +982,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
               </Button>
             </div>
           </div>
-        ) : (
+        ) : activeTab === 'geometry' ? (
           <div className="space-y-4 animate-in fade-in duration-300">
             <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
               <ShieldAlert className="text-indigo-500 shrink-0" size={24} />
@@ -847,6 +1020,47 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
               </div>
               <Button onClick={runGeometryTest} disabled={geomStatus === 'running'} leftIcon={geomStatus === 'running' ? <RefreshCw size={14} className="animate-spin" /> : <Activity size={14} />}>
                 {geomStatus === 'running' ? `${t.testing} (${geomProgress}%)` : (t.run_geometry_test || 'Run Geometry Test')}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4 animate-in fade-in duration-300">
+            <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+              <ShieldAlert className="text-indigo-500 shrink-0" size={24} />
+              <div className="text-sm">
+                <h4 className="font-semibold text-slate-800 dark:text-slate-100">{t.media_detection_title || 'Media Devices Enumeration & ID Poisoning Detection'}</h4>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
+                  {t.media_detection_desc}
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-slate-900 rounded-xl p-4 font-mono text-xs text-slate-300 h-64 overflow-y-auto border border-slate-700 shadow-inner">
+              {mediaLogs.map((log, i) => (
+                <div key={i} className={`mb-1 ${log.includes('❌') || log.includes('⚠️') ? 'text-rose-400' : log.includes('✅') ? 'text-emerald-400' : 'text-slate-300'}`}>
+                  {log}
+                </div>
+              ))}
+              {mediaLogs.length === 0 ? <span className="text-slate-600">{t.waiting}</span> : null}
+            </div>
+
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t.status}:</span>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
+                  mediaStatus === 'clean' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                  mediaStatus === 'poisoned' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' :
+                  mediaStatus === 'running' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
+                  'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                }`}>
+                  {mediaStatus === 'idle' ? t.status_idle : 
+                   mediaStatus === 'running' ? t.status_running : 
+                   mediaStatus === 'poisoned' ? t.status_poisoned : 
+                   t.status_clean}
+                </span>
+              </div>
+              <Button onClick={runMediaTest} disabled={mediaStatus === 'running'} leftIcon={mediaStatus === 'running' ? <RefreshCw size={14} className="animate-spin" /> : <Activity size={14} />}>
+                {mediaStatus === 'running' ? `${t.testing} (${mediaProgress}%)` : (t.run_media_test || 'Run Media Test')}
               </Button>
             </div>
           </div>

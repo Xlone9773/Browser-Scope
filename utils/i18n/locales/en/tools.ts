@@ -364,7 +364,17 @@ export const tools = {
     query_local_fonts_hooked: "❌ Suspicious Proxy/Hook detected on queryLocalFonts API.",
     query_local_fonts_unsupported: "ℹ️ queryLocalFonts is not supported or is disabled by browser security model.",
     font_widths_stable: "✅ High-precision width measurements are stable.",
-    font_differentiation_detected: "✅ Font differentiation detected (local font library access is active)."
+    font_differentiation_detected: "✅ Font differentiation detected (local font library access is active).",
+    tab_media: "Media Devices",
+    media_detection_title: "Media Devices Enumeration & ID Poisoning Detection",
+    media_detection_desc: "Queries navigator.mediaDevices.enumerateDevices() to list audio/video devices. Compares consecutive reads and persists the first device ID hash. If device IDs fluctuate or change order dynamically without actual hardware plugin/unplug or permission changes, or if the method is hooked, media device poisoning is detected.",
+    testing_media: "Testing media device enumeration stability and proxy hooks...",
+    media_hooked: "❌ Suspicious Proxy/Hook detected on navigator.mediaDevices.enumerateDevices method.",
+    media_not_supported: "⚠️ navigator.mediaDevices is not supported by your current browser environment.",
+    media_empty: "ℹ️ No media devices found or media access permissions are not granted.",
+    media_poisoned_detected: "❌ Media Device ID Farbling/Poisoning detected (device IDs or device order fluctuates dynamically between consecutive reads, typical of anti-fingerprinting browsers).",
+    media_stable: "✅ Media device enumeration and deviceId hashes are stable, no poisoning or hooks detected.",
+    run_media_test: "Run Media Test"
   },
   ja3: {
     title: "JA3/JA4 Fingerprint",

@@ -363,7 +363,17 @@ export const tools = {
     query_local_fonts_hooked: "❌ queryLocalFonts API コアメソッドに不審な Proxy/Hook が検出されました。",
     query_local_fonts_unsupported: "ℹ️ queryLocalFonts は、現在のブラウザのセキュリティモデルによってサポートされていないか、無効化されています。",
     font_widths_stable: "✅ 高精度なフォント幅の測定は安定しており、動的な Farbling ノイズは検出されませんでした。",
-    font_differentiation_detected: "✅ ローカルフォントライブラリの差異測定は正常です（ローカルフォントのクエリが利用可能）。"
+    font_differentiation_detected: "✅ ローカルフォントライブラリの差異測定は正常です（ローカルフォントのクエリが利用可能）。",
+    tab_media: "メディアデバイス",
+    media_detection_title: "メディアデバイス列挙と ID ポイズニング検出",
+    media_detection_desc: "navigator.mediaDevices.enumerateDevices() を呼び出してマイクやカメラのデバイスリストを取得します。初回の deviceId ハッシュを保持して比較し、ハードウェアの抜き差しや権限変更がない状態で、IDや並び順が動的に変動する場合や、メソッドがフックされている場合にポイズニングを検出します。",
+    testing_media: "メディアデバイス列挙の安定性とプロキシフックテストを実行中...",
+    media_hooked: "❌ navigator.mediaDevices.enumerateDevices メソッドに不審な Proxy/Hook が検出されました。",
+    media_not_supported: "⚠️ お使いのブラウザ環境では navigator.mediaDevices がサポートされていません。",
+    media_empty: "ℹ️ メディアデバイスが見つからないか、メディアアクセスの権限が許可されていません。",
+    media_poisoned_detected: "❌ メディアデバイスIDのFarbling/ポイズニングを検出（ハードウェア構成が不変であるにもかかわらず、読み取りごとにデバイスIDや順序が動的に変動しています。アンチフィンガープリントブラウザに典型的な挙動です）。",
+    media_stable: "✅ メディアデバイスの列挙と deviceId ハッシュは非常に安定しており、ポイズニングやフックは検出されませんでした。",
+    run_media_test: "デバイス検出を実行"
   },
   ja3: {
     title: "JA3/JA4 TLS フィンガープリント",

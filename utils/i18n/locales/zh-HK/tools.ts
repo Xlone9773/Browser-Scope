@@ -363,7 +363,17 @@ export const tools = {
     query_local_fonts_hooked: "❌ 檢測到 queryLocalFonts API 核心方法被 Proxy/Hook 劫持。",
     query_local_fonts_unsupported: "ℹ️ 當前瀏覽器安全模型不支援或已禁用 queryLocalFonts 本地字型查詢介面。",
     font_widths_stable: "✅ 高精度字型寬度測寬穩定，未檢測到動態 Farbling 擾動。",
-    font_differentiation_detected: "✅ 檢測到本地字型庫差異測寬正常（本地字型檢索可用）。"
+    font_differentiation_detected: "✅ 檢測到本地字型庫差異測寬正常（本地字型檢索可用）。",
+    tab_media: "媒體設備",
+    media_detection_title: "媒體設備列舉與 ID 投毒檢測",
+    media_detection_desc: "通過調用 navigator.mediaDevices.enumerateDevices() 獲取麥克風/攝像頭設備列表。通過比对初次獲取的 deviceId 固化哈希值。若在未更改授權且沒有設備插拔的情況下，核心方法被劫持，或者 deviceId 順序或哈希發生異常隨機抖動，則判定存在防指紋的設備列表投毒干擾。",
+    testing_media: "正在測試媒體設備列舉 (enumerateDevices) 的穩定性與劫持檢測...",
+    media_hooked: "❌ 檢測到 navigator.mediaDevices.enumerateDevices 被 Proxy/Hook 劫持或篡改。",
+    media_not_supported: "⚠️ 當前瀏覽器不支援 navigator.mediaDevices 介面，無法列舉媒體設備。",
+    media_empty: "ℹ️ 瀏覽器未授權媒體設備或未找到任何音視頻輸入輸出設備。",
+    media_poisoned_detected: "❌ 檢測到媒體設備 ID 投毒/Farbling 干擾（在無插拔且未更改授權時，設備 ID 或列表排序在重複讀取中發生變动，常見於防指紋瀏覽器）。",
+    media_stable: "✅ 媒體設備列举與 deviceId 哈希非常穩定，未檢測到動態投毒或劫持行為。",
+    run_media_test: "運行設備檢測"
   },
   ja3: {
     title: "JA3/JA4 TLS 指紋",
