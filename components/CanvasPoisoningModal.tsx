@@ -97,8 +97,8 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
         </button>
       </div>
 
-      {/* Content wrapper with generous negative space */}
-      <div className="p-6 relative overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+      {/* Content wrapper with scroll support */}
+      <div className="p-4 sm:p-6 flex-1 overflow-y-auto custom-scrollbar bg-slate-50 dark:bg-slate-900/40">
         {/* All Tab */}
         <div style={{ display: activeTab === 'all' ? 'block' : 'none' }}>
           <AllTab t={t} />

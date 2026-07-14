@@ -112,6 +112,47 @@ export interface PoisoningTranslations {
   run_all_tests?: string;
   testing_all_steps?: string;
   all_test_summary_title?: string;
+
+  // New localized keys to remove all hardcoded strings
+  audio_unsupported?: string;
+  media_error?: string;
+  media_found_count?: string;
+  status_clean_env?: string;
+  shield_medium?: string;
+  shield_high?: string;
+  currently_scanning?: string;
+  diagnostic_core_logs?: string;
+  diagnostic_outcome?: string;
+  poisoned_count_msg?: string;
+  level_label?: string;
+  logs_label?: string;
+  copied_label?: string;
+  copy_label?: string;
+  filter_placeholder?: string;
+  clear_label?: string;
+  no_matching_logs?: string;
+  inspect_logs_title?: string;
+  inspect_logs_desc?: string;
+  status_pending?: string;
+  font_jitter_log?: string;
+  widths_measured_log?: string;
+  system_fonts_log?: string;
+  geometry_jitter_log?: string;
+  getBoundingClientRect_stable?: string;
+  getClientRects_mismatch?: string;
+  getClientRects_stable?: string;
+  media_runs_log?: string;
+  media_initial_query_log?: string;
+  media_run_count_changed?: string;
+  media_run_device_changed?: string;
+  media_stable_reading?: string;
+  media_persistent_mismatch?: string;
+  media_persistent_info_changed?: string;
+  media_persistent_saved?: string;
+  media_persistent_match?: string;
+  media_persistent_no_baseline?: string;
+  label_2d_canvas?: string;
+  label_webgl?: string;
 }
 
 export interface ExtendedWindow {

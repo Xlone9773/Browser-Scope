@@ -102,7 +102,7 @@ export const GeometryTab: React.FC<GeometryTabProps> = React.memo(({ t }) => {
         Math.abs(cur.height - first.height) > 0.00001
       ) {
         rectsFarbled = true;
-        addGeomLog(`❌ Jitter detected at read ${i}: [${first.left.toFixed(6)}, ${first.top.toFixed(6)}] != [${cur.left.toFixed(6)}, ${cur.top.toFixed(6)}]`);
+        addGeomLog((t.geometry_jitter_log || '❌ Jitter detected at read {i}: [{firstLeft}, {firstTop}] != [{curLeft}, {curTop}]').replace('{i}', String(i)).replace('{firstLeft}', first.left.toFixed(6)).replace('{firstTop}', first.top.toFixed(6)).replace('{curLeft}', cur.left.toFixed(6)).replace('{curTop}', cur.top.toFixed(6)));
       }
     }
     
@@ -110,7 +110,7 @@ export const GeometryTab: React.FC<GeometryTabProps> = React.memo(({ t }) => {
       isPoisoned = true;
       addGeomLog(t.rect_farbling_detected || '❌ ClientRects/DOMRect Farbling detected (getBoundingClientRect measurements fluctuate dynamically in static state, typical of Brave or Cromite).');
     } else {
-      addGeomLog('✅ High-precision consecutive getBoundingClientRect measurements are perfectly stable.');
+      addGeomLog(t.getBoundingClientRect_stable || '✅ High-precision consecutive getBoundingClientRect measurements are perfectly stable.');
     }
     
     try {
@@ -135,9 +135,9 @@ export const GeometryTab: React.FC<GeometryTabProps> = React.memo(({ t }) => {
         }
         if (clientRectsFarbled) {
           isPoisoned = true;
-          addGeomLog('❌ getClientRects measurements fluctuate dynamically.');
+          addGeomLog(t.getClientRects_mismatch || '❌ getClientRects measurements fluctuate dynamically.');
         } else {
-          addGeomLog('✅ High-precision getClientRects measurements are perfectly stable.');
+          addGeomLog(t.getClientRects_stable || '✅ High-precision getClientRects measurements are perfectly stable.');
         }
       }
     } catch {

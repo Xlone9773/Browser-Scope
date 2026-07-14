@@ -86,7 +86,7 @@ export const FontsTab: React.FC<FontsTabProps> = React.memo(({ t }) => {
     for (let i = 1; i < measurements.length; i++) {
       if (Math.abs(measurements[i] - firstW) > 0.00001) {
         jitterDetected = true;
-        addFontLog(`❌ Jitter at read ${i}: ${firstW} != ${measurements[i]}`);
+        addFontLog('❌ ' + (t.font_jitter_log || 'Jitter at read {i}: {firstW} != {currentW}').replace('{i}', String(i)).replace('{firstW}', String(firstW)).replace('{currentW}', String(measurements[i])));
       }
     }
     
@@ -120,8 +120,8 @@ export const FontsTab: React.FC<FontsTabProps> = React.memo(({ t }) => {
     const wArial = measureFont('Arial, sans-serif');
     const wFake = measureFont('NonexistentFakeFontAlphaOmega, sans-serif');
     
-    addFontLog(`ℹ️ Widths measured: sans-serif=${wSans.toFixed(2)}, serif=${wSerif.toFixed(2)}, monospace=${wMono.toFixed(2)}`);
-    addFontLog(`ℹ️ System fonts: Georgia=${wGeorgia.toFixed(2)}, Impact=${wImpact.toFixed(2)}, Courier=${wCourier.toFixed(2)}, Times=${wTimes.toFixed(2)}, Arial=${wArial.toFixed(2)}`);
+    addFontLog((t.widths_measured_log || 'ℹ️ Widths measured: sans-serif={sans}, serif={serif}, monospace={mono}').replace('{sans}', wSans.toFixed(2)).replace('{serif}', wSerif.toFixed(2)).replace('{mono}', wMono.toFixed(2)));
+    addFontLog((t.system_fonts_log || 'ℹ️ System fonts: Georgia={georgia}, Impact={impact}, Courier={courier}, Times={times}, Arial={arial}').replace('{georgia}', wGeorgia.toFixed(2)).replace('{impact}', wImpact.toFixed(2)).replace('{courier}', wCourier.toFixed(2)).replace('{times}', wTimes.toFixed(2)).replace('{arial}', wArial.toFixed(2)));
     
     const hasDifferentSystemFonts = (wGeorgia !== wFake) || (wImpact !== wFake) || (wCourier !== wFake) || (wTimes !== wFake);
     

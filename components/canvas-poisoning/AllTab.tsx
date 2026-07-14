@@ -13,8 +13,12 @@ import {
   AlertTriangle, 
   Play, 
   Terminal,
-  ArrowRight
+  ArrowRight,
+  Search,
+  Copy,
+  Check
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Button } from '../ui/Button';
 import { PoisoningTranslations } from './types';
 import { isHooked, checkAudioHooks, renderAudio } from './utils';
@@ -59,6 +63,8 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
   const [runningLogs, setRunningLogs] = useState<string[]>([]);
   const [results, setResults] = useState<AllResults | null>(null);
   const [selectedResultModule, setSelectedResultModule] = useState<keyof AllResults | null>(null);
+  const [logSearchQuery, setLogSearchQuery] = useState('');
+  const [copiedLogModule, setCopiedLogModule] = useState<string | null>(null);
 
   const logContainerRef = useRef<HTMLDivElement>(null);
 
@@ -87,7 +93,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     // ==========================================
     setActiveStep(1);
     setCurrentModuleText(t.tab_render_audio || 'Render & Audio');
-    addGlobalLog('🚀 [1/5] Starting Render & Audio Canvas/WebGL/WebAudio Diagnostics...');
+    addGlobalLog('🚀 [1/5] ' + (t.start_log || 'Starting Canvas & WebGL Poisoning Test...'));
     await new Promise<void>(resolve => setTimeout(resolve, 150));
 
     const renderAudioLogs: string[] = [];
@@ -148,7 +154,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
         rLog(t.audio_stable || '✅ Audio buffer fingerprint is highly stable.');
       }
     } else {
-      rLog('⚠️ Audio Context rendering is blocked or unsupported.');
+      rLog(t.audio_unsupported || '⚠️ Audio Context rendering is blocked or unsupported.');
     }
     setGlobalProgress(20);
 
@@ -157,7 +163,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     // ==========================================
     setActiveStep(2);
     setCurrentModuleText(t.tab_font_farbling || 'Fonts & Farbling');
-    addGlobalLog('🚀 [2/5] Starting Fonts & Font Farbling Diagnostics...');
+    addGlobalLog('🚀 [2/5] ' + (t.testing_fonts || 'Starting Fonts & Font Farbling Diagnostics...'));
     await new Promise<void>(resolve => setTimeout(resolve, 150));
 
     const fontLogs: string[] = [];
@@ -240,7 +246,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     // ==========================================
     setActiveStep(3);
     setCurrentModuleText(t.tab_geometry || 'Geometry & Layout');
-    addGlobalLog('🚀 [3/5] Starting Geometry & Layout DOMRect Diagnostics...');
+    addGlobalLog('🚀 [3/5] ' + (t.testing_geometry || 'Starting Geometry & Layout DOMRect Diagnostics...'));
     await new Promise<void>(resolve => setTimeout(resolve, 150));
 
     const geomLogs: string[] = [];
@@ -303,7 +309,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     // ==========================================
     setActiveStep(4);
     setCurrentModuleText(t.tab_media || 'Media Devices');
-    addGlobalLog('🚀 [4/5] Starting Media Devices & ID Farbling Diagnostics...');
+    addGlobalLog('🚀 [4/5] ' + (t.testing_media || 'Starting Media Devices & ID Farbling Diagnostics...'));
     await new Promise<void>(resolve => setTimeout(resolve, 150));
 
     const mediaLogs: string[] = [];
@@ -342,10 +348,10 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
       }
 
       if (hasError) {
-        mLog('⚠️ Error occurred while calling enumerateDevices.');
+        mLog(t.media_error || '⚠️ Error occurred while calling enumerateDevices.');
       } else if (deviceRuns.length > 0 && deviceRuns[0].length > 0) {
         const firstRun = deviceRuns[0];
-        mLog(`🔍 Found ${firstRun.length} media devices in initial query.`);
+        mLog((t.media_found_count || 'Found {count} media devices in initial query.').replace('{count}', String(firstRun.length)));
         for (let i = 1; i < deviceRuns.length; i++) {
           if (deviceRuns[i].length !== firstRun.length || JSON.stringify(deviceRuns[i]) !== JSON.stringify(firstRun)) {
             listFluctuation = true;
@@ -369,7 +375,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     // ==========================================
     setActiveStep(5);
     setCurrentModuleText(t.tab_hardware || 'Hardware Config');
-    addGlobalLog('🚀 [5/5] Starting Hardware specifications and Web Worker Concurrency load curve testing...');
+    addGlobalLog('🚀 [5/5] ' + (t.testing_hardware || 'Starting Hardware specifications and Web Worker Concurrency load curve testing...'));
     await new Promise<void>(resolve => setTimeout(resolve, 150));
 
     const hwLogs: string[] = [];
@@ -397,6 +403,9 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     hLog((t.hardware_declared_specs || '📊 Declared Specs: CPU Cores = {cores}, Memory = {memory}')
       .replace('{cores}', String(declaredCores))
       .replace('{memory}', memoryString));
+
+    let maxSpeedup = 1.0;
+    let detectedSat = 1;
 
     if (!window.Worker) {
       hLog(t.hardware_workers_not_supported || '⚠️ Web Workers not supported.');
@@ -460,9 +469,9 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
 
       // Analyze physical core saturation
       const maxResult = speedups.reduce((max, r) => r.speedup > max.speedup ? r : max, speedups[0]);
-      const maxSpeedup = maxResult.speedup;
+      maxSpeedup = maxResult.speedup;
       const threshold = maxSpeedup * 0.82;
-      const detectedSat = speedups.find(r => r.speedup >= threshold)?.concurrency || 1;
+      detectedSat = speedups.find(r => r.speedup >= threshold)?.concurrency || 1;
 
       if (declaredCores > 4 && detectedSat <= declaredCores / 2 && maxSpeedup < declaredCores * 0.7) {
         hwPoisoned = true;
@@ -523,6 +532,9 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
         logs: hwLogs,
         summary: hwPoisoned 
           ? (t.hardware_performance_capped || '❌ Performance severely capped / spoofed.')
+            .replace('{declared}', String(declaredCores))
+            .replace('{detected}', String(detectedSat))
+            .replace('{speedup}', maxSpeedup.toFixed(1))
           : (t.hardware_concurrency_normal || '✅ Multi-threaded scaling performance matches declared CPU core count.')
       }
     };
@@ -532,7 +544,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
   };
 
   const getGlobalShieldStatus = () => {
-    if (!results) return { level: 'NONE', color: 'text-green-600 dark:text-green-400', label: 'Clean (Standard Environment)' };
+    if (!results) return { level: 'NONE', color: 'text-green-600 dark:text-green-400', label: t.status_clean_env || 'Clean Environment' };
     const poisonedCount = Object.values(results).filter(r => r.status === 'poisoned').length;
     if (poisonedCount === 0) {
       return { 
@@ -545,17 +557,26 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
       return { 
         level: 'MEDIUM', 
         color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900', 
-        label: '🛡️ Privacy Protection Active' 
+        label: t.shield_medium || '🛡️ Privacy Protection Active' 
       };
     }
     return { 
       level: 'HIGH', 
       color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900', 
-      label: '🚀 Anti-Fingerprint Shield Active' 
+      label: t.shield_high || '🚀 Anti-Fingerprint Shield Active' 
     };
   };
 
   const shield = getGlobalShieldStatus();
+
+  const handleCopyLogs = (moduleKey: keyof AllResults) => {
+    if (!results) return;
+    const logText = results[moduleKey].logs.join('\n');
+    navigator.clipboard.writeText(logText).then(() => {
+      setCopiedLogModule(moduleKey);
+      setTimeout(() => setCopiedLogModule(null), 2000);
+    }).catch(() => {});
+  };
 
   return (
     <div className="space-y-6">
@@ -594,75 +615,98 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
 
       {/* IDLE VIEW */}
       {status === 'idle' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4"
+        >
           {[
-            { id: 'render_audio', icon: <Tv size={18} className="text-indigo-500" />, title: t.tab_render_audio || 'Render & Audio' },
-            { id: 'fonts', icon: <Type size={18} className="text-amber-500" />, title: t.tab_font_farbling || 'Fonts & Farbling' },
-            { id: 'geometry', icon: <ShieldAlert size={18} className="text-rose-500" />, title: t.tab_geometry || 'Geometry & Layout' },
-            { id: 'media', icon: <Video size={18} className="text-emerald-500" />, title: t.tab_media || 'Media Devices' },
-            { id: 'hardware', icon: <Cpu size={18} className="text-blue-500" />, title: t.tab_hardware || 'Hardware Config' }
-          ].map((m) => (
-            <div key={m.id} className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/40 text-center flex flex-col items-center justify-center gap-3 transition-all hover:translate-y-[-2px] hover:shadow-sm">
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+            { id: 'render_audio', icon: <Tv size={20} className="text-indigo-500" />, title: t.tab_render_audio || 'Render & Audio' },
+            { id: 'fonts', icon: <Type size={20} className="text-amber-500" />, title: t.tab_font_farbling || 'Fonts & Farbling' },
+            { id: 'geometry', icon: <ShieldAlert size={20} className="text-rose-500" />, title: t.tab_geometry || 'Geometry & Layout' },
+            { id: 'media', icon: <Video size={20} className="text-emerald-500" />, title: t.tab_media || 'Media Devices' },
+            { id: 'hardware', icon: <Cpu size={20} className="text-blue-500" />, title: t.tab_hardware || 'Hardware Config' }
+          ].map((m, index) => (
+            <motion.div 
+              key={m.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/40 text-center flex flex-col items-center justify-center gap-4 transition-all hover:-translate-y-1 hover:shadow-md group cursor-pointer"
+              onClick={runAllDiagnostics}
+            >
+              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 transition-colors group-hover:bg-indigo-50 dark:group-hover:bg-indigo-950/40 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                 {m.icon}
               </div>
-              <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{m.title}</span>
-              <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">Pending Scan</span>
-            </div>
+              <div className="space-y-1">
+                <span className="block text-sm font-bold text-slate-800 dark:text-slate-200 tracking-tight">{m.title}</span>
+                <span className="block text-[10px] text-slate-400 dark:text-slate-500 font-mono tracking-wider uppercase font-semibold">{t.status_pending || 'Pending Scan'}</span>
+              </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
 
       {/* RUNNING VIEW */}
       {status === 'running' && (
         <div className="space-y-6">
           {/* Progress Card */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-4 relative overflow-hidden">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 animate-pulse">
-                  <Activity size={18} />
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 animate-pulse relative">
+                  <div className="absolute inset-0 rounded-xl bg-indigo-500/10 animate-ping" />
+                  <Activity size={20} className="relative z-10" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
+                  <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight">
                     {t.testing_all_steps?.replace('{activeStep}', String(activeStep)).replace('{totalSteps}', '5') || 'Running integrated diagnostics...'}
                   </h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                    Currently scanning: <span className="text-indigo-600 dark:text-indigo-400">{currentModuleText}</span>
+                    {t.currently_scanning || 'Currently scanning:'} <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{currentModuleText}</span>
                   </p>
                 </div>
               </div>
-              <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400 font-mono">
+              <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400 font-mono">
                 {globalProgress}%
               </span>
             </div>
             {/* Progress Bar */}
-            <div className="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-              <div 
-                className="bg-indigo-600 h-full rounded-full transition-all duration-300"
-                style={{ width: `${globalProgress}%` }}
+            <div className="w-full bg-slate-100 dark:bg-slate-700 h-3 rounded-full overflow-hidden relative">
+              <motion.div 
+                className="bg-indigo-600 dark:bg-indigo-500 h-full rounded-full"
+                animate={{ width: `${globalProgress}%` }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
               />
             </div>
           </div>
 
           {/* Console / Terminal Logs */}
-          <div className="bg-slate-950 text-slate-200 rounded-2xl border border-slate-800 shadow-lg overflow-hidden flex flex-col h-72">
-            <div className="bg-slate-900 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-slate-400 text-xs font-mono font-medium">
-                <Terminal size={14} />
-                <span>DIAGNOSTIC CORE LOGS</span>
+          <div className="bg-slate-950 text-slate-200 rounded-2xl border border-slate-800/80 shadow-2xl overflow-hidden flex flex-col h-80">
+            <div className="bg-slate-900/90 px-4 py-3 border-b border-slate-800/80 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-slate-400 text-xs font-mono font-bold tracking-wider">
+                <Terminal size={14} className="text-indigo-400" />
+                <span>{t.diagnostic_core_logs || 'DIAGNOSTIC CORE LOGS'}</span>
               </div>
-              <span className="flex h-2 w-2 relative">
+              <span className="flex h-2.5 w-2.5 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-500"></span>
               </span>
             </div>
             <div 
               ref={logContainerRef}
-              className="p-4 font-mono text-xs overflow-y-auto space-y-1.5 scrollbar-thin scrollbar-thumb-slate-800 select-all"
+              className="p-4 font-mono text-[11px] overflow-y-auto space-y-2 flex-1 scrollbar-thin scrollbar-thumb-slate-800 select-all"
             >
               {runningLogs.map((log, index) => (
-                <div key={index} className={`whitespace-pre-wrap leading-relaxed ${log.includes('❌') ? 'text-rose-400' : log.includes('✅') ? 'text-emerald-400' : log.includes('⚠️') ? 'text-amber-400' : 'text-slate-300'}`}>
+                <div key={index} className={`whitespace-pre-wrap leading-relaxed border-l-2 pl-2 ${
+                  log.includes('❌') 
+                    ? 'text-rose-400 border-rose-500/50' 
+                    : log.includes('✅') 
+                    ? 'text-emerald-400 border-emerald-500/50' 
+                    : log.includes('⚠️') 
+                    ? 'text-amber-400 border-amber-500/50' 
+                    : 'text-slate-300 border-slate-800'
+                }`}>
                   {log}
                 </div>
               ))}
@@ -673,49 +717,61 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
 
       {/* COMPLETED VIEW - INTERACTIVE BENTO REPORT */}
       {status === 'completed' && results && (
-        <div className="space-y-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
+        >
           {/* Global Shield status banner */}
           <div className={`p-6 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm relative overflow-hidden transition-all duration-500 ${shield.color}`}>
             <div className="space-y-1.5 z-10">
               <span className="text-xs font-bold tracking-wider uppercase font-mono px-2.5 py-0.5 rounded-full bg-white/40 dark:bg-black/20">
-                Diagnostic Outcome
+                {t.diagnostic_outcome || 'Diagnostic Outcome'}
               </span>
-              <h4 className="text-base sm:text-lg font-semibold tracking-tight">
-                {t.all_test_summary_title || 'Fingerprint Poisoning & Spoofing Evaluation'}
+              <h4 className="text-base sm:text-lg font-bold tracking-tight">
+                {t.all_test_summary_title || 'Fingerprint Poisoning & Spoofing Evaluation Summary'}
               </h4>
-              <p className="text-xs sm:text-sm opacity-80 leading-relaxed font-medium">
-                {shield.label} - Found {Object.values(results).filter(r => r.status === 'poisoned').length} poisoned component(s) out of 5.
+              <p className="text-xs sm:text-sm opacity-90 leading-relaxed font-medium">
+                {shield.label} - {(t.poisoned_count_msg || 'Found {count} poisoned component(s) out of 5.').replace('{count}', String(Object.values(results).filter(r => r.status === 'poisoned').length))}
               </p>
             </div>
-            <div className="shrink-0 text-3xl sm:text-4xl font-black font-mono tracking-tight z-10">
-              LEVEL {shield.level}
+            <div className="shrink-0 text-3xl sm:text-4xl font-black font-mono tracking-tight z-10 bg-white/10 dark:bg-black/10 px-4 py-2 rounded-xl backdrop-blur-sm">
+              {t.level_label || 'LEVEL'} {shield.level}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            {/* Bento modules list (3 cols on MD) */}
-            <div className="md:col-span-3 space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+            {/* Bento modules list (3 cols on LG) */}
+            <div className="lg:col-span-3 space-y-4">
               {[
                 { key: 'render_audio', icon: <Tv size={18} />, title: t.tab_render_audio || 'Render & Audio' },
                 { key: 'fonts', icon: <Type size={18} />, title: t.tab_font_farbling || 'Fonts & Farbling' },
                 { key: 'geometry', icon: <ShieldAlert size={18} />, title: t.tab_geometry || 'Geometry & Layout' },
                 { key: 'media', icon: <Video size={18} />, title: t.tab_media || 'Media Devices' },
                 { key: 'hardware', icon: <Cpu size={18} />, title: t.tab_hardware || 'Hardware Config' }
-              ].map(({ key, icon, title }) => {
+              ].map(({ key, icon, title }, idx) => {
                 const item = results[key as keyof AllResults];
                 const isPoisoned = item.status === 'poisoned';
                 const isSelected = selectedResultModule === key;
 
                 return (
-                  <div
+                  <motion.div
                     key={key}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
                     onClick={() => setSelectedResultModule(isSelected ? null : (key as keyof AllResults))}
                     className={`p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between shadow-sm relative overflow-hidden select-none group ${
                       isSelected 
-                        ? 'border-indigo-600 bg-indigo-50/20 dark:border-indigo-400 dark:bg-indigo-950/10' 
-                        : 'border-slate-100 bg-white dark:border-slate-700/50 dark:bg-slate-800 hover:border-slate-200 hover:translate-x-[2px]'
+                        ? 'border-indigo-600 bg-indigo-50/20 dark:border-indigo-400 dark:bg-indigo-950/10 scale-[1.01]' 
+                        : 'border-slate-100 bg-white dark:border-slate-700/50 dark:bg-slate-800 hover:border-indigo-300 hover:translate-x-1 dark:hover:border-indigo-800'
                     }`}
                   >
+                    {/* Left Accent Bar */}
+                    {isSelected && (
+                      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-600 dark:bg-indigo-400" />
+                    )}
+
                     <div className="flex items-center gap-4 z-10">
                       <div className={`p-3 rounded-xl transition-all ${
                         isPoisoned 
@@ -724,9 +780,9 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
                       }`}>
                         {icon}
                       </div>
-                      <div className="space-y-1">
+                      <div className="space-y-1 max-w-[200px] sm:max-w-md">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm sm:text-base font-semibold text-slate-800 dark:text-slate-200">{title}</span>
+                          <span className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200">{title}</span>
                         </div>
                         <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
                           {item.summary}
@@ -738,54 +794,116 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
                       {isPoisoned ? (
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 border border-rose-200/40 dark:border-rose-900/40 font-semibold text-[10px] sm:text-xs">
                           <AlertTriangle size={12} />
-                          <span>Poisoned</span>
+                          <span>{t.status_poisoned || 'Poisoned'}</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200/40 dark:border-emerald-900/40 font-semibold text-[10px] sm:text-xs">
                           <CheckCircle size={12} />
-                          <span>Stable</span>
+                          <span>{t.status_clean || 'Stable'}</span>
                         </div>
                       )}
                       <ArrowRight size={14} className={`text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300 transition-transform ${isSelected ? 'rotate-90 text-indigo-500 dark:text-indigo-400' : ''}`} />
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
 
-            {/* Deep diagnostics details panel (2 cols on MD) */}
-            <div className="md:col-span-2">
-              <div className="bg-slate-950 text-slate-200 rounded-2xl border border-slate-800 shadow-lg h-full overflow-hidden flex flex-col min-h-[350px]">
+            {/* Deep diagnostics details panel (2 cols on LG) - Sticky Container */}
+            <div className="lg:col-span-2 lg:sticky lg:top-4">
+              <div className="bg-slate-950 text-slate-200 rounded-2xl border border-slate-800/80 shadow-2xl overflow-hidden flex flex-col h-[520px]">
                 {selectedResultModule ? (
                   <>
-                    <div className="bg-slate-900 px-4 py-3.5 border-b border-slate-800 flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-slate-400 text-xs font-mono font-medium">
-                        <Terminal size={14} />
-                        <span>LOGS: {results[selectedResultModule].title.toUpperCase()}</span>
+                    {/* Header */}
+                    <div className="bg-slate-900/90 px-4 py-3 border-b border-slate-800/80 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {/* macOS Window Controls */}
+                        <div className="flex gap-1.5 mr-2">
+                          <span className="w-3 h-3 rounded-full bg-rose-500/80 block" />
+                          <span className="w-3 h-3 rounded-full bg-amber-500/80 block" />
+                          <span className="w-3 h-3 rounded-full bg-emerald-500/80 block" />
+                        </div>
+                        <span className="text-slate-400 font-mono text-xs font-semibold tracking-wider">
+                          {t.logs_label || 'LOGS:'} {results[selectedResultModule].title.toUpperCase()}
+                        </span>
                       </div>
-                      {results[selectedResultModule].status === 'poisoned' ? (
-                        <span className="text-[10px] bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded-full font-mono font-bold">POSION_FLAGGED</span>
-                      ) : (
-                        <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono font-bold">CLEAN_PASS</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleCopyLogs(selectedResultModule)}
+                          className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-[11px] font-mono border border-transparent hover:border-slate-700"
+                          title="Copy Logs"
+                        >
+                          {copiedLogModule === selectedResultModule ? (
+                            <>
+                              <Check size={13} className="text-emerald-400" />
+                              <span className="text-emerald-400">{t.copied_label || 'Copied'}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy size={13} />
+                              <span>{t.copy_label || 'Copy'}</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Filter / Search Bar */}
+                    <div className="bg-slate-900/40 px-3 py-2 border-b border-slate-800/50 flex items-center gap-2">
+                      <Search size={14} className="text-slate-500 shrink-0" />
+                      <input
+                        type="text"
+                        placeholder={t.filter_placeholder || 'Filter log lines...'}
+                        value={logSearchQuery}
+                        onChange={(e) => setLogSearchQuery(e.target.value)}
+                        className="bg-transparent border-none outline-none focus:ring-0 text-xs font-mono text-slate-300 w-full placeholder-slate-600"
+                      />
+                      {logSearchQuery && (
+                        <button 
+                          onClick={() => setLogSearchQuery('')}
+                          className="text-[10px] bg-slate-800 hover:bg-slate-700 px-1.5 py-0.5 rounded text-slate-400 hover:text-white"
+                        >
+                          {t.clear_label || 'Clear'}
+                        </button>
                       )}
                     </div>
+
+                    {/* Logs Area */}
                     <div className="p-4 font-mono text-[11px] overflow-y-auto space-y-2 flex-1 scrollbar-thin scrollbar-thumb-slate-800 select-all">
-                      {results[selectedResultModule].logs.map((log, index) => (
-                        <div key={index} className={`whitespace-pre-wrap leading-relaxed ${log.includes('❌') ? 'text-rose-400' : log.includes('✅') ? 'text-emerald-400' : log.includes('⚠️') ? 'text-amber-400' : 'text-slate-300'}`}>
-                          {log}
+                      {results[selectedResultModule].logs
+                        .filter(log => log.toLowerCase().includes(logSearchQuery.toLowerCase()))
+                        .map((log, index) => (
+                          <div 
+                            key={index} 
+                            className={`whitespace-pre-wrap leading-relaxed border-l-2 pl-2 ${
+                              log.includes('❌') 
+                                ? 'text-rose-400 border-rose-500/50' 
+                                : log.includes('✅') 
+                                ? 'text-emerald-400 border-emerald-500/50' 
+                                : log.includes('⚠️') 
+                                ? 'text-amber-400 border-amber-500/50' 
+                                : 'text-slate-300 border-slate-800'
+                            }`}
+                          >
+                            {log}
+                          </div>
+                        ))}
+                      {results[selectedResultModule].logs.filter(log => log.toLowerCase().includes(logSearchQuery.toLowerCase())).length === 0 && (
+                        <div className="text-slate-500 text-center py-8 font-sans text-xs">
+                          {(t.no_matching_logs || 'No matching logs found for "{query}"').replace('{query}', logSearchQuery)}
                         </div>
-                      ))}
+                      )}
                     </div>
                   </>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-full p-6 text-center space-y-4">
-                    <div className="p-4 rounded-full bg-slate-900 text-slate-400">
-                      <Terminal size={24} />
+                  <div className="flex flex-col items-center justify-center h-full p-8 text-center space-y-5 bg-gradient-to-b from-slate-950 to-slate-900">
+                    <div className="w-16 h-16 rounded-2xl bg-slate-900 flex items-center justify-center text-slate-500 shadow-inner border border-slate-800/80">
+                      <Terminal size={32} />
                     </div>
-                    <div className="space-y-1">
-                      <h5 className="text-sm font-semibold text-slate-200">Select a Scan Module</h5>
-                      <p className="text-xs text-slate-500 max-w-xs">
-                        Click on any diagnostic scan card on the left to inspect its deep execution logs and test vectors.
+                    <div className="space-y-2 max-w-xs">
+                      <h5 className="text-sm font-semibold text-slate-200">{t.inspect_logs_title || 'Inspect Deep Logs'}</h5>
+                      <p className="text-xs text-slate-400 leading-relaxed">
+                        {t.inspect_logs_desc || 'Select any of the five system components on the left to review their cryptographic noise injection logs, spoof vectors, and stable checks.'}
                       </p>
                     </div>
                   </div>
@@ -793,7 +911,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );

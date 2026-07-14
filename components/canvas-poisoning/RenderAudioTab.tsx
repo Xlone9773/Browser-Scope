@@ -258,11 +258,11 @@ export const RenderAudioTab: React.FC<RenderAudioTabProps> = React.memo(({ t }) 
 
       <div className="flex gap-4 justify-center py-4 bg-slate-100 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700/50">
         <div className="space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block text-center">2D Canvas</span>
+          <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block text-center">{t.label_2d_canvas || '2D Canvas'}</span>
           <canvas ref={canvasRef} width={200} height={50} className="border border-slate-300 dark:border-slate-600 rounded bg-white shadow-sm" />
         </div>
         <div className="space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block text-center">WebGL</span>
+          <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block text-center">{t.label_webgl || 'WebGL'}</span>
           <canvas ref={webglRef} width={200} height={50} className="border border-slate-300 dark:border-slate-600 rounded bg-black shadow-sm" />
         </div>
       </div>
