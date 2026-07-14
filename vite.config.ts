@@ -56,6 +56,10 @@ export default defineConfig(({ mode }) => {
           }
         })
       ],
+      esbuild: {
+        drop: mode === 'production' ? ['console', 'debugger'] : [],
+        legalComments: 'none',
+      },
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
@@ -70,26 +74,9 @@ export default defineConfig(({ mode }) => {
       },
       build: {
         target: 'esnext',
-        minify: 'terser',
+        minify: 'esbuild',
         cssMinify: 'lightningcss',
         assetsInlineLimit: 100000000, // 100MB limit to ensure all assets are inlined
-        terserOptions: {
-          compress: {
-            drop_console: mode === 'production',
-            drop_debugger: mode === 'production',
-            passes: 1, // Reduced to avoid build timeout
-            toplevel: true,
-            hoist_funs: true,
-            reduce_funcs: true,
-            booleans_as_integers: true,
-          },
-          mangle: {
-            toplevel: true,
-          },
-          format: {
-            comments: false, // Ensure all comments are stripped
-          }
-        },
         sourcemap: mode !== 'production',
         cssCodeSplit: false, // Bundle all CSS into a single style sheet
         rollupOptions: {
