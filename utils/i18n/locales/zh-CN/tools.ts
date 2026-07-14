@@ -339,7 +339,20 @@ export const tools = {
     testing_viewport: "测试可用视图与屏幕尺寸稳定性...",
     viewport_mismatch: "❌ 检测到可用视图/屏幕尺寸微细动态漂移:",
     viewport_poisoned: "❌ 检测到可用视图尺寸被篡改 (存在动态随机尺寸干扰噪声，通常来自防指纹追踪浏览器如 Cromite)。",
-    viewport_stable: "✅ 可用视图与屏幕尺寸稳定，未检测到动态尺寸随机噪声。"
+    viewport_stable: "✅ 可用视图与屏幕尺寸稳定，未检测到动态尺寸随机噪声。",
+    tab_render_audio: "渲染与音频",
+    tab_font_farbling: "字体与测宽",
+    font_detection_title: "字体与 Farbling 检测",
+    font_detection_desc: "通过高精度测宽、本地字体库检索限制以及 Font Farbling，检测浏览器是否对字体指纹进行了干扰或伪装。",
+    testing_fonts: "测试字体测宽与 Font Farbling...",
+    fonts_hooked: "❌ 检测到 Font / Document API (fonts) 核心方法被 Proxy/Hook 劫持。",
+    font_farbling_detected: "❌ 检测到 Font Farbling 干扰（高精度字体测宽在静止读取时存在微像素抖动，通常由 Brave 或 Cromite 开启）。",
+    font_shielding_detected: "❌ 检测到字体库屏蔽（所有非安全字体的测宽结果与 fallback 完全一致，判定屏蔽了本地字体检索）。",
+    fonts_stable: "✅ 字体渲染与测宽稳定，未检测到 Farbling 抖动或检索屏蔽。",
+    testing_font_query: "正在检测本地字体查询接口 (queryLocalFonts)...",
+    font_query_blocked: "⚠️ Local Font Query (queryLocalFonts) 抛出错误或被禁用，表明可能存在高级隐私限制。",
+    font_query_allowed: "✅ Local Font Query (queryLocalFonts) 可用或行为符合正常规范。",
+    run_font_test: "运行字体检测"
   },
   ja3: {
     title: "JA3/JA4 TLS 指纹",

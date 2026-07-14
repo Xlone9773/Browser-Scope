@@ -1,11 +1,61 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { ShieldAlert, Activity, RefreshCw } from 'lucide-react';
+import { ShieldAlert, Activity, RefreshCw, Tv, Type } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 
+interface PoisoningTranslations {
+  title?: string;
+  detect?: string;
+  desc_title?: string;
+  desc?: string;
+  status?: string;
+  status_idle?: string;
+  status_running?: string;
+  status_poisoned?: string;
+  status_clean?: string;
+  run_test?: string;
+  testing?: string;
+  waiting?: string;
+  start_log?: string;
+  testing_canvas?: string;
+  testing_webgl?: string;
+  testing_audio?: string;
+  audio_poisoned?: string;
+  audio_stable?: string;
+  audio_hooked?: string;
+  poisoned_log?: string;
+  clean_log?: string;
+  canvas_mismatch?: string;
+  canvas_stable?: string;
+  webgl_mismatch?: string;
+  webgl_stable?: string;
+  audio_mismatch?: string;
+  suspicious_base_latency?: string;
+  suspicious_output_latency?: string;
+  testing_viewport?: string;
+  viewport_mismatch?: string;
+  viewport_poisoned?: string;
+  viewport_stable?: string;
+  
+  // Font translations:
+  tab_render_audio?: string;
+  tab_font_farbling?: string;
+  font_detection_title?: string;
+  font_detection_desc?: string;
+  testing_fonts?: string;
+  fonts_hooked?: string;
+  font_farbling_detected?: string;
+  font_shielding_detected?: string;
+  fonts_stable?: string;
+  testing_font_query?: string;
+  font_query_blocked?: string;
+  font_query_allowed?: string;
+  run_font_test?: string;
+}
+
 interface CanvasPoisoningModalProps {
   onClose: () => void;
-  t: Record<string, string>;
+  t: PoisoningTranslations;
 }
 
 interface ExtendedWindow {
@@ -16,11 +66,20 @@ interface ExtendedWindow {
 export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.memo(({ onClose, t }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const webglRef = useRef<HTMLCanvasElement>(null);
+  const [activeTab, setActiveTab] = useState<'render_audio' | 'fonts'>('render_audio');
+
+  // Tab 1: Render & Audio state
   const [status, setStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
   const [progress, setProgress] = useState(0);
   const [logs, setLogs] = useState<string[]>([]);
+
+  // Tab 2: Fonts state
+  const [fontStatus, setFontStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>('idle');
+  const [fontProgress, setFontProgress] = useState(0);
+  const [fontLogs, setFontLogs] = useState<string[]>([]);
   
   const addLog = useCallback((msg: string) => setLogs(prev => [...prev, msg]), []);
+  const addFontLog = useCallback((msg: string) => setFontLogs(prev => [...prev, msg]), []);
 
   const hashString = (str: string) => {
     let hash = 0;
@@ -52,7 +111,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
     gl.clear(gl.COLOR_BUFFER_BIT);
   };
 
-  const isHooked = (fn: (...args: unknown[]) => unknown) => {
+  const isHooked = (fn: (...args: never[]) => unknown) => {
     try {
       return !/\{\s*\[native code\]\s*\}/.test(fn.toString());
     } catch {
@@ -75,10 +134,10 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
       try {
         const desc = Object.getOwnPropertyDescriptor(check.obj, check.prop);
         if (desc) {
-          if (desc.get && isHooked(desc.get as (...args: unknown[]) => unknown)) {
+          if (desc.get && isHooked(desc.get as unknown as (...args: never[]) => unknown)) {
             return { hooked: true, name: check.name };
           }
-          if (desc.value && typeof desc.value === 'function' && isHooked(desc.value as (...args: unknown[]) => unknown)) {
+          if (desc.value && typeof desc.value === 'function' && isHooked(desc.value as unknown as (...args: never[]) => unknown)) {
             return { hooked: true, name: check.name };
           }
         }
@@ -123,12 +182,12 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
     setStatus('running');
     setProgress(0);
     setLogs([]);
-    addLog(t?.start_log || 'Starting Canvas & WebGL Poisoning Test...');
+    addLog(t.start_log || 'Starting Canvas & WebGL Poisoning Test...');
     
     let poisoned = false;
 
     // 1. Viewport & Screen Dimension Tampering (e.g., Cromite viewport fingerprinter protection)
-    addLog(t?.testing_viewport || 'Testing Viewport & Screen Dimensions stability...');
+    addLog(t.testing_viewport || 'Testing Viewport & Screen Dimensions stability...');
     let viewportPoisoned = false;
     let lastW = window.innerWidth;
     let lastH = window.innerHeight;
@@ -161,7 +220,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
         viewportPoisoned = true;
         poisoned = true;
         addLog(
-          `${t?.viewport_mismatch || '❌ Viewport dimension fluctuation detected:'} ` +
+          `${t.viewport_mismatch || '❌ Viewport dimension fluctuation detected:'} ` +
           `[W:${lastW}, H:${lastH}, Div:${lastDivW}x${lastDivH}, Avail:${lastAvailW}x${lastAvailH}] -> ` +
           `[W:${currentW}, H:${currentH}, Div:${currentDivW}x${currentDivH}, Avail:${currentAvailW}x${currentAvailH}]`
         );
@@ -184,9 +243,9 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
     }
     
     if (viewportPoisoned) {
-      addLog(t?.viewport_poisoned || '❌ Viewport/Screen dimension tampering detected (dynamic noise/micro-fluctuations active).');
+      addLog(t.viewport_poisoned || '❌ Viewport/Screen dimension tampering detected (dynamic noise/micro-fluctuations active).');
     } else {
-      addLog(t?.viewport_stable || '✅ Viewport and screen dimensions are stable, no dynamic dimension noise detected.');
+      addLog(t.viewport_stable || '✅ Viewport and screen dimensions are stable, no dynamic dimension noise detected.');
     }
     
     // 2. Canvas Test
@@ -194,7 +253,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
     if (canvas) {
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        addLog(t?.testing_canvas || 'Testing 2D Canvas stability...');
+        addLog(t.testing_canvas || 'Testing 2D Canvas stability...');
         let lastHash = '';
         let canvasPoisoned = false;
         for (let i = 0; i < 10; i++) {
@@ -204,7 +263,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
           if (i > 0 && hash !== lastHash) {
             canvasPoisoned = true;
             poisoned = true;
-            const mismatchTemplate = t?.canvas_mismatch || '❌ 2D Canvas mismatch at iteration {i}: {lastHash} != {hash}';
+            const mismatchTemplate = t.canvas_mismatch || '❌ 2D Canvas mismatch at iteration {i}: {lastHash} != {hash}';
             addLog(mismatchTemplate.replace('{i}', String(i)).replace('{lastHash}', lastHash).replace('{hash}', hash));
           }
           lastHash = hash;
@@ -214,7 +273,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
           });
         }
         if (!canvasPoisoned) {
-          addLog(t?.canvas_stable || '✅ 2D Canvas appears stable (no random noise).');
+          addLog(t.canvas_stable || '✅ 2D Canvas appears stable (no random noise).');
         }
       }
     }
@@ -224,7 +283,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
     if (webgl) {
       const gl = webgl.getContext('webgl');
       if (gl) {
-        addLog(t?.testing_webgl || 'Testing WebGL stability...');
+        addLog(t.testing_webgl || 'Testing WebGL stability...');
         let lastHash = '';
         let webglPoisoned = false;
         for (let i = 0; i < 10; i++) {
@@ -234,7 +293,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
           if (i > 0 && hash !== lastHash) {
             webglPoisoned = true;
             poisoned = true;
-            const mismatchTemplate = t?.webgl_mismatch || '❌ WebGL mismatch at iteration {i}: {lastHash} != {hash}';
+            const mismatchTemplate = t.webgl_mismatch || '❌ WebGL mismatch at iteration {i}: {lastHash} != {hash}';
             addLog(mismatchTemplate.replace('{i}', String(i)).replace('{lastHash}', lastHash).replace('{hash}', hash));
           }
           lastHash = hash;
@@ -244,19 +303,19 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
           });
         }
         if (!webglPoisoned) {
-          addLog(t?.webgl_stable || '✅ WebGL appears stable (no random noise).');
+          addLog(t.webgl_stable || '✅ WebGL appears stable (no random noise).');
         }
       }
     }
     
     // 4. Audio & Latency Test
-    addLog(t?.testing_audio || 'Testing Web Audio stability and latency...');
+    addLog(t.testing_audio || 'Testing Web Audio stability and latency...');
     
     // A. Hook detection
     const hookResult = checkAudioHooks();
     if (hookResult.hooked) {
       poisoned = true;
-      addLog(t?.audio_hooked || `❌ Suspicious Proxy/Hook detected on core Audio APIs (${hookResult.name}).`);
+      addLog(t.audio_hooked || `❌ Suspicious Proxy/Hook detected on core Audio APIs (${hookResult.name}).`);
     }
     
     // B. Dynamic rendering noise detection
@@ -272,7 +331,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
         const hash = hashString(sampleStr);
         if (i > 0 && hash !== lastAudioHash) {
           audioStable = false;
-          const audioMismatchTemplate = t?.audio_mismatch || '❌ Audio buffer mismatch at iteration {i}: {lastAudioHash} != {hash}';
+          const audioMismatchTemplate = t.audio_mismatch || '❌ Audio buffer mismatch at iteration {i}: {lastAudioHash} != {hash}';
           addLog(audioMismatchTemplate.replace('{i}', String(i)).replace('{lastAudioHash}', lastAudioHash).replace('{hash}', hash));
         }
         lastAudioHash = hash;
@@ -294,12 +353,12 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
         
         if (typeof baseLat === 'number' && (baseLat < 0 || baseLat > 2.0)) {
           audioStable = false;
-          const suspBaseLatTemplate = t?.suspicious_base_latency || '❌ Suspicious baseLatency value: {baseLat}';
+          const suspBaseLatTemplate = t.suspicious_base_latency || '❌ Suspicious baseLatency value: {baseLat}';
           addLog(suspBaseLatTemplate.replace('{baseLat}', String(baseLat)));
         }
         if (typeof outLat === 'number' && (outLat < 0 || outLat > 2.0)) {
           audioStable = false;
-          const suspOutLatTemplate = t?.suspicious_output_latency || '❌ Suspicious outputLatency value: {outLat}';
+          const suspOutLatTemplate = t.suspicious_output_latency || '❌ Suspicious outputLatency value: {outLat}';
           addLog(suspOutLatTemplate.replace('{outLat}', String(outLat)));
         }
         tempCtx.close();
@@ -310,73 +369,281 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
 
     if (!audioStable) {
       poisoned = true;
-      addLog(t?.audio_poisoned || '❌ Audio buffer or latency tampering detected (anti-fingerprinting active).');
+      addLog(t.audio_poisoned || '❌ Audio buffer or latency tampering detected (anti-fingerprinting active).');
     } else {
-      addLog(t?.audio_stable || '✅ Audio APIs stable, no waveform or latency tampering detected.');
+      addLog(t.audio_stable || '✅ Audio APIs stable, no waveform or latency tampering detected.');
     }
     
     setProgress(100);
     setStatus(poisoned ? 'poisoned' : 'clean');
-    addLog(poisoned ? (t?.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).') : (t?.clean_log || '✅ Environment appears clean.'));
+    addLog(poisoned ? (t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).') : (t.clean_log || '✅ Environment appears clean.'));
+  };
+
+  const runFontTest = async () => {
+    setFontStatus('running');
+    setFontProgress(0);
+    setFontLogs([]);
+    
+    addFontLog(t.testing_fonts || 'Testing font widths and Font Farbling...');
+    
+    let fontPoisoned = false;
+    
+    // 1. Hook detection on document.fonts
+    try {
+      const fontsProto = Object.getPrototypeOf(document.fonts);
+      const isForEachHooked = isHooked(document.fonts.forEach as unknown as (...args: never[]) => unknown) || 
+                              (fontsProto && isHooked(fontsProto.forEach as unknown as (...args: never[]) => unknown));
+      const isValuesHooked = isHooked(document.fonts.values as unknown as (...args: never[]) => unknown) || 
+                             (fontsProto && isHooked(fontsProto.values as unknown as (...args: never[]) => unknown));
+      if (isForEachHooked || isValuesHooked) {
+        fontPoisoned = true;
+        addFontLog(t.fonts_hooked || '❌ Suspicious Proxy/Hook detected on core Font/Document APIs.');
+      }
+    } catch {
+      // Ignore
+    }
+    setFontProgress(20);
+    await new Promise<void>(resolve => setTimeout(resolve, 50));
+
+    // 2. Local font query interface check (queryLocalFonts)
+    addFontLog(t.testing_font_query || 'Detecting local font query interface (queryLocalFonts)...');
+    const queryLocalFontsFn = (window as unknown as { queryLocalFonts?: () => unknown }).queryLocalFonts || 
+                              (navigator as unknown as { queryLocalFonts?: () => unknown }).queryLocalFonts;
+    if (queryLocalFontsFn) {
+      if (isHooked(queryLocalFontsFn as unknown as (...args: never[]) => unknown)) {
+        fontPoisoned = true;
+        addFontLog('❌ Suspicious Proxy/Hook detected on queryLocalFonts API.');
+      }
+      try {
+        addFontLog(t.font_query_allowed || '✅ Local Font Query (queryLocalFonts) is accessible or behaves normally.');
+      } catch {
+        addFontLog(t.font_query_blocked || '⚠️ Local Font Query (queryLocalFonts) threw an error or is disabled, indicating high privacy restrictions.');
+      }
+    } else {
+      addFontLog('ℹ️ queryLocalFonts is not supported or is disabled by browser security model.');
+    }
+    setFontProgress(40);
+    await new Promise<void>(resolve => setTimeout(resolve, 50));
+
+    // 3. High-precision font width fluctuation (Font Farbling Jitter)
+    const container = document.createElement('div');
+    container.style.cssText = 'position:absolute;top:-9999px;left:-9999px;visibility:hidden;pointer-events:none;white-space:nowrap;font-size:72px;font-family:"Times New Roman", Times, serif;';
+    const span = document.createElement('span');
+    span.textContent = 'Farbling Jitter Check: High-Precision Font Widths Fluctuation Testing !!! @#$%^&*()';
+    container.appendChild(span);
+    document.body.appendChild(container);
+    
+    const measurements: number[] = [];
+    let jitterDetected = false;
+    
+    for (let i = 0; i < 15; i++) {
+      const rect = span.getBoundingClientRect();
+      measurements.push(rect.width);
+      await new Promise<void>(resolve => setTimeout(resolve, 15));
+    }
+    
+    const firstW = measurements[0];
+    for (let i = 1; i < measurements.length; i++) {
+      if (Math.abs(measurements[i] - firstW) > 0.00001) {
+        jitterDetected = true;
+        addFontLog(`❌ Jitter at read ${i}: ${firstW} != ${measurements[i]}`);
+      }
+    }
+    
+    if (jitterDetected) {
+      fontPoisoned = true;
+      addFontLog(t.font_farbling_detected || '❌ Font Farbling detected (high-precision width measurement fluctuates in a static state, typical of Brave or Cromite).');
+    } else {
+      addFontLog('✅ High-precision width measurements are stable.');
+    }
+    setFontProgress(70);
+
+    // 4. All-font equal width anomaly detection (Font Shielding)
+    const measureFont = (family: string) => {
+      const testSpan = document.createElement('span');
+      testSpan.textContent = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+      testSpan.style.fontFamily = family;
+      container.appendChild(testSpan);
+      const width = testSpan.getBoundingClientRect().width;
+      container.removeChild(testSpan);
+      return width;
+    };
+    
+    const wSans = measureFont('sans-serif');
+    const wSerif = measureFont('serif');
+    const wMono = measureFont('monospace');
+    
+    const wGeorgia = measureFont('Georgia, serif');
+    const wImpact = measureFont('Impact, sans-serif');
+    const wCourier = measureFont('Courier New, monospace');
+    const wTimes = measureFont('Times New Roman, serif');
+    const wArial = measureFont('Arial, sans-serif');
+    const wFake = measureFont('NonexistentFakeFontAlphaOmega, sans-serif');
+    
+    addFontLog(`ℹ️ Widths measured: sans-serif=${wSans.toFixed(2)}, serif=${wSerif.toFixed(2)}, monospace=${wMono.toFixed(2)}`);
+    addFontLog(`ℹ️ System fonts: Georgia=${wGeorgia.toFixed(2)}, Impact=${wImpact.toFixed(2)}, Courier=${wCourier.toFixed(2)}, Times=${wTimes.toFixed(2)}, Arial=${wArial.toFixed(2)}`);
+    
+    const hasDifferentSystemFonts = (wGeorgia !== wFake) || (wImpact !== wFake) || (wCourier !== wFake) || (wTimes !== wFake);
+    
+    let shieldingDetected = false;
+    if (!hasDifferentSystemFonts) {
+      if (wSans === wSerif && wSans === wMono) {
+        shieldingDetected = true;
+      } else {
+        shieldingDetected = true;
+      }
+    }
+    
+    if (shieldingDetected) {
+      fontPoisoned = true;
+      addFontLog(t.font_shielding_detected || '❌ Font Shielding detected (all exotic fonts have identical widths to the fallback, local font database is blocked or spoofed).');
+    } else {
+      addFontLog('✅ Font differentiation detected (local font library access is active).');
+    }
+    
+    document.body.removeChild(container);
+    setFontProgress(100);
+    
+    if (fontPoisoned) {
+      setFontStatus('poisoned');
+      addFontLog(t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).');
+    } else {
+      setFontStatus('clean');
+      addFontLog(t.fonts_stable || '✅ Font rendering and measurements are stable, no Farbling jitter or retrieval shielding detected.');
+    }
   };
 
   return (
     <Modal
-      title={t?.title}
+      title={t.title || 'Noise & Poisoning Detection'}
       onClose={onClose}
-      size="md"
+      size="lg"
+      noPadding
     >
-      <div className="space-y-4 p-2">
-        <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-          <ShieldAlert className="text-indigo-500 shrink-0" size={24} />
-          <div className="text-sm">
-            <h4 className="font-semibold text-slate-800 dark:text-slate-100">{t?.desc_title}</h4>
-            <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
-              {t?.desc}
-            </p>
+      {/* Tab Navigation header */}
+      <div className="flex bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 shrink-0 overflow-x-auto scrollbar-hide">
+        <button
+          onClick={() => setActiveTab('render_audio')}
+          className={`flex-1 py-3 font-medium text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 ${
+            activeTab === 'render_audio'
+              ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white dark:bg-slate-800'
+              : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+          }`}
+        >
+          <Tv size={16} />
+          <span>{t.tab_render_audio || 'Render & Audio'}</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('fonts')}
+          className={`flex-1 py-3 font-medium text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 ${
+            activeTab === 'fonts'
+              ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white dark:bg-slate-800'
+              : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+          }`}
+        >
+          <Type size={16} />
+          <span>{t.tab_font_farbling || 'Fonts & Farbling'}</span>
+        </button>
+      </div>
+
+      {/* Content wrapper with generous negative space */}
+      <div className="p-6 relative overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+        {activeTab === 'render_audio' ? (
+          <div className="space-y-4 animate-in fade-in duration-300">
+            <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+              <ShieldAlert className="text-indigo-500 shrink-0" size={24} />
+              <div className="text-sm">
+                <h4 className="font-semibold text-slate-800 dark:text-slate-100">{t.desc_title}</h4>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
+                  {t.desc}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 justify-center py-4 bg-slate-100 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700/50">
+              <div className="space-y-1">
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block text-center">2D Canvas</span>
+                <canvas ref={canvasRef} width={200} height={50} className="border border-slate-300 dark:border-slate-600 rounded bg-white shadow-sm" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block text-center">WebGL</span>
+                <canvas ref={webglRef} width={200} height={50} className="border border-slate-300 dark:border-slate-600 rounded bg-black shadow-sm" />
+              </div>
+            </div>
+
+            <div className="bg-slate-900 rounded-xl p-4 font-mono text-xs text-slate-300 h-48 overflow-y-auto border border-slate-700 shadow-inner">
+              {logs.map((log, i) => (
+                <div key={i} className={`mb-1 ${log.includes('❌') || log.includes('⚠️') ? 'text-rose-400' : log.includes('✅') ? 'text-emerald-400' : ''}`}>
+                  {log}
+                </div>
+              ))}
+              {logs.length === 0 ? <span className="text-slate-600">{t.waiting}</span> : null}
+            </div>
+
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t.status}:</span>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
+                  status === 'clean' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                  status === 'poisoned' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' :
+                  status === 'running' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
+                  'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                }`}>
+                  {status === 'idle' ? t.status_idle : 
+                   status === 'running' ? t.status_running : 
+                   status === 'poisoned' ? t.status_poisoned : 
+                   t.status_clean}
+                </span>
+              </div>
+              <Button onClick={runTest} disabled={status === 'running'} leftIcon={status === 'running' ? <RefreshCw size={14} className="animate-spin" /> : <Activity size={14} />}>
+                {status === 'running' ? `${t.testing} (${progress}%)` : t.run_test}
+              </Button>
+            </div>
           </div>
-        </div>
-
-        <div className="flex gap-4 justify-center py-4 bg-slate-100 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700/50">
-            <div className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block text-center">2D Canvas</span>
-              <canvas ref={canvasRef} width={200} height={50} className="border border-slate-300 dark:border-slate-600 rounded bg-white shadow-sm" />
+        ) : (
+          <div className="space-y-4 animate-in fade-in duration-300">
+            <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+              <ShieldAlert className="text-indigo-500 shrink-0" size={24} />
+              <div className="text-sm">
+                <h4 className="font-semibold text-slate-800 dark:text-slate-100">{t.font_detection_title || 'Font & Farbling Detection'}</h4>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
+                  {t.font_detection_desc}
+                </p>
+              </div>
             </div>
-            <div className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block text-center">WebGL</span>
-              <canvas ref={webglRef} width={200} height={50} className="border border-slate-300 dark:border-slate-600 rounded bg-black shadow-sm" />
-            </div>
-        </div>
 
-        <div className="bg-slate-900 rounded-xl p-4 font-mono text-xs text-slate-300 h-48 overflow-y-auto border border-slate-700 shadow-inner">
-          {logs.map((log, i) => (
-            <div key={i} className={`mb-1 ${log.includes('❌') || log.includes('⚠️') ? 'text-rose-400' : log.includes('✅') ? 'text-emerald-400' : ''}`}>
-              {log}
+            <div className="bg-slate-900 rounded-xl p-4 font-mono text-xs text-slate-300 h-64 overflow-y-auto border border-slate-700 shadow-inner">
+              {fontLogs.map((log, i) => (
+                <div key={i} className={`mb-1 ${log.includes('❌') || log.includes('⚠️') ? 'text-rose-400' : log.includes('✅') ? 'text-emerald-400' : ''}`}>
+                  {log}
+                </div>
+              ))}
+              {fontLogs.length === 0 ? <span className="text-slate-600">{t.waiting}</span> : null}
             </div>
-          ))}
-          {logs.length === 0 && <span className="text-slate-600">{t?.waiting}</span>}
-        </div>
 
-        <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t?.status}:</span>
-            <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
-              status === 'clean' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-              status === 'poisoned' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' :
-              status === 'running' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
-              'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
-            }`}>
-              {status === 'idle' ? (t?.status_idle) : 
-               status === 'running' ? (t?.status_running) : 
-               status === 'poisoned' ? (t?.status_poisoned) : 
-               (t?.status_clean)}
-            </span>
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t.status}:</span>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
+                  fontStatus === 'clean' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                  fontStatus === 'poisoned' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' :
+                  fontStatus === 'running' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
+                  'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                }`}>
+                  {fontStatus === 'idle' ? t.status_idle : 
+                   fontStatus === 'running' ? t.status_running : 
+                   fontStatus === 'poisoned' ? t.status_poisoned : 
+                   t.status_clean}
+                </span>
+              </div>
+              <Button onClick={runFontTest} disabled={fontStatus === 'running'} leftIcon={fontStatus === 'running' ? <RefreshCw size={14} className="animate-spin" /> : <Activity size={14} />}>
+                {fontStatus === 'running' ? `${t.testing} (${fontProgress}%)` : (t.run_font_test || 'Run Font Test')}
+              </Button>
+            </div>
           </div>
-          <Button onClick={runTest} disabled={status === 'running'} leftIcon={status === 'running' ? <RefreshCw size={14} className="animate-spin" /> : <Activity size={14} />}>
-            {status === 'running' ? `${t?.testing} (${progress}%)` : (t?.run_test)}
-          </Button>
-        </div>
+        )}
       </div>
     </Modal>
   );
 });
+

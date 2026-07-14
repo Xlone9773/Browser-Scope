@@ -337,8 +337,21 @@ export const tools = {
     suspicious_output_latency: "❌ 異常的 outputLatency 值: {outLat}",
     testing_viewport: "測試可用視圖與螢幕尺寸穩定性...",
     viewport_mismatch: "❌ 檢測到可用視圖/螢幕尺寸微細動態漂移:",
-    viewport_poisoned: "❌ 檢測到可用視圖尺寸被篡改 (存在動態隨機尺寸干擾噪音，通常來自防指紋追蹤瀏覽器如 Cromite)。",
-    viewport_stable: "✅ 可用視圖與螢幕尺寸穩定，未檢測到動態尺寸隨機噪音。"
+    viewport_poisoned: "❌ 檢測到可用視圖尺寸被篡改 (存在動態隨机尺寸干擾噪音，通常來自防指紋追蹤瀏覽器如 Cromite)。",
+    viewport_stable: "✅ 可用視圖與螢幕尺寸穩定，未檢測到動態尺寸隨機噪音。",
+    tab_render_audio: "渲染與音訊",
+    tab_font_farbling: "字型與測寬",
+    font_detection_title: "字型與 Farbling 檢測",
+    font_detection_desc: "通過高精度測寬、本地字型庫檢索限制以及 Font Farbling，檢測瀏覽器是否對字型指紋進行了干擾或偽裝。",
+    testing_fonts: "測試字型測寬與 Font Farbling...",
+    fonts_hooked: "❌ 檢測到 Font / Document API (fonts) 核心方法被 Proxy/Hook 劫持。",
+    font_farbling_detected: "❌ 檢測到 Font Farbling 干擾（高精度字型測寬在靜止讀取時存在微像素抖動，通常由 Brave 或 Cromite 開啟）。",
+    font_shielding_detected: "❌ 檢測到字型庫屏蔽（所有非安全字型的測寬結果與 fallback 完全一致，判定屏蔽了本地字型檢索）。",
+    fonts_stable: "✅ 字型渲染與測寬穩定，未檢測到 Farbling 抖動或檢索屏蔽。",
+    testing_font_query: "正在檢測本地字型查詢介面 (queryLocalFonts)...",
+    font_query_blocked: "⚠️ Local Font Query (queryLocalFonts) 拋出錯誤或被禁用，表明可能存在高級隱私限制。",
+    font_query_allowed: "✅ Local Font Query (queryLocalFonts) 可用或行為符合正常規範。",
+    run_font_test: "運行字型檢測"
   },
   ja3: {
     title: "JA3/JA4 TLS 指紋",

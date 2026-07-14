@@ -337,8 +337,21 @@ export const tools = {
     suspicious_output_latency: "❌ 不審な outputLatency 値: {outLat}",
     testing_viewport: "ビューポートと画面サイズの安定性を検証中...",
     viewport_mismatch: "❌ ビューポート/画面サイズに微小な動的変動を検出:",
-    viewport_poisoned: "❌ ビューポートサイズの改ざんを検出（防指紋ブラウザ Cromite などの動的ノイズ/微小変動が有効）。",
-    viewport_stable: "✅ ビューポートと画面サイズは安定しており、動的なサイズノイズは検出されませんでした。"
+    viewport_poisoned: "❌ ビポートサイズの改ざんを検出（防指紋ブラウザ Cromite などの動的ノイズ/微小変動が有効）。",
+    viewport_stable: "✅ ビューポートと画面サイズは安定しており、動的なサイズノイズは検出されませんでした。",
+    tab_render_audio: "レンダリングとオーディオ",
+    tab_font_farbling: "フォントと測定幅",
+    font_detection_title: "フォントと Farbling の検出",
+    font_detection_desc: "高精度な測定幅、ローカルフォントライブラリのクエリ制限、および Font Farbling（ピクセル幅のわずかな揺らぎ）を検証し、ブラウザがフォント指紋に干渉または偽装を行っているかを検出します。",
+    testing_fonts: "フォント測定幅と Font Farbling を検証中...",
+    fonts_hooked: "❌ フォントまたはドキュメント API (fonts) のコアメソッドに不審な Proxy/Hook が検出されました。",
+    font_farbling_detected: "❌ Font Farbling 干渉を検出（静的読み取り時に高精度なフォント測定幅に微小ピクセルの揺らぎが存在します。通常、Brave や Cromite で有効です）。",
+    font_shielding_detected: "❌ フォントライブラリのシールドを検出（すべての非安全フォントの測定幅が fallback と完全に一致しているため、ローカルフォントのクエリがブロックされていると判定されました）。",
+    fonts_stable: "✅ フォントレンダリングと測定幅は安定しており、Farbling の揺らぎやクエリのシールドは検出されませんでした。",
+    testing_font_query: "ローカルフォントクエリインターフェース (queryLocalFonts) を検出中...",
+    font_query_blocked: "⚠️ Local Font Query (queryLocalFonts) がエラーをスローしたか無効化されています。高度なプライバシー制限の可能性があります。",
+    font_query_allowed: "✅ Local Font Query (queryLocalFonts) が利用可能、または正常に動作しています。",
+    run_font_test: "フォント検出を実行"
   },
   ja3: {
     title: "JA3/JA4 TLS フィンガープリント",

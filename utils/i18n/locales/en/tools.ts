@@ -339,7 +339,20 @@ export const tools = {
     testing_viewport: "Testing Viewport & Screen Dimensions stability...",
     viewport_mismatch: "❌ Viewport dimension fluctuation detected:",
     viewport_poisoned: "❌ Viewport/Screen dimension tampering detected (dynamic noise/micro-fluctuations active).",
-    viewport_stable: "✅ Viewport and screen dimensions are stable, no dynamic dimension noise detected."
+    viewport_stable: "✅ Viewport and screen dimensions are stable, no dynamic dimension noise detected.",
+    tab_render_audio: "Render & Audio",
+    tab_font_farbling: "Fonts & Farbling",
+    font_detection_title: "Font & Farbling Detection",
+    font_detection_desc: "Detects whether the browser tampers with or spoofs font fingerprints through high-precision width measurements, restricted local font queries, and Font Farbling (fractional pixel width jittering).",
+    testing_fonts: "Testing font widths and Font Farbling...",
+    fonts_hooked: "❌ Suspicious Proxy/Hook detected on core Font/Document APIs.",
+    font_farbling_detected: "❌ Font Farbling detected (high-precision width measurement fluctuates in a static state, typical of Brave or Cromite).",
+    font_shielding_detected: "❌ Font Shielding detected (all exotic fonts have identical widths to the fallback, local font database is blocked or spoofed).",
+    fonts_stable: "✅ Font rendering and measurements are stable, no Farbling jitter or retrieval shielding detected.",
+    testing_font_query: "Detecting local font query interface (queryLocalFonts)...",
+    font_query_blocked: "⚠️ Local Font Query (queryLocalFonts) threw an error or is disabled, indicating high privacy restrictions.",
+    font_query_allowed: "✅ Local Font Query (queryLocalFonts) is accessible or behaves normally.",
+    run_font_test: "Run Font Test"
   },
   ja3: {
     title: "JA3/JA4 Fingerprint",
