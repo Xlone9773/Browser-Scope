@@ -123,16 +123,78 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
     setStatus('running');
     setProgress(0);
     setLogs([]);
-    addLog(t?.start_log);
+    addLog(t?.start_log || 'Starting Canvas & WebGL Poisoning Test...');
     
     let poisoned = false;
+
+    // 1. Viewport & Screen Dimension Tampering (e.g., Cromite viewport fingerprinter protection)
+    addLog(t?.testing_viewport || 'Testing Viewport & Screen Dimensions stability...');
+    let viewportPoisoned = false;
+    let lastW = window.innerWidth;
+    let lastH = window.innerHeight;
+    let lastAvailW = screen.availWidth;
+    let lastAvailH = screen.availHeight;
     
-    // 1. Canvas Test
+    // Create a temporary hidden full-viewport element to check clientWidth / clientHeight stability
+    const probeDiv = document.createElement('div');
+    probeDiv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;visibility:hidden;pointer-events:none;z-index:-9999;';
+    document.body.appendChild(probeDiv);
+    let lastDivW = probeDiv.clientWidth;
+    let lastDivH = probeDiv.clientHeight;
+    
+    for (let i = 0; i < 10; i++) {
+      const currentW = window.innerWidth;
+      const currentH = window.innerHeight;
+      const currentAvailW = screen.availWidth;
+      const currentAvailH = screen.availHeight;
+      const currentDivW = probeDiv.clientWidth;
+      const currentDivH = probeDiv.clientHeight;
+      
+      if (
+        currentW !== lastW || 
+        currentH !== lastH || 
+        currentAvailW !== lastAvailW || 
+        currentAvailH !== lastAvailH ||
+        currentDivW !== lastDivW ||
+        currentDivH !== lastDivH
+      ) {
+        viewportPoisoned = true;
+        poisoned = true;
+        addLog(
+          `${t?.viewport_mismatch || '❌ Viewport dimension fluctuation detected:'} ` +
+          `[W:${lastW}, H:${lastH}, Div:${lastDivW}x${lastDivH}, Avail:${lastAvailW}x${lastAvailH}] -> ` +
+          `[W:${currentW}, H:${currentH}, Div:${currentDivW}x${currentDivH}, Avail:${currentAvailW}x${currentAvailH}]`
+        );
+      }
+      lastW = currentW;
+      lastH = currentH;
+      lastAvailW = currentAvailW;
+      lastAvailH = currentAvailH;
+      lastDivW = currentDivW;
+      lastDivH = currentDivH;
+      
+      setProgress((prev) => Math.min(95, prev + 2));
+      await new Promise<void>((resolve) => {
+        setTimeout(() => { resolve(); }, 40);
+      });
+    }
+    
+    if (document.body.contains(probeDiv)) {
+      document.body.removeChild(probeDiv);
+    }
+    
+    if (viewportPoisoned) {
+      addLog(t?.viewport_poisoned || '❌ Viewport/Screen dimension tampering detected (dynamic noise/micro-fluctuations active).');
+    } else {
+      addLog(t?.viewport_stable || '✅ Viewport and screen dimensions are stable, no dynamic dimension noise detected.');
+    }
+    
+    // 2. Canvas Test
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        addLog(t?.testing_canvas);
+        addLog(t?.testing_canvas || 'Testing 2D Canvas stability...');
         let lastHash = '';
         let canvasPoisoned = false;
         for (let i = 0; i < 10; i++) {
@@ -142,24 +204,27 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
           if (i > 0 && hash !== lastHash) {
             canvasPoisoned = true;
             poisoned = true;
-            addLog(`❌ Canvas mismatch at iteration ${i}: ${lastHash} != ${hash}`);
+            const mismatchTemplate = t?.canvas_mismatch || '❌ 2D Canvas mismatch at iteration {i}: {lastHash} != {hash}';
+            addLog(mismatchTemplate.replace('{i}', String(i)).replace('{lastHash}', lastHash).replace('{hash}', hash));
           }
           lastHash = hash;
-          setProgress((prev) => prev + 3);
-          await new Promise(r => setTimeout(r, 40));
+          setProgress((prev) => Math.min(95, prev + 3));
+          await new Promise<void>((resolve) => {
+            setTimeout(() => { resolve(); }, 40);
+          });
         }
         if (!canvasPoisoned) {
-          addLog('✅ Canvas appears stable (no random noise).');
+          addLog(t?.canvas_stable || '✅ 2D Canvas appears stable (no random noise).');
         }
       }
     }
     
-    // 2. WebGL Test
+    // 3. WebGL Test
     const webgl = webglRef.current;
     if (webgl) {
       const gl = webgl.getContext('webgl');
       if (gl) {
-        addLog(t?.testing_webgl);
+        addLog(t?.testing_webgl || 'Testing WebGL stability...');
         let lastHash = '';
         let webglPoisoned = false;
         for (let i = 0; i < 10; i++) {
@@ -169,19 +234,22 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
           if (i > 0 && hash !== lastHash) {
             webglPoisoned = true;
             poisoned = true;
-            addLog(`❌ WebGL mismatch at iteration ${i}: ${lastHash} != ${hash}`);
+            const mismatchTemplate = t?.webgl_mismatch || '❌ WebGL mismatch at iteration {i}: {lastHash} != {hash}';
+            addLog(mismatchTemplate.replace('{i}', String(i)).replace('{lastHash}', lastHash).replace('{hash}', hash));
           }
           lastHash = hash;
-          setProgress((prev) => prev + 3);
-          await new Promise(r => setTimeout(r, 40));
+          setProgress((prev) => Math.min(95, prev + 3));
+          await new Promise<void>((resolve) => {
+            setTimeout(() => { resolve(); }, 40);
+          });
         }
         if (!webglPoisoned) {
-          addLog('✅ WebGL appears stable (no random noise).');
+          addLog(t?.webgl_stable || '✅ WebGL appears stable (no random noise).');
         }
       }
     }
-
-    // 3. Audio & Latency Test
+    
+    // 4. Audio & Latency Test
     addLog(t?.testing_audio || 'Testing Web Audio stability and latency...');
     
     // A. Hook detection
@@ -204,47 +272,52 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
         const hash = hashString(sampleStr);
         if (i > 0 && hash !== lastAudioHash) {
           audioStable = false;
-          addLog(`❌ Audio buffer mismatch at iteration ${i}: ${lastAudioHash} != ${hash}`);
+          const audioMismatchTemplate = t?.audio_mismatch || '❌ Audio buffer mismatch at iteration {i}: {lastAudioHash} != {hash}';
+          addLog(audioMismatchTemplate.replace('{i}', String(i)).replace('{lastAudioHash}', lastAudioHash).replace('{hash}', hash));
         }
         lastAudioHash = hash;
       }
       setProgress((prev) => Math.min(95, prev + 3));
-      await new Promise(r => setTimeout(r, 40));
+      await new Promise<void>((resolve) => {
+        setTimeout(() => { resolve(); }, 40);
+      });
     }
 
     // C. Latency bounds check
-      try {
-        const extWindow = window as unknown as ExtendedWindow;
-        const AudioContextClass = window.AudioContext || extWindow.webkitAudioContext;
-        if (AudioContextClass) {
-          const tempCtx = new AudioContextClass();
-          const baseLat = tempCtx.baseLatency;
-          const outLat = tempCtx.outputLatency;
-          
-          if (typeof baseLat === 'number' && (baseLat < 0 || baseLat > 2.0)) {
-            audioStable = false;
-            addLog(`❌ Suspicious baseLatency value: ${baseLat}`);
-          }
-          if (typeof outLat === 'number' && (outLat < 0 || outLat > 2.0)) {
-            audioStable = false;
-            addLog(`❌ Suspicious outputLatency value: ${outLat}`);
-          }
-          tempCtx.close();
+    try {
+      const extWindow = window as unknown as ExtendedWindow;
+      const AudioContextClass = window.AudioContext || extWindow.webkitAudioContext;
+      if (AudioContextClass) {
+        const tempCtx = new AudioContextClass();
+        const baseLat = tempCtx.baseLatency;
+        const outLat = tempCtx.outputLatency;
+        
+        if (typeof baseLat === 'number' && (baseLat < 0 || baseLat > 2.0)) {
+          audioStable = false;
+          const suspBaseLatTemplate = t?.suspicious_base_latency || '❌ Suspicious baseLatency value: {baseLat}';
+          addLog(suspBaseLatTemplate.replace('{baseLat}', String(baseLat)));
         }
-      } catch {
-        // Ignore initialization errors for context if not supported in the sandbox
+        if (typeof outLat === 'number' && (outLat < 0 || outLat > 2.0)) {
+          audioStable = false;
+          const suspOutLatTemplate = t?.suspicious_output_latency || '❌ Suspicious outputLatency value: {outLat}';
+          addLog(suspOutLatTemplate.replace('{outLat}', String(outLat)));
+        }
+        tempCtx.close();
       }
+    } catch {
+      // Ignore initialization errors for context if not supported in the sandbox
+    }
 
-      if (!audioStable) {
-        poisoned = true;
-        addLog(t?.audio_poisoned || '❌ Audio buffer or latency tampering detected (anti-fingerprinting active).');
-      } else {
-        addLog(t?.audio_stable || '✅ Audio APIs stable, no waveform or latency tampering detected.');
-      }
+    if (!audioStable) {
+      poisoned = true;
+      addLog(t?.audio_poisoned || '❌ Audio buffer or latency tampering detected (anti-fingerprinting active).');
+    } else {
+      addLog(t?.audio_stable || '✅ Audio APIs stable, no waveform or latency tampering detected.');
+    }
     
     setProgress(100);
     setStatus(poisoned ? 'poisoned' : 'clean');
-    addLog(poisoned ? (t?.poisoned_log) : (t?.clean_log));
+    addLog(poisoned ? (t?.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).') : (t?.clean_log || '✅ Environment appears clean.'));
   };
 
   return (

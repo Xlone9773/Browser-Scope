@@ -327,7 +327,18 @@ export const tools = {
     audio_stable: "✅ オーディオAPIは安定しており、遅延や波形の改ざんは検出されませんでした。",
     audio_hooked: "❌ コアオーディオAPI（遅延/レンダリング）に不審なProxy/Hookを検出しました。",
     poisoned_log: "⚠️ 環境はおそらくポイズニングされています（ノイズインジェクションを検出）。",
-    clean_log: "✅ 環境はクリーンなようです（ランダムノイズは検出されませんでした）。"
+    clean_log: "✅ 環境はクリーンなようです（ランダムノイズは検出されませんでした）。",
+    canvas_mismatch: "❌ 2D Canvas 繰り返しテストの {i} 回目でピクセル不一致を検出: {lastHash} != {hash}",
+    canvas_stable: "✅ 2D Canvas レンダリングは安定しています（ランダムノイズの注入はありません）。",
+    webgl_mismatch: "❌ WebGL 繰り返しテストの {i} 回目でピクセル不一致を検出: {lastHash} != {hash}",
+    webgl_stable: "✅ WebGL レンダリングは安定しています（ランダムノイズの注入はありません）。",
+    audio_mismatch: "❌ オーディオバッファの {i} 回目でハッシュ不一致を検出: {lastAudioHash} != {hash}",
+    suspicious_base_latency: "❌ 不審な baseLatency 値: {baseLat}",
+    suspicious_output_latency: "❌ 不審な outputLatency 値: {outLat}",
+    testing_viewport: "ビューポートと画面サイズの安定性を検証中...",
+    viewport_mismatch: "❌ ビューポート/画面サイズに微小な動的変動を検出:",
+    viewport_poisoned: "❌ ビューポートサイズの改ざんを検出（防指紋ブラウザ Cromite などの動的ノイズ/微小変動が有効）。",
+    viewport_stable: "✅ ビューポートと画面サイズは安定しており、動的なサイズノイズは検出されませんでした。"
   },
   ja3: {
     title: "JA3/JA4 TLS フィンガープリント",

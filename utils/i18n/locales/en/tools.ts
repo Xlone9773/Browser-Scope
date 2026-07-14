@@ -328,7 +328,18 @@ export const tools = {
     audio_stable: "✅ Audio APIs stable, no waveform or latency tampering detected.",
     audio_hooked: "❌ Suspicious Proxy/Hook detected on core Audio APIs (Latency/Rendering).",
     poisoned_log: "⚠️ Environment is likely poisoned (Noise Injection detected).",
-    clean_log: "✅ Environment appears clean."
+    clean_log: "✅ Environment appears clean.",
+    canvas_mismatch: "❌ 2D Canvas mismatch at iteration {i}: {lastHash} != {hash}",
+    canvas_stable: "✅ 2D Canvas appears stable (no random noise).",
+    webgl_mismatch: "❌ WebGL mismatch at iteration {i}: {lastHash} != {hash}",
+    webgl_stable: "✅ WebGL appears stable (no random noise).",
+    audio_mismatch: "❌ Audio buffer mismatch at iteration {i}: {lastAudioHash} != {hash}",
+    suspicious_base_latency: "❌ Suspicious baseLatency value: {baseLat}",
+    suspicious_output_latency: "❌ Suspicious outputLatency value: {outLat}",
+    testing_viewport: "Testing Viewport & Screen Dimensions stability...",
+    viewport_mismatch: "❌ Viewport dimension fluctuation detected:",
+    viewport_poisoned: "❌ Viewport/Screen dimension tampering detected (dynamic noise/micro-fluctuations active).",
+    viewport_stable: "✅ Viewport and screen dimensions are stable, no dynamic dimension noise detected."
   },
   ja3: {
     title: "JA3/JA4 Fingerprint",

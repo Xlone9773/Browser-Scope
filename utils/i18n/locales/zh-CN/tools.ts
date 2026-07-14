@@ -328,7 +328,18 @@ export const tools = {
     audio_stable: "✅ 音频接口数据稳定，未检测到延迟或波形干扰。",
     audio_hooked: "❌ 检测到音频 API (Latency/Render) 核心方法被 Proxy/Hook 劫持。",
     poisoned_log: "⚠️ 环境很可能已被投毒（检测到噪音注入）。",
-    clean_log: "✅ 环境似乎是干净的（未检测到随机噪音）。"
+    clean_log: "✅ 环境似乎是干净的（未检测到随机噪音）。",
+    canvas_mismatch: "❌ 2D Canvas 在第 {i} 次迭代中像素不匹配: {lastHash} != {hash}",
+    canvas_stable: "✅ 2D Canvas 渲染稳定 (无随机噪点注入)。",
+    webgl_mismatch: "❌ WebGL 在第 {i} 次迭代中像素不匹配: {lastHash} != {hash}",
+    webgl_stable: "✅ WebGL 渲染稳定 (无随机噪点注入)。",
+    audio_mismatch: "❌ 音频缓冲区在第 {i} 次迭代中哈希不匹配: {lastAudioHash} != {hash}",
+    suspicious_base_latency: "❌ 异常的 baseLatency 值: {baseLat}",
+    suspicious_output_latency: "❌ 异常的 outputLatency 值: {outLat}",
+    testing_viewport: "测试可用视图与屏幕尺寸稳定性...",
+    viewport_mismatch: "❌ 检测到可用视图/屏幕尺寸微细动态漂移:",
+    viewport_poisoned: "❌ 检测到可用视图尺寸被篡改 (存在动态随机尺寸干扰噪声，通常来自防指纹追踪浏览器如 Cromite)。",
+    viewport_stable: "✅ 可用视图与屏幕尺寸稳定，未检测到动态尺寸随机噪声。"
   },
   ja3: {
     title: "JA3/JA4 TLS 指纹",
