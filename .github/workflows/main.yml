@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Lint & Type-Check
+  install:
+    name: Install Dependencies (Job-Sharing)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -27,9 +27,41 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
-      - name: Install dependencies
+      - name: Cache Node Modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
+
+  lint:
+    name: Lint & Type-Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [install]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Restore Node Modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
 
       - name: Lint and Type-Check
         run: npm run lint
@@ -38,6 +70,7 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: [install]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,18 +80,23 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Restore Node Modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
 
       - name: Run Unit Tests
         run: npm run test
 
   build:
-    name: Build
+    name: Build & Asset Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [lint]  # 只在 lint 检查通过后开始构建，以节省 runner 资源
+    needs: [install, lint]  # 只在 install 准备好且 lint 检查通过后开始构建
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -68,12 +106,70 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Restore Node Modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
 
       - name: Build (vite / server bundle)
         run: npm run build
+
+      - name: Rolldown Bundle Analysis
+        run: |
+          node -e '
+            const fs = require("fs");
+            const path = require("path");
+            
+            function getFiles(dir, files_ = []) {
+              if (!fs.existsSync(dir)) return files_;
+              const files = fs.readdirSync(dir);
+              for (const i in files) {
+                const name = path.join(dir, files[i]);
+                if (fs.statSync(name).isDirectory()) {
+                  getFiles(name, files_);
+                } else {
+                  files_.push(name);
+                }
+              }
+              return files_;
+            }
+
+            if (!fs.existsSync("dist")) {
+              console.error("Error: dist directory not found");
+              process.exit(1);
+            }
+
+            console.log("\n=================== Rolldown Bundle Size Analysis ===================");
+            const allFiles = getFiles("dist");
+            let jsTotalSize = 0;
+            let cssTotalSize = 0;
+            const thresholdMB = 5.0;
+
+            allFiles.forEach(file => {
+              const stats = fs.statSync(file);
+              const sizeMB = stats.size / (1024 * 1024);
+              const ext = path.extname(file);
+              
+              if (ext === ".js") jsTotalSize += stats.size;
+              if (ext === ".css") cssTotalSize += stats.size;
+
+              console.log(`📄 ${path.relative("dist", file)}: ${sizeMB.toFixed(2)} MB (${stats.size.toLocaleString()} bytes)`);
+
+              if (ext === ".js" && sizeMB > thresholdMB) {
+                console.log(`\n⚠️  [WARNING] Bundle ${file} is ${sizeMB.toFixed(2)} MB, exceeding the ${thresholdMB} MB threshold!`);
+                console.log("::warning title=Vite 8 Single Bundle Size Warning::The client bundle is larger than 5MB. Consider analyzing imports or externalizing heavy dependencies if necessary.\n");
+              }
+            });
+
+            console.log("\n=================== Summary ===================");
+            console.log(`Total JavaScript size: ${(jsTotalSize / (1024 * 1024)).toFixed(2)} MB`);
+            console.log(`Total CSS size: ${(cssTotalSize / (1024 * 1024)).toFixed(2)} MB`);
+            console.log("=================================================================\n");
+          '
 
       - name: Audit dependencies (report)
         run: |
