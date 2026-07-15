@@ -214,7 +214,7 @@ export const useSpeedTest = () => {
         current: 0
     });
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-    const [speedHistory, setSpeedHistory] = useState<number[]>(new Array(HISTORY_LENGTH).fill(0));
+    const [speedHistory, setSpeedHistory] = useState<number[]>(Array.from({ length: HISTORY_LENGTH }, () => 0));
     const [progress, setProgress] = useState(0);
     
     const abortControllerRef = useRef<AbortController | null>(null);
@@ -270,7 +270,7 @@ export const useSpeedTest = () => {
         setTestState('ping');
         setMetrics({ ping: null, jitter: null, download: null, upload: null, current: 0 });
         setErrorMsg(null);
-        setSpeedHistory(new Array(HISTORY_LENGTH).fill(0));
+        setSpeedHistory(Array.from({ length: HISTORY_LENGTH }, () => 0));
         setProgress(0);
 
         abortControllerRef.current = new AbortController();

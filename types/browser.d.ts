@@ -1,5 +1,3 @@
-export {};
-
 export interface NavigatorUABrandVersion {
   readonly brand: string;
   readonly version: string;

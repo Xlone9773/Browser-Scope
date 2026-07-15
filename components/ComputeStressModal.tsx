@@ -27,7 +27,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const [gflops, setGflops] = useState(0);
   const [peakGflops, setPeakGflops] = useState(0);
   
-  const [graphData, setGraphData] = useState<number[]>(new Array(HISTORY_LENGTH).fill(0));
+  const [graphData, setGraphData] = useState<number[]>(Array.from({ length: HISTORY_LENGTH }, () => 0));
   const [viewMode, setViewMode] = useState<'graph' | 'visual'>('graph');
 
   // Refs for loop access to avoid dependency churn and memory leaks
@@ -225,7 +225,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       setIsRunning(true);
       setGflops(0);
       setPeakGflops(0);
-      setGraphData(new Array(HISTORY_LENGTH).fill(0));
+      setGraphData(Array.from({ length: HISTORY_LENGTH }, () => 0));
 
       const device = deviceRef.current;
       const pipeline = pipelineRef.current;

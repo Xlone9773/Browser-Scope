@@ -115,7 +115,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
       
       // Reset stats on start if trace data is empty or if restarting manually
       if (traceData.length === 0 || !isRunningTrace) {
-          setTraceData(new Array(60).fill(0).map(() => 0)); 
+          setTraceData(Array.from({ length: 60 }, () => 0)); 
           setTraceStats({ count: 0, lossCount: 0, min: Infinity, max: 0, avg: 0, jitter: 0, last: 0 });
       }
       
@@ -196,7 +196,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
       const timer = setTimeout(() => {
           if (selectedRegion) {
               stopTrace(); 
-              setTraceData(new Array(60).fill(0));
+              setTraceData(Array.from({ length: 60 }, () => 0));
               setTraceStats({ count: 0, lossCount: 0, min: Infinity, max: 0, avg: 0, jitter: 0, last: 0 });
           } else {
               stopTrace();
