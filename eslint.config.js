@@ -3,6 +3,7 @@ import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
+import oxlint from 'eslint-plugin-oxlint';
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -35,5 +36,6 @@ export default tseslint.config(
       'no-fallthrough': 'warn',
       'react-hooks/exhaustive-deps': 'warn'
     },
-  }
+  },
+  oxlint.configs['flat/recommended']
 );

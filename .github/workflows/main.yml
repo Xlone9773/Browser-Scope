@@ -14,37 +14,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  install:
-    name: Install Dependencies (Job-Sharing)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
-
-      - name: Cache Node Modules
-        id: cache-node-modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: npm ci
-
   lint:
     name: Lint & Type-Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [install]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,12 +29,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      - name: Restore Node Modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          fail-on-cache-miss: true
+      - name: Install Dependencies
+        run: npm ci
 
       - name: Lint and Type-Check
         run: npm run lint
@@ -70,7 +39,6 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [install]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -82,12 +50,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      - name: Restore Node Modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          fail-on-cache-miss: true
+      - name: Install Dependencies
+        run: npm ci
 
       - name: Run Unit Tests
         run: npm run test
@@ -96,7 +60,7 @@ jobs:
     name: Build & Asset Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [install, lint]  # 只在 install 准备好且 lint 检查通过后开始构建
+    needs: [lint]  # 只在 lint 检查通过后开始构建
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -108,12 +72,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      - name: Restore Node Modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          fail-on-cache-miss: true
+      - name: Install Dependencies
+        run: npm ci
 
       - name: Build (vite / server bundle)
         run: npm run build
