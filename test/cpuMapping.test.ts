@@ -17,6 +17,8 @@ describe('estimateCpuFromGpu', () => {
   });
 
   it('should detect Apple Silicon CPUs', () => {
+    expect(estimateCpuFromGpu('Apple M5 Ultra')).toBe('Apple M5 Ultra');
+    expect(estimateCpuFromGpu('Apple M5 Series')).toBe('Apple M5 Series');
     expect(estimateCpuFromGpu('Apple M4 Ultra')).toBe('Apple M4 Ultra');
     expect(estimateCpuFromGpu('Apple M4 Max')).toBe('Apple M4 Max');
     expect(estimateCpuFromGpu('Apple M4 Pro')).toBe('Apple M4 Pro');
@@ -31,6 +33,9 @@ describe('estimateCpuFromGpu', () => {
     expect(estimateCpuFromGpu('Adreno X1-85')).toBe('Snapdragon X Elite / Plus (X1E-85-100 / X1E-84-100 / X1E-80-100 / X1E-78-100 / X1P-64-100)');
     expect(estimateCpuFromGpu('Adreno X1-45')).toBe('Snapdragon X Plus (X1P-45-100 / X1P-42-100 / X1P-46-100)');
     expect(estimateCpuFromGpu('Adreno X1')).toBe('Snapdragon X Elite / Plus Series');
+    expect(estimateCpuFromGpu('Adreno 850')).toBe('Snapdragon 8 Elite Gen 6 Pro');
+    expect(estimateCpuFromGpu('Adreno 845')).toBe('Snapdragon 8 Elite Gen 6');
+    expect(estimateCpuFromGpu('Adreno 840')).toBe('Snapdragon 8 Elite Gen 5');
     expect(estimateCpuFromGpu('Adreno 830')).toBe('Snapdragon 8 Elite');
     expect(estimateCpuFromGpu('Adreno 750')).toBe('Snapdragon 8 Gen 3');
     expect(estimateCpuFromGpu('Adreno 660')).toBe('Snapdragon 888 / 888+');
@@ -73,9 +78,10 @@ describe('estimateCpuFromGpu', () => {
   });
 
   it('should detect Discrete Gaming GPUs and infer likely CPU generation', () => {
-    expect(estimateCpuFromGpu('NVIDIA GeForce RTX 5090')).toBe('Intel Core Ultra 200 or Ryzen 9000 with RTX 5090 (Blackwell)');
-    expect(estimateCpuFromGpu('NVIDIA GeForce RTX 4090')).toBe('Intel 13th/14th Gen or Ryzen 7000/9000 (Likely)');
-    expect(estimateCpuFromGpu('NVIDIA GeForce RTX 3080')).toBe('Intel 10th-12th Gen or Ryzen 5000 (Likely)');
+    expect(estimateCpuFromGpu('NVIDIA GeForce RTX 5090')).toBe('Intel Core Ultra 200 or Ryzen 7 9800X3D / Ryzen 9000 Series with RTX 5090 (Blackwell)');
+    expect(estimateCpuFromGpu('NVIDIA GeForce RTX 4090')).toBe('Intel 13th/14th Gen or Ryzen 7 9800X3D / Ryzen 7000 / 9000 (Likely)');
+    expect(estimateCpuFromGpu('NVIDIA GeForce RTX 3080')).toBe('Intel 10th-12th Gen or Ryzen 5000 / 5000X3D (Likely)');
+    expect(estimateCpuFromGpu('AMD Radeon RX 8800 XT')).toBe('AMD Ryzen 7 9800X3D / Ryzen 9000 or Intel Core Ultra 200 (Likely)');
     expect(estimateCpuFromGpu('AMD Radeon RX 7900 XTX')).toBe('AMD Ryzen 7000 or Intel 13th/14th Gen (Likely)');
   });
 

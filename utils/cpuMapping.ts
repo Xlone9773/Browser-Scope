@@ -14,6 +14,10 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('zink')) return 'Zink (OpenGL over Vulkan)';
 
   // --- Apple Silicon (Mac) ---
+  if (r.includes('apple m5 ultra')) return 'Apple M5 Ultra';
+  if (r.includes('apple m5 max')) return 'Apple M5 Max';
+  if (r.includes('apple m5 pro')) return 'Apple M5 Pro';
+  if (r.includes('apple m5')) return 'Apple M5 Series';
   if (r.includes('apple m4 ultra')) return 'Apple M4 Ultra';
   if (r.includes('apple m4 max')) return 'Apple M4 Max';
   if (r.includes('apple m4 pro')) return 'Apple M4 Pro';
@@ -62,6 +66,8 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('adreno 680')) return 'Snapdragon 8cx';
   
   // Mobile High-end
+  if (r.includes('adreno 850')) return 'Snapdragon 8 Elite Gen 6 Pro';
+  if (r.includes('adreno 845')) return 'Snapdragon 8 Elite Gen 6';
   if (r.includes('adreno 840')) return 'Snapdragon 8 Elite Gen 5';
   if (r.includes('adreno 830')) return 'Snapdragon 8 Elite';
   if (r.includes('adreno 810')) return 'Snapdragon 7s Gen 3';
@@ -246,13 +252,13 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
 
   // --- Discrete GPUs (Inference) ---
   // NVIDIA Desktop/Laptop
-  if (r.includes('rtx 5090')) return 'Intel Core Ultra 200 or Ryzen 9000 with RTX 5090 (Blackwell)';
-  if (r.includes('rtx 5080')) return 'Intel Core Ultra 200 or Ryzen 9000 with RTX 5080 (Blackwell)';
-  if (r.includes('rtx 5070')) return 'Intel Core Ultra 200 or Ryzen 9000 with RTX 5070 (Blackwell)';
-  if (r.includes('rtx 50')) return 'Intel Core Ultra 200 / 14th Gen or Ryzen 9000 (Likely)'; // 5090, 5080, 5070, etc.
-  if (r.includes('rtx 4090') || r.includes('rtx 4080')) return 'Intel 13th/14th Gen or Ryzen 7000/9000 (Likely)';
-  if (r.includes('rtx 40')) return 'Intel 13th/14th Gen or Ryzen 7000 (Likely)';
-  if (r.includes('rtx 30')) return 'Intel 10th-12th Gen or Ryzen 5000 (Likely)';
+  if (r.includes('rtx 5090')) return 'Intel Core Ultra 200 or Ryzen 7 9800X3D / Ryzen 9000 Series with RTX 5090 (Blackwell)';
+  if (r.includes('rtx 5080')) return 'Intel Core Ultra 200 or Ryzen 7 9800X3D / Ryzen 9000 Series with RTX 5080 (Blackwell)';
+  if (r.includes('rtx 5070')) return 'Intel Core Ultra 200 or Ryzen 7 9800X3D / Ryzen 9000 Series with RTX 5070 (Blackwell)';
+  if (r.includes('rtx 50')) return 'Intel Core Ultra 200 / 14th Gen or Ryzen 7 9800X3D / Ryzen 9000 Series (Likely)'; // 5090, 5080, 5070, etc.
+  if (r.includes('rtx 4090') || r.includes('rtx 4080')) return 'Intel 13th/14th Gen or Ryzen 7 9800X3D / Ryzen 7000 / 9000 (Likely)';
+  if (r.includes('rtx 40')) return 'Intel 13th/14th Gen or Ryzen 7000 / 9000 (Likely)';
+  if (r.includes('rtx 30')) return 'Intel 10th-12th Gen or Ryzen 5000 / 5000X3D (Likely)';
   if (r.includes('rtx 20') || r.includes('gtx 16')) return 'Intel 9th/10th Gen or Ryzen 3000/4000 (Likely)';
   if (r.includes('titan rtx') || r.includes('titan v') || r.includes('titan xp')) return 'HEDT / Workstation System';
   if (r.includes('gtx 10')) return 'Intel 6th-8th Gen or Ryzen 1000/2000 (Likely)';
@@ -262,7 +268,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('gtx 6')) return 'Intel 2nd-3rd Gen (Likely)';
 
   // AMD Discrete
-  if (r.includes('radeon rx 8')) return 'AMD Ryzen 9000 or Intel 14th/15th Gen (Likely)';
+  if (r.includes('radeon rx 8')) return 'AMD Ryzen 7 9800X3D / Ryzen 9000 or Intel Core Ultra 200 (Likely)';
   if (r.includes('radeon rx 7')) return 'AMD Ryzen 7000 or Intel 13th/14th Gen (Likely)';
   if (r.includes('radeon rx 6')) return 'AMD Ryzen 5000 or Intel 11th/12th Gen (Likely)';
   if (r.includes('radeon rx 5700') || r.includes('rx 5600') || r.includes('rx 5500')) return 'AMD Ryzen 3000 or Intel 9th/10th Gen (Likely)';
