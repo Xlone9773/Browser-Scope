@@ -14,9 +14,11 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('zink')) return 'Zink (OpenGL over Vulkan)';
 
   // --- Apple Silicon (Mac) ---
+  if (r.includes('apple m4 ultra')) return 'Apple M4 Ultra';
   if (r.includes('apple m4 max')) return 'Apple M4 Max';
   if (r.includes('apple m4 pro')) return 'Apple M4 Pro';
   if (r.includes('apple m4')) return 'Apple M4 Series';
+  if (r.includes('apple m3 ultra')) return 'Apple M3 Ultra';
   if (r.includes('apple m3 max')) return 'Apple M3 Max';
   if (r.includes('apple m3 pro')) return 'Apple M3 Pro';
   if (r.includes('apple m3')) return 'Apple M3 Series';
@@ -30,6 +32,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('apple m1')) return 'Apple M1 Series';
   
   // A-Series (Mobile)
+  if (r.includes('apple a18 pro')) return 'Apple A18 Pro';
   if (r.includes('apple a18')) return 'Apple A18 / A18 Pro';
   if (r.includes('apple a17')) return 'Apple A17 Pro';
   if (r.includes('apple a16')) return 'Apple A16 Bionic';
@@ -50,7 +53,9 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
 
   // --- Qualcomm Snapdragon (Adreno) ---
   // PC / Laptop / Tablet
-  if (r.includes('adreno x1')) return 'Snapdragon X Elite / Plus';
+  if (r.includes('adreno x1-85')) return 'Snapdragon X Elite / Plus (X1E-85-100 / X1E-84-100 / X1E-80-100 / X1E-78-100 / X1P-64-100)';
+  if (r.includes('adreno x1-45')) return 'Snapdragon X Plus (X1P-45-100 / X1P-42-100 / X1P-46-100)';
+  if (r.includes('adreno x1')) return 'Snapdragon X Elite / Plus Series';
   if (r.includes('adreno 8cx')) return 'Snapdragon 8cx Gen 3';
   if (r.includes('adreno 690')) return 'Snapdragon 8cx Gen 3'; 
   if (r.includes('adreno 685')) return 'Snapdragon 8cx Gen 2';
@@ -163,8 +168,11 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('powervr')) return 'MediaTek / Apple Legacy / Allwinner';
 
   // --- Intel Integrated Graphics ---
-  // Lunar Lake
+  // Lunar Lake / Arrow Lake
+  if (r.includes('arc 140v')) return 'Intel Core Ultra 7/9 Series 2 (Lunar Lake)';
+  if (r.includes('arc 130v')) return 'Intel Core Ultra 5 Series 2 (Lunar Lake)';
   if (r.includes('arc 140v') || r.includes('arc 130v')) return 'Intel Core Ultra Series 2 (Lunar Lake)';
+  if (r.includes('intel') && r.includes('graphics') && r.includes('arrow lake')) return 'Intel Core Ultra Series 2 Desktop (Arrow Lake)';
   
   // Meteor Lake
   if (r.includes('intel') && r.includes('arc') && !r.includes('pro') && !r.includes('a7') && !r.includes('a3')) return 'Intel Core Ultra (Meteor Lake)';
@@ -204,9 +212,13 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   // Generic Intel
   if (r.includes('intel') && r.includes('family')) return 'Intel Integrated Graphics';
 
-  // --- AMD Integrated Graphics ---
-  // RDNA 3.5
-  if (r.includes('radeon 890m') || r.includes('radeon 880m')) return 'AMD Ryzen AI 300 Series (Strix Point)';
+  // RDNA 3.5 / RDNA 4 Integrated / Strix Halo High-Performance APU
+  if (r.includes('radeon 8060s')) return 'AMD Ryzen AI Max+ 395 / Max 390 (Strix Halo - Radeon 8060S)';
+  if (r.includes('radeon 8050s')) return 'AMD Ryzen AI Max 385 (Strix Halo - Radeon 8050S)';
+  if (r.includes('radeon 890m')) return 'AMD Ryzen AI 9 HX 370 (Strix Point - Radeon 890M)';
+  if (r.includes('radeon 880m')) return 'AMD Ryzen AI 9 365 (Strix Point - Radeon 880M)';
+  if (r.includes('radeon 870m')) return 'AMD Ryzen AI PRO 300 Series (Kraken Point - Radeon 870M)';
+  if (r.includes('radeon 890m') || r.includes('radeon 880m') || r.includes('radeon 870m')) return 'AMD Ryzen AI 300 Series (Strix Point / Kraken Point)';
   
   // RDNA 3
   if (r.includes('radeon 780m')) return 'AMD Ryzen 7040/8040 Series (Phoenix/Hawk Point)';
@@ -234,7 +246,10 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
 
   // --- Discrete GPUs (Inference) ---
   // NVIDIA Desktop/Laptop
-  if (r.includes('rtx 50')) return 'Intel 14th/15th Gen or Ryzen 9000 (Likely)'; // 5090, 5080, 5070, etc.
+  if (r.includes('rtx 5090')) return 'Intel Core Ultra 200 or Ryzen 9000 with RTX 5090 (Blackwell)';
+  if (r.includes('rtx 5080')) return 'Intel Core Ultra 200 or Ryzen 9000 with RTX 5080 (Blackwell)';
+  if (r.includes('rtx 5070')) return 'Intel Core Ultra 200 or Ryzen 9000 with RTX 5070 (Blackwell)';
+  if (r.includes('rtx 50')) return 'Intel Core Ultra 200 / 14th Gen or Ryzen 9000 (Likely)'; // 5090, 5080, 5070, etc.
   if (r.includes('rtx 4090') || r.includes('rtx 4080')) return 'Intel 13th/14th Gen or Ryzen 7000/9000 (Likely)';
   if (r.includes('rtx 40')) return 'Intel 13th/14th Gen or Ryzen 7000 (Likely)';
   if (r.includes('rtx 30')) return 'Intel 10th-12th Gen or Ryzen 5000 (Likely)';
