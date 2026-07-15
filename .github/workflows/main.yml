@@ -29,8 +29,27 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
+      - name: Cache Node Modules
+        id: cache-npm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install Dependencies
+        if: steps.cache-npm.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Restore ESLint Cache
+        uses: actions/cache@v4
+        with:
+          path: .eslintcache
+          key: ${{ runner.os }}-eslint-${{ hashFiles('**/package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-${{ hashFiles('**/package-lock.json') }}-
+            ${{ runner.os }}-eslint-
 
       - name: Lint and Type-Check
         run: npm run lint
@@ -50,8 +69,26 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
+      - name: Cache Node Modules
+        id: cache-npm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install Dependencies
+        if: steps.cache-npm.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Restore Vitest Cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/vitest
+          key: ${{ runner.os }}-vitest-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-vitest-
 
       - name: Run Unit Tests
         run: npm run test
@@ -72,7 +109,17 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
+      - name: Cache Node Modules
+        id: cache-npm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install Dependencies
+        if: steps.cache-npm.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Build (vite / server bundle)
