@@ -110,7 +110,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
         osc.stop();
         osc.disconnect();
         gain.disconnect();
-      } catch (_e) {}
+      } catch {}
     });
     activeOscillatorsRef.current.clear();
     setActiveSpeakerId(null);
@@ -186,7 +186,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
     if (mergerNodeRef.current) {
       try {
         mergerNodeRef.current.disconnect();
-      } catch (_e) {}
+      } catch {}
     }
 
     // Set destination channel parameters
@@ -272,7 +272,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
         active.osc.stop();
         active.osc.disconnect();
         active.gain.disconnect();
-      } catch (_e) {}
+      } catch {}
       activeOscillatorsRef.current.delete(speakerId);
     }
   };

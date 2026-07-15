@@ -249,7 +249,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                           ctx.fill();
                       });
                   });
-              } catch (_e) {
+              } catch {
                   // console.debug('Detection failed', e);
               }
           }

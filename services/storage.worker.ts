@@ -51,11 +51,11 @@ async function cleanup(filename: string, tgt: string) {
                             await root.removeEntry(name, { recursive: true }).catch(() => {});
                         }
                     }
-                } catch(_e) {
+                } catch {
                     // Fallback if async iterator fails
                     try {
                         await root.removeEntry(filename).catch(()=> {});
-                    } catch(_err) {}
+                    } catch {}
                 }
             }
         }
@@ -153,7 +153,7 @@ self.onmessage = async function(e: MessageEvent) {
                 try {
                     writable = await opfsHandle.createSyncAccessHandle();
                     isSync = true;
-                } catch(_e) {
+                } catch {
                     writable = await handle.createWritable();
                 }
             } else {

@@ -49,7 +49,7 @@ export const detectExtensions = (): DetectedExtension[] => {
     let detected = false;
     try {
       detected = test();
-    } catch(_e) {}
+    } catch {}
     extensions.push({ id, name, description, category, detected });
   };
 

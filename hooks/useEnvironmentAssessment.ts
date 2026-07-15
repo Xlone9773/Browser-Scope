@@ -204,7 +204,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                 if (!tz || tz === 'UTC') {
                     addAnomaly('timezone_utc', 'Suspicious UTC timezone (often used in headless)', 'suspicious', 'normalcy', 10);
                 }
-            } catch (_e) {
+            } catch {
                 // Ignore
             }
 
@@ -224,7 +224,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                         addAnomaly('permission_mismatch', 'Permissions API contradicts Notification API', 'danger', 'trust', 25);
                     }
                 }
-            } catch (_e) {
+            } catch {
                 // Ignore if query fails
             }
 

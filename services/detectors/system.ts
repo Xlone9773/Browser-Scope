@@ -72,7 +72,7 @@ export const getWebRTCIP = async (): Promise<string> => {
             };
             setTimeout(() => { pc.close(); resolve('Timeout/Hidden'); }, 200);
             pc.createOffer().then(sdp => pc.setLocalDescription(sdp));
-        } catch(_e) { resolve('Not Supported'); }
+        } catch { resolve('Not Supported'); }
     });
 };
 

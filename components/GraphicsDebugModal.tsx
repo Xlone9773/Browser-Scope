@@ -73,7 +73,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                     const val = ctx.getParameter(ctx[p]);
                     // Format arrays
                     glData[p] = (val && val.length !== undefined && typeof val !== 'string') ? `[${val[0]}, ${val[1]}]` : String(val);
-                } catch(_e) {
+                } catch {
                     glData[p] = 'Error';
                 }
             });
@@ -118,7 +118,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
           } else {
               gpuData['error'] = t.not_supported;
           }
-      } catch(_e) {
+      } catch {
           gpuData['error'] = 'WebGPU Access Denied or Error';
       }
       setWebgpuInfo(gpuData);

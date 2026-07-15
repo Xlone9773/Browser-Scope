@@ -116,7 +116,7 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
       if (typeof res === "object" && res !== null) {
         try {
           output = JSON.stringify(res, null, 2);
-        } catch (_e) {
+        } catch {
           output = Object.prototype.toString.call(res);
         }
       }

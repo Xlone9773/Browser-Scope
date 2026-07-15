@@ -100,7 +100,7 @@ export const getAudioContextInfo = () => {
         const channels = ctx.destination.maxChannelCount || 2;
         ctx.close();
         return { rate: formatHertz(rate), latency: latencyText, channels };
-    } catch(_e) { return { rate: 'Error', latency: 'Error', channels: 'Error' }; }
+    } catch { return { rate: 'Error', latency: 'Error', channels: 'Error' }; }
 };
 
 export const getSpeechVoicesCount = (): Promise<number> => {

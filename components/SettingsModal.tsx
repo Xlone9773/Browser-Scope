@@ -129,7 +129,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       if (saved && ['general', 'appearance', 'storage', 'res', 'dev', 'mod', 'ver'].includes(saved)) {
         return saved as 'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver';
       }
-    } catch (_e) {
+    } catch {
       // Ignored
     }
     return 'appearance';
@@ -139,7 +139,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       setActiveTab(tab);
       try {
          sessionStorage.setItem('browserscope_settings_last_tab', tab);
-      } catch(_e) {}
+      } catch {}
   };
 
   // Access structured settings

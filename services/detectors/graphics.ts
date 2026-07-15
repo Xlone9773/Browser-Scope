@@ -82,7 +82,7 @@ export const getShaderPrecisionFormat = (): { vertexHigh: string, fragmentHigh: 
             fragmentHigh: simple(fHighRaw)
         };
 
-    } catch(_e) {
+    } catch {
         return undefined;
     }
 }
@@ -126,7 +126,7 @@ export const getCanvasFingerprint = (): { hash: string; dataUri: string } => {
     
     const b64 = dataUri.replace("data:image/png;base64,", "");
     return { hash: simpleHash(b64), dataUri: dataUri };
-  } catch (_err) { 
+  } catch { 
     return { hash: 'Error', dataUri: '' }; 
   }
 };
@@ -154,5 +154,5 @@ export const getWebGLFingerprint = (): string => {
         const pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
         gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
         return simpleHash(pixels.join(''));
-    } catch(_e) { return 'Error'; }
+    } catch { return 'Error'; }
 };

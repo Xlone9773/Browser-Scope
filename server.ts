@@ -153,7 +153,7 @@ async function startServer() {
       });
       client.close();
       res.json({ supported: true });
-    } catch (_e) {
+    } catch {
       res.json({ supported: false });
     }
   });
@@ -291,7 +291,7 @@ async function startServer() {
               if (geoData && geoData.success && geoData.country_code) {
                 clientLoc = geoData.country_code;
               }
-            } catch (_e) { /* ignore */ }
+            } catch { /* ignore */ }
 
             const mappedLines = lines.map(line => {
               if (line.startsWith('ip=')) {
@@ -322,10 +322,10 @@ async function startServer() {
            
            const client = dgram.createSocket('udp4');
            client.on('error', () => {
-               try { client.close(); } catch (_e) { /* ignore */ }
+               try { client.close(); } catch { /* ignore */ }
            });
            client.send(Buffer.from('PING'), 80, hostname, (_err) => {
-               try { client.close(); } catch (_e) { /* ignore */ }
+               try { client.close(); } catch { /* ignore */ }
            });
            
            const response = await fetch(url, {

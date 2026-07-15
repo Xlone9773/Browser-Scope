@@ -169,7 +169,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
               const dataUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
               window.open(dataUri, '_blank');
               setExportStatus(copied ? "Copied to clipboard" : "Opened in new tab");
-          } catch(_err) {
+          } catch {
               setExportStatus(copied ? "Copied to clipboard" : "Export Failed");
           }
       }
