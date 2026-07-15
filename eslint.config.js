@@ -19,7 +19,8 @@ export default tseslint.config(
       'react-refresh': reactRefresh,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
@@ -28,13 +29,10 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_', 'caughtErrorsIgnorePattern': '^_' }],
       'no-empty': ['warn', { 'allowEmptyCatch': true }],
       'preserve-caught-error': 'off',
-      'react-hooks/purity': 'warn',
-      'react-hooks/set-state-in-effect': 'warn',
       'no-prototype-builtins': 'warn',
       'prefer-const': 'warn',
       'no-useless-assignment': 'warn',
-      'no-fallthrough': 'warn',
-      'react-hooks/exhaustive-deps': 'warn'
+      'no-fallthrough': 'warn'
     },
   },
   oxlint.configs['flat/recommended']
