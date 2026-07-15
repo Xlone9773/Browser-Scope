@@ -181,7 +181,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('intel') && r.includes('graphics') && r.includes('arrow lake')) return 'Intel Core Ultra Series 2 Desktop (Arrow Lake)';
   
   // Meteor Lake
-  if (r.includes('intel') && r.includes('arc') && !r.includes('pro') && !r.includes('a7') && !r.includes('a3')) return 'Intel Core Ultra (Meteor Lake)';
+  if (r.includes('intel') && r.includes('arc') && !r.includes('pro') && !r.includes('a7') && !r.includes('a5') && !r.includes('a3') && !r.includes('arc b')) return 'Intel Core Ultra (Meteor Lake)';
   if (r.includes('intel arc graphics')) return 'Intel Core Ultra (Meteor Lake) / Arc Discrete';
 
   // Iris Xe / Plus
@@ -206,10 +206,10 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('hd graphics 530')) return 'Intel Core 6th Gen';
   if (r.includes('hd graphics 520')) return 'Intel Core 6th Gen (Mobile)';
   if (r.includes('hd graphics 515') || r.includes('hd graphics 510')) return 'Intel Core 6th Gen (Low power)';
-  if (r.includes('hd graphics 505') || r.includes('hd graphics 500')) return 'Intel Pentium/Celeron (Apollo Lake)';
   if (r.includes('hd graphics 6000') || r.includes('hd graphics 6100')) return 'Intel Core 5th Gen (Broadwell)';
   if (r.includes('hd graphics 5500') || r.includes('hd graphics 5300')) return 'Intel Core 5th Gen (Broadwell)';
   if (r.includes('hd graphics 5000') || r.includes('hd graphics 4600') || r.includes('hd graphics 4400')) return 'Intel Core 4th Gen (Haswell)';
+  if (r.includes('hd graphics 505') || r.includes('hd graphics 500')) return 'Intel Pentium/Celeron (Apollo Lake)';
   if (r.includes('hd graphics 4000')) return 'Intel Core 3rd Gen (Ivy Bridge)';
   if (r.includes('hd graphics 3000')) return 'Intel Core 2nd Gen (Sandy Bridge)';
   if (r.includes('hd graphics 2000')) return 'Intel Core 2nd Gen (Sandy Bridge)';
