@@ -52,7 +52,14 @@ jobs:
             ${{ runner.os }}-eslint-
 
       - name: Lint and Type-Check
-        run: npm run lint
+        id: lint_step
+        run: |
+          npx eslint . --format=json --output-file=eslint-report.json || true
+          npx tsc --noEmit > tsc-output.log 2>&1 || true
+
+      - name: Generate CI Summary
+        if: always()
+        run: npx tsx scripts/ci-summary.ts --mode=lint --status=${{ steps.lint_step.outcome }}
 
   test:
     name: Unit Tests
@@ -91,7 +98,12 @@ jobs:
             ${{ runner.os }}-vitest-
 
       - name: Run Unit Tests
-        run: npm run test
+        id: test_step
+        run: npx vitest run --reporter=default --reporter=json --outputFile=test-results.json
+
+      - name: Generate CI Summary
+        if: always()
+        run: npx tsx scripts/ci-summary.ts --mode=test --status=${{ steps.test_step.outcome }}
 
   build:
     name: Build & Asset Analysis
@@ -123,65 +135,14 @@ jobs:
         run: npm ci
 
       - name: Build (vite / server bundle)
-        run: npm run build
+        id: build_step
+        run: npm run build > build-output.log 2>&1
 
-      - name: Rolldown Bundle Analysis
+      - name: Generate CI Summary
+        if: always()
         run: |
-          node -e '
-            const fs = require("fs");
-            const path = require("path");
-            
-            function getFiles(dir, files_ = []) {
-              if (!fs.existsSync(dir)) return files_;
-              const files = fs.readdirSync(dir);
-              for (const i in files) {
-                const name = path.join(dir, files[i]);
-                if (fs.statSync(name).isDirectory()) {
-                  getFiles(name, files_);
-                } else {
-                  files_.push(name);
-                }
-              }
-              return files_;
-            }
-
-            if (!fs.existsSync("dist")) {
-              console.error("Error: dist directory not found");
-              process.exit(1);
-            }
-
-            console.log("\n=================== Rolldown Bundle Size Analysis ===================");
-            const allFiles = getFiles("dist");
-            let jsTotalSize = 0;
-            let cssTotalSize = 0;
-            const thresholdMB = 5.0;
-
-            allFiles.forEach(file => {
-              const stats = fs.statSync(file);
-              const sizeMB = stats.size / (1024 * 1024);
-              const ext = path.extname(file);
-              
-              if (ext === ".js") jsTotalSize += stats.size;
-              if (ext === ".css") cssTotalSize += stats.size;
-
-              console.log(`📄 ${path.relative("dist", file)}: ${sizeMB.toFixed(2)} MB (${stats.size.toLocaleString()} bytes)`);
-
-              if (ext === ".js" && sizeMB > thresholdMB) {
-                console.log(`\n⚠️  [WARNING] Bundle ${file} is ${sizeMB.toFixed(2)} MB, exceeding the ${thresholdMB} MB threshold!`);
-                console.log("::warning title=Vite 8 Single Bundle Size Warning::The client bundle is larger than 5MB. Consider analyzing imports or externalizing heavy dependencies if necessary.\n");
-              }
-            });
-
-            console.log("\n=================== Summary ===================");
-            console.log(`Total JavaScript size: ${(jsTotalSize / (1024 * 1024)).toFixed(2)} MB`);
-            console.log(`Total CSS size: ${(cssTotalSize / (1024 * 1024)).toFixed(2)} MB`);
-            console.log("=================================================================\n");
-          '
-
-      - name: Audit dependencies (report)
-        run: |
-          echo "Running npm audit (non-failing, prints report)."
-          npm audit --audit-level=high || true
+          npm audit --json > audit-report.json || true
+          npx tsx scripts/ci-summary.ts --mode=build --status=${{ steps.build_step.outcome }}
 
       - name: Upload build (artifact)
         if: success()

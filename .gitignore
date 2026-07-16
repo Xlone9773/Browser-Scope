@@ -30,3 +30,11 @@ dist-ssr
 # ESLint cache
 .eslintcache
 
+# CI Reports & Logs
+test-results.json
+eslint-report.json
+tsc-output.log
+build-output.log
+audit-report.json
+
+
