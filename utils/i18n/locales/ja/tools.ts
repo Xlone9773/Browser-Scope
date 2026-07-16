@@ -86,6 +86,7 @@ export const tools = {
   },
   webglTool: {
     no_results: "一致する拡張機能はありません：",
+    supported_status: "サポート済み",
     descriptions: {
         "EXT_texture_filter_anisotropic": "斜めから見た面のテクスチャ品質を向上させます。",
         "WEBGL_debug_renderer_info": "グラフィックハードウェアとドライバ情報を公開します。",

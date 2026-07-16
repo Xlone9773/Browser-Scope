@@ -42,6 +42,16 @@ Copyright (c) 2026 BrowserScope Contributors
     },
     updates: [
         {
+            version: "2.1.0",
+            title: "カラーアップデート",
+            date: "2026-05-04",
+            changes: [
+                "🎨 カスタムテーマカラーセレクターを追加 (設定 -> 一般)",
+                "✨ カスタム入場アニメーションのスタイル設定を追加",
+                "🐛 システムコマンド呼び出しのバグを修正"
+            ]
+        },
+        {
             version: "2.0.0",
             date: "2026-05-03",
             changes: [

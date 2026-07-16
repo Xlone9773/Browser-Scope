@@ -86,6 +86,7 @@ export const tools = {
   },
   webglTool: {
     no_results: "Нет расширений по запросу: ",
+    supported_status: "Поддерживается",
     descriptions: {
         "EXT_texture_filter_anisotropic": "Улучшает качество текстур на поверхностях под косым углом.",
         "WEBGL_debug_renderer_info": "Раскрывает информацию о графическом оборудовании и драйверах.",
