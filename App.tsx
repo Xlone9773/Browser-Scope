@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { Monitor, Smartphone, ShieldAlert, Cpu } from "lucide-react";
 import { exportAsJson, exportAsPdf, exportAsImage } from "./services/exporter";
-import { loadLocale, Translation, en } from "./utils/i18n/index";
+import { loadLocale, Translation } from "./utils/i18n/index";
 import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 import { useModalManager } from "./hooks/useModalManager";
 import { useCardIndex } from "./hooks/useCardIndex";
@@ -97,7 +97,7 @@ const App: React.FC = () => {
     };
   }, []);
 
-  const [t, setT] = useState<Translation>(en);
+  const [t, setT] = useState<Translation>({} as Translation);
 
   useEffect(() => {
     let active = true;
@@ -275,7 +275,7 @@ const App: React.FC = () => {
   };
 
   const { data, showLoader, fadeLoader, loadingText, fetchData, handleAiRetest } = useAppData(
-    t.common.loading_steps || [t.common.loading]
+    t.common?.loading_steps || [t.common?.loading || "Loading"]
   );
 
   const browserData = data as BrowserData;
@@ -740,6 +740,21 @@ const App: React.FC = () => {
     visibility,
   });
 
+  if (!t || Object.keys(t).length === 0) {
+    return (
+      <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 flex items-center justify-center relative">
+        <LoadingOverlay
+          showLoader={true}
+          fadeLoader={false}
+          loadingText={lang === "zh-CN" || lang === "zh-TW" || lang === "zh-HK" ? "加载语言包中..." : "Loading language..."}
+          isExportingPdf={false}
+          isExportingImage={false}
+          lang={lang}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 text-slate-800 dark:text-slate-100 scrollbar-hide relative">
       <LoadingOverlay
@@ -925,7 +940,7 @@ const App: React.FC = () => {
         ) : null}
 
         <Footer
-          text={t.meta.footer}
+          text={t?.meta?.footer}
           onOpenAttributions={() => open("attributions")}
           label={t.attributionsModal?.title || "Attributions"}
         />

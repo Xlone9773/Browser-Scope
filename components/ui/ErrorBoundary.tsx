@@ -204,7 +204,21 @@ ${errorInfo?.componentStack}`;
   }
 
   private getTranslation() {
-    return activeTranslations.common.error_boundary;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (activeTranslations as any)?.common?.error_boundary || {
+      title: "Component Crashed",
+      message: "An unexpected error occurred rendering this module.",
+      retry: "Try Again",
+      unknown_component: "Unknown Component",
+      component_in: "in component",
+      analysis_title: "Error Analysis",
+      analysis_tip: "Tip:",
+      analysis_unexpected: "An unexpected runtime exception was captured.",
+      analysis_react_lifecycle: "A rendering loop or React lifecycle hook failed.",
+      analysis_invalid_hook: "React Hooks rules were violated.",
+      analysis_network: "A resource or network request failed.",
+      analysis_json: "A syntax error occurred while parsing data.",
+    };
   }
 
   public render() {

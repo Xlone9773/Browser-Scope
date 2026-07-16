@@ -1,10 +1,6 @@
-
-import { en } from './en';
 import { Translation, Language } from './types';
 
 export type { Language, Translation };
-
-export { en };
 
 export const languageNames: Record<Language, string> = {
   en: 'English',
@@ -26,7 +22,7 @@ export interface TranslationModule {
 }
 
 export const localeLoaders: Record<Language, () => Promise<TranslationModule>> = {
-  en: () => Promise.resolve({ en }),
+  en: () => import('./en'),
   'zh-CN': () => import('./zh-CN'),
   'zh-TW': () => import('./zh-TW'),
   'zh-HK': () => import('./zh-HK'),
@@ -34,22 +30,14 @@ export const localeLoaders: Record<Language, () => Promise<TranslationModule>> =
   ru: () => import('./ru'),
 };
 
-export let activeTranslations: Translation = en;
+export let activeTranslations: Translation | null = null;
 
 export function setActiveTranslations(t: Translation) {
   activeTranslations = t;
 }
 
 export const loadLocale = async (lang: Language): Promise<Translation> => {
-  if (lang === 'en') {
-    activeTranslations = en;
-    return en;
-  }
-  const loader = localeLoaders[lang];
-  if (!loader) {
-    activeTranslations = en;
-    return en;
-  }
+  const loader = localeLoaders[lang] || localeLoaders['en'];
   try {
     const module = await loader();
     const keyMap: Record<Language, keyof TranslationModule> = {
@@ -60,13 +48,43 @@ export const loadLocale = async (lang: Language): Promise<Translation> => {
       ja: 'ja',
       ru: 'ru',
     };
-    const key = keyMap[lang];
-    const loaded = module[key] || module.default || en;
+    const key = keyMap[lang] || 'en';
+    const loaded = module[key] || module.default;
+    if (!loaded) {
+      throw new Error(`Locale key ${key} not found in module`);
+    }
     activeTranslations = loaded;
     return loaded;
   } catch (error) {
     console.error(`Failed to load translation locale for ${lang}:`, error);
-    return en;
+    // Fallback dynamically to English ('en') if preferred language fails
+    try {
+      if (lang !== 'en') {
+        const enModule = await localeLoaders['en']();
+        const loaded = enModule['en'] || enModule.default;
+        if (loaded) {
+          activeTranslations = loaded;
+          return loaded;
+        }
+      }
+    } catch (fallbackError) {
+      console.error("Critical fallback to English failed:", fallbackError);
+    }
+    
+    // Safety dummy structure to prevent application crash during emergency failures
+    const dummy: Translation = {
+      meta: { title: "BrowserScope", subtitle: "", footer: "BrowserScope" },
+      common: {
+        error_boundary: {
+          title: "Error",
+          message: "An unexpected error occurred.",
+          retry: "Retry",
+          unknown_component: "Unknown Component",
+          component_in: "Component in"
+        }
+      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
+    return dummy;
   }
 };
-
