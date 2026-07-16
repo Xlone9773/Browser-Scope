@@ -1,6 +1,8 @@
 import { Translation, Language } from './types';
+import { en } from './en';
 
 export type { Language, Translation };
+export { en };
 
 export const languageNames: Record<Language, string> = {
   en: 'English',
@@ -71,20 +73,8 @@ export const loadLocale = async (lang: Language): Promise<Translation> => {
       console.error("Critical fallback to English failed:", fallbackError);
     }
     
-    // Safety dummy structure to prevent application crash during emergency failures
-    const dummy: Translation = {
-      meta: { title: "BrowserScope", subtitle: "", footer: "BrowserScope" },
-      common: {
-        error_boundary: {
-          title: "Error",
-          message: "An unexpected error occurred.",
-          retry: "Retry",
-          unknown_component: "Unknown Component",
-          component_in: "Component in"
-        }
-      }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any;
-    return dummy;
+    // Safety fallback to statically imported English to prevent application crash
+    activeTranslations = en;
+    return en;
   }
 };
