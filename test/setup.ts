@@ -76,6 +76,21 @@ if (typeof window !== "undefined") {
 
   // Mock fetch
   window.fetch = vi.fn();
+
+  // Mock CSS.supports
+  if (typeof window.CSS === "undefined") {
+    Object.defineProperty(window, "CSS", {
+      writable: true,
+      value: {
+        supports: vi.fn().mockReturnValue(false),
+      },
+    });
+  } else if (typeof window.CSS.supports === "undefined") {
+    Object.defineProperty(window.CSS, "supports", {
+      writable: true,
+      value: vi.fn().mockReturnValue(false),
+    });
+  }
 }
 
 // Suppress known non-critical external errors in tests

@@ -71,7 +71,7 @@ export const getMediaSupport = (): { video: CodecInfo[], audio: CodecInfo[], ima
       const canvas = document.createElement('canvas');
       return imageTypes.map(item => {
           const data = canvas.toDataURL(item.type);
-          const supported = data.indexOf(`data:${item.type}`) === 0;
+          const supported = data ? data.indexOf(`data:${item.type}`) === 0 : false;
           return { name: item.name, supported };
       });
   }
