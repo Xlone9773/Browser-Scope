@@ -1,7 +1,22 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { translations, languageNames, Language } from '../utils/i18n/index.js';
+import { en } from '../utils/i18n/en.js';
+import { zhCN } from '../utils/i18n/zh-CN.js';
+import { zhTW } from '../utils/i18n/zh-TW.js';
+import { zhHK } from '../utils/i18n/zh-HK.js';
+import { ja } from '../utils/i18n/ja.js';
+import { ru } from '../utils/i18n/ru.js';
+import { languageNames, Language } from '../utils/i18n/index.js';
+
+const translations = {
+  en,
+  'zh-CN': zhCN,
+  'zh-TW': zhTW,
+  'zh-HK': zhHK,
+  ja,
+  ru
+};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

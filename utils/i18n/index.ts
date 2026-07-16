@@ -1,22 +1,10 @@
 
 import { en } from './en';
-import { zhCN } from './zh-CN';
-import { zhTW } from './zh-TW';
-import { zhHK } from './zh-HK';
-import { ja } from './ja';
-import { ru } from './ru';
 import { Translation, Language } from './types';
 
-export type { Language };
+export type { Language, Translation };
 
-export const translations = {
-  en,
-  'zh-CN': zhCN,
-  'zh-TW': zhTW,
-  'zh-HK': zhHK,
-  ja,
-  ru
-} as unknown as Record<Language, Translation>;
+export { en };
 
 export const languageNames: Record<Language, string> = {
   en: 'English',
@@ -26,3 +14,59 @@ export const languageNames: Record<Language, string> = {
   ja: '日本語',
   ru: 'Русский'
 };
+
+export interface TranslationModule {
+  en?: Translation;
+  zhCN?: Translation;
+  zhTW?: Translation;
+  zhHK?: Translation;
+  ja?: Translation;
+  ru?: Translation;
+  default?: Translation;
+}
+
+export const localeLoaders: Record<Language, () => Promise<TranslationModule>> = {
+  en: () => Promise.resolve({ en }),
+  'zh-CN': () => import('./zh-CN'),
+  'zh-TW': () => import('./zh-TW'),
+  'zh-HK': () => import('./zh-HK'),
+  ja: () => import('./ja'),
+  ru: () => import('./ru'),
+};
+
+export let activeTranslations: Translation = en;
+
+export function setActiveTranslations(t: Translation) {
+  activeTranslations = t;
+}
+
+export const loadLocale = async (lang: Language): Promise<Translation> => {
+  if (lang === 'en') {
+    activeTranslations = en;
+    return en;
+  }
+  const loader = localeLoaders[lang];
+  if (!loader) {
+    activeTranslations = en;
+    return en;
+  }
+  try {
+    const module = await loader();
+    const keyMap: Record<Language, keyof TranslationModule> = {
+      en: 'en',
+      'zh-CN': 'zhCN',
+      'zh-TW': 'zhTW',
+      'zh-HK': 'zhHK',
+      ja: 'ja',
+      ru: 'ru',
+    };
+    const key = keyMap[lang];
+    const loaded = module[key] || module.default || en;
+    activeTranslations = loaded;
+    return loaded;
+  } catch (error) {
+    console.error(`Failed to load translation locale for ${lang}:`, error);
+    return en;
+  }
+};
+

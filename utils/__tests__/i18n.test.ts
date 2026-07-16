@@ -1,6 +1,20 @@
 import { describe, it, expect } from 'vitest';
-import { translations } from '../i18n';
-import type { Language } from '../i18n/types';
+import { en } from '../i18n/en';
+import { zhCN } from '../i18n/zh-CN';
+import { zhTW } from '../i18n/zh-TW';
+import { zhHK } from '../i18n/zh-HK';
+import { ja } from '../i18n/ja';
+import { ru } from '../i18n/ru';
+import type { Language, Translation } from '../i18n/types';
+
+const translations: Record<Language, Translation> = {
+  en,
+  'zh-CN': zhCN,
+  'zh-TW': zhTW,
+  'zh-HK': zhHK,
+  ja,
+  ru
+};
 
 // Helper to recursively get all paths in an object
 const getAllKeys = (obj: Record<string, unknown> | unknown, prefix = ''): string[] => {

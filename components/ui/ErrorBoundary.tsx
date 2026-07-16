@@ -11,8 +11,7 @@ import {
   Home,
   Monitor,
 } from "lucide-react";
-import { translations } from "../../utils/i18n";
-import { Language } from "../../utils/i18n/types";
+import { activeTranslations } from "../../utils/i18n";
 import { loggerStore } from "../../utils/loggerStore";
 
 interface Props {
@@ -205,24 +204,7 @@ ${errorInfo?.componentStack}`;
   }
 
   private getTranslation() {
-    const defaultLang = "en";
-    let lang = defaultLang;
-    try {
-      const stored = localStorage.getItem("language");
-      if (stored && translations[stored as Language]) {
-        lang = stored;
-      }
-    } catch { /* ignore */ }
-
-    // Fallback to english if not found
-    return (
-      (translations[lang as Language] as any /* eslint-disable-line @typescript-eslint/no-explicit-any */)?.common?.error_boundary || {
-        title: "Component Crashed",
-        message: "An unexpected error occurred rendering this module.",
-        retry: "Try Again",
-        any_component: "Unknown Component",
-      }
-    );
+    return activeTranslations.common.error_boundary;
   }
 
   public render() {
@@ -246,7 +228,7 @@ ${errorInfo?.componentStack}`;
                   {t.title}{" "}
                   <span className="text-red-500 font-normal text-sm opacity-70">
                     {t.component_in}{" "}
-                    {this.props.name || t.any_component}
+                    {this.props.name || t.unknown_component}
                   </span>
                 </h3>
                 <p className="text-sm text-red-600 dark:text-red-400 font-medium">

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { Monitor, Smartphone, ShieldAlert, Cpu } from "lucide-react";
 import { exportAsJson, exportAsPdf, exportAsImage } from "./services/exporter";
-import { translations } from "./utils/i18n/index";
+import { loadLocale, Translation, en } from "./utils/i18n/index";
 import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 import { useModalManager } from "./hooks/useModalManager";
 import { useCardIndex } from "./hooks/useCardIndex";
@@ -97,7 +97,22 @@ const App: React.FC = () => {
     };
   }, []);
 
-  const t = translations[lang];
+  const [t, setT] = useState<Translation>(en);
+  const [isI18nLoading, setIsI18nLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    setIsI18nLoading(true);
+    loadLocale(lang).then((loaded) => {
+      if (active) {
+        setT(loaded);
+        setIsI18nLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [lang]);
 
   const swReg = useRef<ServiceWorkerRegistration | undefined>(undefined);
   const [lastCheckTime, setLastCheckTime] = useState<number>(() => Date.now());
@@ -666,13 +681,14 @@ const App: React.FC = () => {
   ];
 
   useEffect(() => {
+    if (isI18nLoading) return;
     fetchData();
     checkPermissionStatus("notifications", "notifications");
     checkPermissionStatus("geolocation", "geolocation");
     checkPermissionStatus("camera", "camera");
     checkPermissionStatus("microphone", "microphone");
     checkPermissionStatus("midi", "midi");
-  }, [fetchData, checkPermissionStatus]);
+  }, [isI18nLoading, fetchData, checkPermissionStatus]);
 
   const handleExportJSON = () => {
     if (!data) return;
