@@ -23,13 +23,12 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
       {/* Loading Overlay */}
       {showLoader ? (
         <div
-          className={`fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 ease-out backdrop-blur-xl ${
+          className={`fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 ease-out backdrop-blur-xl bg-slate-50/80 dark:bg-slate-950/85 ${
             fadeLoader ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
           style={{
-            background:
+            backgroundImage:
               "radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)",
-            backgroundColor: "rgba(248, 250, 252, 0.8)", // Clean slate light mode fallback background
           }}
         >
           <div

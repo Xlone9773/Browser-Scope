@@ -98,15 +98,12 @@ const App: React.FC = () => {
   }, []);
 
   const [t, setT] = useState<Translation>(en);
-  const [isI18nLoading, setIsI18nLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
-    setIsI18nLoading(true);
     loadLocale(lang).then((loaded) => {
       if (active) {
         setT(loaded);
-        setIsI18nLoading(false);
       }
     });
     return () => {
@@ -680,15 +677,18 @@ const App: React.FC = () => {
     },
   ];
 
+  const initialDetectionRun = useRef(false);
+
   useEffect(() => {
-    if (isI18nLoading) return;
+    if (initialDetectionRun.current) return;
+    initialDetectionRun.current = true;
     fetchData();
     checkPermissionStatus("notifications", "notifications");
     checkPermissionStatus("geolocation", "geolocation");
     checkPermissionStatus("camera", "camera");
     checkPermissionStatus("microphone", "microphone");
     checkPermissionStatus("midi", "midi");
-  }, [isI18nLoading, fetchData, checkPermissionStatus]);
+  }, [fetchData, checkPermissionStatus]);
 
   const handleExportJSON = () => {
     if (!data) return;
