@@ -152,13 +152,16 @@ jobs:
 
       - name: Deploy Project Artifacts to Vercel
         if: success()
-        uses: amondnet/vercel-action@v20
         id: deploy
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && '--prod --prebuilt' || '--prebuilt' }}
+        run: |
+          DEPLOY_ARGS="--prebuilt"
+          if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/master" ]]; then
+            DEPLOY_ARGS="--prod --prebuilt"
+          fi
+          DEPLOY_URL=$(npx vercel deploy $DEPLOY_ARGS)
+          echo "preview-url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
       - name: Generate CI Summary
         if: always()
