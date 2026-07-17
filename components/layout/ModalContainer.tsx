@@ -3,6 +3,7 @@ import { ErrorBoundary } from "../ui/ErrorBoundary";
 import { ModalLoading } from "../ui/ModalLoading";
 import { FloatingWindow } from "../ui/FloatingWindow";
 import { ModuleState } from "../settings/ModulesTab";
+import { Language } from "../../utils/i18n/types";
 type BrowserSafeAny = ReturnType<typeof JSON.parse>;
 
 interface ModalContainerProps {
@@ -62,7 +63,7 @@ interface ModalContainerProps {
   updateImageExportScale: (value: number) => void;
   pdfExportFormat: 'a4' | 'letter' | 'legal';
   updatePdfExportFormat: (value: 'a4' | 'letter' | 'legal') => void;
-  changeLang?: (lang: any) => void;
+  changeLang?: (lang: Language) => void;
 }
 
 export const ModalContainer: React.FC<ModalContainerProps> = ({

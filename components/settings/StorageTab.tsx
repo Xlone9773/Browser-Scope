@@ -87,7 +87,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
     const [deletingKeys, setDeletingKeys] = useState<Record<string, boolean>>({});
 
     // Locales states
-    const [localeStatuses, setLocaleStatuses] = useState<Record<Language, { isCached: boolean; size: string | null }>>({} as any);
+    const [localeStatuses, setLocaleStatuses] = useState<Record<Language, { isCached: boolean; size: string | null }>>({} as Record<Language, { isCached: boolean; size: string | null }>);
     const [downloadingLocales, setDownloadingLocales] = useState<Record<string, boolean>>({});
     const [deletingLocales, setDeletingLocales] = useState<Record<string, boolean>>({});
 
@@ -138,7 +138,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
     const updateLocaleStatuses = useCallback(async () => {
         try {
             const list: Language[] = ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'];
-            const updated: Record<Language, { isCached: boolean; size: string | null }> = {} as any;
+            const updated = {} as Record<Language, { isCached: boolean; size: string | null }>;
             for (const item of list) {
                 const isCached = await isLocaleDownloaded(item);
                 const size = await getLocaleSize(item);
