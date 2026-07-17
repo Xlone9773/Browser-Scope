@@ -9,6 +9,11 @@ import { ParticleSystem } from './compute/ParticleSystem';
 import { Modal } from './ui/Modal';
 import { getErrorMessage } from '../utils/error';
 
+// WebGPU fallback types for environments without @webgpu/types
+type GPUAdapter = ReturnType<typeof JSON.parse>;
+type GPUDevice = ReturnType<typeof JSON.parse>;
+type GPUComputePipeline = ReturnType<typeof JSON.parse>;
+
 interface ComputeStressModalProps {
   onClose: () => void;
   t: Translation['computeStress'];
@@ -33,9 +38,9 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   // Refs for loop access to avoid dependency churn and memory leaks
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visualizerCanvasRef = useRef<HTMLCanvasElement>(null);
-  const adapterRef = useRef<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
-  const deviceRef = useRef<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
-  const pipelineRef = useRef<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
+  const adapterRef = useRef<GPUAdapter | null>(null);
+  const deviceRef = useRef<GPUDevice | null>(null);
+  const pipelineRef = useRef<GPUComputePipeline | null>(null);
   
   const animRef = useRef<number | null>(null); // For WebGPU loop
   const renderLoopRef = useRef<number | null>(null); // For UI render loop

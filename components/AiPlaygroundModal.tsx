@@ -18,6 +18,13 @@ const MODELS = {
     translation: { id: 'translation', model: 'Xenova/t5-small', size: '~240MB' }
 };
 
+interface AiResultItem {
+    label?: string;
+    score?: number;
+    generated_text?: string;
+    translation_text?: string;
+}
+
 export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t }) => {
   const [activeTask, setActiveTask] = useState<TaskType>('sentiment');
   const [inputText, setInputText] = useState('');
@@ -27,12 +34,12 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
   const [progress, setProgress] = useState<{status: string, progress?: number, file?: string} | null>(null);
   
   // Result State
-  const [result, setResult] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
+  const [result, setResult] = useState<AiResultItem[] | null>(null);
   const [metrics, setMetrics] = useState<{ loadTime?: string, inferenceTime?: string, device?: string }>({});
   const [isComputing, setIsComputing] = useState(false);
 
   // Refs
-  const pipelineRef = useRef<any /* eslint-disable-line @typescript-eslint/no-explicit-any */>(null);
+  const pipelineRef = useRef<((text: string, options?: Record<string, unknown>) => Promise<AiResultItem[]>) | null>(null);
   const loadedTaskRef = useRef<TaskType | null>(null);
 
   // Load Model Logic
@@ -57,15 +64,15 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
 
           const config = MODELS[task];
           // Explicit cast to avoid type mismatch with specific string literals expected by the library
-          const pipe = await pipeline(config.id as any /* eslint-disable-line @typescript-eslint/no-explicit-any */, config.model, {
-              progress_callback: (data: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
+          const pipe = await pipeline(config.id as Parameters<typeof pipeline>[0], config.model, {
+              progress_callback: (data: { status: string; progress?: number; file?: string }) => {
                   if (data.status === 'progress' || data.status === 'initiate') {
                       setProgress(data);
                   }
               }
           });
           
-          pipelineRef.current = pipe;
+          pipelineRef.current = pipe as ((text: string, options?: Record<string, unknown>) => Promise<AiResultItem[]>);
           loadedTaskRef.current = task;
           
           const endTime = performance.now();
@@ -104,7 +111,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
       
       try {
           const start = performance.now();
-          let output;
+          let output: AiResultItem[] | null = null;
 
           if (activeTask === 'sentiment') {
               output = await pipelineRef.current(inputText);
@@ -321,7 +328,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                                             <div>
                                                 <div className="text-2xl font-bold text-slate-800 dark:text-white">{result[0].label}</div>
                                                 <div className="text-sm text-slate-500">
-                                                    {t.confidence}: <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{(result[0].score * 100).toFixed(2)}%</span>
+                                                    {t.confidence}: <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{((result[0].score ?? 0) * 100).toFixed(2)}%</span>
                                                 </div>
                                             </div>
                                         </div>

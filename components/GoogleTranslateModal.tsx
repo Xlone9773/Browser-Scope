@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Languages, Globe, LogOut } from "lucide-react";
 import { Modal as BaseModal } from "./ui/Modal";
+import { Translation } from "../utils/i18n/types";
 
 interface GoogleTranslateModalProps {
   onClose: () => void;
-  t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+  t: Translation;
 }
 
 const SUPPORTED_LANGS = [

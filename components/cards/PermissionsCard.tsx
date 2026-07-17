@@ -73,7 +73,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
           if ('serviceWorker' in navigator) {
               const reg = await navigator.serviceWorker.getRegistration();
               if (reg) {
-                  const actionsConfig: Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */> = {};
+                  const actionsConfig: Record<string, { type: string; payload: string; title: string }> = {};
                   const mappedActions = notifActions.map((act, i) => {
                       const actionId = `action-${i}`;
                       actionsConfig[actionId] = { type: act.type, payload: act.payload, title: act.title };
@@ -87,14 +87,14 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                       icon: notifIcon,
                       badge: '/vite.svg',
                       actions: mappedActions
-                  } as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
+                  } as NotificationOptions);
                   return;
               }
           }
           // Fallback if ServiceWorker is not available or getRegistration fails
           const n = new Notification(title, { body, icon: notifIcon });
           n.onclick = () => { window.focus(); };
-      } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+      } catch (error) {
           console.error('Notification error:', error);
           const n = new Notification(title, { body, icon: notifIcon });
           n.onclick = () => { window.focus(); };
@@ -155,18 +155,18 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                     <div className="flex flex-col gap-2 mt-2 border-t border-slate-200 dark:border-slate-700 pt-2">
                         <div className="flex justify-between items-center">
                             <span className="text-xs font-medium text-slate-500">
-                                Actions ({notifActions.length}/{'Notification' in window ? ((Notification as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).maxActions || 2) : 2})
+                                Actions ({notifActions.length}/{'Notification' in window ? ((Notification as unknown as { maxActions?: number }).maxActions || 2) : 2})
                             </span>
                             <Button 
                                 size="xs" 
                                 variant="ghost" 
                                 onClick={() => {
-                                    const maxAct = 'Notification' in window ? ((Notification as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).maxActions || 2) : 2;
+                                    const maxAct = 'Notification' in window ? ((Notification as unknown as { maxActions?: number }).maxActions || 2) : 2;
                                     if (notifActions.length < maxAct) {
                                         setNotifActions([...notifActions, {title: '', type: 'alert', payload: ''}]);
                                     }
                                 }}
-                                disabled={notifActions.length >= ('Notification' in window ? ((Notification as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).maxActions || 2) : 2)}
+                                disabled={notifActions.length >= ('Notification' in window ? ((Notification as unknown as { maxActions?: number }).maxActions || 2) : 2)}
                                 leftIcon={<Plus size={12}/>}
                             >
                                 {t.notificationTest?.addAction}
@@ -198,9 +198,9 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                                     <div className="w-32 min-w-[128px] shrink-0">
                                         <Select 
                                             value={act.type}
-                                            onChange={(val: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
+                                            onChange={(val: unknown) => {
                                                 const newActions = [...notifActions];
-                                                newActions[idx] = { ...newActions[idx], type: val };
+                                                newActions[idx] = { ...newActions[idx], type: val as 'alert' | 'url' | 'close' };
                                                 setNotifActions(newActions);
                                             }}
                                             options={[

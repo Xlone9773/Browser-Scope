@@ -2,9 +2,10 @@ import React from 'react';
 import { InfoCard } from '../InfoCard';
 import { ShieldCheck, ShieldAlert, AlertTriangle, Info, Bot, Fingerprint, Cpu } from 'lucide-react';
 import { useEnvironmentAssessment, AnomalyCategory } from '../../hooks/useEnvironmentAssessment';
+import { Translation } from '../../utils/i18n';
 
 interface EnvironmentCardProps {
-    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    t: Translation;
 }
 
 export const EnvironmentCard: React.FC<EnvironmentCardProps> = React.memo(({ t }) => {
@@ -109,7 +110,7 @@ export const EnvironmentCard: React.FC<EnvironmentCardProps> = React.memo(({ t }
                             {assessment.anomalies.map((anomaly, idx) => {
                                 const isDang = anomaly.level === 'danger';
                                 const catLabel = getAnomalyCategoryLabel(anomaly.category, anomaly.level);
-                                const desc = (envT.anomaliesList && envT.anomaliesList[anomaly.id]) || anomaly.description;
+                                const desc = (envT.anomaliesList && (envT.anomaliesList as Record<string, string>)[anomaly.id]) || anomaly.description;
 
                                 return (
                                     <div key={idx} className="flex gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">

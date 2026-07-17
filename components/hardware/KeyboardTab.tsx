@@ -41,7 +41,7 @@ export const KeyboardTab: React.FC<KeyboardTabProps> = ({ t }) => {
             minute: '2-digit', 
             second: '2-digit', 
             fractionalSecondDigits: 3 
-        } as any /* eslint-disable-line @typescript-eslint/no-explicit-any */);
+        } as Intl.DateTimeFormatOptions);
     };
 
     useEffect(() => {

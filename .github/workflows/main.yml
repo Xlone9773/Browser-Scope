@@ -138,11 +138,41 @@ jobs:
         id: build_step
         run: npm run build > build-output.log 2>&1
 
+      - name: Pull Vercel Environment Information
+        if: success()
+        run: npx vercel pull --yes --environment=${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && 'production' || 'preview' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        if: success()
+        run: npx vercel build ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && '--prod' || '' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy Project Artifacts to Vercel
+        if: success()
+        uses: amondnet/vercel-action@v20
+        id: deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && '--prod --prebuilt' || '--prebuilt' }}
+
       - name: Generate CI Summary
         if: always()
         run: |
           npm audit --json > audit-report.json || true
           npx tsx scripts/ci-summary.ts --mode=build --status=${{ steps.build_step.outcome }}
+
+      - name: Add Vercel URL to Summary
+        if: always() && steps.deploy.outcome == 'success'
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 Vercel Deployment Preview" >> $GITHUB_STEP_SUMMARY
+          echo "🟢 Deployed successfully to Vercel!" >> $GITHUB_STEP_SUMMARY
+          echo "[🔍 Click here to preview this build](${{ steps.deploy.outputs.preview-url }})" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload build (artifact)
         if: success()

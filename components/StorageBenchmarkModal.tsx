@@ -64,7 +64,7 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
       setProgress(0);
       setCurrentSpeed(0);
 
-      // Clean up existing worker if any /* eslint-disable-line @typescript-eslint/no-explicit-any */
+      // Clean up existing worker if any 
       if (workerRef.current) {
           workerRef.current.terminate();
       }

@@ -31,9 +31,9 @@ function murmurhash3_32_gc(key: string, seed: number): number {
 
   switch (remainder) {
       case 3: k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
-      // eslint-disable-next-line no-fallthrough
+      /* falls through */
       case 2: k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
-      // eslint-disable-next-line no-fallthrough
+      /* falls through */
       case 1: k1 ^= (key.charCodeAt(i) & 0xff);
       
       k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;

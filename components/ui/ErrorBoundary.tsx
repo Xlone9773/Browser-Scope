@@ -163,7 +163,7 @@ ${errorInfo?.componentStack}`;
     window.location.reload();
   };
 
-  private getAnalysis(error: Error | null, t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+  private getAnalysis(error: Error | null, t: typeof en.common.error_boundary) {
     if (!error) return t.analysis_no_error;
     const msg = error.message.toLowerCase();
     if (

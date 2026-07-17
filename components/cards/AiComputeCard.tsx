@@ -5,7 +5,7 @@ import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
 import { Button } from '../ui/Button';
-import { Badge } from '../ui/Badge';
+import { Badge, BadgeVariant } from '../ui/Badge';
 import { formatNumber } from '../../utils/formatters';
 
 interface AiComputeCardProps {
@@ -20,7 +20,7 @@ export const AiComputeCard: React.FC<AiComputeCardProps> = React.memo(({ data, t
   const [isRetesting, setIsRetesting] = useState(false);
   const trVal = (val: boolean) => val ? t.values.supported : t.values.not_supported;
 
-  const getReadinessColor = (level: string) => {
+  const getReadinessColor = (level: string): BadgeVariant => {
       switch(level) {
           case 'Ultra': return 'purple';
           case 'High': return 'indigo';
@@ -61,7 +61,7 @@ export const AiComputeCard: React.FC<AiComputeCardProps> = React.memo(({ data, t
                     >
                         <RefreshCw size={12} />
                     </button>
-                    <Badge variant={getReadinessColor(data.readiness.level) as any /* eslint-disable-line @typescript-eslint/no-explicit-any */}>{data.readiness.level}</Badge>
+                    <Badge variant={getReadinessColor(data.readiness.level)}>{data.readiness.level}</Badge>
                 </div>
             </div>
             <div className="text-sm font-mono font-bold text-indigo-900 dark:text-indigo-100 mt-1">

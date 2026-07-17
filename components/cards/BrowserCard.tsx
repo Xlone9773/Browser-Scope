@@ -2,10 +2,11 @@ import React from 'react';
 import { InfoCard } from '../InfoCard';
 import { Monitor } from 'lucide-react';
 import { BrowserData } from '../../types';
+import { Translation } from '../../utils/i18n';
 
 interface BrowserCardProps {
     systemData: BrowserData['system'];
-    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    t: Translation;
 }
 
 export const BrowserCard: React.FC<BrowserCardProps> = React.memo(({ systemData, t }) => {

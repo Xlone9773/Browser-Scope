@@ -181,11 +181,13 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   
                   await new Promise<void>((resolve, reject) => {
                       const req = indexedDB.open(dbName, 1);
-                      req.onupgradeneeded = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
-                          e.target.result.createObjectStore('store');
+                      req.onupgradeneeded = (e: IDBVersionChangeEvent) => {
+                          const target = e.target as IDBOpenDBRequest;
+                          target.result.createObjectStore('store');
                       };
-                      req.onsuccess = (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
-                          const db = e.target.result;
+                      req.onsuccess = (e: Event) => {
+                          const target = e.target as IDBOpenDBRequest;
+                          const db = target.result;
                           const tx = db.transaction('store', 'readwrite');
                           const store = tx.objectStore('store');
                           

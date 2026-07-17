@@ -4,6 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 import oxlint from 'eslint-plugin-oxlint';
+import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -17,8 +18,10 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      'eslint-comments': eslintComments,
     },
     rules: {
+      'eslint-comments/no-use': 'error',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': [

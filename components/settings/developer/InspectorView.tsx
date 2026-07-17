@@ -4,14 +4,14 @@ export const InspectorView: React.FC = () => {
   const [inspectorObj, setInspectorObj] = useState("navigator");
 
   const getInspectData = (key: string) => {
-    let target: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = {};
-    if (key === "navigator") target = navigator;
-    else if (key === "screen") target = screen;
-    else if (key === "location") target = location;
-    else if (key === "performance") target = performance;
-    else if (key === "document") target = document;
+    let target: Record<string, unknown> = {};
+    if (key === "navigator") target = navigator as unknown as Record<string, unknown>;
+    else if (key === "screen") target = screen as unknown as Record<string, unknown>;
+    else if (key === "location") target = location as unknown as Record<string, unknown>;
+    else if (key === "performance") target = performance as unknown as Record<string, unknown>;
+    else if (key === "document") target = document as unknown as Record<string, unknown>;
 
-    const result: Record<string, any /* eslint-disable-line @typescript-eslint/no-explicit-any */> = {};
+    const result: Record<string, unknown> = {};
     for (const k in target) {
       try {
         const val = target[k];

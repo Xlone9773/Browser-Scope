@@ -2,17 +2,6 @@
 // A centralized place for Intl formatters to ensure performance (reuse instances) and consistency
 
 // Fix: Add type definitions for Intl.ListFormat if they are missing
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Intl {
-    interface ListFormatOptions {
-      localeMatcher?: 'lookup' | 'best fit';
-      type?: 'conjunction' | 'disjunction' | 'unit';
-      style?: 'long' | 'short' | 'narrow';
-    }
-  }
-}
-
 // Cache formatters to avoid re-instantiating overhead
 // Key now includes locale to support dynamic switching
 const numberFormatters = new Map<string, Intl.NumberFormat>();

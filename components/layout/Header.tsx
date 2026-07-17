@@ -221,8 +221,8 @@ export const Header: React.FC<HeaderProps> = React.memo(({
             onClick={toggleFullscreen}
             title={
               isFullscreen
-                ? (t.common as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).exit_fullscreen
-                : (t.common as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).fullscreen
+                ? t.common.exit_fullscreen
+                : t.common.fullscreen
             }
           >
             {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
@@ -367,8 +367,8 @@ export const Header: React.FC<HeaderProps> = React.memo(({
                 {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
               </span>
               {isFullscreen
-                ? (t.common as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).exit_fullscreen
-                : (t.common as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).fullscreen}
+                ? t.common.exit_fullscreen
+                : t.common.fullscreen}
             </button>
 
             <button

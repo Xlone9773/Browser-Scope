@@ -3,9 +3,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import { RotateCcw, Check, Download, Upload } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Select } from '../ui/Select';
+import { Translation } from '../../utils/i18n/types';
 
 interface GeneralTabProps {
-    t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */; // Using any /* eslint-disable-line @typescript-eslint/no-explicit-any */ for t because Translation type was getting complicated with extensions
+    t: Translation['settings']['general'];
     timeFormat: '12' | '24';
     setTimeFormat: (format: '12' | '24') => void;
     enableUdp?: boolean;
@@ -14,7 +15,7 @@ interface GeneralTabProps {
     setHiddenCards: (cards: string[]) => void;
     restoreAllNotifications: () => void;
     dismissedNotificationsCount: number;
-    translationDict: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    translationDict: Translation;
     showQuickSummary: boolean;
     toggleShowQuickSummary: (val: boolean) => void;
     lang: string;

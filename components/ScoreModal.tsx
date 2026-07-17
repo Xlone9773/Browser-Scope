@@ -3,11 +3,12 @@ import React from 'react';
 import { Fingerprint, Monitor, Wifi, Cpu, Layers, Globe, ShieldCheck } from 'lucide-react';
 import { FingerprintScore } from '../types';
 import { Modal } from './ui/Modal';
+import { Translation } from '../utils/i18n/types';
 
 interface ScoreModalProps {
   scoreData: FingerprintScore;
   onClose: () => void;
-  t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+  t: Translation['scoreModal'];
 }
 
 export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t }) => {
@@ -27,19 +28,19 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
 
   // Helper to safely get translation
   const getFactorLabel = (id: string) => {
-      return t.factors?.[id];
+      return (t.factors as Record<string, string>)?.[id];
   };
 
   const getFactorValue = (val: string | number) => {
-      if (typeof val === 'string' && val.startsWith('val_') && t.values?.[val]) {
-          return t.values[val];
+      if (typeof val === 'string' && val.startsWith('val_') && (t.values as Record<string, string>)?.[val]) {
+          return (t.values as Record<string, string>)[val];
       }
       return val;
   };
 
   const getFactorDesc = (descKey: string) => {
-      if (descKey && t.descriptions?.[descKey]) {
-          return t.descriptions[descKey];
+      if (descKey && (t.descriptions as Record<string, string>)?.[descKey]) {
+          return (t.descriptions as Record<string, string>)[descKey];
       }
       return descKey;
   };
@@ -135,7 +136,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                 <span className={`text-5xl font-black ${getScoreColor(scoreData.totalScore)}`}>{scoreData.totalScore}</span>
                                 <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">
-                                    {t.ratings?.[scoreData.rating] || scoreData.rating}
+                                    {(t.ratings as Record<string, string>)?.[scoreData.rating] || scoreData.rating}
                                 </span>
                             </div>
                         </div>

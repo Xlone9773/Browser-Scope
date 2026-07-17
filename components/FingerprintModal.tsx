@@ -36,18 +36,23 @@ function murmurhash3_32_gc(key: string, seed: number) {
 
   k1 = 0;
 
-  /* eslint-disable no-fallthrough */
+  
   switch (remainder) {
-      case 3: k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
-      case 2: k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
-      case 1: k1 ^= (key.charCodeAt(i) & 0xff);
+      case 3: 
+          k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
+          /* falls through */
+      case 2: 
+          k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
+          /* falls through */
+      case 1: 
+          k1 ^= (key.charCodeAt(i) & 0xff);
       
       k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
       k1 = (k1 << 15) | (k1 >>> 17);
       k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
       h1 ^= k1;
   }
-  /* eslint-enable no-fallthrough */
+  
 
   h1 ^= key.length;
 

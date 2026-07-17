@@ -122,8 +122,9 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
       }
       if (output === undefined) output = "undefined";
       loggerStore.addConsole("output", output);
-    } catch (e: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-      loggerStore.addConsole("error", e.message || String(e));
+    } catch (e: unknown) {
+      const errMsg = e instanceof Error ? e.message : String(e);
+      loggerStore.addConsole("error", errMsg);
     }
   };
 
@@ -268,11 +269,11 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="text-slate-200 font-medium truncate">
-                    {((t.console as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).presets?.[preset.id]?.label ||
+                    {t.console.presets?.[preset.id]?.label ||
                       preset.id}
                   </span>
                   <span className="text-[10px] text-slate-500 truncate">
-                    {((t.console as any) /* eslint-disable-line @typescript-eslint/no-explicit-any */).presets?.[preset.id]?.desc}
+                    {t.console.presets?.[preset.id]?.desc}
                   </span>
                 </div>
               </div>

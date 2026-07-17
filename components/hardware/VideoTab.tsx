@@ -10,9 +10,47 @@ interface VideoTabProps {
     labels: Translation['labels'];
 }
 
+interface VideoTestResultItem {
+    width: number;
+    height: number;
+    fps: number;
+    bitrate: number;
+    label: string;
+    supported?: boolean;
+    smooth?: boolean;
+    efficient?: boolean;
+    error?: string;
+}
+
+interface VideoCodecRow {
+    codec: string;
+    profile: string;
+    bitDepth: number;
+    tag: string;
+    tests: VideoTestResultItem[];
+}
+
+interface AudioTestResultItem {
+    channels: string;
+    samplerate: number;
+    bitrate: number;
+    label: string;
+    supported?: boolean;
+    smooth?: boolean;
+    efficient?: boolean;
+    error?: string;
+}
+
+interface AudioCodecRow {
+    codec: string;
+    label: string;
+    tag: string;
+    tests: AudioTestResultItem[];
+}
+
 export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
-    const [videoResults, setVideoResults] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
-    const [audioResults, setAudioResults] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>([]);
+    const [videoResults, setVideoResults] = useState<VideoCodecRow[]>([]);
+    const [audioResults, setAudioResults] = useState<AudioCodecRow[]>([]);
     const [progress, setProgress] = useState(0);
     const [isTesting, setIsTesting] = useState(false);
     const [showSupportedOnly, setShowSupportedOnly] = useState(false);
@@ -20,27 +58,26 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
     useEffect(() => {
         const runTests = async () => {
             setIsTesting(true);
-            const tempVideoResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] = [];
-            const tempAudioResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] = [];
+            const tempVideoResults: VideoCodecRow[] = [];
+            const tempAudioResults: AudioCodecRow[] = [];
             
             let done = 0;
             const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length);
 
             // --- Run Video Tests ---
             for (const codec of videoCodecs) {
-                const row = { 
+                const row: VideoCodecRow = { 
                     codec: codec.name, 
                     profile: codec.profile, 
                     bitDepth: codec.bitDepth,
                     tag: codec.tag, 
-                    tests: [] as any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] 
+                    tests: []
                 };
 
-                const resPromises = videoResolutions.map(async (res) => {
+                const resPromises = videoResolutions.map(async (res): Promise<VideoTestResultItem> => {
                     try {
-                        
                         if (navigator.mediaCapabilities) {
-                            const config: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = {
+                            const config: MediaDecodingConfiguration = {
                                 type: 'file', 
                                 video: {
                                     contentType: codec.type,
@@ -52,8 +89,8 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                             };
 
                             // Add HDR config if present
-                            if ((codec as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).hdrConfig) {
-                                Object.assign(config.video, (codec as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).hdrConfig);
+                            if ((codec as { hdrConfig?: Record<string, unknown> }).hdrConfig && config.video) {
+                                Object.assign(config.video, (codec as { hdrConfig?: Record<string, unknown> }).hdrConfig);
                             }
                             const info = await navigator.mediaCapabilities.decodingInfo(config);
                             return {
@@ -81,18 +118,17 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
 
             // --- Run Audio Tests ---
             for (const codec of audioCodecs) {
-                const row = {
+                const row: AudioCodecRow = {
                     codec: codec.name,
                     label: codec.label,
                     tag: codec.tag,
-                    tests: [] as any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]
+                    tests: []
                 };
 
-                const audioPromises = audioConfigs.map(async (conf) => {
+                const audioPromises = audioConfigs.map(async (conf): Promise<AudioTestResultItem> => {
                     try {
-                        
                         if (navigator.mediaCapabilities) {
-                            const config = {
+                            const config: MediaDecodingConfiguration = {
                                 type: 'file',
                                 audio: {
                                     contentType: codec.type,
@@ -102,7 +138,6 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                                 }
                             };
                             
-                            // @ts-expect-error auto-fixed
                             const info = await navigator.mediaCapabilities.decodingInfo(config);
                             return {
                                 ...conf,
@@ -145,16 +180,24 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
         }
     };
 
-    const getFilteredResults = (results: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]) => {
+    const getFilteredVideoResults = (results: VideoCodecRow[]) => {
         if (!showSupportedOnly) return results;
         return results.map(row => ({
             ...row,
-            tests: row.tests.filter((t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => t.supported)
+            tests: row.tests.filter((test) => test.supported)
         })).filter(row => row.tests.length > 0);
     };
 
-    const filteredVideo = getFilteredResults(videoResults);
-    const filteredAudio = getFilteredResults(audioResults);
+    const getFilteredAudioResults = (results: AudioCodecRow[]) => {
+        if (!showSupportedOnly) return results;
+        return results.map(row => ({
+            ...row,
+            tests: row.tests.filter((test) => test.supported)
+        })).filter(row => row.tests.length > 0);
+    };
+
+    const filteredVideo = getFilteredVideoResults(videoResults);
+    const filteredAudio = getFilteredAudioResults(audioResults);
 
     return (
         <div className="h-full overflow-y-auto animate-in fade-in duration-300 custom-scrollbar pb-4">
@@ -212,7 +255,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                                 </div>
                                 
                                 <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
-                                    {row.tests.map((test: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, idx: number) => (
+                                    {row.tests.map((test: VideoTestResultItem, idx: number) => (
                                         <div key={idx} className={`p-3 flex flex-col gap-1.5 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
                                             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
                                             {test.error ? (
@@ -268,7 +311,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                                 </div>
                                 
                                 <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
-                                    {row.tests.map((test: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, idx: number) => (
+                                    {row.tests.map((test: AudioTestResultItem, idx: number) => (
                                         <div key={idx} className={`p-3 flex flex-col gap-1 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
                                             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
                                             {!test.supported ? (

@@ -162,7 +162,7 @@ async function startServer() {
   const apiLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
     max: 1500, // Limit each IP to 1500 requests per `window` (here, per 1 minute)
-    message: { error: 'Too many /* eslint-disable-line @typescript-eslint/no-explicit-any */ requests, please try again later.' },
+    message: { error: 'Too many  requests, please try again later.' },
     standardHeaders: true, 
     legacyHeaders: false, 
   });

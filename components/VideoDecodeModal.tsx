@@ -5,6 +5,51 @@ import { Translation } from '../utils/i18n/types';
 import { videoCodecs, videoResolutions, audioCodecs, audioConfigs } from '../data/codecs';
 import { Modal } from './ui/Modal';
 
+interface VideoTestResultItem {
+    width: number;
+    height: number;
+    fps: number;
+    bitrate: number;
+    label: string;
+    supported?: boolean;
+    smooth?: boolean;
+    efficient?: boolean;
+    error?: string;
+}
+
+interface VideoCodecRow {
+    codec: string;
+    profile: string;
+    bitDepth: number;
+    tag: string;
+    tests: VideoTestResultItem[];
+}
+
+interface AudioTestResultItem {
+    channels: string;
+    samplerate: number;
+    bitrate: number;
+    label: string;
+    supported?: boolean;
+    smooth?: boolean;
+    efficient?: boolean;
+    error?: string;
+}
+
+interface AudioCodecRow {
+    codec: string;
+    label: string;
+    tag: string;
+    tests: AudioTestResultItem[];
+}
+
+interface DrmSystemItem {
+    id: string;
+    name: string;
+    supported?: boolean;
+    error?: boolean;
+}
+
 const CACHE_KEY = 'videoDecodeTestCache';
 
 const loadCache = () => {
@@ -13,37 +58,35 @@ const loadCache = () => {
         if (cached) {
             const data = JSON.parse(cached);
             if (data.video && data.audio && data.drm) {
-                return data;
+                return data as { video: VideoCodecRow[]; audio: AudioCodecRow[]; drm: DrmSystemItem[] };
             }
         }
     } catch { /* ignore */ }
     return null;
 };
 
-const saveCache = (video: any  [], audio: any  [], drm: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]) => {
+const saveCache = (video: VideoCodecRow[], audio: AudioCodecRow[], drm: DrmSystemItem[]) => {
     try {
         localStorage.setItem(CACHE_KEY, JSON.stringify({ video, audio, drm }));
     } catch { /* ignore */ }
 };
 
 const memCache = loadCache();
-let cachedVideoResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] | null = memCache?.video || null;
-let cachedAudioResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] | null = memCache?.audio || null;
-let cachedDrmResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] | null = memCache?.drm || null;
+let cachedVideoResults: VideoCodecRow[] | null = memCache?.video || null;
+let cachedAudioResults: AudioCodecRow[] | null = memCache?.audio || null;
+let cachedDrmResults: DrmSystemItem[] | null = memCache?.drm || null;
 
 interface VideoDecodeModalProps {
     onClose: () => void;
-    // We pass the relevant translations. Using HardwareToolsModal translation slice 
-    // as it contains all the necessary strings.
     t: Translation['hardwareToolsModal'];
     values: Translation['values'];
     labels: Translation['labels'];
 }
 
 export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, values, labels }) => {
-    const [videoResults, setVideoResults] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>(cachedVideoResults || []);
-    const [audioResults, setAudioResults] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>(cachedAudioResults || []);
-    const [drmResults, setDrmResults] = useState<any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]>(cachedDrmResults || []);
+    const [videoResults, setVideoResults] = useState<VideoCodecRow[]>(cachedVideoResults || []);
+    const [audioResults, setAudioResults] = useState<AudioCodecRow[]>(cachedAudioResults || []);
+    const [drmResults, setDrmResults] = useState<DrmSystemItem[]>(cachedDrmResults || []);
     const [progress, setProgress] = useState(cachedVideoResults ? 100 : 0);
     const [isTesting, setIsTesting] = useState(false);
     const [showSupportedOnly, setShowSupportedOnly] = useState(false);
@@ -51,149 +94,145 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
     const runTests = async () => {
         setIsTesting(true);
         setProgress(0);
-        const tempVideoResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] = [];
-        const tempAudioResults: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] = [];
+        const tempVideoResults: VideoCodecRow[] = [];
+        const tempAudioResults: AudioCodecRow[] = [];
         
         let done = 0;
-            const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length) + 3; // 3 DRM systems
+        const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length) + 3; // 3 DRM systems
 
-            // --- Run DRM Tests ---
-            const drms = [
-                { id: 'com.widevine.alpha', name: 'Widevine' },
-                { id: 'com.apple.fps.1_0', name: 'FairPlay' },
-                { id: 'com.apple.fps.2_0', name: 'FairPlay v2' },
-                { id: 'com.apple.fps.3_0', name: 'FairPlay v3' },
-                { id: 'com.microsoft.playready', name: 'PlayReady' }
-            ];
-            
-            const tempDrmResults = await Promise.all(drms.map(async (sys) => {
-                try {
+        // --- Run DRM Tests ---
+        const drms = [
+            { id: 'com.widevine.alpha', name: 'Widevine' },
+            { id: 'com.apple.fps.1_0', name: 'FairPlay' },
+            { id: 'com.apple.fps.2_0', name: 'FairPlay v2' },
+            { id: 'com.apple.fps.3_0', name: 'FairPlay v3' },
+            { id: 'com.microsoft.playready', name: 'PlayReady' }
+        ];
+        
+        const tempDrmResults = await Promise.all(drms.map(async (sys): Promise<DrmSystemItem> => {
+            try {
+                if (navigator.requestMediaKeySystemAccess) {
+                    const config = [{
+                        initDataTypes: ['cenc'],
+                        videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }],
+                        audioCapabilities: [{ contentType: 'audio/mp4; codecs="mp4a.40.2"' }]
+                    }];
                     
-                    if (navigator.requestMediaKeySystemAccess) {
-                        const config = [{
-                            initDataTypes: ['cenc'],
-                            videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }],
-                            audioCapabilities: [{ contentType: 'audio/mp4; codecs="mp4a.40.2"' }]
-                        }];
-                        
-                        await navigator.requestMediaKeySystemAccess(sys.id, config);
-                        return { ...sys, supported: true };
-                    }
-                    return { ...sys, supported: false, error: true };
-                } catch {
-                    return { ...sys, supported: false };
+                    await navigator.requestMediaKeySystemAccess(sys.id, config);
+                    return { ...sys, supported: true };
                 }
-            }));
-            setDrmResults(tempDrmResults);
-            done += 3;
+                return { ...sys, supported: false, error: true };
+            } catch {
+                return { ...sys, supported: false };
+            }
+        }));
+        setDrmResults(tempDrmResults);
+        done += 3;
 
-            // --- Run Video Tests ---
-            for (const codec of videoCodecs) {
-                const row = { 
-                    codec: codec.name, 
-                    profile: codec.profile, 
-                    bitDepth: codec.bitDepth,
-                    tag: codec.tag, 
-                    tests: [] as any /* eslint-disable-line @typescript-eslint/no-explicit-any */[] 
-                };
+        // --- Run Video Tests ---
+        for (const codec of videoCodecs) {
+            const row: VideoCodecRow = { 
+                codec: codec.name, 
+                profile: codec.profile, 
+                bitDepth: codec.bitDepth,
+                tag: codec.tag, 
+                tests: []
+            };
 
-                const resPromises = videoResolutions.map(async (res) => {
-                    try {
-                        
-                        if (navigator.mediaCapabilities) {
-                            const config: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = {
-                                type: 'file', 
-                                video: {
-                                    contentType: codec.type,
-                                    width: res.width,
-                                    height: res.height,
-                                    bitrate: res.bitrate,
-                                    framerate: res.fps,
-                                }
-                            };
-
-                            // Add HDR config if present
-                            if ((codec as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).hdrConfig) {
-                                Object.assign(config.video, (codec as any /* eslint-disable-line @typescript-eslint/no-explicit-any */).hdrConfig);
+            const resPromises = videoResolutions.map(async (res): Promise<VideoTestResultItem> => {
+                try {
+                    if (navigator.mediaCapabilities) {
+                        const config: MediaDecodingConfiguration = {
+                            type: 'file', 
+                            video: {
+                                contentType: codec.type,
+                                width: res.width,
+                                height: res.height,
+                                bitrate: res.bitrate,
+                                framerate: res.fps,
                             }
-                            const info = await navigator.mediaCapabilities.decodingInfo(config);
-                            return {
-                                ...res,
-                                supported: info.supported,
-                                smooth: info.smooth,
-                                efficient: info.powerEfficient
-                            };
-                        } else {
-                            return { ...res, error: 'API N/A' };
+                        };
+
+                        // Add HDR config if present
+                        if ((codec as { hdrConfig?: Record<string, unknown> }).hdrConfig && config.video) {
+                            Object.assign(config.video, (codec as { hdrConfig?: Record<string, unknown> }).hdrConfig);
                         }
-                    } catch {
-                        return { ...res, supported: false };
+                        const info = await navigator.mediaCapabilities.decodingInfo(config);
+                        return {
+                            ...res,
+                            supported: info.supported,
+                            smooth: info.smooth,
+                            efficient: info.powerEfficient
+                        };
+                    } else {
+                        return { ...res, error: 'API N/A' };
                     }
-                });
+                } catch {
+                    return { ...res, supported: false };
+                }
+            });
 
-                const resResults = await Promise.all(resPromises);
-                row.tests = resResults;
-                tempVideoResults.push(row);
-                
-                done += videoResolutions.length;
-                setProgress(Math.round((done / total) * 100));
-                setVideoResults([...tempVideoResults]);
-            }
+            const resResults = await Promise.all(resPromises);
+            row.tests = resResults;
+            tempVideoResults.push(row);
+            
+            done += videoResolutions.length;
+            setProgress(Math.round((done / total) * 100));
+            setVideoResults([...tempVideoResults]);
+        }
 
-            // --- Run Audio Tests ---
-            for (const codec of audioCodecs) {
-                const row = {
-                    codec: codec.name,
-                    label: codec.label,
-                    tag: codec.tag,
-                    tests: [] as any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]
-                };
+        // --- Run Audio Tests ---
+        for (const codec of audioCodecs) {
+            const row: AudioCodecRow = {
+                codec: codec.name,
+                label: codec.label,
+                tag: codec.tag,
+                tests: []
+            };
 
-                const audioPromises = audioConfigs.map(async (conf) => {
-                    try {
+            const audioPromises = audioConfigs.map(async (conf): Promise<AudioTestResultItem> => {
+                try {
+                    if (navigator.mediaCapabilities) {
+                        const config: MediaDecodingConfiguration = {
+                            type: 'file',
+                            audio: {
+                                contentType: codec.type,
+                                channels: conf.channels,
+                                bitrate: conf.bitrate,
+                                samplerate: conf.samplerate
+                            }
+                        };
                         
-                        if (navigator.mediaCapabilities) {
-                            const config = {
-                                type: 'file',
-                                audio: {
-                                    contentType: codec.type,
-                                    channels: conf.channels,
-                                    bitrate: conf.bitrate,
-                                    samplerate: conf.samplerate
-                                }
-                            };
-                            
-                            // @ts-expect-error auto-fixed
-                            const info = await navigator.mediaCapabilities.decodingInfo(config);
-                            return {
-                                ...conf,
-                                supported: info.supported,
-                                smooth: info.smooth,
-                                efficient: info.powerEfficient
-                            };
-                        } else {
-                            return { ...conf, error: 'API N/A' };
-                        }
-                    } catch {
-                        return { ...conf, supported: false };
+                        const info = await navigator.mediaCapabilities.decodingInfo(config);
+                        return {
+                            ...conf,
+                            supported: info.supported,
+                            smooth: info.smooth,
+                            efficient: info.powerEfficient
+                        };
+                    } else {
+                        return { ...conf, error: 'API N/A' };
                     }
-                });
+                } catch {
+                    return { ...conf, supported: false };
+                }
+            });
 
-                const audResults = await Promise.all(audioPromises);
-                row.tests = audResults;
-                tempAudioResults.push(row);
+            const audResults = await Promise.all(audioPromises);
+            row.tests = audResults;
+            tempAudioResults.push(row);
 
-                done += audioConfigs.length;
-                setProgress(Math.round((done / total) * 100));
-                setAudioResults([...tempAudioResults]);
-            }
+            done += audioConfigs.length;
+            setProgress(Math.round((done / total) * 100));
+            setAudioResults([...tempAudioResults]);
+        }
 
-            cachedVideoResults = tempVideoResults;
-            cachedAudioResults = tempAudioResults;
-            cachedDrmResults = tempDrmResults;
-            saveCache(tempVideoResults, tempAudioResults, tempDrmResults);
-            setIsTesting(false);
-        };
+        cachedVideoResults = tempVideoResults;
+        cachedAudioResults = tempAudioResults;
+        cachedDrmResults = tempDrmResults;
+        saveCache(tempVideoResults, tempAudioResults, tempDrmResults);
+        setIsTesting(false);
+    };
 
     useEffect(() => {
         if (!cachedVideoResults || !cachedAudioResults || !cachedDrmResults) {
@@ -216,16 +255,24 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
         }
     };
 
-    const getFilteredResults = (results: any /* eslint-disable-line @typescript-eslint/no-explicit-any */[]) => {
+    const getFilteredVideoResults = (results: VideoCodecRow[]) => {
         if (!showSupportedOnly) return results;
         return results.map(row => ({
             ...row,
-            tests: row.tests.filter((t: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => t.supported)
+            tests: row.tests.filter((test) => test.supported)
         })).filter(row => row.tests.length > 0);
     };
 
-    const filteredVideo = getFilteredResults(videoResults);
-    const filteredAudio = getFilteredResults(audioResults);
+    const getFilteredAudioResults = (results: AudioCodecRow[]) => {
+        if (!showSupportedOnly) return results;
+        return results.map(row => ({
+            ...row,
+            tests: row.tests.filter((test) => test.supported)
+        })).filter(row => row.tests.length > 0);
+    };
+
+    const filteredVideo = getFilteredVideoResults(videoResults);
+    const filteredAudio = getFilteredAudioResults(audioResults);
     const filteredDrm = showSupportedOnly ? drmResults.filter(Sys => Sys.supported) : drmResults;
 
     return (
@@ -326,7 +373,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                                         </div>
                                         
                                         <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
-                                            {row.tests.map((test: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, idx: number) => (
+                                            {row.tests.map((test: VideoTestResultItem, idx: number) => (
                                                 <div key={idx} className={`p-3 flex flex-col gap-1.5 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
                                                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
                                                     {test.error ? (
@@ -383,7 +430,7 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
                                         </div>
                                         
                                         <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
-                                            {row.tests.map((test: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, idx: number) => (
+                                            {row.tests.map((test: AudioTestResultItem, idx: number) => (
                                                 <div key={idx} className={`p-3 flex flex-col gap-1 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
                                                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{test.label}</span>
                                                     {!test.supported ? (
