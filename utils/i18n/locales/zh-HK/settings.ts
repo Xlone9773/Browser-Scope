@@ -257,6 +257,25 @@ export const settings = {
             deleteSuccess: "字型已成功清除！",
             downloadFailed: "下載字型失敗，請檢查網路。",
             deleteFailed: "刪除字型失敗。"
+        },
+        locales: {
+            title: "語言包快取管理",
+            desc: "為減少初始載入時間，除核心英文語言包外，其他語言包均可按需動態載入。在此您可以預先下載語言包以便離線使用，或將其清除以釋放空間。",
+            name: "語言包",
+            code: "語言代碼",
+            status: "狀態",
+            cached: "已快取 ({size})",
+            notCached: "未快取 (點擊下載)",
+            downloading: "正在下載...",
+            downloadBtn: "下載",
+            deleteBtn: "刪除",
+            sizeUnknown: "未知大小",
+            downloadSuccess: "語言包下載成功！",
+            deleteSuccess: "語言包已成功清除！",
+            downloadFailed: "下載語言包失敗，請檢查網路。",
+            deleteFailed: "刪除語言包失敗。",
+            coreLanguage: "核心語言 (內置)",
+            notDownloadedTooltip: "該語言包尚未下載。點擊將自動下載並完成切換。"
         }
     },
     resources: {

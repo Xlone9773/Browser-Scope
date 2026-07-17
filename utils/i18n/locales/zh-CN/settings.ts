@@ -257,6 +257,25 @@ export const settings = {
             deleteSuccess: "字体已成功清除！",
             downloadFailed: "下载字体失败，请检查网络。",
             deleteFailed: "删除字体失败。"
+        },
+        locales: {
+            title: "语言包缓存管理",
+            desc: "为减少初始加载时间，除核心英文语言包外，其他语言包均可按需动态加载。在此您可以预先下载语言包以便离线使用，或将其清除以释放空间。",
+            name: "语言包",
+            code: "语言代码",
+            status: "状态",
+            cached: "已缓存 ({size})",
+            notCached: "未缓存 (点击下载)",
+            downloading: "正在下载...",
+            downloadBtn: "下载",
+            deleteBtn: "删除",
+            sizeUnknown: "未知大小",
+            downloadSuccess: "语言包下载成功！",
+            deleteSuccess: "语言包已成功清除！",
+            downloadFailed: "下载语言包失败，请检查网络。",
+            deleteFailed: "删除语言包失败。",
+            coreLanguage: "核心语言 (内置)",
+            notDownloadedTooltip: "该语言包尚未下载。点击将自动下载并完成切换。"
         }
     },
     resources: {

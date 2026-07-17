@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Database, RefreshCw, Trash2, Type, DownloadCloud, CheckCircle2, AlertCircle, X } from 'lucide-react';
+import { Database, RefreshCw, Trash2, Type, DownloadCloud, CheckCircle2, AlertCircle, X, Globe } from 'lucide-react';
 import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
+import { Language } from '../../utils/i18n/types';
+import { languageNames } from '../../utils/i18n/index';
+import { getDownloadedLocales, downloadLocale, deleteLocale, getLocaleSize, isLocaleDownloaded } from '../../utils/i18n/localeCache';
 
 interface StorageTabProps {
     t: Translation['settings']['storage'];
     lang?: string;
+    changeLang?: (lang: Language) => void;
 }
 
 interface FontItem {
@@ -72,7 +76,7 @@ const FONTS_LIST: FontItem[] = [
 
 const CACHE_NAME = "browserscope-fonts";
 
-export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en' }) => {
+export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLang }) => {
     const [localStorageCount, setLocalStorageCount] = useState(() => typeof window !== 'undefined' ? localStorage.length : 0);
     const [sessionStorageCount, setSessionStorageCount] = useState(() => typeof window !== 'undefined' ? sessionStorage.length : 0);
     const [swCount, setSwCount] = useState<number | null>(null);
@@ -81,6 +85,12 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en' }) => {
     const [fontStatuses, setFontStatuses] = useState<Record<string, { isCached: boolean; size: string | null }>>({});
     const [downloadingKeys, setDownloadingKeys] = useState<Record<string, boolean>>({});
     const [deletingKeys, setDeletingKeys] = useState<Record<string, boolean>>({});
+
+    // Locales states
+    const [localeStatuses, setLocaleStatuses] = useState<Record<Language, { isCached: boolean; size: string | null }>>({} as any);
+    const [downloadingLocales, setDownloadingLocales] = useState<Record<string, boolean>>({});
+    const [deletingLocales, setDeletingLocales] = useState<Record<string, boolean>>({});
+
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
     const triggerToast = useCallback((message: string, type: 'success' | 'error') => {
@@ -125,6 +135,24 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en' }) => {
         }
     }, [t]);
 
+    const updateLocaleStatuses = useCallback(async () => {
+        try {
+            const list: Language[] = ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'];
+            const updated: Record<Language, { isCached: boolean; size: string | null }> = {} as any;
+            for (const item of list) {
+                const isCached = await isLocaleDownloaded(item);
+                const size = await getLocaleSize(item);
+                updated[item] = {
+                    isCached,
+                    size
+                };
+            }
+            setLocaleStatuses(updated);
+        } catch (err) {
+            console.error("Failed to update locale statuses:", err);
+        }
+    }, []);
+
     useEffect(() => {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations()
@@ -139,9 +167,10 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en' }) => {
         
         const timer = setTimeout(() => {
             updateFontStatuses();
+            updateLocaleStatuses();
         }, 0);
         return () => clearTimeout(timer);
-    }, [updateFontStatuses]);
+    }, [updateFontStatuses, updateLocaleStatuses]);
 
     const clearStorage = () => {
         localStorage.clear();
@@ -219,6 +248,33 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en' }) => {
             triggerToast(t.fonts?.deleteSuccess || "Font deleted successfully!", "success");
         } else {
             triggerToast(t.fonts?.deleteFailed || "Failed to delete font.", "error");
+        }
+    };
+
+    const handleDownloadLocale = async (langKey: Language) => {
+        setDownloadingLocales(prev => ({ ...prev, [langKey]: true }));
+        const success = await downloadLocale(langKey);
+        setDownloadingLocales(prev => ({ ...prev, [langKey]: false }));
+        if (success) {
+            await updateLocaleStatuses();
+            triggerToast(t.locales?.downloadSuccess || "Language pack downloaded successfully!", "success");
+        } else {
+            triggerToast(t.locales?.downloadFailed || "Failed to download language pack.", "error");
+        }
+    };
+
+    const handleDeleteLocale = async (langKey: Language) => {
+        setDeletingLocales(prev => ({ ...prev, [langKey]: true }));
+        const success = await deleteLocale(langKey);
+        setDeletingLocales(prev => ({ ...prev, [langKey]: false }));
+        if (success) {
+            await updateLocaleStatuses();
+            triggerToast(t.locales?.deleteSuccess || "Language pack deleted successfully!", "success");
+            if (lang === langKey && changeLang) {
+                changeLang('en');
+            }
+        } else {
+            triggerToast(t.locales?.deleteFailed || "Failed to delete language pack.", "error");
         }
     };
 
@@ -329,6 +385,89 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en' }) => {
                                             >
                                                 {isDownloading ? t.fonts.downloading : t.fonts.downloadBtn}
                                             </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            {/* Language Packs Cache Section */}
+            {t.locales && (
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm space-y-4">
+                    <div className="flex items-start gap-3">
+                        <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
+                            <Globe size={20} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-slate-800 dark:text-slate-100">{t.locales.title}</h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                {t.locales.desc}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="divide-y divide-slate-100 dark:divide-slate-700">
+                        {(['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'] as Language[]).map((langKey) => {
+                            const status = localeStatuses[langKey] || { isCached: langKey === 'en', size: langKey === 'en' ? 'Core' : null };
+                            const isDownloading = downloadingLocales[langKey];
+                            const isDeleting = deletingLocales[langKey];
+                            const langName = languageNames[langKey];
+
+                            return (
+                                <div key={langKey} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-semibold text-slate-800 dark:text-slate-100 text-sm">
+                                                {langName}
+                                            </span>
+                                            {status.isCached ? (
+                                                <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 px-2 py-0.5 rounded-full font-medium">
+                                                    <CheckCircle2 size={10} />
+                                                    {langKey === 'en' ? t.locales.coreLanguage : t.locales.cached.replace('{size}', status.size || '')}
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 text-[10px] bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400 px-2 py-0.5 rounded-full font-medium">
+                                                    <AlertCircle size={10} />
+                                                    {t.locales.notCached}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                                            <span className="font-medium text-slate-600 dark:text-slate-300">{t.locales.code}: </span>
+                                            <span className="font-mono bg-slate-50 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-600 dark:text-indigo-400">
+                                                {langKey}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 self-end sm:self-center">
+                                        {langKey !== 'en' && (
+                                            status.isCached ? (
+                                                <Button
+                                                    variant="danger-soft"
+                                                    size="sm"
+                                                    onClick={() => handleDeleteLocale(langKey)}
+                                                    isLoading={isDeleting}
+                                                    disabled={isDownloading || isDeleting}
+                                                    leftIcon={<Trash2 size={14} />}
+                                                >
+                                                    {t.locales.deleteBtn}
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    onClick={() => handleDownloadLocale(langKey)}
+                                                    isLoading={isDownloading}
+                                                    disabled={isDownloading || isDeleting}
+                                                    leftIcon={<DownloadCloud size={14} />}
+                                                >
+                                                    {isDownloading ? t.locales.downloading : t.locales.downloadBtn}
+                                                </Button>
+                                            )
                                         )}
                                     </div>
                                 </div>

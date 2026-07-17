@@ -257,6 +257,25 @@ export const settings = {
             deleteSuccess: "Font deleted successfully!",
             downloadFailed: "Failed to download font.",
             deleteFailed: "Failed to delete font."
+        },
+        locales: {
+            title: "Language Pack Management",
+            desc: "To reduce initial load times, language translation packs can be dynamically downloaded and cached on-demand. Download packs for offline access or delete them to reclaim storage.",
+            name: "Language Pack",
+            code: "Code",
+            status: "Status",
+            cached: "Cached ({size})",
+            notCached: "Not Cached",
+            downloading: "Downloading...",
+            downloadBtn: "Download",
+            deleteBtn: "Delete",
+            sizeUnknown: "Unknown size",
+            downloadSuccess: "Language pack downloaded successfully!",
+            deleteSuccess: "Language pack deleted successfully!",
+            downloadFailed: "Failed to download language pack.",
+            deleteFailed: "Failed to delete language pack.",
+            coreLanguage: "Core Language (Built-in)",
+            notDownloadedTooltip: "Language pack is not downloaded. Click to download and switch."
         }
     },
     resources: {

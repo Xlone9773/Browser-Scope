@@ -20,6 +20,8 @@ import { Translation, Language } from "../../utils/i18n/types";
 import { Theme } from "../../appearance/theme";
 import { useFormatter } from "../../hooks/useFormatter";
 import { Button } from "../ui/Button";
+import { downloadLocale, getDownloadedLocales } from "../../utils/i18n/localeCache";
+import { useCallback } from "react";
 
 // List of supported language codes
 const SUPPORTED_LANGUAGES: Language[] = [
@@ -70,6 +72,29 @@ export const Header: React.FC<HeaderProps> = React.memo(({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [pendingLang, setPendingLang] = useState<Language | null>(null);
   const { formatNativeLanguageName } = useFormatter(lang);
+
+  const [downloadedLangs, setDownloadedLangs] = useState<Language[]>(['en']);
+
+  const refreshDownloadedLangs = useCallback(async () => {
+    const list = await getDownloadedLocales();
+    setDownloadedLangs(list);
+  }, []);
+
+  useEffect(() => {
+    refreshDownloadedLangs();
+  }, [refreshDownloadedLangs]);
+
+  useEffect(() => {
+    if (isLangMenuOpen) {
+      refreshDownloadedLangs();
+    }
+  }, [isLangMenuOpen, refreshDownloadedLangs]);
+
+  useEffect(() => {
+    if (isMoreMenuOpen) {
+      refreshDownloadedLangs();
+    }
+  }, [isMoreMenuOpen, refreshDownloadedLangs]);
 
   const langMenuRef = useRef<HTMLDivElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
@@ -143,19 +168,31 @@ export const Header: React.FC<HeaderProps> = React.memo(({
     setIsMoreMenuOpen(false);
   };
 
-  const handleLangSelect = (code: Language) => {
+  const handleLangSelect = async (code: Language) => {
     if (code === lang) {
       setIsLangMenuOpen(false);
       setIsMoreMenuOpen(false);
       return;
     }
     setPendingLang(code);
+
+    const isAlreadyDownloaded = downloadedLangs.includes(code) || code === 'en';
+    if (!isAlreadyDownloaded) {
+      try {
+        const success = await downloadLocale(code);
+        if (success) {
+          const list = await getDownloadedLocales();
+          setDownloadedLangs(list);
+        }
+      } catch (err) {
+        console.error("Failed to download language on demand:", err);
+      }
+    }
+
     setLang(code);
-    setTimeout(() => {
-       setPendingLang(null);
-       setIsLangMenuOpen(false);
-       setIsMoreMenuOpen(false);
-    }, 0);
+    setPendingLang(null);
+    setIsLangMenuOpen(false);
+    setIsMoreMenuOpen(false);
   };
 
   const useCollapsed = collapseHeader
@@ -259,15 +296,24 @@ export const Header: React.FC<HeaderProps> = React.memo(({
               {SUPPORTED_LANGUAGES.map((code) => {
                 const isCurrent = lang === code;
                 const isItemPending = pendingLang === code;
+                const isDownloaded = downloadedLangs.includes(code) || code === 'en';
 
                 return (
                   <button
                     key={code}
                     onClick={() => handleLangSelect(code as Language)}
                     disabled={!!pendingLang}
+                    title={isDownloaded ? undefined : t.settings.storage.locales?.notDownloadedTooltip || "Click to download and switch"}
                     className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isCurrent ? "text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20" : "text-slate-700 dark:text-slate-300"}`}
                   >
-                    <span>{formatNativeLanguageName(code)}</span>
+                    <span className="flex items-center gap-2">
+                      {formatNativeLanguageName(code)}
+                      {!isDownloaded && (
+                        <span className="inline-flex items-center text-[10px] text-amber-500 dark:text-amber-400" title={t.settings.storage.locales?.notDownloadedTooltip || "Not downloaded"}>
+                          <Download size={12} className="opacity-70" />
+                        </span>
+                      )}
+                    </span>
                     {Boolean(isItemPending) && (
                       <Loader2
                         size={14}
@@ -418,12 +464,14 @@ export const Header: React.FC<HeaderProps> = React.memo(({
               {SUPPORTED_LANGUAGES.map((code) => {
                 const isCurrent = lang === code;
                 const isItemPending = pendingLang === code;
+                const isDownloaded = downloadedLangs.includes(code) || code === 'en';
 
                 return (
                   <button
                     key={code}
                     onClick={() => handleLangSelect(code as Language)}
                     disabled={!!pendingLang}
+                    title={isDownloaded ? undefined : t.settings.storage.locales?.notDownloadedTooltip || "Click to download and switch"}
                     className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors flex items-center gap-2 justify-between disabled:opacity-50 disabled:cursor-not-allowed ${isCurrent ? "text-indigo-600 dark:text-indigo-400 font-medium" : "text-slate-600 dark:text-slate-300"}`}
                   >
                     <div className="flex items-center gap-2">
@@ -433,6 +481,11 @@ export const Header: React.FC<HeaderProps> = React.memo(({
                       <span className={isCurrent ? "" : "ml-3"}>
                         {formatNativeLanguageName(code)}
                       </span>
+                      {!isDownloaded && (
+                        <span className="inline-flex items-center text-[10px] text-amber-500 dark:text-amber-400" title={t.settings.storage.locales?.notDownloadedTooltip || "Not downloaded"}>
+                          <Download size={12} className="opacity-70" />
+                        </span>
+                      )}
                     </div>
                     {Boolean(isItemPending) && (
                       <Loader2

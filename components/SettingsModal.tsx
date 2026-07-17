@@ -1,7 +1,7 @@
 
 import React, { useState, Suspense } from 'react';
 import { Database, Activity, Sliders, Monitor, Terminal, Loader2, Package, Layers, Palette } from 'lucide-react';
-import { Translation } from '../utils/i18n/types';
+import { Translation, Language } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 
 import { GeneralTab } from './settings/GeneralTab';
@@ -67,6 +67,7 @@ interface SettingsModalProps {
   lastCheckTime?: number;
   isCheckingUpdate?: boolean;
   needRefresh?: boolean;
+  changeLang?: (lang: Language) => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ 
@@ -121,7 +122,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     manualCheckUpdate,
     lastCheckTime,
     isCheckingUpdate,
-    needRefresh
+    needRefresh,
+    changeLang
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>(() => {
     try {
@@ -317,7 +319,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               updatePdfExportFormat={updatePdfExportFormat}
                           />) : null}
 
-                          {activeTab === 'storage' ? (<StorageTab t={settings.storage} lang={lang} />) : null}
+                          {activeTab === 'storage' ? (<StorageTab t={settings.storage} lang={lang} changeLang={changeLang} />) : null}
 
                           {activeTab === 'res' ? (<ResourcesTab t={settings.resources} />) : null}
 

@@ -257,6 +257,25 @@ export const settings = {
             deleteSuccess: "フォントが正常に削除されました！",
             downloadFailed: "フォントのダウンロードに失敗しました。",
             deleteFailed: "フォントの削除に失敗しました。"
+        },
+        locales: {
+            title: "言語パックのキャッシュ管理",
+            desc: "初期読み込み時間を短縮するため、コアとなる英語以外の言語パックは必要に応じて動的にダウンロードされます。オフラインアクセスのためにダウンロードするか、削除してストレージを解放できます。",
+            name: "言語パック",
+            code: "言語コード",
+            status: "ステータス",
+            cached: "キャッシュ済み ({size})",
+            notCached: "未キャッシュ (クリックして取得)",
+            downloading: "ダウンロード中...",
+            downloadBtn: "ダウンロード",
+            deleteBtn: "削除",
+            sizeUnknown: "サイズ不明",
+            downloadSuccess: "言語パックが正常にダウンロードされました！",
+            deleteSuccess: "言語パックが正常に削除されました！",
+            downloadFailed: "言語パックのダウンロードに失敗しました。",
+            deleteFailed: "言語パックの削除に失敗しました。",
+            coreLanguage: "コア言語 (組み込み)",
+            notDownloadedTooltip: "この言語パックはダウンロードされていません。クリックすると自動的にダウンロードして切り替えます。"
         }
     },
     resources: {

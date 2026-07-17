@@ -809,6 +809,7 @@ const App: React.FC = () => {
         showQuickSummary={showQuickSummary}
         toggleShowQuickSummary={toggleShowQuickSummary}
         lang={lang}
+        changeLang={changeLang}
         isDevToolsFloating={isDevToolsFloating}
         setIsDevToolsFloating={setIsDevToolsFloating}
         modalStates={modalStates}

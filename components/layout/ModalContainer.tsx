@@ -62,6 +62,7 @@ interface ModalContainerProps {
   updateImageExportScale: (value: number) => void;
   pdfExportFormat: 'a4' | 'letter' | 'legal';
   updatePdfExportFormat: (value: 'a4' | 'letter' | 'legal') => void;
+  changeLang?: (lang: any) => void;
 }
 
 export const ModalContainer: React.FC<ModalContainerProps> = ({
@@ -121,6 +122,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   updateImageExportScale,
   pdfExportFormat,
   updatePdfExportFormat,
+  changeLang,
 }) => {
   return (
     <ErrorBoundary name="Modals">
@@ -264,6 +266,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
             updateImageExportScale={updateImageExportScale}
             pdfExportFormat={pdfExportFormat}
             updatePdfExportFormat={updatePdfExportFormat}
+            changeLang={changeLang}
           />
         ) : null}
 
