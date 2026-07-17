@@ -247,11 +247,15 @@ describe('Exporter Service Unit Tests', () => {
       const onSuccess = vi.fn();
       const onError = vi.fn();
 
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       await exportAsImage('non-existent-element-id', 'light', 2, onStart, onSuccess, onError);
 
       expect(onStart).toHaveBeenCalled();
       expect(onSuccess).not.toHaveBeenCalled();
       expect(onError).toHaveBeenCalledWith('Element with id "non-existent-element-id" not found');
+
+      consoleErrorSpy.mockRestore();
     });
   });
 });
