@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Copy, Check, FileCode } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
+import { useToast } from '../hooks/useToast';
 
 interface Base64ModalProps {
   data: string;
@@ -12,10 +13,12 @@ interface Base64ModalProps {
 
 export const Base64Modal: React.FC<Base64ModalProps> = ({ data, onClose, t }) => {
   const [copied, setCopied] = useState(false);
+  const toast = useToast();
 
   const handleCopy = () => {
       navigator.clipboard.writeText(data);
       setCopied(true);
+      toast.success(t.copySuccess || `${t.desc} copied successfully`, t.title);
       setTimeout(() => setCopied(false), 2000);
   };
 

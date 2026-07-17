@@ -118,7 +118,8 @@ export const tools = {
     title: "Base64 Данные",
     desc: "Сырые данные отпечатка",
     copy: "Копировать все",
-    close: "Закрыть"
+    close: "Закрыть",
+    copySuccess: "Сырые данные отпечатка скопированы в буфер обмена!"
   },
   imageDetails: {
     dimensions: "Размеры",

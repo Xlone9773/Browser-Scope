@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Globe, Copy, Check, SwitchCamera } from 'lucide-react';
 import { InfoCard } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
+import { useToast } from '../../hooks/useToast';
 
 interface UserAgentCardProps {
   userAgent: string;
@@ -13,12 +14,17 @@ interface UserAgentCardProps {
 export const UserAgentCard: React.FC<UserAgentCardProps> = React.memo(({ userAgent, clientHints, t }) => {
   const [copied, setCopied] = useState(false);
   const [showClientHints, setShowClientHints] = useState(false);
+  const toast = useToast();
 
   const dataToCopy = showClientHints ? JSON.stringify(clientHints, null, 2) : userAgent;
 
   const handleCopy = () => {
       navigator.clipboard.writeText(dataToCopy);
       setCopied(true);
+      toast.success(
+        showClientHints ? t.common.toasts.client_hints_copied : t.common.toasts.user_agent_copied,
+        t.sections.user_agent
+      );
       setTimeout(() => setCopied(false), 2000);
   };
 

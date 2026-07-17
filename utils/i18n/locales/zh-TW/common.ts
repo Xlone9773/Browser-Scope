@@ -43,6 +43,10 @@ export const common = {
         url: "當前 URL",
         user_agent: "瀏覽器資訊"
     },
+    toasts: {
+        user_agent_copied: "使用者代理資訊已複製到剪貼簿！",
+        client_hints_copied: "Client Hints 資訊已複製到剪貼簿！"
+    },
     modal_loading: {
         initializing: "正在初始化",
         loading_module: "正在載入模組資源"

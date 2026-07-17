@@ -43,6 +43,10 @@ export const common = {
         url: "現在の URL",
         user_agent: "ユーザーエージェント"
     },
+    toasts: {
+        user_agent_copied: "ユーザーエージェントをクリップボードにコピーしました！",
+        client_hints_copied: "Client Hintsをクリップボードにコピーしました！"
+    },
     modal_loading: {
         initializing: "初期化中",
         loading_module: "モジュールリソースを読み込み中"

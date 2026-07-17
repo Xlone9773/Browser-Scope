@@ -43,6 +43,10 @@ export const common = {
         url: "Current URL",
         user_agent: "User Agent"
     },
+    toasts: {
+        user_agent_copied: "User Agent copied to clipboard!",
+        client_hints_copied: "Client hints copied to clipboard!"
+    },
     modal_loading: {
         initializing: "Initializing",
         loading_module: "Loading Module Resource"

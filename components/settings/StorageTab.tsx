@@ -3,6 +3,7 @@ import { Database, RefreshCw, Trash2, Type, DownloadCloud, CheckCircle2, AlertCi
 import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
 import { Language } from '../../utils/i18n/types';
+import { useToast } from '../../hooks/useToast';
 import { languageNames } from '../../utils/i18n/index';
 import { getDownloadedLocales, downloadLocale, deleteLocale, getLocaleSize, isLocaleDownloaded } from '../../utils/i18n/localeCache';
 
@@ -91,13 +92,15 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
     const [downloadingLocales, setDownloadingLocales] = useState<Record<string, boolean>>({});
     const [deletingLocales, setDeletingLocales] = useState<Record<string, boolean>>({});
 
-    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+    const toast = useToast();
 
     const triggerToast = useCallback((message: string, type: 'success' | 'error') => {
-        setToast({ message, type });
-        const timer = setTimeout(() => setToast(null), 3500);
-        return () => clearTimeout(timer);
-    }, []);
+        if (type === 'success') {
+            toast.success(message);
+        } else {
+            toast.error(message);
+        }
+    }, [toast]);
 
     const updateFontStatuses = useCallback(async () => {
         try {
@@ -264,15 +267,16 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
     };
 
     const handleDeleteLocale = async (langKey: Language) => {
+        if (lang === langKey) {
+            triggerToast(t.locales?.cannotDeleteActive || "Cannot delete the language pack currently in use.", "error");
+            return;
+        }
         setDeletingLocales(prev => ({ ...prev, [langKey]: true }));
         const success = await deleteLocale(langKey);
         setDeletingLocales(prev => ({ ...prev, [langKey]: false }));
         if (success) {
             await updateLocaleStatuses();
             triggerToast(t.locales?.deleteSuccess || "Language pack deleted successfully!", "success");
-            if (lang === langKey && changeLang) {
-                changeLang('en');
-            }
         } else {
             triggerToast(t.locales?.deleteFailed || "Failed to delete language pack.", "error");
         }
@@ -503,19 +507,6 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
                 </div>) : null}
             </div>
 
-            {/* Toast Overlay */}
-            {toast && (
-                <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-xl border shadow-lg animate-in fade-in slide-in-from-bottom-2 ${
-                    toast.type === 'success' 
-                        ? 'bg-emerald-50 dark:bg-emerald-950/90 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200' 
-                        : 'bg-rose-50 dark:bg-rose-950/90 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200'
-                }`}>
-                    <span className="text-sm font-medium">{toast.message}</span>
-                    <button onClick={() => setToast(null)} className="hover:opacity-75 transition-opacity text-slate-400 dark:text-slate-300">
-                        <X size={14} />
-                    </button>
-                </div>
-            )}
         </div>
     );
 };

@@ -118,7 +118,8 @@ export const tools = {
     title: "Base64 資料",
     desc: "指紋原始資料",
     copy: "複製全部",
-    close: "關閉"
+    close: "關閉",
+    copySuccess: "原始指紋資料已成功複製到剪貼簿！"
   },
   imageDetails: {
     dimensions: "尺寸",

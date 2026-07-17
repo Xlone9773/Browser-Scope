@@ -4,6 +4,7 @@ import App from './App';
 import './utils/loggerStore';
 import './index.css';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { ToastProvider } from './components/ui/Toast';
 
 // Suppress specific errors that might leak to the console
 window.addEventListener('error', (e) => {
@@ -29,7 +30,9 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <ErrorBoundary name="RootApp">
-      <App />
+      <ToastProvider>
+        <App />
+      </ToastProvider>
     </ErrorBoundary>
   </React.StrictMode>
 );

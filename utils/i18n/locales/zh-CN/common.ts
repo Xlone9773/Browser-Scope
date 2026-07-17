@@ -43,6 +43,10 @@ export const common = {
         url: "当前 URL",
         user_agent: "浏览器信息"
     },
+    toasts: {
+        user_agent_copied: "用户代理信息已复制到剪贴板！",
+        client_hints_copied: "Client Hints 信息已复制到剪贴板！"
+    },
     modal_loading: {
         initializing: "正在初始化",
         loading_module: "正在加载模块资源"

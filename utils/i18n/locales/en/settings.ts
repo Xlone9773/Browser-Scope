@@ -275,7 +275,8 @@ export const settings = {
             downloadFailed: "Failed to download language pack.",
             deleteFailed: "Failed to delete language pack.",
             coreLanguage: "Core Language (Built-in)",
-            notDownloadedTooltip: "Language pack is not downloaded. Click to download and switch."
+            notDownloadedTooltip: "Language pack is not downloaded. Click to download and switch.",
+            cannotDeleteActive: "Cannot delete the language pack currently in use to avoid rendering issues."
         }
     },
     resources: {

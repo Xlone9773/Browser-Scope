@@ -118,7 +118,8 @@ export const tools = {
     title: "Base64 Data",
     desc: "Raw Fingerprint Data",
     copy: "Copy All",
-    close: "Close"
+    close: "Close",
+    copySuccess: "Raw fingerprint data copied to clipboard!"
   },
   imageDetails: {
     dimensions: "Dimensions",

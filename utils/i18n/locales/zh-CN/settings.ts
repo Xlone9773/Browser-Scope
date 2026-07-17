@@ -275,7 +275,8 @@ export const settings = {
             downloadFailed: "下载语言包失败，请检查网络。",
             deleteFailed: "删除语言包失败。",
             coreLanguage: "核心语言 (内置)",
-            notDownloadedTooltip: "该语言包尚未下载。点击将自动下载并完成切换。"
+            notDownloadedTooltip: "该语言包尚未下载。点击将自动下载并完成切换。",
+            cannotDeleteActive: "无法删除当前正在使用的语言包，以避免出现渲染问题。"
         }
     },
     resources: {

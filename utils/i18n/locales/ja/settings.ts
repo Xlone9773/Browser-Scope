@@ -275,7 +275,8 @@ export const settings = {
             downloadFailed: "言語パックのダウンロードに失敗しました。",
             deleteFailed: "言語パックの削除に失敗しました。",
             coreLanguage: "コア言語 (組み込み)",
-            notDownloadedTooltip: "この言語パックはダウンロードされていません。クリックすると自動的にダウンロードして切り替えます。"
+            notDownloadedTooltip: "この言語パックはダウンロードされていません。クリックすると自動的にダウンロードして切り替えます。",
+            cannotDeleteActive: "レンダリングの問題を避けるため、現在使用中の言語パックは削除できません。"
         }
     },
     resources: {

@@ -43,6 +43,10 @@ export const common = {
         url: "Текущий URL",
         user_agent: "Пользовательский агент"
     },
+    toasts: {
+        user_agent_copied: "User Agent скопирован в буфер обмена!",
+        client_hints_copied: "Client Hints скопированы в буфер обмена!"
+    },
     modal_loading: {
         initializing: "Инициализация",
         loading_module: "Загрузка ресурса модуля"

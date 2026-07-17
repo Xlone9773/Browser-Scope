@@ -118,7 +118,8 @@ export const tools = {
     title: "Base64 データ",
     desc: "指紋の生データ",
     copy: "すべてコピー",
-    close: "閉じる"
+    close: "閉じる",
+    copySuccess: "生フィンガープリントデータをクリップボードにコピーしました！"
   },
   imageDetails: {
     dimensions: "寸法",
