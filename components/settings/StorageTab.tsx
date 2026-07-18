@@ -77,90 +77,6 @@ const FONTS_LIST: FontItem[] = [
 
 const CACHE_NAME = "browserscope-fonts";
 
-const getLocalizedToast = (
-  key: 'cannotDeleteActive' | 'deleteSuccess' | 'deleteFailed' | 'downloadSuccess' | 'downloadFailed' | 'fontDownloadSuccess' | 'fontDownloadFailed' | 'fontDeleteSuccess' | 'fontDeleteFailed',
-  currentLang: string
-): string => {
-  const dict = {
-    cannotDeleteActive: {
-      en: "Cannot delete the language pack currently in use to avoid rendering issues.",
-      'zh-CN': "无法删除当前正在使用的语言包，以避免出现渲染问题。",
-      'zh-TW': "無法刪除目前正在使用的語言包，以避免出現渲染問題。",
-      'zh-HK': "無法刪除目前正在使用的語言包，以避免出現渲染問題。",
-      ja: "レンダリングの問題を避けるため、現在使用中の言語パックは削除できません。",
-      ru: "Нельзя удалить используемый в данный момент языковой пакет во избежание проблем с отображением."
-    },
-    deleteSuccess: {
-      en: "Language pack deleted successfully!",
-      'zh-CN': "语言包已成功清除！",
-      'zh-TW': "語言包已成功清除！",
-      'zh-HK': "語言包已成功清除！",
-      ja: "言語パックが正常に削除されました！",
-      ru: "Языковой пакет успешно удален!"
-    },
-    deleteFailed: {
-      en: "Failed to delete language pack.",
-      'zh-CN': "删除语言包失败。",
-      'zh-TW': "刪除語言包失敗。",
-      'zh-HK': "刪除語言包失敗。",
-      ja: "言語パックの削除に失敗しました。",
-      ru: "Не удалось удалить языковой пакет."
-    },
-    downloadSuccess: {
-      en: "Language pack downloaded successfully!",
-      'zh-CN': "语言包下载成功！",
-      'zh-TW': "語言包下載成功！",
-      'zh-HK': "語言包下載成功！",
-      ja: "言語パックが正常にダウンロードされました！",
-      ru: "Языковой пакет успешно скачан!"
-    },
-    downloadFailed: {
-      en: "Failed to download language pack.",
-      'zh-CN': "下载语言包失败，请检查网络。",
-      'zh-TW': "下載語言包失敗，請檢查網路。",
-      'zh-HK': "下載語言包失敗，請檢查網路。",
-      ja: "言語パックのダウンロードに失敗しました。",
-      ru: "Не удалось скачать языковой пакет."
-    },
-    fontDownloadSuccess: {
-      en: "Font downloaded successfully!",
-      'zh-CN': "字体下载成功！",
-      'zh-TW': "字型下載成功！",
-      'zh-HK': "字型下載成功！",
-      ja: "フォントが正常にダウンロードされました！",
-      ru: "Шрифт успешно скачан!"
-    },
-    fontDownloadFailed: {
-      en: "Failed to download font.",
-      'zh-CN': "下载字体失败。",
-      'zh-TW': "下載字型失敗。",
-      'zh-HK': "下載字型失敗。",
-      ja: "フォントのダウンロードに失敗しました。",
-      ru: "Не удалось скачать шрифт."
-    },
-    fontDeleteSuccess: {
-      en: "Font deleted successfully!",
-      'zh-CN': "字体删除成功！",
-      'zh-TW': "字型刪除成功！",
-      'zh-HK': "字型刪除成功！",
-      ja: "フォントが正常に削除されました！",
-      ru: "Шрифт успешно удален!"
-    },
-    fontDeleteFailed: {
-      en: "Failed to delete font.",
-      'zh-CN': "删除字体失败。",
-      'zh-TW': "刪除字型失敗。",
-      'zh-HK': "刪除字型失敗。",
-      ja: "フォントの削除に失敗しました。",
-      ru: "Не удалось удалить шрифт."
-    }
-  };
-
-  const item = dict[key];
-  const langKey = currentLang as keyof typeof item;
-  return item[langKey] || item['en'];
-};
-
 export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLang }) => {
     const [localStorageCount, setLocalStorageCount] = useState(() => typeof window !== 'undefined' ? localStorage.length : 0);
     const [sessionStorageCount, setSessionStorageCount] = useState(() => typeof window !== 'undefined' ? sessionStorage.length : 0);
@@ -311,9 +227,9 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
         setDownloadingKeys(prev => ({ ...prev, [fontKey]: false }));
         if (success) {
             await updateFontStatuses();
-            triggerToast(t.fonts?.downloadSuccess || getLocalizedToast('fontDownloadSuccess', lang), "success");
+            triggerToast(t.fonts?.downloadSuccess || "Font downloaded successfully!", "success");
         } else {
-            triggerToast(t.fonts?.downloadFailed || getLocalizedToast('fontDownloadFailed', lang), "error");
+            triggerToast(t.fonts?.downloadFailed || "Failed to download font.", "error");
         }
     };
 
@@ -332,9 +248,9 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
         setDeletingKeys(prev => ({ ...prev, [fontKey]: false }));
         if (success) {
             await updateFontStatuses();
-            triggerToast(t.fonts?.deleteSuccess || getLocalizedToast('fontDeleteSuccess', lang), "success");
+            triggerToast(t.fonts?.deleteSuccess || "Font deleted successfully!", "success");
         } else {
-            triggerToast(t.fonts?.deleteFailed || getLocalizedToast('fontDeleteFailed', lang), "error");
+            triggerToast(t.fonts?.deleteFailed || "Failed to delete font.", "error");
         }
     };
 
@@ -344,15 +260,15 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
         setDownloadingLocales(prev => ({ ...prev, [langKey]: false }));
         if (success) {
             await updateLocaleStatuses();
-            triggerToast(t.locales?.downloadSuccess || getLocalizedToast('downloadSuccess', lang), "success");
+            triggerToast(t.locales?.downloadSuccess || "Language pack downloaded successfully!", "success");
         } else {
-            triggerToast(t.locales?.downloadFailed || getLocalizedToast('downloadFailed', lang), "error");
+            triggerToast(t.locales?.downloadFailed || "Failed to download language pack.", "error");
         }
     };
 
     const handleDeleteLocale = async (langKey: Language) => {
         if (lang === langKey) {
-            triggerToast(t.locales?.cannotDeleteActive || getLocalizedToast('cannotDeleteActive', lang), "error");
+            triggerToast(t.locales?.cannotDeleteActive || "Cannot delete the language pack currently in use to avoid rendering issues.", "error");
             return;
         }
         setDeletingLocales(prev => ({ ...prev, [langKey]: true }));
@@ -360,9 +276,9 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
         setDeletingLocales(prev => ({ ...prev, [langKey]: false }));
         if (success) {
             await updateLocaleStatuses();
-            triggerToast(t.locales?.deleteSuccess || getLocalizedToast('deleteSuccess', lang), "success");
+            triggerToast(t.locales?.deleteSuccess || "Language pack deleted successfully!", "success");
         } else {
-            triggerToast(t.locales?.deleteFailed || getLocalizedToast('deleteFailed', lang), "error");
+            triggerToast(t.locales?.deleteFailed || "Failed to delete language pack.", "error");
         }
     };
 
