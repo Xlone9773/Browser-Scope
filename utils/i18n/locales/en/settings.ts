@@ -136,6 +136,8 @@ export const settings = {
             statusInactive: "Inactive / Script Not Loaded",
             installGuide: "Script Install Guide",
             copyScript: "Copy Userscript",
+            quickInstall: "1-Click Quick Install (Recommended)",
+            manualInstallBackup: "Manual Copy & Paste (Backup)",
             copied: "Copied!",
             enableBtn: "Use Userscript Bypass",
             disableBtn: "Disable",

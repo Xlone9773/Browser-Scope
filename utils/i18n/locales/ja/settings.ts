@@ -136,6 +136,8 @@ export const settings = {
             statusInactive: "未検出 / スクリプトが読み込まれていません",
             installGuide: "スクリプトインストールガイド",
             copyScript: "スクリプトコードをコピー",
+            quickInstall: "ワンクリック簡単インストール (推奨)",
+            manualInstallBackup: "手動コピー＆ペースト (バックアップ)",
             copied: "クリップボードにコピーしました!",
             enableBtn: "Tampermonkey の CORS バイパスを優先する",
             disableBtn: "無効化 (フォールバック)",

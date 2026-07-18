@@ -6,6 +6,7 @@ import helmet from "helmet";
 import compression from "compression";
 import cors from "cors";
 import { rateLimit } from "express-rate-limit";
+import { USERSCRIPT_CODE } from "./utils/userscript";
 
 async function startServer() {
   const app = express();
@@ -135,6 +136,12 @@ async function startServer() {
   // Parsers must be placed before any route definition
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+  // Serve the userscript dynamically for 1-click installation
+  app.get("/api/bypass.user.js", (req, res) => {
+    res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+    res.send(USERSCRIPT_CODE);
+  });
 
   app.get("/api/udp-status", async (req, res) => {
     try {

@@ -352,7 +352,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                                     {t.userscriptBypass.desc}
                                 </p>
                                 
-                                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                                <div className="flex items-center gap-2 mt-2">
                                     <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
                                         userscriptConnected 
                                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30' 
@@ -361,18 +361,38 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                                         <span className={`w-1.5 h-1.5 rounded-full ${userscriptConnected ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
                                         {userscriptConnected ? t.userscriptBypass.statusActive : t.userscriptBypass.statusInactive}
                                     </span>
+                                </div>
+
+                                <div className="flex items-center gap-3 mt-4 flex-wrap w-full">
+                                    <a
+                                        href="/api/bypass.user.js"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                                    >
+                                        <Download className="w-3.5 h-3.5" />
+                                        {t.userscriptBypass.quickInstall}
+                                    </a>
                                     
                                     <button
                                         onClick={() => setShowInstallGuide(!showInstallGuide)}
-                                        className="text-xs text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-semibold underline flex items-center gap-1 cursor-pointer"
+                                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${
+                                            showInstallGuide 
+                                                ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-900 dark:text-indigo-300' 
+                                                : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
+                                        }`}
                                     >
                                         <HelpCircle className="w-3.5 h-3.5" />
-                                        {t.userscriptBypass.installGuide}
+                                        {t.userscriptBypass.manualInstallBackup}
                                     </button>
 
                                     <button
                                         onClick={() => setShowComparison(!showComparison)}
-                                        className="text-xs text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-semibold underline flex items-center gap-1 cursor-pointer"
+                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium cursor-pointer transition-all ml-auto ${
+                                            showComparison
+                                                ? 'text-indigo-700 dark:text-indigo-300 underline font-semibold'
+                                                : 'text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 underline'
+                                        }`}
                                     >
                                         <Scale className="w-3.5 h-3.5" />
                                         {t.userscriptBypass.comparisonTitle}

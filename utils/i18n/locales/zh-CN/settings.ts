@@ -136,6 +136,8 @@ export const settings = {
             statusInactive: "未检测到脚本运行或尚未安装",
             installGuide: "脚本安装指南",
             copyScript: "复制脚本代码",
+            quickInstall: "一键快捷安装 (推荐)",
+            manualInstallBackup: "手动复制安装 (备用)",
             copied: "已复制到剪贴板!",
             enableBtn: "优先启用篡改猴脚本跨域直连",
             disableBtn: "不启用 (Fallback)",

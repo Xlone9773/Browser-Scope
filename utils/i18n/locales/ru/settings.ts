@@ -136,6 +136,8 @@ export const settings = {
             statusInactive: "Скрипт не обнаружен или не установлен",
             installGuide: "Руководство по установке",
             copyScript: "Скопировать код скрипта",
+            quickInstall: "Быстрая установка в 1 клик (Рекомендуется)",
+            manualInstallBackup: "Ручная копия и вставка (Резерв)",
             copied: "Скопировано в буфер обмена!",
             enableBtn: "Использовать обход через Tampermonkey",
             disableBtn: "Отключить (Fallback)",
