@@ -461,7 +461,21 @@ SOFTWARE.`
     "ja3n_title": "JA3N Fingerprint",
     "ja3n_hash": "JA3N Hash (MD5)",
     "ja3n_string": "JA3N String (Raw)",
-    "server_ua": "Server Detected User-Agent"
+    "server_ua": "Server Detected User-Agent",
+    "mode_label": "Retrieval Mode",
+    "mode_userscript": "Userscript (Recommended)",
+    "mode_direct": "Direct Browser",
+    "mode_proxy": "Server Proxy",
+    "userscript_uninstalled": "Userscript helper not responding. Install our helper script below to bypass CORS and capture your genuine client TLS handshake!",
+    "userscript_detected": "Userscript helper active! Successfully bypassed CORS for 100% genuine browser TLS fingerprint.",
+    "copy_userscript": "Copy Userscript Code",
+    "proxy_desc": "⚠️ Warning: Under Server Proxy, the TLS handshake is completed by our Node.js server. The fingerprint below reflects the Server environment, NOT your local browser.",
+    "direct_desc": "Requests are sent directly from the client. Will fail due to browser CORS policy unless you have explicitly disabled CORS manually.",
+    "userscript_desc": "Bypasses CORS using the installed Tampermonkey userscript to perform the handshake directly from your actual browser.",
+    "ja4_title": "JA4 Fingerprint",
+    "ja4_hash": "JA4 Hash",
+    "ja4_o_title": "JA4_O Fingerprint (Original Order)",
+    "copied": "Copied!"
   },
   "attributionsModal": {
     "title": "Software & Asset Attributions",

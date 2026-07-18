@@ -383,7 +383,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
         ) : null}
 
         {visibility.ja3 ? (
-          <Components.ja3 onClose={() => close("ja3")} t={t.ja3} />
+          <Components.ja3 onClose={() => close("ja3")} t={t.ja3Modal} />
         ) : null}
 
         {visibility.attributions ? (

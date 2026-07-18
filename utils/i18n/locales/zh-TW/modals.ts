@@ -449,7 +449,21 @@ export const modals = {
     "ja3n_title": "JA3N 指紋",
     "ja3n_hash": "JA3N 雜湊 (MD5)",
     "ja3n_string": "JA3N 字串 (原始)",
-    "server_ua": "伺服器檢測到的 User-Agent"
+    "server_ua": "伺服器檢測到的 User-Agent",
+    "mode_label": "獲取模式",
+    "mode_userscript": "篡改猴腳本 (推薦)",
+    "mode_direct": "瀏覽器直連",
+    "mode_proxy": "服務端代理",
+    "userscript_uninstalled": "未檢測到腳本響應。請在下方安裝我們的輔助腳本，以繞過跨域限制，並捕獲您最真實的本機瀏覽器 TLS 握手！",
+    "userscript_detected": "篡改猴腳本助手已激活！成功繞過 CORS 跨域限制，獲取 100% 真實的本機瀏覽器 TLS 指紋。",
+    "copy_userscript": "複製篡改猴腳本代碼",
+    "proxy_desc": "⚠️ 警告：在服務端代理模式下，TLS 雜湊/握手是由 Node.js 後端完成的。下方指紋代表伺服器環境特徵，而非您本機的瀏覽器。",
+    "direct_desc": "請求將直接從客戶端發起。除非您手動關閉了瀏覽器的跨域安全策略，否則將會因 CORS 策略而失敗。",
+    "userscript_desc": "利用已安裝的篡改猴腳本繞過 CORS 跨域限制，讓您的瀏覽器安全直連並直接獲取 TLS 特徵。",
+    "ja4_title": "JA4 指紋",
+    "ja4_hash": "JA4 哈希",
+    "ja4_o_title": "JA4_O 指紋 (原始順序)",
+    "copied": "已複製！"
   },
   "attributionsModal": {
     "title": "軟體與資產歸屬聲明",

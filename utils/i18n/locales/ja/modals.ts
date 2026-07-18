@@ -449,7 +449,21 @@ Copyright (c) 2026 BrowserScope Contributors
     "ja3n_title": "JA3N 指紋",
     "ja3n_hash": "JA3N ハッシュ (MD5)",
     "ja3n_string": "JA3N 文字列 (生)",
-    "server_ua": "サーバーが検出したユーザーエージェント"
+    "server_ua": "サーバーが検出したユーザーエージェント",
+    "mode_label": "取得モード",
+    "mode_userscript": "Tampermonkeyスクリプト (推奨)",
+    "mode_direct": "ブラウザ直連",
+    "mode_proxy": "サーバープロキシ",
+    "userscript_uninstalled": "スクリプトが応答していません。CORS制限を回避し、ブラウザの実際のTLS指紋を取得するために、以下のヘルパースクリプトをインストールしてください！",
+    "userscript_detected": "ヘルパースクリプトが有効です！CORS制限を回避し、100%本物のブラウザTLS指紋を取得しました。",
+    "copy_userscript": "スクリプトコードをコピー",
+    "proxy_desc": "⚠️ 警告: サーバープロキシモードでは、TLSハンドシェイクはNode.jsバックエンドで実行されます。以下の指紋はサーバーの環境を示しており、あなたのブラウザのものではありません。",
+    "direct_desc": "クライアントから直接リクエストを送信します。ブラウザのCORSセキュリティポリシーを手動で無効にしていない限り、失敗します。",
+    "userscript_desc": "インストール済みのTampermonkeyスクリプトを使用してCORSを回避し、ブラウザ上で直接ハンドシェイクを実行します。",
+    "ja4_title": "JA4 フィンガープリント",
+    "ja4_hash": "JA4 ハッシュ",
+    "ja4_o_title": "JA4_O フィンガープリント (元順)",
+    "copied": "コピーしました！"
   },
   "attributionsModal": {
     "title": "ソフトウェアおよびアセットの帰属表記 (Attributions)",

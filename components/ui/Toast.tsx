@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { ToastContext } from "../../hooks/useToast";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
@@ -23,15 +24,6 @@ export interface ToastContextType {
   clearAll: () => void;
 }
 
-const ToastContext = createContext<ToastContextType | null>(null);
-
-export const useToastContext = (): ToastContextType => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error("useToastContext must be used within a ToastProvider");
-  }
-  return context;
-};
 
 interface ToastProps {
   toast: ToastItem;
