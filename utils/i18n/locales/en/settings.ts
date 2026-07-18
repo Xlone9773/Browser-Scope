@@ -117,6 +117,25 @@ export const settings = {
             checkingUdp: "Checking UDP support...",
             recheckUdp: "Recheck"
         },
+        userscriptBypass: {
+            title: "Tampermonkey CORS Bypass (Local Connect)",
+            desc: "Perform network diagnostics and TLS fingerprinting directly from your actual browser, bypassing CORS limits. Requires installing our Tampermonkey userscript. Safe & fast.",
+            statusActive: "Active & Connected",
+            statusInactive: "Inactive / Script Not Loaded",
+            installGuide: "Script Install Guide",
+            copyScript: "Copy Userscript",
+            copied: "Copied!",
+            enableBtn: "Use Userscript Bypass",
+            disableBtn: "Disable",
+            recheck: "Check Status",
+            checking: "Checking status...",
+            steps: {
+                step1: "Install the **Tampermonkey** browser extension.",
+                step2: "Click **'Create a new script'** inside the extension dashboard.",
+                step3: "Copy and paste the entire userscript below, then save (Ctrl+S).",
+                step4: "Once saved, refresh this page. The system will auto-connect."
+            }
+        },
         exportSettings: {
             title: "Export & Import Settings",
             desc: "Export your current settings and preferences, or import them to quickly configure the application after migrating platforms.",

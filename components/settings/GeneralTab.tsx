@@ -1,9 +1,10 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { RotateCcw, Check, Download, Upload } from 'lucide-react';
+import { RotateCcw, Check, Download, Upload, Terminal, Copy, Radio, HelpCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Select } from '../ui/Select';
 import { Translation } from '../../utils/i18n/types';
+import { USERSCRIPT_CODE } from '../../utils/userscript';
 
 interface GeneralTabProps {
     t: Translation['settings']['general'];
@@ -98,6 +99,56 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
         const stored = localStorage.getItem('udp_supported');
         return stored ? stored === 'true' : null;
     });
+
+    const [useUserscript, setUseUserscript] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('use_userscript') === 'true';
+        }
+        return false;
+    });
+    const [userscriptConnected, setUserscriptConnected] = useState(false);
+    const [checkingUserscript, setCheckingUserscript] = useState(false);
+    const [scriptCopied, setScriptCopied] = useState(false);
+    const [showInstallGuide, setShowInstallGuide] = useState(false);
+
+    const checkUserscriptStatus = React.useCallback(() => {
+        setCheckingUserscript(true);
+        
+        const handlePong = () => {
+            setUserscriptConnected(true);
+            setCheckingUserscript(false);
+            window.removeEventListener('PONG_CORS_HELPER', handlePong);
+        };
+
+        window.addEventListener('PONG_CORS_HELPER', handlePong);
+        window.dispatchEvent(new CustomEvent('PING_CORS_HELPER'));
+
+        setTimeout(() => {
+            setCheckingUserscript(current => {
+                if (current) {
+                    setUserscriptConnected(false);
+                    window.removeEventListener('PONG_CORS_HELPER', handlePong);
+                    return false;
+                }
+                return current;
+            });
+        }, 800);
+    }, []);
+
+    useEffect(() => {
+        checkUserscriptStatus();
+    }, [checkUserscriptStatus]);
+
+    const handleToggleUserscript = (val: boolean) => {
+        setUseUserscript(val);
+        localStorage.setItem('use_userscript', val ? 'true' : 'false');
+    };
+
+    const handleCopyScriptCode = () => {
+        navigator.clipboard.writeText(USERSCRIPT_CODE);
+        setScriptCopied(true);
+        setTimeout(() => setScriptCopied(false), 2000);
+    };
 
     const checkUdpSupport = React.useCallback((force = false) => {
         if (!force && udpSupported !== null) return;
@@ -259,6 +310,86 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     <Switch checked={!!enableUdp} onChange={() => { if(udpSupported) toggleEnableUdp(!enableUdp); }} disabled={!udpSupported} />
                 </div>
             </div>) : null}
+            {/* Tampermonkey CORS Bypass Toggle & Script Settings */}
+            {t.userscriptBypass ? (
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                    <div className="p-5 flex items-start justify-between">
+                        <div className="flex flex-col gap-1 pr-4">
+                            <div className="flex items-center gap-2">
+                                <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                    <Terminal className="w-5 h-5 text-indigo-500 shrink-0" />
+                                    {t.userscriptBypass.title}
+                                </h3>
+                                <button
+                                    onClick={() => checkUserscriptStatus()}
+                                    disabled={checkingUserscript}
+                                    className="px-2 py-0.5 text-xs rounded-md border bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-900/50 transition-colors ml-2 flex items-center gap-1 shrink-0"
+                                >
+                                    <Radio className={`w-3 h-3 ${checkingUserscript ? 'animate-pulse' : ''}`} />
+                                    {checkingUserscript ? t.userscriptBypass.checking : t.userscriptBypass.recheck}
+                                </button>
+                            </div>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 max-w-lg leading-relaxed mt-1">
+                                {t.userscriptBypass.desc}
+                            </p>
+                            
+                            <div className="flex items-center gap-2 mt-2">
+                                <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                                    userscriptConnected 
+                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30' 
+                                        : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                }`}>
+                                    <span className={`w-1.5 h-1.5 rounded-full ${userscriptConnected ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                                    {userscriptConnected ? t.userscriptBypass.statusActive : t.userscriptBypass.statusInactive}
+                                </span>
+                                
+                                <button
+                                    onClick={() => setShowInstallGuide(!showInstallGuide)}
+                                    className="text-xs text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-semibold underline flex items-center gap-1"
+                                >
+                                    <HelpCircle className="w-3.5 h-3.5" />
+                                    {t.userscriptBypass.installGuide}
+                                </button>
+                            </div>
+                        </div>
+                        <div className="shrink-0 pt-1">
+                            <Switch checked={useUserscript} onChange={handleToggleUserscript} />
+                        </div>
+                    </div>
+
+                    {/* Expandable Installation Guide */}
+                    {showInstallGuide && (
+                        <div className="border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/25 p-5 space-y-4">
+                            <div className="space-y-2">
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                    {t.userscriptBypass.installGuide}
+                                </h4>
+                                <ol className="list-decimal list-inside text-xs text-slate-600 dark:text-slate-400 space-y-1.5 leading-relaxed">
+                                    <li><span dangerouslySetInnerHTML={{ __html: t.userscriptBypass.steps.step1 }} /></li>
+                                    <li><span dangerouslySetInnerHTML={{ __html: t.userscriptBypass.steps.step2 }} /></li>
+                                    <li><span dangerouslySetInnerHTML={{ __html: t.userscriptBypass.steps.step3 }} /></li>
+                                    <li><span dangerouslySetInnerHTML={{ __html: t.userscriptBypass.steps.step4 }} /></li>
+                                </ol>
+                            </div>
+
+                            <div className="relative">
+                                <pre className="text-[10px] font-mono bg-white dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-slate-800 overflow-x-auto max-h-48 select-all text-slate-600 dark:text-slate-400">
+                                    {USERSCRIPT_CODE}
+                                </pre>
+                                <Button
+                                    size="xs"
+                                    onClick={handleCopyScriptCode}
+                                    variant="soft"
+                                    className="absolute top-2.5 right-2.5 shadow-sm"
+                                    leftIcon={scriptCopied ? <Check size={12} /> : <Copy size={12} />}
+                                >
+                                    {scriptCopied ? t.userscriptBypass.copied : t.userscriptBypass.copyScript}
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ) : null}
             {/* Custom Visibility */}
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                 <div className="flex flex-col gap-1">

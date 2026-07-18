@@ -117,6 +117,25 @@ export const settings = {
             checkingUdp: "正在检查 UDP 支持...",
             recheckUdp: "重新检查"
         },
+        userscriptBypass: {
+            title: "篡改猴(Tampermonkey)跨域脚本辅助 (直连绕过)",
+            desc: "通过安装在浏览器中的 Tampermonkey 脚本，直接从您的实际电脑发起网络诊断与 TLS 指纹请求，不经过任何服务器代理，完全绕过 CORS 拦截。安全、高速、直连。",
+            statusActive: "脚本已激活并成功连接",
+            statusInactive: "未检测到脚本运行或尚未安装",
+            installGuide: "脚本安装指南",
+            copyScript: "复制脚本代码",
+            copied: "已复制到剪贴板!",
+            enableBtn: "优先启用篡改猴脚本跨域直连",
+            disableBtn: "不启用 (Fallback)",
+            recheck: "重新检测状态",
+            checking: "正在检查脚本状态...",
+            steps: {
+                step1: "在浏览器中安装 **Tampermonkey (篡改猴)** 或类似的用户脚本管理扩展。",
+                step2: "点击该扩展的图标，选择 **“添加新脚本” (Create a new script)**。",
+                step3: "复制下方完整的脚本代码，在编辑器中全部粘贴覆盖并保存 (Ctrl+S)。",
+                step4: "保存成功后，重新刷新本页面。系统将会自动与脚本握手连接！"
+            }
+        },
         exportSettings: {
             title: "导出和导入设置",
             desc: "导出您当前的各项设置和偏好，或导入设置以在迁移平台后快速配置。",

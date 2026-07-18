@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Fingerprint, Activity, Server, Hash, Copy, Check, Info, HelpCircle, Terminal } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
+import { USERSCRIPT_CODE } from '../utils/userscript';
 
 interface Ja3FingerprintModalProps {
   onClose: () => void;
@@ -21,52 +22,6 @@ interface Ja3Data {
   ja4_ro?: string;
   user_agent?: string;
 }
-
-const USERSCRIPT_CODE = `// ==UserScript==
-// @name         BrowserScope TLS Fingerprint Helper
-// @namespace    https://browserleaks.com/
-// @version      1.1
-// @description  Bypass CORS to fetch real client TLS (JA3/JA4) fingerprint for BrowserScope
-// @author       BrowserScope Architect
-// @match        *://*/*
-// @grant        GM_xmlhttpRequest
-// @connect      tls.browserleaks.com
-// @run-at       document-start
-// ==/UserScript==
-
-(function() {
-    'use strict';
-    
-    // Announce presence
-    window.addEventListener('PING_TLS_HELPER', function() {
-        window.dispatchEvent(new CustomEvent('PONG_TLS_HELPER'));
-    });
-
-    // Listen for custom requests from our web page
-    window.addEventListener('GET_TLS_FINGERPRINT', function() {
-        GM_xmlhttpRequest({
-            method: 'GET',
-            url: 'https://tls.browserleaks.com/json',
-            onload: function(response) {
-                try {
-                    const data = JSON.parse(response.responseText);
-                    window.dispatchEvent(new CustomEvent('TLS_FINGERPRINT_RESPONSE', {
-                        detail: { success: true, data: data }
-                    }));
-                } catch (e) {
-                    window.dispatchEvent(new CustomEvent('TLS_FINGERPRINT_RESPONSE', {
-                        detail: { success: false, error: 'Failed to parse JSON' }
-                    }));
-                }
-            },
-            onerror: function(err) {
-                window.dispatchEvent(new CustomEvent('TLS_FINGERPRINT_RESPONSE', {
-                    detail: { success: false, error: 'Network error in Userscript fetch' }
-                }));
-            }
-        });
-    });
-})();`;
 
 export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClose, t }) => {
   const [retrievalMode, setRetrievalMode] = useState<'userscript' | 'direct' | 'proxy'>('userscript');

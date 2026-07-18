@@ -117,6 +117,25 @@ export const settings = {
             checkingUdp: "UDP サポートを確認中...",
             recheckUdp: "再確認"
         },
+        userscriptBypass: {
+            title: "Tampermonkey CORS バイパス補助 (ローカル接続)",
+            desc: "ブラウザにインストールされた Tampermonkey スクリプトを使用して、ローカル PC から直接ネットワーク診断と TLS 指紋取得を実行します。CORS 制限を完全に回避し、プロキシを経由しないセキュアで高速な直接接続を提供します。",
+            statusActive: "スクリプト検出完了・接続中",
+            statusInactive: "未検出 / スクリプトが読み込まれていません",
+            installGuide: "スクリプトインストールガイド",
+            copyScript: "スクリプトコードをコピー",
+            copied: "クリップボードにコピーしました!",
+            enableBtn: "Tampermonkey の CORS バイパスを優先する",
+            disableBtn: "無効化 (フォールバック)",
+            recheck: "ステータス再確認",
+            checking: "接続状況を確認中...",
+            steps: {
+                step1: "ブラウザに **Tampermonkey (篡改猴)** または同様のユーザースクリプト管理拡張機能をインストールします。",
+                step2: "拡張機能のアイコンをクリックし、**「新規スクリプトを作成」 (Create a new script)** を選択します。",
+                step3: "以下のスクリプトコード全体をコピーしてエディタに貼り付け、保存 (Ctrl+S) します。",
+                step4: "保存後、このページを更新してください。システムがスクリプトと自動的にハンドシェイク接続を行います。"
+            }
+        },
         exportSettings: {
             title: "設定のエクスポートとインポート",
             desc: "現在の設定や環境をエクスポートするか、インポートしてプラットフォーム移行後にすばやく構成します。",

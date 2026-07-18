@@ -71,6 +71,83 @@ const customFetch = async (url: string, enableUdp: boolean, options: RequestInit
         };
     };
 
+    const doUserscriptFetch = (targetUrl: string, opts: RequestInit = {}): Promise<CustomFetchResponse> => {
+        return new Promise((resolve, reject) => {
+            const requestId = Math.random().toString(36).substring(2, 11);
+            
+            const handleResponse = (e: Event) => {
+                const customEvent = e as CustomEvent;
+                if (customEvent.detail) {
+                    cleanup();
+                    if (customEvent.detail.success) {
+                        const responseText = customEvent.detail.responseText || '';
+                        resolve({
+                            ok: customEvent.detail.status >= 200 && customEvent.detail.status < 300,
+                            status: customEvent.detail.status,
+                            json: async () => {
+                                try {
+                                    return JSON.parse(responseText);
+                                } catch {
+                                    throw new Error("Unable to parse JSON response.");
+                                }
+                            },
+                            text: async () => responseText
+                        });
+                    } else {
+                        reject(new Error(customEvent.detail.error || 'Userscript fetch failed'));
+                    }
+                }
+            };
+
+            const cleanup = () => {
+                window.removeEventListener('CORS_REQUEST_RECEIVE_' + requestId, handleResponse);
+                clearTimeout(timeoutId);
+            };
+
+            // 5s timeout for fast fallback
+            const timeoutId = setTimeout(() => {
+                cleanup();
+                reject(new Error('Userscript request timeout'));
+            }, 5000);
+
+            window.addEventListener('CORS_REQUEST_RECEIVE_' + requestId, handleResponse);
+
+            // Structure headers to clean object
+            const cleanHeaders: Record<string, string> = {};
+            if (opts.headers) {
+                if (opts.headers instanceof Headers) {
+                    opts.headers.forEach((v, k) => { cleanHeaders[k] = v; });
+                } else if (Array.isArray(opts.headers)) {
+                    opts.headers.forEach(([k, v]) => { cleanHeaders[k] = v; });
+                } else {
+                    Object.assign(cleanHeaders, opts.headers);
+                }
+            }
+
+            // Dispatch sending event
+            window.dispatchEvent(new CustomEvent('CORS_REQUEST_SEND', {
+                detail: {
+                    id: requestId,
+                    url: targetUrl,
+                    method: opts.method || 'GET',
+                    headers: cleanHeaders,
+                    data: opts.body || null
+                }
+            }));
+        });
+    };
+
+    // Check if user enabled Tampermonkey CORS Bypass in settings
+    const useUserscript = typeof window !== 'undefined' && localStorage.getItem('use_userscript') === 'true';
+
+    if (useUserscript) {
+        try {
+            return await doUserscriptFetch(url, options);
+        } catch (err) {
+            console.warn("Tampermonkey CORS Bypass failed or timed out. Falling back to normal flow...", err);
+        }
+    }
+
     if (enableUdp) {
         return doProxyFetch();
     }

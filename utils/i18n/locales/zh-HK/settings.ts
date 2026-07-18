@@ -113,9 +113,28 @@ export const settings = {
         },udpBypass: {
             title: "啟用 UDP 網絡代理 (完全繞過跨域)",
             desc: "使用UDP映射API提取網絡工具端點，徹底解決由於CORS產生的任何網絡請求攔截。",
-            unsupportedEnv: "當前運行環境不支援開啟UDP",
+            unsupportedEnv: "當前運行环境不支援開啟UDP",
             checkingUdp: "正在檢查 UDP 支援...",
             recheckUdp: "重新檢查"
+        },
+        userscriptBypass: {
+            title: "篡改猴(Tampermonkey)跨域腳本輔助 (直連繞過)",
+            desc: "透過安裝在瀏覽器中的 Tampermonkey 腳本，直接從您的實際電腦發起網路診斷與 TLS 指紋請求，不經過任何伺服器代理，完全繞過 CORS 攔截。安全、高速、直連。",
+            statusActive: "腳本已激活並成功連接",
+            statusInactive: "未檢測到腳本執行或尚未安裝",
+            installGuide: "腳本安裝指南",
+            copyScript: "複製腳本代碼",
+            copied: "已複製到剪貼簿!",
+            enableBtn: "優先啟用篡改猴腳本跨域直連",
+            disableBtn: "不啟用 (Fallback)",
+            recheck: "重新檢測狀態",
+            checking: "正在檢查腳本狀態...",
+            steps: {
+                step1: "在瀏覽器中安裝 **Tampermonkey (篡改猴)** 或類似的用戶腳本管理擴充功能。",
+                step2: "點擊該擴充功能的圖示，選擇 **「新增腳本」 (Create a new script)**。",
+                step3: "複製下方完整的腳本代碼，在編輯器中全部貼上覆蓋並儲存 (Ctrl+S)。",
+                step4: "儲存成功後，重新整理本頁面。系統將會自動與腳本握手連接！"
+            }
         },
         exportSettings: {
             title: "匯出與匯入設定",
