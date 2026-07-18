@@ -272,7 +272,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
                           <Suspense fallback={<div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
                           
-                          {activeTab === 'appearance' ? (<AppearanceTab 
+                           {activeTab === 'appearance' ? (<AppearanceTab 
                               t={settings.general} 
                               themeColor={themeColor as SelectColor}
                               setThemeColor={setThemeColor}
@@ -297,6 +297,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               showSearch={showSearch}
                               toggleShowSearch={toggleShowSearch}
                               translationDict={t}
+                              hiddenCards={hiddenCards}
+                              setHiddenCards={setHiddenCards}
+                              restoreAllNotifications={restoreAllNotifications}
+                              dismissedNotificationsCount={dismissedNotificationsCount}
+                              showQuickSummary={showQuickSummary}
+                              toggleShowQuickSummary={toggleShowQuickSummary}
                           />) : null}
 
                           {activeTab === 'general' ? (<GeneralTab 

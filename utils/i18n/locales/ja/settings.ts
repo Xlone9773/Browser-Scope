@@ -115,11 +115,23 @@ export const settings = {
             desc: "UDP マッピング API を使用して、CORS によるネットワーク要求のインターセプトを完全にバイパスします。",
             unsupportedEnv: "現在の実行環境ではUDPを有効にできません",
             checkingUdp: "UDP サポートを確認中...",
-            recheckUdp: "再確認"
+            recheckUdp: "再確認",
+            limitationsTitle: "制限事項",
+            limitationsList: [
+                "プロキシサーバーの遅延: リクエストは中継プロキシノードを経由するため、伝送遅延が発生します。",
+                "実際のIPの隠蔽: エンドポイントには実際のローカルIPではなく、クラウドプロキシサーバーのIPアドレスが表示されます。",
+                "リージョンルーティングの偏差: プロキシサーバーの物理的な位置に影響され、地域の判定に誤差が生じる場合があります。",
+                "レート制限: 高頻度の同時ネットワークスキャンは、プロキシノードのAPIレート制限をトリガーする可能性があります。"
+            ],
+            pros: "設定不要。対応している仮想環境であればすぐに使用可能です。",
+            cons: "遅延が高く、クライアントの実際の送信IPを公開できず、サーバーに依存し、レート制限の可能性があります。",
+            prosLabel: "メリット",
+            consLabel: "デメリット"
         },
         userscriptBypass: {
             title: "Tampermonkey CORS バイパス補助 (ローカル接続)",
             desc: "ブラウザにインストールされた Tampermonkey スクリプトを使用して、ローカル PC から直接ネットワーク診断と TLS 指紋取得を実行します。CORS 制限を完全に回避し、プロキシを経由しないセキュアで高速な直接接続を提供します。",
+            recommended: "推奨方案",
             statusActive: "スクリプト検出完了・接続中",
             statusInactive: "未検出 / スクリプトが読み込まれていません",
             installGuide: "スクリプトインストールガイド",
@@ -129,6 +141,12 @@ export const settings = {
             disableBtn: "無効化 (フォールバック)",
             recheck: "ステータス再確認",
             checking: "接続状況を確認中...",
+            pros: "直接接続、最小限の遅延、実際の送信IPを正確に検出、完全なプライバシー保護、レート制限なし。",
+            cons: "初回のみ拡張機能のインストールとスクリプトコードのコピー＆ペースト作業が必要です。",
+            comparisonTitle: "接続方式の比較",
+            methodHeader: "特性の比較",
+            udpBypassHeader: "UDP クラウドプロキシ (サーバー)",
+            userscriptBypassHeader: "Tampermonkey スクリプト (ローカル直連)",
             steps: {
                 step1: "ブラウザに **Tampermonkey (篡改猴)** または同様のユーザースクリプト管理拡張機能をインストールします。",
                 step2: "拡張機能のアイコンをクリックし、**「新規スクリプトを作成」 (Create a new script)** を選択します。",

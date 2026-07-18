@@ -48,7 +48,8 @@ export const settings = {
                 fuzzy: "模糊匹配",
                 exact: "精確匹配"
             }
-        },simpleMode: {
+        },
+        simpleMode: {
             title: "極簡模式",
             desc: "隱藏部分複雜的技術細節，僅顯示核心資訊。"
         },
@@ -62,7 +63,7 @@ export const settings = {
         },
         themeColor: {
             title: "主題色彩",
-            desc: "選擇應用的主要交互色彩搭配。"
+            desc: "選擇應用的主要交互色彩配搭。"
         },
         animationStyle: {
             title: "動畫風格",
@@ -83,8 +84,8 @@ export const settings = {
             desc: "停用模糊特效與透明度以提升介面流暢度（減少 GPU 消耗）。"
         },
         animations: {
-            title: "禁用動畫",
-            desc: "關閉頁面切換和卡片下載等所有動畫效果。"
+            title: "停用動畫",
+            desc: "關閉頁面切換與卡片載入等所有動畫效果。"
         },
         fastAnimations: {
             title: "加快過渡動畫",
@@ -95,10 +96,9 @@ export const settings = {
             desc: "在電腦端隱藏頂部導航條上比較生僻的各類功能按鍵。"
         },
         cardVisibility: {
-            title: "自訂顯示項目",
-            desc: "如果你不希望在主介面看到某些卡片或分組，可以在這裡按需隱藏。"
+            title: "自訂顯示項",
+            desc: "如果您不希望在主介面看到某些卡片或分組，可以在這裡按需隱藏。"
         },
-        
         restoreNotifications: {
             title: "恢復通知卡片",
             desc: "重新顯示在儀表板頂部被您手動關閉的所有通知卡片。",
@@ -110,16 +110,29 @@ export const settings = {
             desc: "重新顯示主介面頂部的快速概要卡片（包含網路狀態、安全指標等）。",
             restoreBtn: "恢復顯示",
             activeState: "已恢復顯示"
-        },udpBypass: {
+        },
+        udpBypass: {
             title: "啟用 UDP 網絡代理 (完全繞過跨域)",
-            desc: "使用UDP映射API提取網絡工具端點，徹底解決由於CORS產生的任何網絡請求攔截。",
-            unsupportedEnv: "當前運行环境不支援開啟UDP",
+            desc: "使用UDP映射API提取網絡工具端點，徹底解決由於CORS產生的任何網絡请求攔截。",
+            unsupportedEnv: "當前運行環境不支援開啟UDP",
             checkingUdp: "正在檢查 UDP 支援...",
-            recheckUdp: "重新檢查"
+            recheckUdp: "重新檢查",
+            limitationsTitle: "局限性與限制",
+            limitationsList: [
+                "代理中轉延遲：所有請求均需要經過部署的雲端代理伺服器進行中轉，會增加網絡傳輸延遲。",
+                "隱藏真實 IP：目標節點只能獲取到雲端代理伺服器的 IP 地址，無法檢測您實際電腦的本地出口 IP。",
+                "區域定位偏差：受限於代理伺服器所在的物理位置，診斷結果可能會出現區域定位偏差。",
+                "併發頻率限制：高頻併發進行網絡診斷可能觸發中轉節點的防刷和流量頻率限制。"
+            ],
+            pros: "無需任何配置，支援的環境下開箱即用，體驗簡單快捷。",
+            cons: "較高的延遲，無法暴露真實客戶端 IP，極度依賴中轉伺服器且有潛在頻控。",
+            prosLabel: "優勢",
+            consLabel: "劣勢"
         },
         userscriptBypass: {
             title: "篡改猴(Tampermonkey)跨域腳本輔助 (直連繞過)",
-            desc: "透過安裝在瀏覽器中的 Tampermonkey 腳本，直接從您的實際電腦發起網路診斷與 TLS 指紋請求，不經過任何伺服器代理，完全繞過 CORS 攔截。安全、高速、直連。",
+            desc: "透過安裝在瀏覽器中的 Tampermonkey 腳本，直接從您的實際電腦發起網絡診斷與 TLS 指紋請求，不經過任何伺服器代理，完全繞過 CORS 攔截。安全、高速、直連。",
+            recommended: "推薦方案",
             statusActive: "腳本已激活並成功連接",
             statusInactive: "未檢測到腳本執行或尚未安裝",
             installGuide: "腳本安裝指南",
@@ -129,6 +142,12 @@ export const settings = {
             disableBtn: "不啟用 (Fallback)",
             recheck: "重新檢測狀態",
             checking: "正在檢查腳本狀態...",
+            pros: "網路直連、超低延遲、準確捕獲客戶端真實出口 IP、完全隱私安全、無任何頻控限制。",
+            cons: "需要首次手動安裝瀏覽器擴充功能並配置一次腳本代碼。",
+            comparisonTitle: "跨域繞過方式對比",
+            methodHeader: "特性對比",
+            udpBypassHeader: "UDP 雲端代理 (伺服器)",
+            userscriptBypassHeader: "篡改猴腳本 (本地直連)",
             steps: {
                 step1: "在瀏覽器中安裝 **Tampermonkey (篡改猴)** 或類似的用戶腳本管理擴充功能。",
                 step2: "點擊該擴充功能的圖示，選擇 **「新增腳本」 (Create a new script)**。",

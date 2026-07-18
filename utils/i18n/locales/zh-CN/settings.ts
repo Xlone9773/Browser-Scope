@@ -115,11 +115,23 @@ export const settings = {
             desc: "使用UDP映射API提取网络工具端点，彻底解决由于CORS产生的任何网络请求拦截。",
             unsupportedEnv: "当前运行环境不支持开启UDP",
             checkingUdp: "正在检查 UDP 支持...",
-            recheckUdp: "重新检查"
+            recheckUdp: "重新检查",
+            limitationsTitle: "局限性与限制",
+            limitationsList: [
+                "代理中转延迟：所有请求均需要经过部署的云端代理服务器进行中转，会增加网络传输延迟。",
+                "隐藏真实 IP：目标节点只能获取到云端代理服务器的 IP 地址，无法检测您实际电脑的本地出口 IP。",
+                "区域定位偏差：受限于代理服务器所在的物理位置，诊断结果可能会出现区域定位偏差。",
+                "并发频率限制：高频并发进行网络诊断可能触发中转节点的防刷和流量频率限制。"
+            ],
+            pros: "无需任何配置，支持的环境下开箱即用，体验简单快捷。",
+            cons: "较高的延迟，无法暴露真实客户端 IP，极度依赖中转服务器且有潜在频控。",
+            prosLabel: "优势",
+            consLabel: "劣势"
         },
         userscriptBypass: {
             title: "篡改猴(Tampermonkey)跨域脚本辅助 (直连绕过)",
             desc: "通过安装在浏览器中的 Tampermonkey 脚本，直接从您的实际电脑发起网络诊断与 TLS 指纹请求，不经过任何服务器代理，完全绕过 CORS 拦截。安全、高速、直连。",
+            recommended: "推荐方案",
             statusActive: "脚本已激活并成功连接",
             statusInactive: "未检测到脚本运行或尚未安装",
             installGuide: "脚本安装指南",
@@ -129,6 +141,12 @@ export const settings = {
             disableBtn: "不启用 (Fallback)",
             recheck: "重新检测状态",
             checking: "正在检查脚本状态...",
+            pros: "网络直连、超低延迟、准确捕获客户端真实出口 IP、完全隐私安全、无任何频控限制。",
+            cons: "需要首次手动安装浏览器扩展并配置一次脚本代码。",
+            comparisonTitle: "跨域绕过方式对比",
+            methodHeader: "特性对比",
+            udpBypassHeader: "UDP 云端代理 (服务器)",
+            userscriptBypassHeader: "篡改猴脚本 (本地直连)",
             steps: {
                 step1: "在浏览器中安装 **Tampermonkey (篡改猴)** 或类似的用户脚本管理扩展。",
                 step2: "点击该扩展的图标，选择 **“添加新脚本” (Create a new script)**。",

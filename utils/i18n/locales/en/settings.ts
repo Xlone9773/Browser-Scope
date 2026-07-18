@@ -115,11 +115,23 @@ export const settings = {
             desc: "Use UDP mapping API to fetch network tools endpoints entirely bypassing all CORS errors.",
             unsupportedEnv: "Not supported in the current environment",
             checkingUdp: "Checking UDP support...",
-            recheckUdp: "Recheck"
+            recheckUdp: "Recheck",
+            limitationsTitle: "Limitations",
+            limitationsList: [
+                "Proxy Server Latency: Requests are routed through intermediate proxy nodes, which adds propagation latency.",
+                "Hides True IP: Endpoints see the cloud proxy server's IP address rather than your actual home/office outbound IP.",
+                "Regional Routing: subject to proxy server geographic availability, causing regional mismatches.",
+                "Rate Limiting: Heavy concurrent network scans may trigger API rate limits on proxy nodes."
+            ],
+            pros: "No setup required, works instantly in compatible virtual environments.",
+            cons: "Higher latency, masks outbound client IP, server-dependent, restricted endpoints.",
+            prosLabel: "Pros",
+            consLabel: "Cons"
         },
         userscriptBypass: {
             title: "Tampermonkey CORS Bypass (Local Connect)",
-            desc: "Perform network diagnostics and TLS fingerprinting directly from your actual browser, bypassing CORS limits. Requires installing our Tampermonkey userscript. Safe & fast.",
+            desc: "Perform network diagnostics and TLS fingerprinting directly from your actual browser, bypassing CORS limits. Requires installing the Tampermonkey userscript. Safe & fast.",
+            recommended: "Recommended",
             statusActive: "Active & Connected",
             statusInactive: "Inactive / Script Not Loaded",
             installGuide: "Script Install Guide",
@@ -129,6 +141,12 @@ export const settings = {
             disableBtn: "Disable",
             recheck: "Check Status",
             checking: "Checking status...",
+            pros: "Direct routing, minimum latency, detects true local outbound IP, fully private, zero rate limits.",
+            cons: "Requires a 1-time setup (extension installation and copy-paste script).",
+            comparisonTitle: "Bypass Methods Comparison",
+            methodHeader: "Feature",
+            udpBypassHeader: "UDP Proxy (Server)",
+            userscriptBypassHeader: "Tampermonkey (Local)",
             steps: {
                 step1: "Install the **Tampermonkey** browser extension.",
                 step2: "Click **'Create a new script'** inside the extension dashboard.",

@@ -1,7 +1,32 @@
 import React, { useState, useEffect } from 'react';
+import { RotateCcw, Check } from 'lucide-react';
+import { Button } from '../ui/Button';
 import { Select, SelectColor } from '../ui/Select';
 import { Switch } from '../ui/Switch';
 import { Translation } from '../../utils/i18n/types';
+
+// Custom Premium Restore Button Component
+interface CustomRestoreButtonProps {
+    onClick: () => void;
+    disabled: boolean;
+    activeText: string;
+    inactiveText: string;
+}
+
+const CustomRestoreButton: React.FC<CustomRestoreButtonProps> = ({ onClick, disabled, activeText, inactiveText }) => {
+    return (
+        <Button
+            variant={disabled ? "secondary" : "soft"}
+            onClick={onClick}
+            disabled={disabled}
+            size="md"
+            leftIcon={disabled ? <Check className="w-4.5 h-4.5 text-emerald-500 shrink-0" /> : <RotateCcw className="w-4.5 h-4.5 shrink-0 transition-transform duration-500 group-hover:rotate-180" />}
+            className="min-w-[140px] font-semibold rounded-xl group select-none active:scale-[0.97] transition-all"
+        >
+            <span className="truncate">{disabled ? activeText : inactiveText}</span>
+        </Button>
+    );
+};
 
 interface AppearanceTabProps {
     t: Translation['settings']['general'];
@@ -28,6 +53,12 @@ interface AppearanceTabProps {
     showSearch: boolean;
     toggleShowSearch: (value: boolean) => void;
     translationDict: Translation;
+    hiddenCards: string[];
+    setHiddenCards: (cards: string[]) => void;
+    restoreAllNotifications: () => void;
+    dismissedNotificationsCount: number;
+    showQuickSummary: boolean;
+    toggleShowQuickSummary: (val: boolean) => void;
 }
 
 export const AppearanceTab: React.FC<AppearanceTabProps> = ({ 
@@ -54,7 +85,13 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     toggleShowTabs,
     showSearch,
     toggleShowSearch,
-    translationDict
+    translationDict,
+    hiddenCards,
+    setHiddenCards,
+    restoreAllNotifications,
+    dismissedNotificationsCount,
+    showQuickSummary,
+    toggleShowQuickSummary
 }) => {
     const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
 
@@ -65,6 +102,36 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    const sectionsObj = translationDict?.sections || {};
+    const availableCards = [
+        { id: 'environment', name: sectionsObj.environment },
+        { id: 'system', name: sectionsObj.system },
+        { id: 'hardware', name: sectionsObj.hardware },
+        { id: 'display', name: sectionsObj.display },
+        { id: 'network', name: sectionsObj.network },
+        { id: 'security', name: sectionsObj.security },
+        { id: 'fingerprint', name: sectionsObj.fingerprints },
+        { id: 'ai', name: sectionsObj.ai_compute },
+        { id: 'location', name: sectionsObj.location },
+        { id: 'storage', name: sectionsObj.storage },
+        { id: 'permissions', name: sectionsObj.permissions },
+        { id: 'media_devices', name: sectionsObj.media_devices },
+        { id: 'media_capabilities', name: sectionsObj.media_caps },
+        { id: 'user_agent', name: sectionsObj.user_agent },
+        { id: 'pwa', name: sectionsObj.pwa },
+        { id: 'features', name: sectionsObj.features },
+    ];
+
+    const toggleCardHide = (id: string) => {
+        if (hiddenCards.includes(id)) {
+            setHiddenCards(hiddenCards.filter(c => c !== id));
+        } else {
+            setHiddenCards([...hiddenCards, id]);
+        }
+    };
+
+    const dictSettings = translationDict?.settings?.general || {};
 
     return (
         <div className="max-w-2xl mx-auto space-y-4">
@@ -276,6 +343,78 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch checked={collapseHeader} onChange={toggleCollapseHeader} disabled={!isDesktop} />
+                </div>
+            </div>
+
+            {/* Custom Visibility */}
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                <div className="flex flex-col gap-1">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {dictSettings.cardVisibility?.title}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {dictSettings.cardVisibility?.desc}
+                    </p>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {availableCards.map(card => {
+                        const isHidden = hiddenCards.includes(card.id);
+                        return (
+                            <button
+                                key={card.id}
+                                onClick={() => toggleCardHide(card.id)}
+                                className={`
+                                    flex items-center gap-2 p-2 rounded-lg text-sm font-medium transition-colors border text-left
+                                    ${isHidden 
+                                        ? 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 line-through' 
+                                        : 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400'}
+                                `}
+                            >
+                                <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isHidden ? 'bg-slate-300 dark:bg-slate-600' : 'bg-indigo-500'}`} />
+                                <span className="truncate">{card.name}</span>
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Quick Summary Visibility */}
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                <div className="flex flex-col gap-1 max-w-[70%]">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {dictSettings.quickSummaryVisibility?.title || "Quick Summary"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {dictSettings.quickSummaryVisibility?.desc || "Bring back the quick summary widget at the top of the main dashboard."}
+                    </p>
+                </div>
+                <div>
+                    <CustomRestoreButton 
+                        onClick={() => toggleShowQuickSummary(true)}
+                        disabled={showQuickSummary}
+                        activeText={dictSettings.quickSummaryVisibility?.activeState || "Showing"}
+                        inactiveText={dictSettings.quickSummaryVisibility?.restoreBtn || "Restore Display"}
+                    />
+                </div>
+            </div>
+
+            {/* Restore Notifications */}
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                <div className="flex flex-col gap-1 max-w-[70%]">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {dictSettings.restoreNotifications?.title || "Restore Notifications"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {dictSettings.restoreNotifications?.desc || "Bring back all previously dismissed notification cards."}
+                    </p>
+                </div>
+                <div>
+                    <CustomRestoreButton 
+                        onClick={restoreAllNotifications}
+                        disabled={dismissedNotificationsCount === 0}
+                        activeText={dictSettings.restoreNotifications?.empty || "No dismissed notifications"}
+                        inactiveText={dictSettings.restoreNotifications?.button || "Restore All"}
+                    />
                 </div>
             </div>
         </div>
