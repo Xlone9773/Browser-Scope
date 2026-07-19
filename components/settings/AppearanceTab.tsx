@@ -190,18 +190,22 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
 
     const bodyFontOptions = [
         { id: 'default', label: localT.defaultFont },
-        ...FONTS_LIST.map(f => ({
-            id: f.key,
-            label: `${f.name} (${f.languages.join(', ').toUpperCase()})`
-        }))
+        ...FONTS_LIST
+            .filter(f => isFontCompatibleWithLang(f.key, lang as Language))
+            .map(f => ({
+                id: f.key,
+                label: f.name
+            }))
     ];
 
     const modalTitleFontOptions = [
         { id: 'default', label: localT.defaultFont },
-        ...FONTS_LIST.map(f => ({
-            id: f.key,
-            label: `${f.name} (${f.languages.join(', ').toUpperCase()})`
-        }))
+        ...FONTS_LIST
+            .filter(f => isFontCompatibleWithLang(f.key, lang as Language))
+            .map(f => ({
+                id: f.key,
+                label: f.name
+            }))
     ];
 
     const handleFontChange = (fontKey: string, type: 'body' | 'modal') => {

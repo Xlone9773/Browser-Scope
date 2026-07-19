@@ -295,7 +295,19 @@ export const settings = {
             downloadSuccess: "字体下载成功！",
             deleteSuccess: "字体已成功清除！",
             downloadFailed: "下载字体失败，请检查网络。",
-            deleteFailed: "删除字体失败。"
+            deleteFailed: "删除字体失败。",
+            labels: {
+                googlesansflex: "英语 / 拉丁文",
+                notosans: "多语言 / 西里尔文",
+                roboto: "俄语 / 西里尔文",
+                harmonyossanssc: "简体中文 / 英文",
+                misans: "简体中文 / 英文",
+                zcoolxiaowei: "中文 (简体与繁体)",
+                sawarabigothic: "日语",
+                notosanssc: "简体中文",
+                notosanstc: "繁体中文",
+                notosansjp: "日文"
+            }
         },
         locales: {
             title: "语言包缓存管理",

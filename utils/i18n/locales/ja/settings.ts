@@ -295,7 +295,19 @@ export const settings = {
             downloadSuccess: "フォントが正常にダウンロードされました！",
             deleteSuccess: "フォントが正常に削除されました！",
             downloadFailed: "フォントのダウンロードに失敗しました。",
-            deleteFailed: "フォントの削除に失敗しました。"
+            deleteFailed: "フォントの削除に失敗しました。",
+            labels: {
+                googlesansflex: "英語 / ラテン文字",
+                notosans: "多言語 / キリル文字",
+                roboto: "ロシア語 / キリル文字",
+                harmonyossanssc: "中国語簡体字 / 英語",
+                misans: "中国語簡体字 / 英語",
+                zcoolxiaowei: "中国語 (簡体字・繁体字)",
+                sawarabigothic: "日本語",
+                notosanssc: "中国語簡体字",
+                notosanstc: "中国語繁体字",
+                notosansjp: "日本語"
+            }
         },
         locales: {
             title: "言語パックのキャッシュ管理",

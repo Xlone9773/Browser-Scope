@@ -6,7 +6,7 @@ import { Language } from '../../utils/i18n/types';
 import { useToast } from '../../hooks/useToast';
 import { languageNames } from '../../utils/i18n/index';
 import { getDownloadedLocales, downloadLocale, deleteLocale, getLocaleSize, isLocaleDownloaded } from '../../utils/i18n/localeCache';
-import { FONTS_LIST } from '../../utils/fonts';
+import { FONTS_LIST, resolveCssUrls } from '../../utils/fonts';
 
 interface StorageTabProps {
     t: Translation['settings']['storage'];
@@ -48,7 +48,8 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
             const updated: Record<string, { isCached: boolean; size: string | null }> = {};
             
             for (const font of FONTS_LIST) {
-                const cacheKey = `https://local-fonts.browserscope/${font.key}.ttf`;
+                const ext = font.cssUrl ? 'css' : 'ttf';
+                const cacheKey = `https://local-fonts.browserscope/${font.key}.${ext}`;
                 const match = await cache.match(cacheKey);
                 if (match) {
                     try {
@@ -57,7 +58,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
                         const sizeInMb = (blob.size / (1024 * 1024)).toFixed(2);
                         updated[font.key] = {
                             isCached: true,
-                            size: `${sizeInMb} MB`
+                            size: parseFloat(sizeInMb) < 0.01 ? `${(blob.size / 1024).toFixed(1)} KB` : `${sizeInMb} MB`
                         };
                     } catch {
                         updated[font.key] = {
@@ -142,26 +143,47 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
         setDownloadingKeys(prev => ({ ...prev, [fontKey]: true }));
         let success = false;
 
-        for (const url of mirrors) {
+        const font = FONTS_LIST.find(f => f.key === fontKey);
+        const isCss = !!font?.cssUrl;
+        const urlsToTry = isCss ? [font.cssUrl!] : mirrors;
+
+        for (const url of urlsToTry) {
             try {
                 const res = await fetch(url);
                 if (res.ok) {
-                    const buffer = await res.arrayBuffer();
-                    if (buffer.byteLength > 4) {
-                        const cache = await window.caches.open(CACHE_NAME);
-                        const cacheKey = `https://local-fonts.browserscope/${fontKey}.ttf`;
-                        await cache.put(cacheKey, new Response(buffer, {
-                            headers: {
-                                'Content-Type': 'font/ttf',
-                                'Content-Length': String(buffer.byteLength)
-                            }
-                        }));
-                        success = true;
-                        break;
+                    if (isCss) {
+                        const text = await res.text();
+                        if (text && text.length > 10) {
+                            const processedCss = resolveCssUrls(text, font.cssUrl!);
+                            const cache = await window.caches.open(CACHE_NAME);
+                            const cacheKey = `https://local-fonts.browserscope/${fontKey}.css`;
+                            await cache.put(cacheKey, new Response(processedCss, {
+                                headers: {
+                                    'Content-Type': 'text/css',
+                                    'Content-Length': String(new Blob([processedCss]).size)
+                                }
+                            }));
+                            success = true;
+                            break;
+                        }
+                    } else {
+                        const buffer = await res.arrayBuffer();
+                        if (buffer.byteLength > 4) {
+                            const cache = await window.caches.open(CACHE_NAME);
+                            const cacheKey = `https://local-fonts.browserscope/${fontKey}.ttf`;
+                            await cache.put(cacheKey, new Response(buffer, {
+                                headers: {
+                                    'Content-Type': 'font/ttf',
+                                    'Content-Length': String(buffer.byteLength)
+                                }
+                            }));
+                            success = true;
+                            break;
+                        }
                     }
                 }
             } catch (err) {
-                console.warn(`Failed to manually fetch font from mirror: ${url}`, err);
+                console.warn(`Failed to manually fetch font from: ${url}`, err);
             }
         }
 
@@ -180,8 +202,10 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
         let success = false;
 
         try {
+            const font = FONTS_LIST.find(f => f.key === fontKey);
+            const ext = font?.cssUrl ? 'css' : 'ttf';
             const cache = await window.caches.open(CACHE_NAME);
-            const cacheKey = `https://local-fonts.browserscope/${fontKey}.ttf`;
+            const cacheKey = `https://local-fonts.browserscope/${fontKey}.${ext}`;
             success = await cache.delete(cacheKey);
         } catch (err) {
             console.error("Failed to delete font from cache:", err);
@@ -279,7 +303,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
                             const status = fontStatuses[font.key] || { isCached: false, size: null };
                             const isDownloading = downloadingKeys[font.key];
                             const isDeleting = deletingKeys[font.key];
-                            const displayLang = font.langLabel[lang] || font.langLabel.en;
+                            const displayLang = t.fonts.labels?.[font.key as keyof typeof t.fonts.labels] || font.key;
 
                             return (
                                 <div key={font.key} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -324,7 +348,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
                                             <Button
                                                 variant="secondary"
                                                 size="sm"
-                                                onClick={() => handleDownloadFont(font.key, font.mirrors)}
+                                                onClick={() => handleDownloadFont(font.key, font.mirrors || [])}
                                                 isLoading={isDownloading}
                                                 disabled={isDownloading || isDeleting}
                                                 leftIcon={<DownloadCloud size={14} />}

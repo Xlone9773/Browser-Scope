@@ -295,7 +295,19 @@ export const settings = {
             downloadSuccess: "Шрифт успешно скачан!",
             deleteSuccess: "Шрифт успешно удален!",
             downloadFailed: "Не удалось скачать шрифт.",
-            deleteFailed: "Не удалось удалить шрифт."
+            deleteFailed: "Не удалось удалить шрифт.",
+            labels: {
+                googlesansflex: "Английский / Латиница",
+                notosans: "Мультиязычный / Кириллица",
+                roboto: "Русский / Кириллица",
+                harmonyossanssc: "Упрощенный китайский / Английский",
+                misans: "Упрощенный китайский / Английский",
+                zcoolxiaowei: "Китайский (упрощенный и традиционный)",
+                sawarabigothic: "Японский",
+                notosanssc: "Упрощенный китайский",
+                notosanstc: "Традиционный китайский",
+                notosansjp: "Японский"
+            }
         },
         locales: {
             title: "Управление кэшем языковых пакетов",

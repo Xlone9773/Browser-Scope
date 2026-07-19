@@ -296,7 +296,19 @@ export const settings = {
             downloadSuccess: "字型下載成功！",
             deleteSuccess: "字型已成功清除！",
             downloadFailed: "下載字型失敗，請檢查網路。",
-            deleteFailed: "刪除字型失敗。"
+            deleteFailed: "刪除字型失敗。",
+            labels: {
+                googlesansflex: "英語 / 拉丁文",
+                notosans: "多語言 / 西里爾文",
+                roboto: "俄語 / 西里爾文",
+                harmonyossanssc: "簡體中文 / 英文",
+                misans: "簡體中文 / 英文",
+                zcoolxiaowei: "中文 (簡體與繁體)",
+                sawarabigothic: "日語",
+                notosanssc: "簡體中文",
+                notosanstc: "繁體中文",
+                notosansjp: "日文"
+            }
         },
         locales: {
             title: "語言包快取管理",

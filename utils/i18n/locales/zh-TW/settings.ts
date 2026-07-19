@@ -282,7 +282,7 @@ export const settings = {
         usageLabel: "儲存空間使用率",
         fonts: {
             title: "字型快取管理",
-            desc: "為顯著減小應用程式體積，診斷報告匯出的各種非英文字型已改為從全球 CDN 按需拉取。在此您可以預先下載字型以便離線產生 PDF，或將其刪除以釋放瀏覽器快取空間。",
+            desc: "為顯著減小應用程式體積，診斷報告匯出的各種非英文字型已改為從全球 CDN 按需拉取。在此您可以預先下載字型以便離线產生 PDF，或將其刪除以釋放瀏覽器快取空間。",
             name: "字型名稱",
             languages: "適用語言",
             status: "狀態",
@@ -295,7 +295,19 @@ export const settings = {
             downloadSuccess: "字型下載成功！",
             deleteSuccess: "字型已成功清除！",
             downloadFailed: "下載字型失敗，請檢查網路。",
-            deleteFailed: "刪除字型失敗。"
+            deleteFailed: "刪除字型失敗。",
+            labels: {
+                googlesansflex: "英語 / 拉丁文",
+                notosans: "多語言 / 西里爾文",
+                roboto: "俄語 / 西里爾文",
+                harmonyossanssc: "簡體中文 / 英文",
+                misans: "簡體中文 / 英文",
+                zcoolxiaowei: "中文 (簡體與繁體)",
+                sawarabigothic: "日語",
+                notosanssc: "簡體中文",
+                notosanstc: "繁體中文",
+                notosansjp: "日文"
+            }
         },
         locales: {
             title: "語言包快取管理",

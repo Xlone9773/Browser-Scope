@@ -295,7 +295,19 @@ export const settings = {
             downloadSuccess: "Font downloaded successfully!",
             deleteSuccess: "Font deleted successfully!",
             downloadFailed: "Failed to download font.",
-            deleteFailed: "Failed to delete font."
+            deleteFailed: "Failed to delete font.",
+            labels: {
+                googlesansflex: "English / Latin",
+                notosans: "Multilingual / Cyrillic",
+                roboto: "Russian / Cyrillic",
+                harmonyossanssc: "Simplified Chinese / Latin",
+                misans: "Simplified Chinese / Latin",
+                zcoolxiaowei: "Chinese (Simplified & Traditional)",
+                sawarabigothic: "Japanese",
+                notosanssc: "Simplified Chinese",
+                notosanstc: "Traditional Chinese",
+                notosansjp: "Japanese"
+            }
         },
         locales: {
             title: "Language Pack Management",
