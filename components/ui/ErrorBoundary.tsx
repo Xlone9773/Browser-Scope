@@ -61,7 +61,8 @@ export class ErrorBoundary extends Component<Props, State> {
       if (
         msg.includes("vconsole") ||
         msg.includes("websocket closed without opened") ||
-        msg.includes("script error")
+        msg.includes("script error") ||
+        msg.includes("transition was skipped")
       )
         return;
       this.setState({

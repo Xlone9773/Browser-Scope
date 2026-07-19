@@ -75,6 +75,8 @@ export function setupInterceptors(loggerStore: LoggerStoreInterface) {
     );
   });
   window.addEventListener("unhandledrejection", (e) => {
+    const msg = e.reason instanceof Error ? e.reason.message : String(e.reason);
+    if (msg.toLowerCase().includes("transition was skipped")) return;
     loggerStore.addConsole(
       "error",
       `[Unhandled Promise Rejection] ${e.reason}`,

@@ -25,7 +25,12 @@
         function (e) {
           var msg =
             e.reason && e.reason.message ? e.reason.message : String(e.reason);
-          if (msg.indexOf("VConsole") !== -1) {
+          var lowerMsg = msg.toLowerCase();
+          if (
+            msg.indexOf("VConsole") !== -1 ||
+            lowerMsg.indexOf("transition was skipped") !== -1 ||
+            lowerMsg.indexOf("websocket closed without opened") !== -1
+          ) {
             e.preventDefault();
             e.stopImmediatePropagation();
           }
