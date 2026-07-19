@@ -23,4 +23,6 @@
 
 html, body, button, input, select, textarea {
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

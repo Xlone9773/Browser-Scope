@@ -7,6 +7,8 @@ export interface FontItem {
     mirrors?: string[];
     cssUrl?: string;
     fontFamily?: string;
+    isVariable?: boolean;
+    weightRange?: string;
 }
 
 export const FONTS_LIST: FontItem[] = [
@@ -14,6 +16,8 @@ export const FONTS_LIST: FontItem[] = [
         key: 'googlesansflex',
         name: 'Google Sans Flex',
         languages: ['en'],
+        isVariable: true,
+        weightRange: '100 900',
         mirrors: [
             "https://github.com/LineageOS/android_external_google-fonts_google-sans-flex/raw/refs/heads/lineage-23.2/GoogleSansFlex-Regular.ttf"
         ]
@@ -74,6 +78,8 @@ export const FONTS_LIST: FontItem[] = [
         key: 'notosanssc',
         name: 'Noto Sans SC',
         languages: ['en', 'zh-CN'],
+        isVariable: true,
+        weightRange: '100 900',
         mirrors: [
             "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf",
             "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf",
@@ -84,6 +90,8 @@ export const FONTS_LIST: FontItem[] = [
         key: 'notosanstc',
         name: 'Noto Sans TC',
         languages: ['en', 'zh-TW', 'zh-HK'],
+        isVariable: true,
+        weightRange: '100 900',
         mirrors: [
             "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosanstc/NotoSansTC%5Bwght%5D.ttf",
             "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/notosanstc/NotoSansTC%5Bwght%5D.ttf",
@@ -94,6 +102,8 @@ export const FONTS_LIST: FontItem[] = [
         key: 'notosansjp',
         name: 'Noto Sans JP',
         languages: ['en', 'ja'],
+        isVariable: true,
+        weightRange: '100 900',
         mirrors: [
             "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf",
             "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf",
@@ -199,6 +209,9 @@ export async function loadAndApplyFont(fontKey: string, targetVar: '--font-sans'
     }
 
     const fontFamilyName = `DynamicFont-${font.key}`;
+    const fontFaceOptions = font.isVariable
+        ? { weight: font.weightRange || '100 900', style: 'normal' }
+        : undefined;
 
     let loadedFace: FontFace | null = null;
     let fontBlobUrl: string | null = null;
@@ -214,7 +227,7 @@ export async function loadAndApplyFont(fontKey: string, targetVar: '--font-sans'
                 if (blob.size > 10) {
                     fontBlobUrl = URL.createObjectURL(blob);
                     try {
-                        const fontFace = new FontFace(fontFamilyName, `url(${fontBlobUrl})`);
+                        const fontFace = new FontFace(fontFamilyName, `url(${fontBlobUrl})`, fontFaceOptions);
                         loadedFace = await fontFace.load();
                     } catch (cacheLoadErr) {
                         console.warn(`Failed to load cached font ${fontKey} from blob, falling back to CDN mirrors`, cacheLoadErr);
@@ -235,7 +248,7 @@ export async function loadAndApplyFont(fontKey: string, targetVar: '--font-sans'
         for (const mirrorUrl of font.mirrors) {
             try {
                 console.log(`Attempting to load font ${fontKey} from mirror: ${mirrorUrl}`);
-                const fontFace = new FontFace(fontFamilyName, `url(${mirrorUrl})`);
+                const fontFace = new FontFace(fontFamilyName, `url(${mirrorUrl})`, fontFaceOptions);
                 loadedFace = await fontFace.load();
                 break; // Success! Break out of the mirrors loop.
             } catch (mirrorErr) {
