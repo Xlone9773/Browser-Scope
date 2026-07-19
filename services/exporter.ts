@@ -162,11 +162,26 @@ export const exportAsImage = async (
 
         let dataUrl;
         try {
+            // Helper to determine if a stylesheet is cross-origin
+            const isCrossOrigin = (href: string | null) => {
+                if (!href) return false;
+                try {
+                    const url = new URL(href, window.location.origin);
+                    return url.origin !== window.location.origin;
+                } catch {
+                    return true;
+                }
+            };
+
             dataUrl = await htmlToImage.toPng(element, {
                 backgroundColor,
                 pixelRatio: scale || 2, // Retinal high resolution
                 style: {
                     transform: 'none',
+                },
+                styleSheetsFilter: (sheet: CSSStyleSheet) => {
+                    // Ignore cross-origin stylesheets to avoid security errors and "Failed to fetch" exceptions
+                    return !isCrossOrigin(sheet.href);
                 },
                 filter: (node: HTMLElement) => {
                     // Ignore elements that shouldn't be captured
@@ -178,7 +193,7 @@ export const exportAsImage = async (
                     }
                     return true;
                 }
-            });
+            } as any);
         } finally {
             // Restore console.error
             console.error = originalConsoleError;

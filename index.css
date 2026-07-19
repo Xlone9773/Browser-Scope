@@ -1,5 +1,3 @@
-@import url("https://cdn.jsdelivr.net/npm/harmonyos-sans-sc-webfont-splitted@1.1.0/dist/index.min.css");
-@import url("https://cdn.jsdelivr.net/npm/misans-webfont@4.3.1/misans-style.min.css");
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
