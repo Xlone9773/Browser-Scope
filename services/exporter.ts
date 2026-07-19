@@ -193,7 +193,7 @@ export const exportAsImage = async (
                     }
                     return true;
                 }
-            } as any);
+            } as unknown as Parameters<typeof htmlToImage.toPng>[1]);
         } finally {
             // Restore console.error
             console.error = originalConsoleError;
