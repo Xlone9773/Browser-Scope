@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Language } from "../utils/i18n/index";
 import { applyTheme, getSavedTheme, Theme } from "../appearance/theme";
+import { loadAndApplyFont } from "../utils/fonts";
 
 export function useAppSettings() {
   const [lang, setLang] = useState<Language>(() => {
@@ -377,6 +378,31 @@ export function useAppSettings() {
     localStorage.setItem("showSearch", String(value));
   }, []);
 
+  const [bodyFont, setBodyFont] = useState<string>(
+    () => localStorage.getItem("bodyFont") || "default"
+  );
+  const [modalTitleFont, setModalTitleFont] = useState<string>(
+    () => localStorage.getItem("modalTitleFont") || "default"
+  );
+
+  const updateBodyFont = useCallback((font: string) => {
+    setBodyFont(font);
+    localStorage.setItem("bodyFont", font);
+  }, []);
+
+  const updateModalTitleFont = useCallback((font: string) => {
+    setModalTitleFont(font);
+    localStorage.setItem("modalTitleFont", font);
+  }, []);
+
+  useEffect(() => {
+    loadAndApplyFont(bodyFont, '--font-sans');
+  }, [bodyFont]);
+
+  useEffect(() => {
+    loadAndApplyFont(modalTitleFont, '--font-modal-title');
+  }, [modalTitleFont]);
+
   return {
     lang,
     changeLang,
@@ -424,5 +450,9 @@ export function useAppSettings() {
     restoreAllNotifications,
     showQuickSummary,
     toggleShowQuickSummary,
+    bodyFont,
+    updateBodyFont,
+    modalTitleFont,
+    updateModalTitleFont,
   };
 }

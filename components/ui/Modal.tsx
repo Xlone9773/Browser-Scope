@@ -145,7 +145,7 @@ export const Modal: React.FC<ModalProps> = ({
                     {icon}
                  </div>
              )}
-             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 truncate tracking-tight">
+             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 truncate tracking-tight font-modal-title">
                 {title}
              </h2>
           </div>

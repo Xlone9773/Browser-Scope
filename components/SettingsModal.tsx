@@ -58,6 +58,10 @@ interface SettingsModalProps {
   showQuickSummary: boolean;
   toggleShowQuickSummary: (val: boolean) => void;
   lang: string;
+  bodyFont: string;
+  updateBodyFont: (font: string) => void;
+  modalTitleFont: string;
+  updateModalTitleFont: (font: string) => void;
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
   moduleStates?: ModuleState[];
@@ -123,7 +127,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     lastCheckTime,
     isCheckingUpdate,
     needRefresh,
-    changeLang
+    changeLang,
+    bodyFont,
+    updateBodyFont,
+    modalTitleFont,
+    updateModalTitleFont,
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>(() => {
     try {
@@ -303,6 +311,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               dismissedNotificationsCount={dismissedNotificationsCount}
                               showQuickSummary={showQuickSummary}
                               toggleShowQuickSummary={toggleShowQuickSummary}
+                              bodyFont={bodyFont}
+                              updateBodyFont={updateBodyFont}
+                              modalTitleFont={modalTitleFont}
+                              updateModalTitleFont={updateModalTitleFont}
+                              lang={lang}
                           />) : null}
 
                           {activeTab === 'general' ? (<GeneralTab 

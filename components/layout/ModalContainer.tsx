@@ -64,6 +64,10 @@ interface ModalContainerProps {
   pdfExportFormat: 'a4' | 'letter' | 'legal';
   updatePdfExportFormat: (value: 'a4' | 'letter' | 'legal') => void;
   changeLang?: (lang: Language) => void;
+  bodyFont: string;
+  updateBodyFont: (font: string) => void;
+  modalTitleFont: string;
+  updateModalTitleFont: (font: string) => void;
 }
 
 export const ModalContainer: React.FC<ModalContainerProps> = ({
@@ -124,6 +128,10 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   pdfExportFormat,
   updatePdfExportFormat,
   changeLang,
+  bodyFont,
+  updateBodyFont,
+  modalTitleFont,
+  updateModalTitleFont,
 }) => {
   return (
     <ErrorBoundary name="Modals">
@@ -268,6 +276,10 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
             pdfExportFormat={pdfExportFormat}
             updatePdfExportFormat={updatePdfExportFormat}
             changeLang={changeLang}
+            bodyFont={bodyFont}
+            updateBodyFont={updateBodyFont}
+            modalTitleFont={modalTitleFont}
+            updateModalTitleFont={updateModalTitleFont}
           />
         ) : null}
 

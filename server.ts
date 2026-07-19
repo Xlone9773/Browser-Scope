@@ -41,7 +41,11 @@ async function startServer() {
         fontSrc: [
           "'self'",
           "data:",
-          "https://fonts.gstatic.com"
+          "blob:",
+          "https://fonts.gstatic.com",
+          "https://cdn.jsdelivr.net",
+          "https://fastly.jsdelivr.net",
+          "https://raw.githubusercontent.com"
         ],
         imgSrc: [
           "'self'",
@@ -53,6 +57,9 @@ async function startServer() {
           "'self'",
           "wss:",
           "ws:",
+          "https://cdn.jsdelivr.net",
+          "https://fastly.jsdelivr.net",
+          "https://raw.githubusercontent.com",
           "https://dynamodb.ca-central-1.amazonaws.com",
           "https://dynamodb.sa-east-1.amazonaws.com",
           "https://dynamodb.us-west-2.amazonaws.com",

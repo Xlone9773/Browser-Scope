@@ -162,7 +162,7 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
             >
                 <div className="flex items-center gap-2 text-slate-300">
                     <Move size={14} className="opacity-50 group-hover:opacity-100 transition-opacity" />
-                    <span className="text-xs font-bold tracking-wide uppercase">{title}</span>
+                    <span className="text-xs font-bold tracking-wide uppercase font-modal-title">{title}</span>
                 </div>
                 <div className="flex items-center gap-1" onPointerDown={handleStopPropagation}>
                     <button 

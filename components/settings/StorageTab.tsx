@@ -6,74 +6,13 @@ import { Language } from '../../utils/i18n/types';
 import { useToast } from '../../hooks/useToast';
 import { languageNames } from '../../utils/i18n/index';
 import { getDownloadedLocales, downloadLocale, deleteLocale, getLocaleSize, isLocaleDownloaded } from '../../utils/i18n/localeCache';
+import { FONTS_LIST } from '../../utils/fonts';
 
 interface StorageTabProps {
     t: Translation['settings']['storage'];
     lang?: string;
     changeLang?: (lang: Language) => void;
 }
-
-interface FontItem {
-    key: string;
-    name: string;
-    languages: string;
-    langLabel: Record<string, string>;
-    mirrors: string[];
-}
-
-const FONTS_LIST: FontItem[] = [
-    {
-        key: 'roboto',
-        name: 'Roboto Regular',
-        languages: 'ru',
-        langLabel: {
-            en: 'Russian / Cyrillic (ru)',
-            'zh-CN': '俄语 / 西里尔文 (ru)',
-            'zh-TW': '俄語 / 西里爾文 (ru)',
-            'zh-HK': '俄語 / 西里爾文 (ru)',
-            ja: 'ロシア語 / キリル文字 (ru)',
-            ru: 'Русский / Кириллица (ru)'
-        },
-        mirrors: [
-            "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
-            "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/roboto/static/Roboto-Regular.ttf"
-        ]
-    },
-    {
-        key: 'zcoolxiaowei',
-        name: 'ZCOOL XiaoWei',
-        languages: 'zh-CN, zh-TW, zh-HK',
-        langLabel: {
-            en: 'Chinese (Simplified & Traditional) (zh-CN, zh-TW, zh-HK)',
-            'zh-CN': '中文 (简体与繁体) (zh-CN, zh-TW, zh-HK)',
-            'zh-TW': '中文 (簡體與繁體) (zh-CN, zh-TW, zh-HK)',
-            'zh-HK': '中文 (簡體與繁體) (zh-CN, zh-TW, zh-HK)',
-            ja: '中国語 (簡体字・繁体字) (zh-CN, zh-TW, zh-HK)',
-            ru: 'Китайский (упрощенный и традиционный) (zh-CN, zh-TW, zh-HK)'
-        },
-        mirrors: [
-            "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-            "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
-        ]
-    },
-    {
-        key: 'sawarabigothic',
-        name: 'Sawarabi Gothic',
-        languages: 'ja',
-        langLabel: {
-            en: 'Japanese (ja)',
-            'zh-CN': '日语 (ja)',
-            'zh-TW': '日語 (ja)',
-            'zh-HK': '日語 (ja)',
-            ja: '日本語 (ja)',
-            ru: 'Японский (ja)'
-        },
-        mirrors: [
-            "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf",
-            "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf"
-        ]
-    }
-];
 
 const CACHE_NAME = "browserscope-fonts";
 
@@ -109,7 +48,8 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
             const updated: Record<string, { isCached: boolean; size: string | null }> = {};
             
             for (const font of FONTS_LIST) {
-                const match = await cache.match(font.key);
+                const cacheKey = `https://local-fonts.browserscope/${font.key}.ttf`;
+                const match = await cache.match(cacheKey);
                 if (match) {
                     try {
                         const clone = match.clone();
@@ -209,7 +149,8 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
                     const buffer = await res.arrayBuffer();
                     if (buffer.byteLength > 4) {
                         const cache = await window.caches.open(CACHE_NAME);
-                        await cache.put(fontKey, new Response(buffer, {
+                        const cacheKey = `https://local-fonts.browserscope/${fontKey}.ttf`;
+                        await cache.put(cacheKey, new Response(buffer, {
                             headers: {
                                 'Content-Type': 'font/ttf',
                                 'Content-Length': String(buffer.byteLength)
@@ -240,7 +181,8 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
 
         try {
             const cache = await window.caches.open(CACHE_NAME);
-            success = await cache.delete(fontKey);
+            const cacheKey = `https://local-fonts.browserscope/${fontKey}.ttf`;
+            success = await cache.delete(cacheKey);
         } catch (err) {
             console.error("Failed to delete font from cache:", err);
         }
