@@ -143,7 +143,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     const bodyFontOptions = [
         { id: 'default', label: fontT.defaultFont },
         ...FONTS_LIST
-            .filter(f => !codeFontKeys.includes(f.key))
+            .filter(f => !codeFontKeys.includes(f.key) && f.key !== 'misans')
             .filter(f => isFontCompatibleWithLang(f.key, lang as Language))
             .map(f => ({
                 id: f.key,
@@ -154,7 +154,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     const modalTitleFontOptions = [
         { id: 'default', label: fontT.defaultFont },
         ...FONTS_LIST
-            .filter(f => !codeFontKeys.includes(f.key))
+            .filter(f => !codeFontKeys.includes(f.key) && f.key !== 'misans')
             .filter(f => isFontCompatibleWithLang(f.key, lang as Language))
             .map(f => ({
                 id: f.key,
