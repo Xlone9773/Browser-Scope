@@ -164,6 +164,13 @@ export const FONTS_LIST: FontItem[] = [
             "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/sourcecodepro/SourceCodePro%5Bwght%5D.ttf",
             "https://raw.githubusercontent.com/google/fonts/main/ofl/sourcecodepro/SourceCodePro%5Bwght%5D.ttf"
         ]
+    },
+    {
+        key: 'geist',
+        name: 'Geist',
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
+        cssUrl: 'https://cdn.jsdelivr.net/npm/@fontsource/geist@5.3.0/400.min.css',
+        fontFamily: 'Geist'
     }
 ];
 

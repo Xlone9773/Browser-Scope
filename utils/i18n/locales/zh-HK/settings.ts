@@ -42,7 +42,8 @@ export const settings = {
                 jetbrainsmono: "JetBrains Mono",
                 firacode: "Fira Code",
                 robotomono: "Roboto Mono",
-                sourcecodepro: "Source Code Pro"
+                sourcecodepro: "Source Code Pro",
+                geist: "Geist"
             }
         },
         showTabs: {

@@ -143,7 +143,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
         return names?.[f.key] || f.name;
     };
 
-    const codeFontKeys = ['jetbrainsmono', 'firacode', 'robotomono', 'sourcecodepro'];
+    const codeFontKeys = ['jetbrainsmono', 'firacode', 'robotomono', 'sourcecodepro', 'geist'];
 
     const bodyFontOptions = [
         { id: 'default', label: fontT.defaultFont },
