@@ -3,11 +3,84 @@
   <head>
     <script>
       try {
+        // Theme Color early setup
         var themeColor = localStorage.getItem("themeColor") || "indigo";
         if (themeColor !== "indigo") {
           document.documentElement.classList.add("theme-" + themeColor);
         }
-      } catch (e) {}
+
+        // Fonts early setup to prevent layout shift (FOIT/FOUT)
+        var lang = localStorage.getItem("language") || "zh-CN";
+        var bodyFont = localStorage.getItem("bodyFont") || "default";
+        var modalTitleFont = localStorage.getItem("modalTitleFont") || "default";
+        var codeFont = localStorage.getItem("codeFont") || "default";
+
+        var isCJK = ["zh-CN", "zh-TW", "zh-HK", "ja"].indexOf(lang) !== -1;
+
+        // Auto-redirect default to misans for CJK
+        if (bodyFont === "default" && isCJK) bodyFont = "misans";
+        if (modalTitleFont === "default" && isCJK) modalTitleFont = "misans";
+
+        var fontConfigs = {
+          'harmonyossanssc': { type: 'css', url: 'https://cdn.jsdelivr.net/npm/harmonyos-sans-sc-webfont-splitted@1.1.0/dist/index.min.css', family: 'HarmonyOS Sans SC' },
+          'misans': { type: 'css', url: 'https://cdn.jsdelivr.net/npm/misans-webfont@4.3.1/misans-style.min.css', family: 'MiSans' }
+        };
+
+        var sansFallback = '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif';
+        var monoFallback = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+
+        function applyFontVar(targetVar, fontKey, fallback) {
+          if (fontKey === 'default') {
+            return;
+          }
+          var config = fontConfigs[fontKey];
+          if (config && config.type === 'css') {
+            // Append link stylesheet synchronously/immediately to avoid jump
+            var styleId = 'dynamic-css-' + fontKey;
+            if (!document.getElementById(styleId)) {
+              var link = document.createElement('link');
+              link.id = styleId;
+              link.rel = 'stylesheet';
+              link.href = config.url;
+              document.head.appendChild(link);
+            }
+            document.documentElement.style.setProperty(targetVar, '"' + config.family + '", ' + fallback);
+          } else {
+            // Standard loaded web font
+            var familyName = 'DynamicFont-' + fontKey;
+            document.documentElement.style.setProperty(targetVar, '"' + familyName + '", ' + fallback);
+
+            // Fetch early from caches
+            if ('caches' in window) {
+              window.caches.open('browserscope-fonts').then(function(cache) {
+                var cacheKey = 'https://local-fonts.browserscope/' + fontKey + '.ttf';
+                return cache.match(cacheKey);
+              }).then(function(match) {
+                if (match) return match.blob();
+              }).then(function(blob) {
+                if (blob && blob.size > 10) {
+                  var blobUrl = URL.createObjectURL(blob);
+                  var isVar = ['googlesansflex', 'notosanssc', 'notosanstc', 'notosansjp', 'jetbrainsmono', 'firacode', 'robotomono', 'sourcecodepro'].indexOf(fontKey) !== -1;
+                  var face = new FontFace(familyName, 'url(' + blobUrl + ')', isVar ? { weight: '100 900', style: 'normal' } : undefined);
+                  return face.load().then(function(loadedFace) {
+                    document.fonts.add(loadedFace);
+                    setTimeout(function() { try { URL.revokeObjectURL(blobUrl); } catch(e) {} }, 1000);
+                  });
+                }
+              }).catch(function(err) {
+                console.warn('Early font cache loading failed for ' + fontKey, err);
+              });
+            }
+          }
+        }
+
+        applyFontVar('--font-sans', bodyFont, sansFallback);
+        applyFontVar('--font-modal-title', modalTitleFont, sansFallback);
+        applyFontVar('--font-mono-custom', codeFont, monoFallback);
+
+      } catch (e) {
+        console.warn("Early style setup failed:", e);
+      }
     </script>
     <script>
       window.addEventListener(

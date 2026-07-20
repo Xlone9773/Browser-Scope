@@ -23,7 +23,7 @@ export const settings = {
             modalTitleFontDesc: "改变所有弹出窗口、对话框和设置标题的字体样式。",
             codeFont: "代码/等宽字体",
             codeFontDesc: "改变所有代码块、终端、路径与变量的等宽字体样式。",
-            defaultFont: "系统默认 (Inter)",
+            defaultFont: "系统默认 (MiSans)",
             defaultCodeFont: "系统默认等宽字体",
             mismatchError: "所选字体不支持当前界面语言（{lang}），已自动为您拦截。请先在「存储管理」中下载该字体或切换界面语言！",
             mismatchTitle: "字体语言不兼容"

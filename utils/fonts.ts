@@ -50,7 +50,7 @@ export const FONTS_LIST: FontItem[] = [
     {
         key: 'misans',
         name: 'MiSans',
-        languages: ['en', 'zh-CN'],
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja'],
         cssUrl: 'https://cdn.jsdelivr.net/npm/misans-webfont@4.3.1/misans-style.min.css',
         fontFamily: 'MiSans'
     },
@@ -203,8 +203,13 @@ export async function loadAndApplyFont(fontKey: string, targetVar: '--font-sans'
     if (typeof window === 'undefined') return false;
 
     if (fontKey === 'default') {
-        document.documentElement.style.removeProperty(targetVar);
-        return true;
+        const lang = (typeof window !== 'undefined' ? localStorage.getItem('language') : 'zh-CN') || 'zh-CN';
+        if (['zh-CN', 'zh-TW', 'zh-HK', 'ja'].includes(lang)) {
+            return loadAndApplyFont('misans', targetVar);
+        } else {
+            document.documentElement.style.removeProperty(targetVar);
+            return true;
+        }
     }
 
     const font = FONTS_LIST.find(f => f.key === fontKey);

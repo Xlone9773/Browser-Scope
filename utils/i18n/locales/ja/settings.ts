@@ -23,7 +23,7 @@ export const settings = {
             modalTitleFontDesc: "すべての設定ダイアログ、モーダルのヘッダータイトルフォントを変更します。",
             codeFont: "等幅/コードフォント",
             codeFontDesc: "コードブロック、ターミナル、パス、および変数の等幅フォントスタイルを変更します。",
-            defaultFont: "システムデフォルト (Inter)",
+            defaultFont: "システムデフォルト (MiSans)",
             defaultCodeFont: "システムデフォルト等幅フォント",
             mismatchError: "選択したフォントは現在の言語（{lang}）をサポートしていないため、切り替えがブロックされました。使用するには、事前に「ストレージ管理」でダウンロードするか、言語を変更してください。",
             mismatchTitle: "不適合なフォント言語"
