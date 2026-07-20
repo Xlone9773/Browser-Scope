@@ -21,12 +21,29 @@ export const settings = {
             bodyFontDesc: "改變所有數據、表格、說明文本與診斷報告的正文字體。",
             modalTitleFont: "彈窗標題字體",
             modalTitleFontDesc: "改變所有彈出窗口、對話框和設定標題的字體樣式。",
-            codeFont: "程式碼/等寬字體",
+            codeFont: "程式碼/等宽字體",
             codeFontDesc: "改變所有程式碼塊、終端機、路徑與變數的等寬字體樣式。",
             defaultFont: "系統預設 (MiSans)",
             defaultCodeFont: "系統預設等寬字體",
             mismatchError: "所選字體不支援目前介面語言（{lang}），已自動為您攔截。請先在「儲存管理」中下載該字體或切換介面語言！",
-            mismatchTitle: "字體語言不兼容"
+            mismatchTitle: "字體語言不兼容",
+            fontNames: {
+                googlesansflex: "Google Sans Flex",
+                notosans: "Noto Sans",
+                roboto: "Roboto Regular",
+                harmonyossanssc: "華為鴻蒙體 (HarmonyOS Sans SC)",
+                misans: "小米蘭亭體 (MiSans)",
+                smileysans: "得意黑 (Smiley Sans)",
+                zcoolxiaowei: "站酷小薇體",
+                sawarabigothic: "Sawarabi Gothic",
+                notosanssc: "思源黑體 (Noto Sans SC)",
+                notosanstc: "思源繁體 (Noto Sans TC)",
+                notosansjp: "思源日文 (Noto Sans JP)",
+                jetbrainsmono: "JetBrains Mono",
+                firacode: "Fira Code",
+                robotomono: "Roboto Mono",
+                sourcecodepro: "Source Code Pro"
+            }
         },
         showTabs: {
             title: "顯示導覽列",

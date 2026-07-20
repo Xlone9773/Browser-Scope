@@ -26,7 +26,24 @@ export const settings = {
             defaultFont: "System Default (Inter)",
             defaultCodeFont: "System Default (Monospace)",
             mismatchError: "The selected font does not support your current display language ({lang}). Select blocked.",
-            mismatchTitle: "Font Language Blocked"
+            mismatchTitle: "Font Language Blocked",
+            fontNames: {
+                googlesansflex: "Google Sans Flex",
+                notosans: "Noto Sans",
+                roboto: "Roboto Regular",
+                harmonyossanssc: "HarmonyOS Sans SC",
+                misans: "MiSans",
+                smileysans: "Smiley Sans (得意黑)",
+                zcoolxiaowei: "ZCOOL XiaoWei",
+                sawarabigothic: "Sawarabi Gothic",
+                notosanssc: "Noto Sans SC",
+                notosanstc: "Noto Sans TC",
+                notosansjp: "Noto Sans JP",
+                jetbrainsmono: "JetBrains Mono",
+                firacode: "Fira Code",
+                robotomono: "Roboto Mono",
+                sourcecodepro: "Source Code Pro"
+            }
         },
         showTabs: {
             title: "Display Navigation Tabs",

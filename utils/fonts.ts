@@ -55,6 +55,13 @@ export const FONTS_LIST: FontItem[] = [
         fontFamily: 'MiSans'
     },
     {
+        key: 'smileysans',
+        name: 'Smiley Sans',
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja'],
+        cssUrl: 'https://cdn.jsdelivr.net/npm/cn-fontsource-smiley-sans-oblique-regular/font.css',
+        fontFamily: 'Smiley Sans'
+    },
+    {
         key: 'zcoolxiaowei',
         name: 'ZCOOL XiaoWei',
         languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK'],

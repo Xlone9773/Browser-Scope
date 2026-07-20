@@ -26,7 +26,24 @@ export const settings = {
             defaultFont: "Системный по умолчанию (Inter)",
             defaultCodeFont: "Системный моноширинный по умолчанию",
             mismatchError: "Выбранный шрифт не поддерживает ваш текущий язык интерфейса ({lang}). Смена заблокирована.",
-            mismatchTitle: "Шрифт не поддерживает язык"
+            mismatchTitle: "Шрифт не поддерживает язык",
+            fontNames: {
+                googlesansflex: "Google Sans Flex",
+                notosans: "Noto Sans",
+                roboto: "Roboto Regular",
+                harmonyossanssc: "HarmonyOS Sans SC",
+                misans: "MiSans",
+                smileysans: "Smiley Sans (得意黑)",
+                zcoolxiaowei: "ZCOOL XiaoWei",
+                sawarabigothic: "Sawarabi Gothic",
+                notosanssc: "Noto Sans SC",
+                notosanstc: "Noto Sans TC",
+                notosansjp: "Noto Sans JP",
+                jetbrainsmono: "JetBrains Mono",
+                firacode: "Fira Code",
+                robotomono: "Roboto Mono",
+                sourcecodepro: "Source Code Pro"
+            }
         },
         showTabs: {
             title: "Показать вкладки навигации",

@@ -204,7 +204,7 @@ export const Header: React.FC<HeaderProps> = React.memo(({
   return (
     <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800 relative z-40">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-3 font-modal-title">
           <Monitor className="text-indigo-600 dark:text-indigo-400" size={32} />
           {t.meta.title}
         </h1>

@@ -26,7 +26,24 @@ export const settings = {
             defaultFont: "システムデフォルト (MiSans)",
             defaultCodeFont: "システムデフォルト等幅フォント",
             mismatchError: "選択したフォントは現在の言語（{lang}）をサポートしていないため、切り替えがブロックされました。使用するには、事前に「ストレージ管理」でダウンロードするか、言語を変更してください。",
-            mismatchTitle: "不適合なフォント言語"
+            mismatchTitle: "不適合なフォント言語",
+            fontNames: {
+                googlesansflex: "Google Sans Flex",
+                notosans: "Noto Sans",
+                roboto: "Roboto Regular",
+                harmonyossanssc: "HarmonyOS Sans SC (ハーモニーOSサンス)",
+                misans: "MiSans (小米ランティン体)",
+                smileysans: "得意黒 (Smiley Sans)",
+                zcoolxiaowei: "站酷小薇体 (ZCOOL XiaoWei)",
+                sawarabigothic: "さわらびゴシック (Sawarabi Gothic)",
+                notosanssc: "Noto Sans SC (思源ゴシック 簡体字)",
+                notosanstc: "Noto Sans TC (思源ゴシック 繁体字)",
+                notosansjp: "Noto Sans JP (思源ゴシック 日本語)",
+                jetbrainsmono: "JetBrains Mono",
+                firacode: "Fira Code",
+                robotomono: "Roboto Mono",
+                sourcecodepro: "Source Code Pro"
+            }
         },
         showTabs: {
             title: "ナビゲーションタブを表示",

@@ -26,7 +26,24 @@ export const settings = {
             defaultFont: "系统默认 (MiSans)",
             defaultCodeFont: "系统默认等宽字体",
             mismatchError: "所选字体不支持当前界面语言（{lang}），已自动为您拦截。请先在「存储管理」中下载该字体或切换界面语言！",
-            mismatchTitle: "字体语言不兼容"
+            mismatchTitle: "字体语言不兼容",
+            fontNames: {
+                googlesansflex: "Google Sans Flex",
+                notosans: "Noto Sans",
+                roboto: "Roboto Regular",
+                harmonyossanssc: "华为鸿蒙体 (HarmonyOS Sans SC)",
+                misans: "小米兰亭体 (MiSans)",
+                smileysans: "得意黑 (Smiley Sans)",
+                zcoolxiaowei: "站酷小薇体",
+                sawarabigothic: "Sawarabi Gothic",
+                notosanssc: "思源黑体 (Noto Sans SC)",
+                notosanstc: "思源繁体 (Noto Sans TC)",
+                notosansjp: "思源日文 (Noto Sans JP)",
+                jetbrainsmono: "JetBrains Mono",
+                firacode: "Fira Code",
+                robotomono: "Roboto Mono",
+                sourcecodepro: "Source Code Pro"
+            }
         },
         showTabs: {
             title: "显示导航栏",

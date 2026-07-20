@@ -101,7 +101,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                             <div className="w-20 h-20 bg-white/5 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10 shadow-2xl mb-6 animate-in zoom-in duration-500 ring-1 ring-white/20">
                                 <Box className="text-indigo-300" size={40} strokeWidth={1.5} />
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-slate-300 tracking-tight mb-3 drop-shadow-sm">
+                            <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-slate-300 tracking-tight mb-3 drop-shadow-sm font-modal-title">
                                 BrowserScope
                             </h1>
                             <p className="text-slate-400 text-sm md:text-base max-w-lg font-medium leading-relaxed">

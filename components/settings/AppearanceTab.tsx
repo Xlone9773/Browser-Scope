@@ -138,16 +138,20 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
         mismatchTitle: "Font Language Blocked"
     };
 
+    const getFontLabel = (f: { key: string; name: string }) => {
+        return (fontT as any).fontNames?.[f.key] || f.name;
+    };
+
     const codeFontKeys = ['jetbrainsmono', 'firacode', 'robotomono', 'sourcecodepro'];
 
     const bodyFontOptions = [
         { id: 'default', label: fontT.defaultFont },
         ...FONTS_LIST
-            .filter(f => !codeFontKeys.includes(f.key) && f.key !== 'misans')
+            .filter(f => !codeFontKeys.includes(f.key) && f.key !== 'misans' && f.key !== 'smileysans')
             .filter(f => isFontCompatibleWithLang(f.key, lang as Language))
             .map(f => ({
                 id: f.key,
-                label: f.name
+                label: getFontLabel(f)
             }))
     ];
 
@@ -158,7 +162,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             .filter(f => isFontCompatibleWithLang(f.key, lang as Language))
             .map(f => ({
                 id: f.key,
-                label: f.name
+                label: getFontLabel(f)
             }))
     ];
 
@@ -169,7 +173,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             .filter(f => isFontCompatibleWithLang(f.key, lang as Language))
             .map(f => ({
                 id: f.key,
-                label: f.name
+                label: getFontLabel(f)
             }))
     ];
 
