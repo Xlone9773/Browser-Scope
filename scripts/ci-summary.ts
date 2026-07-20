@@ -398,7 +398,7 @@ const main = () => {
       process.exitCode = 1;
     }
 
-    markdown += `#### 🔍 Rolldown Bundle Size breakdown:\n\n`;
+    markdown += `<details>\n<summary><strong>🔍 Rolldown Bundle Size breakdown:</strong></summary>\n\n`;
 
     if (fs.existsSync('dist')) {
       const allFiles = getFilesRecursively('dist');
@@ -456,6 +456,8 @@ const main = () => {
     } else {
       markdown += `> ⚠️ **Notice:** No build folder (\`dist\`) detected to analyze.\n\n`;
     }
+
+    markdown += `</details>\n\n`;
 
     // Dependency vulnerability check
     markdown += `#### 🛡️ Dependency Security Auditing:\n\n`;
