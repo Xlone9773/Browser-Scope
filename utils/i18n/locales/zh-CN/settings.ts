@@ -14,6 +14,20 @@ export const settings = {
         versions: "版本与更新"
     },
     general: {
+        fontSettings: {
+            title: "界面字体定制",
+            desc: "为正文文本和弹窗标题定制个性化的界面排版字体。",
+            bodyFont: "正文字体",
+            bodyFontDesc: "改变所有数据、表格、说明文本与诊断报告的正文字体。",
+            modalTitleFont: "弹窗标题字体",
+            modalTitleFontDesc: "改变所有弹出窗口、对话框和设置标题的字体样式。",
+            codeFont: "代码/等宽字体",
+            codeFontDesc: "改变所有代码块、终端、路径与变量的等宽字体样式。",
+            defaultFont: "系统默认 (Inter)",
+            defaultCodeFont: "系统默认等宽字体",
+            mismatchError: "所选字体不支持当前界面语言（{lang}），已自动为您拦截。请先在「存储管理」中下载该字体或切换界面语言！",
+            mismatchTitle: "字体语言不兼容"
+        },
         showTabs: {
             title: "显示导航栏",
             desc: "在内容上方显示用于筛选分类的选项卡，若所有选项卡都为空将自动隐藏。"

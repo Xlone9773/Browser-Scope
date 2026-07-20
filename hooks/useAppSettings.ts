@@ -384,6 +384,9 @@ export function useAppSettings() {
   const [modalTitleFont, setModalTitleFont] = useState<string>(
     () => localStorage.getItem("modalTitleFont") || "default"
   );
+  const [codeFont, setCodeFont] = useState<string>(
+    () => localStorage.getItem("codeFont") || "default"
+  );
 
   const updateBodyFont = useCallback((font: string) => {
     setBodyFont(font);
@@ -395,6 +398,11 @@ export function useAppSettings() {
     localStorage.setItem("modalTitleFont", font);
   }, []);
 
+  const updateCodeFont = useCallback((font: string) => {
+    setCodeFont(font);
+    localStorage.setItem("codeFont", font);
+  }, []);
+
   useEffect(() => {
     loadAndApplyFont(bodyFont, '--font-sans');
   }, [bodyFont]);
@@ -402,6 +410,10 @@ export function useAppSettings() {
   useEffect(() => {
     loadAndApplyFont(modalTitleFont, '--font-modal-title');
   }, [modalTitleFont]);
+
+  useEffect(() => {
+    loadAndApplyFont(codeFont, '--font-mono-custom');
+  }, [codeFont]);
 
   return {
     lang,
@@ -454,5 +466,7 @@ export function useAppSettings() {
     updateBodyFont,
     modalTitleFont,
     updateModalTitleFont,
+    codeFont,
+    updateCodeFont,
   };
 }

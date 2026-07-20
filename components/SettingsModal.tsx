@@ -62,6 +62,8 @@ interface SettingsModalProps {
   updateBodyFont: (font: string) => void;
   modalTitleFont: string;
   updateModalTitleFont: (font: string) => void;
+  codeFont: string;
+  updateCodeFont: (font: string) => void;
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
   moduleStates?: ModuleState[];
@@ -132,6 +134,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     updateBodyFont,
     modalTitleFont,
     updateModalTitleFont,
+    codeFont,
+    updateCodeFont,
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>(() => {
     try {
@@ -315,6 +319,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               updateBodyFont={updateBodyFont}
                               modalTitleFont={modalTitleFont}
                               updateModalTitleFont={updateModalTitleFont}
+                              codeFont={codeFont}
+                              updateCodeFont={updateCodeFont}
                               lang={lang}
                           />) : null}
 

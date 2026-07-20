@@ -8,74 +8,7 @@ import { FONTS_LIST, isFontCompatibleWithLang } from '../../utils/fonts';
 import { useToast } from '../../hooks/useToast';
 import { Language } from '../../utils/i18n/types';
 
-const LOCAL_I18N = {
-  en: {
-    fontSettings: "Font Customization",
-    fontSettingsDesc: "Customize UI typography for body content and dialog modal titles.",
-    bodyFont: "Body Font",
-    bodyFontDesc: "Change the font family of body texts, lists, and diagnostic reports.",
-    modalTitleFont: "Modal Title Font",
-    modalTitleFontDesc: "Change the font family of headers, settings modal, and dialogs.",
-    defaultFont: "System Default (Inter)",
-    mismatchError: "The selected font does not support your current display language ({lang}). Select blocked.",
-    mismatchTitle: "Font Language Blocked",
-  },
-  'zh-CN': {
-    fontSettings: "界面字体定制",
-    fontSettingsDesc: "为正文文本和弹窗标题定制个性化的界面排版字体。",
-    bodyFont: "正文字体",
-    bodyFontDesc: "改变所有数据、表格、说明文本与诊断报告的正文字体。",
-    modalTitleFont: "弹窗标题字体",
-    modalTitleFontDesc: "改变所有弹出窗口、对话框和设置标题的字体样式。",
-    defaultFont: "系统默认 (Inter)",
-    mismatchError: "所选字体不支持当前界面语言（{lang}），已自动为您拦截。请先在「存储管理」中下载该字体或切换界面语言！",
-    mismatchTitle: "字体语言不兼容",
-  },
-  'zh-TW': {
-    fontSettings: "介面字體定制",
-    fontSettingsDesc: "為正文文本和彈窗標題定制個性化的介面排版字體。",
-    bodyFont: "正文字體",
-    bodyFontDesc: "改變所有數據、表格、說明文本與診斷報告的正文字體。",
-    modalTitleFont: "彈窗標題字體",
-    modalTitleFontDesc: "改變所有彈出窗口、對話框和設定標題的字體樣式。",
-    defaultFont: "系統預設 (Inter)",
-    mismatchError: "所選字體不支援目前介面語言（{lang}），已自動為您攔截。請先在「儲存管理」中下載該字體或切換介面語言！",
-    mismatchTitle: "字體語言不兼容",
-  },
-  'zh-HK': {
-    fontSettings: "介面字體定制",
-    fontSettingsDesc: "為正文文本和彈窗標題定制個性化的介面排版字體。",
-    bodyFont: "正文字體",
-    bodyFontDesc: "改變所有數據、表格、說明文本與診斷報告的正文字體。",
-    modalTitleFont: "彈窗標題字體",
-    modalTitleFontDesc: "改變所有彈出窗口、對話框和設定標題的字體樣式。",
-    defaultFont: "系統預設 (Inter)",
-    mismatchError: "所選字體不支援目前介面語言（{lang}），已自動為您攔截。請先在「儲存管理」中下載該字體或切換介面語言！",
-    mismatchTitle: "字體語言不兼容",
-  },
-  ja: {
-    fontSettings: "フォントのカスタマイズ",
-    fontSettingsDesc: "本文のテキストとダイアログのタイトルフォントを個別にカスタマイズします。",
-    bodyFont: "本文フォント",
-    bodyFontDesc: "レポート、リスト、および各種診断詳細テキストのフォントを変更します。",
-    modalTitleFont: "モーダルタイトルフォント",
-    modalTitleFontDesc: "すべての設定ダイアログ、モーダルのヘッダータイトルフォントを変更します。",
-    defaultFont: "システムデフォルト (Inter)",
-    mismatchError: "選択したフォントは現在の言語（{lang}）をサポートしていないため、切り替えがブロックされました。使用するには、事前に「ストレージ管理」でダウンロードするか、言語を変更してください。",
-    mismatchTitle: "不適合なフォント言語",
-  },
-  ru: {
-    fontSettings: "Настройка шрифтов",
-    fontSettingsDesc: "Настройте шрифты для основного содержимого и заголовков модальных окон.",
-    bodyFont: "Шрифт основного текста",
-    bodyFontDesc: "Изменяет шрифт для текста отчетов, таблиц и основного интерфейса.",
-    modalTitleFont: "Шрифт заголовка модального окна",
-    modalTitleFontDesc: "Изменяет шрифт для всех диалогов и заголовков модальных окон.",
-    defaultFont: "Системный по умолчанию (Inter)",
-    mismatchError: "Выбранный шрифт не поддерживает ваш текущий язык интерфейса ({lang}). Смена заблокирована.",
-    mismatchTitle: "Шрифт не поддерживает язык",
-  }
-};
+
 
 // Custom Premium Restore Button Component
 interface CustomRestoreButtonProps {
@@ -135,6 +68,8 @@ interface AppearanceTabProps {
     updateBodyFont: (font: string) => void;
     modalTitleFont: string;
     updateModalTitleFont: (font: string) => void;
+    codeFont: string;
+    updateCodeFont: (font: string) => void;
     lang: string;
 }
 
@@ -173,6 +108,8 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     updateBodyFont,
     modalTitleFont,
     updateModalTitleFont,
+    codeFont,
+    updateCodeFont,
     lang
 }) => {
     const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
@@ -185,12 +122,28 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const localT = LOCAL_I18N[lang as keyof typeof LOCAL_I18N] || LOCAL_I18N.en;
     const toast = useToast();
+    const fontT = t.fontSettings || {
+        title: "Font Customization",
+        desc: "Customize UI typography for body content and dialog modal titles.",
+        bodyFont: "Body Font",
+        bodyFontDesc: "Change the font family of body texts, lists, and diagnostic reports.",
+        modalTitleFont: "Modal Title Font",
+        modalTitleFontDesc: "Change the font family of headers, settings modal, and dialogs.",
+        codeFont: "Code/Monospace Font",
+        codeFontDesc: "Change the font family of code blocks, terminals, variables, and exports.",
+        defaultFont: "System Default (Inter)",
+        defaultCodeFont: "System Default (Monospace)",
+        mismatchError: "The selected font does not support your current display language ({lang}). Select blocked.",
+        mismatchTitle: "Font Language Blocked"
+    };
+
+    const codeFontKeys = ['jetbrainsmono', 'firacode', 'robotomono', 'sourcecodepro'];
 
     const bodyFontOptions = [
-        { id: 'default', label: localT.defaultFont },
+        { id: 'default', label: fontT.defaultFont },
         ...FONTS_LIST
+            .filter(f => !codeFontKeys.includes(f.key))
             .filter(f => isFontCompatibleWithLang(f.key, lang as Language))
             .map(f => ({
                 id: f.key,
@@ -199,8 +152,9 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     ];
 
     const modalTitleFontOptions = [
-        { id: 'default', label: localT.defaultFont },
+        { id: 'default', label: fontT.defaultFont },
         ...FONTS_LIST
+            .filter(f => !codeFontKeys.includes(f.key))
             .filter(f => isFontCompatibleWithLang(f.key, lang as Language))
             .map(f => ({
                 id: f.key,
@@ -208,11 +162,22 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             }))
     ];
 
-    const handleFontChange = (fontKey: string, type: 'body' | 'modal') => {
+    const codeFontOptions = [
+        { id: 'default', label: fontT.defaultCodeFont },
+        ...FONTS_LIST
+            .filter(f => codeFontKeys.includes(f.key))
+            .filter(f => isFontCompatibleWithLang(f.key, lang as Language))
+            .map(f => ({
+                id: f.key,
+                label: f.name
+            }))
+    ];
+
+    const handleFontChange = (fontKey: string, type: 'body' | 'modal' | 'code') => {
         if (fontKey !== 'default' && !isFontCompatibleWithLang(fontKey, lang as Language)) {
             toast.error(
-                localT.mismatchError.replace('{lang}', lang),
-                localT.mismatchTitle,
+                fontT.mismatchError.replace('{lang}', lang),
+                fontT.mismatchTitle,
                 5000
             );
             return;
@@ -220,8 +185,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
 
         if (type === 'body') {
             updateBodyFont(fontKey);
-        } else {
+        } else if (type === 'modal') {
             updateModalTitleFont(fontKey);
+        } else {
+            updateCodeFont(fontKey);
         }
     };
 
@@ -371,10 +338,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 <div className="flex flex-col gap-1 border-b border-slate-100 dark:border-slate-700 pb-3">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                         <Type size={18} className="text-indigo-500" />
-                        {localT.fontSettings}
+                        {fontT.title}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                        {localT.fontSettingsDesc}
+                        {fontT.desc}
                     </p>
                 </div>
                 
@@ -383,10 +350,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div className="flex flex-col gap-1 max-w-md">
                             <h4 className="text-sm font-medium text-slate-800 dark:text-slate-200">
-                                {localT.bodyFont}
+                                {fontT.bodyFont}
                             </h4>
                             <p className="text-xs text-slate-500 dark:text-slate-400">
-                                {localT.bodyFontDesc}
+                                {fontT.bodyFontDesc}
                             </p>
                         </div>
                         <Select 
@@ -402,16 +369,35 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div className="flex flex-col gap-1 max-w-md">
                             <h4 className="text-sm font-medium text-slate-800 dark:text-slate-200">
-                                {localT.modalTitleFont}
+                                {fontT.modalTitleFont}
                             </h4>
                             <p className="text-xs text-slate-500 dark:text-slate-400">
-                                {localT.modalTitleFontDesc}
+                                {fontT.modalTitleFontDesc}
                             </p>
                         </div>
                         <Select 
                             value={modalTitleFont}
                             onChange={(val) => handleFontChange(val as string, 'modal')}
                             options={modalTitleFontOptions}
+                            className="w-full sm:w-48"
+                            color={themeColor}
+                        />
+                    </div>
+
+                    {/* Code Font Select */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div className="flex flex-col gap-1 max-w-md">
+                            <h4 className="text-sm font-medium text-slate-800 dark:text-slate-200">
+                                {fontT.codeFont}
+                            </h4>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                {fontT.codeFontDesc}
+                            </p>
+                        </div>
+                        <Select 
+                            value={codeFont}
+                            onChange={(val) => handleFontChange(val as string, 'code')}
+                            options={codeFontOptions}
                             className="w-full sm:w-48"
                             color={themeColor}
                         />

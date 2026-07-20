@@ -82,6 +82,8 @@ const App: React.FC = () => {
     updateBodyFont,
     modalTitleFont,
     updateModalTitleFont,
+    codeFont,
+    updateCodeFont,
   } = useAppSettings();
 
   const [matchedCardIds, setMatchedCardIds] = useState<string[] | null>(null);
@@ -832,6 +834,8 @@ const App: React.FC = () => {
         updateBodyFont={updateBodyFont}
         modalTitleFont={modalTitleFont}
         updateModalTitleFont={updateModalTitleFont}
+        codeFont={codeFont}
+        updateCodeFont={updateCodeFont}
       />
 
       <div id="dashboard-container" className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">

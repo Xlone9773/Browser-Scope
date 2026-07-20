@@ -68,6 +68,8 @@ interface ModalContainerProps {
   updateBodyFont: (font: string) => void;
   modalTitleFont: string;
   updateModalTitleFont: (font: string) => void;
+  codeFont: string;
+  updateCodeFont: (font: string) => void;
 }
 
 export const ModalContainer: React.FC<ModalContainerProps> = ({
@@ -132,6 +134,8 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   updateBodyFont,
   modalTitleFont,
   updateModalTitleFont,
+  codeFont,
+  updateCodeFont,
 }) => {
   return (
     <ErrorBoundary name="Modals">
@@ -280,6 +284,8 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
             updateBodyFont={updateBodyFont}
             modalTitleFont={modalTitleFont}
             updateModalTitleFont={updateModalTitleFont}
+            codeFont={codeFont}
+            updateCodeFont={updateCodeFont}
           />
         ) : null}
 

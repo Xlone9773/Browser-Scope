@@ -14,6 +14,20 @@ export const settings = {
         versions: "Versions & Updates"
     },
     general: {
+        fontSettings: {
+            title: "Font Customization",
+            desc: "Customize UI typography for body content and dialog modal titles.",
+            bodyFont: "Body Font",
+            bodyFontDesc: "Change the font family of body texts, lists, and diagnostic reports.",
+            modalTitleFont: "Modal Title Font",
+            modalTitleFontDesc: "Change the font family of headers, settings modal, and dialogs.",
+            codeFont: "Code/Monospace Font",
+            codeFontDesc: "Change the font family of code blocks, terminals, variables, and exports.",
+            defaultFont: "System Default (Inter)",
+            defaultCodeFont: "System Default (Monospace)",
+            mismatchError: "The selected font does not support your current display language ({lang}). Select blocked.",
+            mismatchTitle: "Font Language Blocked"
+        },
         showTabs: {
             title: "Display Navigation Tabs",
             desc: "Show navigation tabs above the content to filter items. Automatically hides if empty."

@@ -109,6 +109,54 @@ export const FONTS_LIST: FontItem[] = [
             "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf",
             "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf"
         ]
+    },
+    {
+        key: 'jetbrainsmono',
+        name: 'JetBrains Mono',
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
+        isVariable: true,
+        weightRange: '100 800',
+        mirrors: [
+            "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/jetbrainsmono/JetBrainsMono%5Bwght%5D.ttf",
+            "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/jetbrainsmono/JetBrainsMono%5Bwght%5D.ttf",
+            "https://raw.githubusercontent.com/google/fonts/main/ofl/jetbrainsmono/JetBrainsMono%5Bwght%5D.ttf"
+        ]
+    },
+    {
+        key: 'firacode',
+        name: 'Fira Code',
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
+        isVariable: true,
+        weightRange: '300 700',
+        mirrors: [
+            "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/firacode/FiraCode%5Bwght%5D.ttf",
+            "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/firacode/FiraCode%5Bwght%5D.ttf",
+            "https://raw.githubusercontent.com/google/fonts/main/ofl/firacode/FiraCode%5Bwght%5D.ttf"
+        ]
+    },
+    {
+        key: 'robotomono',
+        name: 'Roboto Mono',
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
+        isVariable: true,
+        weightRange: '100 700',
+        mirrors: [
+            "https://cdn.jsdelivr.net/gh/google/fonts@main/apache/robotomono/RobotoMono%5Bwght%5D.ttf",
+            "https://fastly.jsdelivr.net/gh/google/fonts@main/apache/robotomono/RobotoMono%5Bwght%5D.ttf",
+            "https://raw.githubusercontent.com/google/fonts/main/apache/robotomono/RobotoMono%5Bwght%5D.ttf"
+        ]
+    },
+    {
+        key: 'sourcecodepro',
+        name: 'Source Code Pro',
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
+        isVariable: true,
+        weightRange: '200 900',
+        mirrors: [
+            "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sourcecodepro/SourceCodePro%5Bwght%5D.ttf",
+            "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/sourcecodepro/SourceCodePro%5Bwght%5D.ttf",
+            "https://raw.githubusercontent.com/google/fonts/main/ofl/sourcecodepro/SourceCodePro%5Bwght%5D.ttf"
+        ]
     }
 ];
 
@@ -151,7 +199,7 @@ export function resolveCssUrls(cssText: string, baseUrl: string): string {
  * Loads a dynamic font either from Cache Storage (if cached) or falls back to CDN.
  * Registers the font with the document.fonts API.
  */
-export async function loadAndApplyFont(fontKey: string, targetVar: '--font-sans' | '--font-modal-title'): Promise<boolean> {
+export async function loadAndApplyFont(fontKey: string, targetVar: '--font-sans' | '--font-modal-title' | '--font-mono-custom'): Promise<boolean> {
     if (typeof window === 'undefined') return false;
 
     if (fontKey === 'default') {
@@ -202,7 +250,10 @@ export async function loadAndApplyFont(fontKey: string, targetVar: '--font-sans'
 
         if (loaded) {
             const familyName = font.fontFamily || `DynamicFont-${font.key}`;
-            document.documentElement.style.setProperty(targetVar, `"${familyName}", "Inter", ui-sans-serif, system-ui, sans-serif`);
+            const fallback = targetVar === '--font-mono-custom'
+                ? 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+                : '"Inter", ui-sans-serif, system-ui, sans-serif';
+            document.documentElement.style.setProperty(targetVar, `"${familyName}", ${fallback}`);
             return true;
         }
         return false;
@@ -267,7 +318,10 @@ export async function loadAndApplyFont(fontKey: string, targetVar: '--font-sans'
         document.fonts.add(loadedFace);
 
         // Apply to the specific target CSS variable
-        document.documentElement.style.setProperty(targetVar, `"${fontFamilyName}", "Inter", ui-sans-serif, system-ui, sans-serif`);
+        const fallback = targetVar === '--font-mono-custom'
+            ? 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+            : '"Inter", ui-sans-serif, system-ui, sans-serif';
+        document.documentElement.style.setProperty(targetVar, `"${fontFamilyName}", ${fallback}`);
 
         // Clean up object URL if created
         if (fontBlobUrl) {
