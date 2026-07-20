@@ -8,7 +8,7 @@ export const settings = {
         network: "Сетевые утилиты",
         display: "Экран",
         storage: "Хранилище",
-        resources: "Ресурсы",
+        resources: "Сетевые запросы",
         developer: "Разработчик",
         modules: "Модули",
         versions: "Версии и обновления"
@@ -362,8 +362,24 @@ export const settings = {
         }
     },
     resources: {
-        title: "Список загрузки внешних ресурсов",
-        columns: { name: "Имя ресурса", type: "Тип", duration: "Время" }
+        title: "Мониторинг сетевых запросов",
+        subtitle: "Мониторинг и анализ сетевых запросов приложения (с разделением на нативный Fetch, прокси UDP и пользовательские скрипты).",
+        clear: "Очистить логи",
+        empty: "Логи сетевых запросов отсутствуют.",
+        columns: {
+            url: "URL запроса",
+            method: "Метод",
+            type: "Тип инициатора",
+            status: "Статус",
+            duration: "Длительность",
+            time: "Время"
+        },
+        types: {
+            udp: "UDP-прокси",
+            native: "Нативный",
+            script: "Скрипт",
+            unknown: "Другое"
+        }
     },
     developer: {
         config: {

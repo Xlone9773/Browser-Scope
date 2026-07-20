@@ -5,6 +5,10 @@ import './utils/loggerStore';
 import './index.css';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { ToastProvider } from './components/ui/Toast';
+import { networkLogger } from './utils/networkLogger';
+
+// Initialize network request logger
+networkLogger.init();
 
 // Suppress specific errors that might leak to the console
 window.addEventListener('error', (e) => {

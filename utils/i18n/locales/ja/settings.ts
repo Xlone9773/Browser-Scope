@@ -8,7 +8,7 @@ export const settings = {
         network: "ネットワークツール",
         display: "画面テスト",
         storage: "ストレージ管理",
-        resources: "リソース監視",
+        resources: "ネットワーク要求",
         developer: "開発者",
         modules: "モジュール管理",
         versions: "バージョンと更新"
@@ -362,8 +362,24 @@ export const settings = {
         }
     },
     resources: {
-        title: "外部リソース読み込みリスト",
-        columns: { name: "リソース名", type: "タイプ", duration: "所要時間" }
+        title: "ネットワーク要求モニター",
+        subtitle: "アプリケーションによって作成されたネットワーク要求を監視および分析します（ネイティブ Fetch、UDP プロキシ、およびユーザースクリプトを区別）。",
+        clear: "ログをクリア",
+        empty: "ネットワーク要求ログはまだありません。",
+        columns: {
+            url: "要求URL",
+            method: "メソッド",
+            type: "イニシエータタイプ",
+            status: "ステータス",
+            duration: "時間",
+            time: "タイムスタンプ"
+        },
+        types: {
+            udp: "UDP 転送",
+            native: "ネイティブ要求",
+            script: "ユーザースクリプト",
+            unknown: "その他"
+        }
     },
     developer: {
         config: {

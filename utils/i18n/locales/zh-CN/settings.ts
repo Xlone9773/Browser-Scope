@@ -8,7 +8,7 @@ export const settings = {
         network: "网络工具",
         display: "屏幕检测",
         storage: "存储管理",
-        resources: "资源监控",
+        resources: "网络请求",
         developer: "开发者",
         modules: "模块管理",
         versions: "版本与更新"
@@ -362,8 +362,24 @@ export const settings = {
         }
     },
     resources: {
-        title: "外部资源加载列表",
-        columns: { name: "资源名称", type: "类型", duration: "耗时" }
+        title: "网络请求监控",
+        subtitle: "监控和分析应用产生的网络请求（区分原生 Fetch、UDP 转发与用户脚本）",
+        clear: "清空记录",
+        empty: "暂无网络请求记录",
+        columns: {
+            url: "请求地址",
+            method: "请求方法",
+            type: "发起类型",
+            status: "状态",
+            duration: "耗时",
+            time: "时间戳"
+        },
+        types: {
+            udp: "UDP 转发",
+            native: "原生请求",
+            script: "用户脚本",
+            unknown: "其他"
+        }
     },
     developer: {
         config: {

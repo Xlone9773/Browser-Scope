@@ -8,7 +8,7 @@ export const settings = {
         network: "網絡工具",
         display: "屏幕檢測",
         storage: "儲存管理",
-        resources: "資源監控",
+        resources: "網路請求",
         developer: "開發者",
         modules: "模組管理",
         versions: "版本與更新"
@@ -363,8 +363,24 @@ export const settings = {
         }
     },
     resources: {
-        title: "外部資源載入列表",
-        columns: { name: "資源名稱", type: "類型", duration: "耗時" }
+        title: "網路請求監控",
+        subtitle: "監控和分析應用產生的網路請求（區分原生 Fetch、UDP 轉發與用戶腳本）",
+        clear: "清空記錄",
+        empty: "暫無網路請求記錄",
+        columns: {
+            url: "請求地址",
+            method: "請求方法",
+            type: "發起類型",
+            status: "狀態",
+            duration: "耗時",
+            time: "時間戳"
+        },
+        types: {
+            udp: "UDP 轉發",
+            native: "原生請求",
+            script: "用戶腳本",
+            unknown: "其他"
+        }
     },
     developer: {
         config: {

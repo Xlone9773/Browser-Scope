@@ -6,7 +6,6 @@ export const USERSCRIPT_CODE = `// ==UserScript==
 // @author       BrowserScope Architect
 // @match        *://*/*
 // @grant        GM_xmlhttpRequest
-// @grant        unsafeWindow
 // @connect      *
 // @run-at       document-start
 // ==/UserScript==
@@ -14,8 +13,7 @@ export const USERSCRIPT_CODE = `// ==UserScript==
 (function() {
     'use strict';
     
-    // In Tampermonkey, window in sandbox is isolated. We MUST use unsafeWindow to interact with the host page.
-    const win = (typeof unsafeWindow !== 'undefined') ? unsafeWindow : window;
+    const win = window;
     
     console.log('[BrowserScope Helper] CORS & TLS bypass helper userscript active.');
 

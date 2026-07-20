@@ -8,7 +8,7 @@ export const settings = {
         network: "Network Tools",
         display: "Display Tests",
         storage: "Storage",
-        resources: "Resources",
+        resources: "Network Requests",
         developer: "Developer",
         modules: "Module Manager",
         versions: "Versions & Updates"
@@ -362,8 +362,24 @@ export const settings = {
         }
     },
     resources: {
-        title: "External Resources",
-        columns: { name: "Name", type: "Type", duration: "Duration" }
+        title: "Network Requests Monitor",
+        subtitle: "Monitor and analyze network requests made by the application (distinguishing Native Fetch, UDP Proxy, and User Scripts).",
+        clear: "Clear Logs",
+        empty: "No network request logs available yet.",
+        columns: {
+            url: "Request URL",
+            method: "Method",
+            type: "Initiator Type",
+            status: "Status",
+            duration: "Duration",
+            time: "Timestamp"
+        },
+        types: {
+            udp: "UDP Forwarding",
+            native: "Native Request",
+            script: "User Script",
+            unknown: "Other"
+        }
     },
     developer: {
         config: {
