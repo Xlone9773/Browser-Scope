@@ -21,7 +21,13 @@ import {
 import { motion } from 'motion/react';
 import { Button } from '../ui/Button';
 import { PoisoningTranslations } from './types';
-import { isHooked, checkAudioHooks, renderAudio } from './utils';
+import { 
+  runGeometryDiagnostic, 
+  runFontDiagnostic, 
+  runMediaDiagnostic, 
+  runRenderAudioDiagnostic, 
+  runHardwareDiagnostic 
+} from './diagnostics';
 
 interface AllTabProps {
   t: PoisoningTranslations;
@@ -42,18 +48,6 @@ interface AllResults {
   media: ModuleResult;
   hardware: ModuleResult;
 }
-
-const workerCode = `
-  self.onmessage = function(e) {
-    const duration = e.data || 40;
-    const start = performance.now();
-    let ops = 0;
-    while (performance.now() - start < duration) {
-      ops += Math.sin(ops) + Math.cos(ops);
-    }
-    self.postMessage(ops);
-  };
-`;
 
 export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
   const [status, setStatus] = useState<'idle' | 'running' | 'completed'>(() => {
@@ -165,61 +159,13 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
       addGlobalLog(`  [Render/Audio] ${m}`);
     };
 
-    let renderAudioPoisoned = false;
-
-    // Viewport & screen check
-    rLog(t.testing_viewport || 'Testing Viewport & Screen Dimensions stability...');
-    const lastW = window.innerWidth;
-    const lastH = window.innerHeight;
-    const probeDiv = document.createElement('div');
-    probeDiv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;visibility:hidden;pointer-events:none;z-index:-9999;';
-    document.body.appendChild(probeDiv);
-    const lastDivW = probeDiv.clientWidth;
-    const lastDivH = probeDiv.clientHeight;
-    
-    for (let i = 0; i < 5; i++) {
-      if (window.innerWidth !== lastW || window.innerHeight !== lastH || probeDiv.clientWidth !== lastDivW || probeDiv.clientHeight !== lastDivH) {
-        renderAudioPoisoned = true;
-        rLog(t.viewport_poisoned || '❌ Viewport dimensions are unstable (dynamic fluctuation detected).');
-        break;
-      }
-      await new Promise<void>(res => setTimeout(res, 10));
-    }
-    document.body.removeChild(probeDiv);
-    if (!renderAudioPoisoned) {
-      rLog(t.viewport_stable || '✅ Viewport and screen dimensions are stable.');
-    }
-    setGlobalProgress(10);
-
-    // Audio Hooks
-    const audioHookInfo = checkAudioHooks();
-    if (audioHookInfo.hooked) {
-      renderAudioPoisoned = true;
-      rLog((t.audio_hooked || '❌ Web Audio API Hook detected on: {name}').replace('{name}', audioHookInfo.name || ''));
-    }
-
-    // Audio Hash check
-    rLog(t.testing_audio || 'Analyzing Audio Buffer channel stability across queries...');
-    const buffer1 = await renderAudio();
-    const buffer2 = await renderAudio();
-    if (buffer1 && buffer2) {
-      let matched = true;
-      for (let i = 0; i < buffer1.length; i++) {
-        if (buffer1[i] !== buffer2[i]) {
-          matched = false;
-          break;
-        }
-      }
-      if (!matched) {
-        renderAudioPoisoned = true;
-        rLog(t.audio_poisoned || '❌ Dynamic Audio Buffer noise injection detected.');
-      } else {
-        rLog(t.audio_stable || '✅ Audio buffer fingerprint is highly stable.');
-      }
-    } else {
-      rLog(t.audio_unsupported || '⚠️ Audio Context rendering is blocked or unsupported.');
-    }
-    setGlobalProgress(20);
+    const renderAudioResult = await runRenderAudioDiagnostic(
+      t,
+      rLog,
+      (p) => setGlobalProgress(Math.floor(p * 0.2)),
+      null,
+      null
+    );
 
     // ==========================================
     // STEP 2: Fonts & Farbling Diagnostics (20% -> 40%)
@@ -235,74 +181,11 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
       addGlobalLog(`  [Fonts] ${m}`);
     };
 
-    let fontPoisoned = false;
-
-    // document.fonts hook
-    try {
-      const fontsProto = Object.getPrototypeOf(document.fonts);
-      const isForEachHooked = isHooked(document.fonts.forEach as unknown as (...args: never[]) => unknown) || 
-                              (fontsProto && isHooked(fontsProto.forEach as unknown as (...args: never[]) => unknown));
-      if (isForEachHooked) {
-        fontPoisoned = true;
-        fLog(t.fonts_hooked || '❌ Suspicious Proxy/Hook detected on core Font/Document APIs.');
-      }
-    } catch {}
-
-    // Font width fluctuation
-    fLog(t.testing_fonts || 'Detecting high-precision font width farbling (jitter)...');
-    const fontContainer = document.createElement('div');
-    fontContainer.style.cssText = 'position:absolute;top:-9999px;left:-9999px;visibility:hidden;pointer-events:none;white-space:nowrap;font-size:72px;font-family:"Times New Roman", Times, serif;';
-    const fontSpan = document.createElement('span');
-    fontSpan.textContent = 'Farbling Jitter Check: High-Precision Font Widths Fluctuation Testing !!! @#$%^&*()';
-    fontContainer.appendChild(fontSpan);
-    document.body.appendChild(fontContainer);
-
-    const measurements: number[] = [];
-    let jitterDetected = false;
-    for (let i = 0; i < 10; i++) {
-      measurements.push(fontSpan.getBoundingClientRect().width);
-      await new Promise<void>(res => setTimeout(res, 10));
-    }
-    const firstW = measurements[0];
-    for (let i = 1; i < measurements.length; i++) {
-      if (Math.abs(measurements[i] - firstW) > 0.00001) {
-        jitterDetected = true;
-        break;
-      }
-    }
-    if (jitterDetected) {
-      fontPoisoned = true;
-      fLog(t.font_farbling_detected || '❌ Font Farbling detected (high-precision width measurement fluctuates in static state).');
-    } else {
-      fLog(t.font_widths_stable || '✅ High-precision font width measurements are stable.');
-    }
-    setGlobalProgress(30);
-
-    // Font shielding
-    const measureFont = (family: string) => {
-      const s = document.createElement('span');
-      s.textContent = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
-      s.style.fontFamily = family;
-      fontContainer.appendChild(s);
-      const width = s.getBoundingClientRect().width;
-      fontContainer.removeChild(s);
-      return width;
-    };
-    const wSans = measureFont('sans-serif');
-    const wSerif = measureFont('serif');
-    const wMono = measureFont('monospace');
-    const wGeorgia = measureFont('Georgia, serif');
-    const wFake = measureFont('NonexistentFakeFontAlphaOmega, sans-serif');
-
-    const hasDifferentSystemFonts = (wGeorgia !== wFake);
-    if (!hasDifferentSystemFonts && wSans === wSerif && wSans === wMono) {
-      fontPoisoned = true;
-      fLog(t.font_shielding_detected || '❌ Font Shielding detected (all exotic fonts have identical widths to the fallback).');
-    } else {
-      fLog(t.font_differentiation_detected || '✅ Font differentiation detected (local font library access behaves normally).');
-    }
-    document.body.removeChild(fontContainer);
-    setGlobalProgress(40);
+    const fontResult = await runFontDiagnostic(
+      t,
+      fLog,
+      (p) => setGlobalProgress(20 + Math.floor(p * 0.2))
+    );
 
     // ==========================================
     // STEP 3: Geometry & Layout Diagnostics (40% -> 60%)
@@ -318,54 +201,11 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
       addGlobalLog(`  [Geometry] ${m}`);
     };
 
-    let geomPoisoned = false;
-
-    // Hook check
-    try {
-      const getBoundingClientRectHooked = isHooked(Element.prototype.getBoundingClientRect as unknown as (...args: never[]) => unknown);
-      if (getBoundingClientRectHooked) {
-        geomPoisoned = true;
-        gLog(t.rects_hooked || '❌ Suspicious Proxy/Hook detected on getBoundingClientRect.');
-      }
-    } catch {}
-
-    // Nested geometry farbling
-    gLog(t.testing_geometry || 'Testing high-frequency nested geometry measurements and poisoning...');
-    const geomContainer = document.createElement('div');
-    geomContainer.style.cssText = 'position:absolute;top:-9999px;left:-9999px;width:300px;height:300px;perspective:100px;transform-style:preserve-3d;visibility:hidden;pointer-events:none;';
-    const svgNS = "http://www.w3.org/2000/svg";
-    const svgEl = document.createElementNS(svgNS, "svg");
-    svgEl.setAttribute("width", "200");
-    svgEl.setAttribute("height", "200");
-    svgEl.style.cssText = "transform: scale(1.2) translate3d(5px, 5px, 5px);";
-    const path = document.createElementNS(svgNS, "path");
-    path.setAttribute("d", "M5 5 H 95 V 95 H 5 Z");
-    svgEl.appendChild(path);
-    geomContainer.appendChild(svgEl);
-    document.body.appendChild(geomContainer);
-
-    const geomMeasurements: { left: number; top: number }[] = [];
-    let geomFarbled = false;
-    for (let i = 0; i < 10; i++) {
-      const r = path.getBoundingClientRect();
-      geomMeasurements.push({ left: r.left, top: r.top });
-      await new Promise<void>(res => setTimeout(res, 10));
-    }
-    const firstGeom = geomMeasurements[0];
-    for (let i = 1; i < geomMeasurements.length; i++) {
-      if (Math.abs(geomMeasurements[i].left - firstGeom.left) > 0.00001 || Math.abs(geomMeasurements[i].top - firstGeom.top) > 0.00001) {
-        geomFarbled = true;
-        break;
-      }
-    }
-    if (geomFarbled) {
-      geomPoisoned = true;
-      gLog(t.rect_farbling_detected || '❌ ClientRects/DOMRect Farbling detected (geometry measurements fluctuate dynamically).');
-    } else {
-      gLog(t.geometry_stable || '✅ High-precision consecutive geometry measurements are stable.');
-    }
-    document.body.removeChild(geomContainer);
-    setGlobalProgress(60);
+    const geomResult = await runGeometryDiagnostic(
+      t,
+      gLog,
+      (p) => setGlobalProgress(40 + Math.floor(p * 0.2))
+    );
 
     // ==========================================
     // STEP 4: Media Devices Diagnostics (60% -> 80%)
@@ -381,57 +221,11 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
       addGlobalLog(`  [Media] ${m}`);
     };
 
-    let mediaPoisoned = false;
-
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-      mLog(t.media_not_supported || '⚠️ navigator.mediaDevices is not supported by your current browser.');
-    } else {
-      // Hook check
-      try {
-        if (isHooked(navigator.mediaDevices.enumerateDevices as unknown as (...args: never[]) => unknown)) {
-          mediaPoisoned = true;
-          mLog(t.media_hooked || '❌ Suspicious Proxy/Hook detected on enumerateDevices.');
-        }
-      } catch {}
-
-      // Consecutive reads
-      mLog(t.testing_media || 'Testing media device enumeration stability across consecutive reads...');
-      let listFluctuation = false;
-      const deviceRuns: string[][] = [];
-      let hasError = false;
-
-      for (let i = 0; i < 4; i++) {
-        try {
-          const list = await navigator.mediaDevices.enumerateDevices();
-          deviceRuns.push(list.map(d => `${d.kind}:${d.deviceId}`));
-        } catch {
-          hasError = true;
-        }
-        await new Promise<void>(res => setTimeout(res, 15));
-      }
-
-      if (hasError) {
-        mLog(t.media_error || '⚠️ Error occurred while calling enumerateDevices.');
-      } else if (deviceRuns.length > 0 && deviceRuns[0].length > 0) {
-        const firstRun = deviceRuns[0];
-        mLog((t.media_found_count || 'Found {count} media devices in initial query.').replace('{count}', String(firstRun.length)));
-        for (let i = 1; i < deviceRuns.length; i++) {
-          if (deviceRuns[i].length !== firstRun.length || JSON.stringify(deviceRuns[i]) !== JSON.stringify(firstRun)) {
-            listFluctuation = true;
-            break;
-          }
-        }
-        if (listFluctuation) {
-          mediaPoisoned = true;
-          mLog(t.media_poisoned_detected || '❌ Media Device ID Farbling/Poisoning detected (device IDs fluctuate dynamically).');
-        } else {
-          mLog(t.media_stable || '✅ Media device enumeration and deviceId hashes are stable.');
-        }
-      } else {
-        mLog(t.media_empty || 'ℹ️ No media devices found or permission not granted.');
-      }
-    }
-    setGlobalProgress(80);
+    const mediaResult = await runMediaDiagnostic(
+      t,
+      mLog,
+      (p) => setGlobalProgress(60 + Math.floor(p * 0.2))
+    );
 
     // ==========================================
     // STEP 5: Hardware Specifications Diagnostics (80% -> 100%)
@@ -447,105 +241,13 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
       addGlobalLog(`  [Hardware] ${m}`);
     };
 
-    let hwPoisoned = false;
-
-    // Hook check
-    try {
-      const hcProto = Object.getPrototypeOf(navigator);
-      const isHcHooked = isHooked(Object.getOwnPropertyDescriptor(hcProto, 'hardwareConcurrency')?.get as unknown as (...args: never[]) => unknown) ||
-                          isHooked(Object.getOwnPropertyDescriptor(navigator, 'hardwareConcurrency')?.get as unknown as (...args: never[]) => unknown);
-      if (isHcHooked) {
-        hwPoisoned = true;
-        hLog(t.hardware_concurrency_hooked || '❌ Suspicious Proxy/Hook detected on hardwareConcurrency.');
-      }
-    } catch {}
-
-    const declaredCores = navigator.hardwareConcurrency || 1;
-    const declaredMemory = (navigator as unknown as { deviceMemory?: number }).deviceMemory || 0;
-    const memoryString = declaredMemory ? `${declaredMemory} ${t.hardware_memory_gb || 'GB'}` : (t.hardware_unknown_spec || 'Unknown');
-    hLog((t.hardware_declared_specs || '📊 Declared Specs: CPU Cores = {cores}, Memory = {memory}')
-      .replace('{cores}', String(declaredCores))
-      .replace('{memory}', memoryString));
-
-    let maxSpeedup = 1.0;
-    let detectedSat = 1;
-
-    if (!window.Worker) {
-      hLog(t.hardware_workers_not_supported || '⚠️ Web Workers not supported.');
-    } else {
-      // Benchmark concurrency levels
-      const levels = [1, 2, 4, 8, 12, 16];
-      const runConcurrency = (C: number): Promise<number> => {
-        return new Promise((resolve) => {
-          const workers: Worker[] = [];
-          let completed = 0;
-          let totalOps = 0;
-          const blob = new Blob([workerCode], { type: 'application/javascript' });
-          const url = URL.createObjectURL(blob);
-          
-          for (let i = 0; i < C; i++) {
-            const worker = new Worker(url);
-            worker.onmessage = (e) => {
-              totalOps += e.data;
-              completed++;
-              worker.terminate();
-              if (completed === C) {
-                URL.revokeObjectURL(url);
-                resolve(totalOps);
-              }
-            };
-            worker.onerror = () => {
-              completed++;
-              worker.terminate();
-              if (completed === C) {
-                URL.revokeObjectURL(url);
-                resolve(totalOps);
-              }
-            };
-            workers.push(worker);
-          }
-          workers.forEach(w => w.postMessage(40)); // 40ms duration
-        });
-      };
-
-      const speedups: { concurrency: number; speedup: number }[] = [];
-      let baseOps = 1;
-      
-      for (let i = 0; i < levels.length; i++) {
-        const c = levels[i];
-        setGlobalProgress(80 + Math.floor((i / levels.length) * 18));
-        hLog((t.hardware_testing_concurrency || 'Benchmarking with: {concurrency}...').replace('{concurrency}', String(c)));
-        const ops = await runConcurrency(c);
-        if (c === 1) {
-          baseOps = ops || 1;
-        }
-        const speedup = ops / baseOps;
-        speedups.push({ concurrency: c, speedup });
-        
-        const compLog = (t.hardware_concurrency_completed || '   -> Concurrency {concurrency}: Completed {ops} ops, Relative speedup: {speedup}x')
-          .replace('{concurrency}', String(c))
-          .replace('{ops}', ops.toLocaleString())
-          .replace('{speedup}', speedup.toFixed(2));
-        hLog(compLog);
-        await new Promise<void>(res => setTimeout(res, 10));
-      }
-
-      // Analyze physical core saturation
-      const maxResult = speedups.reduce((max, r) => r.speedup > max.speedup ? r : max, speedups[0]);
-      maxSpeedup = maxResult.speedup;
-      const threshold = maxSpeedup * 0.82;
-      detectedSat = speedups.find(r => r.speedup >= threshold)?.concurrency || 1;
-
-      if (declaredCores > 4 && detectedSat <= declaredCores / 2 && maxSpeedup < declaredCores * 0.7) {
-        hwPoisoned = true;
-        hLog((t.hardware_performance_capped || '❌ Performance severely capped: Declared CPU cores is {declared}, but speedup saturated early at ~{detected} cores.')
-          .replace('{declared}', String(declaredCores))
-          .replace('{detected}', String(detectedSat))
-          .replace('{speedup}', maxSpeedup.toFixed(1)));
-      } else {
-        hLog(t.hardware_concurrency_normal || '✅ Multi-threaded scaling performance matches declared CPU core count.');
-      }
-    }
+    const hwResult = await runHardwareDiagnostic(
+      t,
+      hLog,
+      (p) => setGlobalProgress(80 + Math.floor(p * 0.2)),
+      undefined,
+      undefined
+    );
 
     setGlobalProgress(100);
     await new Promise<void>(resolve => setTimeout(resolve, 200));
@@ -553,51 +255,48 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     // Compile results
     const compiledResults: AllResults = {
       render_audio: {
-        status: renderAudioPoisoned ? 'poisoned' : 'clean',
+        status: renderAudioResult.status,
         title: t.tab_render_audio || 'Render & Audio',
         desc: t.tab_render_audio || 'Render & Audio',
         logs: renderAudioLogs,
-        summary: renderAudioPoisoned 
+        summary: renderAudioResult.status === 'poisoned'
           ? (t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).') 
           : (t.clean_log || '✅ High-precision rendering is perfectly stable, consistent, and unaltered.')
       },
       fonts: {
-        status: fontPoisoned ? 'poisoned' : 'clean',
+        status: fontResult.status,
         title: t.tab_font_farbling || 'Fonts & Farbling',
         desc: t.tab_font_farbling || 'Fonts & Farbling',
         logs: fontLogs,
-        summary: fontPoisoned 
+        summary: fontResult.status === 'poisoned'
           ? (t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).')
           : (t.font_widths_stable || '✅ High-precision width measurements are stable.')
       },
       geometry: {
-        status: geomPoisoned ? 'poisoned' : 'clean',
+        status: geomResult.status,
         title: t.tab_geometry || 'Geometry & Layout',
         desc: t.tab_geometry || 'Geometry & Layout',
         logs: geomLogs,
-        summary: geomPoisoned 
+        summary: geomResult.status === 'poisoned'
           ? (t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).')
           : (t.geometry_stable || '✅ Geometry boundaries and DOMRect measurements are perfectly stable.')
       },
       media: {
-        status: mediaPoisoned ? 'poisoned' : 'clean',
+        status: mediaResult.status,
         title: t.tab_media || 'Media Devices',
         desc: t.tab_media || 'Media Devices',
         logs: mediaLogs,
-        summary: mediaPoisoned 
+        summary: mediaResult.status === 'poisoned'
           ? (t.media_poisoned_detected || '❌ Media Device ID Farbling/Poisoning detected.')
           : (t.media_stable || '✅ Media device enumeration and deviceId hashes are stable.')
       },
       hardware: {
-        status: hwPoisoned ? 'poisoned' : 'clean',
+        status: hwResult.status,
         title: t.tab_hardware || 'Hardware Config',
         desc: t.tab_hardware || 'Hardware Config',
         logs: hwLogs,
-        summary: hwPoisoned 
-          ? (t.hardware_performance_capped || '❌ Performance severely capped / spoofed.')
-            .replace('{declared}', String(declaredCores))
-            .replace('{detected}', String(detectedSat))
-            .replace('{speedup}', maxSpeedup.toFixed(1))
+        summary: hwResult.status === 'poisoned'
+          ? (t.hardware_concurrency_suspicious || '❌ Hardware specifications are inconsistent or spoofed.')
           : (t.hardware_concurrency_normal || '✅ Multi-threaded scaling performance matches declared CPU core count.')
       }
     };

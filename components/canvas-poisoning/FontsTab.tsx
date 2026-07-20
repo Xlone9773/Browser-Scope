@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { ShieldAlert, RefreshCw, Activity } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { PoisoningTranslations } from './types';
-import { isHooked } from './utils';
+import { runFontDiagnostic } from './diagnostics';
 
 interface FontsTabProps {
   t: PoisoningTranslations;
@@ -55,134 +55,9 @@ export const FontsTab: React.FC<FontsTabProps> = React.memo(({ t }) => {
     setFontStatus('running');
     setFontProgress(0);
     setFontLogs([]);
-    
-    addFontLog(t.testing_fonts || 'Testing font widths and Font Farbling...');
-    
-    let fontPoisoned = false;
-    
-    // 1. Hook detection on document.fonts
-    try {
-      const fontsProto = Object.getPrototypeOf(document.fonts);
-      const isForEachHooked = isHooked(document.fonts.forEach as unknown as (...args: never[]) => unknown) || 
-                              (fontsProto && isHooked(fontsProto.forEach as unknown as (...args: never[]) => unknown));
-      const isValuesHooked = isHooked(document.fonts.values as unknown as (...args: never[]) => unknown) || 
-                             (fontsProto && isHooked(fontsProto.values as unknown as (...args: never[]) => unknown));
-      if (isForEachHooked || isValuesHooked) {
-        fontPoisoned = true;
-        addFontLog(t.fonts_hooked || '❌ Suspicious Proxy/Hook detected on core Font/Document APIs.');
-      }
-    } catch {
-      // Ignore
-    }
-    setFontProgress(20);
-    await new Promise<void>(resolve => setTimeout(resolve, 50));
 
-    // 2. Local font query interface check (queryLocalFonts)
-    addFontLog(t.testing_font_query || 'Detecting local font query interface (queryLocalFonts)...');
-    const queryLocalFontsFn = (window as unknown as { queryLocalFonts?: () => unknown }).queryLocalFonts || 
-                              (navigator as unknown as { queryLocalFonts?: () => unknown }).queryLocalFonts;
-    if (queryLocalFontsFn) {
-      if (isHooked(queryLocalFontsFn as unknown as (...args: never[]) => unknown)) {
-        fontPoisoned = true;
-        addFontLog(t.query_local_fonts_hooked || '❌ Suspicious Proxy/Hook detected on queryLocalFonts API.');
-      }
-      try {
-        addFontLog(t.font_query_allowed || '✅ Local Font Query (queryLocalFonts) is accessible or behaves normally.');
-      } catch {
-        addFontLog(t.font_query_blocked || '⚠️ Local Font Query (queryLocalFonts) threw an error or is disabled, indicating high privacy restrictions.');
-      }
-    } else {
-      addFontLog(t.query_local_fonts_unsupported || 'ℹ️ queryLocalFonts is not supported or is disabled by browser security model.');
-    }
-    setFontProgress(40);
-    await new Promise<void>(resolve => setTimeout(resolve, 50));
-
-    // 3. High-precision font width fluctuation (Font Farbling Jitter)
-    const container = document.createElement('div');
-    container.style.cssText = 'position:absolute;top:-9999px;left:-9999px;visibility:hidden;pointer-events:none;white-space:nowrap;font-size:72px;font-family:"Times New Roman", Times, serif;';
-    const span = document.createElement('span');
-    span.textContent = 'Farbling Jitter Check: High-Precision Font Widths Fluctuation Testing !!! @#$%^&*()';
-    container.appendChild(span);
-    document.body.appendChild(container);
-    
-    const measurements: number[] = [];
-    let jitterDetected = false;
-    
-    for (let i = 0; i < 15; i++) {
-      const rect = span.getBoundingClientRect();
-      measurements.push(rect.width);
-      await new Promise<void>(resolve => setTimeout(resolve, 15));
-    }
-    
-    const firstW = measurements[0];
-    for (let i = 1; i < measurements.length; i++) {
-      if (Math.abs(measurements[i] - firstW) > 0.00001) {
-        jitterDetected = true;
-        addFontLog('❌ ' + (t.font_jitter_log || 'Jitter at read {i}: {firstW} != {currentW}').replace('{i}', String(i)).replace('{firstW}', String(firstW)).replace('{currentW}', String(measurements[i])));
-      }
-    }
-    
-    if (jitterDetected) {
-      fontPoisoned = true;
-      addFontLog(t.font_farbling_detected || '❌ Font Farbling detected (high-precision width measurement fluctuates in a static state, typical of Brave or Cromite).');
-    } else {
-      addFontLog(t.font_widths_stable || '✅ High-precision width measurements are stable.');
-    }
-    setFontProgress(70);
-
-    // 4. All-font equal width anomaly detection (Font Shielding)
-    const measureFont = (family: string) => {
-      const testSpan = document.createElement('span');
-      testSpan.textContent = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
-      testSpan.style.fontFamily = family;
-      container.appendChild(testSpan);
-      const width = testSpan.getBoundingClientRect().width;
-      container.removeChild(testSpan);
-      return width;
-    };
-    
-    const wSans = measureFont('sans-serif');
-    const wSerif = measureFont('serif');
-    const wMono = measureFont('monospace');
-    
-    const wGeorgia = measureFont('Georgia, serif');
-    const wImpact = measureFont('Impact, sans-serif');
-    const wCourier = measureFont('Courier New, monospace');
-    const wTimes = measureFont('Times New Roman, serif');
-    const wArial = measureFont('Arial, sans-serif');
-    const wFake = measureFont('NonexistentFakeFontAlphaOmega, sans-serif');
-    
-    addFontLog((t.widths_measured_log || 'ℹ️ Widths measured: sans-serif={sans}, serif={serif}, monospace={mono}').replace('{sans}', wSans.toFixed(2)).replace('{serif}', wSerif.toFixed(2)).replace('{mono}', wMono.toFixed(2)));
-    addFontLog((t.system_fonts_log || 'ℹ️ System fonts: Georgia={georgia}, Impact={impact}, Courier={courier}, Times={times}, Arial={arial}').replace('{georgia}', wGeorgia.toFixed(2)).replace('{impact}', wImpact.toFixed(2)).replace('{courier}', wCourier.toFixed(2)).replace('{times}', wTimes.toFixed(2)).replace('{arial}', wArial.toFixed(2)));
-    
-    const hasDifferentSystemFonts = (wGeorgia !== wFake) || (wImpact !== wFake) || (wCourier !== wFake) || (wTimes !== wFake);
-    
-    let shieldingDetected = false;
-    if (!hasDifferentSystemFonts) {
-      if (wSans === wSerif && wSans === wMono) {
-        shieldingDetected = true;
-      } else {
-        shieldingDetected = true;
-      }
-    }
-    
-    if (shieldingDetected) {
-      fontPoisoned = true;
-      addFontLog(t.font_shielding_detected || '❌ Font Shielding detected (all exotic fonts have identical widths to the fallback, local font database is blocked or spoofed).');
-    } else {
-      addFontLog(t.font_differentiation_detected || '✅ Font differentiation detected (local font library access is active).');
-    }
-    
-    document.body.removeChild(container);
-    setFontProgress(100);
-    
-    if (fontPoisoned) {
-      setFontStatus('poisoned');
-      addFontLog(t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).');
-    } else {
-      setFontStatus('clean');
-      addFontLog(t.fonts_stable || '✅ Font rendering and measurements are stable, no Farbling jitter or retrieval shielding detected.');
-    }
+    const result = await runFontDiagnostic(t, addFontLog, setFontProgress);
+    setFontStatus(result.status);
   };
 
   return (
