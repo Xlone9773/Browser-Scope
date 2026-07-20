@@ -33,7 +33,7 @@ export const settings = {
                 roboto: "Roboto Regular",
                 harmonyossanssc: "HarmonyOS Sans SC (ハーモニーOSサンス)",
                 misans: "MiSans (小米ランティン体)",
-                smileysans: "得意黒 (Smiley Sans)",
+                smileysans: "得意黒 (Smiley Sans Oblique)",
                 zcoolxiaowei: "站酷小薇体 (ZCOOL XiaoWei)",
                 sawarabigothic: "さわらびゴシック (Sawarabi Gothic)",
                 notosanssc: "Noto Sans SC (思源ゴシック 簡体字)",

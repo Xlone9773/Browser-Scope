@@ -59,7 +59,7 @@ export const FONTS_LIST: FontItem[] = [
         name: 'Smiley Sans',
         languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja'],
         cssUrl: 'https://cdn.jsdelivr.net/npm/cn-fontsource-smiley-sans-oblique-regular/font.css',
-        fontFamily: 'Smiley Sans'
+        fontFamily: 'Smiley Sans Oblique'
     },
     {
         key: 'zcoolxiaowei',

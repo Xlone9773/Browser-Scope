@@ -33,7 +33,7 @@ export const settings = {
                 roboto: "Roboto Regular",
                 harmonyossanssc: "华为鸿蒙体 (HarmonyOS Sans SC)",
                 misans: "小米兰亭体 (MiSans)",
-                smileysans: "得意黑 (Smiley Sans)",
+                smileysans: "得意黑 (Smiley Sans Oblique)",
                 zcoolxiaowei: "站酷小薇体",
                 sawarabigothic: "Sawarabi Gothic",
                 notosanssc: "思源黑体 (Noto Sans SC)",

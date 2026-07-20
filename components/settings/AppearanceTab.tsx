@@ -139,7 +139,8 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     };
 
     const getFontLabel = (f: { key: string; name: string }) => {
-        return (fontT as any).fontNames?.[f.key] || f.name;
+        const names = fontT.fontNames as Record<string, string> | undefined;
+        return names?.[f.key] || f.name;
     };
 
     const codeFontKeys = ['jetbrainsmono', 'firacode', 'robotomono', 'sourcecodepro'];
