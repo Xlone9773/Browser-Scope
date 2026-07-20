@@ -366,6 +366,8 @@ export const settings = {
         subtitle: "Monitor and analyze network requests made by the application (distinguishing Native Fetch, UDP Proxy, and User Scripts).",
         clear: "Clear Logs",
         empty: "No network request logs available yet.",
+        searchPlaceholder: "Search URL...",
+        all: "All",
         columns: {
             url: "Request URL",
             method: "Method",
@@ -379,6 +381,19 @@ export const settings = {
             native: "Native Request",
             script: "User Script",
             unknown: "Other"
+        },
+        details: {
+            title: "Request Details",
+            id: "Request ID",
+            url: "Request URL",
+            method: "Method",
+            type: "Request Type",
+            status: "Response Status",
+            duration: "Duration",
+            initiator: "Initiator",
+            timestamp: "Timestamp",
+            pending: "Pending...",
+            openUrl: "Open Target URL"
         }
     },
     developer: {

@@ -366,6 +366,8 @@ export const settings = {
         subtitle: "Мониторинг и анализ сетевых запросов приложения (с разделением на нативный Fetch, прокси UDP и пользовательские скрипты).",
         clear: "Очистить логи",
         empty: "Логи сетевых запросов отсутствуют.",
+        searchPlaceholder: "Поиск URL...",
+        all: "Все",
         columns: {
             url: "URL запроса",
             method: "Метод",
@@ -379,6 +381,19 @@ export const settings = {
             native: "Нативный",
             script: "Скрипт",
             unknown: "Другое"
+        },
+        details: {
+            title: "Детали запроса",
+            id: "ID запроса",
+            url: "URL запроса",
+            method: "Метод",
+            type: "Тип запроса",
+            status: "Статус ответа",
+            duration: "Длительность",
+            initiator: "Инициатор",
+            timestamp: "Время",
+            pending: "Ожидание...",
+            openUrl: "Открыть целевой URL"
         }
     },
     developer: {

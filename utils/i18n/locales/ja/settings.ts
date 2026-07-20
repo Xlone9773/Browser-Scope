@@ -366,6 +366,8 @@ export const settings = {
         subtitle: "アプリケーションによって作成されたネットワーク要求を監視および分析します（ネイティブ Fetch、UDP プロキシ、およびユーザースクリプトを区別）。",
         clear: "ログをクリア",
         empty: "ネットワーク要求ログはまだありません。",
+        searchPlaceholder: "要求URLを検索...",
+        all: "すべて",
         columns: {
             url: "要求URL",
             method: "メソッド",
@@ -379,6 +381,19 @@ export const settings = {
             native: "ネイティブ要求",
             script: "ユーザースクリプト",
             unknown: "その他"
+        },
+        details: {
+            title: "要求の詳細",
+            id: "要求 ID",
+            url: "要求URL",
+            method: "メソッド",
+            type: "要求タイプ",
+            status: "レスポンスステータス",
+            duration: "所要時間",
+            initiator: "イニシエータ",
+            timestamp: "タイムスタンプ",
+            pending: "保留中...",
+            openUrl: "ターゲットURLを開く"
         }
     },
     developer: {

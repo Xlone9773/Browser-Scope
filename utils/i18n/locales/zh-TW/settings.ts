@@ -366,6 +366,8 @@ export const settings = {
         subtitle: "監控和分析應用產生的網路請求（區分原生 Fetch、UDP 轉發與用戶腳本）",
         clear: "清空記錄",
         empty: "暫無網路請求記錄",
+        searchPlaceholder: "搜尋請求地址...",
+        all: "全部",
         columns: {
             url: "請求地址",
             method: "請求方法",
@@ -379,6 +381,19 @@ export const settings = {
             native: "原生請求",
             script: "用戶腳本",
             unknown: "其他"
+        },
+        details: {
+            title: "請求詳情",
+            id: "請求 ID",
+            url: "請求地址",
+            method: "請求方法",
+            type: "請求類型",
+            status: "響應狀態",
+            duration: "耗時",
+            initiator: "發起者",
+            timestamp: "時間戳",
+            pending: "載入中...",
+            openUrl: "打開目標地址"
         }
     },
     developer: {

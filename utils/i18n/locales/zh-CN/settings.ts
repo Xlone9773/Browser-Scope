@@ -366,6 +366,8 @@ export const settings = {
         subtitle: "监控和分析应用产生的网络请求（区分原生 Fetch、UDP 转发与用户脚本）",
         clear: "清空记录",
         empty: "暂无网络请求记录",
+        searchPlaceholder: "搜索请求地址...",
+        all: "全部",
         columns: {
             url: "请求地址",
             method: "请求方法",
@@ -379,6 +381,19 @@ export const settings = {
             native: "原生请求",
             script: "用户脚本",
             unknown: "其他"
+        },
+        details: {
+            title: "请求详情",
+            id: "请求 ID",
+            url: "请求地址",
+            method: "请求方法",
+            type: "请求类型",
+            status: "响应状态",
+            duration: "耗时",
+            initiator: "发起者",
+            timestamp: "时间戳",
+            pending: "加载中...",
+            openUrl: "打开目标地址"
         }
     },
     developer: {

@@ -78,7 +78,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                     <input
                         type="text"
-                        placeholder="Search URL..."
+                        placeholder={t.searchPlaceholder || "Search URL..."}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-9 pr-4 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
@@ -93,7 +93,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                         onClick={() => setSelectedType('all')}
                         className="h-7 px-2.5"
                     >
-                        All ({logs.length})
+                        {t.all || "All"} ({logs.length})
                     </Button>
                     <Button
                         size="xs"
@@ -231,9 +231,11 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                             {/* Drawer Header */}
                             <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-700/50 pb-3">
                                 <div>
-                                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Request Details</h4>
+                                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                        {t.details?.title || "Request Details"}
+                                    </h4>
                                     <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-[10px] font-semibold font-mono text-slate-600 dark:text-slate-300 mt-1">
-                                        ID: {selectedRequest.id}
+                                        {t.details?.id || "ID"}: {selectedRequest.id}
                                     </span>
                                 </div>
                                 <Button
@@ -250,7 +252,9 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                             <div className="space-y-3.5 text-xs">
                                 {/* URL */}
                                 <div className="space-y-1">
-                                    <span className="text-slate-400 font-medium">Request URL:</span>
+                                    <span className="text-slate-400 font-medium">
+                                        {t.details?.url || "Request URL"}:
+                                    </span>
                                     <div className="bg-slate-50 dark:bg-slate-900 p-2 rounded border border-slate-150 dark:border-slate-800 font-mono text-[11px] break-all max-h-24 overflow-y-auto text-slate-700 dark:text-slate-300">
                                         {selectedRequest.url}
                                     </div>
@@ -259,11 +263,15 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                                 {/* Method & Type */}
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
-                                        <span className="text-slate-400 font-medium">Method:</span>
+                                        <span className="text-slate-400 font-medium">
+                                            {t.details?.method || "Method"}:
+                                        </span>
                                         <p className="font-mono font-bold text-slate-850 dark:text-slate-100 mt-0.5">{selectedRequest.method}</p>
                                     </div>
                                     <div>
-                                        <span className="text-slate-400 font-medium">Request Type:</span>
+                                        <span className="text-slate-400 font-medium">
+                                            {t.details?.type || "Request Type"}:
+                                        </span>
                                         <div className="mt-1">
                                             <Badge
                                                 variant={
@@ -285,7 +293,9 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                                 {/* Status & Duration */}
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
-                                        <span className="text-slate-400 font-medium">Response Status:</span>
+                                        <span className="text-slate-400 font-medium">
+                                            {t.details?.status || "Response Status"}:
+                                        </span>
                                         <div className="mt-1">
                                             <Badge
                                                 variant={
@@ -303,16 +313,20 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                                         </div>
                                     </div>
                                     <div>
-                                        <span className="text-slate-400 font-medium">Duration:</span>
+                                        <span className="text-slate-400 font-medium">
+                                            {t.details?.duration || "Duration"}:
+                                        </span>
                                         <p className="font-mono text-slate-800 dark:text-slate-200 mt-0.5">
-                                            {selectedRequest.status === 'PENDING' ? 'Pending...' : formatDuration(selectedRequest.duration)}
+                                            {selectedRequest.status === 'PENDING' ? (t.details?.pending || 'Pending...') : formatDuration(selectedRequest.duration)}
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Initiator */}
                                 <div>
-                                    <span className="text-slate-400 font-medium">Initiator:</span>
+                                    <span className="text-slate-400 font-medium">
+                                        {t.details?.initiator || "Initiator"}:
+                                    </span>
                                     <p className="text-slate-800 dark:text-slate-200 mt-0.5 flex items-center gap-1.5 font-medium">
                                         {selectedRequest.initiator === 'UDP Proxy Engine' && <Filter className="w-3.5 h-3.5 text-emerald-500" />}
                                         {selectedRequest.initiator === 'Tampermonkey Bypass' && <Terminal className="w-3.5 h-3.5 text-amber-500" />}
@@ -325,7 +339,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                                 <div>
                                     <span className="text-slate-400 font-medium flex items-center gap-1">
                                         <Clock className="w-3.5 h-3.5" />
-                                        Timestamp:
+                                        {t.details?.timestamp || "Timestamp"}:
                                     </span>
                                     <p className="text-slate-600 dark:text-slate-400 font-mono mt-0.5">
                                         {selectedRequest.timestamp.toLocaleString()}
@@ -348,7 +362,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                                     fullWidth={true}
                                     leftIcon={<ExternalLink className="w-3.5 h-3.5" />}
                                 >
-                                    Open Target URL
+                                    {t.details?.openUrl || "Open Target URL"}
                                 </Button>
                             </a>
                         )}
