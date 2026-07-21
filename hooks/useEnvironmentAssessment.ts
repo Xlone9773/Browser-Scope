@@ -297,6 +297,72 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                 // ignore
             }
 
+            // Advanced fingerprint & spoofing detections (no-any compliance)
+
+            // 1. Canvas override check (Fingerprint spoofing)
+            try {
+                const toDataURLStr = HTMLCanvasElement.prototype.toDataURL.toString();
+                const getImageDataStr = CanvasRenderingContext2D.prototype.getImageData.toString();
+                if (!toDataURLStr.includes('native code') || !getImageDataStr.includes('native code')) {
+                    addAnomaly('canvas_spoof', 'Canvas API overridden (possible fingerprint spoofing)', 'danger', 'trust', 30);
+                }
+            } catch {
+                // ignore
+            }
+
+            // 2. AudioContext override check (Audio fingerprint spoofing)
+            try {
+                const audioCtx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+                const offlineCtx = window.OfflineAudioContext || (window as unknown as { webkitOfflineAudioContext?: typeof OfflineAudioContext }).webkitOfflineAudioContext;
+                if (audioCtx) {
+                    const anaStr = audioCtx.prototype.createAnalyser.toString();
+                    if (!anaStr.includes('native code')) {
+                        addAnomaly('audio_spoof', 'AudioContext API overridden (possible fingerprint spoofing)', 'danger', 'trust', 25);
+                    }
+                }
+                if (offlineCtx) {
+                    const startRenderStr = offlineCtx.prototype.startRendering.toString();
+                    if (!startRenderStr.includes('native code')) {
+                        addAnomaly('audio_spoof', 'AudioContext API overridden (possible fingerprint spoofing)', 'danger', 'trust', 25);
+                    }
+                }
+            } catch {
+                // ignore
+            }
+
+            // 3. Languages inconsistency check
+            if (navigator.language && navigator.languages) {
+                const hasMatch = navigator.languages.some(lang => lang === navigator.language || lang.startsWith(navigator.language.split('-')[0]));
+                if (!hasMatch && navigator.languages.length > 0) {
+                    addAnomaly('lang_inconsistency', 'Navigator language and languages array mismatch', 'suspicious', 'normalcy', 15);
+                }
+            }
+
+            // 4. MediaDevices API check
+            if (navigator.mediaDevices) {
+                const hasDirectMediaDevices = Object.prototype.hasOwnProperty.call(navigator, 'mediaDevices');
+                if (hasDirectMediaDevices) {
+                    addAnomaly('mediadevices_spoof', 'MediaDevices API has been directly overridden', 'danger', 'trust', 25);
+                } else {
+                    try {
+                        const enumDevStr = navigator.mediaDevices.enumerateDevices.toString();
+                        if (!enumDevStr.includes('native code')) {
+                            addAnomaly('mediadevices_spoof', 'MediaDevices API has been directly overridden', 'danger', 'trust', 25);
+                        }
+                    } catch {
+                        // ignore
+                    }
+                }
+            }
+
+            // 5. Webdriver property override detection
+            if ('webdriver' in navigator) {
+                const hasDirectWebdriver = Object.prototype.hasOwnProperty.call(navigator, 'webdriver');
+                if (hasDirectWebdriver) {
+                    addAnomaly('webdriver_spoof', 'Navigator webdriver property overridden directly', 'danger', 'trust', 35);
+                }
+            }
+
             // Missing Languages
             if (!navigator.languages || navigator.languages.length === 0) {
                 addAnomaly('no_languages', 'No languages specified', 'suspicious', 'normalcy', 15);

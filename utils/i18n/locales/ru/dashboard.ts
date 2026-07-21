@@ -82,7 +82,12 @@ export const dashboard = {
       invalid_device_memory: "Нестандартное значение deviceMemory (обычно ограничено 8)",
       navigator_spoof: "Свойства переопределены прямо в экземпляре navigator (Подмена)",
       software_renderer: "Обнаружен программный WebGL-рендерер (характерно для headless/виртуальных сред)",
-      webgl_os_mismatch: "WebGL-рендерер противоречит платформе операционной системы"
+      webgl_os_mismatch: "WebGL-рендерер противоречит платформе операционной системы",
+      canvas_spoof: "Canvas API переопределен (возможная подмена отпечатков)",
+      audio_spoof: "AudioContext API переопределен (возможная подмена отпечатков)",
+      lang_inconsistency: "Несоответствие языка локали и списка языков Navigator",
+      mediadevices_spoof: "API MediaDevices был переопределен напрямую",
+      webdriver_spoof: "Свойство webdriver переопределено напрямую в navigator"
     }
   },
 

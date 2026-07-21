@@ -82,7 +82,12 @@ export const dashboard = {
       invalid_device_memory: "デバイスメモリ値の異常（標準ブラウザは通常最大8に制限されています）",
       navigator_spoof: "navigator インスタンスのプロパティが直接書き換えられています（偽装の疑い）",
       software_renderer: "ソフトウェア WebGL レンダラーが検出されました (仮想環境またはヘッドレスの疑い)",
-      webgl_os_mismatch: "WebGL レンダラーとオペレーティングシステムプラットフォームが矛盾しています"
+      webgl_os_mismatch: "WebGL レンダラーとオペレーティングシステムプラットフォームが矛盾しています",
+      canvas_spoof: "Canvas API がオーバーライドされています（指紋偽装の疑い）",
+      audio_spoof: "AudioContext API がオーバーライドされています（指紋偽装の疑い）",
+      lang_inconsistency: "Navigator 言語と言語リストが矛盾しています",
+      mediadevices_spoof: "MediaDevices API が直接書き換えられています",
+      webdriver_spoof: "Navigator webdriver プロパティが直接書き換えられています"
     }
   },
 

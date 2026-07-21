@@ -16,7 +16,6 @@ import { ModuleState } from "./components/settings/ModulesTab";
 import { useAppSettings } from "./hooks/useAppSettings";
 import { useAppPermissions } from "./hooks/useAppPermissions";
 import { useAppData } from "./hooks/useAppData";
-import { useToast } from "./hooks/useToast";
 import packageJson from "./package.json";
 
 // Import newly extracted sub-components
@@ -26,7 +25,6 @@ import { SearchBarAndTabs } from "./components/layout/SearchBarAndTabs";
 import { DashboardGrid } from "./components/layout/DashboardGrid";
 
 const App: React.FC = () => {
-  const { warning } = useToast();
   const { visibility, open, close, unload, loadedModules, Components, closeAll } =
     useModalManager();
 

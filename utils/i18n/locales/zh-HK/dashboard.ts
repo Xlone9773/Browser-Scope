@@ -82,7 +82,12 @@ export const dashboard = {
       invalid_device_memory: "裝置記憶體數值異常（標準瀏覽器通常限制最大為8）",
       navigator_spoof: "navigator 實例屬性被直接改寫（涉嫌偽造）",
       software_renderer: "偵測到軟體 WebGL 渲染器 (多見於虛擬化或無頭環境)",
-      webgl_os_mismatch: "WebGL 渲染器與作業系統平台存在衝突"
+      webgl_os_mismatch: "WebGL 渲染器與作業系統平台存在衝突",
+      canvas_spoof: "Canvas API 被覆寫 (疑似正在偽造指紋)",
+      audio_spoof: "AudioContext API 被覆寫 (疑似正在偽造指紋)",
+      lang_inconsistency: "Navigator 語言與語言列表存在衝突",
+      mediadevices_spoof: "MediaDevices API 存在直接改寫的痕跡",
+      webdriver_spoof: "Navigator webdriver 屬性被直接修改"
     }
   },
 

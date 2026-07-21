@@ -83,7 +83,12 @@ export const dashboard = {
       invalid_device_memory: "Non-standard deviceMemory value (typical values are capped at 8)",
       navigator_spoof: "Properties overridden directly on navigator instance (Spoofing)",
       software_renderer: "Software WebGL renderer detected (common in headless/virtual environments)",
-      webgl_os_mismatch: "WebGL renderer contradicts operating system platform"
+      webgl_os_mismatch: "WebGL renderer contradicts operating system platform",
+      canvas_spoof: "Canvas API overridden (possible fingerprint spoofing)",
+      audio_spoof: "AudioContext API overridden (possible fingerprint spoofing)",
+      lang_inconsistency: "Navigator language and languages array mismatch",
+      mediadevices_spoof: "MediaDevices API has been directly overridden",
+      webdriver_spoof: "Navigator webdriver property overridden directly"
     }
   },
 

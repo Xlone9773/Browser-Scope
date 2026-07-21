@@ -82,7 +82,12 @@ export const dashboard = {
       invalid_device_memory: "设备内存数值异常（标准浏览器通常限制最大为8）",
       navigator_spoof: "navigator 实例属性被直接改写（涉嫌伪造）",
       software_renderer: "检测到软件 WebGL 渲染器 (多见于虚拟化或无头环境)",
-      webgl_os_mismatch: "WebGL 渲染器与操作系统平台存在冲突"
+      webgl_os_mismatch: "WebGL 渲染器与操作系统平台存在冲突",
+      canvas_spoof: "Canvas API 被重写 (疑似正在伪造指纹)",
+      audio_spoof: "AudioContext API 被重写 (疑似正在伪造指纹)",
+      lang_inconsistency: "Navigator 语言与语言列表存在冲突",
+      mediadevices_spoof: "MediaDevices API 存在直接改写的痕迹",
+      webdriver_spoof: "Navigator webdriver 属性被直接修改"
     }
   },
 
