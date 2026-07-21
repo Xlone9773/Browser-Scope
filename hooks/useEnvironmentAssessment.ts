@@ -257,7 +257,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
 
             // Standard device memory value check (Chromium caps at 8)
             if ('deviceMemory' in navigator) {
-                const dm = (navigator as any).deviceMemory;
+                const dm = (navigator as Navigator & { deviceMemory?: unknown }).deviceMemory;
                 if (typeof dm === 'number' && (dm > 8 || ![0.25, 0.5, 1, 2, 4, 8].includes(dm))) {
                     addAnomaly('invalid_device_memory', 'Non-standard deviceMemory value (typical values are capped at 8)', 'danger', 'normalcy', 25);
                 }
