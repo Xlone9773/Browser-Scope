@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fontsource/geist/400.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

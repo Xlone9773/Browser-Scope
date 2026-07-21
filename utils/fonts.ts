@@ -9,6 +9,7 @@ export interface FontItem {
     fontFamily?: string;
     isVariable?: boolean;
     weightRange?: string;
+    isStatic?: boolean;
 }
 
 export const FONTS_LIST: FontItem[] = [
@@ -169,8 +170,8 @@ export const FONTS_LIST: FontItem[] = [
         key: 'geist',
         name: 'Geist',
         languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
-        cssUrl: 'https://cdn.jsdelivr.net/npm/@fontsource/geist@5.3.0/400.min.css',
-        fontFamily: 'Geist'
+        fontFamily: 'Geist',
+        isStatic: true
     }
 ];
 
@@ -228,6 +229,15 @@ export async function loadAndApplyFont(fontKey: string, targetVar: '--font-sans'
 
     const font = FONTS_LIST.find(f => f.key === fontKey);
     if (!font) return false;
+
+    if (font.isStatic) {
+        const familyName = font.fontFamily || font.name;
+        const fallback = targetVar === '--font-mono-custom'
+            ? 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+            : '"Inter", ui-sans-serif, system-ui, sans-serif';
+        document.documentElement.style.setProperty(targetVar, `"${familyName}", ${fallback}`);
+        return true;
+    }
 
     // Handle CSS-based web fonts (HarmonyOS Sans SC and MiSans)
     if (font.cssUrl) {

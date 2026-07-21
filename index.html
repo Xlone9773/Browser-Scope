@@ -24,8 +24,7 @@
         var fontConfigs = {
           'harmonyossanssc': { type: 'css', url: 'https://cdn.jsdelivr.net/npm/harmonyos-sans-sc-webfont-splitted@1.1.0/dist/index.min.css', family: 'HarmonyOS Sans SC' },
           'misans': { type: 'css', url: 'https://cdn.jsdelivr.net/npm/misans-webfont@4.3.1/misans-style.min.css', family: 'MiSans' },
-          'smileysans': { type: 'css', url: 'https://cdn.jsdelivr.net/npm/cn-fontsource-smiley-sans-oblique-regular/font.css', family: 'Smiley Sans Oblique' },
-          'geist': { type: 'css', url: 'https://cdn.jsdelivr.net/npm/@fontsource/geist@5.3.0/400.min.css', family: 'Geist' }
+          'smileysans': { type: 'css', url: 'https://cdn.jsdelivr.net/npm/cn-fontsource-smiley-sans-oblique-regular/font.css', family: 'Smiley Sans Oblique' }
         };
 
         var sansFallback = '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif';
@@ -33,6 +32,10 @@
 
         function applyFontVar(targetVar, fontKey, fallback) {
           if (fontKey === 'default') {
+            return;
+          }
+          if (fontKey === 'geist') {
+            document.documentElement.style.setProperty(targetVar, '"Geist", ' + fallback);
             return;
           }
           var config = fontConfigs[fontKey];

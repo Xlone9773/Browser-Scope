@@ -149,7 +149,11 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                                     return (
                                         <tr
                                             key={log.id}
-                                            onClick={() => setSelectedRequest(log)}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                setSelectedRequest(log);
+                                            }}
                                             className={`cursor-pointer transition-colors ${
                                                 isSelected
                                                     ? 'bg-indigo-50/50 dark:bg-indigo-950/20 font-medium border-l-2 border-indigo-500'
@@ -348,22 +352,16 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                             </div>
                         </div>
 
-                        {/* Action Link (If URL is external and valid) wrapped beautifully inside prebuilt Button */}
+                        {/* Action Link (If URL is external and valid) styled beautifully as a Button */}
                         {selectedRequest.url.startsWith('http') && (
                             <a
                                 href={selectedRequest.url}
                                 target="_blank"
-                                rel="noreferrer"
-                                className="block w-full"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-95 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:ring-slate-500 shadow-sm px-3 py-2 text-xs gap-1.5 w-full"
                             >
-                                <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    fullWidth={true}
-                                    leftIcon={<ExternalLink className="w-3.5 h-3.5" />}
-                                >
-                                    {t.details?.openUrl || "Open Target URL"}
-                                </Button>
+                                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                                <span>{t.details?.openUrl || "Open Target URL"}</span>
                             </a>
                         )}
                     </Card>
