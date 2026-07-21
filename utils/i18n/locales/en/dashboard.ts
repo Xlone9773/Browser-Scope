@@ -79,7 +79,11 @@ export const dashboard = {
       mobile_desktop_mismatch: "Mobile UA on Desktop Platform",
       hardware_anomaly: "Unusually high cores for mobile",
       touch_mismatch: "Mobile UA without touch points",
-      timezone_mismatch: "System timezone does not match IP location timezone"
+      timezone_mismatch: "System timezone does not match IP location timezone",
+      invalid_device_memory: "Non-standard deviceMemory value (typical values are capped at 8)",
+      navigator_spoof: "Properties overridden directly on navigator instance (Spoofing)",
+      software_renderer: "Software WebGL renderer detected (common in headless/virtual environments)",
+      webgl_os_mismatch: "WebGL renderer contradicts operating system platform"
     }
   },
 

@@ -78,7 +78,11 @@ export const dashboard = {
       mobile_desktop_mismatch: "デスクトッププラットフォームでのモバイル UA",
       hardware_anomaly: "モバイルデバイスのコア数が異常に多い",
       touch_mismatch: "タッチポイントサポートがないモバイル UA",
-      timezone_mismatch: "システムタイムゾーンが IP ロケーションタイムゾーンと一致しません"
+      timezone_mismatch: "システムタイムゾーンが IP ロケーションタイムゾーンと一致しません",
+      invalid_device_memory: "デバイスメモリ値の異常（標準ブラウザは通常最大8に制限されています）",
+      navigator_spoof: "navigator インスタンスのプロパティが直接書き換えられています（偽装の疑い）",
+      software_renderer: "ソフトウェア WebGL レンダラーが検出されました (仮想環境またはヘッドレスの疑い)",
+      webgl_os_mismatch: "WebGL レンダラーとオペレーティングシステムプラットフォームが矛盾しています"
     }
   },
 

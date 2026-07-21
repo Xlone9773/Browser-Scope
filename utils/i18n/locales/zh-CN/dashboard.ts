@@ -78,7 +78,11 @@ export const dashboard = {
       mobile_desktop_mismatch: "桌面平台上出现移动端 UA",
       hardware_anomaly: "移动设备核心数异常偏高",
       touch_mismatch: "移动端 UA 缺少触摸点支持",
-      timezone_mismatch: "系统时区与 IP 归属地时区不匹配"
+      timezone_mismatch: "系统时区与 IP 归属地时区不匹配",
+      invalid_device_memory: "设备内存数值异常（标准浏览器通常限制最大为8）",
+      navigator_spoof: "navigator 实例属性被直接改写（涉嫌伪造）",
+      software_renderer: "检测到软件 WebGL 渲染器 (多见于虚拟化或无头环境)",
+      webgl_os_mismatch: "WebGL 渲染器与操作系统平台存在冲突"
     }
   },
 

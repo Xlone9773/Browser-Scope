@@ -244,6 +244,59 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                 console.warn('Failed to perform IP-system timezone comparison check:', err);
             }
 
+            // Direct Navigator property spoofing detection
+            const spoofableKeys = ['deviceMemory', 'hardwareConcurrency', 'languages', 'platform', 'userAgent', 'maxTouchPoints'];
+            for (const key of spoofableKeys) {
+                if (key in navigator) {
+                    const desc = Object.getOwnPropertyDescriptor(navigator, key);
+                    if (desc && desc.configurable !== undefined) { // Directly defined on navigator instance, which is a classic spoof signature
+                        addAnomaly('navigator_spoof', `Navigator ${key} is overridden directly on the instance (Spoofing)`, 'danger', 'trust', 30);
+                    }
+                }
+            }
+
+            // Standard device memory value check (Chromium caps at 8)
+            if ('deviceMemory' in navigator) {
+                const dm = (navigator as any).deviceMemory;
+                if (typeof dm === 'number' && (dm > 8 || ![0.25, 0.5, 1, 2, 4, 8].includes(dm))) {
+                    addAnomaly('invalid_device_memory', 'Non-standard deviceMemory value (typical values are capped at 8)', 'danger', 'normalcy', 25);
+                }
+            }
+
+            // WebGL Renderer / Vendor checks for virtualization or headless environments
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
+                if (gl && typeof gl.getExtension === 'function' && typeof gl.getParameter === 'function') {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || '';
+                        const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || '';
+                        
+                        // 1. Software renderer check
+                        const isSoftware = /SwiftShader|llvmpipe|Software/i.test(renderer) || 
+                                           (/Google Inc\./i.test(vendor) && /Google SwiftShader/i.test(renderer)) ||
+                                           /Mesa/i.test(renderer);
+                        if (isSoftware) {
+                            addAnomaly('software_renderer', 'Software WebGL renderer detected (common in headless/virtual environments)', 'danger', 'trust', 35);
+                        }
+                        
+                        // 2. Platform / Renderer contradiction
+                        const isMac = /Mac|iPhone|iPad|iPod/i.test(navigator.platform);
+                        const isWin = /Win/i.test(navigator.platform);
+                        
+                        if (isMac && /Direct3D|Intel\s+HD\s+Graphics\s+Direct3D/i.test(renderer)) {
+                            addAnomaly('webgl_os_mismatch', 'WebGL renderer (Direct3D) contradicts Mac platform', 'danger', 'normalcy', 30);
+                        }
+                        if (isWin && /Metal|Apple/i.test(renderer)) {
+                            addAnomaly('webgl_os_mismatch', 'WebGL renderer (Apple/Metal) contradicts Windows platform', 'danger', 'normalcy', 30);
+                        }
+                    }
+                }
+            } catch (e) {
+                // ignore
+            }
+
             // Missing Languages
             if (!navigator.languages || navigator.languages.length === 0) {
                 addAnomaly('no_languages', 'No languages specified', 'suspicious', 'normalcy', 15);

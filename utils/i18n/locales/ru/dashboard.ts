@@ -78,7 +78,11 @@ export const dashboard = {
       mobile_desktop_mismatch: "Мобильный UA на десктопной платформе",
       hardware_anomaly: "Необычно большое количество ядер для мобильного устройства",
       touch_mismatch: "Мобильный UA без поддержки сенсорных точек",
-      timezone_mismatch: "Системный часовой пояс не совпадает с часовым поясом IP-адреса"
+      timezone_mismatch: "Системный часовой пояс не совпадает с часовым поясом IP-адреса",
+      invalid_device_memory: "Нестандартное значение deviceMemory (обычно ограничено 8)",
+      navigator_spoof: "Свойства переопределены прямо в экземпляре navigator (Подмена)",
+      software_renderer: "Обнаружен программный WebGL-рендерер (характерно для headless/виртуальных сред)",
+      webgl_os_mismatch: "WebGL-рендерер противоречит платформе операционной системы"
     }
   },
 
