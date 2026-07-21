@@ -48,6 +48,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
             const updated: Record<string, { isCached: boolean; size: string | null }> = {};
             
             for (const font of FONTS_LIST) {
+                if (font.key === 'geist') continue;
                 const ext = font.cssUrl ? 'css' : 'ttf';
                 const cacheKey = `https://local-fonts.browserscope/${font.key}.${ext}`;
                 const match = await cache.match(cacheKey);
@@ -299,7 +300,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
                     </div>
 
                     <div className="divide-y divide-slate-100 dark:divide-slate-700">
-                        {FONTS_LIST.map((font) => {
+                        {FONTS_LIST.filter(font => font.key !== 'geist').map((font) => {
                             const status = fontStatuses[font.key] || { isCached: false, size: null };
                             const isDownloading = downloadingKeys[font.key];
                             const isDeleting = deletingKeys[font.key];

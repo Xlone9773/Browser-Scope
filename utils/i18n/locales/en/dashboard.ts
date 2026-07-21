@@ -78,7 +78,8 @@ export const dashboard = {
       arch_mismatch: "ARM UA with x86 Platform mismatch",
       mobile_desktop_mismatch: "Mobile UA on Desktop Platform",
       hardware_anomaly: "Unusually high cores for mobile",
-      touch_mismatch: "Mobile UA without touch points"
+      touch_mismatch: "Mobile UA without touch points",
+      timezone_mismatch: "System timezone does not match IP location timezone"
     }
   },
 

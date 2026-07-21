@@ -77,7 +77,8 @@ export const dashboard = {
       arch_mismatch: "UA(ARM) 與平台(x86)架構不符",
       mobile_desktop_mismatch: "桌面平台上出現行動端 UA",
       hardware_anomaly: "行動裝置核心數異常偏高",
-      touch_mismatch: "行動端 UA 缺少觸控點支援"
+      touch_mismatch: "行動端 UA 缺少觸控點支援",
+      timezone_mismatch: "系統時區與 IP 歸屬地時區不匹配"
     }
   },
 

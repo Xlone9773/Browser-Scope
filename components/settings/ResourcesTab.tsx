@@ -132,7 +132,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
                     noPadding={true}
                     className={`lg:col-span-2 ${selectedRequest ? '' : 'lg:col-span-3'} transition-all`}
                 >
-                    <div className="overflow-x-auto max-h-[480px] overflow-y-auto">
+                    <div className="overflow-x-auto h-[45vh] lg:h-[calc(90vh-240px)] min-h-[350px] overflow-y-auto custom-scrollbar">
                         <table className="w-full text-left text-sm border-collapse">
                             <thead className="bg-slate-50 dark:bg-slate-900/50 sticky top-0 border-b border-slate-200 dark:border-slate-700 z-10">
                                 <tr>
@@ -230,7 +230,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ t }) => {
 
                 {/* Request Detail Panel in prebuilt Card (Bento Sidebar) */}
                 {selectedRequest && (
-                    <Card className="h-full flex flex-col justify-between space-y-4">
+                    <Card className="lg:h-[calc(90vh-240px)] lg:min-h-[350px] overflow-y-auto custom-scrollbar flex flex-col justify-between space-y-4 shrink-0">
                         <div className="space-y-4">
                             {/* Drawer Header */}
                             <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-700/50 pb-3">

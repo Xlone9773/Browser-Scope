@@ -208,6 +208,42 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                 // Ignore
             }
 
+            // Timezone mismatch check (System timezone vs IP location timezone)
+            try {
+                const systemTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                if (systemTz) {
+                    const res = await fetch('/api/proxy', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url: 'https://ipwho.is/', method: 'GET' })
+                    });
+                    if (res.ok) {
+                        const proxyData = await res.json();
+                        if (proxyData && proxyData.data) {
+                            const geoData = JSON.parse(proxyData.data);
+                            if (geoData && geoData.success && geoData.timezone) {
+                                const ipTz = geoData.timezone.id || (typeof geoData.timezone === 'string' ? geoData.timezone : undefined);
+                                if (ipTz && systemTz) {
+                                    // Robust comparison of timezone offsets
+                                    const getOffset = (tz: string) => {
+                                        const date = new Date();
+                                        const tzString = date.toLocaleString('en-US', { timeZone: tz });
+                                        const tzDate = new Date(tzString);
+                                        return (date.getTime() - tzDate.getTime()) / 60000;
+                                    };
+                                    const tzDiff = Math.abs(getOffset(systemTz) - getOffset(ipTz));
+                                    if (tzDiff > 10) { // offset difference greater than 10 minutes
+                                        addAnomaly('timezone_mismatch', 'System timezone does not match IP location timezone', 'suspicious', 'normalcy', 15);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Failed to perform IP-system timezone comparison check:', err);
+            }
+
             // Missing Languages
             if (!navigator.languages || navigator.languages.length === 0) {
                 addAnomaly('no_languages', 'No languages specified', 'suspicious', 'normalcy', 15);

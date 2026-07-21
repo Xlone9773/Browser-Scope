@@ -77,7 +77,8 @@ export const dashboard = {
       arch_mismatch: "UA(ARM) とプラットフォーム(x86)アーキテクチャの不一致",
       mobile_desktop_mismatch: "デスクトッププラットフォームでのモバイル UA",
       hardware_anomaly: "モバイルデバイスのコア数が異常に多い",
-      touch_mismatch: "タッチポイントサポートがないモバイル UA"
+      touch_mismatch: "タッチポイントサポートがないモバイル UA",
+      timezone_mismatch: "システムタイムゾーンが IP ロケーションタイムゾーンと一致しません"
     }
   },
 
