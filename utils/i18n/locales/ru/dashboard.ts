@@ -340,6 +340,14 @@ export const dashboard = {
     mathML: "MathML",
     vibration: "Vibration API",
     battery: "Battery Status API",
+    webhid: "WebHID API",
+    serial: "Web Serial API",
+    webotp: "WebOTP API",
+    cookieStore: "Cookie Store API",
+    shapeDetection: "Shape Detection API",
+    virtualKeyboard: "Virtual Keyboard API",
+    keyboardMap: "Keyboard Map API",
+    devicePosture: "Device Posture API",
   },
 
   featureDescs: {
@@ -422,6 +430,14 @@ export const dashboard = {
     mathML: "Математическая разметка",
     vibration: "Физическая вибрация устройства",
     battery: "Уровень заряда и статус батареи",
+    webhid: "Доступ к устройствам взаимодействия человека (HID)",
+    serial: "Прямое взаимодействие с последовательными (COM) портами",
+    webotp: "Получение и чтение одноразовых паролей (OTP) из SMS",
+    cookieStore: "Асинхронный доступ к файлам cookie из Service Worker",
+    shapeDetection: "Нативное распознавание лиц и штрих-кодов на изображениях",
+    virtualKeyboard: "Точный контроль всплытия и разметки виртуальной клавиатуры",
+    keyboardMap: "Получение карты физической раскладки клавиатуры",
+    devicePosture: "Определение положения и угла сгиба складных устройств",
   }
 ,
   "extensionsModal": {

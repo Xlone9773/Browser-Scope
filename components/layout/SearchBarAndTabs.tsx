@@ -66,6 +66,8 @@ export const SearchBarAndTabs: React.FC<SearchBarAndTabsProps> = React.memo(({
           </div>
           <button
             onClick={() => setShowSearchSettings(!showSearchSettings)}
+            title={t.search?.settingsTooltip || "Search Settings"}
+            aria-label={t.search?.settingsTooltip || "Search Settings"}
             className={`p-2 rounded-xl border transition-colors flex-shrink-0 ${
               showSearchSettings
                 ? "bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400"
@@ -73,6 +75,7 @@ export const SearchBarAndTabs: React.FC<SearchBarAndTabsProps> = React.memo(({
             }`}
           >
             <Settings2 size={20} />
+            <span className="sr-only">{t.search?.settingsTooltip || "Search Settings"}</span>
           </button>
         </div>
       ) : null}

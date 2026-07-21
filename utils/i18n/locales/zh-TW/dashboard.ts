@@ -81,7 +81,7 @@ export const dashboard = {
       timezone_mismatch: "系統時區與 IP 歸屬地時區不匹配",
       invalid_device_memory: "裝置記憶體數值異常（標準瀏覽器通常限制最大為8）",
       navigator_spoof: "navigator 實例屬性被直接改寫（涉嫌偽造）",
-      software_renderer: "偵測到軟體 WebGL 渲染器 (多見於虛擬化或無頭環境)",
+      software_renderer: "偵測到軟體 WebGL 渲染器 (多見於虛擬化或無头環境)",
       webgl_os_mismatch: "WebGL 渲染器與作業系統平台存在衝突",
       canvas_spoof: "Canvas API 被覆寫 (疑似正在偽造指紋)",
       audio_spoof: "AudioContext API 被覆寫 (疑似正在偽造指纹)",
@@ -340,6 +340,14 @@ export const dashboard = {
     mathML: "MathML",
     vibration: "震動 API",
     battery: "電池狀態 API",
+    webhid: "WebHID API",
+    serial: "Web Serial API",
+    webotp: "WebOTP API",
+    cookieStore: "Cookie Store API",
+    shapeDetection: "形狀檢測 API",
+    virtualKeyboard: "虛擬鍵盤 API",
+    keyboardMap: "鍵盤對應 API",
+    devicePosture: "裝置姿態 API",
   },
 
   featureDescs: {
@@ -422,6 +430,14 @@ export const dashboard = {
     mathML: "原生數學公式渲染引擎",
     vibration: "控制裝置進行物理震動",
     battery: "讀取裝置電量與充電狀態",
+    webhid: "連接並控制人類介面裝置 (HID)",
+    serial: "與序列埠 (COM) 實體介面通訊",
+    webotp: "接收並讀取簡訊中的一次性密碼 (OTP)",
+    cookieStore: "讓 Service Worker 能夠非同步讀寫 Cookie",
+    shapeDetection: "原生辨識影像中的人臉或條形碼",
+    virtualKeyboard: "精確控制虛擬鍵盤的彈出與版面配置",
+    keyboardMap: "獲取實體鍵盤的按鍵對應對照表",
+    devicePosture: "檢測折疊螢幕等裝置的狀態與折叠模式",
   }
 ,
   "extensionsModal": {

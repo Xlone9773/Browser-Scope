@@ -339,7 +339,15 @@ export const dashboard = {
     canvas: "Canvas API",
     mathML: "MathML",
     vibration: "震動 API",
-    battery: "電池狀態 API",
+    battery: "電池状态 API",
+    webhid: "WebHID API",
+    serial: "Web Serial API",
+    webotp: "WebOTP API",
+    cookieStore: "Cookie Store API",
+    shapeDetection: "形狀檢測 API",
+    virtualKeyboard: "虛擬鍵盤 API",
+    keyboardMap: "鍵盤對應 API",
+    devicePosture: "裝置姿態 API",
   },
 
   featureDescs: {
@@ -422,6 +430,14 @@ export const dashboard = {
     mathML: "原生數學公式渲染引擎",
     vibration: "控制裝置進行物理震動",
     battery: "讀取裝置電量與充電狀態",
+    webhid: "連接並控制人類介面裝置 (HID)",
+    serial: "與序列埠 (COM) 實體介面通訊",
+    webotp: "接收並讀取簡訊中的一次性密碼 (OTP)",
+    cookieStore: "讓 Service Worker 能夠非同步讀寫 Cookie",
+    shapeDetection: "原生辨識影像中的人臉或條形碼",
+    virtualKeyboard: "精確控制虛擬鍵盤的彈出與版面配置",
+    keyboardMap: "獲取實體鍵盤的按鍵對應對照表",
+    devicePosture: "檢測折叠屏幕等裝置的狀態與折叠模式",
   }
 ,
   "extensionsModal": {

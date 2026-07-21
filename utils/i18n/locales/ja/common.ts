@@ -110,13 +110,14 @@ export const common = {
     not_installed: "未インストール"
   },
   search: {
-    placeholder: "カテゴリ、カード、または検出値を検索...",
+    placeholder: "カテゴリ、カード、または检测値を検索...",
     scope: "検索範囲",
     scope_all: "すべてのテキスト",
     scope_cards: "カード内容のみ",
     match: "マッチングモード",
     match_fuzzy: "あいまい検索",
     match_exact: "完全一致",
+    settingsTooltip: "検索詳細設定",
     no_results: "該当するカテゴリまたはカードが見つかりません。"
   }
 };

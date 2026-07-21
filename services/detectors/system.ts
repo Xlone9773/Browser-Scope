@@ -193,5 +193,13 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
 
     { name: 'Gyroscope', key: 'gyroscope', supported: 'Gyroscope' in window, description: 'Orientation sensor' },
     { name: 'Ambient Light', key: 'ambientLight', supported: 'AmbientLightSensor' in window, description: 'Light level sensor' },
+    { name: 'WebHID API', key: 'webhid', supported: 'hid' in navigator, description: 'Access human interface devices' },
+    { name: 'Web Serial API', key: 'serial', supported: 'serial' in navigator, description: 'Communicate with serial ports' },
+    { name: 'WebOTP API', key: 'webotp', supported: 'OTPCredential' in window, description: 'One-Time Password receiver' },
+    { name: 'Cookie Store API', key: 'cookieStore', supported: 'cookieStore' in window, description: 'Service Worker cookie access' },
+    { name: 'Shape Detection API', key: 'shapeDetection', supported: 'FaceDetector' in window || 'BarcodeDetector' in window, description: 'Detect faces or barcodes' },
+    { name: 'Virtual Keyboard API', key: 'virtualKeyboard', supported: 'virtualKeyboard' in navigator, description: 'Control virtual keyboard layout' },
+    { name: 'Keyboard Map API', key: 'keyboardMap', supported: 'keyboard' in navigator && 'getLayoutMap' in (navigator as unknown as { keyboard: { getLayoutMap: unknown } }).keyboard, description: 'Resolve physical key layouts' },
+    { name: 'Device Posture API', key: 'devicePosture', supported: 'devicePosture' in navigator, description: 'Detect foldable device states' },
   ];
 };

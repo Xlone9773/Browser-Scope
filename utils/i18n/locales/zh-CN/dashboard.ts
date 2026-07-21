@@ -341,6 +341,14 @@ export const dashboard = {
     mathML: "MathML",
     vibration: "震动 API",
     battery: "电池状态 API",
+    webhid: "WebHID API",
+    serial: "Web Serial API",
+    webotp: "WebOTP API",
+    cookieStore: "Cookie Store API",
+    shapeDetection: "形状检测 API",
+    virtualKeyboard: "虚拟键盘 API",
+    keyboardMap: "键盘映射 API",
+    devicePosture: "设备姿态 API",
   },
 
   featureDescs: {
@@ -423,6 +431,14 @@ export const dashboard = {
     mathML: "原生数学公式渲染引擎",
     vibration: "控制设备进行物理震动",
     battery: "读取设备电量与充电状态",
+    webhid: "连接并控制人类接口设备 (HID)",
+    serial: "与串行端口 (COM) 物理接口通信",
+    webotp: "接收并读取短信中的一次性密码 (OTP)",
+    cookieStore: "让 Service Worker 能够异步读写 Cookie",
+    shapeDetection: "原生识别图像中的人脸或条形码",
+    virtualKeyboard: "精细控制虚拟键盘的弹出与布局",
+    keyboardMap: "获取物理键盘的按键布局映射",
+    devicePosture: "检测折叠屏等设备的姿势与折叠状态",
   }
 ,
   "extensionsModal": {

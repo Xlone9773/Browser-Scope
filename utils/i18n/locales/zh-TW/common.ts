@@ -117,6 +117,7 @@ export const common = {
     match: "匹配模式",
     match_fuzzy: "模糊搜尋",
     match_exact: "精確搜尋",
+    settingsTooltip: "搜尋進階設定",
     no_results: "沒有找到匹配的欄目或卡片。"
   }
 };

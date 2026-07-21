@@ -57,7 +57,10 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
     useEffect(() => {
         if (!isOpen) return;
 
-        const handleClickOutside = (event: MouseEvent) => {
+        let active = true;
+
+        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+            if (!active) return;
             // Check if click is on the button
             if (buttonRef.current && buttonRef.current.contains(event.target as Node)) {
                 return;
@@ -84,12 +87,21 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
             if (isOpen) close();
         };
 
-        window.addEventListener('mousedown', handleClickOutside);
+        // Defer attachment to prevent immediate close due to event bubbling/simulated events on touch screens
+        const timer = setTimeout(() => {
+            if (!active) return;
+            window.addEventListener('mousedown', handleClickOutside);
+            window.addEventListener('touchstart', handleClickOutside);
+        }, 50);
+
         window.addEventListener('resize', handleResize);
         window.addEventListener('scroll', handleScroll, true); 
 
         return () => {
+            active = false;
+            clearTimeout(timer);
             window.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('touchstart', handleClickOutside);
             window.removeEventListener('resize', handleResize);
             window.removeEventListener('scroll', handleScroll, true);
         };

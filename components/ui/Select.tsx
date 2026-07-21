@@ -35,6 +35,7 @@ export const Select: React.FC<SelectProps> = ({
     const [isVisible, setIsVisible] = useState(false);
     const [coords, setCoords] = useState({ top: 0, left: 0, minWidth: 0 });
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const [focusedIndex, setFocusedIndex] = useState(-1);
 
     const selectedLabel = options.find(o => o.id === value)?.label || value;
 
@@ -66,11 +67,57 @@ export const Select: React.FC<SelectProps> = ({
         setTimeout(() => setIsOpen(false), 200);
     };
 
+    // Initialize focused index when select opens
+    useEffect(() => {
+        if (isOpen) {
+            const index = options.findIndex(opt => opt.id === value);
+            setFocusedIndex(index >= 0 ? index : 0);
+        } else {
+            setFocusedIndex(-1);
+        }
+    }, [isOpen, value, options]);
+
+    // Handle global keyboard events to prevent modal-close / shortcuts and allow select navigation
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleGlobalKeyDown = (e: KeyboardEvent) => {
+            // Stop propagation for ALL key events to prevent global shortcuts (useKeyboardShortcuts) and modal close (Modal handleKeyDown)
+            e.stopPropagation();
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setFocusedIndex(prev => (prev + 1) % options.length);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setFocusedIndex(prev => (prev - 1 + options.length) % options.length);
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (focusedIndex >= 0 && focusedIndex < options.length) {
+                    onChange(options[focusedIndex].id);
+                    close();
+                }
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                close();
+            }
+        };
+
+        // Add to capture phase so we intercept before any standard inputs / listeners handle it
+        window.addEventListener('keydown', handleGlobalKeyDown, true);
+        return () => {
+            window.removeEventListener('keydown', handleGlobalKeyDown, true);
+        };
+    }, [isOpen, focusedIndex, options, onChange]);
+
     // Handle clicks outside and window events
     useEffect(() => {
         if (!isOpen) return;
 
-        const handleClickOutside = (event: MouseEvent) => {
+        let active = true;
+
+        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+            if (!active) return;
             // Check if click is on the button
             if (buttonRef.current && buttonRef.current.contains(event.target as Node)) {
                 return;
@@ -97,12 +144,21 @@ export const Select: React.FC<SelectProps> = ({
             if (isOpen) close();
         };
 
-        window.addEventListener('mousedown', handleClickOutside);
+        // Defer attachment to prevent immediate close due to event bubbling/simulated events on touch screens
+        const timer = setTimeout(() => {
+            if (!active) return;
+            window.addEventListener('mousedown', handleClickOutside);
+            window.addEventListener('touchstart', handleClickOutside);
+        }, 50);
+
         window.addEventListener('resize', handleResize);
         window.addEventListener('scroll', handleScroll, true); 
 
         return () => {
+            active = false;
+            clearTimeout(timer);
             window.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('touchstart', handleClickOutside);
             window.removeEventListener('resize', handleResize);
             window.removeEventListener('scroll', handleScroll, true);
         };
@@ -202,23 +258,27 @@ export const Select: React.FC<SelectProps> = ({
                     }}
                 >
                     <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
-                        {options.map((opt) => (
-                            <button
-                                key={opt.id}
-                                onClick={() => { onChange(opt.id); close(); }}
-                                className={`
-                                    w-full text-left flex items-center justify-between
-                                    transition-colors
-                                    ${sizeStyles[size]}
-                                    ${value === opt.id 
-                                        ? currentStyle.active + ' font-medium' 
-                                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50/80 dark:hover:bg-slate-700/80'}
-                                `}
-                            >
-                                <span className="truncate">{opt.label}</span>
-                                {value === opt.id ? <Check size={size === 'sm' ? 12 : 14} className="shrink-0 ml-2" /> : null}
-                            </button>
-                        ))}
+                        {options.map((opt, idx) => {
+                            const isSelected = value === opt.id;
+                            const isFocused = idx === focusedIndex;
+                            return (
+                                <button
+                                    key={opt.id}
+                                    onClick={() => { onChange(opt.id); close(); }}
+                                    className={`
+                                        w-full text-left flex items-center justify-between
+                                        transition-colors
+                                        ${sizeStyles[size]}
+                                        ${isSelected 
+                                            ? currentStyle.active + ' font-medium' 
+                                            : `text-slate-700 dark:text-slate-300 hover:bg-slate-50/80 dark:hover:bg-slate-700/80 ${isFocused ? 'bg-slate-50/80 dark:bg-slate-700/80' : ''}`}
+                                    `}
+                                >
+                                    <span className="truncate">{opt.label}</span>
+                                    {isSelected ? <Check size={size === 'sm' ? 12 : 14} className="shrink-0 ml-2" /> : null}
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>,
                 document.body

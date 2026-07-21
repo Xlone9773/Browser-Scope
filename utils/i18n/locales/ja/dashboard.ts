@@ -340,6 +340,14 @@ export const dashboard = {
     mathML: "MathML",
     vibration: "Vibration API",
     battery: "Battery Status",
+    webhid: "WebHID API",
+    serial: "Web Serial API",
+    webotp: "WebOTP API",
+    cookieStore: "Cookie Store API",
+    shapeDetection: "Shape Detection API",
+    virtualKeyboard: "Virtual Keyboard API",
+    keyboardMap: "Keyboard Map API",
+    devicePosture: "Device Posture API",
   },
 
   featureDescs: {
@@ -422,6 +430,14 @@ export const dashboard = {
     mathML: "数式マークアップ",
     vibration: "ハードウェアの触覚フィードバック",
     battery: "バッテリー残量と充電状態",
+    webhid: "ヒューマンインターフェイスデバイス (HID) へのアクセス",
+    serial: "シリアルポート (COM) との直接通信",
+    webotp: "SMS内の一時ワンタイムパスワード (OTP) を受信・取得",
+    cookieStore: "Service Workerから非同期的なCookieへのアクセス",
+    shapeDetection: "画像内の顔やバーコードをネイティブで検出",
+    virtualKeyboard: "仮想キーボードのポップアップとレイアウトを制御",
+    keyboardMap: "物理キーボードのキーレイアウトマップを取得",
+    devicePosture: "折りたたみデバイス等のポスチャと折れ状態を検出",
   }
 ,
   "extensionsModal": {

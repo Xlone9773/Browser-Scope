@@ -116,6 +116,7 @@ export const common = {
     match: "Matching Mode",
     match_fuzzy: "Fuzzy Match",
     match_exact: "Exact Match",
+    settingsTooltip: "Advanced Search Settings",
     no_results: "No matching categories or cards found."
   }
 };
