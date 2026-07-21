@@ -45,7 +45,9 @@ export const common = {
     },
     toasts: {
         user_agent_copied: "ユーザーエージェントをクリップボードにコピーしました！",
-        client_hints_copied: "Client Hintsをクリップボードにコピーしました！"
+        client_hints_copied: "Client Hintsをクリップボードにコピーしました！",
+        offline_title: "オフラインモード",
+        offline_message: "現在オフライン状態です。PWAによってキャッシュされたリソースにアクセスしており、オンライン機能は利用できません。"
     },
     modal_loading: {
         initializing: "初期化中",

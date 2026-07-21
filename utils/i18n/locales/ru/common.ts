@@ -45,7 +45,9 @@ export const common = {
     },
     toasts: {
         user_agent_copied: "User Agent скопирован в буфер обмена!",
-        client_hints_copied: "Client Hints скопированы в буфер обмена!"
+        client_hints_copied: "Client Hints скопированы в буфер обмена!",
+        offline_title: "Автономный режим",
+        offline_message: "В настоящее время вы находитесь в автономном режиме. Доступ к кэшированным ресурсам PWA; сетевые функции недоступны."
     },
     modal_loading: {
         initializing: "Инициализация",

@@ -45,7 +45,9 @@ export const common = {
     },
     toasts: {
         user_agent_copied: "用户代理信息已复制到剪贴板！",
-        client_hints_copied: "Client Hints 信息已复制到剪贴板！"
+        client_hints_copied: "Client Hints 信息已复制到剪贴板！",
+        offline_title: "离线模式",
+        offline_message: "您当前处于离线状态。目前正在访问 PWA 缓存的资源，联网功能不可用。"
     },
     modal_loading: {
         initializing: "正在初始化",

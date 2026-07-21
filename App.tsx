@@ -16,6 +16,7 @@ import { ModuleState } from "./components/settings/ModulesTab";
 import { useAppSettings } from "./hooks/useAppSettings";
 import { useAppPermissions } from "./hooks/useAppPermissions";
 import { useAppData } from "./hooks/useAppData";
+import { useToast } from "./hooks/useToast";
 import packageJson from "./package.json";
 
 // Import newly extracted sub-components
@@ -25,9 +26,11 @@ import { SearchBarAndTabs } from "./components/layout/SearchBarAndTabs";
 import { DashboardGrid } from "./components/layout/DashboardGrid";
 
 const App: React.FC = () => {
+  const { warning } = useToast();
   const { visibility, open, close, unload, loadedModules, Components, closeAll } =
     useModalManager();
 
+  const [isOffline, setIsOffline] = useState<boolean>(() => !navigator.onLine);
   const [activeTab, setActiveTab] = useState<"all" | "browser" | "environment" | "system" | "network" | "advanced">("all");
   const [_slideDirection, setSlideDirection] = useState<number>(0);
 
@@ -116,6 +119,23 @@ const App: React.FC = () => {
       active = false;
     };
   }, [lang]);
+
+  // Offline / online detection
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+    };
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   const swReg = useRef<ServiceWorkerRegistration | undefined>(undefined);
   const [lastCheckTime, setLastCheckTime] = useState<number>(() => Date.now());
@@ -857,10 +877,18 @@ const App: React.FC = () => {
         />
 
         {/* Notifications */}
-        {((needRefresh && !dismissedNotifications.includes("update")) ||
+        {(isOffline ||
+          (needRefresh && !dismissedNotifications.includes("update")) ||
           (isOutdated && !dismissedNotifications.includes("outdated")) ||
           (isViewportTooSmall && !dismissedNotifications.includes("viewport_small"))) ? (
           <div className="flex flex-col gap-4 w-full">
+            {isOffline ? (
+              <AppNotification
+                type="error"
+                title={t.common?.toasts?.offline_title || "Offline Mode"}
+                message={t.common?.toasts?.offline_message || "You are currently offline. Accessing cached PWA resources; online features are unavailable."}
+              />
+            ) : null}
             {needRefresh && !dismissedNotifications.includes("update") ? (
               <AppNotification
                 type="success"

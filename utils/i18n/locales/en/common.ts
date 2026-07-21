@@ -45,7 +45,9 @@ export const common = {
     },
     toasts: {
         user_agent_copied: "User Agent copied to clipboard!",
-        client_hints_copied: "Client hints copied to clipboard!"
+        client_hints_copied: "Client hints copied to clipboard!",
+        offline_title: "Offline Mode",
+        offline_message: "You are currently offline. Accessing cached PWA resources; online features are unavailable."
     },
     modal_loading: {
         initializing: "Initializing",
