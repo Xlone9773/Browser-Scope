@@ -46,30 +46,21 @@ export const FONTS_LIST: FontItem[] = [
         name: 'HarmonyOS Sans SC',
         languages: ['en', 'zh-CN'],
         cssUrl: 'https://cdn.jsdelivr.net/npm/harmonyos-sans-sc-webfont-splitted@1.1.0/dist/index.min.css',
-        fontFamily: 'HarmonyOS Sans SC',
-        mirrors: [
-            "https://github.com/LineageOS/android_external_harmonyos-sans/raw/refs/heads/lineage-21.0/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Regular.ttf"
-        ]
+        fontFamily: 'HarmonyOS Sans SC'
     },
     {
         key: 'misans',
         name: 'MiSans',
         languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja'],
         cssUrl: 'https://cdn.jsdelivr.net/npm/misans-webfont@4.3.1/misans-style.min.css',
-        fontFamily: 'MiSans',
-        mirrors: [
-            "https://github.com/chinese-font/misans/raw/main/fonts/MiSans-Regular.ttf"
-        ]
+        fontFamily: 'MiSans'
     },
     {
         key: 'smileysans',
         name: 'Smiley Sans',
         languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja'],
         cssUrl: 'https://cdn.jsdelivr.net/npm/cn-fontsource-smiley-sans-oblique-regular/font.css',
-        fontFamily: 'Smiley Sans Oblique',
-        mirrors: [
-            "https://github.com/chinese-font/smiley-sans/raw/main/fonts/SmileySans-Oblique.ttf"
-        ]
+        fontFamily: 'Smiley Sans Oblique'
     },
     {
         key: 'zcoolxiaowei',
@@ -130,7 +121,7 @@ export const FONTS_LIST: FontItem[] = [
     {
         key: 'jetbrainsmono',
         name: 'JetBrains Mono',
-        languages: ['en', 'ru'],
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
         isVariable: true,
         weightRange: '100 800',
         mirrors: [
@@ -142,7 +133,7 @@ export const FONTS_LIST: FontItem[] = [
     {
         key: 'firacode',
         name: 'Fira Code',
-        languages: ['en', 'ru'],
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
         isVariable: true,
         weightRange: '300 700',
         mirrors: [
@@ -154,7 +145,7 @@ export const FONTS_LIST: FontItem[] = [
     {
         key: 'robotomono',
         name: 'Roboto Mono',
-        languages: ['en', 'ru'],
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
         isVariable: true,
         weightRange: '100 700',
         mirrors: [
@@ -166,7 +157,7 @@ export const FONTS_LIST: FontItem[] = [
     {
         key: 'sourcecodepro',
         name: 'Source Code Pro',
-        languages: ['en', 'ru'],
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
         isVariable: true,
         weightRange: '200 900',
         mirrors: [
@@ -178,7 +169,7 @@ export const FONTS_LIST: FontItem[] = [
     {
         key: 'geist',
         name: 'Geist',
-        languages: ['en', 'ru'],
+        languages: ['en', 'zh-CN', 'zh-TW', 'zh-HK', 'ja', 'ru'],
         fontFamily: 'Geist',
         isStatic: true
     }
@@ -191,7 +182,7 @@ const CACHE_NAME = "browserscope-fonts";
  */
 export function resolveCssUrls(cssText: string, baseUrl: string): string {
     // 1. Resolve @import statements (e.g. @import "./foo.css";)
-    let resolved = cssText.replace(/@import\s+['"]?([^'";)]+)['"]?\s*;/gi, (match: string, path: string) => {
+    let resolved = cssText.replace(/@import\s+['"]?([^'";)]+)['"]?\s*;/gi, (match, path) => {
         if (/^(https?:|\/\/|data:)/i.test(path)) {
             return match;
         }
@@ -204,7 +195,7 @@ export function resolveCssUrls(cssText: string, baseUrl: string): string {
     });
 
     // 2. Resolve url(...) paths
-    resolved = resolved.replace(/url\s*\(\s*['"]?([^'")]+)['"]?\s*\)/gi, (match: string, path: string) => {
+    resolved = resolved.replace(/url\s*\(\s*['"]?([^'")]+)['"]?\s*\)/gi, (match, path) => {
         if (/^(https?:|\/\/|data:)/i.test(path)) {
             return match;
         }

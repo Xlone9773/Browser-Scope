@@ -65,7 +65,7 @@ export const exportAsPdf = (
     t: Translation,
     lang: string,
     format: 'a4' | 'letter' | 'legal',
-    font: string = 'auto',
+    font: 'auto' | 'helvetica' | 'times' | 'courier' = 'auto',
     onStart?: () => void,
     onSuccess?: () => void,
     onError?: (error: string) => void

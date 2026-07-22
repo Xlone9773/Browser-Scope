@@ -47,8 +47,8 @@ interface SettingsModalProps {
   updateImageExportScale: (value: number) => void;
   pdfExportFormat: 'a4' | 'letter' | 'legal';
   updatePdfExportFormat: (value: 'a4' | 'letter' | 'legal') => void;
-  pdfExportFont: string;
-  updatePdfExportFont: (value: string) => void;
+  pdfExportFont: 'auto' | 'helvetica' | 'times' | 'courier';
+  updatePdfExportFont: (value: 'auto' | 'helvetica' | 'times' | 'courier') => void;
   searchScope: 'all' | 'category' | 'title' | 'value';
   updateSearchScope: (scope: 'all' | 'category' | 'title' | 'value') => void;
   searchMode: 'fuzzy' | 'exact';
