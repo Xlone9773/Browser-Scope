@@ -1,5 +1,8 @@
 import { jsPDF } from "jspdf";
 import { BrowserData, GeoPosition, ExportPayload } from "../types";
+import { PDF_TRANSLATIONS, PdfTranslation } from "../utils/i18n/pdfTranslations";
+import { Language } from "../utils/i18n/types";
+import { FONTS_LIST, FontItem } from "../utils/fonts";
 
 interface ExportWorkerMessage {
     type?: "pdf" | "json";
@@ -26,129 +29,12 @@ interface ExportWorkerMessage {
     filename: string;
     lang?: string;
     format?: 'a4' | 'letter' | 'legal';
+    font?: string;
 }
 
 const CACHE_NAME = "browserscope-fonts";
-const FONT_KEYS: Record<string, string> = {
-    "ru": "roboto",
-    "zh-CN": "zcoolxiaowei",
-    "zh-TW": "zcoolxiaowei",
-    "zh-HK": "zcoolxiaowei",
-    "ja": "sawarabigothic"
-};
 
-const FONT_MIRRORS: Record<string, string[]> = {
-    "ru": [
-        "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
-        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/roboto/static/Roboto-Regular.ttf"
-    ],
-    "zh-CN": [
-        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
-    ],
-    "zh-TW": [
-        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
-    ],
-    "zh-HK": [
-        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/zcoolxiaowei/ZCOOLXiaoWei-Regular.ttf"
-    ],
-    "ja": [
-        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf",
-        "https://fastly.jsdelivr.net/gh/google/fonts@main/ofl/sawarabigothic/SawarabiGothic-Regular.ttf"
-    ]
-};
-
-const LOCAL_TRANS: Record<string, Record<string, string>> = {
-    en: {
-        report_title: "BrowserScope Diagnostic Report",
-        generated: "Generated",
-        secure_context: "Secure HTTPS Context",
-        trust_score: "Trust Score",
-        level: "Level",
-        permissions: "Permissions",
-        geolocation_data: "Geolocation Data",
-        user_agent: "User Agent",
-        pwa_installed: "PWA Installed",
-        cookies_enabled: "Cookies Enabled",
-        yes: "Yes",
-        no: "No",
-        unknown: "Unknown",
-        charging: "Charging",
-        discharging_unknown: "Discharging/Unknown",
-        screen_res: "Screen Resolution",
-        avail_size: "Available Size",
-        window_size: "Window Size",
-        pixel_ratio: "Pixel Ratio",
-        color_depth: "Color Depth",
-        hdr_support: "HDR Support",
-        supported: "Supported",
-        not_detected: "Not Detected",
-        online_status: "Online Status",
-        conn_type: "Connection Type",
-        downlink_max: "Downlink Max",
-        rtt_latency: "RTT Latency",
-        webrtc_ip: "WebRTC Local IP",
-        canvas_hash: "Canvas Fingerprint Hash",
-        webgl_hash: "WebGL Fingerprint Hash",
-        adblocker: "AdBlocker",
-        bot_diagnostic: "Bot Diagnostic",
-        gpc_enabled: "GPC Enabled",
-        secure_context_lbl: "Secure Context",
-        active: "Active",
-        inactive: "Inactive",
-        suspicious_bot: "Suspicious (Bot)",
-        pass_human: "Pass (Human)",
-        // AI
-        ai_title: "AI & Computational Readiness",
-        wasm_support: "WebAssembly Support",
-        wasm_simd: "Wasm SIMD",
-        webnn: "WebNN API",
-        window_ai: "Window AI",
-        webgpu_compute: "WebGPU Compute",
-        ai_score: "AI Performance Score",
-        ai_flops: "AI FLOPs",
-        ai_level: "Capability Level",
-        // Storage
-        storage_title: "Storage Status",
-        storage_quota: "Quota Limit",
-        storage_usage: "Storage Usage",
-        storage_persisted: "Storage Persisted",
-        // Localization
-        loc_title: "Localization & Internationalization",
-        time_zone: "Time Zone",
-        locale: "Locale",
-        calendar: "Calendar System",
-        numbering: "Numbering System",
-        intl_support: "Intl API Support",
-        // Media
-        media_title: "Media Capabilities",
-        speech_voices: "Speech Synthesis Voices",
-        audio_channels: "Audio Output Channels",
-        video_codecs: "Video Codecs Supported",
-        audio_codecs: "Audio Codecs Supported",
-        image_formats: "Image Formats Supported",
-        drm_systems: "DRM Systems Status"
-    },
-    "zh-CN": {
-        report_title: "BrowserScope 浏览器安全与硬件诊断报告",
-        generated: "生成时间",
-        secure_context: "安全网络环境 (HTTPS)",
-        trust_score: "信任评分",
-        level: "评级级别",
-        permissions: "系统权限",
-        geolocation_data: "地理定位数据",
-        user_agent: "浏览器 User Agent",
-        pwa_installed: "PWA 渐进式应用安装",
-        cookies_enabled: "Cookie 启用状态",
-        yes: "已启用/是",
-        no: "未启用/否",
-        unknown: "未知",
-        charging: "充电中",
-        discharging_unknown: "放电中/未知",
-        screen_res: "屏幕分辨率",
-        avail_size: "可用工作区大小",
+/*
         window_size: "窗口大小",
         pixel_ratio: "像素设备比例",
         color_depth: "色彩深度",
@@ -482,6 +368,7 @@ const LOCAL_TRANS: Record<string, Record<string, string>> = {
         drm_systems: "Статус защиты DRM"
     }
 };
+*/
 
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
     const bytes = new Uint8Array(buffer);
@@ -498,8 +385,24 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
     return btoa(binary);
 }
 
-async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
-    const cacheKey = FONT_KEYS[lang];
+async function fetchFontWithFallbacks(lang: string, fontKey?: string): Promise<ArrayBuffer> {
+    const language = (lang || 'en') as Language;
+
+    // Resolve font configuration from FONTS_LIST based on specified fontKey or language fallback
+    const fontItem = fontKey && fontKey !== 'auto'
+        ? (FONTS_LIST.find((f: FontItem) => f.key === fontKey && Boolean(f.mirrors?.length)) ||
+           FONTS_LIST.find((f: FontItem) => f.languages.includes(language) && Boolean(f.mirrors?.length)))
+        : FONTS_LIST.find((f: FontItem) => f.languages.includes(language) && Boolean(f.mirrors?.length));
+
+    const itemKey = fontItem ? fontItem.key : null;
+    const urls = fontItem && fontItem.mirrors ? fontItem.mirrors : null;
+
+    if (!urls || urls.length === 0) {
+        throw new Error(`No font mirrors available for language: ${lang}`);
+    }
+
+    const cacheKey = itemKey ? `https://local-fonts.browserscope/${itemKey}.ttf` : null;
+
     if (cacheKey) {
         try {
             const cache = await caches.open(CACHE_NAME);
@@ -516,19 +419,10 @@ async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
         }
     }
 
-    const urls = FONT_MIRRORS[lang];
-    if (!urls || urls.length === 0) {
-        throw new Error(`No font URLs defined for language: ${lang}`);
-    }
-
     let lastError: unknown = null;
     for (const url of urls) {
         try {
-            let finalUrl = url;
-            if (url.startsWith("/")) {
-                // Ensure absolute local paths resolve relative to origin in the web worker
-                finalUrl = self.location.origin + url;
-            }
+            const finalUrl = url.startsWith("/") ? self.location.origin + url : url;
             const res = await fetch(finalUrl);
             if (res.ok) {
                 const buffer = await res.arrayBuffer();
@@ -540,7 +434,7 @@ async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
                             const bytes = new Uint8Array(buffer, 0, 12);
                             let isCorrupted = false;
                             for (let i = 0; i < bytes.length - 2; i++) {
-                                if (bytes[i] === 0xEF && bytes[i+1] === 0xBF && bytes[i+2] === 0xBD) {
+                                if (bytes[i] === 0xEF && bytes[i + 1] === 0xBF && bytes[i + 2] === 0xBD) {
                                     isCorrupted = true;
                                     break;
                                 }
@@ -574,12 +468,12 @@ async function fetchFontWithFallbacks(lang: string): Promise<ArrayBuffer> {
             lastError = err;
         }
     }
-    throw lastError || new Error("Failed to fetch font from all mirrors");
+    throw lastError ? lastError : new Error("Failed to fetch font from all mirrors");
 }
 
 self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
     try {
-        const { type = "pdf", data, permStatus, geoData, t, filename, lang = "en", format = "a4" } = event.data;
+        const { type = "pdf", data, permStatus, geoData, t, filename, lang = "en", format = "a4", font = "auto" } = event.data;
 
         // If JSON export type requested, serialize on background thread and post back immediately
         if (type === "json") {
@@ -626,23 +520,24 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
         const contentWidth = pageWidth - (marginX * 2);
 
         let currentY = 20;
-        let activeFontName = "helvetica";
+        let activeFontName = font !== "auto" ? font : "helvetica";
 
-        // Load custom Unicode fonts to support CJK/Cyrillic if non-English
-        if (lang !== "en" && FONT_MIRRORS[lang]) {
+        // Load custom Unicode fonts to support CJK/Cyrillic or custom font choices
+        const hasFontForLang = FONTS_LIST.some((f: FontItem) => f.languages.includes(lang as Language) && Boolean(f.mirrors?.length));
+        if (font !== "auto" || (lang !== "en" && hasFontForLang)) {
             try {
-                const buf = await fetchFontWithFallbacks(lang);
+                const buf = await fetchFontWithFallbacks(lang, font);
                 const b64 = arrayBufferToBase64(buf);
                 doc.addFileToVFS("CustomFont.ttf", b64);
                 doc.addFont("CustomFont.ttf", "CustomFont", "normal");
                 doc.addFont("CustomFont.ttf", "CustomFont", "bold");
                 activeFontName = "CustomFont";
             } catch (e) {
-                console.error("[PDF Worker] Failed to load custom font, falling back to helvetica:", e);
+                console.error("[PDF Worker] Failed to load custom font, falling back to selected font:", e);
             }
         }
 
-        const tLocal = LOCAL_TRANS[lang] || LOCAL_TRANS.en;
+        const tLocal: PdfTranslation = PDF_TRANSLATIONS[lang as Language] || PDF_TRANSLATIONS.en;
 
         // Helper: Check page overflow and add page if necessary
         const checkPageOverflow = (heightNeeded: number) => {
@@ -677,11 +572,11 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
 
             // Bottom Footer Line
             doc.line(marginX, pageHeight - 12, pageWidth - marginX, pageHeight - 12);
-            doc.text("https://browserscope.dev", marginX, pageHeight - 8);
+            doc.text("https://browser-scope.vercel.app/", marginX, pageHeight - 8);
             
             // Page number
             const pageCount = doc.getNumberOfPages();
-            doc.text(`Page ${pageCount}`, pageWidth - marginX - 10, pageHeight - 8);
+            doc.text(`${tLocal.page} ${pageCount}`, pageWidth - marginX - 15, pageHeight - 8);
         };
 
         // Draw background for Page 1

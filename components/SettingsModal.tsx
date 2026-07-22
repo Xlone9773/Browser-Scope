@@ -47,6 +47,8 @@ interface SettingsModalProps {
   updateImageExportScale: (value: number) => void;
   pdfExportFormat: 'a4' | 'letter' | 'legal';
   updatePdfExportFormat: (value: 'a4' | 'letter' | 'legal') => void;
+  pdfExportFont: 'auto' | 'helvetica' | 'times' | 'courier';
+  updatePdfExportFont: (value: 'auto' | 'helvetica' | 'times' | 'courier') => void;
   searchScope: 'all' | 'category' | 'title' | 'value';
   updateSearchScope: (scope: 'all' | 'category' | 'title' | 'value') => void;
   searchMode: 'fuzzy' | 'exact';
@@ -109,6 +111,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     updateImageExportScale,
     pdfExportFormat,
     updatePdfExportFormat,
+    pdfExportFont,
+    updatePdfExportFont,
     searchScope: _searchScope,
     updateSearchScope: _updateSearchScope,
     searchMode: _searchMode,
@@ -342,6 +346,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               updateImageExportScale={updateImageExportScale}
                               pdfExportFormat={pdfExportFormat}
                               updatePdfExportFormat={updatePdfExportFormat}
+                              pdfExportFont={pdfExportFont}
+                              updatePdfExportFont={updatePdfExportFont}
                           />) : null}
 
                           {activeTab === 'storage' ? (<StorageTab t={settings.storage} lang={lang} changeLang={changeLang} />) : null}

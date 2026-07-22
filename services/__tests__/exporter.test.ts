@@ -189,7 +189,7 @@ describe('Exporter Service Unit Tests', () => {
       const appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(vi.fn());
       const removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation(vi.fn());
 
-      exportAsPdf(mockBrowserData, {}, null, mockT, 'en', 'a4', onStart, onSuccess);
+      exportAsPdf(mockBrowserData, {}, null, mockT, 'en', 'a4', 'auto', onStart, onSuccess);
 
       await new Promise(resolve => setTimeout(resolve, 10));
 

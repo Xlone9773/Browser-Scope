@@ -24,6 +24,8 @@ interface GeneralTabProps {
     updateImageExportScale?: (value: number) => void;
     pdfExportFormat?: 'a4' | 'letter' | 'legal';
     updatePdfExportFormat?: (value: 'a4' | 'letter' | 'legal') => void;
+    pdfExportFont?: 'auto' | 'helvetica' | 'times' | 'courier';
+    updatePdfExportFont?: (value: 'auto' | 'helvetica' | 'times' | 'courier') => void;
 }
 
 // Custom Premium Restore Button Component
@@ -93,7 +95,9 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     imageExportScale,
     updateImageExportScale,
     pdfExportFormat,
-    updatePdfExportFormat
+    updatePdfExportFormat,
+    pdfExportFont,
+    updatePdfExportFont
 }) => {
     const [udpSupported, setUdpSupported] = useState<boolean | null>(() => {
         const stored = localStorage.getItem('udp_supported');
@@ -623,6 +627,22 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                                 { id: 'a4', label: t.appExportSettings?.formats?.a4 || 'A4' },
                                 { id: 'letter', label: t.appExportSettings?.formats?.letter || 'Letter' },
                                 { id: 'legal', label: t.appExportSettings?.formats?.legal || 'Legal' }
+                            ]}
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                            {t.appExportSettings?.pdfFont || "PDF 导出字体"}
+                        </label>
+                        <Select 
+                            value={pdfExportFont || 'auto'}
+                            onChange={(value: unknown) => updatePdfExportFont ? updatePdfExportFont(value as 'auto' | 'helvetica' | 'times' | 'courier') : null}
+                            options={[
+                                { id: 'auto', label: t.appExportSettings?.fonts?.auto || 'Auto / Language Default' },
+                                { id: 'helvetica', label: t.appExportSettings?.fonts?.helvetica || 'Helvetica (Sans-Serif)' },
+                                { id: 'times', label: t.appExportSettings?.fonts?.times || 'Times New Roman (Serif)' },
+                                { id: 'courier', label: t.appExportSettings?.fonts?.courier || 'Courier (Monospace)' }
                             ]}
                         />
                     </div>

@@ -63,6 +63,8 @@ interface ModalContainerProps {
   updateImageExportScale: (value: number) => void;
   pdfExportFormat: 'a4' | 'letter' | 'legal';
   updatePdfExportFormat: (value: 'a4' | 'letter' | 'legal') => void;
+  pdfExportFont: 'auto' | 'helvetica' | 'times' | 'courier';
+  updatePdfExportFont: (value: 'auto' | 'helvetica' | 'times' | 'courier') => void;
   changeLang?: (lang: Language) => void;
   bodyFont: string;
   updateBodyFont: (font: string) => void;
@@ -129,6 +131,8 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   updateImageExportScale,
   pdfExportFormat,
   updatePdfExportFormat,
+  pdfExportFont,
+  updatePdfExportFont,
   changeLang,
   bodyFont,
   updateBodyFont,
@@ -279,6 +283,8 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
             updateImageExportScale={updateImageExportScale}
             pdfExportFormat={pdfExportFormat}
             updatePdfExportFormat={updatePdfExportFormat}
+            pdfExportFont={pdfExportFont}
+            updatePdfExportFont={updatePdfExportFont}
             changeLang={changeLang}
             bodyFont={bodyFont}
             updateBodyFont={updateBodyFont}

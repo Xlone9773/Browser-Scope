@@ -201,6 +201,7 @@ export const settings = {
             desc: "控制儀表板「匯出」功能的格式與清晰度。",
             imageScale: "圖片上採樣率",
             pdfFormat: "PDF 頁面格式",
+            pdfFont: "PDF 匯出字型",
             scales: {
                 scale1: "1x - 原始解析度",
                 scale2: "2x - 視網膜高清",
@@ -211,6 +212,12 @@ export const settings = {
                 a4: "A4 (210 × 297 毫米)",
                 letter: "Letter (8.5 × 11 英吋)",
                 legal: "Legal (8.5 × 14 英吋)"
+            },
+            fonts: {
+                auto: "自動 / 語言預設字型",
+                helvetica: "Helvetica (無襯線體)",
+                times: "Times New Roman (襯線體)",
+                courier: "Courier (等寬字型)"
             }
         }
     },

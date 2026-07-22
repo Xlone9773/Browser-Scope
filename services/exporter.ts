@@ -65,6 +65,7 @@ export const exportAsPdf = (
     t: Translation,
     lang: string,
     format: 'a4' | 'letter' | 'legal',
+    font: 'auto' | 'helvetica' | 'times' | 'courier' = 'auto',
     onStart?: () => void,
     onSuccess?: () => void,
     onError?: (error: string) => void
@@ -86,7 +87,8 @@ export const exportAsPdf = (
         t,
         filename,
         lang,
-        format
+        format,
+        font
     });
 
     // Handle background response

@@ -79,6 +79,8 @@ const App: React.FC = () => {
     updateImageExportScale,
     pdfExportFormat,
     updatePdfExportFormat,
+    pdfExportFont,
+    updatePdfExportFont,
     bodyFont,
     updateBodyFont,
     modalTitleFont,
@@ -754,6 +756,7 @@ const App: React.FC = () => {
       t,
       lang,
       pdfExportFormat || 'a4',
+      pdfExportFont || 'auto',
       () => setIsExportingPdf(true),
       () => setIsExportingPdf(false),
       (err) => {
@@ -874,6 +877,8 @@ const App: React.FC = () => {
         updateImageExportScale={updateImageExportScale}
         pdfExportFormat={pdfExportFormat}
         updatePdfExportFormat={updatePdfExportFormat}
+        pdfExportFont={pdfExportFont}
+        updatePdfExportFont={updatePdfExportFont}
         bodyFont={bodyFont}
         updateBodyFont={updateBodyFont}
         modalTitleFont={modalTitleFont}

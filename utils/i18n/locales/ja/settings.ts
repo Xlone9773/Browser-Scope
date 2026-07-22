@@ -201,6 +201,7 @@ export const settings = {
             desc: "ダッシュボードの「エクスポート」機能のフォーマットと解像度を制御します。",
             imageScale: "画像アップスケーリング率",
             pdfFormat: "PDF ページ形式",
+            pdfFont: "PDF エクスポートフォント",
             scales: {
                 scale1: "1x - オリジナル解像度",
                 scale2: "2x - Retina 高画質",
@@ -211,6 +212,12 @@ export const settings = {
                 a4: "A4 (210 × 297 mm)",
                 letter: "レター (8.5 × 11 インチ)",
                 legal: "リーガル (8.5 × 14 インチ)"
+            },
+            fonts: {
+                auto: "自動 / 言語デフォルトフォント",
+                helvetica: "Helvetica (サンセリフ)",
+                times: "Times New Roman (セリフ)",
+                courier: "Courier (等幅フォント)"
             }
         }
     },

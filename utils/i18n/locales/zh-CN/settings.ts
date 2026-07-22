@@ -201,6 +201,7 @@ export const settings = {
             desc: "控制仪表盘「导出」功能的格式与清晰度。",
             imageScale: "图片上采样率",
             pdfFormat: "PDF 页面格式",
+            pdfFont: "PDF 导出字体",
             scales: {
                 scale1: "1x - 原始分辨率",
                 scale2: "2x - 视网膜高清",
@@ -211,6 +212,12 @@ export const settings = {
                 a4: "A4 (210 × 297 毫米)",
                 letter: "Letter (8.5 × 11 英寸)",
                 legal: "Legal (8.5 × 14 英寸)"
+            },
+            fonts: {
+                auto: "自动 / 语言默认字体",
+                helvetica: "Helvetica (无衬线体)",
+                times: "Times New Roman (衬线体)",
+                courier: "Courier (等宽字体)"
             }
         }
     },

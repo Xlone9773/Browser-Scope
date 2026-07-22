@@ -201,6 +201,7 @@ export const settings = {
             desc: "Control the format and quality of dashboard exports.",
             imageScale: "Image Scale",
             pdfFormat: "PDF Format",
+            pdfFont: "PDF Export Font",
             scales: {
                 scale1: "1x - Original",
                 scale2: "2x - Retina",
@@ -211,6 +212,12 @@ export const settings = {
                 a4: "A4 (210 × 297 mm)",
                 letter: "Letter (8.5 × 11 in)",
                 legal: "Legal (8.5 × 14 in)"
+            },
+            fonts: {
+                auto: "Auto / Language Default",
+                helvetica: "Helvetica (Sans-Serif)",
+                times: "Times New Roman (Serif)",
+                courier: "Courier (Monospace)"
             }
         }
     },

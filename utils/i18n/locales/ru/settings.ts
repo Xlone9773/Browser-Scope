@@ -201,6 +201,7 @@ export const settings = {
             desc: "Управление форматом и качеством экспорта панели инструментов.",
             imageScale: "Масштаб изображения",
             pdfFormat: "Формат страницы PDF",
+            pdfFont: "Шрифт экспорта PDF",
             scales: {
                 scale1: "1x - Исходное разрешение",
                 scale2: "2x - Разрешение Retina",
@@ -211,6 +212,12 @@ export const settings = {
                 a4: "A4 (210 × 297 мм)",
                 letter: "Letter (8.5 × 11 дюймов)",
                 legal: "Legal (8.5 × 14 дюймов)"
+            },
+            fonts: {
+                auto: "Авто / По умолчанию для языка",
+                helvetica: "Helvetica (Без засечек)",
+                times: "Times New Roman (С засечками)",
+                courier: "Courier (Моноширинный)"
             }
         }
     },

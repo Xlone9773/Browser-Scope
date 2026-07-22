@@ -373,6 +373,14 @@ export function useAppSettings() {
     localStorage.setItem("pdfExportFormat", value);
   }, []);
 
+  const [pdfExportFont, setPdfExportFont] = useState<'auto' | 'helvetica' | 'times' | 'courier'>(
+    () => (localStorage.getItem("pdfExportFont") as 'auto' | 'helvetica' | 'times' | 'courier') || 'auto',
+  );
+  const updatePdfExportFont = useCallback((value: 'auto' | 'helvetica' | 'times' | 'courier') => {
+    setPdfExportFont(value);
+    localStorage.setItem("pdfExportFont", value);
+  }, []);
+
   const toggleShowSearch = useCallback((value: boolean) => {
     setShowSearch(value);
     localStorage.setItem("showSearch", String(value));
@@ -451,6 +459,8 @@ export function useAppSettings() {
     updateImageExportScale,
     pdfExportFormat,
     updatePdfExportFormat,
+    pdfExportFont,
+    updatePdfExportFont,
     searchScope,
     updateSearchScope,
     searchMode,
