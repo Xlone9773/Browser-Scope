@@ -7,6 +7,7 @@ import {
   Pause,
   AlertCircle,
   RefreshCw,
+  Activity,
 } from "lucide-react";
 import { Translation } from "../utils/i18n/types";
 import { Modal } from "./ui/Modal";
@@ -355,6 +356,7 @@ export const AudioLatencyProbingModal: React.FC<AudioLatencyProbingModalProps> =
   return (
     <Modal
       title={t.audioLatencyProbing?.title}
+      icon={<Activity size={24} className="text-indigo-500" />}
       onClose={onClose}
       size="lg"
     >

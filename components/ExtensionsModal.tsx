@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Puzzle } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { detectExtensions, DetectedExtension } from '../services/detectors/extensions';
 import { Translation } from '../utils/i18n/types';
@@ -30,7 +31,7 @@ export const ExtensionsModal = ({ onClose, t }: { onClose: () => void; t?: Trans
   const descs = (trans.descs || {}) as Record<string, string>;
 
   return (
-    <Modal title={trans.title} onClose={onClose} noPadding>
+    <Modal title={trans.title} icon={<Puzzle size={24} className="text-indigo-500" />} onClose={onClose} noPadding>
       <div className="p-4 sm:p-6 space-y-6">
         <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/30 rounded-lg p-4 mb-4 text-amber-900 dark:text-amber-100 text-sm">
           <p>

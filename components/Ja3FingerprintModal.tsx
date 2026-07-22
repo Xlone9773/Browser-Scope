@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Fingerprint, Activity, Server, Hash, Copy, Check, Info, HelpCircle, Terminal } from 'lucide-react';
+import { Shield, Fingerprint, Activity, Server, Hash, Copy, Check, Info, HelpCircle, Terminal, KeyRound } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { USERSCRIPT_CODE } from '../utils/userscript';
@@ -155,6 +155,7 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
   return (
     <Modal
       title={t?.title}
+      icon={<KeyRound size={24} className="text-indigo-500" />}
       onClose={onClose}
       size="lg"
     >

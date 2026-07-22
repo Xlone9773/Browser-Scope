@@ -707,6 +707,24 @@ const App: React.FC = () => {
       onUnload: () => unload("ja3"),
       isLoaded: loadedModules.has("ja3"),
     },
+    {
+      id: "attributions",
+      name: t.attributionsModal?.title || "Attributions",
+      isOpen: visibility.attributions,
+      setOpen: (v: boolean) => (v ? open("attributions") : close("attributions")),
+      impact: "Low",
+      onUnload: () => unload("attributions"),
+      isLoaded: loadedModules.has("attributions"),
+    },
+    {
+      id: "shortcuts",
+      name: t.keyboardShortcutsModal?.title || "Keyboard Shortcuts",
+      isOpen: visibility.shortcuts,
+      setOpen: (v: boolean) => (v ? open("shortcuts") : close("shortcuts")),
+      impact: "Low",
+      onUnload: () => unload("shortcuts"),
+      isLoaded: loadedModules.has("shortcuts"),
+    },
   ];
 
   const initialDetectionRun = useRef(false);

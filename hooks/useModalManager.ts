@@ -1,86 +1,52 @@
-import React, { useState, useCallback, lazy } from 'react';
+import React, { useState, useCallback, useRef, useMemo, lazy } from 'react';
 
-// Lazy load components
-const CameraModal = lazy(() => import('../components/CameraModal').then(m => ({ default: m.CameraModal })));
-const AudioRecorderModal = lazy(() => import('../components/AudioRecorderModal').then(m => ({ default: m.AudioRecorderModal })));
-const WebGLExtensionsModal = lazy(() => import('../components/WebGLExtensionsModal').then(m => ({ default: m.WebGLExtensionsModal })));
-const CanvasModal = lazy(() => import('../components/CanvasModal').then(m => ({ default: m.CanvasModal })));
-const Base64Modal = lazy(() => import('../components/Base64Modal').then(m => ({ default: m.Base64Modal })));
-const AboutModal = lazy(() => import('../components/AboutModal').then(m => ({ default: m.AboutModal })));
-const AttributionsModal = lazy(() => import('../components/AttributionsModal').then(m => ({ default: m.AttributionsModal })));
-const SensorModal = lazy(() => import('../components/SensorModal').then(m => ({ default: m.SensorModal })));
-const ScoreModal = lazy(() => import('../components/ScoreModal').then(m => ({ default: m.ScoreModal })));
-const FingerprintModal = lazy(() => import('../components/FingerprintModal').then(m => ({ default: m.FingerprintModal })));
-const SettingsModal = lazy(() => import('../components/SettingsModal').then(m => ({ default: m.SettingsModal })));
-const NetworkToolsModal = lazy(() => import('../components/NetworkToolsModal').then(m => ({ default: m.NetworkToolsModal })));
-const DisplayToolsModal = lazy(() => import('../components/DisplayToolsModal').then(m => ({ default: m.DisplayToolsModal })));
-const BenchmarkModal = lazy(() => import('../components/BenchmarkModal').then(m => ({ default: m.BenchmarkModal })));
-const HardwareToolsModal = lazy(() => import('../components/HardwareToolsModal').then(m => ({ default: m.HardwareToolsModal })));
-const AiPlaygroundModal = lazy(() => import('../components/AiPlaygroundModal').then(m => ({ default: m.AiPlaygroundModal })));
-const GamepadToolModal = lazy(() => import('../components/GamepadToolModal').then(m => ({ default: m.GamepadToolModal })));
-const WebDeviceModal = lazy(() => import('../components/WebDeviceModal').then(m => ({ default: m.WebDeviceModal })));
-const VisionModal = lazy(() => import('../components/VisionModal').then(m => ({ default: m.VisionModal })));
-const SpeedTestModal = lazy(() => import('../components/SpeedTestModal').then(m => ({ default: m.SpeedTestModal })));
-const ComputeStressModal = lazy(() => import('../components/ComputeStressModal').then(m => ({ default: m.ComputeStressModal })));
-const DeveloperTab = lazy(() => import('../components/settings/DeveloperTab').then(m => ({ default: m.DeveloperTab })));
-const VideoDecodeModal = lazy(() => import('../components/VideoDecodeModal').then(m => ({ default: m.VideoDecodeModal })));
-const GraphicsDebugModal = lazy(() => import('../components/GraphicsDebugModal').then(m => ({ default: m.GraphicsDebugModal })));
-const SpeechExplorerModal = lazy(() => import('../components/SpeechExplorerModal').then(m => ({ default: m.SpeechExplorerModal })));
-const MidiModal = lazy(() => import('../components/MidiModal').then(m => ({ default: m.MidiModal })));
-const StorageBenchmarkModal = lazy(() => import('../components/StorageBenchmarkModal').then(m => ({ default: m.StorageBenchmarkModal })));
-const NetworkHeatmapModal = lazy(() => import('../components/NetworkHeatmapModal').then(m => ({ default: m.NetworkHeatmapModal })));
-const RayTracingModal = lazy(() => import('../components/RayTracingModal').then(m => ({ default: m.RayTracingModal })));
-const ExtensionsModal = lazy(() => import('../components/ExtensionsModal').then(m => ({ default: m.ExtensionsModal })));
-const GoogleTranslateModal = lazy(() => import('../components/GoogleTranslateModal').then(m => ({ default: m.GoogleTranslateModal })));
-const AudioLatencyProbingModal = lazy(() => import('../components/AudioLatencyProbingModal').then(m => ({ default: m.AudioLatencyProbingModal })));
-const CanvasPoisoningModal = lazy(() => import('../components/CanvasPoisoningModal').then(m => ({ default: m.CanvasPoisoningModal })));
-const Ja3FingerprintModal = lazy(() => import('../components/Ja3FingerprintModal').then(m => ({ default: m.Ja3FingerprintModal })));
-const KeyboardShortcutsModal = lazy(() => import('../components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })));
+type ComponentLoader = () => Promise<{ default: React.ComponentType<any> }>;
 
-const COMPONENTS = {
-  camera: CameraModal,
-  audio: AudioRecorderModal,
-  webgl: WebGLExtensionsModal,
-  canvas: CanvasModal,
-  base64: Base64Modal,
-  about: AboutModal,
-  attributions: AttributionsModal,
-  sensor: SensorModal,
-  score: ScoreModal,
-  fingerprint: FingerprintModal,
-  settings: SettingsModal,
-  networkTools: NetworkToolsModal,
-  displayTools: DisplayToolsModal,
-  benchmark: BenchmarkModal,
-  tools: HardwareToolsModal,
-  ai: AiPlaygroundModal,
-  gamepad: GamepadToolModal,
-  webDevice: WebDeviceModal,
-  vision: VisionModal,
-  speed: SpeedTestModal,
-  compute: ComputeStressModal,
-  developer: DeveloperTab,
-  video: VideoDecodeModal,
-  graphics: GraphicsDebugModal,
-  speech: SpeechExplorerModal,
-  midi: MidiModal,
-  storageBench: StorageBenchmarkModal,
-  heatmap: NetworkHeatmapModal,
-  rayTracing: RayTracingModal,
-  extensions: ExtensionsModal,
-  googleTranslate: GoogleTranslateModal,
-  audioLatency: AudioLatencyProbingModal,
-  poisoning: CanvasPoisoningModal,
-  ja3: Ja3FingerprintModal,
-  shortcuts: KeyboardShortcutsModal,
+const COMPONENT_LOADERS: Record<string, ComponentLoader> = {
+  camera: () => import('../components/CameraModal').then(m => ({ default: m.CameraModal })),
+  audio: () => import('../components/AudioRecorderModal').then(m => ({ default: m.AudioRecorderModal })),
+  webgl: () => import('../components/WebGLExtensionsModal').then(m => ({ default: m.WebGLExtensionsModal })),
+  canvas: () => import('../components/CanvasModal').then(m => ({ default: m.CanvasModal })),
+  base64: () => import('../components/Base64Modal').then(m => ({ default: m.Base64Modal })),
+  about: () => import('../components/AboutModal').then(m => ({ default: m.AboutModal })),
+  attributions: () => import('../components/AttributionsModal').then(m => ({ default: m.AttributionsModal })),
+  sensor: () => import('../components/SensorModal').then(m => ({ default: m.SensorModal })),
+  score: () => import('../components/ScoreModal').then(m => ({ default: m.ScoreModal })),
+  fingerprint: () => import('../components/FingerprintModal').then(m => ({ default: m.FingerprintModal })),
+  settings: () => import('../components/SettingsModal').then(m => ({ default: m.SettingsModal })),
+  networkTools: () => import('../components/NetworkToolsModal').then(m => ({ default: m.NetworkToolsModal })),
+  displayTools: () => import('../components/DisplayToolsModal').then(m => ({ default: m.DisplayToolsModal })),
+  benchmark: () => import('../components/BenchmarkModal').then(m => ({ default: m.BenchmarkModal })),
+  tools: () => import('../components/HardwareToolsModal').then(m => ({ default: m.HardwareToolsModal })),
+  ai: () => import('../components/AiPlaygroundModal').then(m => ({ default: m.AiPlaygroundModal })),
+  gamepad: () => import('../components/GamepadToolModal').then(m => ({ default: m.GamepadToolModal })),
+  webDevice: () => import('../components/WebDeviceModal').then(m => ({ default: m.WebDeviceModal })),
+  vision: () => import('../components/VisionModal').then(m => ({ default: m.VisionModal })),
+  speed: () => import('../components/SpeedTestModal').then(m => ({ default: m.SpeedTestModal })),
+  compute: () => import('../components/ComputeStressModal').then(m => ({ default: m.ComputeStressModal })),
+  developer: () => import('../components/settings/DeveloperTab').then(m => ({ default: m.DeveloperTab })),
+  video: () => import('../components/VideoDecodeModal').then(m => ({ default: m.VideoDecodeModal })),
+  graphics: () => import('../components/GraphicsDebugModal').then(m => ({ default: m.GraphicsDebugModal })),
+  speech: () => import('../components/SpeechExplorerModal').then(m => ({ default: m.SpeechExplorerModal })),
+  midi: () => import('../components/MidiModal').then(m => ({ default: m.MidiModal })),
+  storageBench: () => import('../components/StorageBenchmarkModal').then(m => ({ default: m.StorageBenchmarkModal })),
+  heatmap: () => import('../components/NetworkHeatmapModal').then(m => ({ default: m.NetworkHeatmapModal })),
+  rayTracing: () => import('../components/RayTracingModal').then(m => ({ default: m.RayTracingModal })),
+  extensions: () => import('../components/ExtensionsModal').then(m => ({ default: m.ExtensionsModal })),
+  googleTranslate: () => import('../components/GoogleTranslateModal').then(m => ({ default: m.GoogleTranslateModal })),
+  audioLatency: () => import('../components/AudioLatencyProbingModal').then(m => ({ default: m.AudioLatencyProbingModal })),
+  poisoning: () => import('../components/CanvasPoisoningModal').then(m => ({ default: m.CanvasPoisoningModal })),
+  ja3: () => import('../components/Ja3FingerprintModal').then(m => ({ default: m.Ja3FingerprintModal })),
+  shortcuts: () => import('../components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })),
 };
 
 export const useModalManager = () => {
   // Visibility State for all modals
   const [visibility, setVisibility] = useState<Record<string, boolean>>({});
   const [loadedModules, setLoadedModules] = useState<Set<string>>(new Set());
+  const [moduleVersions, setModuleVersions] = useState<Record<string, number>>({});
 
-  const components = COMPONENTS;
+  const lazyCacheRef = useRef<Record<string, React.LazyExoticComponent<any>>>({});
 
   const open = useCallback((id: string) => {
     setVisibility((prev) => ({ ...prev, [id]: true }));
@@ -101,6 +67,8 @@ export const useModalManager = () => {
 
   const unload = useCallback((id: string) => {
     close(id);
+    delete lazyCacheRef.current[id];
+    setModuleVersions((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
     setLoadedModules((prev) => {
       const next = new Set(prev);
       next.delete(id);
@@ -108,9 +76,21 @@ export const useModalManager = () => {
     });
   }, [close]);
 
-  React.useEffect(() => {
-    
+  const components = useMemo(() => {
+    return new Proxy({} as Record<string, React.ComponentType<any>>, {
+      get: (_target, id: string) => {
+        if (typeof id !== 'string') return undefined;
+        if (!lazyCacheRef.current[id]) {
+          const loader = COMPONENT_LOADERS[id];
+          if (!loader) return undefined;
+          lazyCacheRef.current[id] = lazy(loader);
+        }
+        return lazyCacheRef.current[id];
+      },
+    });
+  }, [moduleVersions]);
 
+  React.useEffect(() => {
     const handleCloseAll = () => {
       closeAll();
     };
@@ -137,7 +117,7 @@ export const useModalManager = () => {
     window.addEventListener("open-shortcuts", handleOpenShortcuts);
 
     return () => {
-            window.removeEventListener("close-all-modals", handleCloseAll);
+      window.removeEventListener("close-all-modals", handleCloseAll);
       window.removeEventListener("open-heatmap", handleOpenHeatmap);
       window.removeEventListener("open-network-tools", handleOpenNetworkTools);
       window.removeEventListener("open-display-tools", handleOpenDisplayTools);

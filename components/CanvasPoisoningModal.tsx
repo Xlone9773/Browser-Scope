@@ -23,6 +23,7 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
   return (
     <Modal
       title={t.title || 'Noise & Poisoning Detection'}
+      icon={<ShieldAlert size={24} className="text-indigo-500" />}
       onClose={onClose}
       size="lg"
       noPadding

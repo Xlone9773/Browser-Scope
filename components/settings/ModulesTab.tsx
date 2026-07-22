@@ -8,7 +8,7 @@ import {
     Fingerprint, Gauge, Wrench, Brain, Gamepad2, Laptop, Eye, 
     Wifi, Flame, Video, Sliders, Music, HardDrive, Globe, Sun, 
     Puzzle, Languages, ShieldAlert, KeyRound, Monitor, Volume2, 
-    Activity
+    Activity, BookOpen, Keyboard
 } from 'lucide-react';
 
 const getModuleIcon = (id: string, isSystem?: boolean) => {
@@ -27,6 +27,10 @@ const getModuleIcon = (id: string, isSystem?: boolean) => {
             return <Binary size={18} />;
         case "about":
             return <Info size={18} />;
+        case "attributions":
+            return <BookOpen size={18} />;
+        case "shortcuts":
+            return <Keyboard size={18} />;
         case "sensor":
             return <Compass size={18} />;
         case "score":
