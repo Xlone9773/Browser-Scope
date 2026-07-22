@@ -3,15 +3,15 @@ import { ErrorBoundary } from "../ui/ErrorBoundary";
 import { ModalLoading } from "../ui/ModalLoading";
 import { FloatingWindow } from "../ui/FloatingWindow";
 import { ModuleState } from "../settings/ModulesTab";
-import { Language } from "../../utils/i18n/types";
-type BrowserSafeAny = ReturnType<typeof JSON.parse>;
+import { Translation, Language } from "../../utils/i18n/types";
+import { BrowserData } from "../../types";
 
 interface ModalContainerProps {
   visibility: Record<string, boolean>;
-  Components: Record<string, React.ComponentType<BrowserSafeAny>>;
+  Components: Record<string, React.ElementType>;
   close: (id: string) => void;
-  data: BrowserSafeAny;
-  t: BrowserSafeAny;
+  data: BrowserData | null;
+  t: Translation;
   themeColor: string;
   updateThemeColor: (color: string) => void;
   animationStyle: string;

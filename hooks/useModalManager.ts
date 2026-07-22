@@ -1,52 +1,53 @@
 import React, { useState, useCallback, useRef, useMemo, lazy } from 'react';
 
-type ComponentLoader = () => Promise<{ default: React.ComponentType<any> }>;
+type ModalComponent = React.ComponentType<Record<string, unknown>>;
+type ComponentLoader = () => Promise<{ default: ModalComponent }>;
 
 const COMPONENT_LOADERS: Record<string, ComponentLoader> = {
-  camera: () => import('../components/CameraModal').then(m => ({ default: m.CameraModal })),
-  audio: () => import('../components/AudioRecorderModal').then(m => ({ default: m.AudioRecorderModal })),
-  webgl: () => import('../components/WebGLExtensionsModal').then(m => ({ default: m.WebGLExtensionsModal })),
-  canvas: () => import('../components/CanvasModal').then(m => ({ default: m.CanvasModal })),
-  base64: () => import('../components/Base64Modal').then(m => ({ default: m.Base64Modal })),
-  about: () => import('../components/AboutModal').then(m => ({ default: m.AboutModal })),
-  attributions: () => import('../components/AttributionsModal').then(m => ({ default: m.AttributionsModal })),
-  sensor: () => import('../components/SensorModal').then(m => ({ default: m.SensorModal })),
-  score: () => import('../components/ScoreModal').then(m => ({ default: m.ScoreModal })),
-  fingerprint: () => import('../components/FingerprintModal').then(m => ({ default: m.FingerprintModal })),
-  settings: () => import('../components/SettingsModal').then(m => ({ default: m.SettingsModal })),
-  networkTools: () => import('../components/NetworkToolsModal').then(m => ({ default: m.NetworkToolsModal })),
-  displayTools: () => import('../components/DisplayToolsModal').then(m => ({ default: m.DisplayToolsModal })),
-  benchmark: () => import('../components/BenchmarkModal').then(m => ({ default: m.BenchmarkModal })),
-  tools: () => import('../components/HardwareToolsModal').then(m => ({ default: m.HardwareToolsModal })),
-  ai: () => import('../components/AiPlaygroundModal').then(m => ({ default: m.AiPlaygroundModal })),
-  gamepad: () => import('../components/GamepadToolModal').then(m => ({ default: m.GamepadToolModal })),
-  webDevice: () => import('../components/WebDeviceModal').then(m => ({ default: m.WebDeviceModal })),
-  vision: () => import('../components/VisionModal').then(m => ({ default: m.VisionModal })),
-  speed: () => import('../components/SpeedTestModal').then(m => ({ default: m.SpeedTestModal })),
-  compute: () => import('../components/ComputeStressModal').then(m => ({ default: m.ComputeStressModal })),
-  developer: () => import('../components/settings/DeveloperTab').then(m => ({ default: m.DeveloperTab })),
-  video: () => import('../components/VideoDecodeModal').then(m => ({ default: m.VideoDecodeModal })),
-  graphics: () => import('../components/GraphicsDebugModal').then(m => ({ default: m.GraphicsDebugModal })),
-  speech: () => import('../components/SpeechExplorerModal').then(m => ({ default: m.SpeechExplorerModal })),
-  midi: () => import('../components/MidiModal').then(m => ({ default: m.MidiModal })),
-  storageBench: () => import('../components/StorageBenchmarkModal').then(m => ({ default: m.StorageBenchmarkModal })),
-  heatmap: () => import('../components/NetworkHeatmapModal').then(m => ({ default: m.NetworkHeatmapModal })),
-  rayTracing: () => import('../components/RayTracingModal').then(m => ({ default: m.RayTracingModal })),
-  extensions: () => import('../components/ExtensionsModal').then(m => ({ default: m.ExtensionsModal })),
-  googleTranslate: () => import('../components/GoogleTranslateModal').then(m => ({ default: m.GoogleTranslateModal })),
-  audioLatency: () => import('../components/AudioLatencyProbingModal').then(m => ({ default: m.AudioLatencyProbingModal })),
-  poisoning: () => import('../components/CanvasPoisoningModal').then(m => ({ default: m.CanvasPoisoningModal })),
-  ja3: () => import('../components/Ja3FingerprintModal').then(m => ({ default: m.Ja3FingerprintModal })),
-  shortcuts: () => import('../components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })),
+  camera: () => import('../components/CameraModal').then(m => ({ default: m.CameraModal as unknown as ModalComponent })),
+  audio: () => import('../components/AudioRecorderModal').then(m => ({ default: m.AudioRecorderModal as unknown as ModalComponent })),
+  webgl: () => import('../components/WebGLExtensionsModal').then(m => ({ default: m.WebGLExtensionsModal as unknown as ModalComponent })),
+  canvas: () => import('../components/CanvasModal').then(m => ({ default: m.CanvasModal as unknown as ModalComponent })),
+  base64: () => import('../components/Base64Modal').then(m => ({ default: m.Base64Modal as unknown as ModalComponent })),
+  about: () => import('../components/AboutModal').then(m => ({ default: m.AboutModal as unknown as ModalComponent })),
+  attributions: () => import('../components/AttributionsModal').then(m => ({ default: m.AttributionsModal as unknown as ModalComponent })),
+  sensor: () => import('../components/SensorModal').then(m => ({ default: m.SensorModal as unknown as ModalComponent })),
+  score: () => import('../components/ScoreModal').then(m => ({ default: m.ScoreModal as unknown as ModalComponent })),
+  fingerprint: () => import('../components/FingerprintModal').then(m => ({ default: m.FingerprintModal as unknown as ModalComponent })),
+  settings: () => import('../components/SettingsModal').then(m => ({ default: m.SettingsModal as unknown as ModalComponent })),
+  networkTools: () => import('../components/NetworkToolsModal').then(m => ({ default: m.NetworkToolsModal as unknown as ModalComponent })),
+  displayTools: () => import('../components/DisplayToolsModal').then(m => ({ default: m.DisplayToolsModal as unknown as ModalComponent })),
+  benchmark: () => import('../components/BenchmarkModal').then(m => ({ default: m.BenchmarkModal as unknown as ModalComponent })),
+  tools: () => import('../components/HardwareToolsModal').then(m => ({ default: m.HardwareToolsModal as unknown as ModalComponent })),
+  ai: () => import('../components/AiPlaygroundModal').then(m => ({ default: m.AiPlaygroundModal as unknown as ModalComponent })),
+  gamepad: () => import('../components/GamepadToolModal').then(m => ({ default: m.GamepadToolModal as unknown as ModalComponent })),
+  webDevice: () => import('../components/WebDeviceModal').then(m => ({ default: m.WebDeviceModal as unknown as ModalComponent })),
+  vision: () => import('../components/VisionModal').then(m => ({ default: m.VisionModal as unknown as ModalComponent })),
+  speed: () => import('../components/SpeedTestModal').then(m => ({ default: m.SpeedTestModal as unknown as ModalComponent })),
+  compute: () => import('../components/ComputeStressModal').then(m => ({ default: m.ComputeStressModal as unknown as ModalComponent })),
+  developer: () => import('../components/settings/DeveloperTab').then(m => ({ default: m.DeveloperTab as unknown as ModalComponent })),
+  video: () => import('../components/VideoDecodeModal').then(m => ({ default: m.VideoDecodeModal as unknown as ModalComponent })),
+  graphics: () => import('../components/GraphicsDebugModal').then(m => ({ default: m.GraphicsDebugModal as unknown as ModalComponent })),
+  speech: () => import('../components/SpeechExplorerModal').then(m => ({ default: m.SpeechExplorerModal as unknown as ModalComponent })),
+  midi: () => import('../components/MidiModal').then(m => ({ default: m.MidiModal as unknown as ModalComponent })),
+  storageBench: () => import('../components/StorageBenchmarkModal').then(m => ({ default: m.StorageBenchmarkModal as unknown as ModalComponent })),
+  heatmap: () => import('../components/NetworkHeatmapModal').then(m => ({ default: m.NetworkHeatmapModal as unknown as ModalComponent })),
+  rayTracing: () => import('../components/RayTracingModal').then(m => ({ default: m.RayTracingModal as unknown as ModalComponent })),
+  extensions: () => import('../components/ExtensionsModal').then(m => ({ default: m.ExtensionsModal as unknown as ModalComponent })),
+  googleTranslate: () => import('../components/GoogleTranslateModal').then(m => ({ default: m.GoogleTranslateModal as unknown as ModalComponent })),
+  audioLatency: () => import('../components/AudioLatencyProbingModal').then(m => ({ default: m.AudioLatencyProbingModal as unknown as ModalComponent })),
+  poisoning: () => import('../components/CanvasPoisoningModal').then(m => ({ default: m.CanvasPoisoningModal as unknown as ModalComponent })),
+  ja3: () => import('../components/Ja3FingerprintModal').then(m => ({ default: m.Ja3FingerprintModal as unknown as ModalComponent })),
+  shortcuts: () => import('../components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal as unknown as ModalComponent })),
 };
 
 export const useModalManager = () => {
-  // Visibility State for all modals
   const [visibility, setVisibility] = useState<Record<string, boolean>>({});
   const [loadedModules, setLoadedModules] = useState<Set<string>>(new Set());
   const [moduleVersions, setModuleVersions] = useState<Record<string, number>>({});
 
-  const lazyCacheRef = useRef<Record<string, React.LazyExoticComponent<any>>>({});
+  const lazyCacheRef = useRef<Record<string, React.ElementType>>({});
+  const unloadedModulesRef = useRef<Set<string>>(new Set());
 
   const open = useCallback((id: string) => {
     setVisibility((prev) => ({ ...prev, [id]: true }));
@@ -67,6 +68,7 @@ export const useModalManager = () => {
 
   const unload = useCallback((id: string) => {
     close(id);
+    unloadedModulesRef.current.add(id);
     delete lazyCacheRef.current[id];
     setModuleVersions((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
     setLoadedModules((prev) => {
@@ -77,13 +79,24 @@ export const useModalManager = () => {
   }, [close]);
 
   const components = useMemo(() => {
-    return new Proxy({} as Record<string, React.ComponentType<any>>, {
+    return new Proxy({} as Record<string, React.ElementType>, {
       get: (_target, id: string) => {
         if (typeof id !== 'string') return undefined;
         if (!lazyCacheRef.current[id]) {
           const loader = COMPONENT_LOADERS[id];
           if (!loader) return undefined;
-          lazyCacheRef.current[id] = lazy(loader);
+          lazyCacheRef.current[id] = lazy(() => {
+            const wasUnloaded = unloadedModulesRef.current.has(id);
+            if (wasUnloaded) {
+              unloadedModulesRef.current.delete(id);
+              return new Promise<{ default: ModalComponent }>((resolve) => {
+                setTimeout(() => {
+                  resolve(loader());
+                }, 350);
+              });
+            }
+            return loader();
+          });
         }
         return lazyCacheRef.current[id];
       },
@@ -107,10 +120,7 @@ export const useModalManager = () => {
     window.addEventListener("open-heatmap", handleOpenHeatmap);
     window.addEventListener("open-network-tools", handleOpenNetworkTools);
     window.addEventListener("open-display-tools", handleOpenDisplayTools);
-    window.addEventListener(
-      "open-storage-benchmark",
-      handleOpenStorageBenchmark,
-    );
+    window.addEventListener("open-storage-benchmark", handleOpenStorageBenchmark);
     window.addEventListener("open-ray-tracing", handleOpenRayTracing);
     window.addEventListener("open-audio-latency", handleOpenAudioLatency);
     window.addEventListener("open-attributions", handleOpenAttributions);
@@ -121,10 +131,7 @@ export const useModalManager = () => {
       window.removeEventListener("open-heatmap", handleOpenHeatmap);
       window.removeEventListener("open-network-tools", handleOpenNetworkTools);
       window.removeEventListener("open-display-tools", handleOpenDisplayTools);
-      window.removeEventListener(
-        "open-storage-benchmark",
-        handleOpenStorageBenchmark,
-      );
+      window.removeEventListener("open-storage-benchmark", handleOpenStorageBenchmark);
       window.removeEventListener("open-ray-tracing", handleOpenRayTracing);
       window.removeEventListener("open-audio-latency", handleOpenAudioLatency);
       window.removeEventListener("open-attributions", handleOpenAttributions);
