@@ -166,35 +166,43 @@ const App: React.FC = () => {
       icon: React.ReactNode;
     }[] = [{ id: "all", label: t.groups?.all || "All", icon: null }];
 
-    if (!hiddenCards.includes("browser")) {
+    const hasVisibleMatchingCard = (cards: string[]) => {
+      return cards.some((cardId) => {
+        if (hiddenCards.includes(cardId)) return false;
+        if (matchedCardIds !== null && !matchedCardIds.includes(cardId)) return false;
+        return true;
+      });
+    };
+
+    if (hasVisibleMatchingCard(["browser"])) {
       tabs.push({ id: "browser", label: t.groups?.browser || "Browser", icon: <Monitor size={16} /> });
     }
-    if (!hiddenCards.includes("environment")) {
+    if (hasVisibleMatchingCard(["environment"])) {
       tabs.push({ id: "environment", label: t.groups?.environment || "Environment", icon: <ShieldAlert size={16} /> });
     }
-    if (!(hiddenCards.includes("system") && hiddenCards.includes("hardware") && hiddenCards.includes("display"))) {
+    if (hasVisibleMatchingCard(["system", "hardware", "display"])) {
       tabs.push({ id: "system", label: t.groups?.system || "System", icon: <Smartphone size={16} /> });
     }
-    if (!(hiddenCards.includes("network") && hiddenCards.includes("security") && hiddenCards.includes("fingerprint"))) {
+    if (hasVisibleMatchingCard(["network", "security", "fingerprint"])) {
       tabs.push({ id: "network", label: t.groups?.network || "Network", icon: <ShieldAlert size={16} /> });
     }
     if (
-      !(
-        hiddenCards.includes("ai") &&
-        hiddenCards.includes("location") &&
-        hiddenCards.includes("storage") &&
-        hiddenCards.includes("permissions") &&
-        hiddenCards.includes("media_devices") &&
-        hiddenCards.includes("media_capabilities") &&
-        hiddenCards.includes("user_agent") &&
-        hiddenCards.includes("pwa") &&
-        hiddenCards.includes("features")
-      )
+      hasVisibleMatchingCard([
+        "ai",
+        "location",
+        "storage",
+        "permissions",
+        "media_devices",
+        "media_capabilities",
+        "user_agent",
+        "pwa",
+        "features",
+      ])
     ) {
       tabs.push({ id: "advanced", label: t.groups?.advanced || "Advanced", icon: <Cpu size={16} /> });
     }
     return tabs;
-  }, [t, hiddenCards]);
+  }, [t, hiddenCards, matchedCardIds]);
 
   useEffect(() => {
     if (activeTab !== "all" && !availableTabs.some((tab) => tab.id === activeTab)) {
