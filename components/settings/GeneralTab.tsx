@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 import { Select } from '../ui/Select';
 import { Translation } from '../../utils/i18n/types';
 import { USERSCRIPT_CODE } from '../../utils/userscript';
+import { FONTS_LIST } from '../../utils/fonts';
 
 interface GeneralTabProps {
     t: Translation['settings']['general'];
@@ -24,8 +25,8 @@ interface GeneralTabProps {
     updateImageExportScale?: (value: number) => void;
     pdfExportFormat?: 'a4' | 'letter' | 'legal';
     updatePdfExportFormat?: (value: 'a4' | 'letter' | 'legal') => void;
-    pdfExportFont?: 'auto' | 'helvetica' | 'times' | 'courier';
-    updatePdfExportFont?: (value: 'auto' | 'helvetica' | 'times' | 'courier') => void;
+    pdfExportFont?: string;
+    updatePdfExportFont?: (value: string) => void;
 }
 
 // Custom Premium Restore Button Component
@@ -637,12 +638,16 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         </label>
                         <Select 
                             value={pdfExportFont || 'auto'}
-                            onChange={(value: unknown) => updatePdfExportFont ? updatePdfExportFont(value as 'auto' | 'helvetica' | 'times' | 'courier') : null}
+                            onChange={(value: unknown) => updatePdfExportFont ? updatePdfExportFont(value as string) : null}
                             options={[
                                 { id: 'auto', label: t.appExportSettings?.fonts?.auto || 'Auto / Language Default' },
                                 { id: 'helvetica', label: t.appExportSettings?.fonts?.helvetica || 'Helvetica (Sans-Serif)' },
                                 { id: 'times', label: t.appExportSettings?.fonts?.times || 'Times New Roman (Serif)' },
-                                { id: 'courier', label: t.appExportSettings?.fonts?.courier || 'Courier (Monospace)' }
+                                { id: 'courier', label: t.appExportSettings?.fonts?.courier || 'Courier (Monospace)' },
+                                ...FONTS_LIST.map(font => ({
+                                    id: font.key,
+                                    label: `${font.name} (${font.languages.map(l => l.toUpperCase()).join(', ')})`
+                                }))
                             ]}
                         />
                     </div>

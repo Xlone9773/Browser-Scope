@@ -373,10 +373,10 @@ export function useAppSettings() {
     localStorage.setItem("pdfExportFormat", value);
   }, []);
 
-  const [pdfExportFont, setPdfExportFont] = useState<'auto' | 'helvetica' | 'times' | 'courier'>(
-    () => (localStorage.getItem("pdfExportFont") as 'auto' | 'helvetica' | 'times' | 'courier') || 'auto',
+  const [pdfExportFont, setPdfExportFont] = useState<string>(
+    () => localStorage.getItem("pdfExportFont") || 'auto',
   );
-  const updatePdfExportFont = useCallback((value: 'auto' | 'helvetica' | 'times' | 'courier') => {
+  const updatePdfExportFont = useCallback((value: string) => {
     setPdfExportFont(value);
     localStorage.setItem("pdfExportFont", value);
   }, []);

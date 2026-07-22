@@ -63,8 +63,8 @@ interface ModalContainerProps {
   updateImageExportScale: (value: number) => void;
   pdfExportFormat: 'a4' | 'letter' | 'legal';
   updatePdfExportFormat: (value: 'a4' | 'letter' | 'legal') => void;
-  pdfExportFont: 'auto' | 'helvetica' | 'times' | 'courier';
-  updatePdfExportFont: (value: 'auto' | 'helvetica' | 'times' | 'courier') => void;
+  pdfExportFont: string;
+  updatePdfExportFont: (value: string) => void;
   changeLang?: (lang: Language) => void;
   bodyFont: string;
   updateBodyFont: (font: string) => void;

@@ -389,16 +389,23 @@ async function fetchFontWithFallbacks(lang: string, fontKey?: string): Promise<A
     const language = (lang || 'en') as Language;
 
     // Resolve font configuration from FONTS_LIST based on specified fontKey or language fallback
-    const fontItem = fontKey && fontKey !== 'auto'
-        ? (FONTS_LIST.find((f: FontItem) => f.key === fontKey && Boolean(f.mirrors?.length)) ||
-           FONTS_LIST.find((f: FontItem) => f.languages.includes(language) && Boolean(f.mirrors?.length)))
-        : FONTS_LIST.find((f: FontItem) => f.languages.includes(language) && Boolean(f.mirrors?.length));
+    let fontItem = fontKey && fontKey !== 'auto'
+        ? FONTS_LIST.find((f: FontItem) => f.key === fontKey && Boolean(f.mirrors?.length))
+        : null;
+
+    if (!fontItem) {
+        fontItem = FONTS_LIST.find((f: FontItem) => f.languages.includes(language) && Boolean(f.mirrors?.length));
+    }
+
+    if (!fontItem) {
+        fontItem = FONTS_LIST.find((f: FontItem) => Boolean(f.mirrors?.length));
+    }
 
     const itemKey = fontItem ? fontItem.key : null;
     const urls = fontItem && fontItem.mirrors ? fontItem.mirrors : null;
 
     if (!urls || urls.length === 0) {
-        throw new Error(`No font mirrors available for language: ${lang}`);
+        throw new Error(`No font mirrors available for font: ${fontKey} or language: ${lang}`);
     }
 
     const cacheKey = itemKey ? `https://local-fonts.browserscope/${itemKey}.ttf` : null;
@@ -520,11 +527,18 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
         const contentWidth = pageWidth - (marginX * 2);
 
         let currentY = 20;
-        let activeFontName = font !== "auto" ? font : "helvetica";
+        let activeFontName = "helvetica";
+        const isCoreFont = font === "helvetica" || font === "times" || font === "courier";
 
-        // Load custom Unicode fonts to support CJK/Cyrillic or custom font choices
+        if (isCoreFont) {
+            activeFontName = font;
+        }
+
+        // Check if we need to load a custom TTF font (either for custom font selection or for CJK/Cyrillic auto support)
         const hasFontForLang = FONTS_LIST.some((f: FontItem) => f.languages.includes(lang as Language) && Boolean(f.mirrors?.length));
-        if (font !== "auto" || (lang !== "en" && hasFontForLang)) {
+        const needsCustomFont = (!isCoreFont && font !== "auto") || (font === "auto" && lang !== "en" && hasFontForLang);
+
+        if (needsCustomFont) {
             try {
                 const buf = await fetchFontWithFallbacks(lang, font);
                 const b64 = arrayBufferToBase64(buf);
@@ -533,7 +547,8 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
                 doc.addFont("CustomFont.ttf", "CustomFont", "bold");
                 activeFontName = "CustomFont";
             } catch (e) {
-                console.error("[PDF Worker] Failed to load custom font, falling back to selected font:", e);
+                console.error("[PDF Worker] Failed to load custom font, falling back to core font:", e);
+                activeFontName = isCoreFont ? font : "helvetica";
             }
         }
 
