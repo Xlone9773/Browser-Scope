@@ -14,48 +14,44 @@ import { Language, Translation } from "../../utils/i18n/types";
 import { PermissionKey, PermissionStatusType } from "../../hooks/useAppPermissions";
 
 // Helper for resilient lazy loading with retry
-const ModuleLoadErrorFallback: React.FC = () => {
-  return (
-    <div className="flex flex-col items-center justify-center p-6 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 rounded-xl text-center">
-      <p className="text-sm font-medium text-red-600 dark:text-red-400">
-        Failed to load this module.
-      </p>
-      <button 
-        onClick={() => window.location.reload()} 
-        className="mt-2 text-xs font-semibold px-3 py-1 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 rounded-lg transition-colors"
-      >
-        Reload Page
-      </button>
-    </div>
-  );
-};
-
-function lazyWithRetry<T extends React.ComponentType<object>>(
+function lazyWithRetry<T extends React.ComponentType<React.ComponentProps<T>>>(
   importFn: () => Promise<{ default: T }>,
   retries = 3,
   delay = 500
 ): React.LazyExoticComponent<T> {
-  return lazy(() =>
-    importFn().catch((_error: unknown) => {
-      return new Promise<{ default: T }>((resolve) => {
-        let attempts = 0;
-        const attemptLoad = () => {
-          importFn()
-            .then(resolve)
-            .catch((err: unknown) => {
-              attempts++;
-              if (attempts >= retries) {
-                console.error("Critical: Failed to load module dynamically after multiple retries. Falling back to error fallback component.", err);
-                resolve({ default: ModuleLoadErrorFallback as unknown as T });
-              } else {
-                setTimeout(attemptLoad, delay);
-              }
-            });
-        };
-        setTimeout(attemptLoad, delay);
-      });
-    })
-  );
+  return lazy(async (): Promise<{ default: T }> => {
+    try {
+      return await importFn();
+    } catch (err: unknown) {
+      for (let attempts = 0; attempts < retries; attempts++) {
+        await new Promise((r) => setTimeout(r, delay));
+        try {
+          return await importFn();
+        } catch {
+          if (attempts === retries - 1) {
+            console.error(
+              "Critical: Failed to load module dynamically after multiple retries.",
+              err
+            );
+          }
+        }
+      }
+      const FallbackComponent = () => (
+        <div className="flex flex-col items-center justify-center p-6 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 rounded-xl text-center">
+          <p className="text-sm font-medium text-red-600 dark:text-red-400">
+            Failed to load this module.
+          </p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-2 text-xs font-semibold px-3 py-1 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 rounded-lg transition-colors"
+          >
+            Reload Page
+          </button>
+        </div>
+      );
+      return { default: FallbackComponent as unknown as T };
+    }
+  });
 }
 
 // Lazy loaded cards
