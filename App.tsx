@@ -59,6 +59,8 @@ const App: React.FC = () => {
     toggleFastAnimations,
     collapseHeader,
     toggleCollapseHeader,
+    fontFix,
+    toggleFontFix,
     enableUdp,
     toggleEnableUdp,
     showTabs,
@@ -868,6 +870,8 @@ const App: React.FC = () => {
         updateModalTitleFont={updateModalTitleFont}
         codeFont={codeFont}
         updateCodeFont={updateCodeFont}
+        fontFix={fontFix}
+        toggleFontFix={toggleFontFix}
       />
 
       <div id="dashboard-container" className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">

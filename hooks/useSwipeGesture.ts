@@ -37,15 +37,26 @@ export function useSwipeGesture(options: SwipeGestureOptions): SwipeHandlers {
 
   const checkExcludedTarget = (element: HTMLElement | null): boolean => {
     let current = element;
-    while (current && current !== document.body) {
+    while (current && current !== document.body && current !== document.documentElement) {
       const tagName = current.tagName.toLowerCase();
+      const id = current.id ? current.id.toLowerCase() : "";
+      const className = typeof current.className === "string" ? current.className.toLowerCase() : "";
+      const role = current.getAttribute ? current.getAttribute("role") : null;
+      const ariaModal = current.getAttribute ? current.getAttribute("aria-modal") : null;
+
       if (
+        id.includes("eruda") ||
+        className.includes("eruda") ||
+        role === "dialog" ||
+        ariaModal === "true" ||
+        role === "button" ||
         tagName === "input" ||
         tagName === "textarea" ||
         tagName === "select" ||
         tagName === "canvas" ||
         tagName === "video" ||
-        tagName === "button"
+        tagName === "button" ||
+        tagName === "a"
       ) {
         return true;
       }

@@ -66,6 +66,8 @@ interface SettingsModalProps {
   updateModalTitleFont: (font: string) => void;
   codeFont: string;
   updateCodeFont: (font: string) => void;
+  fontFix?: boolean;
+  toggleFontFix?: (value: boolean) => void;
   isDevToolsFloating: boolean;
   setDevToolsFloating: (val: boolean) => void;
   moduleStates?: ModuleState[];
@@ -140,6 +142,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     updateModalTitleFont,
     codeFont,
     updateCodeFont,
+    fontFix,
+    toggleFontFix,
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>(() => {
     try {
@@ -326,6 +330,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               codeFont={codeFont}
                               updateCodeFont={updateCodeFont}
                               lang={lang}
+                              fontFix={fontFix}
+                              toggleFontFix={toggleFontFix}
                           />) : null}
 
                           {activeTab === 'general' ? (<GeneralTab 

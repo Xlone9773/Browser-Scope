@@ -46,6 +46,10 @@ export const settings = {
                 geist: "Geist"
             }
         },
+        fontFix: {
+            title: "字體渲染修復",
+            desc: "透過強制 GPU 硬體加速抗鋸齒與首屏靜默微調重繪，修復部分瀏覽器中出現的字體模糊問題。"
+        },
         showTabs: {
             title: "顯示導覽列",
             desc: "在內容上方顯示用於篩選分類的選項卡，若所有選項卡都為空將自動隱藏。"

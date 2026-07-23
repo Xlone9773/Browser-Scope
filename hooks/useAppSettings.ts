@@ -50,6 +50,9 @@ export function useAppSettings() {
   const [collapseHeader, setCollapseHeader] = useState<boolean>(
     () => localStorage.getItem("collapseHeader") === "true",
   );
+  const [fontFix, setFontFix] = useState<boolean>(
+    () => localStorage.getItem("fontFix") === "true",
+  );
   const [enableUdp, setEnableUdp] = useState<boolean>(
     () => localStorage.getItem("enableUdp") === "true",
   );
@@ -347,6 +350,11 @@ export function useAppSettings() {
     localStorage.setItem("collapseHeader", String(value));
   }, []);
 
+  const toggleFontFix = useCallback((value: boolean) => {
+    setFontFix(value);
+    localStorage.setItem("fontFix", String(value));
+  }, []);
+
   const toggleEnableUdp = useCallback((value: boolean) => {
     setEnableUdp(value);
     localStorage.setItem("enableUdp", String(value));
@@ -423,6 +431,19 @@ export function useAppSettings() {
     loadAndApplyFont(codeFont, '--font-mono-custom');
   }, [codeFont]);
 
+  useEffect(() => {
+    if (fontFix) {
+      document.body.classList.add("font-rendering-fix");
+      const timer = setTimeout(() => {
+        document.documentElement.style.textRendering = "optimizeLegibility";
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      document.body.classList.remove("font-rendering-fix");
+      document.documentElement.style.textRendering = "";
+    }
+  }, [fontFix]);
+
   return {
     lang,
     changeLang,
@@ -449,6 +470,8 @@ export function useAppSettings() {
     toggleFastAnimations,
     collapseHeader,
     toggleCollapseHeader,
+    fontFix,
+    toggleFontFix,
     enableUdp,
     toggleEnableUdp,
     showTabs,

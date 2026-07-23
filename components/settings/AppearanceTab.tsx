@@ -71,6 +71,8 @@ interface AppearanceTabProps {
     codeFont: string;
     updateCodeFont: (font: string) => void;
     lang: string;
+    fontFix?: boolean;
+    toggleFontFix?: (value: boolean) => void;
 }
 
 export const AppearanceTab: React.FC<AppearanceTabProps> = ({ 
@@ -110,7 +112,9 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     updateModalTitleFont,
     codeFont,
     updateCodeFont,
-    lang
+    lang,
+    fontFix = false,
+    toggleFontFix
 }) => {
     const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
 
@@ -407,6 +411,28 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                             color={themeColor}
                         />
                     </div>
+                </div>
+            </div>
+
+            {/* Font Sharpening & Repair */}
+            <div 
+                className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
+                onClick={() => {
+                    if (toggleFontFix) {
+                        toggleFontFix(!fontFix);
+                    }
+                }}
+            >
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.fontFix?.title || "Font Sharpening & Repair"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {t.fontFix?.desc || "Fix blurry text rendering by enabling GPU hardware acceleration and triggering a silent redraw pulse on startup."}
+                    </p>
+                </div>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Switch checked={fontFix} onChange={(val) => { if (toggleFontFix) { toggleFontFix(val); } }} />
                 </div>
             </div>
             {/* Disable Blur */}

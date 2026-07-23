@@ -46,6 +46,10 @@ export const settings = {
                 geist: "Geist"
             }
         },
+        fontFix: {
+            title: "字体渲染修复",
+            desc: "通过强制 GPU 硬件加速抗锯齿与首屏静默微调重绘，修复部分浏览器中出现的字体发虚问题。"
+        },
         showTabs: {
             title: "显示导航栏",
             desc: "在内容上方显示用于筛选分类的选项卡，若所有选项卡都为空将自动隐藏。"

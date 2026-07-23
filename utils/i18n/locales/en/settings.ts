@@ -46,6 +46,10 @@ export const settings = {
                 geist: "Geist"
             }
         },
+        fontFix: {
+            title: "Font Sharpening & Repair",
+            desc: "Fix blurry text rendering by enabling GPU hardware acceleration and triggering a silent redraw pulse on startup."
+        },
         showTabs: {
             title: "Display Navigation Tabs",
             desc: "Show navigation tabs above the content to filter items. Automatically hides if empty."
