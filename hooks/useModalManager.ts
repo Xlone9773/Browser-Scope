@@ -116,13 +116,7 @@ export const useModalManager = (options?: ModalManagerOptions) => {
         if (!loader) return undefined;
 
         if (options?.alwaysShowLoading) {
-          return lazy(() => {
-            return new Promise<{ default: ModalComponent }>((resolve) => {
-              setTimeout(() => {
-                resolve(loader());
-              }, 350);
-            });
-          });
+          return lazy(() => loader());
         }
 
         if (!lazyCacheRef.current[id]) {
@@ -130,11 +124,6 @@ export const useModalManager = (options?: ModalManagerOptions) => {
             const wasUnloaded = unloadedModulesRef.current.has(id);
             if (wasUnloaded) {
               unloadedModulesRef.current.delete(id);
-              return new Promise<{ default: ModalComponent }>((resolve) => {
-                setTimeout(() => {
-                  resolve(loader());
-                }, 350);
-              });
             }
             return loader();
           });
