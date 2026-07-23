@@ -76,6 +76,24 @@ let cachedVideoResults: VideoCodecRow[] | null = memCache?.video || null;
 let cachedAudioResults: AudioCodecRow[] | null = memCache?.audio || null;
 let cachedDrmResults: DrmSystemItem[] | null = memCache?.drm || null;
 
+const withTimeout = <T,>(promise: Promise<T>, ms: number, defaultValue: T): Promise<T> => {
+    return new Promise<T>((resolve) => {
+        const timer = setTimeout(() => {
+            resolve(defaultValue);
+        }, ms);
+        promise.then(
+            (res) => {
+                clearTimeout(timer);
+                resolve(res);
+            },
+            () => {
+                clearTimeout(timer);
+                resolve(defaultValue);
+            }
+        );
+    });
+};
+
 interface VideoDecodeModalProps {
     onClose: () => void;
     t: Translation['hardwareToolsModal'];
@@ -94,144 +112,159 @@ export const VideoDecodeModal: React.FC<VideoDecodeModalProps> = ({ onClose, t, 
     const runTests = async () => {
         setIsTesting(true);
         setProgress(0);
-        const tempVideoResults: VideoCodecRow[] = [];
-        const tempAudioResults: AudioCodecRow[] = [];
-        
-        let done = 0;
-        const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length) + 3; // 3 DRM systems
-
-        // --- Run DRM Tests ---
-        const drms = [
-            { id: 'com.widevine.alpha', name: 'Widevine' },
-            { id: 'com.apple.fps.1_0', name: 'FairPlay' },
-            { id: 'com.apple.fps.2_0', name: 'FairPlay v2' },
-            { id: 'com.apple.fps.3_0', name: 'FairPlay v3' },
-            { id: 'com.microsoft.playready', name: 'PlayReady' }
-        ];
-        
-        const tempDrmResults = await Promise.all(drms.map(async (sys): Promise<DrmSystemItem> => {
-            try {
-                if (navigator.requestMediaKeySystemAccess) {
-                    const config = [{
-                        initDataTypes: ['cenc'],
-                        videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }],
-                        audioCapabilities: [{ contentType: 'audio/mp4; codecs="mp4a.40.2"' }]
-                    }];
-                    
-                    await navigator.requestMediaKeySystemAccess(sys.id, config);
-                    return { ...sys, supported: true };
-                }
-                return { ...sys, supported: false, error: true };
-            } catch {
-                return { ...sys, supported: false };
-            }
-        }));
-        setDrmResults(tempDrmResults);
-        done += 3;
-
-        // --- Run Video Tests ---
-        for (const codec of videoCodecs) {
-            const row: VideoCodecRow = { 
-                codec: codec.name, 
-                profile: codec.profile, 
-                bitDepth: codec.bitDepth,
-                tag: codec.tag, 
-                tests: []
-            };
-
-            const resPromises = videoResolutions.map(async (res): Promise<VideoTestResultItem> => {
-                try {
-                    if (navigator.mediaCapabilities) {
-                        const config: MediaDecodingConfiguration = {
-                            type: 'file', 
-                            video: {
-                                contentType: codec.type,
-                                width: res.width,
-                                height: res.height,
-                                bitrate: res.bitrate,
-                                framerate: res.fps,
-                            }
-                        };
-
-                        // Add HDR config if present
-                        if ((codec as { hdrConfig?: Record<string, unknown> }).hdrConfig && config.video) {
-                            Object.assign(config.video, (codec as { hdrConfig?: Record<string, unknown> }).hdrConfig);
-                        }
-                        const info = await navigator.mediaCapabilities.decodingInfo(config);
-                        return {
-                            ...res,
-                            supported: info.supported,
-                            smooth: info.smooth,
-                            efficient: info.powerEfficient
-                        };
-                    } else {
-                        return { ...res, error: 'API N/A' };
-                    }
-                } catch {
-                    return { ...res, supported: false };
-                }
-            });
-
-            const resResults = await Promise.all(resPromises);
-            row.tests = resResults;
-            tempVideoResults.push(row);
+        try {
+            const tempVideoResults: VideoCodecRow[] = [];
+            const tempAudioResults: AudioCodecRow[] = [];
             
-            done += videoResolutions.length;
-            setProgress(Math.round((done / total) * 100));
-            setVideoResults([...tempVideoResults]);
-        }
+            let done = 0;
+            const drms = [
+                { id: 'com.widevine.alpha', name: 'Widevine' },
+                { id: 'com.apple.fps.1_0', name: 'FairPlay' },
+                { id: 'com.apple.fps.2_0', name: 'FairPlay v2' },
+                { id: 'com.apple.fps.3_0', name: 'FairPlay v3' },
+                { id: 'com.microsoft.playready', name: 'PlayReady' }
+            ];
 
-        // --- Run Audio Tests ---
-        for (const codec of audioCodecs) {
-            const row: AudioCodecRow = {
-                codec: codec.name,
-                label: codec.label,
-                tag: codec.tag,
-                tests: []
-            };
+            const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length) + drms.length;
 
-            const audioPromises = audioConfigs.map(async (conf): Promise<AudioTestResultItem> => {
-                try {
-                    if (navigator.mediaCapabilities) {
-                        const config: MediaDecodingConfiguration = {
-                            type: 'file',
-                            audio: {
-                                contentType: codec.type,
-                                channels: conf.channels,
-                                bitrate: conf.bitrate,
-                                samplerate: conf.samplerate
-                            }
-                        };
-                        
-                        const info = await navigator.mediaCapabilities.decodingInfo(config);
-                        return {
-                            ...conf,
-                            supported: info.supported,
-                            smooth: info.smooth,
-                            efficient: info.powerEfficient
-                        };
-                    } else {
-                        return { ...conf, error: 'API N/A' };
+            // --- Run DRM Tests ---
+            const tempDrmResults = await Promise.all(drms.map(async (sys): Promise<DrmSystemItem> => {
+                const runCheck = async (): Promise<DrmSystemItem> => {
+                    try {
+                        if (typeof navigator !== 'undefined' && navigator.requestMediaKeySystemAccess) {
+                            const config = [{
+                                initDataTypes: ['cenc'],
+                                videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }],
+                                audioCapabilities: [{ contentType: 'audio/mp4; codecs="mp4a.40.2"' }]
+                            }];
+                            
+                            await navigator.requestMediaKeySystemAccess(sys.id, config);
+                            return { ...sys, supported: true };
+                        }
+                        return { ...sys, supported: false, error: true };
+                    } catch {
+                        return { ...sys, supported: false };
                     }
-                } catch {
-                    return { ...conf, supported: false };
-                }
-            });
-
-            const audResults = await Promise.all(audioPromises);
-            row.tests = audResults;
-            tempAudioResults.push(row);
-
-            done += audioConfigs.length;
+                };
+                return withTimeout(runCheck(), 1000, { ...sys, supported: false });
+            }));
+            setDrmResults(tempDrmResults);
+            done += drms.length;
             setProgress(Math.round((done / total) * 100));
-            setAudioResults([...tempAudioResults]);
-        }
 
-        cachedVideoResults = tempVideoResults;
-        cachedAudioResults = tempAudioResults;
-        cachedDrmResults = tempDrmResults;
-        saveCache(tempVideoResults, tempAudioResults, tempDrmResults);
-        setIsTesting(false);
+            // --- Run Video Tests ---
+            for (const codec of videoCodecs) {
+                const row: VideoCodecRow = { 
+                    codec: codec.name, 
+                    profile: codec.profile, 
+                    bitDepth: codec.bitDepth,
+                    tag: codec.tag, 
+                    tests: []
+                };
+
+                const resPromises = videoResolutions.map(async (res): Promise<VideoTestResultItem> => {
+                    const runCheck = async (): Promise<VideoTestResultItem> => {
+                        try {
+                            if (typeof navigator !== 'undefined' && navigator.mediaCapabilities) {
+                                const config: MediaDecodingConfiguration = {
+                                    type: 'file', 
+                                    video: {
+                                        contentType: codec.type,
+                                        width: res.width,
+                                        height: res.height,
+                                        bitrate: res.bitrate,
+                                        framerate: res.fps,
+                                    }
+                                };
+
+                                // Add HDR config if present
+                                if ((codec as { hdrConfig?: Record<string, unknown> }).hdrConfig && config.video) {
+                                    Object.assign(config.video, (codec as { hdrConfig?: Record<string, unknown> }).hdrConfig);
+                                }
+                                const info = await navigator.mediaCapabilities.decodingInfo(config);
+                                return {
+                                    ...res,
+                                    supported: info.supported,
+                                    smooth: info.smooth,
+                                    efficient: info.powerEfficient
+                                };
+                            } else {
+                                return { ...res, error: 'API N/A' };
+                            }
+                        } catch {
+                            return { ...res, supported: false };
+                        }
+                    };
+                    return withTimeout(runCheck(), 1500, { ...res, supported: false });
+                });
+
+                const resResults = await Promise.all(resPromises);
+                row.tests = resResults;
+                tempVideoResults.push(row);
+                
+                done += videoResolutions.length;
+                setProgress(Math.round((done / total) * 100));
+                setVideoResults([...tempVideoResults]);
+            }
+
+            // --- Run Audio Tests ---
+            for (const codec of audioCodecs) {
+                const row: AudioCodecRow = {
+                    codec: codec.name,
+                    label: codec.label,
+                    tag: codec.tag,
+                    tests: []
+                };
+
+                const audioPromises = audioConfigs.map(async (conf): Promise<AudioTestResultItem> => {
+                    const runCheck = async (): Promise<AudioTestResultItem> => {
+                        try {
+                            if (typeof navigator !== 'undefined' && navigator.mediaCapabilities) {
+                                const config: MediaDecodingConfiguration = {
+                                    type: 'file',
+                                    audio: {
+                                        contentType: codec.type,
+                                        channels: conf.channels,
+                                        bitrate: conf.bitrate,
+                                        samplerate: conf.samplerate
+                                    }
+                                };
+                                
+                                const info = await navigator.mediaCapabilities.decodingInfo(config);
+                                return {
+                                    ...conf,
+                                    supported: info.supported,
+                                    smooth: info.smooth,
+                                    efficient: info.powerEfficient
+                                };
+                            } else {
+                                return { ...conf, error: 'API N/A' };
+                            }
+                        } catch {
+                            return { ...conf, supported: false };
+                        }
+                    };
+                    return withTimeout(runCheck(), 1500, { ...conf, supported: false });
+                });
+
+                const audResults = await Promise.all(audioPromises);
+                row.tests = audResults;
+                tempAudioResults.push(row);
+
+                done += audioConfigs.length;
+                setProgress(Math.round((done / total) * 100));
+                setAudioResults([...tempAudioResults]);
+            }
+
+            cachedVideoResults = tempVideoResults;
+            cachedAudioResults = tempAudioResults;
+            cachedDrmResults = tempDrmResults;
+            saveCache(tempVideoResults, tempAudioResults, tempDrmResults);
+        } catch (error) {
+            console.error('Error running decoding capability tests:', error);
+        } finally {
+            setIsTesting(false);
+        }
     };
 
     useEffect(() => {
