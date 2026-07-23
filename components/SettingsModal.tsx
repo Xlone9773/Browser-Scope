@@ -173,40 +173,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     return 'appearance';
   });
 
-  const [isTabLoading, setIsTabLoading] = useState<boolean>(false);
-  const tabTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-
-  React.useEffect(() => {
-    return () => {
-      if (tabTimeoutRef.current !== null) {
-        clearTimeout(tabTimeoutRef.current);
-      }
-    };
-  }, []);
-
   const handleTabChange = (tab: 'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver') => {
       if (tab === activeTab) {
           return;
       }
-
-      if (lazyTabChange) {
-          setIsTabLoading(true);
-          if (tabTimeoutRef.current !== null) {
-              clearTimeout(tabTimeoutRef.current);
-          }
-          tabTimeoutRef.current = setTimeout(() => {
-              setActiveTab(tab);
-              setIsTabLoading(false);
-              try {
-                 sessionStorage.setItem('browserscope_settings_last_tab', tab);
-              } catch {}
-          }, 350);
-      } else {
-          setActiveTab(tab);
-          try {
-             sessionStorage.setItem('browserscope_settings_last_tab', tab);
-          } catch {}
-      }
+      setActiveTab(tab);
+      try {
+         sessionStorage.setItem('browserscope_settings_last_tab', tab);
+      } catch {}
   };
 
   // Access structured settings
@@ -335,23 +309,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                       {/* Content Area */}
                       <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
-                          {isTabLoading ? (
-                              <div 
-                                  className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200"
-                                  onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                                      e.stopPropagation();
-                                      e.preventDefault();
-                                  }}
-                                  onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
-                                      e.stopPropagation();
-                                      e.preventDefault();
-                                  }}
-                              >
-                                  <div className="flex flex-col items-center gap-3">
-                                      <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
-                                  </div>
-                              </div>
-                          ) : null}
                           <Suspense fallback={<div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
                           
                            {activeTab === 'appearance' ? (<AppearanceTab 

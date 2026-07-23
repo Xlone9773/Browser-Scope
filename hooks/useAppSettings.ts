@@ -375,11 +375,19 @@ export function useAppSettings() {
   const toggleDisableCache = useCallback((value: boolean) => {
     setDisableCache(value);
     localStorage.setItem("disableCache", String(value));
+    if (value) {
+      setDisableLazyLoading(false);
+      localStorage.setItem("disableLazyLoading", "false");
+    }
   }, []);
 
   const toggleDisableLazyLoading = useCallback((value: boolean) => {
     setDisableLazyLoading(value);
     localStorage.setItem("disableLazyLoading", String(value));
+    if (value) {
+      setDisableCache(false);
+      localStorage.setItem("disableCache", "false");
+    }
   }, []);
 
   const toggleAlwaysShowLoading = useCallback((value: boolean) => {
