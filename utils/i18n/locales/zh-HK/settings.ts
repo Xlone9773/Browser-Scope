@@ -534,7 +534,14 @@ export const settings = {
         actions: {
             unload: "卸載",
             unloadAll: "卸載所有活動模組"
-        }
+        },
+        settingsTitle: "模組設定",
+        disableCache: "禁用緩存",
+        disableCacheDesc: "用完即銷毀，每次打開都走一遍載入流程，絕不緩存到本地，適合資源緊張的情況。",
+        disableLazyLoading: "禁用延遲載入",
+        disableLazyLoadingDesc: "預設緩存全部模組到本地，並在啟動時提前載入所有資源。",
+        alwaysShowLoading: "始終顯示載入提示",
+        alwaysShowLoadingDesc: "不論模組是否緩存，打開時始終顯示載入指示器，以提升視覺一致性。"
     },
     versions: {
         title: "軟件版本",

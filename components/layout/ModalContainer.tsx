@@ -74,6 +74,12 @@ interface ModalContainerProps {
   updateCodeFont: (font: string) => void;
   fontFix?: boolean;
   toggleFontFix?: (value: boolean) => void;
+  disableCache: boolean;
+  toggleDisableCache: (val: boolean) => void;
+  disableLazyLoading: boolean;
+  toggleDisableLazyLoading: (val: boolean) => void;
+  alwaysShowLoading: boolean;
+  toggleAlwaysShowLoading: (val: boolean) => void;
 }
 
 export const ModalContainer: React.FC<ModalContainerProps> = ({
@@ -144,6 +150,12 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   updateCodeFont,
   fontFix,
   toggleFontFix,
+  disableCache,
+  toggleDisableCache,
+  disableLazyLoading,
+  toggleDisableLazyLoading,
+  alwaysShowLoading,
+  toggleAlwaysShowLoading,
 }) => {
   return (
     <ErrorBoundary name="Modals">
@@ -298,6 +310,12 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
             updateCodeFont={updateCodeFont}
             fontFix={fontFix}
             toggleFontFix={toggleFontFix}
+            disableCache={disableCache}
+            toggleDisableCache={toggleDisableCache}
+            disableLazyLoading={disableLazyLoading}
+            toggleDisableLazyLoading={toggleDisableLazyLoading}
+            alwaysShowLoading={alwaysShowLoading}
+            toggleAlwaysShowLoading={toggleAlwaysShowLoading}
           />
         ) : null}
 

@@ -8,7 +8,7 @@ import {
     Fingerprint, Gauge, Wrench, Brain, Gamepad2, Laptop, Eye, 
     Wifi, Flame, Video, Sliders, Music, HardDrive, Globe, Sun, 
     Puzzle, Languages, ShieldAlert, KeyRound, Monitor, Volume2, 
-    Activity, BookOpen, Keyboard
+    Activity, BookOpen, Keyboard, Settings
 } from 'lucide-react';
 
 const getModuleIcon = (id: string, isSystem?: boolean) => {
@@ -100,9 +100,39 @@ export interface ModuleState {
 interface ModulesTabProps {
     t: Translation['settings']['modules'];
     modules: ModuleState[];
+    disableCache: boolean;
+    toggleDisableCache: (val: boolean) => void;
+    disableLazyLoading: boolean;
+    toggleDisableLazyLoading: (val: boolean) => void;
+    alwaysShowLoading: boolean;
+    toggleAlwaysShowLoading: (val: boolean) => void;
 }
 
-export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
+export const ModulesTab: React.FC<ModulesTabProps> = ({ 
+    t, 
+    modules,
+    disableCache,
+    toggleDisableCache,
+    disableLazyLoading,
+    toggleDisableLazyLoading,
+    alwaysShowLoading,
+    toggleAlwaysShowLoading,
+}) => {
+    const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+    const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsSettingsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const activeCount = modules.filter(m => m.isOpen).length;
     const cachedCount = modules.filter(m => !m.isOpen && m.isLoaded).length;
     const idleCount = modules.filter(m => !m.isOpen && !m.isLoaded).length;
@@ -157,7 +187,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
                     </p>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50 w-full xl:w-auto">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50 w-full xl:w-auto relative">
                     <div className="flex items-center justify-around sm:justify-start gap-4 sm:gap-6 flex-1">
                         <div className="text-center min-w-[3rem]">
                             <div className="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-bold mb-0.5">{t?.status?.active}</div>
@@ -181,16 +211,108 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({ t, modules }) => {
 
                     <div className="w-full h-px sm:w-px sm:h-8 bg-slate-200 dark:bg-slate-700 mx-2 hidden sm:block"></div>
                     
-                    <Button 
-                        variant="danger-soft" 
-                        size="sm" 
-                        onClick={closeAll}
-                        disabled={activeOrLoadedNonSystemCount === 0}
-                        leftIcon={<Power size={16} />}
-                        className="whitespace-nowrap justify-center"
-                    >
-                        {t?.actions?.unloadAll}
-                    </Button>
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <Button 
+                            variant="danger-soft" 
+                            size="sm" 
+                            onClick={closeAll}
+                            disabled={activeOrLoadedNonSystemCount === 0}
+                            leftIcon={<Power size={16} />}
+                            className="whitespace-nowrap justify-center flex-1 sm:flex-none"
+                        >
+                            {t?.actions?.unloadAll}
+                        </Button>
+
+                        <div className="relative" ref={dropdownRef}>
+                            <button
+                                onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                                className={`p-2 rounded-lg border transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${isSettingsOpen ? "bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/40 dark:border-indigo-900/50 dark:text-indigo-400" : "bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300"}`}
+                            >
+                                <Settings size={18} className={isSettingsOpen ? "rotate-45 duration-200" : "duration-200"} />
+                            </button>
+
+                            {isSettingsOpen ? (
+                                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-50 py-1 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/20">
+                                        <h4 className="font-semibold text-slate-800 dark:text-slate-100 text-xs uppercase tracking-wider">
+                                            {t?.settingsTitle}
+                                        </h4>
+                                    </div>
+
+                                    <div className="divide-y divide-slate-100 dark:divide-slate-700 max-h-[280px] overflow-y-auto custom-scrollbar">
+                                        {/* Disable Cache */}
+                                        <div className="p-4 flex flex-col gap-1.5 hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors">
+                                            <div className="flex items-center justify-between gap-4">
+                                                <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs leading-none">
+                                                    {t?.disableCache}
+                                                </span>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleDisableCache(!disableCache);
+                                                    }}
+                                                    className={`w-8 h-4.5 rounded-full relative transition-colors duration-200 outline-none focus:ring-2 focus:ring-indigo-500/50 shrink-0 ${disableCache ? "bg-indigo-500" : "bg-slate-200 dark:bg-slate-600"}`}
+                                                >
+                                                    <span
+                                                        className={`absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-white rounded-full transition-transform duration-200 ${disableCache ? "translate-x-3.5" : "translate-x-0"}`}
+                                                    />
+                                                </button>
+                                            </div>
+                                            <p className="text-[11px] text-slate-400 dark:text-slate-400 leading-normal font-normal">
+                                                {t?.disableCacheDesc}
+                                            </p>
+                                        </div>
+
+                                        {/* Disable Lazy Loading */}
+                                        <div className="p-4 flex flex-col gap-1.5 hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors">
+                                            <div className="flex items-center justify-between gap-4">
+                                                <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs leading-none">
+                                                    {t?.disableLazyLoading}
+                                                </span>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleDisableLazyLoading(!disableLazyLoading);
+                                                    }}
+                                                    className={`w-8 h-4.5 rounded-full relative transition-colors duration-200 outline-none focus:ring-2 focus:ring-indigo-500/50 shrink-0 ${disableLazyLoading ? "bg-indigo-500" : "bg-slate-200 dark:bg-slate-600"}`}
+                                                >
+                                                    <span
+                                                        className={`absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-white rounded-full transition-transform duration-200 ${disableLazyLoading ? "translate-x-3.5" : "translate-x-0"}`}
+                                                    />
+                                                </button>
+                                            </div>
+                                            <p className="text-[11px] text-slate-400 dark:text-slate-400 leading-normal font-normal">
+                                                {t?.disableLazyLoadingDesc}
+                                            </p>
+                                        </div>
+
+                                        {/* Always Show Loading */}
+                                        <div className="p-4 flex flex-col gap-1.5 hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors">
+                                            <div className="flex items-center justify-between gap-4">
+                                                <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs leading-none">
+                                                    {t?.alwaysShowLoading}
+                                                </span>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleAlwaysShowLoading(!alwaysShowLoading);
+                                                    }}
+                                                    className={`w-8 h-4.5 rounded-full relative transition-colors duration-200 outline-none focus:ring-2 focus:ring-indigo-500/50 shrink-0 ${alwaysShowLoading ? "bg-indigo-500" : "bg-slate-200 dark:bg-slate-600"}`}
+                                                >
+                                                    <span
+                                                        className={`absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-white rounded-full transition-transform duration-200 ${alwaysShowLoading ? "translate-x-3.5" : "translate-x-0"}`}
+                                                    />
+                                                </button>
+                                            </div>
+                                            <p className="text-[11px] text-slate-400 dark:text-slate-400 leading-normal font-normal">
+                                                {t?.alwaysShowLoadingDesc}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : null}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">

@@ -41,7 +41,13 @@ const COMPONENT_LOADERS: Record<string, ComponentLoader> = {
   shortcuts: () => import('../components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal as unknown as ModalComponent })),
 };
 
-export const useModalManager = () => {
+interface ModalManagerOptions {
+  disableCache?: boolean;
+  disableLazyLoading?: boolean;
+  alwaysShowLoading?: boolean;
+}
+
+export const useModalManager = (options?: ModalManagerOptions) => {
   const [visibility, setVisibility] = useState<Record<string, boolean>>({});
   const [loadedModules, setLoadedModules] = useState<Set<string>>(new Set());
   const [moduleVersions, setModuleVersions] = useState<Record<string, number>>({});
@@ -58,16 +64,8 @@ export const useModalManager = () => {
     });
   }, []);
 
-  const close = useCallback((id: string) => {
-    setVisibility((prev) => ({ ...prev, [id]: false }));
-  }, []);
-
-  const closeAll = useCallback(() => {
-    setVisibility({});
-  }, []);
-
   const unload = useCallback((id: string) => {
-    close(id);
+    setVisibility((prev) => ({ ...prev, [id]: false }));
     unloadedModulesRef.current.add(id);
     delete lazyCacheRef.current[id];
     setModuleVersions((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
@@ -76,15 +74,58 @@ export const useModalManager = () => {
       next.delete(id);
       return next;
     });
-  }, [close]);
+  }, []);
+
+  const close = useCallback((id: string) => {
+    setVisibility((prev) => ({ ...prev, [id]: false }));
+    if (options?.disableCache && id !== "settings" && id !== "developer") {
+      unload(id);
+    }
+  }, [options?.disableCache, unload]);
+
+  const closeAll = useCallback(() => {
+    setVisibility({});
+  }, []);
+
+  React.useEffect(() => {
+    if (options?.disableLazyLoading) {
+      Object.keys(COMPONENT_LOADERS).forEach((id) => {
+        if (id !== "settings" && id !== "developer") {
+          const loader = COMPONENT_LOADERS[id];
+          if (loader) {
+            loader().then(() => {
+              setLoadedModules((prev) => {
+                const next = new Set(prev);
+                next.add(id);
+                return next;
+              });
+            }).catch((err: unknown) => {
+              console.error(`Failed to pre-cache module ${id}:`, err);
+            });
+          }
+        }
+      });
+    }
+  }, [options?.disableLazyLoading]);
 
   const components = useMemo(() => {
     return new Proxy({} as Record<string, React.ElementType>, {
       get: (_target, id: string) => {
-        if (typeof id !== 'string') return undefined;
+        if (typeof id !== "string") return undefined;
+        const loader = COMPONENT_LOADERS[id];
+        if (!loader) return undefined;
+
+        if (options?.alwaysShowLoading) {
+          return lazy(() => {
+            return new Promise<{ default: ModalComponent }>((resolve) => {
+              setTimeout(() => {
+                resolve(loader());
+              }, 350);
+            });
+          });
+        }
+
         if (!lazyCacheRef.current[id]) {
-          const loader = COMPONENT_LOADERS[id];
-          if (!loader) return undefined;
           lazyCacheRef.current[id] = lazy(() => {
             const wasUnloaded = unloadedModulesRef.current.has(id);
             if (wasUnloaded) {
@@ -101,7 +142,7 @@ export const useModalManager = () => {
         return lazyCacheRef.current[id];
       },
     });
-  }, [moduleVersions]);
+  }, [moduleVersions, options?.alwaysShowLoading]);
 
   React.useEffect(() => {
     const handleCloseAll = () => {

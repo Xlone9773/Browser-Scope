@@ -56,6 +56,15 @@ export function useAppSettings() {
   const [enableUdp, setEnableUdp] = useState<boolean>(
     () => localStorage.getItem("enableUdp") === "true",
   );
+  const [disableCache, setDisableCache] = useState<boolean>(
+    () => localStorage.getItem("disableCache") === "true",
+  );
+  const [disableLazyLoading, setDisableLazyLoading] = useState<boolean>(
+    () => localStorage.getItem("disableLazyLoading") === "true",
+  );
+  const [alwaysShowLoading, setAlwaysShowLoading] = useState<boolean>(
+    () => localStorage.getItem("alwaysShowLoading") === "true",
+  );
   const [showTabs, setShowTabs] = useState<boolean>(() => {
     const saved = localStorage.getItem("showTabs");
     return saved === null ? true : saved === "true";
@@ -360,6 +369,21 @@ export function useAppSettings() {
     localStorage.setItem("enableUdp", String(value));
   }, []);
 
+  const toggleDisableCache = useCallback((value: boolean) => {
+    setDisableCache(value);
+    localStorage.setItem("disableCache", String(value));
+  }, []);
+
+  const toggleDisableLazyLoading = useCallback((value: boolean) => {
+    setDisableLazyLoading(value);
+    localStorage.setItem("disableLazyLoading", String(value));
+  }, []);
+
+  const toggleAlwaysShowLoading = useCallback((value: boolean) => {
+    setAlwaysShowLoading(value);
+    localStorage.setItem("alwaysShowLoading", String(value));
+  }, []);
+
   const toggleShowTabs = useCallback((value: boolean) => {
     setShowTabs(value);
     localStorage.setItem("showTabs", String(value));
@@ -474,6 +498,12 @@ export function useAppSettings() {
     toggleFontFix,
     enableUdp,
     toggleEnableUdp,
+    disableCache,
+    toggleDisableCache,
+    disableLazyLoading,
+    toggleDisableLazyLoading,
+    alwaysShowLoading,
+    toggleAlwaysShowLoading,
     showTabs,
     toggleShowTabs,
     showSearch,

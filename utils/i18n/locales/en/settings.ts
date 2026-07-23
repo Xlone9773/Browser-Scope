@@ -533,7 +533,14 @@ export const settings = {
         actions: {
             unload: "Unload",
             unloadAll: "Unload All Active Modules"
-        }
+        },
+        settingsTitle: "Module Settings",
+        disableCache: "Disable Cache",
+        disableCacheDesc: "Destroy modules immediately after close. Force full reload on next open, saving memory but requiring network.",
+        disableLazyLoading: "Disable Lazy Loading",
+        disableLazyLoadingDesc: "Cache all modules locally upon startup instead of loading on demand.",
+        alwaysShowLoading: "Always Show Loading",
+        alwaysShowLoadingDesc: "Show a loading indicator regardless of cache status to ensure visual consistency."
     },
     versions: {
         title: "Software Versions",

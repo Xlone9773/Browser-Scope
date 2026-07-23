@@ -533,7 +533,14 @@ export const settings = {
         actions: {
             unload: "卸载",
             unloadAll: "卸载所有活动模块"
-        }
+        },
+        settingsTitle: "模块设置",
+        disableCache: "禁用缓存",
+        disableCacheDesc: "用完即销毁，每次打开都走一遍加载流程，绝不缓存到本地，适合资源紧张的情况。",
+        disableLazyLoading: "禁用懒加载",
+        disableLazyLoadingDesc: "默认缓存全部模块到本地，并在启动时提前加载所有资源。",
+        alwaysShowLoading: "始终显示加载提示",
+        alwaysShowLoadingDesc: "不论模块是否缓存，打开时始终显示加载指示器，以提升视觉一致性。"
     },
     versions: {
         title: "软件版本",

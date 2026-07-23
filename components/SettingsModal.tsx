@@ -78,6 +78,12 @@ interface SettingsModalProps {
   isCheckingUpdate?: boolean;
   needRefresh?: boolean;
   changeLang?: (lang: Language) => void;
+  disableCache?: boolean;
+  toggleDisableCache?: (val: boolean) => void;
+  disableLazyLoading?: boolean;
+  toggleDisableLazyLoading?: (val: boolean) => void;
+  alwaysShowLoading?: boolean;
+  toggleAlwaysShowLoading?: (val: boolean) => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ 
@@ -144,6 +150,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     updateCodeFont,
     fontFix,
     toggleFontFix,
+    disableCache = false,
+    toggleDisableCache = () => {},
+    disableLazyLoading = false,
+    toggleDisableLazyLoading = () => {},
+    alwaysShowLoading = false,
+    toggleAlwaysShowLoading = () => {},
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver'>(() => {
     try {
@@ -360,7 +372,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                           {activeTab === 'res' ? (<ResourcesTab t={settings.resources} />) : null}
 
-                          {activeTab === 'mod' && settings.modules ? (<ModulesTab t={settings.modules} modules={moduleStates} />) : null}
+                          {activeTab === 'mod' && settings.modules ? (
+                              <ModulesTab 
+                                  t={settings.modules} 
+                                  modules={moduleStates} 
+                                  disableCache={disableCache}
+                                  toggleDisableCache={toggleDisableCache}
+                                  disableLazyLoading={disableLazyLoading}
+                                  toggleDisableLazyLoading={toggleDisableLazyLoading}
+                                  alwaysShowLoading={alwaysShowLoading}
+                                  toggleAlwaysShowLoading={toggleAlwaysShowLoading}
+                              />
+                          ) : null}
 
                           {activeTab === 'ver' && settings.versions ? (<VersionsTab 
                               t={settings.versions} 

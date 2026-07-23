@@ -533,7 +533,14 @@ export const settings = {
         actions: {
             unload: "強制終了",
             unloadAll: "全モジュールをアンロード"
-        }
+        },
+        settingsTitle: "モジュール設定",
+        disableCache: "キャッシュの無効化",
+        disableCacheDesc: "使用後は即座に破棄し、次回開くときは最初から再ロードします。リソースが限られている場合に適しています。",
+        disableLazyLoading: "遅延ロードの無効化",
+        disableLazyLoadingDesc: "すべてのモジュールを最初からローカルにキャッシュし、起動時にリソースをすべてプリロードします。",
+        alwaysShowLoading: "常にローディングを表示",
+        alwaysShowLoadingDesc: "キャッシュの有無に関わらず、開く際に常にロード中インジケータを表示し、ビジュアルの一貫性を向上させます。"
     },
     versions: {
         title: "ソフトウェアバージョン",

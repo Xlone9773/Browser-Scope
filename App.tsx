@@ -26,13 +26,6 @@ import { SearchBarAndTabs } from "./components/layout/SearchBarAndTabs";
 import { DashboardGrid } from "./components/layout/DashboardGrid";
 
 const App: React.FC = () => {
-  const { visibility, open, close, unload, loadedModules, Components, closeAll } =
-    useModalManager();
-
-  const [isOffline, setIsOffline] = useState<boolean>(() => !navigator.onLine);
-  const [activeTab, setActiveTab] = useState<"all" | "browser" | "environment" | "system" | "network" | "advanced">("all");
-  const [slideDirection, setSlideDirection] = useState<number>(0);
-
   const {
     lang,
     changeLang,
@@ -63,6 +56,12 @@ const App: React.FC = () => {
     toggleFontFix,
     enableUdp,
     toggleEnableUdp,
+    disableCache,
+    toggleDisableCache,
+    disableLazyLoading,
+    toggleDisableLazyLoading,
+    alwaysShowLoading,
+    toggleAlwaysShowLoading,
     showTabs,
     toggleShowTabs,
     showSearch,
@@ -91,6 +90,17 @@ const App: React.FC = () => {
     codeFont,
     updateCodeFont,
   } = useAppSettings();
+
+  const { visibility, open, close, unload, loadedModules, Components, closeAll } =
+    useModalManager({
+      disableCache,
+      disableLazyLoading,
+      alwaysShowLoading,
+    });
+
+  const [isOffline, setIsOffline] = useState<boolean>(() => !navigator.onLine);
+  const [activeTab, setActiveTab] = useState<"all" | "browser" | "environment" | "system" | "network" | "advanced">("all");
+  const [slideDirection, setSlideDirection] = useState<number>(0);
 
   const [matchedCardIds, setMatchedCardIds] = useState<string[] | null>(null);
   const [showSearchSettings, setShowSearchSettings] = useState(false);
@@ -872,6 +882,12 @@ const App: React.FC = () => {
         updateCodeFont={updateCodeFont}
         fontFix={fontFix}
         toggleFontFix={toggleFontFix}
+        disableCache={disableCache}
+        toggleDisableCache={toggleDisableCache}
+        disableLazyLoading={disableLazyLoading}
+        toggleDisableLazyLoading={toggleDisableLazyLoading}
+        alwaysShowLoading={alwaysShowLoading}
+        toggleAlwaysShowLoading={toggleAlwaysShowLoading}
       />
 
       <div id="dashboard-container" className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">
