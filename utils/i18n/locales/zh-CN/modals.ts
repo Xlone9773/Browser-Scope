@@ -261,7 +261,8 @@ export const modals = {
     local: "本地",
     remote: "在线",
     no_voices: "未找到语音包。请检查您的系统是否支持文本转语音。",
-    loading: "加载语音库..."
+    loading: "加载语音库...",
+    not_supported: "此浏览器不支持语音合成（speechSynthesis）。"
   },
   storageBenchmark: {
     title: "存储性能基准测试 Pro",

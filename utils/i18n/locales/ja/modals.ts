@@ -261,7 +261,8 @@ Copyright (c) 2026 BrowserScope Contributors
     local: "ローカル",
     remote: "リモート",
     no_voices: "音声が見つかりません。システムがテキスト読み上げをサポートしているか確認してください。",
-    loading: "音声を読み込み中..."
+    loading: "音声を読み込み中...",
+    not_supported: "このブラウザは音声合成（speechSynthesis）をサポートしていません。"
   },
   storageBenchmark: {
     title: "ストレージベンチマーク Pro",

@@ -273,7 +273,8 @@ SOFTWARE.`
     local: "Local",
     remote: "Remote",
     no_voices: "No voices found. Ensure your system supports Text-to-Speech.",
-    loading: "Loading voices..."
+    loading: "Loading voices...",
+    not_supported: "Text-to-Speech (speechSynthesis) is not supported in this browser."
   },
   storageBenchmark: {
     title: "Storage Benchmark Pro",

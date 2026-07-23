@@ -261,7 +261,8 @@ Copyright (c) 2026 BrowserScope Contributors
     local: "Локальный",
     remote: "Удаленный",
     no_voices: "Голоса не найдены. Убедитесь, что ваша система поддерживает синтез речи.",
-    loading: "Загрузка голосов..."
+    loading: "Загрузка голосов...",
+    not_supported: "Синтез речи (speechSynthesis) не поддерживается в этом браузере."
   },
   storageBenchmark: {
     title: "Бенчмарк Хранилища Pro",

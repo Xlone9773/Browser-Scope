@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Mic, Play, Globe, CheckCircle, Search, User } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
@@ -18,23 +17,29 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
   const [playingVoiceURI, setPlayingVoiceURI] = useState<string | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
+  const isSupported = typeof window !== 'undefined' && typeof window.speechSynthesis !== 'undefined' && window.speechSynthesis !== null;
+
   const filteredVoices = useMemo(() => {
       let res = voices;
       if (selectedLang !== 'all') {
-          res = res.filter(v => v.lang === selectedLang);
+          res = res.filter((v: SpeechSynthesisVoice) => v.lang === selectedLang);
       }
       if (searchTerm) {
           const lower = searchTerm.toLowerCase();
-          res = res.filter(v => v.name.toLowerCase().includes(lower) || v.lang.toLowerCase().includes(lower));
+          res = res.filter((v: SpeechSynthesisVoice) => v.name.toLowerCase().includes(lower) || v.lang.toLowerCase().includes(lower));
       }
       return res;
   }, [voices, selectedLang, searchTerm]);
 
   useEffect(() => {
+      if (!isSupported) {
+          return;
+      }
+
       const loadVoices = () => {
           const vs = window.speechSynthesis.getVoices();
           // Sort: Default first, then by Lang, then Name
-          vs.sort((a, b) => {
+          vs.sort((a: SpeechSynthesisVoice, b: SpeechSynthesisVoice) => {
               if (a.default && !b.default) return -1;
               if (!a.default && b.default) return 1;
               return a.lang.localeCompare(b.lang) || a.name.localeCompare(b.name);
@@ -43,10 +48,10 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
           
           // Extract unique langs
           const langMap = new Map<string, string>();
-          vs.forEach(v => {
+          vs.forEach((v: SpeechSynthesisVoice) => {
               langMap.set(v.lang, v.lang); 
           });
-          const langOpts = Array.from(langMap.keys()).sort().map(l => ({ id: l, label: l }));
+          const langOpts = Array.from(langMap.keys()).sort().map((l: string) => ({ id: l, label: l }));
           setLanguages([{ id: 'all', label: 'All Languages' }, ...langOpts]);
       };
 
@@ -57,14 +62,18 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
       window.speechSynthesis.onvoiceschanged = loadVoices;
       
       return () => {
-          window.speechSynthesis.onvoiceschanged = null;
-          window.speechSynthesis.cancel();
+          if (window.speechSynthesis) {
+              window.speechSynthesis.onvoiceschanged = null;
+              window.speechSynthesis.cancel();
+          }
       };
-  }, []);
-
-
+  }, [isSupported]);
 
   const playSample = (voice: SpeechSynthesisVoice) => {
+      if (!isSupported) {
+          return;
+      }
+
       window.speechSynthesis.cancel();
       setPlayingVoiceURI(null);
       if (utteranceRef.current) {
@@ -107,7 +116,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
               utteranceRef.current = null;
           };
           
-          utterance.onerror = (e) => {
+          utterance.onerror = (e: SpeechSynthesisErrorEvent) => {
               console.error("SpeechSynthesis error: ", e);
               setPlayingVoiceURI(null);
               utteranceRef.current = null;
@@ -116,6 +125,23 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
           window.speechSynthesis.speak(utterance);
       }, 50);
   };
+
+  if (!isSupported) {
+      return (
+          <Modal
+              title={t.title}
+              icon={<Mic size={24} />}
+              onClose={onClose}
+              size="3xl"
+              fullHeight
+              noPadding
+          >
+              <div className="flex flex-col items-center justify-center h-full p-6 text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900">
+                  <p className="text-center font-medium">{t.not_supported}</p>
+              </div>
+          </Modal>
+      );
+  }
 
   return (
     <Modal
@@ -134,7 +160,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
                     <input 
                         type="text"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                         placeholder="Search voices..."
                         className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                     />
@@ -142,7 +168,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
                 <Select 
                     value={selectedLang}
                     options={languages}
-                    onChange={(val) => setSelectedLang(val as string)}
+                    onChange={(val: unknown) => setSelectedLang(val as string)}
                     color="indigo"
                 />
             </div>
@@ -159,18 +185,18 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {filteredVoices.map((voice) => (
+                        {filteredVoices.map((voice: SpeechSynthesisVoice) => (
                             <div key={voice.voiceURI} className={`p-4 rounded-xl border transition-all hover:shadow-md flex flex-col gap-2 ${playingVoiceURI === voice.voiceURI ? 'bg-indigo-50 border-indigo-300 dark:bg-indigo-900/30 dark:border-indigo-500' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>
                                 <div className="flex justify-between items-start">
                                     <div className="flex items-center gap-2">
                                         <User size={16} className="text-slate-400" />
                                         <h3 className="font-bold text-slate-700 dark:text-slate-200 text-sm">{voice.name}</h3>
                                     </div>
-                                    {voice.default && (
+                                    {voice.default ? (
                                         <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-0.5 rounded-full flex items-center gap-1">
                                             <CheckCircle size={10} /> {t.default}
                                         </span>
-                                    )}
+                                    ) : null}
                                 </div>
                                 
                                 <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">

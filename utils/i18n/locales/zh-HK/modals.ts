@@ -260,7 +260,8 @@ export const modals = {
     local: "本地",
     remote: "線上",
     no_voices: "未找到語音包。請檢查您的系統是否支援文字轉語音。",
-    loading: "載入語音庫..."
+    loading: "載入語音庫...",
+    not_supported: "此瀏覽器不支援語音合成（speechSynthesis）。"
   },
   storageBenchmark: {
     title: "儲存效能基準測試 Pro",
