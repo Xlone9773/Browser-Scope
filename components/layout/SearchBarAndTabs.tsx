@@ -1,7 +1,7 @@
 import React from "react";
 import { Search, Settings2 } from "lucide-react";
 import { Select, SelectColor } from "../ui/Select";
-type BrowserSafeAny = ReturnType<typeof JSON.parse>;
+import { Translation } from "../../utils/i18n/types";
 
 interface TabItem {
   id: "all" | "browser" | "environment" | "system" | "network" | "advanced";
@@ -26,7 +26,7 @@ interface SearchBarAndTabsProps {
   tabsContainerRef: React.RefObject<HTMLDivElement | null>;
   activeTabRef: React.RefObject<HTMLButtonElement | null>;
   themeColor: string;
-  t: BrowserSafeAny;
+  t: Translation;
 }
 
 export const SearchBarAndTabs: React.FC<SearchBarAndTabsProps> = React.memo(({

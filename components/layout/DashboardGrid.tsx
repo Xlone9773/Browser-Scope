@@ -9,10 +9,9 @@ import { BrowserCard } from "../cards/BrowserCard";
 import { SystemCard } from "../cards/SystemCard";
 import { HardwareCard } from "../cards/HardwareCard";
 import { DisplayCard } from "../cards/DisplayCard";
-import { BrowserData } from "../../types";
-import { Language } from "../../utils/i18n/types";
-import { PermissionKey } from "../../hooks/useAppPermissions";
-type BrowserSafeAny = ReturnType<typeof JSON.parse>;
+import { BrowserData, GeoPosition } from "../../types";
+import { Language, Translation } from "../../utils/i18n/types";
+import { PermissionKey, PermissionStatusType } from "../../hooks/useAppPermissions";
 
 // Helper for resilient lazy loading with retry
 const ModuleLoadErrorFallback: React.FC = () => {
@@ -31,19 +30,19 @@ const ModuleLoadErrorFallback: React.FC = () => {
   );
 };
 
-function lazyWithRetry<T extends React.ComponentType<BrowserSafeAny>>(
+function lazyWithRetry<T extends React.ComponentType<object>>(
   importFn: () => Promise<{ default: T }>,
   retries = 3,
   delay = 500
 ): React.LazyExoticComponent<T> {
   return lazy(() =>
-    (importFn().catch((_error) => {
+    importFn().catch((_error: unknown) => {
       return new Promise<{ default: T }>((resolve) => {
         let attempts = 0;
         const attemptLoad = () => {
           importFn()
             .then(resolve)
-            .catch((err) => {
+            .catch((err: unknown) => {
               attempts++;
               if (attempts >= retries) {
                 console.error("Critical: Failed to load module dynamically after multiple retries. Falling back to error fallback component.", err);
@@ -55,8 +54,8 @@ function lazyWithRetry<T extends React.ComponentType<BrowserSafeAny>>(
         };
         setTimeout(attemptLoad, delay);
       });
-    }) as unknown) as Promise<{ default: React.ComponentType<BrowserSafeAny> }>
-  ) as unknown as React.LazyExoticComponent<T>;
+    })
+  );
 }
 
 // Lazy loaded cards
@@ -99,7 +98,7 @@ const FeaturesSection = lazyWithRetry(() =>
 
 interface DashboardGridProps {
   browserData: BrowserData;
-  t: BrowserSafeAny;
+  t: Translation;
   lang: Language;
   themeColor: string;
   timeFormat: "12" | "24";
@@ -107,17 +106,19 @@ interface DashboardGridProps {
   hiddenCards: string[];
   matchedCardIds: string[] | null;
   activeTab: "all" | "browser" | "environment" | "system" | "network" | "advanced";
-  geoData: BrowserSafeAny;
-  permStatus: BrowserSafeAny;
+  slideDirection?: number;
+  geoData: GeoPosition | null;
+  permStatus: Record<PermissionKey, PermissionStatusType>;
   open: (id: string) => void;
   requestPermission: (id: PermissionKey) => void | Promise<void>;
   handleAiRetest: () => void;
   showQuickSummary: boolean;
   toggleShowQuickSummary: (show: boolean) => void;
   initialAnimationStyle: string;
-  onTouchStart: (e: React.TouchEvent) => void;
-  onTouchMove: (e: React.TouchEvent) => void;
-  onTouchEnd: () => void;
+  onTouchStart: (e: React.TouchEvent<HTMLElement>) => void;
+  onTouchMove: (e: React.TouchEvent<HTMLElement>) => void;
+  onTouchEnd: (e: React.TouchEvent<HTMLElement>) => void;
+  onTouchCancel?: (e: React.TouchEvent<HTMLElement>) => void;
 }
 
 export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
@@ -129,6 +130,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
   hiddenCards,
   matchedCardIds,
   activeTab,
+  slideDirection = 0,
   geoData,
   permStatus,
   open,
@@ -140,7 +142,13 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
   onTouchStart,
   onTouchMove,
   onTouchEnd,
+  onTouchCancel,
 }) => {
+  const getSlideOffset = (visible: boolean): number => {
+    if (visible) return 0;
+    return slideDirection > 0 ? -20 : slideDirection < 0 ? 20 : 0;
+  };
+
   return (
     <Suspense
       fallback={
@@ -153,7 +161,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="overflow-hidden"
+        onTouchCancel={onTouchCancel}
+        className="overflow-hidden touch-pan-y"
       >
         <div
           className={`space-y-6 ${

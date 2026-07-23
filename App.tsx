@@ -16,6 +16,7 @@ import { ModuleState } from "./components/settings/ModulesTab";
 import { useAppSettings } from "./hooks/useAppSettings";
 import { useAppPermissions } from "./hooks/useAppPermissions";
 import { useAppData } from "./hooks/useAppData";
+import { useSwipeGesture } from "./hooks/useSwipeGesture";
 import packageJson from "./package.json";
 
 // Import newly extracted sub-components
@@ -30,7 +31,7 @@ const App: React.FC = () => {
 
   const [isOffline, setIsOffline] = useState<boolean>(() => !navigator.onLine);
   const [activeTab, setActiveTab] = useState<"all" | "browser" | "environment" | "system" | "network" | "advanced">("all");
-  const [_slideDirection, setSlideDirection] = useState<number>(0);
+  const [slideDirection, setSlideDirection] = useState<number>(0);
 
   const {
     lang,
@@ -215,10 +216,6 @@ const App: React.FC = () => {
     }
   }, [availableTabs, activeTab]);
 
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
-  const touchStartY = useRef<number | null>(null);
-  const touchEndY = useRef<number | null>(null);
   const tabsContainerRef = useRef<HTMLDivElement>(null);
   const activeTabRef = useRef<HTMLButtonElement>(null);
 
@@ -236,43 +233,29 @@ const App: React.FC = () => {
     }
   }, [activeTab]);
 
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    touchEndX.current = null;
-    touchEndY.current = null;
-    touchStartX.current = e.targetTouches[0].clientX;
-    touchStartY.current = e.targetTouches[0].clientY;
-  }, []);
-
-  const onTouchMove = useCallback((e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX;
-    touchEndY.current = e.targetTouches[0].clientY;
-  }, []);
-
-  const onTouchEnd = useCallback(() => {
-    if (
-      touchStartX.current === null ||
-      touchEndX.current === null ||
-      touchStartY.current === null ||
-      touchEndY.current === null
-    ) {
-      return;
-    }
-    const distanceX = touchStartX.current - touchEndX.current;
-    const distanceY = touchStartY.current - touchEndY.current;
-    if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > 50) {
-      const isLeftSwipe = distanceX > 50;
-      const currentIndex = availableTabs.findIndex((tab) => tab.id === activeTab);
-      if (currentIndex !== -1) {
-        if (isLeftSwipe && currentIndex < availableTabs.length - 1) {
-          setSlideDirection(1);
-          setActiveTab(availableTabs[currentIndex + 1].id);
-        } else if (!isLeftSwipe && currentIndex > 0) {
-          setSlideDirection(-1);
-          setActiveTab(availableTabs[currentIndex - 1].id);
-        }
-      }
+  const handleSwipeNext = useCallback(() => {
+    const currentIndex = availableTabs.findIndex((tab) => tab.id === activeTab);
+    if (currentIndex !== -1 && currentIndex < availableTabs.length - 1) {
+      setSlideDirection(1);
+      setActiveTab(availableTabs[currentIndex + 1].id);
     }
   }, [availableTabs, activeTab]);
+
+  const handleSwipePrev = useCallback(() => {
+    const currentIndex = availableTabs.findIndex((tab) => tab.id === activeTab);
+    if (currentIndex > 0) {
+      setSlideDirection(-1);
+      setActiveTab(availableTabs[currentIndex - 1].id);
+    }
+  }, [availableTabs, activeTab]);
+
+  const { onTouchStart, onTouchMove, onTouchEnd, onTouchCancel } = useSwipeGesture({
+    onSwipeLeft: handleSwipeNext,
+    onSwipeRight: handleSwipePrev,
+    minDistance: 40,
+    minVelocity: 0.2,
+    angleRatio: 1.5,
+  });
 
   useEffect(() => {
     const handleVisibility = () => {
@@ -994,6 +977,7 @@ const App: React.FC = () => {
               hiddenCards={hiddenCards}
               matchedCardIds={matchedCardIds}
               activeTab={activeTab}
+              slideDirection={slideDirection}
               geoData={geoData}
               permStatus={permStatus}
               open={open}
@@ -1005,6 +989,7 @@ const App: React.FC = () => {
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}
+              onTouchCancel={onTouchCancel}
             />
           </ErrorBoundary>
         ) : null}
