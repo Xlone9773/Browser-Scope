@@ -1,17 +1,19 @@
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useTransition } from 'react';
 import { Database, Activity, Sliders, Monitor, Terminal, Loader2, Package, Layers, Palette } from 'lucide-react';
 import { Translation, Language } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 
-import { GeneralTab } from './settings/GeneralTab';
-import { AppearanceTab } from './settings/AppearanceTab';
 import { SelectColor } from './ui/Select';
-import { StorageTab } from './settings/StorageTab';
-import { ResourcesTab } from './settings/ResourcesTab';
-import { DeveloperTab } from './settings/DeveloperTab';
-import { ModulesTab, ModuleState } from './settings/ModulesTab';
-import { VersionsTab } from './settings/VersionsTab';
+import type { ModuleState } from './settings/ModulesTab';
+
+const GeneralTab = React.lazy(() => import('./settings/GeneralTab').then(m => ({ default: m.GeneralTab })));
+const AppearanceTab = React.lazy(() => import('./settings/AppearanceTab').then(m => ({ default: m.AppearanceTab })));
+const StorageTab = React.lazy(() => import('./settings/StorageTab').then(m => ({ default: m.StorageTab })));
+const ResourcesTab = React.lazy(() => import('./settings/ResourcesTab').then(m => ({ default: m.ResourcesTab })));
+const DeveloperTab = React.lazy(() => import('./settings/DeveloperTab').then(m => ({ default: m.DeveloperTab })));
+const ModulesTab = React.lazy(() => import('./settings/ModulesTab').then(m => ({ default: m.ModulesTab })));
+const VersionsTab = React.lazy(() => import('./settings/VersionsTab').then(m => ({ default: m.VersionsTab })));
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -173,15 +175,29 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     return 'appearance';
   });
 
+  const [isPending, startTransition] = useTransition();
+
   const handleTabChange = (tab: 'general' | 'appearance' | 'storage' | 'res' | 'dev' | 'mod' | 'ver') => {
       if (tab === activeTab) {
           return;
       }
-      setActiveTab(tab);
-      try {
-         sessionStorage.setItem('browserscope_settings_last_tab', tab);
-      } catch {}
+
+      if (lazyTabChange) {
+          startTransition(() => {
+              setActiveTab(tab);
+              try {
+                 sessionStorage.setItem('browserscope_settings_last_tab', tab);
+              } catch {}
+          });
+      } else {
+          setActiveTab(tab);
+          try {
+             sessionStorage.setItem('browserscope_settings_last_tab', tab);
+          } catch {}
+      }
   };
+
+  const isTabLoading = isPending;
 
   // Access structured settings
   const settings = t.settings;
@@ -309,6 +325,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                       {/* Content Area */}
                       <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
+                          {isTabLoading ? (
+                              <div 
+                                  className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200"
+                                  onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                                      e.stopPropagation();
+                                      e.preventDefault();
+                                  }}
+                                  onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
+                                      e.stopPropagation();
+                                      e.preventDefault();
+                                  }}
+                              >
+                                  <div className="flex flex-col items-center gap-3">
+                                      <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
+                                  </div>
+                              </div>
+                          ) : null}
                           <Suspense fallback={<div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
                           
                            {activeTab === 'appearance' ? (<AppearanceTab 
