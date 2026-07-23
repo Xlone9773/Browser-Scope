@@ -62,6 +62,8 @@ const App: React.FC = () => {
     toggleDisableLazyLoading,
     alwaysShowLoading,
     toggleAlwaysShowLoading,
+    lazyTabChange,
+    toggleLazyTabChange,
     showTabs,
     toggleShowTabs,
     showSearch,
@@ -888,6 +890,8 @@ const App: React.FC = () => {
         toggleDisableLazyLoading={toggleDisableLazyLoading}
         alwaysShowLoading={alwaysShowLoading}
         toggleAlwaysShowLoading={toggleAlwaysShowLoading}
+        lazyTabChange={lazyTabChange}
+        toggleLazyTabChange={toggleLazyTabChange}
       />
 
       <div id="dashboard-container" className="max-w-7xl mx-auto space-y-8 py-10 px-4 sm:px-6 lg:px-8">

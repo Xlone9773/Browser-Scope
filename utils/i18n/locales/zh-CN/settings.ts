@@ -540,7 +540,9 @@ export const settings = {
         disableLazyLoading: "禁用懒加载",
         disableLazyLoadingDesc: "默认缓存全部模块到本地，并在启动时提前加载所有资源。",
         alwaysShowLoading: "始终显示加载提示",
-        alwaysShowLoadingDesc: "不论模块是否缓存，打开时始终显示加载指示器，以提升视觉一致性。"
+        alwaysShowLoadingDesc: "不论模块是否缓存，打开时始终显示加载指示器，以提升视觉一致性。",
+        lazyTabChange: "标签页延迟加载",
+        lazyTabChangeDesc: "切换设置标签页时，显示一个模糊遮罩和加载圆环，拦截点击事件，以模拟过渡加载并防止误触。"
     },
     versions: {
         title: "软件版本",

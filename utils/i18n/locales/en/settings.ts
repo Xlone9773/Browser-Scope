@@ -540,7 +540,9 @@ export const settings = {
         disableLazyLoading: "Disable Lazy Loading",
         disableLazyLoadingDesc: "Cache all modules locally upon startup instead of loading on demand.",
         alwaysShowLoading: "Always Show Loading",
-        alwaysShowLoadingDesc: "Show a loading indicator regardless of cache status to ensure visual consistency."
+        alwaysShowLoadingDesc: "Show a loading indicator regardless of cache status to ensure visual consistency.",
+        lazyTabChange: "Tab Transition Loading",
+        lazyTabChangeDesc: "Show a blurred loading mask with a circular spinner when switching settings tabs to simulate transition load and prevent accidental clicks."
     },
     versions: {
         title: "Software Versions",

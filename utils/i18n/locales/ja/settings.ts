@@ -540,7 +540,9 @@ export const settings = {
         disableLazyLoading: "遅延ロードの無効化",
         disableLazyLoadingDesc: "すべてのモジュールを最初からローカルにキャッシュし、起動時にリソースをすべてプリロードします。",
         alwaysShowLoading: "常にローディングを表示",
-        alwaysShowLoadingDesc: "キャッシュの有無に関わらず、開く際に常にロード中インジケータを表示し、ビジュアルの一貫性を向上させます。"
+        alwaysShowLoadingDesc: "キャッシュの有無に関わらず、開く際に常にロード中インジケータを表示し、ビジュアルの一貫性を向上させます。",
+        lazyTabChange: "タブ遅延ロード",
+        lazyTabChangeDesc: "設定タブを切り替える際、ぼかしマスクとロード中インジケータを表示してクリックイベントを遮断し、ロードをシミュレートして誤クリックを防止します。"
     },
     versions: {
         title: "ソフトウェアバージョン",

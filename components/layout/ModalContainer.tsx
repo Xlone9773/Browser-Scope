@@ -80,6 +80,8 @@ interface ModalContainerProps {
   toggleDisableLazyLoading: (val: boolean) => void;
   alwaysShowLoading: boolean;
   toggleAlwaysShowLoading: (val: boolean) => void;
+  lazyTabChange: boolean;
+  toggleLazyTabChange: (val: boolean) => void;
 }
 
 export const ModalContainer: React.FC<ModalContainerProps> = ({
@@ -156,6 +158,8 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   toggleDisableLazyLoading,
   alwaysShowLoading,
   toggleAlwaysShowLoading,
+  lazyTabChange,
+  toggleLazyTabChange,
 }) => {
   return (
     <ErrorBoundary name="Modals">
@@ -316,6 +320,8 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
             toggleDisableLazyLoading={toggleDisableLazyLoading}
             alwaysShowLoading={alwaysShowLoading}
             toggleAlwaysShowLoading={toggleAlwaysShowLoading}
+            lazyTabChange={lazyTabChange}
+            toggleLazyTabChange={toggleLazyTabChange}
           />
         ) : null}
 

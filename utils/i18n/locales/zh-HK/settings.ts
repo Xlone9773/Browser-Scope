@@ -541,7 +541,9 @@ export const settings = {
         disableLazyLoading: "禁用延遲載入",
         disableLazyLoadingDesc: "預設緩存全部模組到本地，並在啟動時提前載入所有資源。",
         alwaysShowLoading: "始終顯示載入提示",
-        alwaysShowLoadingDesc: "不論模組是否緩存，打開時始終顯示載入指示器，以提升視覺一致性。"
+        alwaysShowLoadingDesc: "不論模組是否緩存，打開時始終顯示載入指示器，以提升視覺一致性。",
+        lazyTabChange: "標籤頁延遲載入",
+        lazyTabChangeDesc: "切換設定標籤頁時，顯示一個模糊遮罩和載入圓環，攔截點擊事件，以模擬過渡載入並防止誤觸。"
     },
     versions: {
         title: "軟件版本",

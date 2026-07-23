@@ -106,6 +106,8 @@ interface ModulesTabProps {
     toggleDisableLazyLoading: (val: boolean) => void;
     alwaysShowLoading: boolean;
     toggleAlwaysShowLoading: (val: boolean) => void;
+    lazyTabChange: boolean;
+    toggleLazyTabChange: (val: boolean) => void;
 }
 
 export const ModulesTab: React.FC<ModulesTabProps> = ({ 
@@ -117,6 +119,8 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
     toggleDisableLazyLoading,
     alwaysShowLoading,
     toggleAlwaysShowLoading,
+    lazyTabChange,
+    toggleLazyTabChange,
 }) => {
     const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
     const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -306,6 +310,29 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
                                             </div>
                                             <p className="text-[11px] text-slate-400 dark:text-slate-400 leading-normal font-normal">
                                                 {t?.alwaysShowLoadingDesc}
+                                            </p>
+                                        </div>
+
+                                        {/* Lazy Tab Change */}
+                                        <div className="p-4 flex flex-col gap-1.5 hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors">
+                                            <div className="flex items-center justify-between gap-4">
+                                                <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs leading-none">
+                                                    {t?.lazyTabChange ? t.lazyTabChange : null}
+                                                </span>
+                                                <button
+                                                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                                                        e.stopPropagation();
+                                                        toggleLazyTabChange(!lazyTabChange);
+                                                    }}
+                                                    className={`w-8 h-4.5 rounded-full relative transition-colors duration-200 outline-none focus:ring-2 focus:ring-indigo-500/50 shrink-0 ${lazyTabChange ? "bg-indigo-500" : "bg-slate-200 dark:bg-slate-600"}`}
+                                                >
+                                                    <span
+                                                        className={`absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-white rounded-full transition-transform duration-200 ${lazyTabChange ? "translate-x-3.5" : "translate-x-0"}`}
+                                                    />
+                                                </button>
+                                            </div>
+                                            <p className="text-[11px] text-slate-400 dark:text-slate-400 leading-normal font-normal">
+                                                {t?.lazyTabChangeDesc ? t.lazyTabChangeDesc : null}
                                             </p>
                                         </div>
                                     </div>

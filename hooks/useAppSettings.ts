@@ -65,6 +65,9 @@ export function useAppSettings() {
   const [alwaysShowLoading, setAlwaysShowLoading] = useState<boolean>(
     () => localStorage.getItem("alwaysShowLoading") === "true",
   );
+  const [lazyTabChange, setLazyTabChange] = useState<boolean>(
+    () => localStorage.getItem("lazyTabChange") === "true",
+  );
   const [showTabs, setShowTabs] = useState<boolean>(() => {
     const saved = localStorage.getItem("showTabs");
     return saved === null ? true : saved === "true";
@@ -384,6 +387,11 @@ export function useAppSettings() {
     localStorage.setItem("alwaysShowLoading", String(value));
   }, []);
 
+  const toggleLazyTabChange = useCallback((value: boolean) => {
+    setLazyTabChange(value);
+    localStorage.setItem("lazyTabChange", String(value));
+  }, []);
+
   const toggleShowTabs = useCallback((value: boolean) => {
     setShowTabs(value);
     localStorage.setItem("showTabs", String(value));
@@ -504,6 +512,8 @@ export function useAppSettings() {
     toggleDisableLazyLoading,
     alwaysShowLoading,
     toggleAlwaysShowLoading,
+    lazyTabChange,
+    toggleLazyTabChange,
     showTabs,
     toggleShowTabs,
     showSearch,
