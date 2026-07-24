@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Cpu, Zap, Activity, AlertTriangle, Layers, Play, Square, TrendingUp, Microscope, Eye } from 'lucide-react';
+import { Cpu, Zap, Activity, AlertTriangle, Layers, Play, Square, TrendingUp, Microscope, Eye, Clock } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
 import { Select } from './ui/Select';
@@ -32,6 +32,15 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const [gflops, setGflops] = useState(0);
   const [peakGflops, setPeakGflops] = useState(0);
   const [cpuCores, setCpuCores] = useState(4);
+  const [selectedDuration, setSelectedDuration] = useState<number>(0);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const timerIntervalRef = useRef<any>(null);
+
+  const formatTimeRemaining = (secs: number) => {
+      const m = Math.floor(secs / 60);
+      const s = secs % 60;
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
   
   const [graphData, setGraphData] = useState<number[]>(Array.from({ length: HISTORY_LENGTH }, () => 0));
   const [viewMode, setViewMode] = useState<'graph' | 'visual'>('graph');
@@ -268,6 +277,10 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           cancelAnimationFrame(animRef.current);
           animRef.current = null;
       }
+      if (timerIntervalRef.current) {
+          clearInterval(timerIntervalRef.current);
+          timerIntervalRef.current = null;
+      }
       stopCpuWorkers();
       setIsRunning(false);
   }
@@ -446,6 +459,21 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       setPeakGflops(0);
       setGraphData(Array.from({ length: HISTORY_LENGTH }, () => 0));
       isRunningRef.current = true;
+
+      if (selectedDuration > 0) {
+          setTimeLeft(selectedDuration);
+          let currentLeft = selectedDuration;
+          if (timerIntervalRef.current) {
+              clearInterval(timerIntervalRef.current);
+          }
+          timerIntervalRef.current = setInterval(() => {
+              currentLeft -= 1;
+              setTimeLeft(currentLeft);
+              if (currentLeft <= 0) {
+                  stopTest();
+              }
+          }, 1000);
+      }
 
       let startTime = performance.now();
       let frames = 0;
@@ -692,11 +720,19 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                         <div>{t.peak}: <span className="text-white font-bold">{formatNumber(peakGflops, 2)}</span></div>
                         <div>{t.stability}: <span className={`font-bold ${stability > 90 ? 'text-green-400' : 'text-amber-400'}`}>{stability}%</span></div>
                     </div>
-                    {isRunning && (
-                        <div className="flex items-center gap-2 px-2 py-1 bg-red-500/20 border border-red-500/50 rounded text-xs font-bold text-red-400 animate-pulse">
-                            <Activity size={12} /> {t.status_active}
-                        </div>
-                    )}
+                    <div className="flex flex-col items-end gap-1.5">
+                        {isRunning && (
+                            <div className="flex items-center gap-2 px-2 py-1 bg-red-500/20 border border-red-500/50 rounded text-xs font-bold text-red-400 animate-pulse">
+                                <Activity size={12} /> {t.status_active}
+                            </div>
+                        )}
+                        {isRunning && selectedDuration > 0 && (
+                            <div className="flex items-center gap-1.5 px-2 py-1 bg-indigo-500/20 border border-indigo-500/40 rounded text-[10px] font-mono font-bold text-indigo-300">
+                                <Clock size={11} className="animate-pulse" />
+                                {t.time_remaining || "Time Remaining"}: {formatTimeRemaining(timeLeft)}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -742,6 +778,27 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                 { id: 2048, label: 'Extreme (2048x2048)' }
                             ]}
                             onChange={(val) => setMatrixSize(Number(val))}
+                            disabled={isRunning}
+                            color="indigo"
+                        />
+                    </div>
+
+                    <div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
+                            {t.timer_label || "Test Duration"}
+                        </div>
+                        <Select 
+                            value={selectedDuration}
+                            options={[
+                                { id: 0, label: t.timer_unlimited || 'Infinite' },
+                                { id: 10, label: t.timer_10s || '10 Seconds' },
+                                { id: 30, label: t.timer_30s || '30 Seconds' },
+                                { id: 60, label: t.timer_1m || '1 Minute' },
+                                { id: 120, label: t.timer_2m || '2 Minutes' },
+                                { id: 300, label: t.timer_5m || '5 Minutes' },
+                                { id: 600, label: t.timer_10m || '10 Minutes' }
+                            ]}
+                            onChange={(val) => setSelectedDuration(Number(val))}
                             disabled={isRunning}
                             color="indigo"
                         />

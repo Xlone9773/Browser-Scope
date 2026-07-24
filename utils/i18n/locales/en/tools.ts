@@ -146,7 +146,16 @@ export const tools = {
     engine_webgpu: "GPU: WebGPU (Tensor Core)",
     engine_webgl: "GPU: WebGL (Fragment Shader)",
     engine_cpu: "CPU: Multi-threaded Workload",
-    cpu_cores_prefix: "Active Cores:"
+    cpu_cores_prefix: "Active Cores:",
+    timer_label: "Test Duration",
+    timer_unlimited: "Infinite",
+    timer_10s: "10 Seconds",
+    timer_30s: "30 Seconds",
+    timer_1m: "1 Minute",
+    timer_2m: "2 Minutes",
+    timer_5m: "5 Minutes",
+    timer_10m: "10 Minutes",
+    time_remaining: "Time Remaining"
   },
   gamepadTool: {
     title: "Gamepad",

@@ -146,7 +146,16 @@ export const tools = {
     engine_webgpu: "GPU: WebGPU (Тензорные ядра)",
     engine_webgl: "GPU: WebGL (Пиксельные шейдеры)",
     engine_cpu: "CPU: Многопоточная нагрузка",
-    cpu_cores_prefix: "Активные ядра:"
+    cpu_cores_prefix: "Активные ядра:",
+    timer_label: "Длительность теста",
+    timer_unlimited: "Бесконечно",
+    timer_10s: "10 Секунд",
+    timer_30s: "30 Секунд",
+    timer_1m: "1 Минута",
+    timer_2m: "2 Минуты",
+    timer_5m: "5 Минут",
+    timer_10m: "10 Минут",
+    time_remaining: "Оставшееся время"
   },
   gamepadTool: {
     title: "Геймпад",

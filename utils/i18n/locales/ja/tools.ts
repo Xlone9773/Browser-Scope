@@ -146,7 +146,16 @@ export const tools = {
     engine_webgpu: "GPU: WebGPU (テンソルコア)",
     engine_webgl: "GPU: WebGL (フラグメントシェーダー)",
     engine_cpu: "CPU: マルチスレッド負荷テスト",
-    cpu_cores_prefix: "有効なコア数:"
+    cpu_cores_prefix: "有効なコア数:",
+    timer_label: "テスト時間",
+    timer_unlimited: "無制限",
+    timer_10s: "10 秒",
+    timer_30s: "30 秒",
+    timer_1m: "1 分",
+    timer_2m: "2 分",
+    timer_5m: "5 分",
+    timer_10m: "10 分",
+    time_remaining: "残り時間"
   },
   gamepadTool: {
     title: "ゲームパッド",

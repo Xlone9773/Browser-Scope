@@ -146,7 +146,16 @@ export const tools = {
     engine_webgpu: "GPU: WebGPU (张量核心)",
     engine_webgl: "GPU: WebGL (着色器图形)",
     engine_cpu: "CPU: 多线程高负荷",
-    cpu_cores_prefix: "活跃核心数:"
+    cpu_cores_prefix: "活跃核心数:",
+    timer_label: "测试时长",
+    timer_unlimited: "无限制",
+    timer_10s: "10 秒",
+    timer_30s: "30 秒",
+    timer_1m: "1 分钟",
+    timer_2m: "2 分钟",
+    timer_5m: "5 分钟",
+    timer_10m: "10 分钟",
+    time_remaining: "剩余时间"
   },
   gamepadTool: {
     title: "游戏手柄",
