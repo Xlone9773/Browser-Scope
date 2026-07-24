@@ -143,6 +143,7 @@ describe('useAppPermissions Hook', () => {
       altitudeAccuracy: null,
       heading: null,
       speed: null,
+      isSpoofed: false,
     });
   });
 
