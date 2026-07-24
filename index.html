@@ -354,7 +354,8 @@
       }
 
       /* === FAST TRANSITIONS MODE === */
-      body.fast-animations * {
+      body.fast-animations .transition,
+      body.fast-animations [class*="transition-"] {
         transition-duration: 0.1s !important;
       }
 

@@ -228,6 +228,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <SectionGroup
+              id="environment"
               title={t.groups?.environment || "Environment & Trust"}
               icon={<ShieldAlert className="text-emerald-500" />}
             >
@@ -250,6 +251,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <SectionGroup
+              id="browser"
               title={t.groups?.browser || "Browser"}
               icon={<Monitor className="text-indigo-500" />}
             >
@@ -277,6 +279,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <SectionGroup
+              id="system"
               title={t.groups?.system || "Device & System Core"}
               icon={<Smartphone className="text-indigo-500" />}
             >
@@ -335,6 +338,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <SectionGroup
+              id="network"
               title={t.groups?.network || "Network & Security"}
               icon={<ShieldAlert className="text-emerald-500" />}
             >
@@ -405,6 +409,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <SectionGroup
+              id="advanced"
               title={t.groups?.advanced || "Capabilities & APIs"}
               icon={<Cpu className="text-amber-500" />}
             >

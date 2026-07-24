@@ -13,7 +13,7 @@ interface PwaSectionProps {
 
 export const PwaSection: React.FC<PwaSectionProps> = ({ isPwaInstalled, features, t }) => {
   return (
-    <SectionGroup title={t.sections.pwa} icon={<AppWindow className="text-sky-500" size={24} />}>
+    <SectionGroup id="pwa" title={t.sections.pwa} icon={<AppWindow className="text-sky-500" size={24} />}>
         {/* PWA Section uses 1 full-width column in the SectionGroup grid since it renders its own card */}
         <div className="col-span-1 md:col-span-2 lg:col-span-3">
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">

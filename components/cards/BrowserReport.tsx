@@ -70,11 +70,20 @@ interface BrowserReportProps {
 type DimensionKey = 'rendering' | 'computing' | 'codecs' | 'apis' | 'privacy';
 
 export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
-    const [isExpanded, setIsExpanded] = useState<boolean>(true);
+    const [isExpanded, setIsExpanded] = useState<boolean>(() => {
+        const saved = localStorage.getItem('browser-report-expanded');
+        return saved === null ? true : saved === 'true';
+    });
     const [isAuditing, setIsAuditing] = useState<boolean>(false);
     const [results, setResults] = useState<ReportResults | null>(null);
     const [activeTab, setActiveTab] = useState<DimensionKey>('rendering');
     const [scoreDisplayMode, setScoreDisplayMode] = useState<'number' | 'grade'>('number');
+
+    const handleToggleExpand = () => {
+        const next = !isExpanded;
+        setIsExpanded(next);
+        localStorage.setItem('browser-report-expanded', String(next));
+    };
 
     const reportT = {
         title: t.browserReport?.title || "Browser Audit Report",
@@ -357,7 +366,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                     </Button>
                     <Button
                         id="btn-toggle-browser-report-expansion"
-                        onClick={() => setIsExpanded(!isExpanded)}
+                        onClick={handleToggleExpand}
                         leftIcon={isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                         size="sm"
                         variant="secondary"

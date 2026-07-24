@@ -6,16 +6,38 @@ interface SectionGroupProps {
     icon: React.ReactNode;
     children: React.ReactNode;
     defaultExpanded?: boolean;
+    id?: string;
 }
 
-export const SectionGroup: React.FC<SectionGroupProps> = ({ title, icon, children, defaultExpanded = true }) => {
-    const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+export const SectionGroup: React.FC<SectionGroupProps> = ({ 
+    title, 
+    icon, 
+    children, 
+    defaultExpanded = true,
+    id 
+}) => {
+    const storageKey = id ? `section-group-expanded-${id}` : null;
+    const [isExpanded, setIsExpanded] = useState<boolean>(() => {
+        if (storageKey) {
+            const saved = localStorage.getItem(storageKey);
+            return saved === null ? defaultExpanded : saved === 'true';
+        }
+        return defaultExpanded;
+    });
+
+    const handleToggle = () => {
+        const next = !isExpanded;
+        setIsExpanded(next);
+        if (storageKey) {
+            localStorage.setItem(storageKey, String(next));
+        }
+    };
 
     return (
         <div className="mb-8">
             <div 
                 className="flex items-center mb-4 cursor-pointer group select-none" 
-                onClick={() => setIsExpanded(!isExpanded)}
+                onClick={handleToggle}
             >
                 <div className="flex items-center gap-2 text-xl font-bold text-slate-800 dark:text-slate-100 transition-colors group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                     {icon}
