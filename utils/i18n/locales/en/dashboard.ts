@@ -501,4 +501,56 @@ export const dashboard = {
   "action_retest": "Retest",
   "drm_title": "DRM Capabilities",
   "collapseHeader": {"title":"Collapse Header (Desktop)","desc":"Use a collapsed menu for header actions on desktop screens."},
+  "browserReport": {
+    "title": "Browser Audit Report",
+    "subtitle": "Comprehensive check on rendering, core computation, codecs, API levels, and privacy",
+    "startAudit": "Run Audit",
+    "reAudit": "Re-Audit",
+    "evaluating": "Auditing browser capabilities...",
+    "overallScore": "Overall Score",
+    "rating": "Overall Rating",
+    "dimensions": {
+      "rendering": "Graphics & Rendering",
+      "computing": "Core Compute Power",
+      "codecs": "Media Codecs",
+      "apis": "System APIs Support",
+      "privacy": "Privacy Safeguards"
+    },
+    "dimensionDescs": {
+      "rendering": "WebGL, WebGPU, and modern CSS rendering standards",
+      "computing": "Multi-threading, WASM execution speed, and CPU concurrency",
+      "codecs": "Hardware/software AV1, VP9, AAC, Opus decoding capabilities",
+      "apis": "FileSystem, WebUSB, Geolocation, and modern Web APIs",
+      "privacy": "DoNotTrack, cookie storage sandbox, and leak prevention"
+    },
+    "ratings": {
+      "perfect": "Exemplary",
+      "excellent": "Excellent",
+      "good": "Good",
+      "standard": "Standard",
+      "weak": "Weak"
+    },
+    "ratingsDesc": {
+      "perfect": "Your browser has outstanding capabilities, fully supporting cutting-edge WebGPU graphics, high-performance WASM computing, rich modern APIs, and strict privacy protection.",
+      "excellent": "Excellent performance with high graphics and api support. Suitable for complex modern web applications and media playback.",
+      "good": "Good performance, covering major modern specifications. Some niche system APIs or hardware capabilities are not enabled.",
+      "standard": "Basic web capabilities are supported, but modern high-performance rendering (WebGPU/WebGL2) or strict privacy configurations are missing.",
+      "weak": "Limited browser features, with potential security leaks or lacking modern rendering engines."
+    },
+    "status": {
+      "supported": "Supported",
+      "unsupported": "Unsupported",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "advises": "Professional Recommendations",
+    "adviseItems": {
+      "upgrade": "Consider updating your browser or operating system to unlock full WebGPU/WebAssembly capabilities.",
+      "privateMode": "Enabling Do Not Track and hardening WebRTC can enhance your privacy security.",
+      "acceleration": "Make sure hardware acceleration is enabled in browser settings for optimal rendering performance.",
+      "allSet": "Your browser is fully optimized. Keep it updated for continued security and performance."
+    },
+    "displayModeOptionNumber": "Score (0-100)",
+    "displayModeOptionGrade": "Grade (S-D)"
+  }
 };

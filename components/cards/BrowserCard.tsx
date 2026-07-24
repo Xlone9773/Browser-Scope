@@ -3,6 +3,7 @@ import { InfoCard } from '../InfoCard';
 import { Monitor } from 'lucide-react';
 import { BrowserData } from '../../types';
 import { Translation } from '../../utils/i18n';
+import { BrowserReport } from './BrowserReport';
 
 interface BrowserCardProps {
     systemData: BrowserData['system'];
@@ -32,6 +33,7 @@ export const BrowserCard: React.FC<BrowserCardProps> = React.memo(({ systemData,
                     <Monitor size={32} />
                 </div>
             </div>
+            <BrowserReport t={t} />
         </InfoCard>
     );
 });

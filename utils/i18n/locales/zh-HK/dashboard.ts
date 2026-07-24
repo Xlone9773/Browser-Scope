@@ -502,4 +502,56 @@ export const dashboard = {
   "action_retest": "重新測試",
   "drm_title": "DRM 功能",
   "collapseHeader": {"title":"折疊標題列（桌面）","desc":"在桌面螢幕上使用折疊選單作為標題列操作。"},
+  "browserReport": {
+    "title": "瀏覽器質檢報告",
+    "subtitle": "全面檢測瀏覽器在影像渲染、核心算力、媒體編解碼、系統API、隱私防範等維度的表現",
+    "startAudit": "啟動質檢",
+    "reAudit": "重新評估",
+    "evaluating": "正在進行全方位質檢檢測...",
+    "overallScore": "綜合評分",
+    "rating": "綜合表現評價",
+    "dimensions": {
+      "rendering": "影像渲染",
+      "computing": "核心算力",
+      "codecs": "媒體編解碼",
+      "apis": "系統API支援",
+      "privacy": "隱私防範"
+    },
+    "dimensionDescs": {
+      "rendering": "WebGL、WebGPU 支援情況及現代 CSS 佈局渲染標準",
+      "computing": "多線程支援、WASM 執行速度與 CPU 核心並行能力",
+      "codecs": "硬體/軟體解碼 AV1、VP9 以及無損音訊編解碼實力",
+      "apis": "本地檔案讀寫、WebUSB、地理定位及現代 Web API 完備度",
+      "privacy": "防追蹤追蹤(DNT)、安全沙盒、隱私洩漏攔截防護表現"
+    },
+    "ratings": {
+      "perfect": "極佳",
+      "excellent": "優秀",
+      "good": "良好",
+      "standard": "基本",
+      "weak": "較差"
+    },
+    "ratingsDesc": {
+      "perfect": "您的瀏覽器具備極佳的現代 Web 核心能力，完美支援最新的 WebGPU 圖形標準、超強 WASM 算力及高水平隱私防護。",
+      "excellent": "瀏覽器綜合表現優秀，具備高水平的圖形與系統介面呼叫能力，能極佳地承載複雜大型 Web 應用及高清媒體互動。",
+      "good": "表現良好，完全覆蓋絕大多數現代 Web 標準。少數前沿技術（如 WebGPU、WebUSB 等）受限於設備或系統未完全啟用。",
+      "standard": "支援基本的 Web 標準，但缺乏最新的渲染引擎與部分硬體加速算力支援，面對複雜應用可能較為吃力。",
+      "weak": "瀏覽器綜合能力明顯欠缺，存在部分現代 API 不支援或隱私防護不足的情況，強烈建議升級瀏覽器。"
+    },
+    "status": {
+      "supported": "支援",
+      "unsupported": "不支援",
+      "enabled": "已開啟",
+      "disabled": "未開啟"
+    },
+    "advises": "專業優化建議",
+    "adviseItems": {
+      "upgrade": "建議升級最新版瀏覽器或作業系統，以解鎖完整的 WebGPU 圖形與算力能力。",
+      "privateMode": "啟用 Do Not Track 並加強 WebRTC 洩漏防護可以顯著提升您的瀏覽隱私度。",
+      "acceleration": "確保瀏覽器設定中的 '硬體加速' 已開啟，以便獲得最佳的圖形渲染性能。",
+      "allSet": "當前瀏覽器配置狀態極佳，請保持定期更新以維持最佳的安全與性能體驗。"
+    },
+    "displayModeOptionNumber": "分數模式 (0-100)",
+    "displayModeOptionGrade": "等級模式 (S-D)"
+  }
 };

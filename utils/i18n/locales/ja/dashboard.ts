@@ -502,4 +502,56 @@ export const dashboard = {
   "action_retest": "再テスト",
   "drm_title": "DRM 機能",
   "collapseHeader": {"title":"ヘッダーを折りたたむ (デスクトップ)","desc":"デスクトップ画面でヘッダーアクションに折りたたみメニューを使用します。"},
+  "browserReport": {
+    "title": "ブラウザ品質検査レポート",
+    "subtitle": "グラフィックス、レンダリング、コア計算、メディアコーデック、システムAPI、およびプライバシーを網羅的に検査します",
+    "startAudit": "検査を開始",
+    "reAudit": "再評価",
+    "evaluating": "ブラウザの能力を全面的に検査中...",
+    "overallScore": "総合スコア",
+    "rating": "総合評価",
+    "dimensions": {
+      "rendering": "レンダリングとグラフィックス",
+      "computing": "コア計算能力",
+      "codecs": "メディアコーデック",
+      "apis": "システムAPIサポート",
+      "privacy": "プライバシー保護"
+    },
+    "dimensionDescs": {
+      "rendering": "WebGL、WebGPU、およびモダンCSSレンダリング規格のサポート",
+      "computing": "マルチスレッド、WASM実行速度、およびCPU同時実行能力",
+      "codecs": "AV1、VP9、AAC、Opusデコードのハードウェア/ソフトウェアサポート",
+      "apis": "ファイルシステム、WebUSB、位置情報、およびモダンWeb APIの完備度",
+      "privacy": "DoNotTrack、クッキーサンドボックス、およびリーク防止性能"
+    },
+    "ratings": {
+      "perfect": "極めて優秀",
+      "excellent": "優秀",
+      "good": "良好",
+      "standard": "標準",
+      "weak": "不十分"
+    },
+    "ratingsDesc": {
+      "perfect": "お使いのブラウザは優れたWebコア能力を備えており、最新のWebGPUグラフィックス、高速WASM処理、豊富なAPI、厳格なプライバシー保護を完璧にサポートしています。",
+      "excellent": "ブラウザの総合パフォーマンスは優秀で、グラフィックスとシステムインターフェイスの呼び出し能力が高く、高度なWebアプリケーションを快適に実行できます。",
+      "good": "良好なパフォーマンスで、大部分のWeb規格をカバーしています。一部の先進技術（WebGPUやWebUSBなど）は制限されている場合があります。",
+      "standard": "基本的なWeb規格はサポートされていますが、最新のレンダリングやハードウェアアクセラレーション能力が不足しており、複雑な処理は遅くなる可能性があります。",
+      "weak": "ブラウザのコア機能が不足しているか、一部のAPIが未対応です。セキュリティ向上とパフォーマンス改善のため、ブラウザの更新を強くお勧めします。"
+    },
+    "status": {
+      "supported": "対応",
+      "unsupported": "非対応",
+      "enabled": "有効",
+      "disabled": "無効"
+    },
+    "advises": "最適化のアドバイス",
+    "adviseItems": {
+      "upgrade": "WebGPUやWebAssemblyなどの新機能を利用するため、ブラウザやOSを最新版に更新することをお勧めします。",
+      "privateMode": "Do Not Trackを有効にし、WebRTCの漏洩対策を強化することで、プライバシーを保護できます。",
+      "acceleration": "最高のレンダリングパフォーマンスを得るために、ブラウザ設定で「ハードウェアアクセラレーション」が有効になっていることを確認してください。",
+      "allSet": "現在の設定は非常に優れています。最高のセキュリティとパフォーマンスを維持するために定期的な更新を行ってください。"
+    },
+    "displayModeOptionNumber": "スコア (0-100)",
+    "displayModeOptionGrade": "評価 (S-D)"
+  }
 };
