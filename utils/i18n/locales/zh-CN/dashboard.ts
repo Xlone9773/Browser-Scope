@@ -553,6 +553,10 @@ export const dashboard = {
       "allSet": "当前浏览器配置状态极佳，请保持定期更新以维持最佳的安全与性能体验。"
     },
     "displayModeOptionNumber": "分数模式 (0-100)",
-    "displayModeOptionGrade": "等级模式 (S-D)"
+    "displayModeOptionGrade": "等级模式 (S-D)",
+    "weight": "权重",
+    "contribution": "贡献",
+    "deduction": "扣除",
+    "pts": "分"
   }
 };

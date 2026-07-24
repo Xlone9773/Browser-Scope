@@ -552,6 +552,10 @@ export const dashboard = {
       "allSet": "現在の設定は非常に優れています。最高のセキュリティとパフォーマンスを維持するために定期的な更新を行ってください。"
     },
     "displayModeOptionNumber": "スコア (0-100)",
-    "displayModeOptionGrade": "評価 (S-D)"
+    "displayModeOptionGrade": "評価 (S-D)",
+    "weight": "配点",
+    "contribution": "貢献",
+    "deduction": "控除",
+    "pts": "点"
   }
 };

@@ -552,6 +552,10 @@ export const dashboard = {
       "allSet": "當前瀏覽器配置狀態極佳，請保持定期更新以維持最佳的安全與性能體驗。"
     },
     "displayModeOptionNumber": "分數模式 (0-100)",
-    "displayModeOptionGrade": "等級模式 (S-D)"
+    "displayModeOptionGrade": "等級模式 (S-D)",
+    "weight": "權重",
+    "contribution": "貢獻",
+    "deduction": "扣除",
+    "pts": "分"
   }
 };

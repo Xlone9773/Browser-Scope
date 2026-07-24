@@ -552,6 +552,10 @@ export const dashboard = {
       "allSet": "Конфигурация вашего браузера отличная. Держите его обновленным для безопасности и скорости."
     },
     "displayModeOptionNumber": "Оценка (0-100)",
-    "displayModeOptionGrade": "Уровень (S-D)"
+    "displayModeOptionGrade": "Уровень (S-D)",
+    "weight": "Вес",
+    "contribution": "Вклад",
+    "deduction": "Вычет",
+    "pts": "баллов"
   }
 };

@@ -551,6 +551,10 @@ export const dashboard = {
       "allSet": "Your browser is fully optimized. Keep it updated for continued security and performance."
     },
     "displayModeOptionNumber": "Score (0-100)",
-    "displayModeOptionGrade": "Grade (S-D)"
+    "displayModeOptionGrade": "Grade (S-D)",
+    "weight": "Weight",
+    "contribution": "Contribution",
+    "deduction": "Deduction",
+    "pts": "pts"
   }
 };

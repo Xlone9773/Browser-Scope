@@ -13,13 +13,12 @@ import {
     RefreshCw, 
     ShieldCheck, 
     CpuIcon, 
-    FileCode, 
     Info 
 } from 'lucide-react';
 import { Translation } from '../../utils/i18n';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
-import { Select, SelectOption } from '../ui/Select';
+import { Select } from '../ui/Select';
 
 const getGrade = (score: number): string => {
     if (score >= 95) return 'S';
@@ -44,6 +43,7 @@ interface TestItem {
     name: string;
     supported: boolean;
     displayValue?: string;
+    weight: number;
 }
 
 interface DimensionResult {
@@ -73,145 +73,196 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
     const [activeTab, setActiveTab] = useState<DimensionKey>('rendering');
     const [scoreDisplayMode, setScoreDisplayMode] = useState<'number' | 'grade'>('number');
 
-    const reportT = t.browserReport || {
-        title: "Browser Audit Report",
-        subtitle: "Comprehensive check on rendering, core computation, codecs, API levels, and privacy",
-        startAudit: "Run Audit",
-        reAudit: "Re-Audit",
-        evaluating: "Auditing browser capabilities...",
-        overallScore: "Overall Score",
-        rating: "Overall Rating",
+    const reportT = {
+        title: t.browserReport?.title || "Browser Audit Report",
+        subtitle: t.browserReport?.subtitle || "Comprehensive check on rendering, core computation, codecs, API levels, and privacy",
+        startAudit: t.browserReport?.startAudit || "Run Audit",
+        reAudit: t.browserReport?.reAudit || "Re-Audit",
+        evaluating: t.browserReport?.evaluating || "Auditing browser capabilities...",
+        overallScore: t.browserReport?.overallScore || "Overall Score",
+        rating: t.browserReport?.rating || "Overall Rating",
         dimensions: {
-            rendering: "Graphics & Rendering",
-            computing: "Core Compute Power",
-            codecs: "Media Codecs",
-            apis: "System APIs Support",
-            privacy: "Privacy Safeguards"
+            rendering: t.browserReport?.dimensions?.rendering || "Graphics & Rendering",
+            computing: t.browserReport?.dimensions?.computing || "Core Compute Power",
+            codecs: t.browserReport?.dimensions?.codecs || "Media Codecs",
+            apis: t.browserReport?.dimensions?.apis || "System APIs Support",
+            privacy: t.browserReport?.dimensions?.privacy || "Privacy Safeguards"
         },
         dimensionDescs: {
-            rendering: "WebGL, WebGPU, and modern CSS rendering standards",
-            computing: "Multi-threading, WASM execution speed, and CPU concurrency",
-            codecs: "Hardware/software AV1, VP9, AAC, Opus decoding capabilities",
-            apis: "FileSystem, WebUSB, Geolocation, and modern Web APIs",
-            privacy: "DoNotTrack, cookie storage sandbox, and leak prevention"
+            rendering: t.browserReport?.dimensionDescs?.rendering || "WebGL, WebGPU, and modern CSS rendering standards",
+            computing: t.browserReport?.dimensionDescs?.computing || "Multi-threading, WASM execution speed, and CPU concurrency",
+            codecs: t.browserReport?.dimensionDescs?.codecs || "Hardware/software AV1, VP9, AAC, Opus decoding capabilities",
+            apis: t.browserReport?.dimensionDescs?.apis || "FileSystem, WebUSB, Geolocation, and modern Web APIs",
+            privacy: t.browserReport?.dimensionDescs?.privacy || "DoNotTrack, cookie storage sandbox, and leak prevention"
         },
         ratings: {
-            perfect: "Exemplary",
-            excellent: "Excellent",
-            good: "Good",
-            standard: "Standard",
-            weak: "Weak"
+            perfect: t.browserReport?.ratings?.perfect || "Exemplary",
+            excellent: t.browserReport?.ratings?.excellent || "Excellent",
+            good: t.browserReport?.ratings?.good || "Good",
+            standard: t.browserReport?.ratings?.standard || "Standard",
+            weak: t.browserReport?.ratings?.weak || "Weak"
         },
         ratingsDesc: {
-            perfect: "Your browser has outstanding capabilities, fully supporting cutting-edge WebGPU graphics, high-performance WASM computing, rich modern APIs, and strict privacy protection.",
-            excellent: "Excellent performance with high graphics and api support. Suitable for complex modern web applications and media playback.",
-            good: "Good performance, covering major modern specifications. Some niche system APIs or hardware capabilities are not enabled.",
-            standard: "Basic web capabilities are supported, but modern high-performance rendering (WebGPU/WebGL2) or strict privacy configurations are missing.",
-            weak: "Limited browser features, with potential security leaks or lacking modern rendering engines."
+            perfect: t.browserReport?.ratingsDesc?.perfect || "Your browser has outstanding capabilities, fully supporting cutting-edge WebGPU graphics, high-performance WASM computing, rich modern APIs, and strict privacy protection.",
+            excellent: t.browserReport?.ratingsDesc?.excellent || "Excellent performance with high graphics and api support. Suitable for complex modern web applications and media playback.",
+            good: t.browserReport?.ratingsDesc?.good || "Good performance, covering major modern specifications. Some niche system APIs or hardware capabilities are not enabled.",
+            standard: t.browserReport?.ratingsDesc?.standard || "Basic web capabilities are supported, but modern high-performance rendering (WebGPU/WebGL2) or strict privacy configurations are missing.",
+            weak: t.browserReport?.ratingsDesc?.weak || "Limited browser features, with potential security leaks or lacking modern rendering engines."
         },
         status: {
-            supported: "Supported",
-            unsupported: "Unsupported",
-            enabled: "Enabled",
-            disabled: "Disabled"
+            supported: t.browserReport?.status?.supported || "Supported",
+            unsupported: t.browserReport?.status?.unsupported || "Unsupported",
+            enabled: t.browserReport?.status?.enabled || "Enabled",
+            disabled: t.browserReport?.status?.disabled || "Disabled"
         },
-        advises: "Professional Recommendations",
+        advises: t.browserReport?.advises || "Professional Recommendations",
         adviseItems: {
-            upgrade: "Consider updating your browser or operating system to unlock full WebGPU/WebAssembly capabilities.",
-            privateMode: "Enabling Do Not Track and hardening WebRTC can enhance your privacy security.",
-            acceleration: "Make sure hardware acceleration is enabled in browser settings for optimal rendering performance.",
-            allSet: "Your browser is fully optimized. Keep it updated for continued security and performance."
+            upgrade: t.browserReport?.adviseItems?.upgrade || "Consider updating your browser or operating system to unlock full WebGPU/WebAssembly capabilities.",
+            privateMode: t.browserReport?.adviseItems?.privateMode || "Enabling Do Not Track and hardening WebRTC can enhance your privacy security.",
+            acceleration: t.browserReport?.adviseItems?.acceleration || "Make sure hardware acceleration is enabled in browser settings for optimal rendering performance.",
+            allSet: t.browserReport?.adviseItems?.allSet || "Your browser is fully optimized. Keep it updated for continued security and performance."
         },
-        displayModeOptionNumber: "Score (0-100)",
-        displayModeOptionGrade: "Grade (S-D)"
+        displayModeOptionNumber: t.browserReport?.displayModeOptionNumber || "Score (0-100)",
+        displayModeOptionGrade: t.browserReport?.displayModeOptionGrade || "Grade (S-D)",
+        weight: t.browserReport?.weight || "Weight",
+        contribution: t.browserReport?.contribution || "Contribution",
+        deduction: t.browserReport?.deduction || "Deduction",
+        pts: t.browserReport?.pts || "pts"
     };
 
     const runDiagnostic = useCallback((): void => {
         setIsAuditing(true);
 
         setTimeout((): void => {
-            // 1. Rendering
-            const hasWebGL: boolean = typeof window !== 'undefined' && (!!window.WebGLRenderingContext || !!document.createElement('canvas').getContext('webgl'));
+            // 1. Graphics & Rendering
             const hasWebGPU: boolean = typeof navigator !== 'undefined' && ('gpu' in navigator);
+            const hasWebGL2: boolean = typeof window !== 'undefined' && ('WebGL2RenderingContext' in window || !!document.createElement('canvas').getContext('webgl2'));
+            const hasWebGL1: boolean = typeof window !== 'undefined' && ('WebGLRenderingContext' in window || !!document.createElement('canvas').getContext('webgl'));
+            const hasOffscreenCanvas: boolean = typeof OffscreenCanvas !== 'undefined';
+            const hasImageDecoder: boolean = typeof ImageDecoder !== 'undefined';
             const hasCanvas: boolean = typeof document !== 'undefined' && (!!document.createElement('canvas').getContext);
             const hasContainerQueries: boolean = typeof CSS !== 'undefined' && CSS.supports('container-type: inline-size');
             const hasViewTransitions: boolean = typeof document !== 'undefined' && ('startViewTransition' in document);
 
             const renderingItems: TestItem[] = [
-                { id: 'webgpu', name: 'WebGPU (Next-gen Graphics)', supported: hasWebGPU },
-                { id: 'webgl', name: 'WebGL (3D Context)', supported: hasWebGL },
-                { id: 'canvas', name: 'Canvas 2D Rendering', supported: hasCanvas },
-                { id: 'container_queries', name: 'CSS Container Queries', supported: hasContainerQueries },
-                { id: 'view_transitions', name: 'View Transitions API', supported: hasViewTransitions }
+                { id: 'webgpu', name: 'WebGPU (Next-gen Graphics)', supported: hasWebGPU, weight: 25 },
+                { id: 'webgl2', name: 'WebGL 2.0 (High-perf 3D)', supported: hasWebGL2, weight: 20 },
+                { id: 'webgl', name: 'WebGL 1.0 (Standard 3D)', supported: hasWebGL1, weight: 15 },
+                { id: 'offscreencanvas', name: 'OffscreenCanvas (Worker)', supported: hasOffscreenCanvas, weight: 15 },
+                { id: 'imagedecoder', name: 'ImageDecoder API (Hardware)', supported: hasImageDecoder, weight: 10 },
+                { id: 'canvas', name: 'Canvas 2D Rendering', supported: hasCanvas, weight: 5 },
+                { id: 'container_queries', name: 'CSS Container Queries', supported: hasContainerQueries, weight: 5 },
+                { id: 'view_transitions', name: 'View Transitions API', supported: hasViewTransitions, weight: 5 }
             ];
-            const renderingScore: number = Math.round((renderingItems.filter((i: TestItem) => i.supported).length / renderingItems.length) * 100);
+            const renderingScore: number = renderingItems
+                .filter((i: TestItem) => i.supported)
+                .reduce((acc: number, i: TestItem) => acc + i.weight, 0);
 
-            // 2. Computing
-            const hasWorkers: boolean = typeof Worker !== 'undefined';
+            // 2. Core Compute Power
             const hasWASM: boolean = typeof WebAssembly !== 'undefined';
-            const cpuCores: number = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 1 : 1;
+            const hasWASMSIMD: boolean = typeof WebAssembly !== 'undefined' && WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 0, 3, 2, 1, 0, 10, 9, 1, 7, 0, 65, 0, 253, 15, 26]));
+            const hasWASMThreads: boolean = typeof SharedArrayBuffer !== 'undefined' && typeof WebAssembly !== 'undefined';
+            const hasWorkers: boolean = typeof Worker !== 'undefined';
+            const hasServiceWorker: boolean = typeof navigator !== 'undefined' && ('serviceWorker' in navigator);
             const hasSharedArrayBuffer: boolean = typeof SharedArrayBuffer !== 'undefined';
+            const cpuCores: number = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 1 : 1;
             const hasWebNN: boolean = typeof navigator !== 'undefined' && ('ml' in navigator || 'webnn' in navigator);
 
             const computingItems: TestItem[] = [
-                { id: 'wasm', name: 'WebAssembly (WASM)', supported: hasWASM },
-                { id: 'workers', name: 'Web Workers (Multi-threading)', supported: hasWorkers },
-                { id: 'shared_array_buffer', name: 'SharedArrayBuffer', supported: hasSharedArrayBuffer },
-                { id: 'cpu_concurrency', name: `High Concurrency (CPU Cores: ${cpuCores})`, supported: cpuCores >= 4 },
-                { id: 'webnn', name: 'WebNN (Neural Network API)', supported: hasWebNN }
+                { id: 'wasm', name: 'WebAssembly (WASM Core)', supported: hasWASM, weight: 20 },
+                { id: 'wasm_simd', name: 'WASM SIMD (Vectorization)', supported: hasWASMSIMD, weight: 15 },
+                { id: 'wasm_threads', name: 'WASM Threads (Parallel)', supported: hasWASMThreads, weight: 15 },
+                { id: 'workers', name: 'Web Workers (Multithread)', supported: hasWorkers, weight: 15 },
+                { id: 'serviceworker', name: 'ServiceWorker (Background)', supported: hasServiceWorker, weight: 15 },
+                { id: 'shared_array_buffer', name: 'SharedArrayBuffer', supported: hasSharedArrayBuffer, weight: 10 },
+                { id: 'cpu_concurrency', name: `High Concurrency (${cpuCores} Cores)`, supported: cpuCores >= 4, weight: 5, displayValue: `${cpuCores} Cores` },
+                { id: 'webnn', name: 'WebNN (Neural Network API)', supported: hasWebNN, weight: 5 }
             ];
-            const computingScore: number = Math.round((computingItems.filter((i: TestItem) => i.supported).length / computingItems.length) * 100);
+            const computingScore: number = computingItems
+                .filter((i: TestItem) => i.supported)
+                .reduce((acc: number, i: TestItem) => acc + i.weight, 0);
 
-            // 3. Codecs
+            // 3. Media Codecs
             let hasVP9: boolean = false;
             let hasAV1: boolean = false;
+            let hasHEVC: boolean = false;
             let hasAAC: boolean = false;
             let hasOpus: boolean = false;
+            let hasFLAC: boolean = false;
 
             if (typeof document !== 'undefined') {
                 const video: HTMLVideoElement = document.createElement('video');
                 const audio: HTMLAudioElement = document.createElement('audio');
                 hasVP9 = video.canPlayType('video/webm; codecs="vp9"') !== '';
                 hasAV1 = video.canPlayType('video/mp4; codecs="av01.0.05M.08"') !== '';
+                hasHEVC = video.canPlayType('video/mp4; codecs="hvc1.1.6.L93.B0"') !== '' || video.canPlayType('video/mp4; codecs="hev1.1.6.L93.B0"') !== '';
                 hasAAC = audio.canPlayType('audio/mp4; codecs="mp4a.40.2"') !== '';
                 hasOpus = audio.canPlayType('audio/webm; codecs="opus"') !== '';
+                hasFLAC = audio.canPlayType('audio/flac') !== '' || audio.canPlayType('audio/x-flac') !== '';
             }
 
-            const codecsItems: TestItem[] = [
-                { id: 'av1', name: 'AV1 Video Decoding', supported: hasAV1 },
-                { id: 'vp9', name: 'VP9 Video Decoding', supported: hasVP9 },
-                { id: 'aac', name: 'AAC Audio Decoding', supported: hasAAC },
-                { id: 'opus', name: 'Opus Audio Decoding', supported: hasOpus }
-            ];
-            const codecsScore: number = Math.round((codecsItems.filter((i: TestItem) => i.supported).length / codecsItems.length) * 100);
+            const hasWebCodecs: boolean = typeof VideoDecoder !== 'undefined';
+            const hasWebAudio: boolean = typeof AudioContext !== 'undefined' || (typeof window !== 'undefined' && 'webkitAudioContext' in window);
 
-            // 4. APIs
+            const codecsItems: TestItem[] = [
+                { id: 'av1', name: 'AV1 Video Decoding', supported: hasAV1, weight: 20 },
+                { id: 'hevc', name: 'HEVC/H.265 Decoding', supported: hasHEVC, weight: 15 },
+                { id: 'vp9', name: 'VP9 Video Decoding', supported: hasVP9, weight: 15 },
+                { id: 'webcodecs', name: 'WebCodecs API (Low-level)', supported: hasWebCodecs, weight: 15 },
+                { id: 'webaudio', name: 'Web Audio API (Spatial)', supported: hasWebAudio, weight: 15 },
+                { id: 'opus', name: 'Opus Audio Decoding', supported: hasOpus, weight: 10 },
+                { id: 'aac', name: 'AAC Audio Decoding', supported: hasAAC, weight: 5 },
+                { id: 'flac', name: 'FLAC Audio Decoding', supported: hasFLAC, weight: 5 }
+            ];
+            const codecsScore: number = codecsItems
+                .filter((i: TestItem) => i.supported)
+                .reduce((acc: number, i: TestItem) => acc + i.weight, 0);
+
+            // 4. System APIs Support
             const hasFS: boolean = typeof window !== 'undefined' && ('showOpenFilePicker' in window);
-            const hasGeo: boolean = typeof navigator !== 'undefined' && ('geolocation' in navigator);
-            const hasNotification: boolean = typeof window !== 'undefined' && ('Notification' in window);
             const hasClipboard: boolean = typeof navigator !== 'undefined' && ('clipboard' in navigator);
+            const hasGeo: boolean = typeof navigator !== 'undefined' && ('geolocation' in navigator);
+            const hasWebUSB: boolean = typeof navigator !== 'undefined' && ('usb' in navigator);
+            const hasWebBluetooth: boolean = typeof navigator !== 'undefined' && ('bluetooth' in navigator);
+            const hasEyeDropper: boolean = typeof window !== 'undefined' && ('EyeDropper' in window);
+            const hasNotification: boolean = typeof window !== 'undefined' && ('Notification' in window);
+            const hasGamepad: boolean = typeof navigator !== 'undefined' && ('getGamepads' in navigator);
 
             const apisItems: TestItem[] = [
-                { id: 'filesystem', name: 'FileSystem Access API', supported: hasFS },
-                { id: 'geolocation', name: 'Geolocation API', supported: hasGeo },
-                { id: 'notification', name: 'Notification API', supported: hasNotification },
-                { id: 'clipboard', name: 'Clipboard Read/Write API', supported: hasClipboard }
+                { id: 'filesystem', name: 'FileSystem Access API', supported: hasFS, weight: 20 },
+                { id: 'clipboard', name: 'Clipboard Read/Write API', supported: hasClipboard, weight: 15 },
+                { id: 'geolocation', name: 'Geolocation API', supported: hasGeo, weight: 15 },
+                { id: 'webusb', name: 'WebUSB API (Hardware)', supported: hasWebUSB, weight: 15 },
+                { id: 'webbluetooth', name: 'WebBluetooth API (Wireless)', supported: hasWebBluetooth, weight: 15 },
+                { id: 'eyedropper', name: 'EyeDropper API (Color Picker)', supported: hasEyeDropper, weight: 10 },
+                { id: 'notification', name: 'Notification API', supported: hasNotification, weight: 5 },
+                { id: 'gamepad', name: 'Gamepad API (Controllers)', supported: hasGamepad, weight: 5 }
             ];
-            const apisScore: number = Math.round((apisItems.filter((i: TestItem) => i.supported).length / apisItems.length) * 100);
+            const apisScore: number = apisItems
+                .filter((i: TestItem) => i.supported)
+                .reduce((acc: number, i: TestItem) => acc + i.weight, 0);
 
-            // 5. Privacy
-            const isDNT: boolean = typeof navigator !== 'undefined' && (navigator.doNotTrack === '1' || ('doNotTrack' in window ? (window as unknown as Record<string, string>).doNotTrack === '1' : false));
-            const hasCookies: boolean = typeof navigator !== 'undefined' && navigator.cookieEnabled;
-            const hasStoragePersist: boolean = typeof navigator !== 'undefined' && ('storage' in navigator && 'persist' in navigator.storage);
+            // 5. Privacy Safeguards
             const isSecure: boolean = typeof window !== 'undefined' && window.isSecureContext;
+            const hasWebAuthn: boolean = typeof window !== 'undefined' && ('PublicKeyCredential' in window);
+            const hasCookies: boolean = typeof navigator !== 'undefined' && navigator.cookieEnabled;
+            const isDNT: boolean = typeof navigator !== 'undefined' && (navigator.doNotTrack === '1' || ('doNotTrack' in window ? (window as unknown as Record<string, string>).doNotTrack === '1' : false));
+            const hasPermissions: boolean = typeof navigator !== 'undefined' && ('permissions' in navigator);
+            const hasStoragePersist: boolean = typeof navigator !== 'undefined' && ('storage' in navigator && 'persist' in navigator.storage);
+            const hasWebShare: boolean = typeof navigator !== 'undefined' && ('share' in navigator);
 
             const privacyItems: TestItem[] = [
-                { id: 'dnt', name: 'Do Not Track (DNT) Signal', supported: isDNT, displayValue: isDNT ? reportT.status.enabled : reportT.status.disabled },
-                { id: 'cookies', name: 'Cookie Security Sandbox', supported: hasCookies, displayValue: hasCookies ? reportT.status.enabled : reportT.status.disabled },
-                { id: 'storage_persist', name: 'Persistent Storage API', supported: hasStoragePersist },
-                { id: 'secure_context', name: 'HTTPS Secure Context', supported: isSecure }
+                { id: 'secure_context', name: 'HTTPS Secure Context', supported: isSecure, weight: 25 },
+                { id: 'webauthn', name: 'WebAuthn / Passkey API', supported: hasWebAuthn, weight: 20 },
+                { id: 'cookies', name: 'Cookie Security Sandbox', supported: hasCookies, weight: 15, displayValue: hasCookies ? reportT.status.enabled : reportT.status.disabled },
+                { id: 'dnt', name: 'Do Not Track (DNT) Signal', supported: isDNT, weight: 15, displayValue: isDNT ? reportT.status.enabled : reportT.status.disabled },
+                { id: 'permissions', name: 'Permissions Query API', supported: hasPermissions, weight: 10 },
+                { id: 'storage_persist', name: 'Persistent Storage API', supported: hasStoragePersist, weight: 10 },
+                { id: 'webshare', name: 'Web Share API (Secure)', supported: hasWebShare, weight: 5 }
             ];
-            const privacyScore: number = Math.round((privacyItems.filter((i: TestItem) => i.supported).length / privacyItems.length) * 100);
+            const privacyScore: number = privacyItems
+                .filter((i: TestItem) => i.supported)
+                .reduce((acc: number, i: TestItem) => acc + i.weight, 0);
 
             // Overall Score
             const overallScore: number = Math.round((renderingScore + computingScore + codecsScore + apisScore + privacyScore) / 5);
@@ -279,8 +330,8 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                         <Select
                             value={scoreDisplayMode}
                             options={[
-                                { id: 'number', label: reportT.displayModeOptionNumber || 'Score (0-100)' },
-                                { id: 'grade', label: reportT.displayModeOptionGrade || 'Grade (S-D)' }
+                                { id: 'number', label: reportT.displayModeOptionNumber },
+                                { id: 'grade', label: reportT.displayModeOptionGrade }
                             ]}
                             onChange={(val: unknown) => setScoreDisplayMode(val as 'number' | 'grade')}
                             size="sm"
@@ -445,23 +496,38 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                             <div className="divide-y divide-slate-100 dark:divide-slate-800/50 mt-2">
                                 {results[activeTab].items.map((item: TestItem) => (
                                     <div key={item.id} className="flex items-center justify-between py-3">
-                                        <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">
-                                            {item.name}
-                                        </span>
-                                        <div className="flex items-center gap-2 shrink-0">
+                                        <div className="flex flex-col">
+                                            <span className="text-xs text-slate-700 dark:text-slate-300 font-semibold">
+                                                {item.name}
+                                            </span>
+                                            <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                                                {reportT.weight}: {item.weight}% ({reportT.contribution}: +{item.weight} / {reportT.deduction}: -{item.weight})
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2.5 shrink-0">
                                             {item.displayValue ? (
                                                 <Badge variant="neutral">
                                                     {item.displayValue}
                                                 </Badge>
                                             ) : null}
                                             {item.supported ? (
-                                                <Badge variant="success" icon={<Check size={10} strokeWidth={2.5} />}>
-                                                    {reportT.status.supported}
-                                                </Badge>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[11px] font-bold text-emerald-500 dark:text-emerald-400">
+                                                        +{item.weight} {reportT.pts}
+                                                    </span>
+                                                    <Badge variant="success" icon={<Check size={10} strokeWidth={2.5} />}>
+                                                        {reportT.status.supported}
+                                                    </Badge>
+                                                </div>
                                             ) : (
-                                                <Badge variant="error" icon={<X size={10} strokeWidth={2.5} />}>
-                                                    {reportT.status.unsupported}
-                                                </Badge>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[11px] font-bold text-rose-500 dark:text-rose-400 animate-pulse">
+                                                        -{item.weight} {reportT.pts}
+                                                    </span>
+                                                    <Badge variant="error" icon={<X size={10} strokeWidth={2.5} />}>
+                                                        {reportT.status.unsupported}
+                                                    </Badge>
+                                                </div>
                                             )}
                                         </div>
                                     </div>
