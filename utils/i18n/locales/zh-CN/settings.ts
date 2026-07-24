@@ -542,7 +542,11 @@ export const settings = {
         alwaysShowLoading: "始终显示加载提示",
         alwaysShowLoadingDesc: "不论模块是否缓存，打开时始终显示加载指示器，以提升视觉一致性。",
         lazyTabChange: "标签页延迟加载",
-        lazyTabChangeDesc: "切换设置标签页时，显示一个模糊遮罩和加载圆环，拦截点击事件，以模拟过渡加载并防止误触。"
+        lazyTabChangeDesc: "切换设置标签页时，显示一个模糊遮罩和加载圆环，拦截点击事件，以模拟过渡加载并防止误触。",
+        mutualCacheTag: "与禁用懒加载互斥",
+        mutualLazyTag: "与禁用缓存互斥",
+        mutualCacheWarning: "💡 已启用 '禁用懒加载'，本项已被自动关闭",
+        mutualLazyWarning: "💡 已启用 '禁用缓存'，本项已被自动关闭"
     },
     versions: {
         title: "软件版本",

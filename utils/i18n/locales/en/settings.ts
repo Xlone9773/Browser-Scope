@@ -542,7 +542,11 @@ export const settings = {
         alwaysShowLoading: "Always Show Loading",
         alwaysShowLoadingDesc: "Show a loading indicator regardless of cache status to ensure visual consistency.",
         lazyTabChange: "Tab Transition Loading",
-        lazyTabChangeDesc: "Show a blurred loading mask with a circular spinner when switching settings tabs to simulate transition load and prevent accidental clicks."
+        lazyTabChangeDesc: "Show a blurred loading mask with a circular spinner when switching settings tabs to simulate transition load and prevent accidental clicks.",
+        mutualCacheTag: "Mutual with Disable Lazy Loading",
+        mutualLazyTag: "Mutual with Disable Cache",
+        mutualCacheWarning: "💡 'Disable Lazy Loading' is active, this option is auto-turned off",
+        mutualLazyWarning: "💡 'Disable Cache' is active, this option is auto-turned off"
     },
     versions: {
         title: "Software Versions",

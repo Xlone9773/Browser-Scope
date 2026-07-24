@@ -542,7 +542,11 @@ export const settings = {
         alwaysShowLoading: "常にローディングを表示",
         alwaysShowLoadingDesc: "キャッシュの有無に関わらず、開く際に常にロード中インジケータを表示し、ビジュアルの一貫性を向上させます。",
         lazyTabChange: "タブ遅延ロード",
-        lazyTabChangeDesc: "設定タブを切り替える際、ぼかしマスクとロード中インジケータを表示してクリックイベントを遮断し、ロードをシミュレートして誤クリックを防止します。"
+        lazyTabChangeDesc: "設定タブを切り替える際、ぼかしマスクとロード中インジケータを表示してクリックイベントを遮断し、ロードをシミュレートして誤クリックを防止します。",
+        mutualCacheTag: "遅延ロード無効化と互斥",
+        mutualLazyTag: "キャッシュ無効化と互斥",
+        mutualCacheWarning: "💡 '遅延ロード無効化'が有効なため、自動的にオフ",
+        mutualLazyWarning: "💡 'キャッシュ無効化'が有効なため、自動的にオフ"
     },
     versions: {
         title: "ソフトウェアバージョン",
