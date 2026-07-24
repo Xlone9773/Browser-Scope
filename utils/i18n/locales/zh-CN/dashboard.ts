@@ -557,6 +557,8 @@ export const dashboard = {
     "weight": "权重",
     "contribution": "贡献",
     "deduction": "扣除",
-    "pts": "分"
+    "pts": "分",
+    "collapse": "收起",
+    "expand": "展开"
   }
 };

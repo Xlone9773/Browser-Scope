@@ -555,6 +555,8 @@ export const dashboard = {
     "weight": "Weight",
     "contribution": "Contribution",
     "deduction": "Deduction",
-    "pts": "pts"
+    "pts": "pts",
+    "collapse": "Collapse",
+    "expand": "Expand"
   }
 };

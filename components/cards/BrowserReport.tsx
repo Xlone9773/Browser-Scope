@@ -13,7 +13,9 @@ import {
     RefreshCw, 
     ShieldCheck, 
     CpuIcon, 
-    Info 
+    Info,
+    ChevronDown,
+    ChevronUp
 } from 'lucide-react';
 import { Translation } from '../../utils/i18n';
 import { Button } from '../ui/Button';
@@ -68,6 +70,7 @@ interface BrowserReportProps {
 type DimensionKey = 'rendering' | 'computing' | 'codecs' | 'apis' | 'privacy';
 
 export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
+    const [isExpanded, setIsExpanded] = useState<boolean>(true);
     const [isAuditing, setIsAuditing] = useState<boolean>(false);
     const [results, setResults] = useState<ReportResults | null>(null);
     const [activeTab, setActiveTab] = useState<DimensionKey>('rendering');
@@ -127,7 +130,9 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
         weight: t.browserReport?.weight || "Weight",
         contribution: t.browserReport?.contribution || "Contribution",
         deduction: t.browserReport?.deduction || "Deduction",
-        pts: t.browserReport?.pts || "pts"
+        pts: t.browserReport?.pts || "pts",
+        collapse: t.browserReport?.collapse || "Collapse",
+        expand: t.browserReport?.expand || "Expand"
     };
 
     const runDiagnostic = useCallback((): void => {
@@ -315,7 +320,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
 
     return (
         <div id="browser-quality-report" className="mt-6 border border-slate-100 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900/50 p-6 shadow-sm overflow-hidden">
-            <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-slate-100 dark:border-slate-800 gap-4">
+            <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-300 ${isExpanded ? 'pb-6 border-b border-slate-100 dark:border-slate-800' : ''}`}>
                 <div>
                     <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                         <Gauge className="text-indigo-500 animate-pulse" size={22} />
@@ -350,11 +355,27 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                     >
                         {results ? reportT.reAudit : reportT.startAudit}
                     </Button>
+                    <Button
+                        id="btn-toggle-browser-report-expansion"
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        leftIcon={isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        size="sm"
+                        variant="secondary"
+                        className="shadow-sm font-medium"
+                    >
+                        {isExpanded ? reportT.collapse : reportT.expand}
+                    </Button>
                 </div>
             </div>
 
-            {isAuditing ? (
-                <div id="audit-loading-indicator" className="py-16 flex flex-col items-center justify-center">
+            <motion.div
+                initial={false}
+                animate={{ height: isExpanded ? 'auto' : 0, opacity: isExpanded ? 1 : 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="overflow-hidden"
+            >
+                {isAuditing ? (
+                    <div id="audit-loading-indicator" className="py-16 flex flex-col items-center justify-center">
                     <div className="relative w-16 h-16 mb-4">
                         <div className="absolute inset-0 rounded-full border-4 border-slate-100 dark:border-slate-800"></div>
                         <div className="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
@@ -591,6 +612,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                     </div>
                 </div>
             ) : null}
+            </motion.div>
         </div>
     );
 };

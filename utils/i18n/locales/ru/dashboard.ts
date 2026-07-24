@@ -556,6 +556,8 @@ export const dashboard = {
     "weight": "Вес",
     "contribution": "Вклад",
     "deduction": "Вычет",
-    "pts": "баллов"
+    "pts": "баллов",
+    "collapse": "Свернуть",
+    "expand": "Развернуть"
   }
 };

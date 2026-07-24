@@ -556,6 +556,8 @@ export const dashboard = {
     "weight": "權重",
     "contribution": "貢獻",
     "deduction": "扣除",
-    "pts": "分"
+    "pts": "分",
+    "collapse": "收起",
+    "expand": "展開"
   }
 };

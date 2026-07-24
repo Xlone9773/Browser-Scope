@@ -556,6 +556,8 @@ export const dashboard = {
     "weight": "配点",
     "contribution": "貢献",
     "deduction": "控除",
-    "pts": "点"
+    "pts": "点",
+    "collapse": "折りたたむ",
+    "expand": "展開する"
   }
 };
