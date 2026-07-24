@@ -199,6 +199,13 @@ export interface GeoPosition {
     altitudeAccuracy: number | null;
     heading: number | null;
     speed: number | null;
+    isSpoofed?: boolean;
+    apparentLat?: number;
+    apparentLong?: number;
+    apparentAcc?: number;
+    realLat?: number;
+    realLong?: number;
+    realAcc?: number;
 }
 
 // Shape Detection API Types
