@@ -6,6 +6,7 @@ import { ChevronDown, Check } from 'lucide-react';
 export interface SelectOption {
     id: string | number;
     label: string;
+    disabled?: boolean;
 }
 
 export type SelectColor = 'indigo' | 'purple' | 'blue' | 'emerald' | 'rose' | 'amber' | 'violet' | 'sky' | 'ice' | 'cherry';
@@ -261,17 +262,21 @@ export const Select: React.FC<SelectProps> = ({
                         {options.map((opt, idx) => {
                             const isSelected = value === opt.id;
                             const isFocused = idx === focusedIndex;
+                            const isDisabled = opt.disabled;
                             return (
                                 <button
                                     key={opt.id}
-                                    onClick={() => { onChange(opt.id); close(); }}
+                                    onClick={() => { if (isDisabled) return; onChange(opt.id); close(); }}
+                                    disabled={isDisabled}
                                     className={`
                                         w-full text-left flex items-center justify-between
                                         transition-colors
                                         ${sizeStyles[size]}
-                                        ${isSelected 
-                                            ? currentStyle.active + ' font-medium' 
-                                            : `text-slate-700 dark:text-slate-300 hover:bg-slate-50/80 dark:hover:bg-slate-700/80 ${isFocused ? 'bg-slate-50/80 dark:bg-slate-700/80' : ''}`}
+                                        ${isDisabled
+                                            ? 'opacity-40 cursor-not-allowed text-slate-400 dark:text-slate-500 bg-transparent'
+                                            : isSelected 
+                                                ? currentStyle.active + ' font-medium' 
+                                                : `text-slate-700 dark:text-slate-300 hover:bg-slate-50/80 dark:hover:bg-slate-700/80 ${isFocused ? 'bg-slate-50/80 dark:bg-slate-700/80' : ''}`}
                                     `}
                                 >
                                     <span className="truncate">{opt.label}</span>

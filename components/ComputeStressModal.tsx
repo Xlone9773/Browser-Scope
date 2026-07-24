@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Cpu, Zap, Activity, AlertTriangle, Layers, Play, Square, TrendingUp, Microscope, Eye } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
@@ -27,10 +26,12 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const [useFp16, setUseFp16] = useState(false);
   const [adapterName, setAdapterName] = useState('Checking GPU...');
   
+  const [backend, setBackend] = useState<'webgpu' | 'webgl' | 'cpu'>('webgpu');
   const [isRunning, setIsRunning] = useState(false);
   const [matrixSize, setMatrixSize] = useState(512); 
   const [gflops, setGflops] = useState(0);
   const [peakGflops, setPeakGflops] = useState(0);
+  const [cpuCores, setCpuCores] = useState(4);
   
   const [graphData, setGraphData] = useState<number[]>(Array.from({ length: HISTORY_LENGTH }, () => 0));
   const [viewMode, setViewMode] = useState<'graph' | 'visual'>('graph');
@@ -38,11 +39,13 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   // Refs for loop access to avoid dependency churn and memory leaks
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visualizerCanvasRef = useRef<HTMLCanvasElement>(null);
+  const webglCanvasRef = useRef<HTMLCanvasElement>(null);
+
   const adapterRef = useRef<GPUAdapter | null>(null);
   const deviceRef = useRef<GPUDevice | null>(null);
   const pipelineRef = useRef<GPUComputePipeline | null>(null);
   
-  const animRef = useRef<number | null>(null); // For WebGPU loop
+  const animRef = useRef<number | null>(null); // For active loops
   const renderLoopRef = useRef<number | null>(null); // For UI render loop
   const isRunningRef = useRef(false);
   
@@ -51,10 +54,213 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const peakGflopsRef = useRef(0);
   const graphDataRef = useRef<number[]>([]);
 
+  // CPU Multi-threaded Worker references
+  const workersRef = useRef<Worker[]>([]);
+  const accumulatedCpuOpsRef = useRef<number>(0);
+
+  // WebGL context states
+  const webglStateRef = useRef<{
+      gl: WebGLRenderingContext | null;
+      program: WebGLProgram | null;
+      positionBuffer: WebGLBuffer | null;
+      timeLoc: WebGLUniformLocation | null;
+      resolutionLoc: WebGLUniformLocation | null;
+      iterationsLoc: WebGLUniformLocation | null;
+  }>({ gl: null, program: null, positionBuffer: null, timeLoc: null, resolutionLoc: null, iterationsLoc: null });
+
   // Sync state to refs for the animation loop
   useEffect(() => { gflopsRef.current = gflops; }, [gflops]);
   useEffect(() => { peakGflopsRef.current = peakGflops; }, [peakGflops]);
   useEffect(() => { graphDataRef.current = graphData; }, [graphData]);
+
+  // CPU Workers control
+  const startCpuWorkers = (numWorkers: number) => {
+      stopCpuWorkers();
+      accumulatedCpuOpsRef.current = 0;
+      
+      const workerBlobCode = `
+          let isRunning = true;
+          self.onmessage = function(e) {
+              if (e.data.cmd === 'stop') {
+                  isRunning = false;
+                  self.close();
+                  return;
+              }
+              
+              let x0 = 1.0, x1 = 1.1, x2 = 1.2, x3 = 1.3, x4 = 1.4, x5 = 1.5, x6 = 1.6, x7 = 1.7;
+              const opsPerBatch = 160;
+              
+              while (isRunning) {
+                  for (let i = 0; i < 40000; i++) {
+                      x0 = x0 * 0.9999 + 0.0001; x1 = x1 * 0.9998 + 0.0002;
+                      x2 = x2 * 0.9997 + 0.0003; x3 = x3 * 0.9996 + 0.0004;
+                      x4 = x4 * 0.9995 + 0.0005; x5 = x5 * 0.9994 + 0.0006;
+                      x6 = x6 * 0.9993 + 0.0007; x7 = x7 * 0.9992 + 0.0008;
+
+                      x0 = x0 * 0.9999 + 0.0001; x1 = x1 * 0.9998 + 0.0002;
+                      x2 = x2 * 0.9997 + 0.0003; x3 = x3 * 0.9996 + 0.0004;
+                      x4 = x4 * 0.9995 + 0.0005; x5 = x5 * 0.9994 + 0.0006;
+                      x6 = x6 * 0.9993 + 0.0007; x7 = x7 * 0.9992 + 0.0008;
+
+                      x0 = x0 * 0.9999 + 0.0001; x1 = x1 * 0.9998 + 0.0002;
+                      x2 = x2 * 0.9997 + 0.0003; x3 = x3 * 0.9996 + 0.0004;
+                      x4 = x4 * 0.9995 + 0.0005; x5 = x5 * 0.9994 + 0.0006;
+                      x6 = x6 * 0.9993 + 0.0007; x7 = x7 * 0.9992 + 0.0008;
+
+                      x0 = x0 * 0.9999 + 0.0001; x1 = x1 * 0.9998 + 0.0002;
+                      x2 = x2 * 0.9997 + 0.0003; x3 = x3 * 0.9996 + 0.0004;
+                      x4 = x4 * 0.9995 + 0.0005; x5 = x5 * 0.9994 + 0.0006;
+                      x6 = x6 * 0.9993 + 0.0007; x7 = x7 * 0.9992 + 0.0008;
+
+                      x0 = x0 * 0.9999 + 0.0001; x1 = x1 * 0.9998 + 0.0002;
+                      x2 = x2 * 0.9997 + 0.0003; x3 = x3 * 0.9996 + 0.0004;
+                      x4 = x4 * 0.9995 + 0.0005; x5 = x5 * 0.9994 + 0.0006;
+                      x6 = x6 * 0.9993 + 0.0007; x7 = x7 * 0.9992 + 0.0008;
+                  }
+                  self.postMessage({ cmd: 'progress', ops: 40000 * 5 * opsPerBatch });
+              }
+          };
+      `;
+      const blob = new Blob([workerBlobCode], { type: 'application/javascript' });
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const activeWorkers: Worker[] = [];
+      for (let i = 0; i < numWorkers; i++) {
+          const worker = new Worker(blobUrl);
+          worker.onmessage = (e) => {
+              if (e.data.cmd === 'progress') {
+                  accumulatedCpuOpsRef.current += e.data.ops;
+              }
+          };
+          worker.postMessage({ cmd: 'start' });
+          activeWorkers.push(worker);
+      }
+      workersRef.current = activeWorkers;
+      URL.revokeObjectURL(blobUrl);
+  };
+
+  const stopCpuWorkers = () => {
+      workersRef.current.forEach(w => {
+          w.postMessage({ cmd: 'stop' });
+          w.terminate();
+      });
+      workersRef.current = [];
+  };
+
+  // WebGL GPGPU stress compiler
+  const initWebGL = () => {
+      const canvas = webglCanvasRef.current;
+      if (!canvas) return false;
+      
+      let gl = canvas.getContext('webgl');
+      if (!gl) {
+          gl = canvas.getContext('experimental-webgl') as WebGLRenderingContext | null;
+      }
+      if (!gl) return false;
+      
+      const vsSource = `
+          attribute vec2 position;
+          void main() {
+              gl_Position = vec4(position, 0.0, 1.0);
+          }
+      `;
+      
+      const fsSource = `
+          precision highp float;
+          uniform vec2 u_resolution;
+          uniform float u_time;
+          uniform int u_iterations;
+
+          void main() {
+              vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+              float x = uv.x * 3.0 - 1.5;
+              float y = uv.y * 2.0 - 1.0;
+              
+              float d = 0.0;
+              int limit = u_iterations;
+              if (limit > 1500) limit = 1500;
+              
+              for (int i = 0; i < 1500; i++) {
+                  if (i >= limit) break;
+                  float nx = x * x - y * y + sin(u_time * 0.15) * 0.3;
+                  float ny = 2.0 * x * y + cos(u_time * 0.1) * 0.25;
+                  x = nx;
+                  y = ny;
+                  d += sin(x) * cos(y);
+              }
+              
+              vec3 col = vec3(
+                  sin(d + u_time * 1.0) * 0.4 + 0.6,
+                  cos(d - u_time * 0.8) * 0.3 + 0.5,
+                  sin(d * 1.5 + u_time * 1.2) * 0.2 + 0.8
+              );
+              gl_FragColor = vec4(col * (1.0 - length(uv - 0.5) * 0.5), 1.0);
+          }
+      `;
+      
+      const compileShader = (src: string, type: number) => {
+          const shader = gl!.createShader(type);
+          if (!shader) return null;
+          gl!.shaderSource(shader, src);
+          gl!.compileShader(shader);
+          if (!gl!.getShaderParameter(shader, gl!.COMPILE_STATUS)) {
+              console.error(gl!.getShaderInfoLog(shader));
+              return null;
+          }
+          return shader;
+      };
+      
+      const vs = compileShader(vsSource, gl.VERTEX_SHADER);
+      const fs = compileShader(fsSource, gl.FRAGMENT_SHADER);
+      if (!vs || !fs) return false;
+      
+      const program = gl.createProgram();
+      if (!program) return false;
+      gl.attachShader(program, vs);
+      gl.attachShader(program, fs);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          console.error(gl.getProgramInfoLog(program));
+          return false;
+      }
+      
+      const positionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+          -1, -1,
+           1, -1,
+          -1,  1,
+          -1,  1,
+           1, -1,
+           1,  1,
+      ]), gl.STATIC_DRAW);
+      
+      const timeLoc = gl.getUniformLocation(program, 'u_time');
+      const resolutionLoc = gl.getUniformLocation(program, 'u_resolution');
+      const iterationsLoc = gl.getUniformLocation(program, 'u_iterations');
+      
+      webglStateRef.current = { gl, program, positionBuffer, timeLoc, resolutionLoc, iterationsLoc };
+      return true;
+  };
+
+  const renderWebGLFrame = (time: number, iterations: number) => {
+      const { gl, program, positionBuffer, timeLoc, resolutionLoc, iterationsLoc } = webglStateRef.current;
+      if (!gl || !program) return;
+      
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+      gl.useProgram(program);
+      
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      const posAttr = gl.getAttribLocation(program, 'position');
+      gl.enableVertexAttribArray(posAttr);
+      gl.vertexAttribPointer(posAttr, 2, gl.FLOAT, false, 0, 0);
+      
+      gl.uniform2f(resolutionLoc, gl.canvas.width, gl.canvas.height);
+      gl.uniform1f(timeLoc, time / 1000);
+      gl.uniform1i(iterationsLoc, iterations);
+      
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+  };
 
   function stopTest() {
       isRunningRef.current = false;
@@ -62,14 +268,14 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           cancelAnimationFrame(animRef.current);
           animRef.current = null;
       }
+      stopCpuWorkers();
       setIsRunning(false);
-  };
+  }
 
   useEffect(() => {
-     // Cleanup on unmount
-     return () => {
-         stopTest();
-     };
+      return () => {
+          stopTest();
+      };
   }, []);
 
   const handleClose = () => {
@@ -77,40 +283,57 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
     onClose();
   };
 
-  // Init WebGPU & Check Features
+  // Init WebGPU & Check Features & detect Fallbacks
   useEffect(() => {
     const init = async () => {
-        if (!navigator.gpu) {
-            setIsWebGPUSupported(false);
-            return;
-        }
-        try {
-            const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
-            if (!adapter) {
-                setIsWebGPUSupported(false);
-                return;
-            }
-            adapterRef.current = adapter;
-            if (adapter.name) {
-                setAdapterName(adapter.name);
-            } else {
-                setAdapterName('WebGPU Adapter');
-            }
-            
-            // Check for shader-f16 feature
-            const features = adapter.features;
-            const supportsF16 = features.has('shader-f16');
-            setHasFp16Support(supportsF16);
-            if (supportsF16) setUseFp16(true); 
+        let webgpuOk = false;
+        if (navigator.gpu) {
+            try {
+                const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+                if (adapter) {
+                    adapterRef.current = adapter;
+                    setAdapterName(adapter.name || 'WebGPU Adapter');
+                    
+                    const features = adapter.features;
+                    const supportsF16 = features.has('shader-f16');
+                    setHasFp16Support(supportsF16);
+                    if (supportsF16) setUseFp16(true); 
 
-            const requiredFeatures = supportsF16 ? ['shader-f16'] : [];
-            const device = await adapter.requestDevice({ requiredFeatures });
-            deviceRef.current = device;
-            
-            setIsWebGPUSupported(true);
-        } catch (e: unknown) {
-            console.error("WebGPU Init Error", getErrorMessage(e));
+                    const requiredFeatures = supportsF16 ? ['shader-f16'] : [];
+                    const device = await adapter.requestDevice({ requiredFeatures });
+                    deviceRef.current = device;
+                    
+                    setIsWebGPUSupported(true);
+                    setBackend('webgpu');
+                    webgpuOk = true;
+                } else {
+                    setIsWebGPUSupported(false);
+                }
+            } catch (e: unknown) {
+                console.error("WebGPU Init Error", getErrorMessage(e));
+                setIsWebGPUSupported(false);
+            }
+        } else {
             setIsWebGPUSupported(false);
+        }
+
+        // Fallback checks
+        if (!webgpuOk) {
+            const canvas = document.createElement('canvas');
+            const gl = (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
+            if (gl) {
+                setBackend('webgl');
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    setAdapterName(renderer || 'WebGL Graphics Context');
+                } else {
+                    setAdapterName('Standard WebGL Context');
+                }
+            } else {
+                setBackend('cpu');
+                setAdapterName('CPU Environment (Multi-threaded Fallback)');
+            }
         }
     };
     init();
@@ -134,10 +357,8 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   };
 
   // UI Render Loop (Graph / Visualizer)
-  // This loop uses Refs to avoid re-binding and memory leaks
   useEffect(() => {
       const loop = () => {
-          // Mode 1: Graph
           if (viewMode === 'graph' && canvasRef.current) {
               const ctx = canvasRef.current.getContext('2d');
               const width = canvasRef.current.width;
@@ -193,9 +414,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
               }
           }
 
-          // Mode 2: Visualizer
-          // Strictly execute only if viewMode is visual
-          else if (viewMode === 'visual' && visualizerCanvasRef.current) {
+          else if (viewMode === 'visual' && backend !== 'webgl' && visualizerCanvasRef.current) {
               if (!visualizerRef.current) {
                   visualizerRef.current = new ParticleSystem(1000, visualizerCanvasRef.current.width, visualizerCanvasRef.current.height);
               }
@@ -208,116 +427,193 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           renderLoopRef.current = requestAnimationFrame(loop);
       };
       
-      // Start Loop
       renderLoopRef.current = requestAnimationFrame(loop);
       
-      // Cleanup previous loop on unmount or mode change
       return () => {
           if (renderLoopRef.current) cancelAnimationFrame(renderLoopRef.current);
       };
-  }, [viewMode]); // Only restart loop if viewMode changes (isRunning is not needed here as we want graph to persist)
+  }, [viewMode, backend]);
 
   const updateGraph = (newVal: number) => {
       setGraphData(prev => [...prev.slice(1), newVal]);
   };
 
   const runTest = async () => {
-      if (!deviceRef.current || isRunning) return;
+      if (isRunning) return;
       
-      await initPipeline();
-      if (!pipelineRef.current) return;
-
       setIsRunning(true);
       setGflops(0);
       setPeakGflops(0);
       setGraphData(Array.from({ length: HISTORY_LENGTH }, () => 0));
-
-      const device = deviceRef.current;
-      const pipeline = pipelineRef.current;
-
-      // Matrix Setup
-      const firstMatrix = new Float32Array(Array(matrixSize * matrixSize).fill(0).map(() => Math.random()));
-      const secondMatrix = new Float32Array(Array(matrixSize * matrixSize).fill(0).map(() => Math.random()));
-      
-      const createBuffer = (arr: Float32Array, usage: number) => {
-          const desc = new Float32Array([matrixSize, matrixSize, 0, 0]);
-          const buffer = device.createBuffer({
-              size: desc.byteLength + arr.byteLength,
-              usage,
-              mappedAtCreation: true,
-          });
-          const dst = new ArrayBuffer(buffer.size);
-          new Float32Array(dst).set(desc);
-          new Float32Array(dst, desc.byteLength).set(arr);
-          new Uint8Array(buffer.getMappedRange()).set(new Uint8Array(dst));
-          buffer.unmap();
-          return buffer;
-      };
-      const USAGE_STORAGE = window.GPUBufferUsage?.STORAGE || 128;
-
-      const gpuBufferFirstMatrix = createBuffer(firstMatrix, USAGE_STORAGE);
-      const gpuBufferSecondMatrix = createBuffer(secondMatrix, USAGE_STORAGE);
-      const resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + firstMatrix.length);
-      const resultMatrixBuffer = device.createBuffer({
-          size: resultMatrixBufferSize,
-          usage: USAGE_STORAGE
-      });
-      const bindGroup = device.createBindGroup({
-          layout: pipeline.getBindGroupLayout(0),
-          entries: [
-              { binding: 0, resource: { buffer: gpuBufferFirstMatrix } },
-              { binding: 1, resource: { buffer: gpuBufferSecondMatrix } },
-              { binding: 2, resource: { buffer: resultMatrixBuffer } },
-          ],
-      });
-
-      // Compute Loop
-      let startTime = performance.now();
-      let frames = 0;
       isRunningRef.current = true;
 
-      const loop = async () => {
-          if (!isRunningRef.current) return; // Stopped
-          const commandEncoder = device.createCommandEncoder();
-          const passEncoder = commandEncoder.beginComputePass();
-          passEncoder.setPipeline(pipeline);
-          passEncoder.setBindGroup(0, bindGroup);
-          const workgroupCount = Math.ceil(matrixSize / 8);
-          passEncoder.dispatchWorkgroups(workgroupCount, workgroupCount);
-          passEncoder.end();
-          device.queue.submit([commandEncoder.finish()]);
-          await device.queue.onSubmittedWorkDone();
+      let startTime = performance.now();
+      let frames = 0;
+      accumulatedCpuOpsRef.current = 0;
 
-          frames++;
-          const now = performance.now();
-          const elapsed = now - startTime;
-
-          // Update metrics every ~200ms
-          if (elapsed >= 200) { 
-              // FLOPs for MatMul: 2 * N * N * N
-              // N = matrixSize
-              const N = matrixSize;
-              const operationsPerDispatch = 2 * N * N * N;
-              const totalOps = operationsPerDispatch * frames;
-              const seconds = elapsed / 1000;
-              const gflopsVal = (totalOps / seconds) / 1e9;
-              
-              setGflops(gflopsVal);
-              setPeakGflops(prev => Math.max(prev, gflopsVal));
-              updateGraph(gflopsVal);
-
-              startTime = now;
-              frames = 0;
+      if (backend === 'webgpu') {
+          if (!deviceRef.current) {
+              setIsRunning(false);
+              isRunningRef.current = false;
+              return;
           }
+          await initPipeline();
+          if (!pipelineRef.current) {
+              setIsRunning(false);
+              isRunningRef.current = false;
+              return;
+          }
+          
+          const device = deviceRef.current;
+          const pipeline = pipelineRef.current;
 
-          animRef.current = requestAnimationFrame(loop);
-      };
+          // Matrix Setup
+          const firstMatrix = new Float32Array(Array(matrixSize * matrixSize).fill(0).map(() => Math.random()));
+          const secondMatrix = new Float32Array(Array(matrixSize * matrixSize).fill(0).map(() => Math.random()));
+          
+          const createBuffer = (arr: Float32Array, usage: number) => {
+              const desc = new Float32Array([matrixSize, matrixSize, 0, 0]);
+              const buffer = device.createBuffer({
+                  size: desc.byteLength + arr.byteLength,
+                  usage,
+                  mappedAtCreation: true,
+              });
+              const dst = new ArrayBuffer(buffer.size);
+              new Float32Array(dst).set(desc);
+              new Float32Array(dst, desc.byteLength).set(arr);
+              new Uint8Array(buffer.getMappedRange()).set(new Uint8Array(dst));
+              buffer.unmap();
+              return buffer;
+          };
+          const USAGE_STORAGE = window.GPUBufferUsage?.STORAGE || 128;
 
-      animRef.current = requestAnimationFrame(loop);
+          const gpuBufferFirstMatrix = createBuffer(firstMatrix, USAGE_STORAGE);
+          const gpuBufferSecondMatrix = createBuffer(secondMatrix, USAGE_STORAGE);
+          const resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + firstMatrix.length);
+          const resultMatrixBuffer = device.createBuffer({
+              size: resultMatrixBufferSize,
+              usage: USAGE_STORAGE
+          });
+          const bindGroup = device.createBindGroup({
+              layout: pipeline.getBindGroupLayout(0),
+              entries: [
+                  { binding: 0, resource: { buffer: gpuBufferFirstMatrix } },
+                  { binding: 1, resource: { buffer: gpuBufferSecondMatrix } },
+                  { binding: 2, resource: { buffer: resultMatrixBuffer } },
+              ],
+          });
+
+          const webgpuLoop = async () => {
+              if (!isRunningRef.current) return;
+              const commandEncoder = device.createCommandEncoder();
+              const passEncoder = commandEncoder.beginComputePass();
+              passEncoder.setPipeline(pipeline);
+              passEncoder.setBindGroup(0, bindGroup);
+              const workgroupCount = Math.ceil(matrixSize / 8);
+              passEncoder.dispatchWorkgroups(workgroupCount, workgroupCount);
+              passEncoder.end();
+              device.queue.submit([commandEncoder.finish()]);
+              await device.queue.onSubmittedWorkDone();
+
+              frames++;
+              const now = performance.now();
+              const elapsed = now - startTime;
+
+              if (elapsed >= 200) { 
+                  const N = matrixSize;
+                  const operationsPerDispatch = 2 * N * N * N;
+                  const totalOps = operationsPerDispatch * frames;
+                  const seconds = elapsed / 1000;
+                  const gflopsVal = (totalOps / seconds) / 1e9;
+                  
+                  setGflops(gflopsVal);
+                  setPeakGflops(prev => Math.max(prev, gflopsVal));
+                  updateGraph(gflopsVal);
+
+                  startTime = now;
+                  frames = 0;
+              }
+              animRef.current = requestAnimationFrame(webgpuLoop);
+          };
+          animRef.current = requestAnimationFrame(webgpuLoop);
+
+      } else if (backend === 'webgl') {
+          const ok = initWebGL();
+          if (!ok) {
+              console.error("WebGL initialization failed");
+              setIsRunning(false);
+              isRunningRef.current = false;
+              return;
+          }
+          
+          const iterations = Math.max(128, Math.floor(matrixSize / 2));
+          
+          const webglLoop = () => {
+              if (!isRunningRef.current) return;
+              
+              const now = performance.now();
+              renderWebGLFrame(now, iterations);
+              
+              frames++;
+              const elapsed = now - startTime;
+              
+              if (elapsed >= 200) {
+                  const opsPerFrame = 600 * 256 * iterations * 40;
+                  const totalOps = opsPerFrame * frames;
+                  const seconds = elapsed / 1000;
+                  const gflopsVal = (totalOps / seconds) / 1e9;
+                  
+                  setGflops(gflopsVal);
+                  setPeakGflops(prev => Math.max(prev, gflopsVal));
+                  updateGraph(gflopsVal);
+                  
+                  startTime = now;
+                  frames = 0;
+              }
+              animRef.current = requestAnimationFrame(webglLoop);
+          };
+          animRef.current = requestAnimationFrame(webglLoop);
+
+      } else if (backend === 'cpu') {
+          const cores = typeof navigator !== 'undefined' && navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 4;
+          let numWorkers = 4;
+          if (matrixSize === 256) {
+              numWorkers = Math.max(1, Math.round(cores * 0.25));
+          } else if (matrixSize === 512) {
+              numWorkers = Math.max(1, Math.round(cores * 0.50));
+          } else if (matrixSize === 1024) {
+              numWorkers = Math.max(1, Math.round(cores * 0.75));
+          } else {
+              numWorkers = cores;
+          }
+          
+          startCpuWorkers(numWorkers);
+          setCpuCores(numWorkers);
+          
+          const cpuLoop = () => {
+              if (!isRunningRef.current) return;
+              
+              const now = performance.now();
+              const elapsed = now - startTime;
+              
+              if (elapsed >= 200) {
+                  const totalOps = accumulatedCpuOpsRef.current;
+                  accumulatedCpuOpsRef.current = 0;
+                  const seconds = elapsed / 1000;
+                  const gflopsVal = (totalOps / seconds) / 1e9;
+                  
+                  setGflops(gflopsVal);
+                  setPeakGflops(prev => Math.max(prev, gflopsVal));
+                  updateGraph(gflopsVal);
+                  
+                  startTime = now;
+              }
+              animRef.current = requestAnimationFrame(cpuLoop);
+          };
+          animRef.current = requestAnimationFrame(cpuLoop);
+      }
   };
 
-  
-  // Calculate Stability
   const stability = peakGflops > 0 ? Math.round((gflops / peakGflops) * 100) : 100;
 
   return (
@@ -326,7 +622,6 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
         icon={<Cpu size={24} />}
         onClose={handleClose}
         size="3xl"
-        // Removed hardcoded bg-slate-950 to support light mode properly
     >
         <div className="flex flex-col gap-6 relative">
             {/* Warning Banner */}
@@ -367,17 +662,24 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                     className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'graph' ? 'opacity-100 pointer-events-none' : 'opacity-0'}`} 
                 />
                 
-                {/* Visualizer Layer */}
+                {/* Visualizer Layer (Particles) */}
                 <canvas 
                     ref={visualizerCanvasRef} 
                     width={600} height={256} 
-                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'visual' ? 'opacity-100' : 'opacity-0'}`} 
+                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'visual' && backend !== 'webgl' ? 'opacity-100' : 'opacity-0'}`} 
+                />
+
+                {/* WebGL Stress Render Layer */}
+                <canvas 
+                    ref={webglCanvasRef} 
+                    width={600} height={256} 
+                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'visual' && backend === 'webgl' ? 'opacity-100' : 'opacity-0'}`} 
                 />
                 
                 {/* Metrics Overlay (Always visible) */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20 flex-col">
                     <div className="text-center mix-blend-difference">
-                        <div className="text-6xl font-black text-white tracking-tighter tabular-nums drop-shadow-2xl glitch-effect">
+                        <div className="text-6xl font-black text-white tracking-tighter tabular-nums drop-shadow-2xl">
                             {formatNumber(gflops, 2)}
                         </div>
                         <div className="text-sm font-bold text-indigo-400 uppercase tracking-widest mt-1">{t.metric_gflops}</div>
@@ -400,13 +702,40 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
             {/* Config & Controls */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Intensity & FP16 Toggle */}
+                {/* Intensity & Backend Selection */}
                 <div className="bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5 space-y-4">
                     <div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">{t.intensity}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
+                            {t.engine_label || "Compute Engine"}
+                        </div>
+                        <Select 
+                            value={backend}
+                            options={[
+                                { id: 'webgpu', label: t.engine_webgpu || 'GPU: WebGPU (Tensor Core)', disabled: isWebGPUSupported === false },
+                                { id: 'webgl', label: t.engine_webgl || 'GPU: WebGL (Fragment Shader)' },
+                                { id: 'cpu', label: t.engine_cpu || 'CPU: Multi-threaded Workload' }
+                            ]}
+                            onChange={(val) => {
+                                setBackend(val as 'webgpu' | 'webgl' | 'cpu');
+                                stopTest();
+                            }}
+                            disabled={isRunning}
+                            color="indigo"
+                        />
+                    </div>
+
+                    <div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
+                            {backend === 'cpu' ? (t.cpu_cores_prefix || "Active Cores:") : t.intensity}
+                        </div>
                         <Select 
                             value={matrixSize}
-                            options={[
+                            options={backend === 'cpu' ? [
+                                { id: 256, label: 'Light (25% CPU Cores)' },
+                                { id: 512, label: 'Moderate (50% CPU Cores)' },
+                                { id: 1024, label: 'Heavy (75% CPU Cores)' },
+                                { id: 2048, label: 'Max Saturated (100% CPU Cores)' }
+                            ] : [
                                 { id: 256, label: 'Low (256x256)' },
                                 { id: 512, label: 'Medium (512x512)' },
                                 { id: 1024, label: 'High (1024x1024)' },
@@ -418,53 +747,62 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                         />
                     </div>
                     
-                    {/* FP16 Toggle */}
-                    <label className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${useFp16 ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-500/50' : 'bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'} ${hasFp16Support ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'}`}>
-                        <div className="flex flex-col">
-                            <span className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
-                                <Microscope size={12} className={useFp16 ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'} /> 
-                                {t.use_fp16}
-                            </span>
-                            <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{t.fp16_desc}</span>
-                        </div>
-                        <div className={`w-10 h-5 rounded-full relative transition-colors ${useFp16 ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
-                            <input 
-                                type="checkbox" 
-                                checked={useFp16} 
-                                onChange={(e) => setUseFp16(e.target.checked)} 
-                                disabled={!hasFp16Support || isRunning}
-                                className="opacity-0 w-full h-full absolute cursor-pointer"
-                            />
-                            <div className={`absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-transform shadow-sm ${useFp16 ? 'translate-x-5' : 'translate-x-0'}`} />
-                        </div>
-                    </label>
+                    {/* FP16 Toggle (Only for WebGPU) */}
+                    {backend === 'webgpu' && (
+                        <label className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${useFp16 ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-500/50' : 'bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'} ${hasFp16Support ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'}`}>
+                            <div className="flex flex-col">
+                                <span className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                                    <Microscope size={12} className={useFp16 ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'} /> 
+                                    {t.use_fp16}
+                                </span>
+                                <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{t.fp16_desc}</span>
+                            </div>
+                            <div className={`w-10 h-5 rounded-full relative transition-colors ${useFp16 ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={useFp16} 
+                                    onChange={(e) => setUseFp16(e.target.checked)} 
+                                    disabled={!hasFp16Support || isRunning}
+                                    className="opacity-0 w-full h-full absolute cursor-pointer"
+                                />
+                                <div className={`absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-transform shadow-sm ${useFp16 ? 'translate-x-5' : 'translate-x-0'}`} />
+                            </div>
+                        </label>
+                    )}
                 </div>
                 
-                {/* Backend Status */}
+                {/* Backend Status Details */}
                 <div className="bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5 flex flex-col justify-center gap-2">
                     <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Backend Status</div>
                     
                     <div className="flex items-center gap-2 text-xs font-mono text-slate-700 dark:text-slate-300">
-                        {isWebGPUSupported === true && (
+                        {backend === 'webgpu' && (
                             <>
                                 <Layers size={14} className="text-emerald-600 dark:text-green-400" />
                                 {t.backend_webgpu}
                             </>
                         )}
-                        {isWebGPUSupported === false && (
+                        {backend === 'webgl' && (
                             <>
-                                <AlertTriangle size={14} className="text-amber-500 dark:text-amber-400" />
-                                {t.error_webgpu}
+                                <Zap size={14} className="text-amber-500 dark:text-amber-400 animate-pulse" />
+                                {t.backend_fallback || "Backend: WebGL Graphics"}
                             </>
                         )}
-                        {isWebGPUSupported === null && <Activity size={14} className="animate-spin text-slate-500" />}
+                        {backend === 'cpu' && (
+                            <>
+                                <Cpu size={14} className="text-indigo-500" />
+                                {`Backend: CPU Multi-core Stress (${cpuCores} Threads)`}
+                            </>
+                        )}
                     </div>
 
                     <div className="h-px bg-slate-200 dark:bg-white/10 my-1" />
                     
                     {/* Device Info */}
                     <div className="text-[10px] text-slate-500 font-mono break-all leading-tight">
-                        {adapterName}
+                        {backend === 'cpu' 
+                            ? `Logical Processors: ${navigator.hardwareConcurrency || 'Unknown'} | Active Stress Threads: ${cpuCores}` 
+                            : adapterName}
                     </div>
                 </div>
             </div>
@@ -472,13 +810,10 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
             {/* Main Button */}
             <button 
                 onClick={isRunning ? stopTest : runTest}
-                disabled={isWebGPUSupported === false}
                 className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 group ${
                     isRunning 
                     ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20' 
-                    : isWebGPUSupported === false 
-                        ? 'bg-slate-400 dark:bg-slate-700 cursor-not-allowed opacity-50 shadow-none'
-                        : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/30'
+                    : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/30'
                 }`}
             >
                 {isRunning ? (
@@ -490,7 +825,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                     <>
                         <Play size={20} fill="currentColor" className="group-hover:text-white" />
                         {t.start}
-                        <Zap size={16} className={`${isWebGPUSupported ? 'text-yellow-300' : 'text-slate-200'}`} />
+                        <Zap size={16} className="text-yellow-300 animate-bounce" />
                     </>
                 )}
             </button>

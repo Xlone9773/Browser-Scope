@@ -141,7 +141,12 @@ export const tools = {
     use_fp16: "Use FP16 (Half Precision)",
     fp16_desc: "Accelerate on AI Tensor Cores",
     stability: "Stability",
-    peak: "Peak"
+    peak: "Peak",
+    engine_label: "Compute Engine",
+    engine_webgpu: "GPU: WebGPU (Tensor Core)",
+    engine_webgl: "GPU: WebGL (Fragment Shader)",
+    engine_cpu: "CPU: Multi-threaded Workload",
+    cpu_cores_prefix: "Active Cores:"
   },
   gamepadTool: {
     title: "Gamepad",

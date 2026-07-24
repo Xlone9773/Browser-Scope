@@ -141,7 +141,12 @@ export const tools = {
     use_fp16: "FP16 (半精度浮動小数点) を使用",
     fp16_desc: "AI Tensor Cores 演算を加速",
     stability: "安定性",
-    peak: "ピーク"
+    peak: "ピーク",
+    engine_label: "計算エンジン",
+    engine_webgpu: "GPU: WebGPU (テンソルコア)",
+    engine_webgl: "GPU: WebGL (フラグメントシェーダー)",
+    engine_cpu: "CPU: マルチスレッド負荷テスト",
+    cpu_cores_prefix: "有効なコア数:"
   },
   gamepadTool: {
     title: "ゲームパッド",

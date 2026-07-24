@@ -141,7 +141,12 @@ export const tools = {
     use_fp16: "启用 FP16 (半精度浮点)",
     fp16_desc: "加速 AI Tensor Cores 运算",
     stability: "稳定性",
-    peak: "峰值"
+    peak: "峰值",
+    engine_label: "计算引擎",
+    engine_webgpu: "GPU: WebGPU (张量核心)",
+    engine_webgl: "GPU: WebGL (着色器图形)",
+    engine_cpu: "CPU: 多线程高负荷",
+    cpu_cores_prefix: "活跃核心数:"
   },
   gamepadTool: {
     title: "游戏手柄",

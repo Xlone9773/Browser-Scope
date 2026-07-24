@@ -141,7 +141,12 @@ export const tools = {
     use_fp16: "Включить FP16 (Half Precision)",
     fp16_desc: "Ускорение на тензорных ядрах AI",
     stability: "Стабильность",
-    peak: "Пик"
+    peak: "Пик",
+    engine_label: "Вычислительный движок",
+    engine_webgpu: "GPU: WebGPU (Тензорные ядра)",
+    engine_webgl: "GPU: WebGL (Пиксельные шейдеры)",
+    engine_cpu: "CPU: Многопоточная нагрузка",
+    cpu_cores_prefix: "Активные ядра:"
   },
   gamepadTool: {
     title: "Геймпад",
