@@ -115,10 +115,6 @@ export const useModalManager = (options?: ModalManagerOptions) => {
         const loader = COMPONENT_LOADERS[id];
         if (!loader) return undefined;
 
-        if (options?.alwaysShowLoading) {
-          return lazy(() => loader());
-        }
-
         if (!lazyCacheRef.current[id]) {
           lazyCacheRef.current[id] = lazy(() => {
             const wasUnloaded = unloadedModulesRef.current.has(id);
@@ -131,7 +127,17 @@ export const useModalManager = (options?: ModalManagerOptions) => {
         return lazyCacheRef.current[id];
       },
     });
-  }, [moduleVersions, options?.alwaysShowLoading]);
+  }, [moduleVersions]);
+
+  React.useEffect(() => {
+    if (options?.alwaysShowLoading) {
+      Object.keys(lazyCacheRef.current).forEach((id) => {
+        if (!visibility[id]) {
+          delete lazyCacheRef.current[id];
+        }
+      });
+    }
+  }, [visibility, options?.alwaysShowLoading]);
 
   React.useEffect(() => {
     const handleCloseAll = () => {
