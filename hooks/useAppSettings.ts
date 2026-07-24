@@ -378,6 +378,8 @@ export function useAppSettings() {
     if (value) {
       setDisableLazyLoading(false);
       localStorage.setItem("disableLazyLoading", "false");
+      setAlwaysShowLoading(true);
+      localStorage.setItem("alwaysShowLoading", "true");
     }
   }, []);
 
