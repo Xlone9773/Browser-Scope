@@ -41,11 +41,11 @@ export const ModuleSettingsDropdown: React.FC<ModuleSettingsDropdownProps> = ({
                                 <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs leading-none">
                                     {t?.disableCache ? t.disableCache : null}
                                 </span>
-                                {disableLazyLoading && t?.mutualCacheTag && (
+                                {disableLazyLoading && t?.mutualCacheTag ? (
                                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-medium whitespace-nowrap">
                                         {t.mutualCacheTag}
                                     </span>
-                                )}
+                                ) : null}
                             </div>
                         </div>
                         <button
@@ -63,11 +63,11 @@ export const ModuleSettingsDropdown: React.FC<ModuleSettingsDropdownProps> = ({
                     <p className="text-[11px] text-slate-400 dark:text-slate-400 leading-normal font-normal">
                         {t?.disableCacheDesc ? t.disableCacheDesc : null}
                     </p>
-                    {disableLazyLoading && t?.mutualCacheWarning && (
+                    {disableLazyLoading && t?.mutualCacheWarning ? (
                         <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1 font-medium flex items-center gap-1">
                             {t.mutualCacheWarning}
                         </p>
-                    )}
+                    ) : null}
                 </div>
 
                 {/* Disable Lazy Loading */}
@@ -78,11 +78,11 @@ export const ModuleSettingsDropdown: React.FC<ModuleSettingsDropdownProps> = ({
                                 <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs leading-none">
                                     {t?.disableLazyLoading ? t.disableLazyLoading : null}
                                 </span>
-                                {disableCache && t?.mutualLazyTag && (
+                                {disableCache && t?.mutualLazyTag ? (
                                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-medium whitespace-nowrap">
                                         {t.mutualLazyTag}
                                     </span>
-                                )}
+                                ) : null}
                             </div>
                         </div>
                         <button
@@ -100,34 +100,49 @@ export const ModuleSettingsDropdown: React.FC<ModuleSettingsDropdownProps> = ({
                     <p className="text-[11px] text-slate-400 dark:text-slate-400 leading-normal font-normal">
                         {t?.disableLazyLoadingDesc ? t.disableLazyLoadingDesc : null}
                     </p>
-                    {disableCache && t?.mutualLazyWarning && (
+                    {disableCache && t?.mutualLazyWarning ? (
                         <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1 font-medium flex items-center gap-1">
                             {t.mutualLazyWarning}
                         </p>
-                    )}
+                    ) : null}
                 </div>
 
                 {/* Always Show Loading */}
-                <div className="p-4 flex flex-col gap-1.5 hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors">
+                <div className={`p-4 flex flex-col gap-1.5 transition-colors ${disableCache ? "bg-amber-500/5 dark:bg-amber-500/5 hover:bg-amber-500/10 dark:hover:bg-amber-500/10" : "hover:bg-slate-50/50 dark:hover:bg-slate-900/10"}`}>
                     <div className="flex items-center justify-between gap-4">
-                        <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs leading-none">
-                            {t?.alwaysShowLoading ? t.alwaysShowLoading : null}
-                        </span>
+                        <div className="flex flex-col gap-1 min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs leading-none">
+                                    {t?.alwaysShowLoading ? t.alwaysShowLoading : null}
+                                </span>
+                                {disableCache && t?.forceLoadingTag ? (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-medium whitespace-nowrap">
+                                        {t.forceLoadingTag}
+                                    </span>
+                                ) : null}
+                            </div>
+                        </div>
                         <button
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                                 e.stopPropagation();
-                                toggleAlwaysShowLoading(!alwaysShowLoading);
+                                if (!disableCache) toggleAlwaysShowLoading(!alwaysShowLoading);
                             }}
-                            className={`w-8 h-4.5 rounded-full relative transition-colors duration-200 outline-none focus:ring-2 focus:ring-indigo-500/50 shrink-0 ${alwaysShowLoading ? "bg-indigo-500" : "bg-slate-200 dark:bg-slate-600"}`}
+                            className={`w-8 h-4.5 rounded-full relative transition-colors duration-200 outline-none focus:ring-2 focus:ring-indigo-500/50 shrink-0 ${alwaysShowLoading || disableCache ? "bg-indigo-500" : "bg-slate-200 dark:bg-slate-600"} ${disableCache ? "opacity-50 cursor-not-allowed" : ""}`}
+                            disabled={disableCache}
                         >
                             <span
-                                className={`absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-white rounded-full transition-transform duration-200 ${alwaysShowLoading ? "translate-x-3.5" : "translate-x-0"}`}
+                                className={`absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-white rounded-full transition-transform duration-200 ${alwaysShowLoading || disableCache ? "translate-x-3.5" : "translate-x-0"}`}
                             />
                         </button>
                     </div>
                     <p className="text-[11px] text-slate-400 dark:text-slate-400 leading-normal font-normal">
                         {t?.alwaysShowLoadingDesc ? t.alwaysShowLoadingDesc : null}
                     </p>
+                    {disableCache && t?.forceLoadingWarning ? (
+                        <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1 font-medium flex items-center gap-1">
+                            {t.forceLoadingWarning}
+                        </p>
+                    ) : null}
                 </div>
 
                 {/* Lazy Tab Change */}

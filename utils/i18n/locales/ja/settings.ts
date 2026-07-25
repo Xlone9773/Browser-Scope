@@ -546,7 +546,15 @@ export const settings = {
         mutualCacheTag: "遅延ロード無効化と互斥",
         mutualLazyTag: "キャッシュ無効化と互斥",
         mutualCacheWarning: "💡 '遅延ロード無効化'が有効なため、自動的にオフ",
-        mutualLazyWarning: "💡 'キャッシュ無効化'が有効なため、自動的にオフ"
+        mutualLazyWarning: "💡 'キャッシュ無効化'が有効なため、自動的にオフ",
+        forceLoadingTag: "キャッシュ無効化で強制",
+        forceLoadingWarning: "💡 'キャッシュ無効化'が有効なため、強制的にオン",
+        overlay: {
+            cacheDisabled: "キャッシュ無効化がオン",
+            lazyLoadingDisabled: "遅延ロード無効化がオン",
+            managementUnavailable: "この機能が有効な間、モジュール管理は使用できません。",
+            openSettings: "設定を開く"
+        }
     },
     versions: {
         title: "ソフトウェアバージョン",

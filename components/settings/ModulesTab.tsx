@@ -179,9 +179,56 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
         }
     };
 
+    const isOverlayActive = disableCache || disableLazyLoading;
+
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div className={`relative ${isOverlayActive ? 'h-[60vh] overflow-hidden' : ''}`}>
+            {isOverlayActive ? (
+                <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl">
+                    <div className="flex flex-col max-w-sm p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 pointer-events-auto">
+                        <div className="flex items-center gap-3 mb-4">
+                            <ShieldAlert size={32} className="text-amber-500 shrink-0" />
+                            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+                                {disableCache ? t?.overlay?.cacheDisabled : t?.overlay?.lazyLoadingDisabled}
+                            </h4>
+                        </div>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+                            {t?.overlay?.managementUnavailable}
+                        </p>
+                        
+                        <div className="relative w-full flex flex-col items-start" ref={isOverlayActive ? dropdownRef : null}>
+                            <Button 
+                                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                                    e.stopPropagation();
+                                    setIsSettingsOpen(!isSettingsOpen);
+                                }}
+                                variant="primary"
+                            >
+                                <Settings size={16} className={`mr-2 ${isSettingsOpen ? "rotate-45 duration-200" : "duration-200"}`} />
+                                {t?.overlay?.openSettings}
+                            </Button>
+                            {isSettingsOpen ? (
+                                <div className="absolute top-full mt-2 left-0 w-72">
+                                    <ModuleSettingsDropdown
+                                        t={t}
+                                        disableCache={disableCache}
+                                        toggleDisableCache={toggleDisableCache}
+                                        disableLazyLoading={disableLazyLoading}
+                                        toggleDisableLazyLoading={toggleDisableLazyLoading}
+                                        alwaysShowLoading={alwaysShowLoading}
+                                        toggleAlwaysShowLoading={toggleAlwaysShowLoading}
+                                        lazyTabChange={lazyTabChange}
+                                        toggleLazyTabChange={toggleLazyTabChange}
+                                    />
+                                </div>
+                            ) : null}
+                        </div>
+                    </div>
+                </div>
+            ) : null}
+            
+            <div className={`space-y-6 ${isOverlayActive ? 'opacity-30 pointer-events-none select-none filter blur-sm' : ''}`}>
+                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                 <div>
                     <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-lg">
                         <Package size={22} className="text-indigo-500" />
@@ -228,7 +275,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
                             {t?.actions?.unloadAll}
                         </Button>
 
-                        <div className="relative" ref={dropdownRef}>
+                        <div className="relative" ref={isOverlayActive ? null : dropdownRef}>
                             <button
                                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                                 className={`p-2 rounded-lg border transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${isSettingsOpen ? "bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/40 dark:border-indigo-900/50 dark:text-indigo-400" : "bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300"}`}
@@ -236,7 +283,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
                                 <Settings size={18} className={isSettingsOpen ? "rotate-45 duration-200" : "duration-200"} />
                             </button>
 
-                            {isSettingsOpen ? (
+                            {isSettingsOpen && !isOverlayActive ? (
                                 <ModuleSettingsDropdown
                                     t={t}
                                     disableCache={disableCache}
@@ -328,6 +375,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
                         ))}
                     </tbody>
                 </table>
+            </div>
             </div>
         </div>
     );

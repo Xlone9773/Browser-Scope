@@ -546,7 +546,15 @@ export const settings = {
         mutualCacheTag: "与禁用懒加载互斥",
         mutualLazyTag: "与禁用缓存互斥",
         mutualCacheWarning: "💡 已启用 '禁用懒加载'，本项已被自动关闭",
-        mutualLazyWarning: "💡 已启用 '禁用缓存'，本项已被自动关闭"
+        mutualLazyWarning: "💡 已启用 '禁用缓存'，本项已被自动关闭",
+        forceLoadingTag: "随禁用缓存联动",
+        forceLoadingWarning: "💡 已启用 '禁用缓存'，本项已被强制开启",
+        overlay: {
+            cacheDisabled: "禁用缓存已开启",
+            lazyLoadingDisabled: "禁用懒加载已开启",
+            managementUnavailable: "管理功能不可用，请在设置中关闭该选项后重试。",
+            openSettings: "展开设置"
+        }
     },
     versions: {
         title: "软件版本",

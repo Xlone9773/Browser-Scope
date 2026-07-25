@@ -546,7 +546,15 @@ export const settings = {
         mutualCacheTag: "Mutual with Disable Lazy Loading",
         mutualLazyTag: "Mutual with Disable Cache",
         mutualCacheWarning: "💡 'Disable Lazy Loading' is active, this option is auto-turned off",
-        mutualLazyWarning: "💡 'Disable Cache' is active, this option is auto-turned off"
+        mutualLazyWarning: "💡 'Disable Cache' is active, this option is auto-turned off",
+        forceLoadingTag: "Forced by Disable Cache",
+        forceLoadingWarning: "💡 'Disable Cache' is active, this option is forced on",
+        overlay: {
+            cacheDisabled: "Cache Disabled",
+            lazyLoadingDisabled: "Lazy Loading Disabled",
+            managementUnavailable: "Module management is unavailable while this feature is active.",
+            openSettings: "Open Settings"
+        }
     },
     versions: {
         title: "Software Versions",

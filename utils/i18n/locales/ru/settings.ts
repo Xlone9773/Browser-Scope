@@ -546,7 +546,15 @@ export const settings = {
         mutualCacheTag: "Взаимоискл. с откл. ленивой загр.",
         mutualLazyTag: "Взаимоискл. с откл. кеша",
         mutualCacheWarning: "💡 Включено 'Отключить ленивую загрузку', этот параметр автоматически выключен",
-        mutualLazyWarning: "💡 Включено 'Отключить кеш', этот параметр автоматически выключен"
+        mutualLazyWarning: "💡 Включено 'Отключить кеш', этот параметр автоматически выключен",
+        forceLoadingTag: "Форс. откл. кешем",
+        forceLoadingWarning: "💡 Включено 'Отключить кеш', этот параметр принудительно включен",
+        overlay: {
+            cacheDisabled: "Кеш отключен",
+            lazyLoadingDisabled: "Ленивая загрузка отключена",
+            managementUnavailable: "Управление модулями недоступно, пока включена эта функция.",
+            openSettings: "Открыть настройки"
+        }
     },
     versions: {
         title: "Версии ПО",
