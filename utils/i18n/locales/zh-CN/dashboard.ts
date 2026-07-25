@@ -564,6 +564,9 @@ export const dashboard = {
     "deduction": "扣除",
     "pts": "分",
     "collapse": "收起",
-    "expand": "展开"
+    "expand": "展开",
+    "historyTitle": "历史记录",
+    "confirmClearHistory": "您确定要清空所有的质检评估历史记录吗？",
+    "clearHistory": "清空历史记录"
   }
 };

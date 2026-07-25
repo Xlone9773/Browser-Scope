@@ -61,6 +61,7 @@ interface ReportResults {
     privacy: DimensionResult;
     overallScore: number;
     ratingKey: 'perfect' | 'excellent' | 'good' | 'standard' | 'weak';
+    timestamp?: string;
 }
 
 interface BrowserReportProps {
@@ -76,6 +77,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
     });
     const [isAuditing, setIsAuditing] = useState<boolean>(false);
     const [results, setResults] = useState<ReportResults | null>(null);
+    const [history, setHistory] = useState<ReportResults[]>([]);
     const [activeTab, setActiveTab] = useState<DimensionKey>('rendering');
     const [scoreDisplayMode, setScoreDisplayMode] = useState<'number' | 'grade'>('number');
 
@@ -141,7 +143,10 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
         deduction: t.browserReport?.deduction || "Deduction",
         pts: t.browserReport?.pts || "pts",
         collapse: t.browserReport?.collapse || "Collapse",
-        expand: t.browserReport?.expand || "Expand"
+        expand: t.browserReport?.expand || "Expand",
+        historyTitle: t.browserReport?.historyTitle || "Audit History",
+        confirmClearHistory: t.browserReport?.confirmClearHistory || "Are you sure you want to clear your browser audit history?",
+        clearHistory: t.browserReport?.clearHistory || "Clear History"
     };
 
     const runDiagnostic = useCallback((): void => {
@@ -292,21 +297,44 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                 ratingKey = 'standard';
             }
 
-            setResults({
+            const newResult: ReportResults = {
                 rendering: { score: renderingScore, items: renderingItems },
                 computing: { score: computingScore, items: computingItems },
                 codecs: { score: codecsScore, items: codecsItems },
                 apis: { score: apisScore, items: apisItems },
                 privacy: { score: privacyScore, items: privacyItems },
                 overallScore,
-                ratingKey
+                ratingKey,
+                timestamp: new Date().toLocaleString()
+            };
+
+            setResults(newResult);
+            
+            setHistory(prev => {
+                const existing = prev.filter(item => item.timestamp !== newResult.timestamp);
+                const updated = [newResult, ...existing].slice(0, 10);
+                localStorage.setItem('browser-report-history', JSON.stringify(updated));
+                return updated;
             });
+
             setIsAuditing(false);
         }, 1200);
     }, [reportT.status.enabled, reportT.status.disabled]);
 
     useEffect((): void => {
-        // Run diagnosis on initial load to populate first report
+        const savedHistory = localStorage.getItem('browser-report-history');
+        if (savedHistory) {
+            try {
+                const parsed = JSON.parse(savedHistory);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    setHistory(parsed);
+                    setResults(parsed[0]);
+                    return;
+                }
+            } catch (e) {
+                console.error("Failed to parse browser report history", e);
+            }
+        }
         runDiagnostic();
     }, [runDiagnostic]);
 
@@ -340,6 +368,43 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
+                    {history.length > 0 && (
+                        <div className="w-48 shrink-0">
+                            <Select
+                                value={history.findIndex(h => h.timestamp === results?.timestamp).toString()}
+                                options={history.map((h, idx) => ({
+                                    id: idx.toString(),
+                                    label: `${h.timestamp || 'Report'} (${scoreDisplayMode === 'grade' ? getGrade(h.overallScore) : h.overallScore + ' ' + reportT.pts})`
+                                }))}
+                                onChange={(val: unknown) => {
+                                    const idx = parseInt(val as string, 10);
+                                    if (history[idx]) {
+                                        setResults(history[idx]);
+                                    }
+                                }}
+                                size="sm"
+                                fullWidth={true}
+                            />
+                        </div>
+                    )}
+                    {history.length > 1 && (
+                        <Button
+                            id="btn-clear-report-history"
+                            onClick={() => {
+                                if (window.confirm(reportT.confirmClearHistory)) {
+                                    localStorage.removeItem('browser-report-history');
+                                    setHistory([]);
+                                    runDiagnostic();
+                                }
+                            }}
+                            size="sm"
+                            variant="secondary"
+                            className="text-rose-500 hover:text-rose-600 border-rose-200 hover:border-rose-300 dark:border-rose-900/40 dark:hover:border-rose-800 shrink-0"
+                            title={reportT.clearHistory}
+                        >
+                            <X size={14} />
+                        </Button>
+                    )}
                     <div className="w-40">
                         <Select
                             value={scoreDisplayMode}
@@ -524,44 +589,47 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                             </div>
 
                             <div className="divide-y divide-slate-100 dark:divide-slate-800/50 mt-2">
-                                {results[activeTab].items.map((item: TestItem) => (
-                                    <div key={item.id} className="flex items-center justify-between py-3">
-                                        <div className="flex flex-col">
-                                            <span className="text-xs text-slate-700 dark:text-slate-300 font-semibold">
-                                                {item.name}
-                                            </span>
-                                            <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
-                                                {reportT.weight}: {item.weight}% ({reportT.contribution}: +{item.weight} / {reportT.deduction}: -{item.weight})
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-2.5 shrink-0">
-                                            {item.displayValue ? (
-                                                <Badge variant="neutral">
-                                                    {item.displayValue}
-                                                </Badge>
-                                            ) : null}
-                                            {item.supported ? (
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-[11px] font-bold text-emerald-500 dark:text-emerald-400">
-                                                        +{item.weight} {reportT.pts}
-                                                    </span>
-                                                    <Badge variant="success" icon={<Check size={10} strokeWidth={2.5} />}>
-                                                        {reportT.status.supported}
+                                {results[activeTab].items.map((item: TestItem) => {
+                                    const weightedWeight = item.weight / 5;
+                                    return (
+                                        <div key={item.id} className="flex items-center justify-between py-3">
+                                            <div className="flex flex-col">
+                                                <span className="text-xs text-slate-700 dark:text-slate-300 font-semibold">
+                                                    {item.name}
+                                                </span>
+                                                <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                                                    {reportT.weight}: {item.weight}% ({reportT.contribution}: +{weightedWeight} / {reportT.deduction}: -{weightedWeight})
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2.5 shrink-0">
+                                                {item.displayValue ? (
+                                                    <Badge variant="neutral">
+                                                        {item.displayValue}
                                                     </Badge>
-                                                </div>
-                                            ) : (
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-[11px] font-bold text-rose-500 dark:text-rose-400 animate-pulse">
-                                                        -{item.weight} {reportT.pts}
-                                                    </span>
-                                                    <Badge variant="error" icon={<X size={10} strokeWidth={2.5} />}>
-                                                        {reportT.status.unsupported}
-                                                    </Badge>
-                                                </div>
-                                            )}
+                                                ) : null}
+                                                {item.supported ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-[11px] font-bold text-emerald-500 dark:text-emerald-400">
+                                                            +{weightedWeight} {reportT.pts}
+                                                        </span>
+                                                        <Badge variant="success" icon={<Check size={10} strokeWidth={2.5} />}>
+                                                            {reportT.status.supported}
+                                                        </Badge>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-[11px] font-bold text-rose-500 dark:text-rose-400 animate-pulse">
+                                                            -{weightedWeight} {reportT.pts}
+                                                        </span>
+                                                        <Badge variant="error" icon={<X size={10} strokeWidth={2.5} />}>
+                                                            {reportT.status.unsupported}
+                                                        </Badge>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>

@@ -563,6 +563,9 @@ export const dashboard = {
     "deduction": "扣除",
     "pts": "分",
     "collapse": "收起",
-    "expand": "展開"
+    "expand": "展開",
+    "historyTitle": "歷史記錄",
+    "confirmClearHistory": "您確定要清空所有的質檢評估歷史記錄嗎？",
+    "clearHistory": "清空歷史記錄"
   }
 };

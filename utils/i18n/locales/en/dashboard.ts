@@ -562,6 +562,9 @@ export const dashboard = {
     "deduction": "Deduction",
     "pts": "pts",
     "collapse": "Collapse",
-    "expand": "Expand"
+    "expand": "Expand",
+    "historyTitle": "Audit History",
+    "confirmClearHistory": "Are you sure you want to clear your browser audit history?",
+    "clearHistory": "Clear History"
   }
 };

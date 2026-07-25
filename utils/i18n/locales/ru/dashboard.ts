@@ -563,6 +563,9 @@ export const dashboard = {
     "deduction": "Вычет",
     "pts": "баллов",
     "collapse": "Свернуть",
-    "expand": "Развернуть"
+    "expand": "Развернуть",
+    "historyTitle": "История аудита",
+    "confirmClearHistory": "Вы уверены, что хотите очистить историю аудита браузера?",
+    "clearHistory": "Очистить историю"
   }
 };

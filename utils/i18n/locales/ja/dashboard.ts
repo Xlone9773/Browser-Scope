@@ -563,6 +563,9 @@ export const dashboard = {
     "deduction": "控除",
     "pts": "点",
     "collapse": "折りたたむ",
-    "expand": "展開する"
+    "expand": "展開する",
+    "historyTitle": "履歴レコード",
+    "confirmClearHistory": "本当にブラウザ診断の履歴を消去しますか？",
+    "clearHistory": "履歴の消去"
   }
 };
