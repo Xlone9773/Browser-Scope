@@ -30,7 +30,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install --no-fund --no-audit --legacy-peer-deps
 
       - name: Restore ESLint Cache
         uses: actions/cache@v4
@@ -67,7 +67,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install --no-fund --no-audit --legacy-peer-deps
 
       - name: Restore Vitest Cache
         uses: actions/cache@v4
@@ -102,7 +102,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install --no-fund --no-audit --legacy-peer-deps
 
       - name: Build (vite / server bundle)
         id: build_step
