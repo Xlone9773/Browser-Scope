@@ -34,7 +34,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const [cpuCores, setCpuCores] = useState(4);
   const [selectedDuration, setSelectedDuration] = useState<number>(0);
   const [timeLeft, setTimeLeft] = useState<number>(0);
-  const timerIntervalRef = useRef<any>(null);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const formatTimeRemaining = (secs: number) => {
       const m = Math.floor(secs / 60);
@@ -604,7 +604,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
       } else if (backend === 'cpu') {
           const cores = typeof navigator !== 'undefined' && navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 4;
-          let numWorkers = 4;
+          let numWorkers: number;
           if (matrixSize === 256) {
               numWorkers = Math.max(1, Math.round(cores * 0.25));
           } else if (matrixSize === 512) {
