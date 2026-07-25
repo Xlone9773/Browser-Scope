@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Shield, Fingerprint, Activity, Server, Hash, Copy, Check, Info, HelpCircle, Terminal, KeyRound } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
@@ -31,6 +31,7 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
   const [userscriptDetected, setUserscriptDetected] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [copiedScript, setCopiedScript] = useState(false);
+  const userscriptDetectedRef = useRef(false);
 
   // Setup custom event listeners for Tampermonkey Userscript
   useEffect(() => {
@@ -39,6 +40,7 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
       if (customEvent.detail && customEvent.detail.success) {
         setData(customEvent.detail.data);
         setUserscriptDetected(true);
+        userscriptDetectedRef.current = true;
         setError(null);
         setLoading(false);
       } else if (customEvent.detail && !customEvent.detail.success) {
@@ -49,6 +51,7 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
 
     const handlePong = () => {
       setUserscriptDetected(true);
+      userscriptDetectedRef.current = true;
     };
 
     window.addEventListener('TLS_FINGERPRINT_RESPONSE', handleResponse);
@@ -66,6 +69,9 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
     setData(null);
 
     if (mode === 'userscript') {
+      userscriptDetectedRef.current = false;
+      setUserscriptDetected(false);
+      
       // First ping the script to see if it responds
       window.dispatchEvent(new CustomEvent('PING_TLS_HELPER'));
       // Request fingerprint
@@ -73,10 +79,16 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
 
       // Set timeout to determine if userscript helper is not installed/active
       setTimeout(() => {
+        if (userscriptDetectedRef.current) {
+          // Userscript is detected and active, do not trigger unresponsive error.
+          // The userscript's own fetch request is in progress and has its own error/timeout handlers.
+          return;
+        }
         setLoading((stillLoading) => {
           if (stillLoading) {
             setError(t?.userscript_uninstalled || 'Userscript helper not responding.');
             setUserscriptDetected(false);
+            userscriptDetectedRef.current = false;
             return false;
           }
           return stillLoading;
