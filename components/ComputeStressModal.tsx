@@ -404,7 +404,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const initPipeline = async () => {
       if (!deviceRef.current) return;
       
-      let shaderCode = MATMUL_SHADER_F32;
+      let shaderCode: string;
       const isF16 = precision === 'fp16' && hasFp16Support;
 
       if (workloadType === 'alu_simd') {

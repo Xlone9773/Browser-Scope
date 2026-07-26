@@ -111,7 +111,7 @@ self.onmessage = function (e: MessageEvent) {
       self.postMessage({ id, score, details, success: true });
     } else if (id === 'crypto') {
       const size = config.size;
-      let tempStr = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const tempStr = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       let key = "";
       while (key.length < size) {
         key += tempStr;
@@ -175,7 +175,7 @@ self.onmessage = function (e: MessageEvent) {
       self.postMessage({ id, score, details, success: true });
     } else if (id === 'regex') {
       const codeLen = config.length;
-      let chunk = "const app = express(); app.get('/api/v1/user/:id', (req, res) => { const email = 'user' + req.params.id + '@test.example.com'; return res.json({ id: req.params.id, email, role: 'admin', active: true }); });\n";
+      const chunk = "const app = express(); app.get('/api/v1/user/:id', (req, res) => { const email = 'user' + req.params.id + '@test.example.com'; return res.json({ id: req.params.id, email, role: 'admin', active: true }); });\n";
       let text = "";
       while (text.length < codeLen) {
         text += chunk;
