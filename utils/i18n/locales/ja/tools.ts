@@ -138,6 +138,8 @@ export const tools = {
     backend_webgpu: "バックエンド: WebGPU (行列乗算)",
     backend_fallback: "バックエンド: WebGL (GPGPUフォールバック)",
     error_webgpu: "このブラウザはWebGPUをサポートしていません。従来の方法にフォールバックします。",
+    error_device_lost: "GPUデバイスが失われました。続行するにはこのテストを再度開いてください。",
+    error_shader_compile: "この設定のシェーダーのコンパイルまたはGPUリソースの割り当てに失敗しました。",
     use_fp16: "FP16 (半精度浮動小数点) を使用",
     fp16_desc: "AI Tensor Cores 演算を加速",
     stability: "安定性",

@@ -138,6 +138,8 @@ export const tools = {
     backend_webgpu: "Backend: WebGPU (Умножение матриц)",
     backend_fallback: "Backend: WebGL (GPGPU Fallback)",
     error_webgpu: "WebGPU не поддерживается в этом браузере. Возврат к устаревшим методам.",
+    error_device_lost: "GPU-устройство потеряно. Откройте этот тест заново, чтобы продолжить.",
+    error_shader_compile: "Не удалось скомпилировать шейдер или выделить ресурсы GPU для этой конфигурации.",
     use_fp16: "Включить FP16 (Half Precision)",
     fp16_desc: "Ускорение на тензорных ядрах AI",
     stability: "Стабильность",

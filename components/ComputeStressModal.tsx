@@ -14,11 +14,12 @@ import {
 import { ParticleSystem } from './compute/ParticleSystem';
 import { Modal } from './ui/Modal';
 import { getErrorMessage } from '../utils/error';
-
-// WebGPU fallback types for environments without @webgpu/types
-type GPUAdapter = ReturnType<typeof JSON.parse>;
-type GPUDevice = ReturnType<typeof JSON.parse>;
-type GPUComputePipeline = ReturnType<typeof JSON.parse>;
+import type {
+  GPUAdapter,
+  GPUDevice,
+  GPUBuffer,
+  GPUComputePipeline,
+} from '../types/browser';
 
 interface ComputeStressModalProps {
   onClose: () => void;
@@ -66,7 +67,11 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const adapterRef = useRef<GPUAdapter | null>(null);
   const deviceRef = useRef<GPUDevice | null>(null);
   const pipelineRef = useRef<GPUComputePipeline | null>(null);
-  
+  const pipelineCacheRef = useRef<Map<string, GPUComputePipeline>>(new Map());
+  const activeBuffersRef = useRef<GPUBuffer[]>([]);
+  const runIdRef = useRef(0);
+  const [gpuError, setGpuError] = useState<string | null>(null);
+
   const animRef = useRef<number | null>(null); // For active loops
   const renderLoopRef = useRef<number | null>(null); // For UI render loop
   const isRunningRef = useRef(false);
@@ -200,11 +205,24 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       workersRef.current = [];
   };
 
-  // WebGL GPGPU stress compiler
+  const destroyWebGLResources = () => {
+      const { gl, program, positionBuffer } = webglStateRef.current;
+      if (gl) {
+          if (program) gl.deleteProgram(program);
+          if (positionBuffer) gl.deleteBuffer(positionBuffer);
+          const loseCtx = gl.getExtension('WEBGL_lose_context');
+          loseCtx?.loseContext();
+      }
+      webglStateRef.current = { gl: null, program: null, positionBuffer: null, timeLoc: null, resolutionLoc: null, iterationsLoc: null };
+  };
+
+  // WebGL GPGPU stress compiler (shader is static, so compile once and reuse across runs)
   const initWebGL = () => {
+      if (webglStateRef.current.program) return true;
+
       const canvas = webglCanvasRef.current;
       if (!canvas) return false;
-      
+
       let gl = canvas.getContext('webgl');
       if (!gl) {
           gl = canvas.getContext('experimental-webgl') as WebGLRenderingContext | null;
@@ -315,7 +333,15 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       gl.drawArrays(gl.TRIANGLES, 0, 6);
   };
 
+  const destroyActiveBuffers = () => {
+      activeBuffersRef.current.forEach(buffer => buffer.destroy());
+      activeBuffersRef.current = [];
+  };
+
   function stopTest() {
+      // Bump the run id so any in-flight loop iteration (mid-await) sees itself
+      // as stale and exits instead of rescheduling.
+      runIdRef.current += 1;
       isRunningRef.current = false;
       if (animRef.current) {
           cancelAnimationFrame(animRef.current);
@@ -326,12 +352,17 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           timerIntervalRef.current = null;
       }
       stopCpuWorkers();
+      destroyActiveBuffers();
       setIsRunning(false);
   }
 
   useEffect(() => {
       return () => {
           stopTest();
+          destroyWebGLResources();
+          pipelineCacheRef.current.clear();
+          deviceRef.current?.destroy();
+          deviceRef.current = null;
       };
   }, []);
 
@@ -349,8 +380,10 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                 const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
                 if (adapter) {
                     adapterRef.current = adapter;
-                    setAdapterName(adapter.name || t.backend_webgpu_info || 'WebGPU Adapter');
-                    
+                    const info = adapter.info;
+                    const resolvedName = info?.description || adapter.name || t.backend_webgpu_info || 'WebGPU Adapter';
+                    setAdapterName(resolvedName);
+
                     const features = adapter.features;
                     const supportsF16 = features.has('shader-f16');
                     setHasFp16Support(supportsF16);
@@ -363,7 +396,17 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                     const requiredFeatures = supportsF16 ? ['shader-f16'] : [];
                     const device = await adapter.requestDevice({ requiredFeatures });
                     deviceRef.current = device;
-                    
+
+                    device.lost.then((lostInfo) => {
+                        if (deviceRef.current !== device) return;
+                        console.error('WebGPU device lost:', lostInfo.reason, lostInfo.message);
+                        stopTest();
+                        deviceRef.current = null;
+                        pipelineRef.current = null;
+                        pipelineCacheRef.current.clear();
+                        setGpuError(t.error_device_lost || 'The GPU device was lost. Please reopen this test to continue.');
+                    });
+
                     setIsWebGPUSupported(true);
                     setBackend('webgpu');
                     webgpuOk = true;
@@ -400,13 +443,22 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
     init();
   }, []);
 
-  // Initialize Pipeline based on settings
-  const initPipeline = async () => {
-      if (!deviceRef.current) return;
-      
-      let shaderCode: string;
-      const isF16 = precision === 'fp16' && hasFp16Support;
+  // Initialize Pipeline based on settings. Pipelines are cached per (workload,
+  // memory mode, precision) combination since the shader source is static for
+  // each — no need to recompile on every run.
+  const initPipeline = async (): Promise<boolean> => {
+      const device = deviceRef.current;
+      if (!device) return false;
 
+      const isF16 = precision === 'fp16' && hasFp16Support;
+      const cacheKey = `${workloadType}|${memoryMode}|${isF16 ? 'fp16' : 'fp32'}`;
+      const cached = pipelineCacheRef.current.get(cacheKey);
+      if (cached) {
+          pipelineRef.current = cached;
+          return true;
+      }
+
+      let shaderCode: string;
       if (workloadType === 'alu_simd') {
           shaderCode = isF16 ? ALU_SIMD_SHADER_F16 : ALU_SIMD_SHADER_F32;
       } else { // gemm
@@ -416,17 +468,32 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
               shaderCode = isF16 ? MATMUL_SHADER_F16 : MATMUL_SHADER_F32;
           }
       }
-      
-      const device = deviceRef.current;
+
+      device.pushErrorScope('validation');
       const shaderModule = device.createShaderModule({ code: shaderCode });
-      const pipeline = device.createComputePipeline({
-          layout: 'auto',
-          compute: {
-              module: shaderModule,
-              entryPoint: 'main',
-          },
-      });
+      let pipeline: GPUComputePipeline | null = null;
+      try {
+          pipeline = await device.createComputePipelineAsync({
+              layout: 'auto',
+              compute: {
+                  module: shaderModule,
+                  entryPoint: 'main',
+              },
+          });
+      } catch (e: unknown) {
+          console.error('WebGPU pipeline creation failed', getErrorMessage(e));
+      }
+      const validationError = await device.popErrorScope();
+
+      if (validationError || !pipeline) {
+          console.error('WebGPU shader validation error', validationError?.message);
+          setGpuError(t.error_shader_compile || 'Failed to compile the compute shader for this configuration.');
+          return false;
+      }
+
+      pipelineCacheRef.current.set(cacheKey, pipeline);
       pipelineRef.current = pipeline;
+      return true;
   };
 
   // UI Render Loop (Graph / Visualizer)
@@ -513,7 +580,11 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
   const runTest = async () => {
       if (isRunning) return;
-      
+
+      runIdRef.current += 1;
+      const myRunId = runIdRef.current;
+
+      setGpuError(null);
       setIsRunning(true);
       setGflops(0);
       setPeakGflops(0);
@@ -545,36 +616,42 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
               isRunningRef.current = false;
               return;
           }
-          await initPipeline();
-          if (!pipelineRef.current) {
+          const pipelineReady = await initPipeline();
+          if (runIdRef.current !== myRunId) return; // superseded while awaiting pipeline
+          if (!pipelineReady || !pipelineRef.current || !deviceRef.current) {
               setIsRunning(false);
               isRunningRef.current = false;
               return;
           }
-          
+
           const device = deviceRef.current;
           const pipeline = pipelineRef.current;
 
           // Matrix Setup
           const firstMatrix = new Float32Array(Array(matrixSize * matrixSize).fill(0).map(() => Math.random()));
           const secondMatrix = new Float32Array(Array(matrixSize * matrixSize).fill(0).map(() => Math.random()));
-          
+
+          // WGSL storage struct is `{ size: vec2<f32>, numbers: array<f32> }`.
+          // vec2<f32> has an 8-byte size/align, so `numbers` starts at byte
+          // offset 8 (2 floats) — the header written here must match exactly,
+          // otherwise every element read by the shader is shifted.
           const createBuffer = (arr: Float32Array, usage: number) => {
-              const desc = new Float32Array([matrixSize, matrixSize, 0, 0]);
+              const header = new Float32Array([matrixSize, matrixSize]);
               const buffer = device.createBuffer({
-                  size: desc.byteLength + arr.byteLength,
+                  size: header.byteLength + arr.byteLength,
                   usage,
                   mappedAtCreation: true,
               });
               const dst = new ArrayBuffer(buffer.size);
-              new Float32Array(dst).set(desc);
-              new Float32Array(dst, desc.byteLength).set(arr);
+              new Float32Array(dst).set(header);
+              new Float32Array(dst, header.byteLength).set(arr);
               new Uint8Array(buffer.getMappedRange()).set(new Uint8Array(dst));
               buffer.unmap();
               return buffer;
           };
           const USAGE_STORAGE = window.GPUBufferUsage?.STORAGE || 128;
 
+          device.pushErrorScope('validation');
           const gpuBufferFirstMatrix = createBuffer(firstMatrix, USAGE_STORAGE);
           const gpuBufferSecondMatrix = createBuffer(secondMatrix, USAGE_STORAGE);
           const resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + firstMatrix.length);
@@ -590,9 +667,21 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                   { binding: 2, resource: { buffer: resultMatrixBuffer } },
               ],
           });
+          activeBuffersRef.current.push(gpuBufferFirstMatrix, gpuBufferSecondMatrix, resultMatrixBuffer);
+
+          const setupError = await device.popErrorScope();
+          if (runIdRef.current !== myRunId) return; // superseded while awaiting validation
+          if (setupError) {
+              console.error('WebGPU buffer/bind group validation error', setupError.message);
+              setGpuError(t.error_shader_compile || 'Failed to allocate GPU buffers for this configuration.');
+              setIsRunning(false);
+              isRunningRef.current = false;
+              destroyActiveBuffers();
+              return;
+          }
 
           const webgpuLoop = async () => {
-              if (!isRunningRef.current) return;
+              if (!isRunningRef.current || runIdRef.current !== myRunId) return;
               const commandEncoder = device.createCommandEncoder();
               const passEncoder = commandEncoder.beginComputePass();
               passEncoder.setPipeline(pipeline);
@@ -603,22 +692,27 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
               device.queue.submit([commandEncoder.finish()]);
               await device.queue.onSubmittedWorkDone();
 
+              // Re-check after the await: Stop (or Stop+Start) may have run
+              // while this dispatch was in flight, in which case the buffers
+              // this closure references may already be destroyed.
+              if (!isRunningRef.current || runIdRef.current !== myRunId) return;
+
               frames++;
               const now = performance.now();
               const elapsed = now - startTime;
 
-              if (elapsed >= 200) { 
+              if (elapsed >= 200) {
                   const N = matrixSize;
                   // Operations count based on workload type
                   let operationsPerDispatch = 2 * N * N * N;
                   if (workloadType === 'alu_simd') {
                       operationsPerDispatch = 4000 * N * N;
                   }
-                  
+
                   const totalOps = operationsPerDispatch * frames;
                   const seconds = elapsed / 1000;
                   const gflopsVal = (totalOps / seconds) / 1e9;
-                  
+
                   setGflops(gflopsVal);
                   setPeakGflops(prev => Math.max(prev, gflopsVal));
                   updateGraph(gflopsVal);
@@ -771,6 +865,16 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
         size="4xl"
     >
         <div className="flex flex-col gap-6 relative">
+            {/* GPU Error Banner */}
+            {gpuError && (
+                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3">
+                    <ShieldAlert className="text-red-500 shrink-0 mt-0.5" size={18} />
+                    <p className="text-red-800 dark:text-red-200 text-xs leading-relaxed font-medium">
+                        {gpuError}
+                    </p>
+                </div>
+            )}
+
             {/* Warning Banner */}
             {!isRunning && (
                 <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg flex items-start gap-3">

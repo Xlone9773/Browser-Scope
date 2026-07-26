@@ -138,6 +138,8 @@ export const tools = {
     backend_webgpu: "后端: WebGPU (矩阵乘法)",
     backend_fallback: "后端: WebGL (GPGPU 回退)",
     error_webgpu: "当前浏览器不支持 WebGPU，将回退到传统方法。",
+    error_device_lost: "GPU 设备已丢失，请重新打开此测试以继续。",
+    error_shader_compile: "无法为当前配置编译着色器或分配 GPU 资源。",
     use_fp16: "启用 FP16 (半精度浮点)",
     fp16_desc: "加速 AI Tensor Cores 运算",
     stability: "稳定性",

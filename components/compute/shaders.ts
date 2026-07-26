@@ -17,7 +17,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     return;
   }
 
-  resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  if (global_id.x == 0u && global_id.y == 0u) {
+    resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  }
   let resultCell = vec2<u32>(global_id.x, global_id.y);
   
   var result = 0.0;
@@ -51,7 +53,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     return;
   }
 
-  resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  if (global_id.x == 0u && global_id.y == 0u) {
+    resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  }
   let resultCell = vec2<u32>(global_id.x, global_id.y);
   
   var result = 0.0h; // half-precision accumulator
@@ -85,7 +89,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     return;
   }
 
-  resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  if (global_id.x == 0u && global_id.y == 0u) {
+    resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  }
   let resultCell = vec2<u32>(global_id.x, global_id.y);
   
   // High-intensity SIMD FMA loops in registers
@@ -125,7 +131,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     return;
   }
 
-  resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  if (global_id.x == 0u && global_id.y == 0u) {
+    resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  }
   let resultCell = vec2<u32>(global_id.x, global_id.y);
   
   // High-intensity SIMD FMA loops in registers with f16
@@ -163,7 +171,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     return;
   }
 
-  resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  if (global_id.x == 0u && global_id.y == 0u) {
+    resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  }
   let resultCell = vec2<u32>(global_id.x, global_id.y);
   
   let N = u32(firstMatrix.size.y);
@@ -240,7 +250,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     return;
   }
 
-  resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  if (global_id.x == 0u && global_id.y == 0u) {
+    resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
+  }
   let resultCell = vec2<u32>(global_id.x, global_id.y);
   
   let N = u32(firstMatrix.size.y);

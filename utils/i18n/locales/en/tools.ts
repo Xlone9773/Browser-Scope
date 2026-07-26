@@ -138,6 +138,8 @@ export const tools = {
     backend_webgpu: "Backend: WebGPU (Matrix Multiply)",
     backend_fallback: "Backend: WebGL (GPGPU Fallback)",
     error_webgpu: "WebGPU is not supported on this browser. Falling back to legacy methods.",
+    error_device_lost: "The GPU device was lost. Please reopen this test to continue.",
+    error_shader_compile: "Failed to compile or allocate GPU resources for this configuration.",
     use_fp16: "Use FP16 (Half Precision)",
     fp16_desc: "Accelerate on AI Tensor Cores",
     stability: "Stability",
