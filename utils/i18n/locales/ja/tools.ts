@@ -478,7 +478,20 @@ export const tools = {
     geo_noise_detected: "❌ 位置ノイズが検出されました: 連続する読み取り値が平均 ~{jump}m 移動しており、宣言された精度 ~{acc}m を大幅に超えています — 毎回再生成される円形ノイズ（ラプラス機構など）のプライバシー保護レイヤーの特徴と一致しています。",
     geo_positions_stable: "✅ 連続する位置情報の読み取り値は宣言された精度と一致しており、合成ノイズパターンは検出されませんでした。",
     geo_accuracy_static: "ℹ️ すべてのサンプルで宣言された精度が同一です — キャッシュされた、または合成されたソースとして考えられますが、単独では決定的ではありません。",
-    geo_stable: "✅ 位置情報 API および位置情報の挙動は安定しており、汚染や Hook は検出されませんでした。"
+    geo_stable: "✅ 位置情報 API および位置情報の挙動は安定しており、汚染や Hook は検出されませんでした。",
+    
+    // New cross-session / fixed-seed / CSP keys
+    status_unknown: "不明",
+    canvas_persistent_mismatch: "❌ Canvas 永続シード汚染を検出: セッション内の Canvas 描画は安定していますが、localStorage に保存された履歴基準と異なるため、セッションごとまたはオリジンごとの固定シードのノイズ注入が疑われます（Brave や Firefox RFP などに典型的）。",
+    canvas_persistent_match: "✅ Canvas フィンガープリントは、クロスセッションでの履歴基準と完全に一致しています。",
+    canvas_persistent_saved: "💾 クロスセッション比較のため、Canvas フィンガープリント基準を localStorage に保存しました。",
+    webgl_persistent_mismatch: "❌ WebGL 永続シード汚染を検出: セッション内の WebGL 描画は安定していますが、localStorage に保存された履歴基準と異なるため、セッションごとまたはオリジンごとの固定シードのノイズ注入が疑われます（Brave や Firefox RFP などに典型的）。",
+    webgl_persistent_match: "✅ WebGL フィンガープリントは、クロスセッションでの履歴基準と完全に一致しています。",
+    webgl_persistent_saved: "💾 クロスセッション比較のため、WebGL フィンガープリント基準を localStorage に保存しました。",
+    audio_persistent_mismatch: "❌ Audio 永続シード汚染を検出: セッション内の Audio 波形は安定していますが、localStorage に保存された履歴基準と異なるため、セッションごとまたはオリジンごとの固定シードのノイズ注入が疑われます（Brave や Firefox RFP などに典型的）。",
+    audio_persistent_match: "✅ Audio フィンガープリントは、クロスセッションでの履歴基準と完全に一致しています。",
+    audio_persistent_saved: "💾 クロスセッション比較のため、Audio フィンガープリント基準を localStorage に保存しました。",
+    csp_block_detected: "⚠️ コンテンツセキュリティポリシー (CSP) により Web Worker の作成がブロックされました。誤検出を防ぐため、ハードウェアベンチマークを自動的にスキップしました。"
   },
   ja3: {
     title: "JA3/JA4 TLS フィンガープリント",

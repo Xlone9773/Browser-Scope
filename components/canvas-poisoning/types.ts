@@ -171,6 +171,19 @@ export interface PoisoningTranslations {
   geo_positions_stable?: string;
   geo_accuracy_static?: string;
   geo_stable?: string;
+  
+  // New cross-session / fixed-seed / CSP keys
+  status_unknown?: string;
+  canvas_persistent_mismatch?: string;
+  canvas_persistent_match?: string;
+  canvas_persistent_saved?: string;
+  webgl_persistent_mismatch?: string;
+  webgl_persistent_match?: string;
+  webgl_persistent_saved?: string;
+  audio_persistent_mismatch?: string;
+  audio_persistent_match?: string;
+  audio_persistent_saved?: string;
+  csp_block_detected?: string;
 }
 
 export interface ExtendedWindow {

@@ -208,12 +208,14 @@ export const HardwareTab: React.FC<HardwareTabProps> = React.memo(({ t }) => {
           <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
             hwStatus === 'clean' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
             hwStatus === 'poisoned' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' :
+            hwStatus === 'unknown' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
             hwStatus === 'running' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
             'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
           }`}>
             {hwStatus === 'idle' ? t.status_idle : 
              hwStatus === 'running' ? t.status_running : 
              hwStatus === 'poisoned' ? t.status_poisoned : 
+             hwStatus === 'unknown' ? (t.status_unknown || 'Unknown') :
              t.status_clean}
           </span>
         </div>

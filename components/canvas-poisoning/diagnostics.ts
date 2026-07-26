@@ -317,11 +317,9 @@ export const runFontDiagnostic = async (
 
   let shieldingDetected = false;
   if (!hasDifferentSystemFonts) {
-    if (wSans === wSerif && wSans === wMono) {
-      shieldingDetected = true;
-    } else {
-      shieldingDetected = true;
-    }
+    shieldingDetected = true;
+  } else if (wSans === wSerif && wSans === wMono) {
+    shieldingDetected = true;
   }
 
   if (shieldingDetected) {
@@ -612,8 +610,25 @@ export const runRenderAudioDiagnostic = async (
         onProgress(Math.min(95, 30 + i * 3));
         await new Promise<void>((resolve) => setTimeout(resolve, 40));
       }
-      if (!canvasPoisoned) {
+      if (!canvasPoisoned && lastHash) {
         log(t.canvas_stable || '✅ 2D Canvas appears stable (no random noise).');
+        
+        // Cross-Session / Fixed-seed detection
+        try {
+          const stored = localStorage.getItem('browserscope_canvas_baseline_hash');
+          if (!stored) {
+            localStorage.setItem('browserscope_canvas_baseline_hash', lastHash);
+            log(t.canvas_persistent_saved || '💾 Saved Canvas fingerprint baseline to localStorage for cross-session comparison.');
+          } else if (stored !== lastHash) {
+            canvasPoisoned = true;
+            poisoned = true;
+            log(t.canvas_persistent_mismatch || '❌ Canvas Persistent Seed Poisoning detected: Canvas rendering is stable in this session, but the fingerprint differs from the stored baseline, indicating per-session or per-origin fixed-seed noise injection (typical of Brave or Firefox RFP).');
+          } else {
+            log(t.canvas_persistent_match || '✅ Canvas fingerprint matches the stored baseline across sessions.');
+          }
+        } catch {
+          // Ignore localStorage blocked/disabled
+        }
       }
     }
   }
@@ -644,8 +659,25 @@ export const runRenderAudioDiagnostic = async (
         onProgress(Math.min(95, 60 + i * 3));
         await new Promise<void>((resolve) => setTimeout(resolve, 40));
       }
-      if (!webglPoisoned) {
+      if (!webglPoisoned && lastHash) {
         log(t.webgl_stable || '✅ WebGL appears stable (no random noise).');
+        
+        // Cross-Session / Fixed-seed detection
+        try {
+          const stored = localStorage.getItem('browserscope_webgl_baseline_hash');
+          if (!stored) {
+            localStorage.setItem('browserscope_webgl_baseline_hash', lastHash);
+            log(t.webgl_persistent_saved || '💾 Saved WebGL fingerprint baseline to localStorage for cross-session comparison.');
+          } else if (stored !== lastHash) {
+            webglPoisoned = true;
+            poisoned = true;
+            log(t.webgl_persistent_mismatch || '❌ WebGL Persistent Seed Poisoning detected: WebGL rendering is stable in this session, but the fingerprint differs from the stored baseline, indicating per-session or per-origin fixed-seed noise injection (typical of Brave or Firefox RFP).');
+          } else {
+            log(t.webgl_persistent_match || '✅ WebGL fingerprint matches the stored baseline across sessions.');
+          }
+        } catch {
+          // Ignore localStorage blocked/disabled
+        }
       }
     }
   }
@@ -710,8 +742,25 @@ export const runRenderAudioDiagnostic = async (
   if (!audioStable) {
     poisoned = true;
     log(t.audio_poisoned || '❌ Audio buffer or latency tampering detected (anti-fingerprinting active).');
-  } else {
+  } else if (lastAudioHash) {
     log(t.audio_stable || '✅ Audio APIs stable, no waveform or latency tampering detected.');
+    
+    // Cross-Session / Fixed-seed detection
+    try {
+      const stored = localStorage.getItem('browserscope_audio_baseline_hash');
+      if (!stored) {
+        localStorage.setItem('browserscope_audio_baseline_hash', lastAudioHash);
+        log(t.audio_persistent_saved || '💾 Saved Audio fingerprint baseline to localStorage for cross-session comparison.');
+      } else if (stored !== lastAudioHash) {
+        audioStable = false;
+        poisoned = true;
+        log(t.audio_persistent_mismatch || '❌ Audio Persistent Seed Poisoning detected: Audio rendering is stable in this session, but the fingerprint differs from the stored baseline, indicating per-session or per-origin fixed-seed noise injection (typical of Brave or Firefox RFP).');
+      } else {
+        log(t.audio_persistent_match || '✅ Audio fingerprint matches the stored baseline across sessions.');
+      }
+    } catch {
+      // Ignore localStorage blocked/disabled
+    }
   }
 
   onProgress(100);
@@ -796,7 +845,7 @@ export const runHardwareDiagnostic = async (
     log(levelTemplate.replace('{concurrency}', String(c)));
 
     const runConcurrency = (C: number, duration: number): Promise<number> => {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         const workers: Worker[] = [];
         let completedCount = 0;
         let totalOps = 0;
@@ -804,34 +853,53 @@ export const runHardwareDiagnostic = async (
         const blob = new Blob([workerCode], { type: 'application/javascript' });
         const workerUrl = URL.createObjectURL(blob);
         
-        for (let i = 0; i < C; i++) {
-          const worker = new Worker(workerUrl);
-          worker.onmessage = (e) => {
-            totalOps += e.data;
-            completedCount++;
-            worker.terminate();
-            if (completedCount === C) {
-              URL.revokeObjectURL(workerUrl);
-              resolve(totalOps);
-            }
-          };
-          worker.onerror = () => {
-            completedCount++;
-            worker.terminate();
-            if (completedCount === C) {
-              URL.revokeObjectURL(workerUrl);
-              resolve(totalOps);
-            }
-          };
-          workers.push(worker);
+        try {
+          for (let i = 0; i < C; i++) {
+            const worker = new Worker(workerUrl);
+            worker.onmessage = (e) => {
+              totalOps += e.data;
+              completedCount++;
+              worker.terminate();
+              if (completedCount === C) {
+                URL.revokeObjectURL(workerUrl);
+                resolve(totalOps);
+              }
+            };
+            worker.onerror = () => {
+              completedCount++;
+              worker.terminate();
+              if (completedCount === C) {
+                URL.revokeObjectURL(workerUrl);
+                resolve(totalOps);
+              }
+            };
+            workers.push(worker);
+          }
+          
+          // Trigger execution
+          workers.forEach(w => w.postMessage(duration));
+        } catch (err) {
+          URL.revokeObjectURL(workerUrl);
+          workers.forEach(w => {
+            try { w.terminate(); } catch {}
+          });
+          reject(err);
         }
-        
-        // Trigger execution
-        workers.forEach(w => w.postMessage(duration));
       });
     };
 
-    const ops = await runConcurrency(c, durationMs);
+    let ops: number;
+    try {
+      ops = await runConcurrency(c, durationMs);
+    } catch {
+      log(t.csp_block_detected || '⚠️ Content Security Policy (CSP) blocked Web Worker creation. Skipping hardware benchmarking to prevent false positives.');
+      onProgress(100);
+      return {
+        status: 'unknown',
+        logs
+      };
+    }
+
     if (c === 1) {
       baseOps = ops || 1;
     }

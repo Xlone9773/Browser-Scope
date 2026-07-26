@@ -478,7 +478,20 @@ export const tools = {
     geo_noise_detected: "❌ 检测到位置噪点注入：连续读取结果平均漂移约 {jump}米，远超声明的 {acc}米精度 —— 符合基于拉普拉斯机制等圆噪点隐私保护方案（每次调用均重新生成噪点，而非真实的 GPS 渐进漂移）。",
     geo_positions_stable: "✅ 连续位置读取与声明的精度一致，未检测到人工噪点特征。",
     geo_accuracy_static: "ℹ️ 所有样本的声明精度完全相同 —— 对于缓存或虚拟定位源是合理的，但单凭此项不能作为断定依据。",
-    geo_stable: "✅ 地理位置 API 及其定位特征表现正常，未检测到劫持、Hook 或位置噪点注入。"
+    geo_stable: "✅ 地理位置 API 及其定位特征表现正常，未检测到劫持、Hook 或位置噪点注入。",
+    
+    // New cross-session / fixed-seed / CSP keys
+    status_unknown: "未知",
+    canvas_persistent_mismatch: "❌ 检测到 Canvas 跨会话/固定种子投毒：Canvas 渲染在当前会话内表现稳定，但与 localStorage 中的历史基线不一致，提示存在按会话或按域名变化的固定种子噪点注入（典型如 Brave 或 Firefox RFP 防护）。",
+    canvas_persistent_match: "✅ Canvas 指纹与 localStorage 中的历史跨会话基线完全一致。",
+    canvas_persistent_saved: "💾 已成功将 Canvas 指纹基线保存至 localStorage，以便进行跨会话对比。",
+    webgl_persistent_mismatch: "❌ 检测到 WebGL 跨会话/固定种子投毒：WebGL 渲染在当前会话内表现稳定，但与 localStorage 中的历史基线不一致，提示存在按会话或按域名变化的固定种子噪点注入（典型如 Brave 或 Firefox RFP 防护）。",
+    webgl_persistent_match: "✅ WebGL 指纹与 localStorage 中的历史跨会话基线完全一致。",
+    webgl_persistent_saved: "💾 已成功将 WebGL 指纹基线保存至 localStorage，以便进行跨会话对比。",
+    audio_persistent_mismatch: "❌ 检测到音频跨会话/固定种子投毒：音频波形在当前会话内表现稳定，但与 localStorage 中的历史基线不一致，提示存在按会话或按域名变化的固定种子噪点注入（典型如 Brave 或 Firefox RFP 防护）。",
+    audio_persistent_match: "✅ 音频指纹与 localStorage 中的历史跨会话基线完全一致。",
+    audio_persistent_saved: "💾 已成功将音频指纹基线保存至 localStorage，以便进行跨会话对比。",
+    csp_block_detected: "⚠️ 内容安全策略 (CSP) 阻止了 Web Worker 线程的创建。已自动跳过硬件性能多线程测试以防止误报。"
   },
   ja3: {
     title: "JA3/JA4 TLS 指纹",
