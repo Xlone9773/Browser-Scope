@@ -231,6 +231,7 @@ Copyright (c) 2026 BrowserScope Contributors
   benchmarkModal: {
     title: "Бенчмарк производительности",
     start_btn: "Запустить полный тест",
+    cancel_btn: "Отменить тест",
     running: "Выполнение теста...",
     score: "Общий балл",
     cpu_test: "CPU (Простые числа)",

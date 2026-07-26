@@ -45,6 +45,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   const [progress, setProgress] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
   const isRunningRef = useRef(false);
+  const cancelledRef = useRef(false);
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
@@ -84,15 +85,30 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   const recalcTotalScore = (currentTests: TestItem[]) => {
       const completed = currentTests.filter(t => t.score !== null);
       if (completed.length === 0) return 0;
-      // Summation logic for bigger, more satisfying numbers
       const sum = completed.reduce((acc, curr) => acc + (curr.score || 0), 0);
       return sum;
   };
 
-  // --- Core Benchmark Logic ---
-  const runBenchmarkTask = useCallback(async (id: TestItem['id']): Promise<{score: number, details: string}> => {
-      await new Promise(r => setTimeout(r, 50)); // UI Breath
+  // --- Cancellation Mechanism ---
+  const handleCancel = () => {
+      cancelledRef.current = true;
+      if (workerRef.current) {
+          workerRef.current.terminate();
+          workerRef.current = null;
+      }
+      // Re-initialize Web Worker for future runs
+      workerRef.current = new Worker(new URL('../services/app.worker.ts', import.meta.url), { type: 'module' });
       
+      setTests(prev => prev.map(test => 
+          test.status === 'running' ? { ...test, status: 'pending', score: null, details: 'Cancelled' } : test
+      ));
+      setGlobalStatus('done');
+      setRunningMode(null);
+      isRunningRef.current = false;
+  };
+
+  // --- Run a single iteration of a test ---
+  const runSingleIteration = useCallback(async (id: TestItem['id']): Promise<{score: number, details: string}> => {
       const start = performance.now();
       let score = 0;
       let details = "";
@@ -134,13 +150,28 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   break;
               }
               case 'dom': {
+                  // JIT Calibration / Warm-up
+                  const warmCount = Math.floor(TEST_CONFIG.dom.elements * 0.1);
+                  const warmContainer = document.createElement('div');
+                  warmContainer.style.display = 'none';
+                  document.body.appendChild(warmContainer);
+                  for (let i = 0; i < warmCount; i++) {
+                      const el = document.createElement('div');
+                      el.textContent = 'warm';
+                      warmContainer.appendChild(el);
+                  }
+                  warmContainer.innerHTML = '';
+                  document.body.removeChild(warmContainer);
+
+                  // Real measured execution
+                  const iterStart = performance.now();
                   const count = TEST_CONFIG.dom.elements;
                   const container = document.createElement('div');
                   container.style.display = 'none';
                   document.body.appendChild(container);
                   const fragment = document.createDocumentFragment();
 
-                  // Create
+                  // Create DOM nodes
                   for(let i=0; i<count; i++) {
                       const el = document.createElement('div');
                       el.textContent = 'benchmark';
@@ -148,22 +179,39 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   }
                   container.appendChild(fragment);
                   
-                  // Read/Modify
+                  // Read & modify layout styles (forced reflow safeguard)
                   const children = container.children;
+                  let colorCheck = 0;
                   for(let i=0; i<children.length; i+=2) {
-                      (children[i] as HTMLElement).style.color = 'red';
+                      const child = children[i] as HTMLElement;
+                      child.style.color = 'red';
+                      colorCheck += child.style.color ? 1 : 0;
                   }
 
-                  // Clear
+                  // Clear and unmount
                   container.innerHTML = '';
                   document.body.removeChild(container);
 
-                  const duration = Math.max(performance.now() - start, 1);
+                  const duration = Math.max(performance.now() - iterStart, 1);
                   score = Math.floor(TEST_CONFIG.dom.multiplier / duration);
-                  details = `${count} Nodes (${duration.toFixed(0)}ms)`;
+                  const nodesPerSec = (count / (duration / 1000)).toFixed(0);
+                  details = `${Number(nodesPerSec).toLocaleString()} Nodes/s (${duration.toFixed(0)}ms, chk: ${colorCheck.toString(16)})`;
                   break;
               }
               case 'gpu': {
+                  // JIT Calibration / Warm-up
+                  const warmCanvas = document.createElement('canvas');
+                  warmCanvas.width = 100;
+                  warmCanvas.height = 100;
+                  const warmCtx = warmCanvas.getContext('2d');
+                  if (warmCtx) {
+                      for (let i = 0; i < 50; i++) {
+                          warmCtx.fillRect(i % 10, i / 10, 5, 5);
+                      }
+                  }
+
+                  // Real measured execution
+                  const iterStart = performance.now();
                   const rects = TEST_CONFIG.gpu.rects;
                   const canvas = document.createElement('canvas');
                   canvas.width = 800; 
@@ -171,22 +219,49 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   const ctx = canvas.getContext('2d', { alpha: false }); 
                   if (!ctx) throw new Error("No Context");
 
+                  let pathCheck = 0;
                   for(let i=0; i<rects; i++) {
                       ctx.fillStyle = `rgba(${i%255},${(i*5)%255},${(i*10)%255},0.5)`;
                       ctx.fillRect(Math.random()*800, Math.random()*600, 60, 60);
                       ctx.beginPath();
                       ctx.arc(Math.random()*800, Math.random()*600, 20, 0, Math.PI*2);
                       ctx.fill();
+                      pathCheck += i;
                   }
                   
-                  const duration = Math.max(performance.now() - start, 1);
+                  const duration = Math.max(performance.now() - iterStart, 1);
                   score = Math.floor(TEST_CONFIG.gpu.multiplier / duration);
-                  details = `Canvas Render (${duration.toFixed(0)}ms)`;
+                  const kShapesPerSec = ((rects * 2) / (duration / 1000) / 1000).toFixed(1);
+                  details = `${kShapesPerSec}K shapes/s (${duration.toFixed(0)}ms, chk: ${(pathCheck & 0xffff).toString(16)})`;
                   break;
               }
               case 'storage': {
+                  // Warm-up
+                  const dbNameWarm = `bench_db_warm_${Date.now()}`;
+                  await new Promise<void>((resolve, reject) => {
+                      const req = indexedDB.open(dbNameWarm, 1);
+                      req.onupgradeneeded = (e) => {
+                          (e.target as IDBOpenDBRequest).result.createObjectStore('store');
+                      };
+                      req.onsuccess = (e) => {
+                          const db = (e.target as IDBOpenDBRequest).result;
+                          const tx = db.transaction('store', 'readwrite');
+                          tx.objectStore('store').add({ val: 'warm' }, 1);
+                          tx.oncomplete = () => {
+                              db.close();
+                              indexedDB.deleteDatabase(dbNameWarm);
+                              resolve();
+                          };
+                          tx.onerror = () => reject();
+                      };
+                      req.onerror = () => reject();
+                  });
+
+                  // Real measured execution
+                  const iterStart = performance.now();
                   const writes = TEST_CONFIG.storage.writes;
                   const dbName = `bench_db_${Date.now()}_${Math.random()}`;
+                  let writeCheck = 0;
                   
                   await new Promise<void>((resolve, reject) => {
                       const req = indexedDB.open(dbName, 1);
@@ -202,6 +277,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                           
                           for(let i=0; i<writes; i++) {
                               store.add({ id: i, payload: 'x'.repeat(2048) }, i);
+                              writeCheck += i;
                           }
                           
                           tx.oncomplete = () => {
@@ -214,36 +290,67 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                       req.onerror = () => reject();
                   });
 
-                  const duration = Math.max(performance.now() - start, 1);
+                  const duration = Math.max(performance.now() - iterStart, 1);
                   const iops = (writes / (duration/1000)).toFixed(0);
                   score = Math.floor(TEST_CONFIG.storage.multiplier / duration);
-                  details = `${iops} IOPS (${duration.toFixed(0)}ms)`;
+                  details = `${Number(iops).toLocaleString()} IOPS (${duration.toFixed(0)}ms, chk: ${(writeCheck & 0xffff).toString(16)})`;
                   break;
               }
           }
       } catch (e: unknown) {
-          console.error("Benchmark failed", getErrorMessage(e));
+          console.error("Benchmark iteration failed", getErrorMessage(e));
           return { score: 0, details: "Failed" };
       }
 
       return { score, details };
   }, []);
 
+  // --- Orchestrate multiple runs to calculate the median ---
+  const runBenchmarkTask = useCallback(async (id: TestItem['id']): Promise<{score: number, details: string}> => {
+      await new Promise(r => setTimeout(r, 60)); // Inter-task breathing room
+
+      const runs: Array<{score: number, details: string}> = [];
+      
+      for (let r = 0; r < 3; r++) {
+          if (cancelledRef.current) break;
+          // Progress report: update UI showing current sub-run index
+          updateTestState(id, { status: 'running', details: `${t.running || 'Running...'} (${r + 1}/3)` });
+          
+          const result = await runSingleIteration(id);
+          if (cancelledRef.current) break;
+          runs.push(result);
+      }
+
+      if (cancelledRef.current || runs.length === 0) {
+          return { score: 0, details: "Cancelled" };
+      }
+
+      // Sort by score ascending to compute the exact statistical median
+      runs.sort((a, b) => a.score - b.score);
+      const medianResult = runs[Math.floor(runs.length / 2)];
+      return medianResult;
+  }, [runSingleIteration, t.running]);
+
   const handleRunSingle = async (id: TestItem['id']) => {
       if (isRunningRef.current) return;
       isRunningRef.current = true;
+      cancelledRef.current = false;
       
       setGlobalStatus('running');
       setRunningMode('single');
-      updateTestState(id, { status: 'running', details: 'Running...' });
+      updateTestState(id, { status: 'running', score: null, details: 'Initializing...' });
 
       const result = await runBenchmarkTask(id);
       
-      setTests(prev => {
-          const newTests = prev.map(t => t.id === id ? { ...t, status: 'done' as const, score: result.score, details: result.details } : t);
-          setTotalScore(recalcTotalScore(newTests));
-          return newTests;
-      });
+      if (cancelledRef.current) {
+          updateTestState(id, { status: 'pending', details: 'Cancelled', score: null });
+      } else {
+          setTests(prev => {
+              const newTests = prev.map(t => t.id === id ? { ...t, status: 'done' as const, score: result.score, details: result.details } : t);
+              setTotalScore(recalcTotalScore(newTests));
+              return newTests;
+          });
+      }
 
       setGlobalStatus('done');
       setRunningMode(null);
@@ -253,21 +360,28 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   const handleRunAll = async () => {
       if (isRunningRef.current) return;
       isRunningRef.current = true;
+      cancelledRef.current = false;
 
       setGlobalStatus('running');
       setRunningMode('all');
       setTotalScore(0);
       setProgress(0);
 
-      // Reset
+      // Reset all states
       setTests(prev => prev.map(t => ({ ...t, status: 'pending', score: null, details: undefined })));
 
       for (let i = 0; i < tests.length; i++) {
+          if (cancelledRef.current) break;
           const test = tests[i];
-          updateTestState(test.id, { status: 'running', details: 'Running...' });
+          updateTestState(test.id, { status: 'running', details: 'Initializing...' });
           
           const result = await runBenchmarkTask(test.id);
           
+          if (cancelledRef.current) {
+              updateTestState(test.id, { status: 'pending', details: 'Cancelled', score: null });
+              break;
+          }
+
           setTests(prev => {
               const updated = prev.map(t => t.id === test.id ? { ...t, status: 'done' as const, score: result.score, details: result.details } : t);
               setTotalScore(recalcTotalScore(updated));
@@ -419,19 +533,18 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
 
             {/* Global Action Button */}
             <button 
-                onClick={handleRunAll}
-                disabled={globalStatus === 'running'}
+                onClick={globalStatus === 'running' ? handleCancel : handleRunAll}
                 className={`
                     w-full py-3.5 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2
                     ${globalStatus === 'running' 
-                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed shadow-none' 
-                        : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200 dark:shadow-indigo-900/20 active:scale-95'}
+                        ? 'bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 dark:hover:bg-rose-950/30 border border-rose-200 dark:border-rose-900/40 text-rose-600 dark:text-rose-400 shadow-none cursor-pointer' 
+                        : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200 dark:shadow-indigo-900/20 active:scale-95 cursor-pointer'}
                 `}
             >
                 {globalStatus === 'running' ? (
                     <>
-                        <Loader2 size={20} className="animate-spin" />
-                        {t.running}
+                        <Loader2 size={20} className="animate-spin text-rose-500" />
+                        {t.cancel_btn || 'Cancel Benchmark'}
                     </>
                 ) : (
                     <>

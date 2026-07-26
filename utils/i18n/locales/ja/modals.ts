@@ -231,6 +231,7 @@ Copyright (c) 2026 BrowserScope Contributors
   benchmarkModal: {
     title: "パフォーマンスベンチマーク",
     start_btn: "フルテスト開始",
+    cancel_btn: "テストをキャンセル",
     running: "テスト実行中...",
     score: "総合スコア",
     cpu_test: "CPU 素数計算",

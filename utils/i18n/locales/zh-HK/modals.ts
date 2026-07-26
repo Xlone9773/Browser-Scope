@@ -230,6 +230,7 @@ export const modals = {
   benchmarkModal: {
     title: "效能基準測試",
     start_btn: "開始全套測試",
+    cancel_btn: "取消測試",
     running: "測試進行中...",
     score: "綜合跑分",
     cpu_test: "CPU 素數計算",

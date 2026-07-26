@@ -243,6 +243,7 @@ SOFTWARE.`
   benchmarkModal: {
     title: "Performance Benchmark",
     start_btn: "Start Full Suite",
+    cancel_btn: "Cancel Benchmark",
     running: "Running...",
     score: "Total Score",
     cpu_test: "CPU Primes",

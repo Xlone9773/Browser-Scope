@@ -55,7 +55,6 @@ function murmurhash3_32_gc(key: string, seed: number): number {
 
 self.onmessage = function (e: MessageEvent) {
   const { id, config, type, key, seed } = e.data;
-  const start = performance.now();
 
   try {
     if (type === 'hash') {
@@ -66,8 +65,23 @@ self.onmessage = function (e: MessageEvent) {
     }
 
     if (id === 'cpu') {
-      let count = 0;
       const max = config.primeMax;
+      
+      // Warm-up (10% of workload) to trigger JIT compilation
+      const warmupMax = Math.floor(max * 0.1);
+      let warmupCount = 0;
+      for (let i = 2; i <= warmupMax; i++) {
+        let isPrime = true;
+        const limit = Math.sqrt(i);
+        for (let j = 2; j <= limit; j++) {
+          if (i % j === 0) { isPrime = false; break; }
+        }
+        if (isPrime) warmupCount++;
+      }
+
+      // Real measured run
+      const start = performance.now();
+      let count = 0;
       for (let i = 2; i <= max; i++) {
         let isPrime = true;
         const limit = Math.sqrt(i);
@@ -80,22 +94,47 @@ self.onmessage = function (e: MessageEvent) {
         if (isPrime) count++;
       }
       const duration = Math.max(performance.now() - start, 1);
-      const score = Math.floor(config.multiplier / duration);
-      const details = count + ' primes (' + duration.toFixed(0) + 'ms)';
+      
+      // Prevent JIT from optimizing count away and calculate physical metric (Primes checked per sec)
+      const speed = (max / (duration / 1000) / 1000000).toFixed(1);
+      const score = Math.floor(config.multiplier / duration) + (count === warmupCount ? 0 : 0);
+      const details = `${speed} M candidates/s (${duration.toFixed(0)}ms, chk: ${count.toString(16)})`;
       self.postMessage({ id, score, details, success: true });
+
     } else if (id === 'math') {
       const ops = config.ops;
+
+      // Warm-up (10% of workload)
+      const warmupOps = Math.floor(ops * 0.1);
+      let warmupSum = 0;
+      for (let i = 0; i < warmupOps; i++) {
+        warmupSum += Math.sqrt(i) * Math.sin(i) * Math.cos(i);
+      }
+
+      // Real measured run
+      const start = performance.now();
       let sum = 0;
       for (let i = 0; i < ops; i++) {
         sum += Math.sqrt(i) * Math.sin(i) * Math.cos(i);
       }
-      // Use sum to prevent optimization
       const duration = Math.max(performance.now() - start, 1);
-      const score = Math.floor(config.multiplier / duration) + (sum === 0 ? 0 : 0);
-      const details = (ops / 1000000).toFixed(1) + 'M ops (' + duration.toFixed(0) + 'ms)';
+      
+      // Incorporate sum checksum into score & details to block JIT elimination
+      const score = Math.floor(config.multiplier / duration) + (sum === warmupSum ? 0 : 0);
+      const mopsPerSec = (ops / (duration / 1000) / 1000000).toFixed(1);
+      const details = `${mopsPerSec} M ops/s (${duration.toFixed(0)}ms, chk: ${(Math.abs(sum) & 0xffff).toString(16)})`;
       self.postMessage({ id, score, details, success: true });
+
     } else if (id === 'memory') {
       const size = config.size;
+
+      // Warm-up (10% of size)
+      const warmupSize = Math.floor(size * 0.1);
+      const warmupArr = new Uint32Array(warmupSize);
+      for (let i = 0; i < warmupSize; i++) warmupArr[i] = i;
+
+      // Real measured run
+      const start = performance.now();
       const arr = new Uint32Array(size);
       // Write
       for (let i = 0; i < size; i++) arr[i] = i;
@@ -106,12 +145,23 @@ self.onmessage = function (e: MessageEvent) {
       const duration = Math.max(performance.now() - start, 1);
       const mbProcessed = (size * 4 * 2.5) / (1024 * 1024);
       const throughput = (mbProcessed / (duration / 1000)).toFixed(0);
-      const score = Math.floor(config.multiplier / duration);
-      const details = throughput + ' MB/s (' + duration.toFixed(0) + 'ms)';
+      
+      // Ensure arr is used to prevent optimizations
+      const chk = arr[size - 1] & 0xff;
+      const score = Math.floor(config.multiplier / duration) + (chk === 0 ? 0 : 0);
+      const details = `${throughput} MB/s (${duration.toFixed(0)}ms, chk: ${chk.toString(16)})`;
       self.postMessage({ id, score, details, success: true });
+
     } else if (id === 'crypto') {
       const size = config.size;
       const tempStr = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      
+      // Warm-up
+      const warmupKey = "abcdefghijklmnopqrstuvwxyz";
+      let warmupHash = murmurhash3_32_gc(warmupKey, 123);
+
+      // Real measured run
+      const start = performance.now();
       let key = "";
       while (key.length < size) {
         key += tempStr;
@@ -123,14 +173,30 @@ self.onmessage = function (e: MessageEvent) {
       for (let i = 0; i < iterations; i++) {
         hashVal ^= murmurhash3_32_gc(key, 12345 + i);
       }
-      
       const duration = Math.max(performance.now() - start, 1);
-      const score = Math.floor(config.multiplier / duration) + (hashVal === 0 ? 0 : 0);
+      
+      const score = Math.floor(config.multiplier / duration) + (hashVal === warmupHash ? 0 : 0);
       const mbs = ((size * iterations) / (1024 * 1024) / (duration / 1000)).toFixed(1);
-      const details = mbs + ' MB/s (' + duration.toFixed(0) + 'ms)';
+      const details = `${mbs} MB/s (${duration.toFixed(0)}ms, chk: ${(hashVal & 0xffff).toString(16)})`;
       self.postMessage({ id, score, details, success: true });
+
     } else if (id === 'convolution') {
       const size = config.matrixSize;
+
+      // Warm-up (smaller matrix)
+      const warmupMatrixSize = 64;
+      const warmupInput = new Float32Array(warmupMatrixSize * warmupMatrixSize);
+      const warmupOutput = new Float32Array(warmupMatrixSize * warmupMatrixSize);
+      for (let i = 0; i < warmupInput.length; i++) warmupInput[i] = Math.sin(i) * 0.5 + 0.5;
+      const warmupKernel = new Float32Array([1, 0, -1, 2, 0, -2, 1, 0, -1]);
+      for (let y = 1; y < warmupMatrixSize - 1; y++) {
+        for (let x = 1; x < warmupMatrixSize - 1; x++) {
+          warmupOutput[y * warmupMatrixSize + x] = warmupInput[y * warmupMatrixSize + x] * warmupKernel[3];
+        }
+      }
+
+      // Real measured run
+      const start = performance.now();
       const input = new Float32Array(size * size);
       const output = new Float32Array(size * size);
       
@@ -170,11 +236,24 @@ self.onmessage = function (e: MessageEvent) {
       const duration = Math.max(performance.now() - start, 1);
       const ops = size * size * 9 * passes;
       const gflops = (ops / (duration / 1000) / 1000000000).toFixed(2);
-      const score = Math.floor(config.multiplier / duration);
-      const details = gflops + ' GFLOPS (' + duration.toFixed(0) + 'ms)';
+      
+      // Prevent JIT elimination using center pixel checksum
+      const centerPixelVal = output[Math.floor((size * size) / 2)];
+      const chk = Math.floor(Math.abs(centerPixelVal) * 100) & 0xffff;
+      const score = Math.floor(config.multiplier / duration) + (chk === 0 ? 0 : 0);
+      const details = `${gflops} GFLOPS (${duration.toFixed(0)}ms, chk: ${chk.toString(16)})`;
       self.postMessage({ id, score, details, success: true });
+
     } else if (id === 'regex') {
       const codeLen = config.length;
+
+      // Warm-up
+      const warmupText = "const val = 'user@example.com';";
+      const warmRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+      const warmupMatches = warmupText.match(warmRegex) || [];
+
+      // Real measured run
+      const start = performance.now();
       const chunk = "const app = express(); app.get('/api/v1/user/:id', (req, res) => { const email = 'user' + req.params.id + '@test.example.com'; return res.json({ id: req.params.id, email, role: 'admin', active: true }); });\n";
       let text = "";
       while (text.length < codeLen) {
@@ -193,9 +272,9 @@ self.onmessage = function (e: MessageEvent) {
       
       const totalMatches = emails.length + paths.length + vars.length;
       const duration = Math.max(performance.now() - start, 1);
-      const score = Math.floor(config.multiplier / duration) + (totalMatches === 0 ? 0 : 0);
+      const score = Math.floor(config.multiplier / duration) + (totalMatches === warmupMatches.length ? 0 : 0);
       const mbs = (codeLen / (1024 * 1024) / (duration / 1000)).toFixed(1);
-      const details = mbs + ' MB/s (' + duration.toFixed(0) + 'ms)';
+      const details = `${mbs} MB/s (${duration.toFixed(0)}ms, chk: ${(totalMatches & 0xffff).toString(16)})`;
       self.postMessage({ id, score, details, success: true });
     }
   } catch (err: unknown) {

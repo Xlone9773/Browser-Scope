@@ -231,6 +231,7 @@ export const modals = {
   benchmarkModal: {
     title: "性能基准测试",
     start_btn: "开始全套测试",
+    cancel_btn: "取消测试",
     running: "测试进行中...",
     score: "综合跑分",
     cpu_test: "CPU 素数计算",
