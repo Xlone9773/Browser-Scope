@@ -239,6 +239,9 @@ Copyright (c) 2026 BrowserScope Contributors
     dom_test: "DOM操作性能",
     gpu_test: "Canvas描画性能",
     storage_test: "データベースIOPS",
+    crypto_test: "暗号ハッシュ",
+    convolution_test: "画像行列畳み込み",
+    regex_test: "正規表現パース",
     worker_status: "Web Worker 有効 (マルチスレッド高速)"
   },
   graphicsModal: {

@@ -239,6 +239,9 @@ Copyright (c) 2026 BrowserScope Contributors
     dom_test: "Операции с DOM",
     gpu_test: "Рендеринг Canvas",
     storage_test: "IOPS Базы данных",
+    crypto_test: "Криптографический хэш",
+    convolution_test: "Свёртка изображения",
+    regex_test: "Парсинг регулярных выражений",
     worker_status: "Web Worker активен (Многопоточность)"
   },
   graphicsModal: {

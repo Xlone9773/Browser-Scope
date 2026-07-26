@@ -251,6 +251,9 @@ SOFTWARE.`
     dom_test: "DOM Manipulation",
     gpu_test: "Canvas Rendering",
     storage_test: "Database IOPS",
+    crypto_test: "Cryptographic Hash",
+    convolution_test: "Image Convolution",
+    regex_test: "Regex Parsing",
     worker_status: "Web Worker Active (Multi-Threaded)"
   },
   graphicsModal: {

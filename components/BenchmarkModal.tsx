@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Cpu, Zap, Activity, Code, Box, Image as ImageIcon, Calculator, Database, RotateCw, Loader2 } from 'lucide-react';
+import { Play, Cpu, Zap, Activity, Code, Box, Image as ImageIcon, Calculator, Database, RotateCw, Loader2, ShieldCheck, Binary, FileText } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
 import { Modal } from './ui/Modal';
@@ -14,7 +14,7 @@ interface BenchmarkModalProps {
 type TestStatus = 'pending' | 'running' | 'done';
 
 interface TestItem {
-    id: 'cpu' | 'math' | 'memory' | 'dom' | 'gpu' | 'storage';
+    id: 'cpu' | 'math' | 'memory' | 'dom' | 'gpu' | 'storage' | 'crypto' | 'convolution' | 'regex';
     name: string;
     icon: React.ElementType;
     status: TestStatus;
@@ -30,7 +30,10 @@ const TEST_CONFIG = {
     memory: { size: 4000000, multiplier: 18000000 }, 
     dom: { elements: 4000, multiplier: 10000000 },   
     gpu: { rects: 3000, multiplier: 15000000 },      
-    storage: { writes: 200, multiplier: 40000000 }   
+    storage: { writes: 200, multiplier: 40000000 },
+    crypto: { size: 1000000, iterations: 10, multiplier: 25000000 },
+    convolution: { matrixSize: 512, passes: 12, multiplier: 15000000 },
+    regex: { length: 1500000, multiplier: 12000000 }
 };
 
 export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) => {
@@ -60,7 +63,10 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
       { id: 'memory', name: t.memory_test, icon: Box, status: 'pending', score: null },
       { id: 'dom', name: t.dom_test, icon: Code, status: 'pending', score: null },
       { id: 'gpu', name: t.gpu_test, icon: ImageIcon, status: 'pending', score: null },
-      { id: 'storage', name: t.storage_test, icon: Database, status: 'pending', score: null }
+      { id: 'storage', name: t.storage_test, icon: Database, status: 'pending', score: null },
+      { id: 'crypto', name: t.crypto_test, icon: ShieldCheck, status: 'pending', score: null },
+      { id: 'convolution', name: t.convolution_test, icon: Binary, status: 'pending', score: null },
+      { id: 'regex', name: t.regex_test, icon: FileText, status: 'pending', score: null }
   ]);
 
   const handleClose = () => {
@@ -95,7 +101,10 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
           switch (id) {
               case 'cpu':
               case 'math':
-              case 'memory': {
+              case 'memory':
+              case 'crypto':
+              case 'convolution':
+              case 'regex': {
                   if (!workerRef.current) {
                       throw new Error("Web Worker not initialized");
                   }

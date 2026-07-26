@@ -109,6 +109,94 @@ self.onmessage = function (e: MessageEvent) {
       const score = Math.floor(config.multiplier / duration);
       const details = throughput + ' MB/s (' + duration.toFixed(0) + 'ms)';
       self.postMessage({ id, score, details, success: true });
+    } else if (id === 'crypto') {
+      const size = config.size;
+      let tempStr = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let key = "";
+      while (key.length < size) {
+        key += tempStr;
+      }
+      key = key.substring(0, size);
+      
+      let hashVal = 0;
+      const iterations = config.iterations;
+      for (let i = 0; i < iterations; i++) {
+        hashVal ^= murmurhash3_32_gc(key, 12345 + i);
+      }
+      
+      const duration = Math.max(performance.now() - start, 1);
+      const score = Math.floor(config.multiplier / duration) + (hashVal === 0 ? 0 : 0);
+      const mbs = ((size * iterations) / (1024 * 1024) / (duration / 1000)).toFixed(1);
+      const details = mbs + ' MB/s (' + duration.toFixed(0) + 'ms)';
+      self.postMessage({ id, score, details, success: true });
+    } else if (id === 'convolution') {
+      const size = config.matrixSize;
+      const input = new Float32Array(size * size);
+      const output = new Float32Array(size * size);
+      
+      for (let i = 0; i < input.length; i++) {
+        input[i] = Math.sin(i) * 0.5 + 0.5;
+      }
+      
+      const kernel = new Float32Array([
+        1,  2,  1,
+        0,  0,  0,
+       -1, -2, -1
+      ]);
+      
+      const passes = config.passes;
+      for (let p = 0; p < passes; p++) {
+        for (let y = 1; y < size - 1; y++) {
+          for (let x = 1; x < size - 1; x++) {
+            let sum = 0;
+            sum += input[(y - 1) * size + (x - 1)] * kernel[0];
+            sum += input[(y - 1) * size + x]       * kernel[1];
+            sum += input[(y - 1) * size + (x + 1)] * kernel[2];
+            
+            sum += input[y * size + (x - 1)]       * kernel[3];
+            sum += input[y * size + x]             * kernel[4];
+            sum += input[y * size + (x + 1)]       * kernel[5];
+            
+            sum += input[(y + 1) * size + (x - 1)] * kernel[6];
+            sum += input[(y + 1) * size + x]       * kernel[7];
+            sum += input[(y + 1) * size + (x + 1)] * kernel[8];
+            
+            output[y * size + x] = sum;
+          }
+        }
+        input.set(output);
+      }
+      
+      const duration = Math.max(performance.now() - start, 1);
+      const ops = size * size * 9 * passes;
+      const gflops = (ops / (duration / 1000) / 1000000000).toFixed(2);
+      const score = Math.floor(config.multiplier / duration);
+      const details = gflops + ' GFLOPS (' + duration.toFixed(0) + 'ms)';
+      self.postMessage({ id, score, details, success: true });
+    } else if (id === 'regex') {
+      const codeLen = config.length;
+      let chunk = "const app = express(); app.get('/api/v1/user/:id', (req, res) => { const email = 'user' + req.params.id + '@test.example.com'; return res.json({ id: req.params.id, email, role: 'admin', active: true }); });\n";
+      let text = "";
+      while (text.length < codeLen) {
+        text += chunk;
+      }
+      text = text.substring(0, codeLen);
+      
+      const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+      const emails = text.match(emailRegex) || [];
+      
+      const apiRegex = /\/api\/v[0-9]\/[a-zA-Z0-9]+/g;
+      const paths = text.match(apiRegex) || [];
+      
+      const varRegex = /(const|let|var)\s+[a-zA-Z0-9_]+\s*=/g;
+      const vars = text.match(varRegex) || [];
+      
+      const totalMatches = emails.length + paths.length + vars.length;
+      const duration = Math.max(performance.now() - start, 1);
+      const score = Math.floor(config.multiplier / duration) + (totalMatches === 0 ? 0 : 0);
+      const mbs = (codeLen / (1024 * 1024) / (duration / 1000)).toFixed(1);
+      const details = mbs + ' MB/s (' + duration.toFixed(0) + 'ms)';
+      self.postMessage({ id, score, details, success: true });
     }
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : String(err);
