@@ -147,6 +147,7 @@ export interface GPUCommandBuffer {
 
 export interface GPUCommandEncoder {
   beginComputePass(descriptor?: unknown): GPUComputePassEncoder;
+  copyBufferToBuffer(source: GPUBuffer, sourceOffset: number, destination: GPUBuffer, destinationOffset: number, size: number): void;
   finish(descriptor?: unknown): GPUCommandBuffer;
 }
 
@@ -184,6 +185,7 @@ export interface GPUAdapter {
 
 export interface GPUBuffer {
   readonly size: number;
+  mapAsync(mode: number, offset?: number, size?: number): Promise<void>;
   getMappedRange(offset?: number, size?: number): ArrayBuffer;
   unmap(): void;
   destroy(): void;
@@ -300,9 +302,15 @@ declare global {
       RENDER_ATTACHMENT?: number;
     };
     GPUBufferUsage?: {
+      MAP_READ?: number;
       UNIFORM?: number;
+      COPY_SRC?: number;
       COPY_DST?: number;
       STORAGE?: number;
+    };
+    GPUMapMode?: {
+      READ?: number;
+      WRITE?: number;
     };
     model?: unknown;
     Magnetometer?: new (options?: { frequency?: number }) => Magnetometer;
