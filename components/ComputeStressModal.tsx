@@ -28,12 +28,14 @@ interface ComputeStressModalProps {
 
 const HISTORY_LENGTH = 60;
 
-// ALU SIMD shader body: 200 loop iterations, each with 2 vec4 FMAs (4 lanes x
-// 2 flops each) plus a closing vec4 dot product (4 muls + 3 adds). sin/cos
-// calls are intentionally excluded from this count — there is no defensible
-// FLOP-equivalent for transcendental ops, so this is a conservative
-// (undercounted, never inflated) estimate of the true throughput.
-const ALU_FLOPS_PER_INVOCATION = 200 * 2 * 4 * 2 + 7;
+// ALU SIMD shader body: 200 loop iterations, each with 2 vec4 clamp(fma(...))
+// pairs (fma: 4 lanes x 2 flops; clamp: 4 lanes x 2 flops for the min+max),
+// plus a closing vec4 dot product (4 muls + 3 adds). This is an exact count
+// of the shader's ALU ops — clamp replaced the sin/cos calls this shader
+// used to use for the same range-bounding role, since clamp has a
+// well-defined FLOP cost and sin/cos do not (they run on a separate
+// special-function unit with no standard FLOP-equivalent).
+const ALU_FLOPS_PER_INVOCATION = 200 * 2 * (4 * 2 + 4 * 2) + 7;
 
 const pipelineCacheKey = (workloadType: 'gemm' | 'alu_simd', memoryMode: 'hybrid' | 'cache', isF16: boolean): string =>
     `${workloadType}|${memoryMode}|${isF16 ? 'fp16' : 'fp32'}`;
