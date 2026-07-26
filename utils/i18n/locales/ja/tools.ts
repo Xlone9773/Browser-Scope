@@ -433,7 +433,7 @@ export const tools = {
     currently_scanning: "現在スキャン中:",
     diagnostic_core_logs: "診断コアログ",
     diagnostic_outcome: "診断結果",
-    poisoned_count_msg: "5つの主要コンポーネントテストのうち、{count}個のノイズ注入/干渉が検出されました。",
+    poisoned_count_msg: "6つの主要コンポーネントテストのうち、{count}個のノイズ注入/干渉が検出されました。",
     level_label: "保護レベル",
     logs_label: "ログ一覧:",
     copied_label: "コピー完了",

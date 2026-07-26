@@ -433,7 +433,7 @@ export const tools = {
     currently_scanning: "當前掃描項目：",
     diagnostic_core_logs: "診斷核心日誌",
     diagnostic_outcome: "診斷最終結果",
-    poisoned_count_msg: "在 5 個核心組件檢測中，共發現 {count} 個可能被投毒/被干擾項。",
+    poisoned_count_msg: "在 6 個核心組件檢測中，共發現 {count} 個可能被投毒/被干擾項。",
     level_label: "防護等級",
     logs_label: "即時日誌：",
     copied_label: "已複製",

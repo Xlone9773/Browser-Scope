@@ -16,7 +16,8 @@ import {
   ArrowRight,
   Search,
   Copy,
-  Check
+  Check,
+  MapPin
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from '../ui/Button';
@@ -26,7 +27,8 @@ import {
   runFontDiagnostic, 
   runMediaDiagnostic, 
   runRenderAudioDiagnostic, 
-  runHardwareDiagnostic 
+  runHardwareDiagnostic,
+  runGeolocationDiagnostic
 } from './diagnostics';
 
 interface AllTabProps {
@@ -47,6 +49,7 @@ interface AllResults {
   geometry: ModuleResult;
   media: ModuleResult;
   hardware: ModuleResult;
+  geolocation: ModuleResult;
 }
 
 export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
@@ -146,11 +149,11 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     setSelectedResultModule(null);
 
     // ==========================================
-    // STEP 1: Render & Audio Diagnostics (0% -> 20%)
+    // STEP 1: Render & Audio Diagnostics (0% -> 16%)
     // ==========================================
     setActiveStep(1);
     setCurrentModuleText(t.tab_render_audio || 'Render & Audio');
-    addGlobalLog('🚀 [1/5] ' + (t.start_log || 'Starting Canvas & WebGL Poisoning Test...'));
+    addGlobalLog('🚀 [1/6] ' + (t.start_log || 'Starting Canvas & WebGL Poisoning Test...'));
     await new Promise<void>(resolve => setTimeout(resolve, 150));
 
     const renderAudioLogs: string[] = [];
@@ -162,17 +165,17 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     const renderAudioResult = await runRenderAudioDiagnostic(
       t,
       rLog,
-      (p) => setGlobalProgress(Math.floor(p * 0.2)),
+      (p) => setGlobalProgress(Math.floor(p * 0.16)),
       null,
       null
     );
 
     // ==========================================
-    // STEP 2: Fonts & Farbling Diagnostics (20% -> 40%)
+    // STEP 2: Fonts & Farbling Diagnostics (16% -> 33%)
     // ==========================================
     setActiveStep(2);
     setCurrentModuleText(t.tab_font_farbling || 'Fonts & Farbling');
-    addGlobalLog('🚀 [2/5] ' + (t.testing_fonts || 'Starting Fonts & Font Farbling Diagnostics...'));
+    addGlobalLog('🚀 [2/6] ' + (t.testing_fonts || 'Starting Fonts & Font Farbling Diagnostics...'));
     await new Promise<void>(resolve => setTimeout(resolve, 150));
 
     const fontLogs: string[] = [];
@@ -184,15 +187,15 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     const fontResult = await runFontDiagnostic(
       t,
       fLog,
-      (p) => setGlobalProgress(20 + Math.floor(p * 0.2))
+      (p) => setGlobalProgress(16 + Math.floor(p * 0.17))
     );
 
     // ==========================================
-    // STEP 3: Geometry & Layout Diagnostics (40% -> 60%)
+    // STEP 3: Geometry & Layout Diagnostics (33% -> 50%)
     // ==========================================
     setActiveStep(3);
     setCurrentModuleText(t.tab_geometry || 'Geometry & Layout');
-    addGlobalLog('🚀 [3/5] ' + (t.testing_geometry || 'Starting Geometry & Layout DOMRect Diagnostics...'));
+    addGlobalLog('🚀 [3/6] ' + (t.testing_geometry || 'Starting Geometry & Layout DOMRect Diagnostics...'));
     await new Promise<void>(resolve => setTimeout(resolve, 150));
 
     const geomLogs: string[] = [];
@@ -204,15 +207,15 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     const geomResult = await runGeometryDiagnostic(
       t,
       gLog,
-      (p) => setGlobalProgress(40 + Math.floor(p * 0.2))
+      (p) => setGlobalProgress(33 + Math.floor(p * 0.17))
     );
 
     // ==========================================
-    // STEP 4: Media Devices Diagnostics (60% -> 80%)
+    // STEP 4: Media Devices Diagnostics (50% -> 66%)
     // ==========================================
     setActiveStep(4);
     setCurrentModuleText(t.tab_media || 'Media Devices');
-    addGlobalLog('🚀 [4/5] ' + (t.testing_media || 'Starting Media Devices & ID Farbling Diagnostics...'));
+    addGlobalLog('🚀 [4/6] ' + (t.testing_media || 'Starting Media Devices & ID Farbling Diagnostics...'));
     await new Promise<void>(resolve => setTimeout(resolve, 150));
 
     const mediaLogs: string[] = [];
@@ -224,15 +227,15 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     const mediaResult = await runMediaDiagnostic(
       t,
       mLog,
-      (p) => setGlobalProgress(60 + Math.floor(p * 0.2))
+      (p) => setGlobalProgress(50 + Math.floor(p * 0.16))
     );
 
     // ==========================================
-    // STEP 5: Hardware Specifications Diagnostics (80% -> 100%)
+    // STEP 5: Hardware Specifications Diagnostics (66% -> 83%)
     // ==========================================
     setActiveStep(5);
     setCurrentModuleText(t.tab_hardware || 'Hardware Config');
-    addGlobalLog('🚀 [5/5] ' + (t.testing_hardware || 'Starting Hardware specifications and Web Worker Concurrency load curve testing...'));
+    addGlobalLog('🚀 [5/6] ' + (t.testing_hardware || 'Starting Hardware specifications and Web Worker Concurrency load curve testing...'));
     await new Promise<void>(resolve => setTimeout(resolve, 150));
 
     const hwLogs: string[] = [];
@@ -244,9 +247,29 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     const hwResult = await runHardwareDiagnostic(
       t,
       hLog,
-      (p) => setGlobalProgress(80 + Math.floor(p * 0.2)),
+      (p) => setGlobalProgress(66 + Math.floor(p * 0.17)),
       undefined,
       undefined
+    );
+
+    // ==========================================
+    // STEP 6: Geolocation Hook & Noise Diagnostics (83% -> 100%)
+    // ==========================================
+    setActiveStep(6);
+    setCurrentModuleText(t.tab_geolocation || 'Geolocation');
+    addGlobalLog('🚀 [6/6] ' + (t.testing_geolocation || 'Testing Geolocation API hooks and positional noise consistency...'));
+    await new Promise<void>(resolve => setTimeout(resolve, 150));
+
+    const geoLogs: string[] = [];
+    const gGeoLog = (m: string) => {
+      geoLogs.push(m);
+      addGlobalLog(`  [Geolocation] ${m}`);
+    };
+
+    const geoResult = await runGeolocationDiagnostic(
+      t,
+      gGeoLog,
+      (p) => setGlobalProgress(83 + Math.floor(p * 0.17))
     );
 
     setGlobalProgress(100);
@@ -298,6 +321,15 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
         summary: hwResult.status === 'poisoned'
           ? (t.hardware_concurrency_suspicious || '❌ Hardware specifications are inconsistent or spoofed.')
           : (t.hardware_concurrency_normal || '✅ Multi-threaded scaling performance matches declared CPU core count.')
+      },
+      geolocation: {
+        status: geoResult.status,
+        title: t.tab_geolocation || 'Geolocation',
+        desc: t.tab_geolocation || 'Geolocation',
+        logs: geoLogs,
+        summary: geoResult.status === 'poisoned'
+          ? (t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).')
+          : (t.geo_stable || '✅ Geolocation APIs and positional behavior appear stable, no poisoning or hooks detected.')
       }
     };
 
@@ -369,7 +401,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
           ) : (
             <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700/50 text-indigo-600 dark:text-indigo-400 font-medium px-4 py-2.5 rounded-xl border border-slate-200/50 dark:border-slate-600">
               <RefreshCw size={16} className="animate-spin" />
-              <span className="text-sm">{t.testing_all_steps?.replace('{activeStep}', String(activeStep)).replace('{totalSteps}', '5') || 'Running Diagnostics...'}</span>
+              <span className="text-sm">{t.testing_all_steps?.replace('{activeStep}', String(activeStep)).replace('{totalSteps}', '6') || 'Running Diagnostics...'}</span>
             </div>
           )}
         </div>
@@ -380,14 +412,15 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
         >
           {[
             { id: 'render_audio', icon: <Tv size={20} className="text-indigo-500" />, title: t.tab_render_audio || 'Render & Audio' },
             { id: 'fonts', icon: <Type size={20} className="text-amber-500" />, title: t.tab_font_farbling || 'Fonts & Farbling' },
             { id: 'geometry', icon: <ShieldAlert size={20} className="text-rose-500" />, title: t.tab_geometry || 'Geometry & Layout' },
             { id: 'media', icon: <Video size={20} className="text-emerald-500" />, title: t.tab_media || 'Media Devices' },
-            { id: 'hardware', icon: <Cpu size={20} className="text-blue-500" />, title: t.tab_hardware || 'Hardware Config' }
+            { id: 'hardware', icon: <Cpu size={20} className="text-blue-500" />, title: t.tab_hardware || 'Hardware Config' },
+            { id: 'geolocation', icon: <MapPin size={20} className="text-indigo-500" />, title: t.tab_geolocation || 'Geolocation' }
           ].map((m, index) => (
             <motion.div 
               key={m.id}
@@ -422,7 +455,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
                 </div>
                 <div>
                   <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight">
-                    {t.testing_all_steps?.replace('{activeStep}', String(activeStep)).replace('{totalSteps}', '5') || 'Running integrated diagnostics...'}
+                    {t.testing_all_steps?.replace('{activeStep}', String(activeStep)).replace('{totalSteps}', '6') || 'Running integrated diagnostics...'}
                   </h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                     {t.currently_scanning || 'Currently scanning:'} <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{currentModuleText}</span>
@@ -494,7 +527,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
                 {t.all_test_summary_title || 'Fingerprint Poisoning & Spoofing Evaluation Summary'}
               </h4>
               <p className="text-xs sm:text-sm opacity-90 leading-relaxed font-medium">
-                {shield.label} - {(t.poisoned_count_msg || 'Found {count} poisoned component(s) out of 5.').replace('{count}', String(Object.values(results).filter(r => r.status === 'poisoned').length))}
+                {shield.label} - {(t.poisoned_count_msg || 'Found {count} poisoned component(s) out of 6.').replace('{count}', String(Object.values(results).filter(r => r.status === 'poisoned').length))}
               </p>
             </div>
             <div className="shrink-0 text-3xl sm:text-4xl font-black font-mono tracking-tight z-10 bg-white/10 dark:bg-black/10 px-4 py-2 rounded-xl backdrop-blur-sm">
@@ -510,7 +543,8 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
                 { key: 'fonts', icon: <Type size={18} />, title: t.tab_font_farbling || 'Fonts & Farbling' },
                 { key: 'geometry', icon: <ShieldAlert size={18} />, title: t.tab_geometry || 'Geometry & Layout' },
                 { key: 'media', icon: <Video size={18} />, title: t.tab_media || 'Media Devices' },
-                { key: 'hardware', icon: <Cpu size={18} />, title: t.tab_hardware || 'Hardware Config' }
+                { key: 'hardware', icon: <Cpu size={18} />, title: t.tab_hardware || 'Hardware Config' },
+                { key: 'geolocation', icon: <MapPin size={18} />, title: t.tab_geolocation || 'Geolocation' }
               ].map(({ key, icon, title }, idx) => {
                 const item = results[key as keyof AllResults];
                 const isPoisoned = item.status === 'poisoned';

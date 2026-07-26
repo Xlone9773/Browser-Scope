@@ -433,7 +433,7 @@ export const tools = {
     currently_scanning: "Сейчас сканируется:",
     diagnostic_core_logs: "ЯДРО ДИАГНОСТИЧЕСКИХ ЛОГОВ",
     diagnostic_outcome: "Результат диагностики",
-    poisoned_count_msg: "Обнаружено {count} зашумленных компонентов из 5.",
+    poisoned_count_msg: "Обнаружено {count} зашумленных компонентов из 6.",
     level_label: "УРОВЕНЬ",
     logs_label: "ЛОГИ:",
     copied_label: "Скопировано",

@@ -433,7 +433,7 @@ export const tools = {
     currently_scanning: "Currently scanning:",
     diagnostic_core_logs: "DIAGNOSTIC CORE LOGS",
     diagnostic_outcome: "Diagnostic Outcome",
-    poisoned_count_msg: "Found {count} poisoned component(s) out of 5.",
+    poisoned_count_msg: "Found {count} poisoned component(s) out of 6.",
     level_label: "LEVEL",
     logs_label: "LOGS:",
     copied_label: "Copied",
