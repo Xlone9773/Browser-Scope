@@ -1,9 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Cpu, Zap, Activity, AlertTriangle, Layers, Play, Square, TrendingUp, Microscope, Eye, Clock } from 'lucide-react';
+import { Cpu, Zap, Activity, AlertTriangle, Layers, Play, Square, TrendingUp, Microscope, Eye, Clock, HelpCircle, HardDrive, ShieldAlert, Cpu as CpuIcon } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
 import { Select } from './ui/Select';
-import { MATMUL_SHADER_F32, MATMUL_SHADER_F16 } from './compute/shaders';
+import { 
+  MATMUL_SHADER_F32, 
+  MATMUL_SHADER_F16,
+  ALU_SIMD_SHADER_F32,
+  ALU_SIMD_SHADER_F16,
+  CACHE_MATMUL_SHADER_F32,
+  CACHE_MATMUL_SHADER_F16
+} from './compute/shaders';
 import { ParticleSystem } from './compute/ParticleSystem';
 import { Modal } from './ui/Modal';
 import { getErrorMessage } from '../utils/error';
@@ -23,8 +30,7 @@ const HISTORY_LENGTH = 60;
 export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose, t }) => {
   const [isWebGPUSupported, setIsWebGPUSupported] = useState<boolean | null>(null);
   const [hasFp16Support, setHasFp16Support] = useState(false);
-  const [useFp16, setUseFp16] = useState(false);
-  const [adapterName, setAdapterName] = useState('Checking GPU...');
+  const [adapterName, setAdapterName] = useState(t.checking_gpu || 'Checking GPU...');
   
   const [backend, setBackend] = useState<'webgpu' | 'webgl' | 'cpu'>('webgpu');
   const [isRunning, setIsRunning] = useState(false);
@@ -35,6 +41,13 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const [selectedDuration, setSelectedDuration] = useState<number>(0);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // New Upgraded Control State Variables
+  const [testMode, setTestMode] = useState<'quick' | 'expert'>('quick');
+  const [selectedPreset, setSelectedPreset] = useState<'standard' | 'peak' | 'fp16' | 'thermal'>('standard');
+  const [workloadType, setWorkloadType] = useState<'gemm' | 'alu_simd'>('gemm');
+  const [precision, setPrecision] = useState<'fp32' | 'fp16' | 'fp64'>('fp32');
+  const [memoryMode, setMemoryMode] = useState<'hybrid' | 'cache'>('hybrid');
 
   const formatTimeRemaining = (secs: number) => {
       const m = Math.floor(secs / 60);
@@ -81,6 +94,37 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   useEffect(() => { gflopsRef.current = gflops; }, [gflops]);
   useEffect(() => { peakGflopsRef.current = peakGflops; }, [peakGflops]);
   useEffect(() => { graphDataRef.current = graphData; }, [graphData]);
+
+  // Sync Preset selections in Quick Mode
+  useEffect(() => {
+    if (testMode === 'quick' && backend === 'webgpu') {
+      if (selectedPreset === 'standard') {
+        setWorkloadType('gemm');
+        setMemoryMode('hybrid');
+        setPrecision('fp32');
+        setMatrixSize(512);
+        setSelectedDuration(30);
+      } else if (selectedPreset === 'peak') {
+        setWorkloadType('alu_simd');
+        setMemoryMode('cache');
+        setPrecision(hasFp16Support ? 'fp16' : 'fp32');
+        setMatrixSize(512);
+        setSelectedDuration(10);
+      } else if (selectedPreset === 'fp16') {
+        setWorkloadType('gemm');
+        setMemoryMode('hybrid');
+        setPrecision(hasFp16Support ? 'fp16' : 'fp32');
+        setMatrixSize(1024);
+        setSelectedDuration(30);
+      } else if (selectedPreset === 'thermal') {
+        setWorkloadType('gemm');
+        setMemoryMode('hybrid');
+        setPrecision('fp32');
+        setMatrixSize(1024);
+        setSelectedDuration(60);
+      }
+    }
+  }, [testMode, selectedPreset, hasFp16Support, backend]);
 
   // CPU Workers control
   const startCpuWorkers = (numWorkers: number) => {
@@ -305,12 +349,16 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                 const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
                 if (adapter) {
                     adapterRef.current = adapter;
-                    setAdapterName(adapter.name || 'WebGPU Adapter');
+                    setAdapterName(adapter.name || t.backend_webgpu_info || 'WebGPU Adapter');
                     
                     const features = adapter.features;
                     const supportsF16 = features.has('shader-f16');
                     setHasFp16Support(supportsF16);
-                    if (supportsF16) setUseFp16(true); 
+                    if (supportsF16) {
+                        setPrecision('fp16');
+                    } else {
+                        setPrecision('fp32');
+                    }
 
                     const requiredFeatures = supportsF16 ? ['shader-f16'] : [];
                     const device = await adapter.requestDevice({ requiredFeatures });
@@ -339,13 +387,13 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                 const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
                 if (debugInfo) {
                     const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-                    setAdapterName(renderer || 'WebGL Graphics Context');
+                    setAdapterName(renderer || t.backend_webgl_info || 'WebGL Graphics Context');
                 } else {
-                    setAdapterName('Standard WebGL Context');
+                    setAdapterName(t.backend_webgl_info || 'Standard WebGL Context');
                 }
             } else {
                 setBackend('cpu');
-                setAdapterName('CPU Environment (Multi-threaded Fallback)');
+                setAdapterName(t.backend_cpu_info_prefix || 'CPU Environment (Multi-threaded Fallback)');
             }
         }
     };
@@ -356,7 +404,19 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const initPipeline = async () => {
       if (!deviceRef.current) return;
       
-      const shaderCode = useFp16 && hasFp16Support ? MATMUL_SHADER_F16 : MATMUL_SHADER_F32;
+      let shaderCode = MATMUL_SHADER_F32;
+      const isF16 = precision === 'fp16' && hasFp16Support;
+
+      if (workloadType === 'alu_simd') {
+          shaderCode = isF16 ? ALU_SIMD_SHADER_F16 : ALU_SIMD_SHADER_F32;
+      } else { // gemm
+          if (memoryMode === 'cache') {
+              shaderCode = isF16 ? CACHE_MATMUL_SHADER_F16 : CACHE_MATMUL_SHADER_F32;
+          } else {
+              shaderCode = isF16 ? MATMUL_SHADER_F16 : MATMUL_SHADER_F32;
+          }
+      }
+      
       const device = deviceRef.current;
       const shaderModule = device.createShaderModule({ code: shaderCode });
       const pipeline = device.createComputePipeline({
@@ -549,7 +609,12 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
               if (elapsed >= 200) { 
                   const N = matrixSize;
-                  const operationsPerDispatch = 2 * N * N * N;
+                  // Operations count based on workload type
+                  let operationsPerDispatch = 2 * N * N * N;
+                  if (workloadType === 'alu_simd') {
+                      operationsPerDispatch = 4000 * N * N;
+                  }
+                  
                   const totalOps = operationsPerDispatch * frames;
                   const seconds = elapsed / 1000;
                   const gflopsVal = (totalOps / seconds) / 1e9;
@@ -644,18 +709,72 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
   const stability = peakGflops > 0 ? Math.round((gflops / peakGflops) * 100) : 100;
 
+  // Preset Info Helper for Quick Presets View
+  const getPresetDescription = () => {
+    switch (selectedPreset) {
+      case 'standard':
+        return {
+          title: t.preset_standard || "Standard Run (Matrix)",
+          desc: t.preset_standard_desc || "Balanced memory and computation load, reflecting standard 3D/AI workloads.",
+          bullets: [
+            t.preset_standard_bullet1 || "Workload: 512x512 GEMM matrix multiplication",
+            t.preset_standard_bullet2 || "Precision: FP32 Single-precision standard",
+            t.preset_standard_bullet3 || "Data Access: Hybrid Global Buffer lookup patterns",
+            t.preset_standard_bullet4 || "Target: Measures standard graphics/compute capability"
+          ]
+        };
+      case 'peak':
+        return {
+          title: t.preset_peak || "Peak ALU Compute (SIMD)",
+          desc: t.preset_peak_desc || "Stresses ALU arithmetic units to their limits, eliminating global memory bottlenecks.",
+          bullets: [
+            t.preset_peak_bullet1 || "Workload: High-intensity fused vector FMA points",
+            t.preset_peak_bullet2 || "Precision: FP16 (Half precision) optimized or fallback FP32",
+            t.preset_peak_bullet3 || "Data Access: High-speed local hardware registers",
+            t.preset_peak_bullet4 || "Target: Tests theoretical peak floating-point math power"
+          ]
+        };
+      case 'fp16':
+        return {
+          title: t.preset_fp16 || "FP16 Extreme (Tensor Core)",
+          desc: t.preset_fp16_desc || "Runs FP16 matrix operations on modern neural hardware accelerators.",
+          bullets: [
+            t.preset_fp16_bullet1 || "Workload: 1024x1024 dense GEMM matrix computation",
+            t.preset_fp16_bullet2 || "Precision: Native FP16 (requires hardware support)",
+            t.preset_fp16_bullet3 || "Data Access: High-speed half-precision pipelines",
+            t.preset_fp16_bullet4 || "Target: Stresses AI cores / Neural accelerator hardware"
+          ]
+        };
+      case 'thermal':
+        return {
+          title: t.preset_thermal || "Thermal Throttle Burn",
+          desc: t.preset_thermal_desc || "Generates continuous thermal load over 60s to inspect performance dropoff curves.",
+          bullets: [
+            t.preset_thermal_bullet1 || "Workload: 1024x1024 dense GEMM cycles",
+            t.preset_thermal_bullet2 || "Precision: FP32 Single-precision heavy load",
+            t.preset_thermal_bullet3 || "Duration: 60 seconds sustained stress",
+            t.preset_thermal_bullet4 || "Target: Charts heat dissipation and thermal throttling"
+          ]
+        };
+      default:
+        return { title: "", desc: "", bullets: [] };
+    }
+  };
+
+  const presetInfo = getPresetDescription();
+
   return (
     <Modal
         title={t.title}
         icon={<Cpu size={24} />}
         onClose={handleClose}
-        size="3xl"
+        size="4xl"
     >
         <div className="flex flex-col gap-6 relative">
             {/* Warning Banner */}
             {!isRunning && (
-                <div className="p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg flex items-start gap-3">
-                    <AlertTriangle className="text-amber-600 dark:text-amber-500 shrink-0 mt-0.5" size={18} />
+                <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg flex items-start gap-3">
+                    <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={18} />
                     <p className="text-amber-800 dark:text-amber-200 text-xs leading-relaxed font-medium">
                         {t.warning}
                     </p>
@@ -670,14 +789,14 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                     <button 
                         onClick={() => setViewMode('graph')}
                         className={`p-1.5 rounded transition-colors ${viewMode === 'graph' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
-                        title="Performance Graph"
+                        title={t.perf_graph || "Performance Graph"}
                     >
                         <TrendingUp size={14} />
                     </button>
                     <button 
                         onClick={() => setViewMode('visual')}
                         className={`p-1.5 rounded transition-colors ${viewMode === 'visual' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
-                        title="Visualizer"
+                        title={t.visualizer || "Visualizer"}
                     >
                         <Eye size={14} />
                     </button>
@@ -687,7 +806,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                 <canvas 
                     ref={canvasRef} 
                     width={600} height={256} 
-                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'graph' ? 'opacity-100 pointer-events-none' : 'opacity-0'}`} 
+                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'graph' ? 'opacity-100' : 'opacity-0'}`} 
                 />
                 
                 {/* Visualizer Layer (Particles) */}
@@ -736,130 +855,303 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                 </div>
             </div>
 
-            {/* Config & Controls */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Intensity & Backend Selection */}
-                <div className="bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5 space-y-4">
-                    <div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
-                            {t.engine_label || "Compute Engine"}
-                        </div>
-                        <Select 
-                            value={backend}
-                            options={[
-                                { id: 'webgpu', label: t.engine_webgpu || 'GPU: WebGPU (Tensor Core)', disabled: isWebGPUSupported === false },
-                                { id: 'webgl', label: t.engine_webgl || 'GPU: WebGL (Fragment Shader)' },
-                                { id: 'cpu', label: t.engine_cpu || 'CPU: Multi-threaded Workload' }
-                            ]}
-                            onChange={(val) => {
-                                setBackend(val as 'webgpu' | 'webgl' | 'cpu');
-                                stopTest();
-                            }}
-                            disabled={isRunning}
-                            color="indigo"
-                        />
-                    </div>
-
-                    <div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
-                            {backend === 'cpu' ? (t.cpu_cores_prefix || "Active Cores:") : t.intensity}
-                        </div>
-                        <Select 
-                            value={matrixSize}
-                            options={backend === 'cpu' ? [
-                                { id: 256, label: 'Light (25% CPU Cores)' },
-                                { id: 512, label: 'Moderate (50% CPU Cores)' },
-                                { id: 1024, label: 'Heavy (75% CPU Cores)' },
-                                { id: 2048, label: 'Max Saturated (100% CPU Cores)' }
-                            ] : [
-                                { id: 256, label: 'Low (256x256)' },
-                                { id: 512, label: 'Medium (512x512)' },
-                                { id: 1024, label: 'High (1024x1024)' },
-                                { id: 2048, label: 'Extreme (2048x2048)' }
-                            ]}
-                            onChange={(val) => setMatrixSize(Number(val))}
-                            disabled={isRunning}
-                            color="indigo"
-                        />
-                    </div>
-
-                    <div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
-                            {t.timer_label || "Test Duration"}
-                        </div>
-                        <Select 
-                            value={selectedDuration}
-                            options={[
-                                { id: 0, label: t.timer_unlimited || 'Infinite' },
-                                { id: 10, label: t.timer_10s || '10 Seconds' },
-                                { id: 30, label: t.timer_30s || '30 Seconds' },
-                                { id: 60, label: t.timer_1m || '1 Minute' },
-                                { id: 120, label: t.timer_2m || '2 Minutes' },
-                                { id: 300, label: t.timer_5m || '5 Minutes' },
-                                { id: 600, label: t.timer_10m || '10 Minutes' }
-                            ]}
-                            onChange={(val) => setSelectedDuration(Number(val))}
-                            disabled={isRunning}
-                            color="indigo"
-                        />
-                    </div>
+            {/* Config & Controls Panel with Quick/Expert Toggles */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                {/* Control Panel: Settings & Mode Selection (Spans 2 columns) */}
+                <div className="md:col-span-2 bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5 space-y-4">
                     
-                    {/* FP16 Toggle (Only for WebGPU) */}
+                    {/* Mode Toggle Switcher */}
                     {backend === 'webgpu' && (
-                        <label className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${useFp16 ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-500/50' : 'bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'} ${hasFp16Support ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'}`}>
-                            <div className="flex flex-col">
-                                <span className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
-                                    <Microscope size={12} className={useFp16 ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'} /> 
-                                    {t.use_fp16}
-                                </span>
-                                <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{t.fp16_desc}</span>
-                            </div>
-                            <div className={`w-10 h-5 rounded-full relative transition-colors ${useFp16 ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
-                                <input 
-                                    type="checkbox" 
-                                    checked={useFp16} 
-                                    onChange={(e) => setUseFp16(e.target.checked)} 
-                                    disabled={!hasFp16Support || isRunning}
-                                    className="opacity-0 w-full h-full absolute cursor-pointer"
+                        <div className="flex bg-slate-200/50 dark:bg-slate-900/60 p-1 rounded-xl border border-slate-300/30 dark:border-white/5">
+                            <button
+                                onClick={() => setTestMode('quick')}
+                                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                                    testMode === 'quick'
+                                        ? 'bg-indigo-600 text-white shadow-md'
+                                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                                }`}
+                                disabled={isRunning}
+                            >
+                                <Zap size={14} />
+                                {t.mode_quick || 'Quick Presets'}
+                            </button>
+                            <button
+                                onClick={() => setTestMode('expert')}
+                                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                                    testMode === 'expert'
+                                        ? 'bg-indigo-600 text-white shadow-md'
+                                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                                }`}
+                                disabled={isRunning}
+                            >
+                                <Microscope size={14} />
+                                {t.mode_expert || 'Expert Settings'}
+                            </button>
+                        </div>
+                    )}
+
+                    {/* QUICK PRESET MODE VIEW */}
+                    {testMode === 'quick' && backend === 'webgpu' ? (
+                        <div className="space-y-4 animate-fadeIn">
+                            <div>
+                                <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold flex items-center gap-1">
+                                    <Layers size={12} className="text-indigo-500" />
+                                    {t.preset_label || "Select Stress Preset"}
+                                </div>
+                                <Select 
+                                    value={selectedPreset}
+                                    options={[
+                                        { id: 'standard', label: t.preset_standard || 'Standard Run (Matrix)' },
+                                        { id: 'peak', label: t.preset_peak || 'Peak ALU Compute (SIMD)' },
+                                        { id: 'fp16', label: t.preset_fp16 || 'FP16 Extreme (Tensor Core)' },
+                                        { id: 'thermal', label: t.preset_thermal || 'Thermal Throttle Burn' }
+                                    ]}
+                                    onChange={(val) => {
+                                        setSelectedPreset(val as 'standard' | 'peak' | 'fp16' | 'thermal');
+                                    }}
+                                    disabled={isRunning}
+                                    color="indigo"
                                 />
-                                <div className={`absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-transform shadow-sm ${useFp16 ? 'translate-x-5' : 'translate-x-0'}`} />
                             </div>
-                        </label>
+
+                            {/* Preset Description Card */}
+                            <div className="bg-white/40 dark:bg-slate-900/40 border border-slate-200/50 dark:border-white/5 rounded-xl p-3.5 space-y-2">
+                                <h4 className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                                    <HelpCircle size={13} className="text-indigo-400 shrink-0" />
+                                    {presetInfo.title}
+                                </h4>
+                                <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                                    {presetInfo.desc}
+                                </p>
+                                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1.5 border-t border-slate-200/40 dark:border-white/5">
+                                    {presetInfo.bullets.map((bullet, idx) => (
+                                        <li key={idx} className="text-[10px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
+                                            {bullet}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    ) : (
+                        /* EXPERT MODE / FALLBACK MODE VIEW */
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fadeIn">
+                            
+                            {/* Compute Engine */}
+                            <div>
+                                <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
+                                    {t.engine_label || "Compute Engine"}
+                                </div>
+                                <Select 
+                                    value={backend}
+                                    options={[
+                                        { id: 'webgpu', label: t.engine_webgpu || 'GPU: WebGPU (Tensor Core)', disabled: isWebGPUSupported === false },
+                                        { id: 'webgl', label: t.engine_webgl || 'GPU: WebGL (Fragment Shader)' },
+                                        { id: 'cpu', label: t.engine_cpu || 'CPU: Multi-threaded Workload' }
+                                    ]}
+                                    onChange={(val) => {
+                                        setBackend(val as 'webgpu' | 'webgl' | 'cpu');
+                                        stopTest();
+                                    }}
+                                    disabled={isRunning}
+                                    color="indigo"
+                                />
+                            </div>
+
+                            {/* Load Intensity / Grid Size */}
+                            <div>
+                                <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
+                                    {backend === 'cpu' ? (t.cpu_cores_prefix || "Active Cores:") : t.intensity}
+                                </div>
+                                <Select 
+                                    value={matrixSize}
+                                    options={backend === 'cpu' ? [
+                                        { id: 256, label: t.intensity_cpu_light || 'Light (25% CPU Cores)' },
+                                        { id: 512, label: t.intensity_cpu_moderate || 'Moderate (50% CPU Cores)' },
+                                        { id: 1024, label: t.intensity_cpu_heavy || 'Heavy (75% CPU Cores)' },
+                                        { id: 2048, label: t.intensity_cpu_max || 'Max Saturated (100% CPU Cores)' }
+                                    ] : [
+                                        { id: 256, label: t.intensity_gpu_low || 'Low (256x256)' },
+                                        { id: 512, label: t.intensity_gpu_medium || 'Medium (512x512)' },
+                                        { id: 1024, label: t.intensity_gpu_high || 'High (1024x1024)' },
+                                        { id: 2048, label: t.intensity_gpu_extreme || 'Extreme (2048x2048)' }
+                                    ]}
+                                    onChange={(val) => setMatrixSize(Number(val))}
+                                    disabled={isRunning}
+                                    color="indigo"
+                                />
+                            </div>
+
+                            {/* Duration */}
+                            <div>
+                                <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
+                                    {t.timer_label || "Test Duration"}
+                                </div>
+                                <Select 
+                                    value={selectedDuration}
+                                    options={[
+                                        { id: 0, label: t.timer_unlimited || 'Infinite' },
+                                        { id: 10, label: t.timer_10s || '10 Seconds' },
+                                        { id: 30, label: t.timer_30s || '30 Seconds' },
+                                        { id: 60, label: t.timer_1m || '1 Minute' },
+                                        { id: 120, label: t.timer_2m || '2 Minutes' },
+                                        { id: 300, label: t.timer_5m || '5 Minutes' },
+                                        { id: 600, label: t.timer_10m || '10 Minutes' }
+                                    ]}
+                                    onChange={(val) => setSelectedDuration(Number(val))}
+                                    disabled={isRunning}
+                                    color="indigo"
+                                />
+                            </div>
+
+                            {/* Workload Type (Only WebGPU) */}
+                            {backend === 'webgpu' && (
+                                <div>
+                                    <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
+                                        {t.workload_label || "Workload Type"}
+                                    </div>
+                                    <Select 
+                                        value={workloadType}
+                                        options={[
+                                            { id: 'gemm', label: t.workload_gemm || 'Matrix Multiply (GEMM)' },
+                                            { id: 'alu_simd', label: t.workload_alu || 'Vector ALU SIMD (FMA Loops)' }
+                                        ]}
+                                        onChange={(val) => setWorkloadType(val as 'gemm' | 'alu_simd')}
+                                        disabled={isRunning}
+                                        color="indigo"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Memory Mode (Only WebGPU & GEMM) */}
+                            {backend === 'webgpu' && workloadType === 'gemm' && (
+                                <div>
+                                    <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
+                                        {t.memory_label || "Memory / Cache Mode"}
+                                    </div>
+                                    <Select 
+                                        value={memoryMode}
+                                        options={[
+                                            { id: 'hybrid', label: t.memory_hybrid || 'Compute + Memory Hybrid' },
+                                            { id: 'cache', label: t.memory_cache || 'Register Cache Prioritized' }
+                                        ]}
+                                        onChange={(val) => setMemoryMode(val as 'hybrid' | 'cache')}
+                                        disabled={isRunning}
+                                        color="indigo"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Floating Point Precision (Only WebGPU) */}
+                            {backend === 'webgpu' && (
+                                <div>
+                                    <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
+                                        {t.precision_label || "Float Precision"}
+                                    </div>
+                                    <Select 
+                                        value={precision}
+                                        options={[
+                                            { id: 'fp32', label: t.precision_fp32 || 'FP32 (Single Precision)' },
+                                            { 
+                                                id: 'fp16', 
+                                                label: hasFp16Support 
+                                                    ? (t.precision_fp16 || 'FP16 (Half Precision)') 
+                                                    : (t.precision_fp16_unsupported || 'FP16 (Unsupported)') ,
+                                                disabled: !hasFp16Support
+                                            },
+                                            { 
+                                                id: 'fp64', 
+                                                label: t.precision_fp64_unsupported || 'FP64 (Standard/GPU Unsupported)', 
+                                                disabled: true 
+                                            }
+                                        ]}
+                                        onChange={(val) => setPrecision(val as 'fp32' | 'fp16' | 'fp64')}
+                                        disabled={isRunning}
+                                        color="indigo"
+                                    />
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
                 
-                {/* Backend Status Details */}
-                <div className="bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5 flex flex-col justify-center gap-2">
-                    <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Backend Status</div>
-                    
-                    <div className="flex items-center gap-2 text-xs font-mono text-slate-700 dark:text-slate-300">
-                        {backend === 'webgpu' && (
-                            <>
-                                <Layers size={14} className="text-emerald-600 dark:text-green-400" />
-                                {t.backend_webgpu}
-                            </>
-                        )}
-                        {backend === 'webgl' && (
-                            <>
-                                <Zap size={14} className="text-amber-500 dark:text-amber-400 animate-pulse" />
-                                {t.backend_fallback || "Backend: WebGL Graphics"}
-                            </>
-                        )}
-                        {backend === 'cpu' && (
-                            <>
-                                <Cpu size={14} className="text-indigo-500" />
-                                {`Backend: CPU Multi-core Stress (${cpuCores} Threads)`}
-                            </>
-                        )}
+                {/* Right Panel: Advanced Backend Status Metrics */}
+                <div className="bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5 flex flex-col justify-between">
+                    <div className="space-y-3">
+                        <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold flex items-center gap-1.5">
+                            <Activity size={13} className="text-indigo-400" />
+                            {t.backend_status || "Backend Status"}
+                        </div>
+                        
+                        <div className="flex items-center gap-2 text-xs font-mono text-slate-700 dark:text-slate-300">
+                            {backend === 'webgpu' && (
+                                <>
+                                    <Layers size={14} className="text-emerald-500 shrink-0" />
+                                    <span>{t.backend_webgpu_info || "WebGPU (Next-Gen Graphics)"}</span>
+                                </>
+                            )}
+                            {backend === 'webgl' && (
+                                <>
+                                    <Zap size={14} className="text-amber-500 animate-pulse shrink-0" />
+                                    <span>{t.backend_webgl_info || "WebGL (Legacy Shader GPGPU)"}</span>
+                                </>
+                            )}
+                            {backend === 'cpu' && (
+                                <>
+                                    <CpuIcon size={14} className="text-indigo-500 shrink-0" />
+                                    <span>{t.backend_cpu_info_prefix || "CPU Multi-thread"} ({cpuCores} {t.cores_suffix || "Cores"})</span>
+                                </>
+                            )}
+                        </div>
+
+                        <div className="h-px bg-slate-200 dark:bg-white/10" />
+                        
+                        {/* Status Details List */}
+                        <div className="space-y-1.5 font-mono text-[10px] text-slate-500 dark:text-slate-400">
+                            <div className="flex justify-between">
+                                <span>{t.label_precision || "Precision"}:</span>
+                                <span className="text-slate-800 dark:text-slate-200 font-bold uppercase">
+                                    {backend === 'webgpu' ? precision : backend === 'webgl' ? (t.precision_fp32_simulated || 'FP32 (Simulated)') : (t.precision_fp64_native || 'FP64 (Native)')}
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>{t.label_workload || "Workload"}:</span>
+                                <span className="text-slate-800 dark:text-slate-200 font-bold">
+                                    {backend === 'webgpu' ? (workloadType === 'gemm' ? (t.workload_gemm_short || 'GEMM Matrix') : (t.workload_simd_short || 'SIMD FMA Vector')) : (t.workload_shader_short || 'Shader Raster')}
+                                </span>
+                            </div>
+                            {backend === 'webgpu' && (
+                                <div className="flex justify-between">
+                                    <span>{t.label_access_mode || "Access Mode"}:</span>
+                                    <span className="text-slate-800 dark:text-slate-200 font-bold">
+                                        {workloadType === 'alu_simd' ? (t.access_register || 'Register Compute') : (memoryMode === 'cache' ? (t.access_cache || 'Cache Local') : (t.access_global || 'Global Bandwidth'))}
+                                    </span>
+                                </div>
+                            )}
+                            <div className="flex justify-between">
+                                <span>{t.label_grid_size || "Grid Size"}:</span>
+                                <span className="text-slate-800 dark:text-slate-200 font-bold">
+                                    {backend === 'cpu' ? `${t.active_workers_prefix || 'Active Workers'}: ${cpuCores}` : `${matrixSize} x ${matrixSize}`}
+                                </span>
+                            </div>
+                            {backend === 'webgpu' && (
+                                <div className="flex justify-between">
+                                    <span>{t.label_total_threads || "Total Threads"}:</span>
+                                    <span className="text-slate-800 dark:text-slate-200 font-bold">
+                                        {(matrixSize * matrixSize).toLocaleString()}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="h-px bg-slate-200 dark:bg-white/10 my-1" />
-                    
-                    {/* Device Info */}
-                    <div className="text-[10px] text-slate-500 font-mono break-all leading-tight">
-                        {backend === 'cpu' 
-                            ? `Logical Processors: ${navigator.hardwareConcurrency || 'Unknown'} | Active Stress Threads: ${cpuCores}` 
-                            : adapterName}
+                    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-white/10">
+                        {/* Device Info */}
+                        <div className="text-[9px] text-slate-400 font-mono break-all leading-tight flex items-start gap-1">
+                            <HardDrive size={10} className="shrink-0 mt-0.5 text-indigo-400/70" />
+                            <span>{backend === 'cpu' ? `${t.logical_cores_prefix || 'Logical cores'}: ${navigator.hardwareConcurrency || (t.status_unknown || 'Unknown')}` : adapterName}</span>
+                        </div>
                     </div>
                 </div>
             </div>

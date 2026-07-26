@@ -29,11 +29,11 @@ const workerCode = `
 `;
 
 export const HardwareTab: React.FC<HardwareTabProps> = React.memo(({ t }) => {
-  const [hwStatus, setHwStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean'>(() => {
+  const [hwStatus, setHwStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean' | 'unknown'>(() => {
     try {
       const val = sessionStorage.getItem('browserscope_poisoning_hardware_status');
       if (val === 'running') return 'idle';
-      return (val as 'idle' | 'running' | 'poisoned' | 'clean') || 'idle';
+      return (val as 'idle' | 'running' | 'poisoned' | 'clean' | 'unknown') || 'idle';
     } catch {
       return 'idle';
     }

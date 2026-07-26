@@ -36,7 +36,7 @@ interface AllTabProps {
 }
 
 interface ModuleResult {
-  status: 'clean' | 'poisoned' | 'warning' | 'info';
+  status: 'clean' | 'poisoned' | 'warning' | 'info' | 'unknown';
   title: string;
   desc: string;
   logs: string[];

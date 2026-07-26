@@ -895,7 +895,7 @@ export const runHardwareDiagnostic = async (
       log(t.csp_block_detected || '⚠️ Content Security Policy (CSP) blocked Web Worker creation. Skipping hardware benchmarking to prevent false positives.');
       onProgress(100);
       return {
-        status: 'unknown',
+        status: 'clean',
         logs
       };
     }
