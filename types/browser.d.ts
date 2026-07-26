@@ -48,7 +48,7 @@ export interface Serial {
   requestPort(): Promise<SerialPort>;
 }
 
-interface GPULimits {
+export interface GPULimits {
   readonly [key: string]: number | undefined;
   readonly maxTextureDimension1D?: number;
   readonly maxTextureDimension2D?: number;
@@ -78,29 +78,122 @@ interface GPULimits {
   readonly maxComputeWorkgroupsPerDimension?: number;
 }
 
-interface GPUSupportedFeatures {
+export interface GPUSupportedFeatures {
   readonly size: number;
   has(value: string): boolean;
   [Symbol.iterator](): IterableIterator<string>;
   forEach(callbackfn: (value: string, key: string, parent: GPUSupportedFeatures) => void): void;
 }
 
-interface GPUAdapter {
-  readonly name: string;
-  readonly features: GPUSupportedFeatures;
-  readonly limits: GPULimits;
-  requestDevice(descriptor?: unknown): Promise<GPUDevice>;
+export interface GPUAdapterInfo {
+  readonly vendor: string;
+  readonly architecture: string;
+  readonly device: string;
+  readonly description: string;
 }
 
-interface GPUBuffer {
+export interface GPUCompilationMessage {
+  readonly message: string;
+  readonly type: 'error' | 'warning' | 'info';
+  readonly lineNum: number;
+  readonly linePos: number;
+}
+
+export interface GPUCompilationInfo {
+  readonly messages: readonly GPUCompilationMessage[];
+}
+
+export interface GPUShaderModule {
+  getCompilationInfo(): Promise<GPUCompilationInfo>;
+}
+
+export interface GPUBindGroupLayout {
+  readonly __brand: 'GPUBindGroupLayout';
+}
+
+export interface GPUPipelineLayout {
+  readonly __brand: 'GPUPipelineLayout';
+}
+
+export interface GPUComputePipeline {
+  getBindGroupLayout(index: number): GPUBindGroupLayout;
+}
+
+export interface GPUBindGroupEntryResource {
+  buffer: GPUBuffer;
+  offset?: number;
+  size?: number;
+}
+
+export interface GPUBindGroupEntry {
+  binding: number;
+  resource: GPUBindGroupEntryResource;
+}
+
+export interface GPUBindGroup {
+  readonly __brand: 'GPUBindGroup';
+}
+
+export interface GPUComputePassEncoder {
+  setPipeline(pipeline: GPUComputePipeline): void;
+  setBindGroup(index: number, bindGroup: GPUBindGroup): void;
+  dispatchWorkgroups(workgroupCountX: number, workgroupCountY?: number, workgroupCountZ?: number): void;
+  end(): void;
+}
+
+export interface GPUCommandBuffer {
+  readonly __brand: 'GPUCommandBuffer';
+}
+
+export interface GPUCommandEncoder {
+  beginComputePass(descriptor?: unknown): GPUComputePassEncoder;
+  finish(descriptor?: unknown): GPUCommandBuffer;
+}
+
+export interface GPUQueue {
+  submit(commandBuffers: readonly GPUCommandBuffer[]): void;
+  onSubmittedWorkDone(): Promise<void>;
+  writeBuffer(buffer: GPUBuffer, bufferOffset: number, data: BufferSource, dataOffset?: number, size?: number): void;
+}
+
+export interface GPUError {
+  readonly message: string;
+}
+
+export interface GPUDeviceLostInfo {
+  readonly reason: 'destroyed' | 'unknown';
+  readonly message: string;
+}
+
+export interface GPUComputePipelineDescriptor {
+  layout: GPUPipelineLayout | 'auto';
+  compute: {
+    module: GPUShaderModule;
+    entryPoint: string;
+  };
+}
+
+export interface GPUAdapter {
+  readonly name: string;
+  readonly info?: GPUAdapterInfo;
+  readonly features: GPUSupportedFeatures;
+  readonly limits: GPULimits;
+  requestAdapterInfo?(): Promise<GPUAdapterInfo>;
+  requestDevice(descriptor?: { requiredFeatures?: readonly string[]; requiredLimits?: Record<string, number> }): Promise<GPUDevice>;
+}
+
+export interface GPUBuffer {
+  readonly size: number;
   getMappedRange(offset?: number, size?: number): ArrayBuffer;
   unmap(): void;
   destroy(): void;
 }
 
-interface GPUDevice {
+export interface GPUDevice {
   readonly limits: GPULimits;
-  createShaderModule(descriptor: { code: string }): unknown;
+  readonly queue: GPUQueue;
+  readonly lost: Promise<GPUDeviceLostInfo>;
+  createShaderModule(descriptor: { code: string }): GPUShaderModule;
   createBuffer(descriptor: {
     size: number;
     usage: number;
@@ -108,11 +201,14 @@ interface GPUDevice {
   }): GPUBuffer;
   createTexture(descriptor: unknown): unknown;
   createSampler(descriptor?: unknown): unknown;
-  createBindGroupLayout(descriptor: unknown): unknown;
-  createPipelineLayout(descriptor: unknown): unknown;
-  createComputePipeline(descriptor: unknown): unknown;
-  createBindGroup(descriptor: unknown): unknown;
-  createCommandEncoder(descriptor?: unknown): unknown;
+  createBindGroupLayout(descriptor: unknown): GPUBindGroupLayout;
+  createPipelineLayout(descriptor: unknown): GPUPipelineLayout;
+  createComputePipeline(descriptor: GPUComputePipelineDescriptor): GPUComputePipeline;
+  createComputePipelineAsync(descriptor: GPUComputePipelineDescriptor): Promise<GPUComputePipeline>;
+  createBindGroup(descriptor: { layout: GPUBindGroupLayout; entries: readonly GPUBindGroupEntry[] }): GPUBindGroup;
+  createCommandEncoder(descriptor?: unknown): GPUCommandEncoder;
+  pushErrorScope(filter: 'validation' | 'out-of-memory' | 'internal'): void;
+  popErrorScope(): Promise<GPUError | null>;
   destroy(): void;
 }
 
