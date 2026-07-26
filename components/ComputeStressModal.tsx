@@ -28,6 +28,131 @@ interface ComputeStressModalProps {
 
 const HISTORY_LENGTH = 60;
 
+// ALU SIMD shader body: 200 loop iterations, each with 2 vec4 FMAs (4 lanes x
+// 2 flops each) plus a closing vec4 dot product (4 muls + 3 adds). sin/cos
+// calls are intentionally excluded from this count — there is no defensible
+// FLOP-equivalent for transcendental ops, so this is a conservative
+// (undercounted, never inflated) estimate of the true throughput.
+const ALU_FLOPS_PER_INVOCATION = 200 * 2 * 4 * 2 + 7;
+
+const pipelineCacheKey = (workloadType: 'gemm' | 'alu_simd', memoryMode: 'hybrid' | 'cache', isF16: boolean): string =>
+    `${workloadType}|${memoryMode}|${isF16 ? 'fp16' : 'fp32'}`;
+
+const percentileOf = (samples: readonly number[], p: number): number => {
+    if (samples.length === 0) return 0;
+    const sorted = [...samples].sort((a, b) => a - b);
+    const idx = Math.min(sorted.length - 1, Math.floor(p * sorted.length));
+    return sorted[idx];
+};
+
+const medianOf = (samples: readonly number[]): number => percentileOf(samples, 0.5);
+
+const VERIFY_MATRIX_SIZE = 20;
+
+const computeReferenceGemm = (a: Float32Array, b: Float32Array, n: number): Float32Array => {
+    const result = new Float32Array(n * n);
+    for (let row = 0; row < n; row++) {
+        for (let col = 0; col < n; col++) {
+            let sum = 0;
+            for (let k = 0; k < n; k++) {
+                sum += a[row * n + k] * b[k * n + col];
+            }
+            result[row * n + col] = sum;
+        }
+    }
+    return result;
+};
+
+// Runs a small GEMM dispatch through the given (already-compiled) pipeline
+// and compares the readback against a CPU reference implementation. This is
+// the only way to know the shader is actually computing the advertised
+// workload rather than silently producing garbage (e.g. from a buffer layout
+// mismatch) while still reporting a plausible-looking GFLOPS number.
+const verifyGemmCorrectness = async (device: GPUDevice, pipeline: GPUComputePipeline, isF16: boolean): Promise<boolean> => {
+    const n = VERIFY_MATRIX_SIZE;
+    const a = new Float32Array(n * n).map(() => Math.random());
+    const b = new Float32Array(n * n).map(() => Math.random());
+    const expected = computeReferenceGemm(a, b, n);
+
+    const USAGE_STORAGE = window.GPUBufferUsage?.STORAGE || 128;
+    const USAGE_COPY_SRC = window.GPUBufferUsage?.COPY_SRC || 4;
+    const USAGE_COPY_DST = window.GPUBufferUsage?.COPY_DST || 8;
+    const USAGE_MAP_READ = window.GPUBufferUsage?.MAP_READ || 1;
+    const MAP_MODE_READ = window.GPUMapMode?.READ || 1;
+
+    const makeInputBuffer = (arr: Float32Array) => {
+        // Header matches the WGSL storage struct layout: vec2<f32> size (8
+        // bytes) followed immediately by the data array.
+        const header = new Float32Array([n, n]);
+        const buffer = device.createBuffer({
+            size: header.byteLength + arr.byteLength,
+            usage: USAGE_STORAGE,
+            mappedAtCreation: true,
+        });
+        const dst = new ArrayBuffer(buffer.size);
+        new Float32Array(dst).set(header);
+        new Float32Array(dst, header.byteLength).set(arr);
+        new Uint8Array(buffer.getMappedRange()).set(new Uint8Array(dst));
+        buffer.unmap();
+        return buffer;
+    };
+
+    const bufferA = makeInputBuffer(a);
+    const bufferB = makeInputBuffer(b);
+    const resultSize = Float32Array.BYTES_PER_ELEMENT * (2 + n * n);
+    const resultBuffer = device.createBuffer({ size: resultSize, usage: USAGE_STORAGE | USAGE_COPY_SRC });
+    const stagingBuffer = device.createBuffer({ size: resultSize, usage: USAGE_COPY_DST | USAGE_MAP_READ });
+
+    try {
+        const bindGroup = device.createBindGroup({
+            layout: pipeline.getBindGroupLayout(0),
+            entries: [
+                { binding: 0, resource: { buffer: bufferA } },
+                { binding: 1, resource: { buffer: bufferB } },
+                { binding: 2, resource: { buffer: resultBuffer } },
+            ],
+        });
+
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginComputePass();
+        pass.setPipeline(pipeline);
+        pass.setBindGroup(0, bindGroup);
+        const wgCount = Math.ceil(n / 8);
+        pass.dispatchWorkgroups(wgCount, wgCount);
+        pass.end();
+        encoder.copyBufferToBuffer(resultBuffer, 0, stagingBuffer, 0, resultSize);
+        device.queue.submit([encoder.finish()]);
+        await device.queue.onSubmittedWorkDone();
+
+        await stagingBuffer.mapAsync(MAP_MODE_READ);
+        const actual = new Float32Array(stagingBuffer.getMappedRange(8));
+
+        // fp16 accumulates ~20 terms in half precision, so it needs a much
+        // looser tolerance than fp32 to avoid flagging legitimate rounding
+        // as a correctness failure.
+        const tolerance = isF16 ? 0.08 : 0.01;
+        let ok = true;
+        for (let i = 0; i < expected.length; i++) {
+            const diff = Math.abs(actual[i] - expected[i]);
+            const allowed = tolerance * (1 + Math.abs(expected[i]));
+            if (diff > allowed) {
+                ok = false;
+                break;
+            }
+        }
+        stagingBuffer.unmap();
+        return ok;
+    } catch (e: unknown) {
+        console.error('GEMM correctness verification failed', getErrorMessage(e));
+        return false;
+    } finally {
+        bufferA.destroy();
+        bufferB.destroy();
+        resultBuffer.destroy();
+        stagingBuffer.destroy();
+    }
+};
+
 export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose, t }) => {
   const [isWebGPUSupported, setIsWebGPUSupported] = useState<boolean | null>(null);
   const [hasFp16Support, setHasFp16Support] = useState(false);
@@ -35,9 +160,12 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   
   const [backend, setBackend] = useState<'webgpu' | 'webgl' | 'cpu'>('webgpu');
   const [isRunning, setIsRunning] = useState(false);
-  const [matrixSize, setMatrixSize] = useState(512); 
+  const [matrixSize, setMatrixSize] = useState(512);
   const [gflops, setGflops] = useState(0);
   const [peakGflops, setPeakGflops] = useState(0);
+  const [sustainedGflops, setSustainedGflops] = useState(0);
+  const [runPhase, setRunPhase] = useState<'idle' | 'calibrating' | 'verifying' | 'warmup' | 'running'>('idle');
+  const [verificationStatus, setVerificationStatus] = useState<'unverified' | 'passed' | 'failed' | 'skipped'>('unverified');
   const [cpuCores, setCpuCores] = useState(4);
   const [selectedDuration, setSelectedDuration] = useState<number>(0);
   const [timeLeft, setTimeLeft] = useState<number>(0);
@@ -68,6 +196,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const deviceRef = useRef<GPUDevice | null>(null);
   const pipelineRef = useRef<GPUComputePipeline | null>(null);
   const pipelineCacheRef = useRef<Map<string, GPUComputePipeline>>(new Map());
+  const verifiedKeysRef = useRef<Map<string, boolean>>(new Map());
   const activeBuffersRef = useRef<GPUBuffer[]>([]);
   const runIdRef = useRef(0);
   const [gpuError, setGpuError] = useState<string | null>(null);
@@ -354,6 +483,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       stopCpuWorkers();
       destroyActiveBuffers();
       setIsRunning(false);
+      setRunPhase('idle');
   }
 
   useEffect(() => {
@@ -451,7 +581,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       if (!device) return false;
 
       const isF16 = precision === 'fp16' && hasFp16Support;
-      const cacheKey = `${workloadType}|${memoryMode}|${isF16 ? 'fp16' : 'fp32'}`;
+      const cacheKey = pipelineCacheKey(workloadType, memoryMode, isF16);
       const cached = pipelineCacheRef.current.get(cacheKey);
       if (cached) {
           pipelineRef.current = cached;
@@ -588,6 +718,8 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       setIsRunning(true);
       setGflops(0);
       setPeakGflops(0);
+      setSustainedGflops(0);
+      setVerificationStatus('unverified');
       setGraphData(Array.from({ length: HISTORY_LENGTH }, () => 0));
       isRunningRef.current = true;
 
@@ -626,6 +758,34 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
           const device = deviceRef.current;
           const pipeline = pipelineRef.current;
+          const isF16 = precision === 'fp16' && hasFp16Support;
+
+          // Correctness verification: GEMM has a well-defined mathematical
+          // result, so a broken shader or buffer layout can be caught before
+          // it produces a plausible-looking but meaningless GFLOPS number.
+          // ALU SIMD is pure arithmetic busywork with no ground truth to
+          // check against, so it's marked as skipped rather than verified.
+          if (workloadType === 'gemm') {
+              const verifyKey = pipelineCacheKey(workloadType, memoryMode, isF16);
+              if (!verifiedKeysRef.current.has(verifyKey)) {
+                  setRunPhase('verifying');
+                  const passed = await verifyGemmCorrectness(device, pipeline, isF16);
+                  if (runIdRef.current !== myRunId) return;
+                  verifiedKeysRef.current.set(verifyKey, passed);
+              }
+              const passed = verifiedKeysRef.current.get(verifyKey) ?? false;
+              setVerificationStatus(passed ? 'passed' : 'failed');
+              if (!passed) {
+                  console.error('GEMM correctness verification failed for', verifyKey);
+                  setGpuError(t.error_verification_failed || 'The GEMM correctness check failed on this GPU. Results would not be trustworthy, so the test was aborted.');
+                  setIsRunning(false);
+                  isRunningRef.current = false;
+                  setRunPhase('idle');
+                  return;
+              }
+          } else {
+              setVerificationStatus('skipped');
+          }
 
           // Matrix Setup
           const firstMatrix = new Float32Array(Array(matrixSize * matrixSize).fill(0).map(() => Math.random()));
@@ -680,49 +840,90 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
               return;
           }
 
-          const webgpuLoop = async () => {
-              if (!isRunningRef.current || runIdRef.current !== myRunId) return;
+          const workgroupCount = Math.ceil(matrixSize / 8);
+          const opsPerInvocation = workloadType === 'alu_simd' ? ALU_FLOPS_PER_INVOCATION : 2 * matrixSize;
+          const opsPerDispatch = opsPerInvocation * matrixSize * matrixSize;
+
+          // Encodes `dispatches` dispatchWorkgroups calls into a single pass
+          // and command buffer. WebGPU guarantees dispatches within one pass
+          // execute in encoded order with each seeing prior writes, so it's
+          // safe to run the whole batch against the same buffers before
+          // reading back a single wall-clock measurement for the batch.
+          const runBatch = async (dispatches: number): Promise<number> => {
+              const t0 = performance.now();
               const commandEncoder = device.createCommandEncoder();
               const passEncoder = commandEncoder.beginComputePass();
               passEncoder.setPipeline(pipeline);
               passEncoder.setBindGroup(0, bindGroup);
-              const workgroupCount = Math.ceil(matrixSize / 8);
-              passEncoder.dispatchWorkgroups(workgroupCount, workgroupCount);
+              for (let i = 0; i < dispatches; i++) {
+                  passEncoder.dispatchWorkgroups(workgroupCount, workgroupCount);
+              }
               passEncoder.end();
               device.queue.submit([commandEncoder.finish()]);
               await device.queue.onSubmittedWorkDone();
+              return performance.now() - t0;
+          };
 
-              // Re-check after the await: Stop (or Stop+Start) may have run
-              // while this dispatch was in flight, in which case the buffers
-              // this closure references may already be destroyed.
-              if (!isRunningRef.current || runIdRef.current !== myRunId) return;
+          // Calibrate: time a single dispatch and size batches around
+          // ~50ms of GPU work each. This decouples measurement from the
+          // display refresh rate entirely — the previous one-dispatch-per-
+          // requestAnimationFrame loop capped every workload's GFLOPS at
+          // whatever a single dispatch could do inside one frame budget
+          // (~16ms at 60Hz), regardless of how much headroom the GPU had.
+          setRunPhase('calibrating');
+          const singleDispatchMs = await runBatch(1);
+          if (runIdRef.current !== myRunId) { destroyActiveBuffers(); return; }
+          const TARGET_BATCH_MS = 50;
+          const batchSize = Math.max(1, Math.min(4000, Math.round(TARGET_BATCH_MS / Math.max(singleDispatchMs, 0.05))));
 
-              frames++;
-              const now = performance.now();
-              const elapsed = now - startTime;
+          // Warm-up: GPUs run below their steady-state clock for the first
+          // few hundred milliseconds (DVFS ramp-up, shader compilation
+          // finishing on first dispatch). Discard samples until throughput
+          // stops improving, up to a hard cap so a noisy first reading can't
+          // stall the test indefinitely.
+          setRunPhase('warmup');
+          const WARMUP_MAX_MS = 1500;
+          const warmupDeadline = performance.now() + WARMUP_MAX_MS;
+          let previousWarmupGflops: number | null = null;
+          while (performance.now() < warmupDeadline) {
+              if (runIdRef.current !== myRunId) { destroyActiveBuffers(); return; }
+              const warmupMs = await runBatch(batchSize);
+              if (runIdRef.current !== myRunId) { destroyActiveBuffers(); return; }
+              const warmupGflops = (opsPerDispatch * batchSize / (warmupMs / 1000)) / 1e9;
+              if (previousWarmupGflops !== null && Math.abs(warmupGflops - previousWarmupGflops) / previousWarmupGflops < 0.05) {
+                  break;
+              }
+              previousWarmupGflops = warmupGflops;
+          }
+          if (runIdRef.current !== myRunId) { destroyActiveBuffers(); return; }
 
-              if (elapsed >= 200) {
-                  const N = matrixSize;
-                  // Operations count based on workload type
-                  let operationsPerDispatch = 2 * N * N * N;
-                  if (workloadType === 'alu_simd') {
-                      operationsPerDispatch = 4000 * N * N;
-                  }
+          setRunPhase('running');
+          const samples: number[] = [];
 
-                  const totalOps = operationsPerDispatch * frames;
-                  const seconds = elapsed / 1000;
-                  const gflopsVal = (totalOps / seconds) / 1e9;
+          const recordLoop = async () => {
+              while (isRunningRef.current && runIdRef.current === myRunId) {
+                  const batchMs = await runBatch(batchSize);
+                  // Re-check after the await: Stop (or Stop+Start) may have
+                  // run while this batch was in flight, in which case the
+                  // buffers this closure references may already be
+                  // destroyed.
+                  if (!isRunningRef.current || runIdRef.current !== myRunId) break;
+
+                  const gflopsVal = (opsPerDispatch * batchSize / (batchMs / 1000)) / 1e9;
+                  samples.push(gflopsVal);
+                  if (samples.length > 300) samples.shift();
+                  const tailStart = Math.max(0, samples.length - Math.max(1, Math.floor(samples.length * 0.25)));
 
                   setGflops(gflopsVal);
-                  setPeakGflops(prev => Math.max(prev, gflopsVal));
+                  // Peak is the 95th percentile of the rolling sample window
+                  // rather than an all-time max, so a single early outlier
+                  // can't pin an unrealistic ceiling for the rest of the run.
+                  setPeakGflops(percentileOf(samples, 0.95));
+                  setSustainedGflops(medianOf(samples.slice(tailStart)));
                   updateGraph(gflopsVal);
-
-                  startTime = now;
-                  frames = 0;
               }
-              animRef.current = requestAnimationFrame(webgpuLoop);
           };
-          animRef.current = requestAnimationFrame(webgpuLoop);
+          recordLoop();
 
       } else if (backend === 'webgl') {
           const ok = initWebGL();
@@ -752,8 +953,9 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                   
                   setGflops(gflopsVal);
                   setPeakGflops(prev => Math.max(prev, gflopsVal));
+                  setSustainedGflops(gflopsVal);
                   updateGraph(gflopsVal);
-                  
+
                   startTime = now;
                   frames = 0;
               }
@@ -791,8 +993,9 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                   
                   setGflops(gflopsVal);
                   setPeakGflops(prev => Math.max(prev, gflopsVal));
+                  setSustainedGflops(gflopsVal);
                   updateGraph(gflopsVal);
-                  
+
                   startTime = now;
               }
               animRef.current = requestAnimationFrame(cpuLoop);
@@ -801,7 +1004,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       }
   };
 
-  const stability = peakGflops > 0 ? Math.round((gflops / peakGflops) * 100) : 100;
+  const stability = peakGflops > 0 ? Math.round((sustainedGflops / peakGflops) * 100) : 100;
 
   // Preset Info Helper for Quick Presets View
   const getPresetDescription = () => {
@@ -856,6 +1059,11 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   };
 
   const presetInfo = getPresetDescription();
+
+  const phaseLabel = runPhase === 'calibrating' ? (t.status_calibrating || 'Calibrating')
+      : runPhase === 'verifying' ? (t.status_verifying || 'Verifying')
+      : runPhase === 'warmup' ? (t.status_warmup || 'Warming Up')
+      : t.status_active;
 
   return (
     <Modal
@@ -946,7 +1154,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                     <div className="flex flex-col items-end gap-1.5">
                         {isRunning && (
                             <div className="flex items-center gap-2 px-2 py-1 bg-red-500/20 border border-red-500/50 rounded text-xs font-bold text-red-400 animate-pulse">
-                                <Activity size={12} /> {t.status_active}
+                                <Activity size={12} /> {phaseLabel}
                             </div>
                         )}
                         {isRunning && selectedDuration > 0 && (
@@ -1244,6 +1452,21 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                     <span>{t.label_total_threads || "Total Threads"}:</span>
                                     <span className="text-slate-800 dark:text-slate-200 font-bold">
                                         {(matrixSize * matrixSize).toLocaleString()}
+                                    </span>
+                                </div>
+                            )}
+                            {backend === 'webgpu' && (
+                                <div className="flex justify-between">
+                                    <span>{t.verify_label || "Correctness Check"}:</span>
+                                    <span className={`font-bold ${
+                                        verificationStatus === 'passed' ? 'text-green-500'
+                                        : verificationStatus === 'failed' ? 'text-red-500'
+                                        : 'text-slate-500 dark:text-slate-400'
+                                    }`}>
+                                        {verificationStatus === 'passed' ? (t.verify_passed || 'Passed')
+                                            : verificationStatus === 'failed' ? (t.verify_failed || 'Failed')
+                                            : verificationStatus === 'skipped' ? (t.verify_skipped || 'N/A (no ground truth)')
+                                            : (t.status_unknown || 'Unknown')}
                                     </span>
                                 </div>
                             )}
