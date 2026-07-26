@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { MapPin, ExternalLink, Navigation, Globe2, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { MapPin, ExternalLink, Navigation, Globe2, ShieldCheck } from 'lucide-react';
 import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation, Language } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
@@ -131,12 +131,12 @@ export const LocationCard: React.FC<LocationCardProps> = React.memo(({
             subValue={regionName && regionName !== data.locale ? regionName : undefined} 
         />
         <InfoItem label={t.labels.calendar} value={data.calendar} />
-        {Boolean(data.numberingSystem) && (
+        {data.numberingSystem ? (
             <InfoItem label="Number System" value={data.numberingSystem} />
-        )}
+        ) : null}
 
         {/* Intl API Capabilities */}
-        {Boolean(data.intlSupport) && (
+        {data.intlSupport ? (
             <div className="mt-3 mb-2">
                 <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                     <Globe2 size={12} />
@@ -157,7 +157,7 @@ export const LocationCard: React.FC<LocationCardProps> = React.memo(({
                     </div>
                 </div>
             </div>
-        )}
+        ) : null}
 
         {/* Geolocation Section */}
         <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50">
@@ -166,115 +166,44 @@ export const LocationCard: React.FC<LocationCardProps> = React.memo(({
                     <Navigation size={14} className="text-slate-400"/>
                     <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t.labels.perm_geo}</span>
                 </div>
-                {permStatus !== 'granted' && (
+                {permStatus !== 'granted' ? (
                     <Button onClick={onRequestPermission} variant="soft" size="xs">
                         {t.actions.check}
                     </Button>
-                )}
+                ) : null}
             </div>
 
             {permStatus === 'granted' && geoData ? (
                 <div className="space-y-3">
-                    {geoData.isSpoofed ? (
-                        <div className="border border-red-200 dark:border-red-900/40 bg-red-50/30 dark:bg-red-950/10 rounded-xl p-3">
-                            <div className="flex gap-2 items-start mb-2.5">
-                                <ShieldAlert size={16} className="text-red-500 dark:text-red-400 mt-0.5 shrink-0 animate-pulse" />
-                                <div>
-                                    <h4 className="text-xs font-bold text-red-800 dark:text-red-400">
-                                        {t.labels.geo_tampering}
-                                    </h4>
-                                    <p className="text-[10px] text-red-600 dark:text-red-500 leading-normal mt-0.5">
-                                        {t.labels.geo_tampered_desc}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-2.5 mb-2.5">
-                                {/* Real Coordinates (Bypassed) */}
-                                <div className="bg-green-50/40 dark:bg-green-950/10 border border-green-100 dark:border-green-900/30 rounded-lg p-2.5">
-                                    <span className="text-[10px] text-green-700 dark:text-green-400 font-bold uppercase tracking-wider flex items-center gap-1 mb-1.5">
-                                        <ShieldCheck size={12} />
-                                        {t.labels.real_coordinates}
-                                    </span>
-                                    <div className="grid grid-cols-2 gap-2 text-xs">
-                                        <div className="flex flex-col">
-                                            <span className="text-[9px] text-slate-400 uppercase">{t.labels.geo_lat}</span>
-                                            <span className="font-mono font-medium text-slate-700 dark:text-slate-300">{(geoData.realLat ?? geoData.latitude).toFixed(6)}</span>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-[9px] text-slate-400 uppercase">{t.labels.geo_long}</span>
-                                            <span className="font-mono font-medium text-slate-700 dark:text-slate-300">{(geoData.realLong ?? geoData.longitude).toFixed(6)}</span>
-                                        </div>
-                                        <div className="flex flex-col col-span-2">
-                                            <span className="text-[9px] text-slate-400 uppercase">{t.labels.geo_acc}</span>
-                                            <span className="font-mono font-medium text-slate-700 dark:text-slate-300">±{(geoData.realAcc ?? geoData.accuracy).toFixed(1)} meters</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Apparent Coordinates (Spoofed) */}
-                                <div className="bg-slate-100/40 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50 rounded-lg p-2.5 opacity-80">
-                                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1.5 block">
-                                        {t.labels.apparent_coordinates}
-                                    </span>
-                                    <div className="grid grid-cols-2 gap-2 text-xs">
-                                        <div className="flex flex-col">
-                                            <span className="text-[9px] text-slate-400 uppercase">{t.labels.geo_lat}</span>
-                                            <span className="font-mono text-slate-600 dark:text-slate-400">{(geoData.apparentLat ?? geoData.latitude).toFixed(6)}</span>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-[9px] text-slate-400 uppercase">{t.labels.geo_long}</span>
-                                            <span className="font-mono text-slate-600 dark:text-slate-400">{(geoData.apparentLong ?? geoData.longitude).toFixed(6)}</span>
-                                        </div>
-                                        <div className="flex flex-col col-span-2">
-                                            <span className="text-[9px] text-slate-400 uppercase">{t.labels.geo_acc}</span>
-                                            <span className="font-mono text-slate-600 dark:text-slate-400">±{(geoData.apparentAcc ?? geoData.accuracy).toFixed(1)} meters</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <a 
-                                href={`https://www.google.com/maps/search/?api=1&query=${geoData.realLat ?? geoData.latitude},${geoData.realLong ?? geoData.longitude}`} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="inline-flex w-full items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-95 rounded-lg bg-green-600 hover:bg-green-700 text-white shadow-sm px-2.5 py-1.5 text-xs gap-1.5"
-                            >
-                                <ExternalLink size={12} />
-                                {t.actions.open_map}
-                            </a>
+                    <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+                        <div className="flex items-center gap-1.5 mb-2.5 text-[10px] text-green-600 dark:text-green-500 font-bold uppercase tracking-wider">
+                            <ShieldCheck size={12} />
+                            {t.labels.geo_secure_active}
                         </div>
-                    ) : (
-                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
-                            <div className="flex items-center gap-1.5 mb-2.5 text-[10px] text-green-600 dark:text-green-500 font-bold uppercase tracking-wider">
-                                <ShieldCheck size={12} />
-                                {t.labels.geo_secure_active}
+                        <div className="grid grid-cols-2 gap-y-2 gap-x-4 mb-3">
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-slate-400 uppercase">{t.labels.geo_lat}</span>
+                                <span className="font-mono text-xs font-medium text-slate-700 dark:text-slate-300">{geoData.latitude.toFixed(6)}</span>
                             </div>
-                            <div className="grid grid-cols-2 gap-y-2 gap-x-4 mb-3">
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] text-slate-400 uppercase">{t.labels.geo_lat}</span>
-                                    <span className="font-mono text-xs font-medium text-slate-700 dark:text-slate-300">{geoData.latitude.toFixed(6)}</span>
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] text-slate-400 uppercase">{t.labels.geo_long}</span>
-                                    <span className="font-mono text-xs font-medium text-slate-700 dark:text-slate-300">{geoData.longitude.toFixed(6)}</span>
-                                </div>
-                                <div className="flex flex-col col-span-2">
-                                    <span className="text-[10px] text-slate-400 uppercase">{t.labels.geo_acc}</span>
-                                    <span className="font-mono text-xs font-medium text-slate-700 dark:text-slate-300">±{geoData.accuracy.toFixed(1)} meters</span>
-                                </div>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-slate-400 uppercase">{t.labels.geo_long}</span>
+                                <span className="font-mono text-xs font-medium text-slate-700 dark:text-slate-300">{geoData.longitude.toFixed(6)}</span>
                             </div>
-                            <a 
-                                href={`https://www.google.com/maps/search/?api=1&query=${geoData.latitude},${geoData.longitude}`} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="inline-flex w-full items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-95 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:ring-slate-500 shadow-sm px-2.5 py-1.5 text-xs gap-1.5"
-                            >
-                                <ExternalLink size={12} />
-                                {t.actions.open_map}
-                            </a>
+                            <div className="flex flex-col col-span-2">
+                                <span className="text-[10px] text-slate-400 uppercase">{t.labels.geo_acc}</span>
+                                <span className="font-mono text-xs font-medium text-slate-700 dark:text-slate-300">±{geoData.accuracy.toFixed(1)} meters</span>
+                            </div>
                         </div>
-                    )}
+                        <a 
+                            href={`https://www.google.com/maps/search/?api=1&query=${geoData.latitude},${geoData.longitude}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex w-full items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-95 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:ring-slate-500 shadow-sm px-2.5 py-1.5 text-xs gap-1.5"
+                        >
+                            <ExternalLink size={12} />
+                            {t.actions.open_map}
+                        </a>
+                    </div>
                 </div>
             ) : permStatus === 'denied' ? (
                 <div className="text-xs text-red-500 dark:text-red-400 px-2">

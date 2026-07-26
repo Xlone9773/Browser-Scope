@@ -1,7 +1,7 @@
 // src/components/CanvasPoisoningModal.tsx
 
 import React, { useState } from 'react';
-import { ShieldAlert, Tv, Type, Video, Cpu, Activity } from 'lucide-react';
+import { ShieldAlert, Tv, Type, Video, Cpu, Activity, MapPin } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { PoisoningTranslations } from './canvas-poisoning/types';
 
@@ -11,6 +11,7 @@ import { FontsTab } from './canvas-poisoning/FontsTab';
 import { GeometryTab } from './canvas-poisoning/GeometryTab';
 import { MediaTab } from './canvas-poisoning/MediaTab';
 import { HardwareTab } from './canvas-poisoning/HardwareTab';
+import { GeolocationTab } from './canvas-poisoning/GeolocationTab';
 
 interface CanvasPoisoningModalProps {
   onClose: () => void;
@@ -18,7 +19,7 @@ interface CanvasPoisoningModalProps {
 }
 
 export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.memo(({ onClose, t }) => {
-  const [activeTab, setActiveTab] = useState<'all' | 'render_audio' | 'fonts' | 'geometry' | 'media' | 'hardware'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'render_audio' | 'fonts' | 'geometry' | 'media' | 'hardware' | 'geolocation'>('all');
 
   return (
     <Modal
@@ -96,6 +97,17 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
           <Cpu size={16} />
           <span>{t.tab_hardware || 'Hardware Config'}</span>
         </button>
+        <button
+          onClick={() => setActiveTab('geolocation')}
+          className={`flex-1 py-3 font-medium text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 min-w-[120px] ${
+            activeTab === 'geolocation'
+              ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white dark:bg-slate-800'
+              : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+          }`}
+        >
+          <MapPin size={16} />
+          <span>{t.tab_geolocation || 'Geolocation'}</span>
+        </button>
       </div>
 
       {/* Content wrapper with scroll support */}
@@ -128,6 +140,11 @@ export const CanvasPoisoningModal: React.FC<CanvasPoisoningModalProps> = React.m
         {/* Hardware Config Tab */}
         <div style={{ display: activeTab === 'hardware' ? 'block' : 'none' }}>
           <HardwareTab t={t} />
+        </div>
+
+        {/* Geolocation Tab */}
+        <div style={{ display: activeTab === 'geolocation' ? 'block' : 'none' }}>
+          <GeolocationTab t={t} />
         </div>
       </div>
     </Modal>

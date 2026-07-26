@@ -153,6 +153,24 @@ export interface PoisoningTranslations {
   media_persistent_no_baseline?: string;
   label_2d_canvas?: string;
   label_webgl?: string;
+  
+  // Geolocation translations
+  tab_geolocation?: string;
+  geolocation_detection_title?: string;
+  geolocation_detection_desc?: string;
+  run_geolocation_test?: string;
+  testing_geolocation?: string;
+  geo_not_supported?: string;
+  geo_own_property?: string;
+  geo_hooked?: string;
+  geo_proto_missing?: string;
+  geo_permission_denied?: string;
+  geo_insufficient_samples?: string;
+  geo_sample_summary?: string;
+  geo_noise_detected?: string;
+  geo_positions_stable?: string;
+  geo_accuracy_static?: string;
+  geo_stable?: string;
 }
 
 export interface ExtendedWindow {

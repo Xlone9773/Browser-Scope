@@ -913,3 +913,176 @@ export const runHardwareDiagnostic = async (
     logs
   };
 };
+
+/**
+ * 6. Geolocation API Hook & Noise Consistency Diagnostics
+ */
+export const runGeolocationDiagnostic = async (
+  t: PoisoningTranslations,
+  onLog: (msg: string) => void,
+  onProgress: (p: number) => void
+): Promise<DiagnosticResult> => {
+  const logs: string[] = [];
+  const log = (msg: string) => {
+    logs.push(msg);
+    onLog(msg);
+  };
+
+  log(t.testing_geolocation || 'Testing Geolocation API hooks and positional noise consistency...');
+  onProgress(0);
+
+  let isPoisoned = false;
+
+  if (!('geolocation' in navigator)) {
+    log(t.geo_not_supported || 'ℹ️ Geolocation API is not supported in this environment.');
+    onProgress(100);
+    return { status: 'clean', logs };
+  }
+
+  // 1. Hook detection: native getCurrentPosition/watchPosition live on Geolocation.prototype,
+  // never as an own property on the instance. Userscripts that do
+  // `navigator.geolocation.getCurrentPosition = async function(...) {...}`
+  // (direct assignment, e.g. Location Guard-style patches) leave two tells behind.
+  try {
+    const geoProto = Object.getPrototypeOf(navigator.geolocation) as object;
+    const ownGetCurrent = Object.prototype.hasOwnProperty.call(navigator.geolocation, 'getCurrentPosition');
+    const ownWatch = Object.prototype.hasOwnProperty.call(navigator.geolocation, 'watchPosition');
+
+    const hookedGetCurrent = isHooked(navigator.geolocation.getCurrentPosition as unknown as (...args: never[]) => unknown);
+    const hookedWatch = isHooked(navigator.geolocation.watchPosition as unknown as (...args: never[]) => unknown);
+    const protoHasGetCurrent = geoProto ? 'getCurrentPosition' in geoProto : false;
+
+    if (ownGetCurrent || ownWatch) {
+      isPoisoned = true;
+      log(t.geo_own_property || '❌ getCurrentPosition/watchPosition exists as an own property on navigator.geolocation instead of the prototype chain — indicates direct method replacement by a userscript/extension.');
+    }
+    if (hookedGetCurrent || hookedWatch) {
+      isPoisoned = true;
+      log(t.geo_hooked || '❌ Suspicious Proxy/Hook detected on getCurrentPosition or watchPosition (function body does not match native code signature).');
+    }
+    if (!protoHasGetCurrent) {
+      log(t.geo_proto_missing || 'ℹ️ Geolocation.prototype does not expose getCurrentPosition; unusual for a standard implementation.');
+    }
+  } catch {
+    // Ignore
+  }
+
+  onProgress(20);
+
+  // 2. Permission probe — avoid spamming a prompt if permission was never granted
+  let permissionState: PermissionState | 'unsupported' = 'unsupported';
+  try {
+    if (navigator.permissions?.query) {
+      const status = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
+      permissionState = status.state;
+    }
+  } catch {
+    // Ignore
+  }
+
+  if (permissionState === 'denied') {
+    log(t.geo_permission_denied || 'ℹ️ Geolocation permission is denied; skipping live positional sampling.');
+    onProgress(100);
+    if (isPoisoned) {
+      log(t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).');
+    } else {
+      null;
+    }
+    return { status: isPoisoned ? 'poisoned' : 'clean', logs };
+  }
+
+  // 3. Repeated sampling — check whether consecutive reads jump around far more
+  // than the browser's own declared accuracy would allow. Real GPS/network
+  // positioning drifts gradually and correlates with the reported accuracy;
+  // circular-noise privacy tools (e.g. Laplace-mechanism based) reroll a fresh
+  // random offset around the true point on every call, producing large,
+  // uncorrelated jumps between back-to-back reads.
+  const haversineMeters = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371000;
+    const toRad = (d: number) => (d * Math.PI) / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+  };
+
+  const samples: { lat: number; lon: number; accuracy: number }[] = [];
+  const SAMPLE_COUNT = 8;
+
+  for (let i = 0; i < SAMPLE_COUNT; i++) {
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 4000,
+        });
+      });
+      samples.push({
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude,
+        accuracy: pos.coords.accuracy,
+      });
+    } catch {
+      // Permission prompt ignored/timed out/unavailable — stop sampling, don't block the rest of the suite
+      break;
+    }
+    onProgress(20 + Math.floor(((i + 1) / SAMPLE_COUNT) * 70));
+    await new Promise<void>((resolve) => setTimeout(resolve, 150));
+  }
+
+  if (samples.length < 3) {
+    log(t.geo_insufficient_samples || 'ℹ️ Not enough positional samples collected (permission not granted or no fix available); skipping noise-consistency check.');
+  } else {
+    const jumps: number[] = [];
+    for (let i = 1; i < samples.length; i++) {
+      jumps.push(haversineMeters(samples[i - 1].lat, samples[i - 1].lon, samples[i].lat, samples[i].lon));
+    }
+    const avgJump = jumps.reduce((a, b) => a + b, 0) / jumps.length;
+    const avgAccuracy = samples.reduce((a, s) => a + s.accuracy, 0) / samples.length;
+
+    log(
+      (t.geo_sample_summary || '📊 Collected {n} samples: avg consecutive jump = {jump}m, avg declared accuracy = {acc}m')
+        .replace('{n}', String(samples.length))
+        .replace('{jump}', avgJump.toFixed(1))
+        .replace('{acc}', avgAccuracy.toFixed(1))
+    );
+
+    // A well-behaved fix shouldn't drift, between two back-to-back reads,
+    // several multiples beyond its own claimed accuracy radius.
+    if (avgJump > Math.max(30, avgAccuracy * 3)) {
+      isPoisoned = true;
+      log(
+        (t.geo_noise_detected || '❌ Positional noise detected: consecutive reads jump ~{jump}m on average, far exceeding the declared ~{acc}m accuracy — consistent with a circular-noise privacy layer (e.g. Laplace mechanism) rerolling on every call rather than genuine GPS drift.')
+          .replace('{jump}', avgJump.toFixed(1))
+          .replace('{acc}', avgAccuracy.toFixed(1))
+      );
+    } else {
+      log(t.geo_positions_stable || '✅ Consecutive positional reads are consistent with the declared accuracy, no synthetic noise pattern detected.');
+    }
+
+    // Discrete accuracy levels (e.g. fixed radius tiers) are another tell —
+    // real hardware accuracy varies continuously with signal conditions.
+    const distinctAccuracies = new Set(samples.map((s) => Math.round(s.accuracy)));
+    if (distinctAccuracies.size === 1 && samples.length >= 5) {
+      log(t.geo_accuracy_static || 'ℹ️ Declared accuracy value is identical across all samples — plausible for a cached/synthetic source, though not conclusive on its own.');
+    } else {
+      null;
+    }
+  }
+
+  onProgress(100);
+
+  if (isPoisoned) {
+    log(t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).');
+  } else {
+    log(t.geo_stable || '✅ Geolocation APIs and positional behavior appear stable, no poisoning or hooks detected.');
+  }
+
+  return {
+    status: isPoisoned ? 'poisoned' : 'clean',
+    logs,
+  };
+};
