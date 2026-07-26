@@ -14,6 +14,9 @@ import {
 import { ParticleSystem } from './compute/ParticleSystem';
 import { Modal } from './ui/Modal';
 import { getErrorMessage } from '../utils/error';
+import { resolvePreset, describePreset, type PresetId } from './compute/presets';
+import { pipelineCacheKey } from './compute/flops';
+import { runWebGpuBenchmark, type RunPhase } from './compute/engines/webgpuBenchmark';
 import type {
   GPUAdapter,
   GPUDevice,
@@ -28,133 +31,6 @@ interface ComputeStressModalProps {
 
 const HISTORY_LENGTH = 60;
 
-// ALU SIMD shader body: 200 loop iterations, each with 2 vec4 clamp(fma(...))
-// pairs (fma: 4 lanes x 2 flops; clamp: 4 lanes x 2 flops for the min+max),
-// plus a closing vec4 dot product (4 muls + 3 adds). This is an exact count
-// of the shader's ALU ops — clamp replaced the sin/cos calls this shader
-// used to use for the same range-bounding role, since clamp has a
-// well-defined FLOP cost and sin/cos do not (they run on a separate
-// special-function unit with no standard FLOP-equivalent).
-const ALU_FLOPS_PER_INVOCATION = 200 * 2 * (4 * 2 + 4 * 2) + 7;
-
-const pipelineCacheKey = (workloadType: 'gemm' | 'alu_simd', memoryMode: 'hybrid' | 'cache', isF16: boolean): string =>
-    `${workloadType}|${memoryMode}|${isF16 ? 'fp16' : 'fp32'}`;
-
-const percentileOf = (samples: readonly number[], p: number): number => {
-    if (samples.length === 0) return 0;
-    const sorted = [...samples].sort((a, b) => a - b);
-    const idx = Math.min(sorted.length - 1, Math.floor(p * sorted.length));
-    return sorted[idx];
-};
-
-const medianOf = (samples: readonly number[]): number => percentileOf(samples, 0.5);
-
-const VERIFY_MATRIX_SIZE = 20;
-
-const computeReferenceGemm = (a: Float32Array, b: Float32Array, n: number): Float32Array => {
-    const result = new Float32Array(n * n);
-    for (let row = 0; row < n; row++) {
-        for (let col = 0; col < n; col++) {
-            let sum = 0;
-            for (let k = 0; k < n; k++) {
-                sum += a[row * n + k] * b[k * n + col];
-            }
-            result[row * n + col] = sum;
-        }
-    }
-    return result;
-};
-
-// Runs a small GEMM dispatch through the given (already-compiled) pipeline
-// and compares the readback against a CPU reference implementation. This is
-// the only way to know the shader is actually computing the advertised
-// workload rather than silently producing garbage (e.g. from a buffer layout
-// mismatch) while still reporting a plausible-looking GFLOPS number.
-const verifyGemmCorrectness = async (device: GPUDevice, pipeline: GPUComputePipeline, isF16: boolean): Promise<boolean> => {
-    const n = VERIFY_MATRIX_SIZE;
-    const a = new Float32Array(n * n).map(() => Math.random());
-    const b = new Float32Array(n * n).map(() => Math.random());
-    const expected = computeReferenceGemm(a, b, n);
-
-    const USAGE_STORAGE = window.GPUBufferUsage?.STORAGE || 128;
-    const USAGE_COPY_SRC = window.GPUBufferUsage?.COPY_SRC || 4;
-    const USAGE_COPY_DST = window.GPUBufferUsage?.COPY_DST || 8;
-    const USAGE_MAP_READ = window.GPUBufferUsage?.MAP_READ || 1;
-    const MAP_MODE_READ = window.GPUMapMode?.READ || 1;
-
-    const makeInputBuffer = (arr: Float32Array) => {
-        // Header matches the WGSL storage struct layout: vec2<f32> size (8
-        // bytes) followed immediately by the data array.
-        const header = new Float32Array([n, n]);
-        const buffer = device.createBuffer({
-            size: header.byteLength + arr.byteLength,
-            usage: USAGE_STORAGE,
-            mappedAtCreation: true,
-        });
-        const dst = new ArrayBuffer(buffer.size);
-        new Float32Array(dst).set(header);
-        new Float32Array(dst, header.byteLength).set(arr);
-        new Uint8Array(buffer.getMappedRange()).set(new Uint8Array(dst));
-        buffer.unmap();
-        return buffer;
-    };
-
-    const bufferA = makeInputBuffer(a);
-    const bufferB = makeInputBuffer(b);
-    const resultSize = Float32Array.BYTES_PER_ELEMENT * (2 + n * n);
-    const resultBuffer = device.createBuffer({ size: resultSize, usage: USAGE_STORAGE | USAGE_COPY_SRC });
-    const stagingBuffer = device.createBuffer({ size: resultSize, usage: USAGE_COPY_DST | USAGE_MAP_READ });
-
-    try {
-        const bindGroup = device.createBindGroup({
-            layout: pipeline.getBindGroupLayout(0),
-            entries: [
-                { binding: 0, resource: { buffer: bufferA } },
-                { binding: 1, resource: { buffer: bufferB } },
-                { binding: 2, resource: { buffer: resultBuffer } },
-            ],
-        });
-
-        const encoder = device.createCommandEncoder();
-        const pass = encoder.beginComputePass();
-        pass.setPipeline(pipeline);
-        pass.setBindGroup(0, bindGroup);
-        const wgCount = Math.ceil(n / 8);
-        pass.dispatchWorkgroups(wgCount, wgCount);
-        pass.end();
-        encoder.copyBufferToBuffer(resultBuffer, 0, stagingBuffer, 0, resultSize);
-        device.queue.submit([encoder.finish()]);
-        await device.queue.onSubmittedWorkDone();
-
-        await stagingBuffer.mapAsync(MAP_MODE_READ);
-        const actual = new Float32Array(stagingBuffer.getMappedRange(8));
-
-        // fp16 accumulates ~20 terms in half precision, so it needs a much
-        // looser tolerance than fp32 to avoid flagging legitimate rounding
-        // as a correctness failure.
-        const tolerance = isF16 ? 0.08 : 0.01;
-        let ok = true;
-        for (let i = 0; i < expected.length; i++) {
-            const diff = Math.abs(actual[i] - expected[i]);
-            const allowed = tolerance * (1 + Math.abs(expected[i]));
-            if (diff > allowed) {
-                ok = false;
-                break;
-            }
-        }
-        stagingBuffer.unmap();
-        return ok;
-    } catch (e: unknown) {
-        console.error('GEMM correctness verification failed', getErrorMessage(e));
-        return false;
-    } finally {
-        bufferA.destroy();
-        bufferB.destroy();
-        resultBuffer.destroy();
-        stagingBuffer.destroy();
-    }
-};
-
 export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose, t }) => {
   const [isWebGPUSupported, setIsWebGPUSupported] = useState<boolean | null>(null);
   const [hasFp16Support, setHasFp16Support] = useState(false);
@@ -166,7 +42,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const [gflops, setGflops] = useState(0);
   const [peakGflops, setPeakGflops] = useState(0);
   const [sustainedGflops, setSustainedGflops] = useState(0);
-  const [runPhase, setRunPhase] = useState<'idle' | 'calibrating' | 'verifying' | 'warmup' | 'running'>('idle');
+  const [runPhase, setRunPhase] = useState<RunPhase>('idle');
   const [verificationStatus, setVerificationStatus] = useState<'unverified' | 'passed' | 'failed' | 'skipped'>('unverified');
   const [cpuCores, setCpuCores] = useState(4);
   const [selectedDuration, setSelectedDuration] = useState<number>(0);
@@ -175,7 +51,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
   // New Upgraded Control State Variables
   const [testMode, setTestMode] = useState<'quick' | 'expert'>('quick');
-  const [selectedPreset, setSelectedPreset] = useState<'standard' | 'peak' | 'fp16' | 'thermal'>('standard');
+  const [selectedPreset, setSelectedPreset] = useState<PresetId>('standard');
   const [workloadType, setWorkloadType] = useState<'gemm' | 'alu_simd'>('gemm');
   const [precision, setPrecision] = useState<'fp32' | 'fp16' | 'fp64'>('fp32');
   const [memoryMode, setMemoryMode] = useState<'hybrid' | 'cache'>('hybrid');
@@ -234,88 +110,26 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   // Sync Preset selections in Quick Mode
   useEffect(() => {
     if (testMode === 'quick' && backend === 'webgpu') {
-      if (selectedPreset === 'standard') {
-        setWorkloadType('gemm');
-        setMemoryMode('hybrid');
-        setPrecision('fp32');
-        setMatrixSize(512);
-        setSelectedDuration(30);
-      } else if (selectedPreset === 'peak') {
-        setWorkloadType('alu_simd');
-        setMemoryMode('cache');
-        setPrecision(hasFp16Support ? 'fp16' : 'fp32');
-        setMatrixSize(512);
-        setSelectedDuration(10);
-      } else if (selectedPreset === 'fp16') {
-        setWorkloadType('gemm');
-        setMemoryMode('hybrid');
-        setPrecision(hasFp16Support ? 'fp16' : 'fp32');
-        setMatrixSize(1024);
-        setSelectedDuration(30);
-      } else if (selectedPreset === 'thermal') {
-        setWorkloadType('gemm');
-        setMemoryMode('hybrid');
-        setPrecision('fp32');
-        setMatrixSize(1024);
-        setSelectedDuration(60);
-      }
+      const preset = resolvePreset(selectedPreset, hasFp16Support);
+      setWorkloadType(preset.workloadType);
+      setMemoryMode(preset.memoryMode);
+      setPrecision(preset.precision);
+      setMatrixSize(preset.matrixSize);
+      setSelectedDuration(preset.duration);
     }
   }, [testMode, selectedPreset, hasFp16Support, backend]);
 
-  // CPU Workers control
+  // CPU Workers control. Uses a real worker module (components/compute/workers/cpuStress.worker.ts)
+  // instead of a blob URL, and its 'stop' message actually takes effect — the
+  // worker yields between batches via setTimeout so its message queue isn't
+  // starved, rather than relying solely on terminate().
   const startCpuWorkers = (numWorkers: number) => {
       stopCpuWorkers();
       accumulatedCpuOpsRef.current = 0;
-      
-      const workerBlobCode = `
-          let isRunning = true;
-          self.onmessage = function(e) {
-              if (e.data.cmd === 'stop') {
-                  isRunning = false;
-                  self.close();
-                  return;
-              }
-              
-              let x0 = 1.0, x1 = 1.1, x2 = 1.2, x3 = 1.3, x4 = 1.4, x5 = 1.5, x6 = 1.6, x7 = 1.7;
-              const opsPerBatch = 160;
-              
-              while (isRunning) {
-                  for (let i = 0; i < 40000; i++) {
-                      x0 = x0 * 0.9999 + 0.0001; x1 = x1 * 0.9998 + 0.0002;
-                      x2 = x2 * 0.9997 + 0.0003; x3 = x3 * 0.9996 + 0.0004;
-                      x4 = x4 * 0.9995 + 0.0005; x5 = x5 * 0.9994 + 0.0006;
-                      x6 = x6 * 0.9993 + 0.0007; x7 = x7 * 0.9992 + 0.0008;
 
-                      x0 = x0 * 0.9999 + 0.0001; x1 = x1 * 0.9998 + 0.0002;
-                      x2 = x2 * 0.9997 + 0.0003; x3 = x3 * 0.9996 + 0.0004;
-                      x4 = x4 * 0.9995 + 0.0005; x5 = x5 * 0.9994 + 0.0006;
-                      x6 = x6 * 0.9993 + 0.0007; x7 = x7 * 0.9992 + 0.0008;
-
-                      x0 = x0 * 0.9999 + 0.0001; x1 = x1 * 0.9998 + 0.0002;
-                      x2 = x2 * 0.9997 + 0.0003; x3 = x3 * 0.9996 + 0.0004;
-                      x4 = x4 * 0.9995 + 0.0005; x5 = x5 * 0.9994 + 0.0006;
-                      x6 = x6 * 0.9993 + 0.0007; x7 = x7 * 0.9992 + 0.0008;
-
-                      x0 = x0 * 0.9999 + 0.0001; x1 = x1 * 0.9998 + 0.0002;
-                      x2 = x2 * 0.9997 + 0.0003; x3 = x3 * 0.9996 + 0.0004;
-                      x4 = x4 * 0.9995 + 0.0005; x5 = x5 * 0.9994 + 0.0006;
-                      x6 = x6 * 0.9993 + 0.0007; x7 = x7 * 0.9992 + 0.0008;
-
-                      x0 = x0 * 0.9999 + 0.0001; x1 = x1 * 0.9998 + 0.0002;
-                      x2 = x2 * 0.9997 + 0.0003; x3 = x3 * 0.9996 + 0.0004;
-                      x4 = x4 * 0.9995 + 0.0005; x5 = x5 * 0.9994 + 0.0006;
-                      x6 = x6 * 0.9993 + 0.0007; x7 = x7 * 0.9992 + 0.0008;
-                  }
-                  self.postMessage({ cmd: 'progress', ops: 40000 * 5 * opsPerBatch });
-              }
-          };
-      `;
-      const blob = new Blob([workerBlobCode], { type: 'application/javascript' });
-      const blobUrl = URL.createObjectURL(blob);
-      
       const activeWorkers: Worker[] = [];
       for (let i = 0; i < numWorkers; i++) {
-          const worker = new Worker(blobUrl);
+          const worker = new Worker(new URL('./compute/workers/cpuStress.worker.ts', import.meta.url), { type: 'module' });
           worker.onmessage = (e) => {
               if (e.data.cmd === 'progress') {
                   accumulatedCpuOpsRef.current += e.data.ops;
@@ -325,7 +139,6 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           activeWorkers.push(worker);
       }
       workersRef.current = activeWorkers;
-      URL.revokeObjectURL(blobUrl);
   };
 
   const stopCpuWorkers = () => {
@@ -727,14 +540,21 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
       if (selectedDuration > 0) {
           setTimeLeft(selectedDuration);
-          let currentLeft = selectedDuration;
+          // Track an absolute deadline rather than decrementing a counter
+          // each tick: background tabs throttle setInterval to as little as
+          // once/minute, and a counter would only lose one "second" per
+          // throttled tick, leaving the test running long after it should
+          // have stopped. Deriving remaining time from the deadline means
+          // whenever the tick does fire, it immediately reflects real
+          // elapsed wall time and stops promptly.
+          const deadline = performance.now() + selectedDuration * 1000;
           if (timerIntervalRef.current) {
               clearInterval(timerIntervalRef.current);
           }
           timerIntervalRef.current = setInterval(() => {
-              currentLeft -= 1;
-              setTimeLeft(currentLeft);
-              if (currentLeft <= 0) {
+              const remaining = Math.ceil((deadline - performance.now()) / 1000);
+              setTimeLeft(Math.max(0, remaining));
+              if (remaining <= 0) {
                   stopTest();
               }
           }, 1000);
@@ -762,170 +582,35 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           const pipeline = pipelineRef.current;
           const isF16 = precision === 'fp16' && hasFp16Support;
 
-          // Correctness verification: GEMM has a well-defined mathematical
-          // result, so a broken shader or buffer layout can be caught before
-          // it produces a plausible-looking but meaningless GFLOPS number.
-          // ALU SIMD is pure arithmetic busywork with no ground truth to
-          // check against, so it's marked as skipped rather than verified.
-          if (workloadType === 'gemm') {
-              const verifyKey = pipelineCacheKey(workloadType, memoryMode, isF16);
-              if (!verifiedKeysRef.current.has(verifyKey)) {
-                  setRunPhase('verifying');
-                  const passed = await verifyGemmCorrectness(device, pipeline, isF16);
-                  if (runIdRef.current !== myRunId) return;
-                  verifiedKeysRef.current.set(verifyKey, passed);
-              }
-              const passed = verifiedKeysRef.current.get(verifyKey) ?? false;
-              setVerificationStatus(passed ? 'passed' : 'failed');
-              if (!passed) {
-                  console.error('GEMM correctness verification failed for', verifyKey);
-                  setGpuError(t.error_verification_failed || 'The GEMM correctness check failed on this GPU. Results would not be trustworthy, so the test was aborted.');
-                  setIsRunning(false);
-                  isRunningRef.current = false;
-                  setRunPhase('idle');
-                  return;
-              }
-          } else {
-              setVerificationStatus('skipped');
-          }
-
-          // Matrix Setup
-          const firstMatrix = new Float32Array(Array(matrixSize * matrixSize).fill(0).map(() => Math.random()));
-          const secondMatrix = new Float32Array(Array(matrixSize * matrixSize).fill(0).map(() => Math.random()));
-
-          // WGSL storage struct is `{ size: vec2<f32>, numbers: array<f32> }`.
-          // vec2<f32> has an 8-byte size/align, so `numbers` starts at byte
-          // offset 8 (2 floats) — the header written here must match exactly,
-          // otherwise every element read by the shader is shifted.
-          const createBuffer = (arr: Float32Array, usage: number) => {
-              const header = new Float32Array([matrixSize, matrixSize]);
-              const buffer = device.createBuffer({
-                  size: header.byteLength + arr.byteLength,
-                  usage,
-                  mappedAtCreation: true,
-              });
-              const dst = new ArrayBuffer(buffer.size);
-              new Float32Array(dst).set(header);
-              new Float32Array(dst, header.byteLength).set(arr);
-              new Uint8Array(buffer.getMappedRange()).set(new Uint8Array(dst));
-              buffer.unmap();
-              return buffer;
-          };
-          const USAGE_STORAGE = window.GPUBufferUsage?.STORAGE || 128;
-
-          device.pushErrorScope('validation');
-          const gpuBufferFirstMatrix = createBuffer(firstMatrix, USAGE_STORAGE);
-          const gpuBufferSecondMatrix = createBuffer(secondMatrix, USAGE_STORAGE);
-          const resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + firstMatrix.length);
-          const resultMatrixBuffer = device.createBuffer({
-              size: resultMatrixBufferSize,
-              usage: USAGE_STORAGE
-          });
-          const bindGroup = device.createBindGroup({
-              layout: pipeline.getBindGroupLayout(0),
-              entries: [
-                  { binding: 0, resource: { buffer: gpuBufferFirstMatrix } },
-                  { binding: 1, resource: { buffer: gpuBufferSecondMatrix } },
-                  { binding: 2, resource: { buffer: resultMatrixBuffer } },
-              ],
-          });
-          activeBuffersRef.current.push(gpuBufferFirstMatrix, gpuBufferSecondMatrix, resultMatrixBuffer);
-
-          const setupError = await device.popErrorScope();
-          if (runIdRef.current !== myRunId) return; // superseded while awaiting validation
-          if (setupError) {
-              console.error('WebGPU buffer/bind group validation error', setupError.message);
-              setGpuError(t.error_shader_compile || 'Failed to allocate GPU buffers for this configuration.');
-              setIsRunning(false);
-              isRunningRef.current = false;
-              destroyActiveBuffers();
-              return;
-          }
-
-          const workgroupCount = Math.ceil(matrixSize / 8);
-          const opsPerInvocation = workloadType === 'alu_simd' ? ALU_FLOPS_PER_INVOCATION : 2 * matrixSize;
-          const opsPerDispatch = opsPerInvocation * matrixSize * matrixSize;
-
-          // Encodes `dispatches` dispatchWorkgroups calls into a single pass
-          // and command buffer. WebGPU guarantees dispatches within one pass
-          // execute in encoded order with each seeing prior writes, so it's
-          // safe to run the whole batch against the same buffers before
-          // reading back a single wall-clock measurement for the batch.
-          const runBatch = async (dispatches: number): Promise<number> => {
-              const t0 = performance.now();
-              const commandEncoder = device.createCommandEncoder();
-              const passEncoder = commandEncoder.beginComputePass();
-              passEncoder.setPipeline(pipeline);
-              passEncoder.setBindGroup(0, bindGroup);
-              for (let i = 0; i < dispatches; i++) {
-                  passEncoder.dispatchWorkgroups(workgroupCount, workgroupCount);
-              }
-              passEncoder.end();
-              device.queue.submit([commandEncoder.finish()]);
-              await device.queue.onSubmittedWorkDone();
-              return performance.now() - t0;
-          };
-
-          // Calibrate: time a single dispatch and size batches around
-          // ~50ms of GPU work each. This decouples measurement from the
-          // display refresh rate entirely — the previous one-dispatch-per-
-          // requestAnimationFrame loop capped every workload's GFLOPS at
-          // whatever a single dispatch could do inside one frame budget
-          // (~16ms at 60Hz), regardless of how much headroom the GPU had.
-          setRunPhase('calibrating');
-          const singleDispatchMs = await runBatch(1);
-          if (runIdRef.current !== myRunId) { destroyActiveBuffers(); return; }
-          const TARGET_BATCH_MS = 50;
-          const batchSize = Math.max(1, Math.min(4000, Math.round(TARGET_BATCH_MS / Math.max(singleDispatchMs, 0.05))));
-
-          // Warm-up: GPUs run below their steady-state clock for the first
-          // few hundred milliseconds (DVFS ramp-up, shader compilation
-          // finishing on first dispatch). Discard samples until throughput
-          // stops improving, up to a hard cap so a noisy first reading can't
-          // stall the test indefinitely.
-          setRunPhase('warmup');
-          const WARMUP_MAX_MS = 1500;
-          const warmupDeadline = performance.now() + WARMUP_MAX_MS;
-          let previousWarmupGflops: number | null = null;
-          while (performance.now() < warmupDeadline) {
-              if (runIdRef.current !== myRunId) { destroyActiveBuffers(); return; }
-              const warmupMs = await runBatch(batchSize);
-              if (runIdRef.current !== myRunId) { destroyActiveBuffers(); return; }
-              const warmupGflops = (opsPerDispatch * batchSize / (warmupMs / 1000)) / 1e9;
-              if (previousWarmupGflops !== null && Math.abs(warmupGflops - previousWarmupGflops) / previousWarmupGflops < 0.05) {
-                  break;
-              }
-              previousWarmupGflops = warmupGflops;
-          }
-          if (runIdRef.current !== myRunId) { destroyActiveBuffers(); return; }
-
-          setRunPhase('running');
-          const samples: number[] = [];
-
-          const recordLoop = async () => {
-              while (isRunningRef.current && runIdRef.current === myRunId) {
-                  const batchMs = await runBatch(batchSize);
-                  // Re-check after the await: Stop (or Stop+Start) may have
-                  // run while this batch was in flight, in which case the
-                  // buffers this closure references may already be
-                  // destroyed.
-                  if (!isRunningRef.current || runIdRef.current !== myRunId) break;
-
-                  const gflopsVal = (opsPerDispatch * batchSize / (batchMs / 1000)) / 1e9;
-                  samples.push(gflopsVal);
-                  if (samples.length > 300) samples.shift();
-                  const tailStart = Math.max(0, samples.length - Math.max(1, Math.floor(samples.length * 0.25)));
-
-                  setGflops(gflopsVal);
-                  // Peak is the 95th percentile of the rolling sample window
-                  // rather than an all-time max, so a single early outlier
-                  // can't pin an unrealistic ceiling for the rest of the run.
-                  setPeakGflops(percentileOf(samples, 0.95));
-                  setSustainedGflops(medianOf(samples.slice(tailStart)));
-                  updateGraph(gflopsVal);
-              }
-          };
-          recordLoop();
+          runWebGpuBenchmark(
+              device,
+              pipeline,
+              { matrixSize, workloadType, memoryMode, isF16 },
+              verifiedKeysRef.current,
+              () => runIdRef.current !== myRunId,
+              () => !isRunningRef.current,
+              {
+                  onPhaseChange: setRunPhase,
+                  onVerification: setVerificationStatus,
+                  onBuffersCreated: (buffers) => { activeBuffersRef.current.push(...buffers); },
+                  onSample: (val, peak, sustained) => {
+                      setGflops(val);
+                      setPeakGflops(peak);
+                      setSustainedGflops(sustained);
+                      updateGraph(val);
+                  },
+                  onError: (kind) => {
+                      const message = kind === 'verification'
+                          ? (t.error_verification_failed || 'The GEMM correctness check failed on this GPU. Results would not be trustworthy, so the test was aborted.')
+                          : (t.error_shader_compile || 'Failed to allocate GPU buffers for this configuration.');
+                      setGpuError(message);
+                      setIsRunning(false);
+                      isRunningRef.current = false;
+                      setRunPhase('idle');
+                      destroyActiveBuffers();
+                  },
+              },
+          );
 
       } else if (backend === 'webgl') {
           const ok = initWebGL();
@@ -1008,59 +693,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
   const stability = peakGflops > 0 ? Math.round((sustainedGflops / peakGflops) * 100) : 100;
 
-  // Preset Info Helper for Quick Presets View
-  const getPresetDescription = () => {
-    switch (selectedPreset) {
-      case 'standard':
-        return {
-          title: t.preset_standard || "Standard Run (Matrix)",
-          desc: t.preset_standard_desc || "Balanced memory and computation load, reflecting standard 3D/AI workloads.",
-          bullets: [
-            t.preset_standard_bullet1 || "Workload: 512x512 GEMM matrix multiplication",
-            t.preset_standard_bullet2 || "Precision: FP32 Single-precision standard",
-            t.preset_standard_bullet3 || "Data Access: Hybrid Global Buffer lookup patterns",
-            t.preset_standard_bullet4 || "Target: Measures standard graphics/compute capability"
-          ]
-        };
-      case 'peak':
-        return {
-          title: t.preset_peak || "Peak ALU Compute (SIMD)",
-          desc: t.preset_peak_desc || "Stresses ALU arithmetic units to their limits, eliminating global memory bottlenecks.",
-          bullets: [
-            t.preset_peak_bullet1 || "Workload: High-intensity fused vector FMA points",
-            t.preset_peak_bullet2 || "Precision: FP16 (Half precision) optimized or fallback FP32",
-            t.preset_peak_bullet3 || "Data Access: High-speed local hardware registers",
-            t.preset_peak_bullet4 || "Target: Tests theoretical peak floating-point math power"
-          ]
-        };
-      case 'fp16':
-        return {
-          title: t.preset_fp16 || "FP16 Extreme (Tensor Core)",
-          desc: t.preset_fp16_desc || "Runs FP16 matrix operations on modern neural hardware accelerators.",
-          bullets: [
-            t.preset_fp16_bullet1 || "Workload: 1024x1024 dense GEMM matrix computation",
-            t.preset_fp16_bullet2 || "Precision: Native FP16 (requires hardware support)",
-            t.preset_fp16_bullet3 || "Data Access: High-speed half-precision pipelines",
-            t.preset_fp16_bullet4 || "Target: Stresses AI cores / Neural accelerator hardware"
-          ]
-        };
-      case 'thermal':
-        return {
-          title: t.preset_thermal || "Thermal Throttle Burn",
-          desc: t.preset_thermal_desc || "Generates continuous thermal load over 60s to inspect performance dropoff curves.",
-          bullets: [
-            t.preset_thermal_bullet1 || "Workload: 1024x1024 dense GEMM cycles",
-            t.preset_thermal_bullet2 || "Precision: FP32 Single-precision heavy load",
-            t.preset_thermal_bullet3 || "Duration: 60 seconds sustained stress",
-            t.preset_thermal_bullet4 || "Target: Charts heat dissipation and thermal throttling"
-          ]
-        };
-      default:
-        return { title: "", desc: "", bullets: [] };
-    }
-  };
-
-  const presetInfo = getPresetDescription();
+  const presetInfo = describePreset(selectedPreset, t);
 
   const phaseLabel = runPhase === 'calibrating' ? (t.status_calibrating || 'Calibrating')
       : runPhase === 'verifying' ? (t.status_verifying || 'Verifying')
@@ -1222,7 +855,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                         { id: 'thermal', label: t.preset_thermal || 'Thermal Throttle Burn' }
                                     ]}
                                     onChange={(val) => {
-                                        setSelectedPreset(val as 'standard' | 'peak' | 'fp16' | 'thermal');
+                                        setSelectedPreset(val as PresetId);
                                     }}
                                     disabled={isRunning}
                                     color="indigo"

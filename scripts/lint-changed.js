@@ -13,7 +13,10 @@ function addFileIfValid(filePath) {
 
 // 1. Detect uncommitted/unstaged dirty files (local dev or dirty CI workspace)
 try {
-  const statusOutput = execSync('git status --porcelain', { encoding: 'utf-8' });
+  // -uall: without it, git collapses a brand-new (not-yet-tracked) directory
+  // into a single "?? path/to/dir/" line instead of listing the files inside,
+  // so any new file created in a new subdirectory would silently skip linting.
+  const statusOutput = execSync('git status --porcelain -uall', { encoding: 'utf-8' });
   const lines = statusOutput.split('\n');
   for (const line of lines) {
     if (!line) continue;
