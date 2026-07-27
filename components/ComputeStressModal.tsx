@@ -190,15 +190,22 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
               vec2 uv = gl_FragCoord.xy / u_resolution.xy;
               float x = uv.x * 3.0 - 1.5;
               float y = uv.y * 2.0 - 1.0;
-              
+
               float d = 0.0;
               int limit = u_iterations;
               if (limit > 1500) limit = 1500;
-              
+
+              // u_time is a uniform, so these were loop-invariant: any
+              // correct GLSL compiler already hoists them out, which means
+              // counting them per-iteration in the FLOP estimate below would
+              // charge for work that never actually executes inside the loop.
+              float driftX = sin(u_time * 0.15) * 0.3;
+              float driftY = cos(u_time * 0.1) * 0.25;
+
               for (int i = 0; i < 1500; i++) {
                   if (i >= limit) break;
-                  float nx = x * x - y * y + sin(u_time * 0.15) * 0.3;
-                  float ny = 2.0 * x * y + cos(u_time * 0.1) * 0.25;
+                  float nx = x * x - y * y + driftX;
+                  float ny = 2.0 * x * y + driftY;
                   x = nx;
                   y = ny;
                   d += sin(x) * cos(y);
@@ -633,7 +640,12 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
               const elapsed = now - startTime;
               
               if (elapsed >= 200) {
-                  const opsPerFrame = 600 * 256 * iterations * 40;
+                  // Per-iteration countable flops (sin/cos excluded, see shader
+                  // comment above): nx = x*x - y*y + driftX (4), ny = 2.0*x*y
+                  // + driftY (3), d += sin(x)*cos(y) (2, only the multiply and
+                  // accumulating add) = 9 total.
+                  const FLOPS_PER_ITERATION = 9;
+                  const opsPerFrame = 600 * 256 * iterations * FLOPS_PER_ITERATION;
                   const totalOps = opsPerFrame * frames;
                   const seconds = elapsed / 1000;
                   const gflopsVal = (totalOps / seconds) / 1e9;

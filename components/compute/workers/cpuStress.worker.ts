@@ -4,7 +4,9 @@
 // processed — a tight synchronous while(true) loop would starve the worker's
 // own message queue and never see it.
 
-const OPS_PER_BATCH_ITERATION = 160;
+// Each loop iteration runs 5 unrolled blocks of 8 `x = x * a + b` statements
+// (40 statements total), each statement being 1 multiply + 1 add = 2 flops.
+const FLOPS_PER_LOOP_ITERATION = 40 * 2;
 const BATCH_ITERATIONS = 40000;
 
 let isRunning = false;
@@ -45,7 +47,7 @@ function runBatch() {
   // of a real postMessage payload per iteration.
   if (x0 === Infinity) console.log(x0, x1, x2, x3, x4, x5, x6, x7);
 
-  self.postMessage({ cmd: 'progress', ops: BATCH_ITERATIONS * 5 * OPS_PER_BATCH_ITERATION });
+  self.postMessage({ cmd: 'progress', ops: BATCH_ITERATIONS * FLOPS_PER_LOOP_ITERATION });
 
   if (isRunning) {
     setTimeout(runBatch, 0);
