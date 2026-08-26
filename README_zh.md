@@ -140,7 +140,7 @@ npm run start
 
 ## 🙌 鸣谢与归属
 
-感谢以下优秀的开源项目及设计团队，让本项目变得更好：
+感谢以下优秀的开源项目及设计团队，让本项目变得更好、功能更强大：
 
 - **[React](https://react.dev/)** - 声明式 UI 渲染引擎与组件状态框架
 - **[Tailwind CSS](https://tailwindcss.com/)** - 原子化语义类样式框架
