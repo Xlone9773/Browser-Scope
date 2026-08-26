@@ -1,15 +1,35 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { getAdvancedFeatures } from '../services/detectors/system';
+import type { ExtendedNavigator, NavigatorKeyboard } from '../types';
 
-const originalNavigator = (globalThis as any).navigator;
+const originalNavigator = typeof globalThis.navigator !== 'undefined' ? (globalThis.navigator as ExtendedNavigator) : undefined;
+
+function setNavigator(value?: ExtendedNavigator | null) {
+  if (typeof value === 'undefined') {
+    // remove mocked navigator
+    try { delete (globalThis as { navigator?: unknown }).navigator; } catch {}
+    return;
+  }
+
+  Object.defineProperty(globalThis, 'navigator', {
+    value,
+    configurable: true,
+  });
+}
 
 afterEach(() => {
-  (globalThis as any).navigator = originalNavigator;
+  if (typeof originalNavigator === 'undefined') {
+    setNavigator(undefined);
+  } else {
+    setNavigator(originalNavigator);
+  }
 });
 
 describe('Keyboard map detection (Brave null keyboard handling)', () => {
   it('does not throw when navigator.keyboard is null and marks keyboardMap unsupported', () => {
-    (globalThis as any).navigator = { ...(originalNavigator || {}), keyboard: null };
+    const mockNav = { keyboard: null } as unknown as ExtendedNavigator;
+    setNavigator(mockNav);
+
     const features = getAdvancedFeatures();
     const k = features.find(f => f.key === 'keyboardMap');
     expect(k).toBeDefined();
@@ -17,7 +37,10 @@ describe('Keyboard map detection (Brave null keyboard handling)', () => {
   });
 
   it('detects keyboardMap when getLayoutMap exists', () => {
-    (globalThis as any).navigator = { ...(originalNavigator || {}), keyboard: { getLayoutMap: () => ({}) } };
+    const keyboard: NavigatorKeyboard = { getLayoutMap: () => new Map() };
+    const mockNav = { keyboard } as unknown as ExtendedNavigator;
+    setNavigator(mockNav);
+
     const features = getAdvancedFeatures();
     const k = features.find(f => f.key === 'keyboardMap');
     expect(k).toBeDefined();
