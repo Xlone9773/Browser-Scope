@@ -139,7 +139,7 @@ npm run start
 
 ---
 
-## 🙌 Attributions & Acknowledgments
+## 🙌 Attri󠀁󠀁󠀁󠀁󠀁󠀁󠀁󠀁󠀁󠀁butions & Acknowledgments
 
 We thank the amazing open-source community and the following libraries for powering BrowserScope:
 
