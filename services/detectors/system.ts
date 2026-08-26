@@ -1,4 +1,3 @@
-
 import { FeatureItem, ExtendedNavigator } from '../../types';
 
 
@@ -111,7 +110,7 @@ export const getPWAFeatures = (): FeatureItem[] => {
     { name: 'Web App Manifest', key: 'manifest', supported: !!document.querySelector('link[rel="manifest"]'), description: 'Defines PWA branding and behavior' },
     { name: 'Standalone Mode', key: 'standalone', supported: window.matchMedia && window.matchMedia('(display-mode: standalone)').matches, description: 'Running as installed app' },
     { name: 'Service Worker', key: 'serviceWorker', supported: 'serviceWorker' in navigator, description: 'Offline capabilities & PWA support' },
-    { name: 'Background Sync', key: 'bgSync', supported: 'serviceWorker' in navigator && 'sync' in ((navigator as unknown as { serviceWorker?: Record<string, unknown> }).serviceWorker || {}), description: 'Defer actions until user has connectivity' },
+    { name: 'Background Sync', key: 'bgSync', supported: 'serviceWorker' in navigator && 'sync' in ((navigator as unknown as { serviceWorker?: Record<string, unknown> }).serviceWorker || {}), description: 'Background sync via service workers' },
     { name: 'Push API', key: 'pushApi', supported: 'PushManager' in window, description: 'Receive push notifications from server' },
     { name: 'Notification API', key: 'notification', supported: 'Notification' in window, description: 'System level notifications' },
     { name: 'App Badges', key: 'appBadges', supported: 'setAppBadge' in navigator, description: 'Set badges on app icon' },
@@ -165,17 +164,17 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'WebSocket', key: 'webSocket', supported: 'WebSocket' in window, description: 'Two-way socket connection' },
     { name: 'Server-Sent Events', key: 'sse', supported: 'EventSource' in window, description: 'Server push notifications' },
     { name: 'Pointer Lock', key: 'pointerLock', supported: typeof document !== 'undefined' && 'exitPointerLock' in document, description: 'Lock mouse cursor' },
-    { name: 'Fullscreen API', key: 'fullscreen', supported: typeof document !== 'undefined' && !!(document.fullscreenEnabled || (document as unknown as { webkitFullscreenEnabled?: boolean }).webkitFullscreenEnabled || (document as unknown as { mozFullScreenEnabled?: boolean }).mozFullScreenEnabled), description: 'Native full screen' },
+    { name: 'Fullscreen API', key: 'fullscreen', supported: typeof document !== 'undefined' && !!(document.fullscreenEnabled || (document as unknown as { webkitFullscreenEnabled?: boolean }).webkitFullscreenEnabled), description: 'Enter fullscreen mode' },
     { name: 'Page Visibility', key: 'pageVisibility', supported: typeof document !== 'undefined' && 'hidden' in document, description: 'Detect tab backgrounding' },
     { name: 'Drag and Drop', key: 'dragAndDrop', supported: typeof document !== 'undefined' && 'draggable' in document.createElement('span'), description: 'Native DND features' },
     { name: 'Canvas API', key: 'canvas', supported: typeof document !== 'undefined' && !!document.createElement('canvas').getContext, description: '2D dynamic rendering' },
-    { name: 'MathML', key: 'mathML', supported: typeof document !== 'undefined' && document.createElement('math').namespaceURI === 'http://www.w3.org/1998/Math/MathML', description: 'Math formula markup' },
+    { name: 'MathML', key: 'mathML', supported: typeof document !== 'undefined' && document.createElement('math').namespaceURI === 'http://www.w3.org/1998/Math/MathML', description: 'Math formatting' },
     { name: 'Vibration API', key: 'vibration', supported: typeof navigator !== 'undefined' && 'vibrate' in navigator, description: 'Hardware haptics' },
     { name: 'Battery Status', key: 'battery', supported: typeof navigator !== 'undefined' && 'getBattery' in navigator, description: 'Power level and charging' },
     { name: 'Eye Dropper', key: 'eyeDropper', supported: 'EyeDropper' in window, description: 'System color picker' },
     { name: 'Accelerometer', key: 'accelerometer', supported: 'Accelerometer' in window, description: 'Motion sensor' },
     { name: 'View Transitions API', key: 'viewTransitions', supported: 'startViewTransition' in document, description: 'Smooth DOM transitions' },
-    { name: 'Popover API', key: 'popover', supported: typeof HTMLElement !== 'undefined' && Object.prototype.hasOwnProperty.call(HTMLElement.prototype, 'popover'), description: 'Native popovers and tooltips' },
+    { name: 'Popover API', key: 'popover', supported: typeof HTMLElement !== 'undefined' && Object.prototype.hasOwnProperty.call(HTMLElement.prototype, 'popover'), description: 'Native popovers and dialogs' },
     { name: 'Trusted Types', key: 'trustedTypes', supported: 'trustedTypes' in window, description: 'DOM XSS protection' },
     { name: 'CSS Container Queries', key: 'containerQueries', supported: typeof CSS !== 'undefined' && CSS.supports('container-type: inline-size'), description: 'Element-based responsive design' },
     { name: 'CSS Anchor Positioning', key: 'anchorPositioning', supported: typeof CSS !== 'undefined' && CSS.supports('anchor-name: --test'), description: 'Tether elements to anchors' },
@@ -199,7 +198,7 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'Cookie Store API', key: 'cookieStore', supported: 'cookieStore' in window, description: 'Service Worker cookie access' },
     { name: 'Shape Detection API', key: 'shapeDetection', supported: 'FaceDetector' in window || 'BarcodeDetector' in window, description: 'Detect faces or barcodes' },
     { name: 'Virtual Keyboard API', key: 'virtualKeyboard', supported: 'virtualKeyboard' in navigator, description: 'Control virtual keyboard layout' },
-    { name: 'Keyboard Map API', key: 'keyboardMap', supported: 'keyboard' in navigator && 'getLayoutMap' in (navigator as unknown as { keyboard: { getLayoutMap: unknown } }).keyboard, description: 'Resolve physical key layouts' },
+    { name: 'Keyboard Map API', key: 'keyboardMap', supported: typeof navigator !== 'undefined' && (navigator as any).keyboard != null && 'getLayoutMap' in (navigator as any).keyboard, description: 'Resolve physical key layouts' },
     { name: 'Device Posture API', key: 'devicePosture', supported: 'devicePosture' in navigator, description: 'Detect foldable device states' },
   ];
 };
