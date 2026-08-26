@@ -3,6 +3,14 @@ import { FeatureItem, ExtendedNavigator } from '../../types';
 
 const nav = navigator as ExtendedNavigator;
 
+// Brave 某些版本会把 navigator.keyboard 设为 null，先做类型安全的判空再检查 getLayoutMap
+function hasKeyboardLayoutMap(navObj?: ExtendedNavigator): boolean {
+  const n = navObj ?? (typeof navigator !== 'undefined' ? (navigator as ExtendedNavigator) : undefined);
+  if (!n) return false;
+  const kb = n.keyboard; // NavigatorKeyboard | null | undefined (defined in types.ts)
+  return kb != null && typeof kb.getLayoutMap === 'function';
+}
+
 export const detectOS = (): string => {
   const userAgent = window.navigator.userAgent;
   const platform = window.navigator.platform;
@@ -155,7 +163,7 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'Intersection Observer', key: 'intersectionObserver', supported: 'IntersectionObserver' in window, description: 'Detect element visibility' },
     { name: 'Mutation Observer', key: 'mutationObserver', supported: 'MutationObserver' in window, description: 'Watch DOM changes' },
     { name: 'Resize Observer', key: 'resizeObserver', supported: 'ResizeObserver' in window, description: 'Watch element size' },
-    { name: 'Web Components', key: 'webComponents', supported: 'customElements' in window && typeof Element !== 'undefined' && 'attachShadow' in Element.prototype, description: 'Custom reusable HTML elements' },
+    { name: 'Web Components', key: 'webComponents', supported: 'customElements' in window && typeof Element !== 'undefined' && 'attachShadow' in Element.prototype, description: 'Custom reusable H[...]
     { name: 'Gamepad API', key: 'gamepad', supported: typeof navigator !== 'undefined' && 'getGamepads' in navigator, description: 'Controller support' },
     { name: 'WebRTC', key: 'webrtc', supported: 'RTCPeerConnection' in window, description: 'Real-time communication' },
     { name: 'Web Audio API', key: 'webAudio', supported: 'AudioContext' in window || 'webkitAudioContext' in window, description: 'Advanced audio processing' },
@@ -168,13 +176,13 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'Page Visibility', key: 'pageVisibility', supported: typeof document !== 'undefined' && 'hidden' in document, description: 'Detect tab backgrounding' },
     { name: 'Drag and Drop', key: 'dragAndDrop', supported: typeof document !== 'undefined' && 'draggable' in document.createElement('span'), description: 'Native DND features' },
     { name: 'Canvas API', key: 'canvas', supported: typeof document !== 'undefined' && !!document.createElement('canvas').getContext, description: '2D dynamic rendering' },
-    { name: 'MathML', key: 'mathML', supported: typeof document !== 'undefined' && document.createElement('math').namespaceURI === 'http://www.w3.org/1998/Math/MathML', description: 'Math formatting' },
+    { name: 'MathML', key: 'mathML', supported: typeof document !== 'undefined' && document.createElement('math').namespaceURI === 'http://www.w3.org/1998/Math/MathML', description: 'Math formatt[...]
     { name: 'Vibration API', key: 'vibration', supported: typeof navigator !== 'undefined' && 'vibrate' in navigator, description: 'Hardware haptics' },
     { name: 'Battery Status', key: 'battery', supported: typeof navigator !== 'undefined' && 'getBattery' in navigator, description: 'Power level and charging' },
     { name: 'Eye Dropper', key: 'eyeDropper', supported: 'EyeDropper' in window, description: 'System color picker' },
     { name: 'Accelerometer', key: 'accelerometer', supported: 'Accelerometer' in window, description: 'Motion sensor' },
     { name: 'View Transitions API', key: 'viewTransitions', supported: 'startViewTransition' in document, description: 'Smooth DOM transitions' },
-    { name: 'Popover API', key: 'popover', supported: typeof HTMLElement !== 'undefined' && Object.prototype.hasOwnProperty.call(HTMLElement.prototype, 'popover'), description: 'Native popovers and dialogs' },
+    { name: 'Popover API', key: 'popover', supported: typeof HTMLElement !== 'undefined' && Object.prototype.hasOwnProperty.call(HTMLElement.prototype, 'popover'), description: 'Native popovers a[...]
     { name: 'Trusted Types', key: 'trustedTypes', supported: 'trustedTypes' in window, description: 'DOM XSS protection' },
     { name: 'CSS Container Queries', key: 'containerQueries', supported: typeof CSS !== 'undefined' && CSS.supports('container-type: inline-size'), description: 'Element-based responsive design' },
     { name: 'CSS Anchor Positioning', key: 'anchorPositioning', supported: typeof CSS !== 'undefined' && CSS.supports('anchor-name: --test'), description: 'Tether elements to anchors' },
@@ -198,7 +206,7 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'Cookie Store API', key: 'cookieStore', supported: 'cookieStore' in window, description: 'Service Worker cookie access' },
     { name: 'Shape Detection API', key: 'shapeDetection', supported: 'FaceDetector' in window || 'BarcodeDetector' in window, description: 'Detect faces or barcodes' },
     { name: 'Virtual Keyboard API', key: 'virtualKeyboard', supported: 'virtualKeyboard' in navigator, description: 'Control virtual keyboard layout' },
-    { name: 'Keyboard Map API', key: 'keyboardMap', supported: typeof navigator !== 'undefined' && (navigator as any).keyboard != null && 'getLayoutMap' in (navigator as any).keyboard, description: 'Resolve physical key layouts' },
+    { name: 'Keyboard Map API', key: 'keyboardMap', supported: hasKeyboardLayoutMap(nav), description: 'Resolve physical key layouts' },
     { name: 'Device Posture API', key: 'devicePosture', supported: 'devicePosture' in navigator, description: 'Detect foldable device states' },
   ];
 };
