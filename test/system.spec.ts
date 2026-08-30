@@ -37,7 +37,7 @@ describe('Keyboard map detection (Brave null keyboard handling)', () => {
   });
 
   it('detects keyboardMap when getLayoutMap exists', () => {
-    const keyboard: NavigatorKeyboard = { getLayoutMap: () => new Map() };
+    const keyboard: NavigatorKeyboard = { getLayoutMap: () => Promise.resolve(new Map<string, string>()) };
     const mockNav = { keyboard } as unknown as ExtendedNavigator;
     setNavigator(mockNav);
 
