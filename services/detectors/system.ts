@@ -149,7 +149,7 @@ export const getAdvancedFeatures = (): FeatureItem[] => {
     { name: 'Screen Wake Lock', key: 'wakeLock', supported: typeof navigator !== 'undefined' && 'wakeLock' in navigator, description: 'Prevent screen from dimming' },
     { name: 'Idle Detection', key: 'idleDetection', supported: typeof window !== 'undefined' && 'IdleDetector' in window, description: 'Detect when user is idle' },
     { name: 'File System Access', key: 'fsAccess', supported: typeof window !== 'undefined' && 'showOpenFilePicker' in window, description: 'Read/Write local files' },
-    { name: 'OPFS (Origin Private File System)', key: 'opfs', supported: !!(typeof navigator !== 'undefined' && navigator.storage && (navigator.storage as any).getDirectory), description: 'High-performance local storage' },
+    { name: 'OPFS (Origin Private File System)', key: 'opfs', supported: !!(typeof navigator !== 'undefined' && navigator.storage && (navigator.storage as { getDirectory?: unknown }).getDirectory), description: 'High-performance local storage' },
     { name: 'File Handling API', key: 'fileHandling', supported: typeof window !== 'undefined' && 'launchQueue' in window, description: 'Register as file handler' },
     { name: 'Local Font Access', key: 'localFonts', supported: typeof window !== 'undefined' && 'queryLocalFonts' in window, description: 'Access installed local fonts' },
     { name: 'Window Controls Overlay', key: 'wco', supported: typeof navigator !== 'undefined' && 'windowControlsOverlay' in navigator, description: 'Customize PWA title bar' },
