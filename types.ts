@@ -1,3 +1,4 @@
+/* types.ts - updated to include NavigatorKeyboard and keyboard in ExtendedNavigator */
 
 export interface NetworkInformation extends EventTarget {
   downlink?: number;
@@ -19,9 +20,19 @@ export interface BatteryManager extends EventTarget {
     onlevelchange: ((this: BatteryManager, ev: Event) => unknown) | null;
 }
 
+// Small addition: NavigatorKeyboard shape used by Keyboard Map API (partial)
+export interface NavigatorKeyboard {
+  // getLayoutMap exists on the Keyboard interface in some browsers;
+  // declare minimal shape used by code/tests. Mark optional because not all envs provide it.
+  getLayoutMap?: () => Promise<Map<string, string>>;
+  // other properties can be added later if needed
+}
+
 // Extend the Navigator interface for non-standard or experimental APIs
 export interface ExtendedNavigator extends Navigator {
   nfc?: unknown;
+  // keyboard may be present or null in some browsers (e.g., Brave), so type as optional | null
+  keyboard?: NavigatorKeyboard | null;
 }
 
 export interface CodecInfo {

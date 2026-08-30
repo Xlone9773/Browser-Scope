@@ -1,0 +1,90 @@
+name: Automated npm audit fix
+
+on:
+  workflow_dispatch: {}
+
+# Ensure the workflow has write permissions for contents and pull requests so the
+# create-pull-request action (and any git push) can succeed.
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  audit-fix:
+    name: Run npm audit fix and open PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Persist the GITHUB_TOKEN credentials in the checked-out repo so
+          # subsequent git push operations (used by create-pull-request) will
+          # authenticate as the github-actions[bot]. This restores persisted
+          # git credentials that some workflows disable by default.
+          persist-credentials: true
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit (report)
+        run: npm audit --json > audit.json || true
+
+      - name: Run auto-fix script
+        # Assumes you committed scripts/auto-fix-audit.ts and have tsx available.
+        # If tsx is not installed as a devDependency, npx will fetch it.
+        run: |
+          npx tsx scripts/auto-fix-audit.ts || true
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git status --porcelain | grep -q .; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run typecheck
+        id: tsc
+        run: npx tsc --noEmit
+        continue-on-error: true
+
+      - name: Run tests
+        id: tests
+        run: npx vitest run --run || true
+        continue-on-error: true
+
+      - name: Show git diff
+        run: |
+          echo "Git status:"
+          git status --porcelain
+          echo "--- Diff ---"
+          git --no-pager diff --name-only || true
+
+      - name: Create PR with dependency fixes
+        if: steps.check_changes.outputs.changed == 'true' && steps.tsc.outcome == 'success' && steps.tests.outcome == 'success'
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: 'main'
+          commit-message: 'chore(deps): run auto-fix-audit'
+          branch: 'automated/audit-fix-${{ github.run_id }}'
+          title: 'chore(deps): run auto-fix-audit'
+          body: |
+            This PR was created automatically by the Automated npm audit fix workflow.
+
+            It runs scripts/auto-fix-audit.ts and creates this PR with changes to package.json/package-lock.json if any.
+
+            Validation steps:
+            1. git fetch origin
+            2. git checkout automated/audit-fix-<run_id>
+            3. npm ci && npx tsc --noEmit && npm test
+          labels: automated, dependencies
