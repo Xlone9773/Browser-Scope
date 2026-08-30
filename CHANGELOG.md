@@ -1,6 +1,14 @@
 # Release Notes
 
-## [Unreleased] - 2026-07-09
+## [2.2.0] - 2026-08-30
+
+### 🚀 Highlights & Version Update
+- Bumped application version to `2.2.0`
+- Updated core runtime and development dependencies across React, Vite, Tailwind CSS, and testing libraries
+- Fixed Window fetch getter-only property reassignment in network logger interceptor
+- Added LICENSE file to public assets distribution
+
+## [2.1.0] - 2026-07-09
 
 ### 🎉 New Features
 
