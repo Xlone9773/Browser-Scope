@@ -1,0 +1,140 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "brace-expansion": {
+      "name": "brace-expansion",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1130734,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
+          "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=4.0.0 <5.0.9"
+        }
+      ],
+      "effects": [],
+      "range": "4.0.0 - 5.0.8",
+      "nodes": [
+        "node_modules/brace-expansion"
+      ],
+      "fixAvailable": true
+    },
+    "dompurify": {
+      "name": "dompurify",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1138538,
+          "name": "dompurify",
+          "dependency": "dompurify",
+          "title": "DOMPurify: IN_PLACE hook removal leaves a detached subtree executable, causing XSS",
+          "url": "https://github.com/advisories/GHSA-55q2-fjhq-7xh7",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<=3.4.12"
+        }
+      ],
+      "effects": [],
+      "range": "<=3.4.12",
+      "nodes": [
+        "node_modules/dompurify"
+      ],
+      "fixAvailable": true
+    },
+    "fast-uri": {
+      "name": "fast-uri",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1130720,
+          "name": "fast-uri",
+          "dependency": "fast-uri",
+          "title": "fast-uri vulnerable to host confusion via backslash authority introducer",
+          "url": "https://github.com/advisories/GHSA-7p8r-x3mc-p8w7",
+          "severity": "high",
+          "cwe": [
+            "CWE-436"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": ">=3.0.0 <3.1.5"
+        }
+      ],
+      "effects": [],
+      "range": "3.0.0 - 3.1.4",
+      "nodes": [
+        "node_modules/fast-uri"
+      ],
+      "fixAvailable": true
+    },
+    "nanoid": {
+      "name": "nanoid",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1139427,
+          "name": "nanoid",
+          "dependency": "nanoid",
+          "title": "nanoid: custom generators can loop indefinitely when size is zero",
+          "url": "https://github.com/advisories/GHSA-2v37-7h3g-55p8",
+          "severity": "high",
+          "cwe": [
+            "CWE-835"
+          ],
+          "cvss": {
+            "score": 5.9,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<3.3.18"
+        }
+      ],
+      "effects": [],
+      "range": "<3.3.18",
+      "nodes": [
+        "node_modules/nanoid"
+      ],
+      "fixAvailable": true
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 3,
+      "critical": 0,
+      "total": 4
+    },
+    "dependencies": {
+      "prod": 151,
+      "dev": 709,
+      "optional": 163,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 896
+    }
+  }
+}
