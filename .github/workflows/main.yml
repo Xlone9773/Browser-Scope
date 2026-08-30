@@ -89,7 +89,7 @@ jobs:
     name: Build & Asset Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [lint]  # 只在 lint 检查通过后开始构建
+    needs: [lint, test]. # 只在 lint 和 test 检查通过后开始构建
     steps:
       - name: Checkout
         uses: actions/checkout@v4
