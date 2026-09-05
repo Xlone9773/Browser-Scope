@@ -1,5 +1,5 @@
 
-import React, { useState, Suspense, useTransition } from 'react';
+import React, { useState, Suspense, useTransition, useRef, useEffect } from 'react';
 import { Database, Activity, Sliders, Monitor, Terminal, Loader2, Package, Layers, Palette } from 'lucide-react';
 import { Translation, Language } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
@@ -199,6 +199,25 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   const isTabLoading = isPending;
 
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const scrollActiveTab = () => {
+      const activeElement = tabsContainerRef.current?.querySelector('[data-active="true"]');
+      if (activeElement) {
+        activeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center',
+        });
+      }
+    };
+
+    scrollActiveTab();
+    const rafId = requestAnimationFrame(scrollActiveTab);
+    return () => cancelAnimationFrame(rafId);
+  }, [activeTab]);
+
   // Access structured settings
   const settings = t.settings;
   
@@ -222,9 +241,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <div className="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
                       
                       {/* Navigation Tabs */}
-                      <div className="flex md:flex-col border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 md:w-56 overflow-x-auto md:overflow-visible scrollbar-hide">
+                      <div 
+                          ref={tabsContainerRef}
+                          className="flex md:flex-col border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 md:w-56 overflow-x-auto md:overflow-visible scrollbar-hide"
+                      >
                           <button 
                               onClick={() => handleTabChange('general')}
+                              data-active={activeTab === 'general'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
@@ -239,6 +262,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           </button>
                           <button 
                               onClick={() => handleTabChange('appearance')}
+                              data-active={activeTab === 'appearance'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
@@ -253,6 +277,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           </button>
                           <button 
                               onClick={() => handleTabChange('storage')}
+                              data-active={activeTab === 'storage'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
@@ -267,6 +292,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           </button>
                           <button 
                               onClick={() => handleTabChange('res')}
+                              data-active={activeTab === 'res'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
@@ -281,6 +307,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           </button>
                           <button 
                               onClick={() => handleTabChange('mod')}
+                              data-active={activeTab === 'mod'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
@@ -295,6 +322,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           </button>
                           <button 
                               onClick={() => handleTabChange('ver')}
+                              data-active={activeTab === 'ver'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
@@ -309,6 +337,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           </button>
                           <button 
                               onClick={() => handleTabChange('dev')}
+                              data-active={activeTab === 'dev'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
