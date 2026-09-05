@@ -21,6 +21,7 @@ import { Translation } from '../../utils/i18n';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Select } from '../ui/Select';
+import { Modal } from '../ui/Modal';
 
 const getGrade = (score: number): string => {
     if (score >= 95) return 'S';
@@ -80,6 +81,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
     const [history, setHistory] = useState<ReportResults[]>([]);
     const [activeTab, setActiveTab] = useState<DimensionKey>('rendering');
     const [scoreDisplayMode, setScoreDisplayMode] = useState<'number' | 'grade'>('number');
+    const [confirmAction, setConfirmAction] = useState<'clearAll' | 'deleteCurrent' | null>(null);
 
     const handleToggleExpand = () => {
         const next = !isExpanded;
@@ -145,34 +147,46 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
         collapse: t.browserReport?.collapse || "Collapse",
         expand: t.browserReport?.expand || "Expand",
         historyTitle: t.browserReport?.historyTitle || "Audit History",
-        confirmClearHistory: t.browserReport?.confirmClearHistory || "Are you sure you want to clear your browser audit history?",
+        confirmClearHistory: t.browserReport?.confirmClearHistory || "Are you sure you want to clear your browser audit history? This action cannot be undone.",
         clearHistory: t.browserReport?.clearHistory || "Clear All History",
         deleteCurrentReport: t.browserReport?.deleteCurrentReport || "Delete Current Report",
         confirmDeleteCurrent: t.browserReport?.confirmDeleteCurrent || "Are you sure you want to delete the currently selected audit report?",
+        confirmActionTitle: t.browserReport?.confirmActionTitle || "Confirm Deletion",
+        confirmActionBtn: t.browserReport?.confirmActionBtn || "Confirm Delete",
+        cancelBtn: t.browserReport?.cancelBtn || "Cancel",
         emptyStateTitle: t.browserReport?.emptyStateTitle || "No Audit Report Available",
         emptyStateDesc: t.browserReport?.emptyStateDesc || "Click \"Run Audit\" to evaluate browser rendering, compute power, codecs, and privacy performance."
     };
 
-    const handleClearAll = useCallback((): void => {
-        if (window.confirm(reportT.confirmClearHistory)) {
+    const handleRequestClearAll = useCallback((): void => {
+        setConfirmAction('clearAll');
+    }, []);
+
+    const handleRequestDeleteCurrent = useCallback((): void => {
+        if (history.length <= 1) {
+            setConfirmAction('clearAll');
+            return;
+        }
+        setConfirmAction('deleteCurrent');
+    }, [history.length]);
+
+    const handleConfirmDelete = useCallback((): void => {
+        if (confirmAction === 'clearAll') {
             localStorage.setItem('browser-report-history', '[]');
             setHistory([]);
             setResults(null);
-        }
-    }, [reportT.confirmClearHistory]);
-
-    const handleDeleteCurrent = useCallback((): void => {
-        if (history.length <= 1) {
-            handleClearAll();
-            return;
-        }
-        if (window.confirm(reportT.confirmDeleteCurrent)) {
+        } else if (confirmAction === 'deleteCurrent') {
             const updated = history.filter((h: ReportResults) => h.timestamp !== results?.timestamp);
             setHistory(updated);
             localStorage.setItem('browser-report-history', JSON.stringify(updated));
             setResults(updated.length > 0 ? updated[0] : null);
         }
-    }, [history, results?.timestamp, reportT.confirmDeleteCurrent, handleClearAll]);
+        setConfirmAction(null);
+    }, [confirmAction, history, results?.timestamp]);
+
+    const handleCancelDelete = useCallback((): void => {
+        setConfirmAction(null);
+    }, []);
 
     const runDiagnostic = useCallback((): void => {
         setIsAuditing(true);
@@ -417,28 +431,16 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                             />
                         </div>
                     )}
-                    {history.length > 1 && (
+                    {history.length > 0 && (
                         <Button
                             id="btn-delete-current-report"
-                            onClick={handleDeleteCurrent}
+                            onClick={handleRequestDeleteCurrent}
                             size="sm"
                             variant="secondary"
                             className="text-rose-500 hover:text-rose-600 border-rose-200 hover:border-rose-300 dark:border-rose-900/40 dark:hover:border-rose-800 shrink-0"
                             title={reportT.deleteCurrentReport}
                         >
                             <Trash2 size={14} />
-                        </Button>
-                    )}
-                    {history.length > 0 && (
-                        <Button
-                            id="btn-clear-report-history"
-                            onClick={handleClearAll}
-                            size="sm"
-                            variant="secondary"
-                            className="text-rose-500 hover:text-rose-600 border-rose-200 hover:border-rose-300 dark:border-rose-900/40 dark:hover:border-rose-800 shrink-0"
-                            title={reportT.clearHistory}
-                        >
-                            <X size={14} />
                         </Button>
                     )}
                     {results && (
@@ -752,6 +754,43 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                 </div>
             )}
             </motion.div>
+
+            {/* Custom In-App Confirmation Modal */}
+            {confirmAction && (
+                <Modal
+                    title={confirmAction === 'clearAll' ? reportT.clearHistory : reportT.deleteCurrentReport}
+                    icon={<Trash2 size={20} className="text-rose-500" />}
+                    onClose={handleCancelDelete}
+                    size="sm"
+                >
+                    <div className="flex flex-col items-center py-2 text-center">
+                        <div className="w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-500 flex items-center justify-center mb-3">
+                            <Trash2 size={24} />
+                        </div>
+                        <p className="text-sm text-slate-700 dark:text-slate-300 font-medium mb-1">
+                            {confirmAction === 'clearAll' ? reportT.confirmClearHistory : reportT.confirmDeleteCurrent}
+                        </p>
+                        <div className="flex gap-3 mt-6 w-full">
+                            <Button
+                                id="btn-cancel-delete-modal"
+                                variant="secondary"
+                                className="flex-1"
+                                onClick={handleCancelDelete}
+                            >
+                                {reportT.cancelBtn}
+                            </Button>
+                            <Button
+                                id="btn-confirm-delete-modal"
+                                variant="danger"
+                                className="flex-1"
+                                onClick={handleConfirmDelete}
+                            >
+                                {reportT.confirmActionBtn}
+                            </Button>
+                        </div>
+                    </div>
+                </Modal>
+            )}
         </div>
     );
 };

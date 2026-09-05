@@ -565,10 +565,13 @@ export const dashboard = {
     "collapse": "折りたたむ",
     "expand": "展開する",
     "historyTitle": "履歴レコード",
-    "confirmClearHistory": "本当にブラウザ診断の履歴を消去しますか？",
+    "confirmClearHistory": "本当にブラウザ診断の履歴を消去しますか？この操作は元に戻せません。",
     "clearHistory": "すべての履歴を消去",
     "deleteCurrentReport": "現在のレポートを削除",
     "confirmDeleteCurrent": "現在選択されている診断レポートを削除してもよろしいですか？",
+    "confirmActionTitle": "削除の確認",
+    "confirmActionBtn": "削除する",
+    "cancelBtn": "キャンセル",
     "emptyStateTitle": "診断レポートはありません",
     "emptyStateDesc": "「診断を開始」をクリックして、ブラウザの描画、演算、コーデック、プライバシー性能を総合診断します。"
   }

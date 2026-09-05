@@ -564,10 +564,13 @@ export const dashboard = {
     "collapse": "Collapse",
     "expand": "Expand",
     "historyTitle": "Audit History",
-    "confirmClearHistory": "Are you sure you want to clear your browser audit history?",
+    "confirmClearHistory": "Are you sure you want to clear your browser audit history? This action cannot be undone.",
     "clearHistory": "Clear All History",
     "deleteCurrentReport": "Delete Current Report",
     "confirmDeleteCurrent": "Are you sure you want to delete the currently selected audit report?",
+    "confirmActionTitle": "Confirm Deletion",
+    "confirmActionBtn": "Confirm Delete",
+    "cancelBtn": "Cancel",
     "emptyStateTitle": "No Audit Report Available",
     "emptyStateDesc": "Click \"Run Audit\" to evaluate browser rendering, compute power, codecs, and privacy performance."
   }

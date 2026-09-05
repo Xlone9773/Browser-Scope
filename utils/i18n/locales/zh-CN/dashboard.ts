@@ -566,10 +566,13 @@ export const dashboard = {
     "collapse": "收起",
     "expand": "展开",
     "historyTitle": "历史记录",
-    "confirmClearHistory": "您确定要清空所有的质检评估历史记录吗？",
+    "confirmClearHistory": "您确定要清空所有的质检评估历史记录吗？此操作无法撤销。",
     "clearHistory": "清空全部历史",
     "deleteCurrentReport": "删除当前报告",
     "confirmDeleteCurrent": "您确定要删除当前选中的质检报告吗？",
+    "confirmActionTitle": "确认删除",
+    "confirmActionBtn": "确认删除",
+    "cancelBtn": "取消",
     "emptyStateTitle": "暂无质检报告",
     "emptyStateDesc": "点击“启动质检”全面检测当前浏览器的渲染、算力、编解码与隐私表现。"
   }

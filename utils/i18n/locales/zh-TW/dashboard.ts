@@ -565,10 +565,13 @@ export const dashboard = {
     "collapse": "收起",
     "expand": "展開",
     "historyTitle": "歷史記錄",
-    "confirmClearHistory": "您確定要清空所有的質檢評估歷史記錄嗎？",
+    "confirmClearHistory": "您確定要清空所有的質檢評估歷史記錄嗎？此操作無法撤銷。",
     "clearHistory": "清空全部歷史",
     "deleteCurrentReport": "刪除當前報告",
     "confirmDeleteCurrent": "您確定要刪除當前選中的質檢報告嗎？",
+    "confirmActionTitle": "確認刪除",
+    "confirmActionBtn": "確認刪除",
+    "cancelBtn": "取消",
     "emptyStateTitle": "暫無質檢報告",
     "emptyStateDesc": "點擊「啟動質檢」全面檢測當前瀏覽器的渲染、算力、編解碼與隱私表現。"
   }
