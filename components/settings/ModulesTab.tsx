@@ -182,7 +182,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
     const isOverlayActive = disableCache || disableLazyLoading;
 
     return (
-        <div className={`relative ${isOverlayActive ? 'h-[60vh] overflow-hidden' : ''}`}>
+        <div className="relative">
             {isOverlayActive ? (
                 <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl">
                     <div className="flex flex-col max-w-sm p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 pointer-events-auto">
@@ -227,7 +227,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
                 </div>
             ) : null}
             
-            <div className={`space-y-6 ${isOverlayActive ? 'opacity-30 pointer-events-none select-none filter blur-sm' : ''}`}>
+            <div className={`space-y-6 ${isOverlayActive ? 'opacity-30 pointer-events-none select-none filter blur-sm max-h-[360px] overflow-hidden' : ''}`}>
                 <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                 <div>
                     <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-lg">
