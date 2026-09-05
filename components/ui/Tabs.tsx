@@ -104,15 +104,53 @@ export const Tabs = <T extends string = string>({
               data-active={isActive}
               disabled={item.disabled}
               onClick={() => onChange(item.id)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+              className={`inline-flex shrink-0 min-w-max items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
                 isActive
                   ? 'bg-indigo-600 text-white shadow-xs font-semibold'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-800'
               }`}
             >
-              {item.icon && <span className="shrink-0">{item.icon}</span>}
-              <span>{item.label}</span>
-              {item.badge && <span className="shrink-0 ml-1">{item.badge}</span>}
+              {item.icon && <span className="shrink-0 inline-flex items-center justify-center pointer-events-none">{item.icon}</span>}
+              <span className="shrink-0 whitespace-nowrap">{item.label}</span>
+              {item.badge && <span className="shrink-0 inline-flex items-center ml-1">{item.badge}</span>}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
+  if (variant === 'underline') {
+    const paddingClass = size === 'sm' ? 'py-2 px-3 text-xs' : 'py-3 px-3.5 sm:px-4 text-xs sm:text-sm';
+    return (
+      <div
+        id={id}
+        ref={tabsContainerRef}
+        role="tablist"
+        onKeyDown={handleKeyDown}
+        className={`flex border-b border-slate-200 dark:border-slate-700 shrink-0 overflow-x-auto scrollbar-hide ${className}`}
+      >
+        {items.map((item) => {
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              role="tab"
+              id={`${id}-tab-${item.id}`}
+              aria-selected={isActive}
+              aria-controls={`${id}-panel-${item.id}`}
+              data-active={isActive}
+              disabled={item.disabled}
+              onClick={() => onChange(item.id)}
+              className={`flex-1 shrink-0 min-w-max ${paddingClass} font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+                isActive
+                  ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400 font-semibold'
+                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40 border-b-2 border-transparent'
+              }`}
+            >
+              {item.icon && <span className="shrink-0 inline-flex items-center justify-center pointer-events-none">{item.icon}</span>}
+              <span className="shrink-0 whitespace-nowrap">{item.label}</span>
+              {item.badge && <span className="shrink-0 inline-flex items-center ml-1">{item.badge}</span>}
             </button>
           );
         })}
@@ -121,7 +159,7 @@ export const Tabs = <T extends string = string>({
   }
 
   // Default 'modal' variant: Standard pre-made modal tab bar
-  const paddingClass = size === 'sm' ? 'py-2 px-3 text-xs' : 'py-3 px-4 text-xs sm:text-sm';
+  const paddingClass = size === 'sm' ? 'py-2 px-3 text-xs' : 'py-3 px-3.5 sm:px-4 text-xs sm:text-sm';
 
   return (
     <div
@@ -143,15 +181,15 @@ export const Tabs = <T extends string = string>({
             data-active={isActive}
             disabled={item.disabled}
             onClick={() => onChange(item.id)}
-            className={`flex-1 min-w-[90px] sm:min-w-[110px] ${paddingClass} font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+            className={`flex-1 shrink-0 min-w-max ${paddingClass} font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
               isActive
                 ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400 bg-white dark:bg-slate-800 shadow-2xs font-semibold'
                 : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/40'
             }`}
           >
-            {item.icon && <span className="shrink-0">{item.icon}</span>}
-            <span>{item.label}</span>
-            {item.badge && <span className="shrink-0">{item.badge}</span>}
+            {item.icon && <span className="shrink-0 inline-flex items-center justify-center pointer-events-none">{item.icon}</span>}
+            <span className="shrink-0 whitespace-nowrap">{item.label}</span>
+            {item.badge && <span className="shrink-0 inline-flex items-center ml-1">{item.badge}</span>}
           </button>
         );
       })}
