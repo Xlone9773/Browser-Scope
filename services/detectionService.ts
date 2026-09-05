@@ -109,7 +109,9 @@ export const getAllData = async (): Promise<BrowserData> => {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       languages: navigator.languages ? navigator.languages.join(',') : navigator.language,
       doNotTrack: navigator.doNotTrack || null,
-      gamepads: gamepadsCount
+      gamepads: gamepadsCount,
+      orientation: window.screen.orientation ? window.screen.orientation.type : undefined,
+      networkType: connection ? connection.effectiveType || connection.type : undefined
   });
 
   const isPwaInstalled = window.matchMedia('(display-mode: standalone)').matches;

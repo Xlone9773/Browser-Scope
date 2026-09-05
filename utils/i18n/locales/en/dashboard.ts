@@ -565,6 +565,10 @@ export const dashboard = {
     "expand": "Expand",
     "historyTitle": "Audit History",
     "confirmClearHistory": "Are you sure you want to clear your browser audit history?",
-    "clearHistory": "Clear History"
+    "clearHistory": "Clear All History",
+    "deleteCurrentReport": "Delete Current Report",
+    "confirmDeleteCurrent": "Are you sure you want to delete the currently selected audit report?",
+    "emptyStateTitle": "No Audit Report Available",
+    "emptyStateDesc": "Click \"Run Audit\" to evaluate browser rendering, compute power, codecs, and privacy performance."
   }
 };

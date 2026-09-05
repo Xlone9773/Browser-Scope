@@ -9,7 +9,7 @@ import {
     Compass, 
     Check, 
     X, 
-    AlertTriangle, 
+    Trash2,
     RefreshCw, 
     ShieldCheck, 
     CpuIcon, 
@@ -146,8 +146,33 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
         expand: t.browserReport?.expand || "Expand",
         historyTitle: t.browserReport?.historyTitle || "Audit History",
         confirmClearHistory: t.browserReport?.confirmClearHistory || "Are you sure you want to clear your browser audit history?",
-        clearHistory: t.browserReport?.clearHistory || "Clear History"
+        clearHistory: t.browserReport?.clearHistory || "Clear All History",
+        deleteCurrentReport: t.browserReport?.deleteCurrentReport || "Delete Current Report",
+        confirmDeleteCurrent: t.browserReport?.confirmDeleteCurrent || "Are you sure you want to delete the currently selected audit report?",
+        emptyStateTitle: t.browserReport?.emptyStateTitle || "No Audit Report Available",
+        emptyStateDesc: t.browserReport?.emptyStateDesc || "Click \"Run Audit\" to evaluate browser rendering, compute power, codecs, and privacy performance."
     };
+
+    const handleClearAll = useCallback((): void => {
+        if (window.confirm(reportT.confirmClearHistory)) {
+            localStorage.setItem('browser-report-history', '[]');
+            setHistory([]);
+            setResults(null);
+        }
+    }, [reportT.confirmClearHistory]);
+
+    const handleDeleteCurrent = useCallback((): void => {
+        if (history.length <= 1) {
+            handleClearAll();
+            return;
+        }
+        if (window.confirm(reportT.confirmDeleteCurrent)) {
+            const updated = history.filter((h: ReportResults) => h.timestamp !== results?.timestamp);
+            setHistory(updated);
+            localStorage.setItem('browser-report-history', JSON.stringify(updated));
+            setResults(updated.length > 0 ? updated[0] : null);
+        }
+    }, [history, results?.timestamp, reportT.confirmDeleteCurrent, handleClearAll]);
 
     const runDiagnostic = useCallback((): void => {
         setIsAuditing(true);
@@ -310,8 +335,8 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
 
             setResults(newResult);
             
-            setHistory(prev => {
-                const existing = prev.filter(item => item.timestamp !== newResult.timestamp);
+            setHistory((prev: ReportResults[]) => {
+                const existing = prev.filter((item: ReportResults) => item.timestamp !== newResult.timestamp);
                 const updated = [newResult, ...existing].slice(0, 10);
                 localStorage.setItem('browser-report-history', JSON.stringify(updated));
                 return updated;
@@ -323,12 +348,17 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
 
     useEffect((): void => {
         const savedHistory = localStorage.getItem('browser-report-history');
-        if (savedHistory) {
+        if (savedHistory !== null) {
             try {
                 const parsed = JSON.parse(savedHistory);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    setHistory(parsed);
-                    setResults(parsed[0]);
+                if (Array.isArray(parsed)) {
+                    if (parsed.length > 0) {
+                        setHistory(parsed);
+                        setResults(parsed[0]);
+                    } else {
+                        setHistory([]);
+                        setResults(null);
+                    }
                     return;
                 }
             } catch (e) {
@@ -389,14 +419,20 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                     )}
                     {history.length > 1 && (
                         <Button
+                            id="btn-delete-current-report"
+                            onClick={handleDeleteCurrent}
+                            size="sm"
+                            variant="secondary"
+                            className="text-rose-500 hover:text-rose-600 border-rose-200 hover:border-rose-300 dark:border-rose-900/40 dark:hover:border-rose-800 shrink-0"
+                            title={reportT.deleteCurrentReport}
+                        >
+                            <Trash2 size={14} />
+                        </Button>
+                    )}
+                    {history.length > 0 && (
+                        <Button
                             id="btn-clear-report-history"
-                            onClick={() => {
-                                if (window.confirm(reportT.confirmClearHistory)) {
-                                    localStorage.removeItem('browser-report-history');
-                                    setHistory([]);
-                                    runDiagnostic();
-                                }
-                            }}
+                            onClick={handleClearAll}
                             size="sm"
                             variant="secondary"
                             className="text-rose-500 hover:text-rose-600 border-rose-200 hover:border-rose-300 dark:border-rose-900/40 dark:hover:border-rose-800 shrink-0"
@@ -405,18 +441,20 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                             <X size={14} />
                         </Button>
                     )}
-                    <div className="w-40">
-                        <Select
-                            value={scoreDisplayMode}
-                            options={[
-                                { id: 'number', label: reportT.displayModeOptionNumber },
-                                { id: 'grade', label: reportT.displayModeOptionGrade }
-                            ]}
-                            onChange={(val: unknown) => setScoreDisplayMode(val as 'number' | 'grade')}
-                            size="sm"
-                            fullWidth={true}
-                        />
-                    </div>
+                    {results && (
+                        <div className="w-40">
+                            <Select
+                                value={scoreDisplayMode}
+                                options={[
+                                    { id: 'number', label: reportT.displayModeOptionNumber },
+                                    { id: 'grade', label: reportT.displayModeOptionGrade }
+                                ]}
+                                onChange={(val: unknown) => setScoreDisplayMode(val as 'number' | 'grade')}
+                                size="sm"
+                                fullWidth={true}
+                            />
+                        </div>
+                    )}
                     <Button
                         id="btn-trigger-browser-audit"
                         onClick={runDiagnostic}
@@ -677,7 +715,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                                     <ShieldCheck className="text-emerald-500 shrink-0 mt-0.5" size={16} />
                                     <div>
                                         <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                                            Excellent Environment State
+                                            {reportT.ratings.perfect}
                                         </span>
                                         <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                                             {reportT.adviseItems.allSet}
@@ -688,7 +726,31 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                         </div>
                     </div>
                 </div>
-            ) : null}
+            ) : (
+                <div id="audit-empty-panel" className="py-12 flex flex-col items-center justify-center text-center px-4 mt-4">
+                    <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 flex items-center justify-center text-indigo-500 mb-3.5 shadow-xs">
+                        <Gauge size={26} />
+                    </div>
+                    <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                        {reportT.emptyStateTitle}
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md leading-relaxed">
+                        {reportT.emptyStateDesc}
+                    </p>
+                    <div className="mt-4">
+                        <Button
+                            id="btn-start-audit-empty"
+                            onClick={runDiagnostic}
+                            leftIcon={<RefreshCw size={14} />}
+                            size="sm"
+                            variant="primary"
+                            className="shadow-sm"
+                        >
+                            {reportT.startAudit}
+                        </Button>
+                    </div>
+                </div>
+            )}
             </motion.div>
         </div>
     );

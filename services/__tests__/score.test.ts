@@ -422,4 +422,100 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       });
     });
   });
+
+  describe('Entropy Precision & Differential Scoring', () => {
+    const baseInput = {
+      canvasHash: 'canvas123',
+      webglHash: 'webgl456',
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      cpu: '8',
+      memory: '16',
+      gpuRenderer: 'ANGLE (Intel HD Graphics 630)',
+      battery: 'Unknown',
+      screenRes: '1920x1080',
+      pixelRatio: 1,
+      colorDepth: 24,
+      audioRate: '44100 Hz',
+      webRTC: 'Protected',
+      drmCount: 1,
+      touchPoints: 0,
+      hdr: false,
+      timezone: 'America/New_York',
+      languages: 'en-US',
+      fontsCount: 0,
+    };
+
+    it('should assign higher entropy to extensive fonts vs 0/unknown fonts', () => {
+      const withNoFonts = calculateFingerprintScore({ ...baseInput, fontsCount: 0 });
+      const withManyFonts = calculateFingerprintScore({ ...baseInput, fontsCount: 150 });
+
+      const fontFactorNo = withNoFonts.factors.find(f => f.id === 'installed_fonts');
+      const fontFactorMany = withManyFonts.factors.find(f => f.id === 'installed_fonts');
+
+      expect(fontFactorNo?.score).toBe(0);
+      expect(fontFactorMany?.score).toBe(20);
+      expect(withManyFonts.totalScore).toBeGreaterThan(withNoFonts.totalScore);
+    });
+
+    it('should differentiate public IP WebRTC leak from private IP and protected state', () => {
+      const protectedRtc = calculateFingerprintScore({ ...baseInput, webRTC: 'Protected' });
+      const privateRtc = calculateFingerprintScore({ ...baseInput, webRTC: '192.168.1.105' });
+      const publicRtc = calculateFingerprintScore({ ...baseInput, webRTC: '198.51.100.42' });
+
+      const factorProtected = protectedRtc.factors.find(f => f.id === 'webrtc_leak');
+      const factorPrivate = privateRtc.factors.find(f => f.id === 'webrtc_leak');
+      const factorPublic = publicRtc.factors.find(f => f.id === 'webrtc_leak');
+
+      expect(factorProtected?.score).toBe(0);
+      expect(factorPrivate?.score).toBe(45);
+      expect(factorPublic?.score).toBe(75);
+      expect(publicRtc.totalScore).toBeGreaterThan(privateRtc.totalScore);
+      expect(privateRtc.totalScore).toBeGreaterThan(protectedRtc.totalScore);
+    });
+
+    it('should correctly treat Timeout/Hidden as safe and protected (0 pts)', () => {
+      const timeoutRtc = calculateFingerprintScore({ ...baseInput, webRTC: 'Timeout/Hidden' });
+      const factorTimeout = timeoutRtc.factors.find(f => f.id === 'webrtc_leak');
+
+      expect(factorTimeout?.score).toBe(0);
+      expect(factorTimeout?.description).toBe('desc_webrtc_safe');
+      expect(factorTimeout?.value).toBe('val_protected');
+    });
+
+    it('should give dedicated GPU higher uniqueness than software rasterizer', () => {
+      const softGpu = calculateFingerprintScore({ ...baseInput, gpuRenderer: 'Google SwiftShader (LLVM 10.0.0)' });
+      const dedicatedGpu = calculateFingerprintScore({ ...baseInput, gpuRenderer: 'ANGLE (NVIDIA GeForce RTX 4080 Direct3D11 vs_5_0 ps_5_0)' });
+
+      const factorSoft = softGpu.factors.find(f => f.id === 'gpu_renderer');
+      const factorDedicated = dedicatedGpu.factors.find(f => f.id === 'gpu_renderer');
+
+      expect(factorSoft?.score).toBe(5);
+      expect(factorDedicated?.score).toBe(35);
+      expect(dedicatedGpu.totalScore).toBeGreaterThan(softGpu.totalScore);
+    });
+
+    it('should score high audiophile DAC rate higher than standard 44.1kHz rate', () => {
+      const standardAudio = calculateFingerprintScore({ ...baseInput, audioRate: '44100 Hz' });
+      const proAudio = calculateFingerprintScore({ ...baseInput, audioRate: '192000 Hz' });
+
+      const factorStandard = standardAudio.factors.find(f => f.id === 'audio_context');
+      const factorPro = proAudio.factors.find(f => f.id === 'audio_context');
+
+      expect(factorStandard?.score).toBe(20);
+      expect(factorPro?.score).toBe(50);
+      expect(proAudio.totalScore).toBeGreaterThan(standardAudio.totalScore);
+    });
+
+    it('should score non-standard windowed screen higher than standard 1080p', () => {
+      const standardScreen = calculateFingerprintScore({ ...baseInput, screenRes: '1920x1080' });
+      const customScreen = calculateFingerprintScore({ ...baseInput, screenRes: '1437x893' });
+
+      const factorStd = standardScreen.factors.find(f => f.id === 'resolution');
+      const factorCustom = customScreen.factors.find(f => f.id === 'resolution');
+
+      expect(factorStd?.score).toBe(18);
+      expect(factorCustom?.score).toBe(45);
+      expect(customScreen.totalScore).toBeGreaterThan(standardScreen.totalScore);
+    });
+  });
 });
