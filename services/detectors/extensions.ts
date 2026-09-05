@@ -120,7 +120,7 @@ export const detectExtensions = (): DetectedExtension[] => {
     method: DetectionMethod,
     test: () => boolean
   ) => {
-    let detected = false;
+    let detected: boolean;
     try {
       detected = test();
     } catch {
