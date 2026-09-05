@@ -208,7 +208,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
                                 {t?.overlay?.openSettings}
                             </Button>
                             {isSettingsOpen ? (
-                                <div className="absolute top-full mt-2 left-0 w-72">
+                                <div className="absolute top-full mt-2 left-0 w-72 z-30">
                                     <ModuleSettingsDropdown
                                         t={t}
                                         disableCache={disableCache}
