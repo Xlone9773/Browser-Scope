@@ -158,7 +158,7 @@ self.onmessage = function (e: MessageEvent) {
       
       // Warm-up
       const warmupKey = "abcdefghijklmnopqrstuvwxyz";
-      let warmupHash = murmurhash3_32_gc(warmupKey, 123);
+      const warmupHash = murmurhash3_32_gc(warmupKey, 123);
 
       // Real measured run
       const start = performance.now();

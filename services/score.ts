@@ -283,8 +283,8 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
         const width = parts[0] || 0;
         const height = parts[1] || 0;
 
-        let resScore = 20;
-        let resDesc = 'desc_generic';
+        let resScore: number;
+        let resDesc: string;
 
         if (COMMON_RESOLUTIONS.has(rawRes) || (width === 1920 && height === 1080)) {
             resScore = 18;
@@ -350,8 +350,8 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     const audioRateStr = input.audioRate ? input.audioRate.trim() : '';
     const numericRate = parseInt(audioRateStr, 10);
     if (audioRateStr && audioRateStr !== 'Unknown' && !isNaN(numericRate) && numericRate > 0) {
-        let audioScore = 18;
-        let audioDesc = 'desc_generic';
+        let audioScore: number;
+        let audioDesc: string;
         if (numericRate >= 96000) {
             audioScore = 50;
             audioDesc = 'desc_audio_unique';
@@ -360,6 +360,7 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
             audioDesc = 'desc_audio_unique';
         } else {
             audioScore = 20; // 44.1k / 48k are mainstream standards
+            audioDesc = 'desc_generic';
         }
         catMedia += audioScore;
         addFactor('audio_context', input.audioRate, audioScore, 50, 'media', audioDesc);
