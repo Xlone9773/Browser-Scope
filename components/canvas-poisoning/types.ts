@@ -184,6 +184,13 @@ export interface PoisoningTranslations {
   audio_persistent_match?: string;
   audio_persistent_saved?: string;
   csp_block_detected?: string;
+
+  // Baseline Anti-Tamper Keys
+  baseline_tamper_detected?: string;
+  baseline_cross_storage_mismatch?: string;
+  baseline_anchor_mismatch?: string;
+  baseline_secure_saved?: string;
+  baseline_secure_verified?: string;
 }
 
 export interface ExtendedWindow {

@@ -2,6 +2,7 @@
 
 import { PoisoningTranslations, ExtendedWindow } from './types';
 import { isHooked, hashString, checkAudioHooks, renderAudio } from './utils';
+import { verifyOrStoreBaseline } from './secureBaseline';
 
 export interface DiagnosticResult {
   status: 'clean' | 'poisoned';
@@ -445,44 +446,42 @@ export const runMediaDiagnostic = async (
       log(t.media_stable_reading || '✅ High-frequency consecutive deviceId and order readings are perfectly stable.');
     }
 
-    // 3. Persistent ID comparison via localStorage (设备 ID 固化比对)
+    // 3. Persistent ID comparison via Secure Baseline Vault (设备 ID 固化比对与防篡改)
     try {
       const serializedFirstRun = JSON.stringify(firstRun.map(d => ({ kind: d.kind, deviceId: d.deviceId })));
-      const storedFirstRun = localStorage.getItem('browserscope_first_media_devices');
-      if (storedFirstRun) {
-        const parsedStored: { kind: string; deviceId: string }[] = JSON.parse(storedFirstRun);
-        let match = true;
-        if (parsedStored.length !== firstRun.length) {
-          match = false;
-        } else {
-          for (let j = 0; j < firstRun.length; j++) {
-            if (parsedStored[j].deviceId !== firstRun[j].deviceId || parsedStored[j].kind !== firstRun[j].kind) {
-              match = false;
-              break;
-            }
-          }
+      const hasActualIdCurr = firstRun.some(d => d.deviceId && d.deviceId !== 'default');
+      
+      const baselineRes = await verifyOrStoreBaseline('media_devices', serializedFirstRun);
+      if (baselineRes.status === 'TAMPERED') {
+        isPoisoned = true;
+        if (baselineRes.reason === 'sig_invalid') {
+          log(t.baseline_tamper_detected || '❌ Fingerprint Baseline Tampering Detected: Stored Media Device baseline signature is invalid or manually altered. Fabricated baseline bypass blocked!');
+        } else if (baselineRes.reason === 'desync_storage') {
+          log(t.baseline_cross_storage_mismatch || '❌ Baseline Storage Desynchronization Detected: Local storage area and IndexedDB secure vault records mismatch, indicating single-sided clearing or overwrite tampering!');
+        } else if (baselineRes.reason === 'anchor_mismatch') {
+          log(t.baseline_anchor_mismatch || '❌ Baseline Environment Anchor Mismatch: The Media Device baseline appears to have been transplanted from another device/browser profile!');
         }
-
-        if (!match) {
-          const hasActualIdPrev = parsedStored.some(d => d.deviceId && d.deviceId !== 'default');
-          const hasActualIdCurr = firstRun.some(d => d.deviceId && d.deviceId !== 'default');
-          
-          if (hasActualIdPrev && hasActualIdCurr) {
+      } else if (baselineRes.status === 'FIRST_RUN') {
+        log(t.baseline_secure_saved || '🔒 Media Device fingerprint baseline digitally signed, anchored, and securely synchronized to IndexedDB and storage vault.');
+      } else if (baselineRes.status === 'MISMATCH') {
+        if (baselineRes.storedBaseline) {
+          try {
+            const parsedStored: { kind: string; deviceId: string }[] = JSON.parse(baselineRes.storedBaseline);
+            const hasActualIdPrev = parsedStored.some(d => d.deviceId && d.deviceId !== 'default');
+            if (hasActualIdPrev && hasActualIdCurr) {
+              isPoisoned = true;
+              log(t.media_persistent_mismatch || '❌ Persistent Device ID mismatch detected: Current deviceIds/order differ from the originally stored fingerprint in baseline vault, indicating ID reset or randomization across refreshes (typically Brave/Cromite farbling).');
+            } else {
+              log(t.media_persistent_info_changed || 'ℹ️ Media device IDs differ from previous run, but this might be due to a change in permission state or no active device ID present.');
+            }
+          } catch {
             isPoisoned = true;
-            log(t.media_persistent_mismatch || '❌ Persistent Device ID mismatch detected: Current deviceIds/order differ from the originally stored fingerprint in localStorage, indicating ID reset or randomization across refreshes (typically Brave/Cromite farbling).');
-          } else {
-            log(t.media_persistent_info_changed || 'ℹ️ Media device IDs differ from previous run, but this might be due to a change in permission state or no active device ID present.');
-            if (hasActualIdCurr) {
-              localStorage.setItem('browserscope_first_media_devices', serializedFirstRun);
-              log(t.media_persistent_saved || '💾 Saved active media devices fingerprint to localStorage for future session comparisons.');
-            }
+            log(t.media_persistent_mismatch || '❌ Persistent Device ID mismatch detected.');
           }
-        } else {
-          log(t.media_persistent_match || '✅ Current Media Device fingerprint matches originally stored localStorage baseline perfectly.');
         }
-      } else {
-        localStorage.setItem('browserscope_first_media_devices', serializedFirstRun);
-        log(t.media_persistent_no_baseline || '💾 No prior baseline found in localStorage. Saved current media devices fingerprint for future session comparisons.');
+      } else if (baselineRes.status === 'MATCH') {
+        log(t.media_persistent_match || '✅ Current Media Device fingerprint matches originally stored baseline perfectly.');
+        log(t.baseline_secure_verified || '🛡️ Fingerprint baseline signature and dual-storage vault verified.');
       }
     } catch {
       // Ignore storage errors
@@ -613,21 +612,31 @@ export const runRenderAudioDiagnostic = async (
       if (!canvasPoisoned && lastHash) {
         log(t.canvas_stable || '✅ 2D Canvas appears stable (no random noise).');
         
-        // Cross-Session / Fixed-seed detection
+        // Cross-Session / Fixed-seed detection via Secure Baseline Vault
         try {
-          const stored = localStorage.getItem('browserscope_canvas_baseline_hash');
-          if (!stored) {
-            localStorage.setItem('browserscope_canvas_baseline_hash', lastHash);
-            log(t.canvas_persistent_saved || '💾 Saved Canvas fingerprint baseline to localStorage for cross-session comparison.');
-          } else if (stored !== lastHash) {
+          const baselineRes = await verifyOrStoreBaseline('canvas_2d', lastHash);
+          if (baselineRes.status === 'TAMPERED') {
+            canvasPoisoned = true;
+            poisoned = true;
+            if (baselineRes.reason === 'sig_invalid') {
+              log(t.baseline_tamper_detected || '❌ Fingerprint Baseline Tampering Detected: Stored Canvas baseline signature is invalid or manually altered. Fabricated baseline bypass blocked!');
+            } else if (baselineRes.reason === 'desync_storage') {
+              log(t.baseline_cross_storage_mismatch || '❌ Baseline Storage Desynchronization Detected: Local storage area and IndexedDB secure vault records mismatch, indicating single-sided clearing or overwrite tampering!');
+            } else if (baselineRes.reason === 'anchor_mismatch') {
+              log(t.baseline_anchor_mismatch || '❌ Baseline Environment Anchor Mismatch: The Canvas baseline appears to have been transplanted from another device/browser profile!');
+            }
+          } else if (baselineRes.status === 'FIRST_RUN') {
+            log(t.canvas_persistent_saved || '💾 Saved Canvas fingerprint baseline to secure vault for cross-session comparison.');
+          } else if (baselineRes.status === 'MISMATCH') {
             canvasPoisoned = true;
             poisoned = true;
             log(t.canvas_persistent_mismatch || '❌ Canvas Persistent Seed Poisoning detected: Canvas rendering is stable in this session, but the fingerprint differs from the stored baseline, indicating per-session or per-origin fixed-seed noise injection (typical of Brave or Firefox RFP).');
           } else {
             log(t.canvas_persistent_match || '✅ Canvas fingerprint matches the stored baseline across sessions.');
+            log(t.baseline_secure_verified || '🛡️ Fingerprint baseline signature and dual-storage vault verified.');
           }
         } catch {
-          // Ignore localStorage blocked/disabled
+          // Ignore storage errors
         }
       }
     }
@@ -662,21 +671,31 @@ export const runRenderAudioDiagnostic = async (
       if (!webglPoisoned && lastHash) {
         log(t.webgl_stable || '✅ WebGL appears stable (no random noise).');
         
-        // Cross-Session / Fixed-seed detection
+        // Cross-Session / Fixed-seed detection via Secure Baseline Vault
         try {
-          const stored = localStorage.getItem('browserscope_webgl_baseline_hash');
-          if (!stored) {
-            localStorage.setItem('browserscope_webgl_baseline_hash', lastHash);
-            log(t.webgl_persistent_saved || '💾 Saved WebGL fingerprint baseline to localStorage for cross-session comparison.');
-          } else if (stored !== lastHash) {
+          const baselineRes = await verifyOrStoreBaseline('webgl', lastHash);
+          if (baselineRes.status === 'TAMPERED') {
+            webglPoisoned = true;
+            poisoned = true;
+            if (baselineRes.reason === 'sig_invalid') {
+              log(t.baseline_tamper_detected || '❌ Fingerprint Baseline Tampering Detected: Stored WebGL baseline signature is invalid or manually altered. Fabricated baseline bypass blocked!');
+            } else if (baselineRes.reason === 'desync_storage') {
+              log(t.baseline_cross_storage_mismatch || '❌ Baseline Storage Desynchronization Detected: Local storage area and IndexedDB secure vault records mismatch, indicating single-sided clearing or overwrite tampering!');
+            } else if (baselineRes.reason === 'anchor_mismatch') {
+              log(t.baseline_anchor_mismatch || '❌ Baseline Environment Anchor Mismatch: The WebGL baseline appears to have been transplanted from another device/browser profile!');
+            }
+          } else if (baselineRes.status === 'FIRST_RUN') {
+            log(t.webgl_persistent_saved || '💾 Saved WebGL fingerprint baseline to secure vault for cross-session comparison.');
+          } else if (baselineRes.status === 'MISMATCH') {
             webglPoisoned = true;
             poisoned = true;
             log(t.webgl_persistent_mismatch || '❌ WebGL Persistent Seed Poisoning detected: WebGL rendering is stable in this session, but the fingerprint differs from the stored baseline, indicating per-session or per-origin fixed-seed noise injection (typical of Brave or Firefox RFP).');
           } else {
             log(t.webgl_persistent_match || '✅ WebGL fingerprint matches the stored baseline across sessions.');
+            log(t.baseline_secure_verified || '🛡️ Fingerprint baseline signature and dual-storage vault verified.');
           }
         } catch {
-          // Ignore localStorage blocked/disabled
+          // Ignore storage errors
         }
       }
     }
@@ -745,21 +764,31 @@ export const runRenderAudioDiagnostic = async (
   } else if (lastAudioHash) {
     log(t.audio_stable || '✅ Audio APIs stable, no waveform or latency tampering detected.');
     
-    // Cross-Session / Fixed-seed detection
+    // Cross-Session / Fixed-seed detection via Secure Baseline Vault
     try {
-      const stored = localStorage.getItem('browserscope_audio_baseline_hash');
-      if (!stored) {
-        localStorage.setItem('browserscope_audio_baseline_hash', lastAudioHash);
-        log(t.audio_persistent_saved || '💾 Saved Audio fingerprint baseline to localStorage for cross-session comparison.');
-      } else if (stored !== lastAudioHash) {
+      const baselineRes = await verifyOrStoreBaseline('audio', lastAudioHash);
+      if (baselineRes.status === 'TAMPERED') {
+        audioStable = false;
+        poisoned = true;
+        if (baselineRes.reason === 'sig_invalid') {
+          log(t.baseline_tamper_detected || '❌ Fingerprint Baseline Tampering Detected: Stored Audio baseline signature is invalid or manually altered. Fabricated baseline bypass blocked!');
+        } else if (baselineRes.reason === 'desync_storage') {
+          log(t.baseline_cross_storage_mismatch || '❌ Baseline Storage Desynchronization Detected: Local storage area and IndexedDB secure vault records mismatch, indicating single-sided clearing or overwrite tampering!');
+        } else if (baselineRes.reason === 'anchor_mismatch') {
+          log(t.baseline_anchor_mismatch || '❌ Baseline Environment Anchor Mismatch: The Audio baseline appears to have been transplanted from another device/browser profile!');
+        }
+      } else if (baselineRes.status === 'FIRST_RUN') {
+        log(t.audio_persistent_saved || '💾 Saved Audio fingerprint baseline to secure vault for cross-session comparison.');
+      } else if (baselineRes.status === 'MISMATCH') {
         audioStable = false;
         poisoned = true;
         log(t.audio_persistent_mismatch || '❌ Audio Persistent Seed Poisoning detected: Audio rendering is stable in this session, but the fingerprint differs from the stored baseline, indicating per-session or per-origin fixed-seed noise injection (typical of Brave or Firefox RFP).');
       } else {
         log(t.audio_persistent_match || '✅ Audio fingerprint matches the stored baseline across sessions.');
+        log(t.baseline_secure_verified || '🛡️ Fingerprint baseline signature and dual-storage vault verified.');
       }
     } catch {
-      // Ignore localStorage blocked/disabled
+      // Ignore storage errors
     }
   }
 
