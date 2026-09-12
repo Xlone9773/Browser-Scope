@@ -151,7 +151,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: build-dist
+          name: build-dist-${{ github.sha }}
           path: |
             dist
             build
