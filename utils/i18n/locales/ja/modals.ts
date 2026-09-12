@@ -299,7 +299,16 @@ Copyright (c) 2026 BrowserScope Contributors
     table_latency: "レイテンシ (平均/ピーク)",
     op_read: "読み込み",
     op_write: "書き込み",
-    worker_status: "専有 Web Worker 動作中 (マルチスレッド高速同期 IO 有効)"
+    worker_status: "専有 Web Worker 動作中 (マルチスレッド高速同期 IO 有効)",
+    cleanup_btn: "残余データをクリア",
+    cleanup_all: "すべての残余データをクリア",
+    cleanup_success: "テスト残余データが正常に削除されました。",
+    cleanup_error: "一部の残余ストレージデータの削除に失敗しました。",
+    cleaning: "クリーンアップ中...",
+    no_residues_found: "テストの残余データは検出されませんでした。",
+    residues_detected: "テスト残余データが検出されました",
+    storage_used: "使用済みストレージ",
+    cleanup_tooltip: "ベンチマークによって作成された一時データベース、キャッシュ、OPFSファイルを削除します"
   },
   heatmap: {
     title: "グローバルネットワーク品質監視",

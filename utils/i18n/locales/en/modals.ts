@@ -311,7 +311,16 @@ SOFTWARE.`
     table_latency: "Latency (Avg/Peak)",
     op_read: "Read",
     op_write: "Write",
-    worker_status: "Dedicated Web Worker Active (Fast Sync IO Enabled)"
+    worker_status: "Dedicated Web Worker Active (Fast Sync IO Enabled)",
+    cleanup_btn: "Clean Residues",
+    cleanup_all: "Clean All Residues",
+    cleanup_success: "Test residues cleared successfully.",
+    cleanup_error: "Failed to clean some storage residues.",
+    cleaning: "Cleaning...",
+    no_residues_found: "No test residues detected.",
+    residues_detected: "Test residues detected",
+    storage_used: "Storage Used",
+    cleanup_tooltip: "Manually clear temporary databases, caches, and OPFS files created by benchmarks"
   },
   heatmap: {
     title: "Global Network Quality",

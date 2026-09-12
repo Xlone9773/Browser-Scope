@@ -299,7 +299,16 @@ Copyright (c) 2026 BrowserScope Contributors
     table_latency: "Задержка (Сред./Пик)",
     op_read: "Чтение",
     op_write: "Запись",
-    worker_status: "Выделенный Web Worker активен (Включен быстрый синхронный IO)"
+    worker_status: "Выделенный Web Worker активен (Включен быстрый синхронный IO)",
+    cleanup_btn: "Очистить остатки",
+    cleanup_all: "Очистить все остатки",
+    cleanup_success: "Остатки тестов успешно очищены.",
+    cleanup_error: "Не удалось очистить некоторые остатки.",
+    cleaning: "Очистка...",
+    no_residues_found: "Остатков тестов не обнаружено.",
+    residues_detected: "Обнаружены остатки тестов",
+    storage_used: "Использовано памяти",
+    cleanup_tooltip: "Удалить временные базы данных, кэш и файлы OPFS, созданные тестами"
   },
   heatmap: {
     title: "Мониторинг качества сети",

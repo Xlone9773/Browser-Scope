@@ -299,7 +299,16 @@ export const modals = {
     table_latency: "延迟 (平均/峰值)",
     op_read: "读取",
     op_write: "写入",
-    worker_status: "专有 Web Worker 生效中 (启用多线程同步高速 IO)"
+    worker_status: "专有 Web Worker 生效中 (启用多线程同步高速 IO)",
+    cleanup_btn: "清除残留",
+    cleanup_all: "清除所有残留",
+    cleanup_success: "测试残留已成功清除。",
+    cleanup_error: "部分存储残留清理失败。",
+    cleaning: "正在清理...",
+    no_residues_found: "未检测到残留测试数据。",
+    residues_detected: "检测到测试残留数据",
+    storage_used: "已用存储",
+    cleanup_tooltip: "手动清除基准测试创建的临时数据库、缓存项及 OPFS 临时文件"
   },
   heatmap: {
     title: "全球网络质量监测",
