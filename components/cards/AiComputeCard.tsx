@@ -37,14 +37,15 @@ export const AiComputeCard: React.FC<AiComputeCardProps> = React.memo(({ data, t
   };
 
   const handleRetest = () => {
-      setIsRetesting(true);
-      // Small delay to allow UI to update state before blocking calculation
-      // and ensuring the animation is visible for a moment
-      setTimeout(() => {
-          onRetest();
-          // Keep spinning a bit longer for visual feedback
-          setTimeout(() => setIsRetesting(false), 600);
-      }, 50);
+    setIsRetesting(true);
+    // Use requestAnimationFrame to yield one paint tick for spinner state, then execute retest without artificial delay
+    requestAnimationFrame(() => {
+      try {
+        onRetest();
+      } finally {
+        setIsRetesting(false);
+      }
+    });
   };
 
   return (
