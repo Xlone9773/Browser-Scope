@@ -87,7 +87,7 @@ export default defineConfig(({ mode }) => {
         reportCompressedSize: false,
         chunkSizeWarningLimit: 3000,
         assetsInlineLimit: 4096,
-        sourcemap: false,
+        sourcemap: true,
         cssCodeSplit: true,
         rollupOptions: {
           output: {
