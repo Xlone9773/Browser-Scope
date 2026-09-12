@@ -122,6 +122,10 @@ export const settings = {
             title: "禁用動畫",
             desc: "關閉頁面切換和卡片下載等所有動畫效果。"
         },
+        disableTabAnimations: {
+            title: "禁用首頁 Tab 切換過渡動畫",
+            desc: "關閉首頁分類標籤切換時的過渡動畫，直接瞬間切換。"
+        },
         fastAnimations: {
             title: "加快過渡動畫",
             desc: "加快頁面元素的懸停、展開等互動過渡動畫的速度。"

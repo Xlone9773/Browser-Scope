@@ -49,6 +49,8 @@ interface AppearanceTabProps {
     toggleDisableBlur: (value: boolean) => void;
     disableAnimations: boolean;
     toggleDisableAnimations: (value: boolean) => void;
+    disableTabAnimations?: boolean;
+    toggleDisableTabAnimations?: (value: boolean) => void;
     fastAnimations: boolean;
     toggleFastAnimations: (value: boolean) => void;
     collapseHeader: boolean;
@@ -91,6 +93,8 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     toggleDisableBlur,
     disableAnimations,
     toggleDisableAnimations,
+    disableTabAnimations = false,
+    toggleDisableTabAnimations,
     fastAnimations,
     toggleFastAnimations,
     collapseHeader,
@@ -501,6 +505,35 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch checked={disableAnimations} onChange={toggleDisableAnimations} />
+                </div>
+            </div>
+            {/* Disable Homepage Tab Switch Animation */}
+            <div 
+                className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${disableAnimations ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
+                onClick={() => {
+                    if (!disableAnimations && toggleDisableTabAnimations) {
+                        toggleDisableTabAnimations(!disableTabAnimations);
+                    }
+                }}
+            >
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.disableTabAnimations?.title || "Disable Homepage Tab Switch Animation"}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {t.disableTabAnimations?.desc || "Instantly switch tabs on the homepage without transition animations."}
+                    </p>
+                </div>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Switch 
+                        checked={disableAnimations || disableTabAnimations} 
+                        onChange={(val) => {
+                            if (!disableAnimations && toggleDisableTabAnimations) {
+                                toggleDisableTabAnimations(val);
+                            }
+                        }} 
+                        disabled={disableAnimations} 
+                    />
                 </div>
             </div>
             {/* Fast Animations */}

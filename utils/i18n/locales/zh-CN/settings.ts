@@ -122,6 +122,10 @@ export const settings = {
             title: "禁用动画",
             desc: "关闭页面切换和卡片加载等所有动画效果。"
         },
+        disableTabAnimations: {
+            title: "禁用首页 Tab 切换过渡动画",
+            desc: "关闭首页分类选项卡切换时的过渡动画，直接瞬间切换。"
+        },
         fastAnimations: {
             title: "加快过渡动画",
             desc: "加快页面元素的悬停、展开等交互过渡动画的速度。"

@@ -28,6 +28,8 @@ interface ModalContainerProps {
   toggleDisableBlur: (disable: boolean) => void;
   disableAnimations: boolean;
   toggleDisableAnimations: (disable: boolean) => void;
+  disableTabAnimations?: boolean;
+  toggleDisableTabAnimations?: (disable: boolean) => void;
   fastAnimations: boolean;
   toggleFastAnimations: (fast: boolean) => void;
   collapseHeader: boolean;
@@ -106,6 +108,8 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   toggleDisableBlur,
   disableAnimations,
   toggleDisableAnimations,
+  disableTabAnimations,
+  toggleDisableTabAnimations,
   fastAnimations,
   toggleFastAnimations,
   collapseHeader,
@@ -269,6 +273,8 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
             toggleDisableBlur={toggleDisableBlur}
             disableAnimations={disableAnimations}
             toggleDisableAnimations={toggleDisableAnimations}
+            disableTabAnimations={disableTabAnimations}
+            toggleDisableTabAnimations={toggleDisableTabAnimations}
             fastAnimations={fastAnimations}
             toggleFastAnimations={toggleFastAnimations}
             collapseHeader={collapseHeader}

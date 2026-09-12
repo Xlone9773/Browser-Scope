@@ -44,6 +44,9 @@ export function useAppSettings() {
   const [disableAnimations, setDisableAnimations] = useState<boolean>(
     () => localStorage.getItem("disableAnimations") === "true",
   );
+  const [disableTabAnimations, setDisableTabAnimations] = useState<boolean>(
+    () => localStorage.getItem("disableTabAnimations") === "true",
+  );
   const [fastAnimations, setFastAnimations] = useState<boolean>(
     () => localStorage.getItem("fastAnimations") === "true",
   );
@@ -352,6 +355,11 @@ export function useAppSettings() {
     localStorage.setItem("disableAnimations", String(value));
   }, []);
 
+  const toggleDisableTabAnimations = useCallback((value: boolean) => {
+    setDisableTabAnimations(value);
+    localStorage.setItem("disableTabAnimations", String(value));
+  }, []);
+
   const toggleFastAnimations = useCallback((value: boolean) => {
     setFastAnimations(value);
     localStorage.setItem("fastAnimations", String(value));
@@ -508,6 +516,8 @@ export function useAppSettings() {
     toggleDisableBlur,
     disableAnimations,
     toggleDisableAnimations,
+    disableTabAnimations,
+    toggleDisableTabAnimations,
     fastAnimations,
     toggleFastAnimations,
     collapseHeader,

@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import { motion } from "motion/react";
+import { motion, type Transition } from "motion/react";
 import { ShieldAlert, Monitor, Smartphone, Cpu, Search, Loader2 } from "lucide-react";
 
 import { SectionGroup } from "../ui/SectionGroup";
@@ -111,6 +111,8 @@ interface DashboardGridProps {
   showQuickSummary: boolean;
   toggleShowQuickSummary: (show: boolean) => void;
   initialAnimationStyle: string;
+  disableAnimations?: boolean;
+  disableTabAnimations?: boolean;
   onTouchStart: (e: React.TouchEvent<HTMLElement>) => void;
   onTouchMove: (e: React.TouchEvent<HTMLElement>) => void;
   onTouchEnd: (e: React.TouchEvent<HTMLElement>) => void;
@@ -135,15 +137,17 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
   showQuickSummary,
   toggleShowQuickSummary,
   initialAnimationStyle,
+  disableAnimations = false,
+  disableTabAnimations = false,
   onTouchStart,
   onTouchMove,
   onTouchEnd,
   onTouchCancel,
 }) => {
-  const getSlideOffset = (visible: boolean): number => {
-    if (visible) return 0;
-    return slideDirection > 0 ? -20 : slideDirection < 0 ? 20 : 0;
-  };
+  const isAnimationDisabled = disableAnimations || disableTabAnimations;
+  const tabTransition: Transition = isAnimationDisabled
+    ? { duration: 0 }
+    : { duration: 0.15, ease: "easeOut" };
 
   return (
     <Suspense
@@ -162,7 +166,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
       >
         <div
           className={`space-y-6 ${
-            initialAnimationStyle === "slide-up"
+            isAnimationDisabled
+              ? ""
+              : initialAnimationStyle === "slide-up"
               ? "anim-slide-up"
               : initialAnimationStyle === "fade"
               ? "anim-fade"
@@ -179,9 +185,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
             animate={
               activeTab === "all" && matchedCardIds === null && showQuickSummary
                 ? { opacity: 1, y: 0, scale: 1, display: "block" }
-                : { opacity: 0, y: 15, scale: 0.98, transitionEnd: { display: "none" } }
+                : { opacity: 0, y: isAnimationDisabled ? 0 : 8, scale: isAnimationDisabled ? 1 : 0.99, transitionEnd: { display: "none" } }
             }
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={tabTransition}
           >
             <QuickSummaryWidget
               data={browserData}
@@ -196,9 +202,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
             animate={
               matchedCardIds !== null && matchedCardIds.length === 0
                 ? { opacity: 1, y: 0, scale: 1, display: "block" }
-                : { opacity: 0, y: 15, scale: 0.98, transitionEnd: { display: "none" } }
+                : { opacity: 0, y: isAnimationDisabled ? 0 : 8, scale: isAnimationDisabled ? 1 : 0.99, transitionEnd: { display: "none" } }
             }
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={tabTransition}
           >
             <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-center shadow-sm">
               <div className="w-16 h-16 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-400 dark:text-slate-600 mb-4">
@@ -223,9 +229,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
               (activeTab === "all" || activeTab === "environment") &&
               (matchedCardIds === null || matchedCardIds.includes("environment"))
                 ? { opacity: 1, y: 0, scale: 1, display: "block" }
-                : { opacity: 0, y: 15, scale: 0.98, transitionEnd: { display: "none" } }
+                : { opacity: 0, y: isAnimationDisabled ? 0 : 8, scale: isAnimationDisabled ? 1 : 0.99, transitionEnd: { display: "none" } }
             }
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={tabTransition}
           >
             <SectionGroup
               id="environment"
@@ -246,9 +252,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
               (activeTab === "all" || activeTab === "browser") &&
               (matchedCardIds === null || matchedCardIds.includes("browser"))
                 ? { opacity: 1, y: 0, scale: 1, display: "block" }
-                : { opacity: 0, y: 15, scale: 0.98, transitionEnd: { display: "none" } }
+                : { opacity: 0, y: isAnimationDisabled ? 0 : 8, scale: isAnimationDisabled ? 1 : 0.99, transitionEnd: { display: "none" } }
             }
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={tabTransition}
           >
             <SectionGroup
               id="browser"
@@ -274,9 +280,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
                 matchedCardIds.includes("hardware") ||
                 matchedCardIds.includes("display"))
                 ? { opacity: 1, y: 0, scale: 1, display: "block" }
-                : { opacity: 0, y: 15, scale: 0.98, transitionEnd: { display: "none" } }
+                : { opacity: 0, y: isAnimationDisabled ? 0 : 8, scale: isAnimationDisabled ? 1 : 0.99, transitionEnd: { display: "none" } }
             }
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={tabTransition}
           >
             <SectionGroup
               id="system"
@@ -333,9 +339,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
                 matchedCardIds.includes("security") ||
                 matchedCardIds.includes("fingerprint"))
                 ? { opacity: 1, y: 0, scale: 1, display: "block" }
-                : { opacity: 0, y: 15, scale: 0.98, transitionEnd: { display: "none" } }
+                : { opacity: 0, y: isAnimationDisabled ? 0 : 8, scale: isAnimationDisabled ? 1 : 0.99, transitionEnd: { display: "none" } }
             }
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={tabTransition}
           >
             <SectionGroup
               id="network"
@@ -404,9 +410,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
                 matchedCardIds.includes("media_capabilities") ||
                 matchedCardIds.includes("user_agent"))
                 ? { opacity: 1, y: 0, scale: 1, display: "block" }
-                : { opacity: 0, y: 15, scale: 0.98, transitionEnd: { display: "none" } }
+                : { opacity: 0, y: isAnimationDisabled ? 0 : 8, scale: isAnimationDisabled ? 1 : 0.99, transitionEnd: { display: "none" } }
             }
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={tabTransition}
           >
             <SectionGroup
               id="advanced"
@@ -494,11 +500,11 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
               (activeTab === "all" || activeTab === "advanced") &&
               (matchedCardIds === null || matchedCardIds.includes("pwa"))
                 ? { opacity: 1, y: 0, scale: 1, display: "block" }
-                : { opacity: 0, y: 15, scale: 0.98, transitionEnd: { display: "none" } }
+                : { opacity: 0, y: isAnimationDisabled ? 0 : 8, scale: isAnimationDisabled ? 1 : 0.99, transitionEnd: { display: "none" } }
             }
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={tabTransition}
           >
-            <div className="anim-slide-up delay-100">
+            <div className={isAnimationDisabled ? "" : "anim-slide-up delay-100"}>
               <PwaSection
                 isPwaInstalled={browserData.system.isPwaInstalled}
                 features={browserData.pwaFeatures}
@@ -515,11 +521,11 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
               (activeTab === "all" || activeTab === "advanced") &&
               (matchedCardIds === null || matchedCardIds.includes("features"))
                 ? { opacity: 1, y: 0, scale: 1, display: "block" }
-                : { opacity: 0, y: 15, scale: 0.98, transitionEnd: { display: "none" } }
+                : { opacity: 0, y: isAnimationDisabled ? 0 : 8, scale: isAnimationDisabled ? 1 : 0.99, transitionEnd: { display: "none" } }
             }
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={tabTransition}
           >
-            <div className="anim-slide-up delay-200">
+            <div className={isAnimationDisabled ? "" : "anim-slide-up delay-200"}>
               <FeaturesSection features={browserData.features} t={t} />
             </div>
           </motion.div>

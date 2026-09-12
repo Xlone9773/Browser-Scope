@@ -35,6 +35,8 @@ interface SettingsModalProps {
   toggleDisableBlur: (value: boolean) => void;
   disableAnimations: boolean;
   toggleDisableAnimations: (value: boolean) => void;
+  disableTabAnimations?: boolean;
+  toggleDisableTabAnimations?: (value: boolean) => void;
   fastAnimations: boolean;
   toggleFastAnimations: (value: boolean) => void;
   collapseHeader: boolean;
@@ -109,6 +111,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     toggleDisableBlur,
     disableAnimations,
     toggleDisableAnimations,
+    disableTabAnimations = false,
+    toggleDisableTabAnimations,
     fastAnimations,
     toggleFastAnimations,
     collapseHeader,
@@ -389,6 +393,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               toggleDisableBlur={toggleDisableBlur}
                               disableAnimations={disableAnimations}
                               toggleDisableAnimations={toggleDisableAnimations}
+                              disableTabAnimations={disableTabAnimations}
+                              toggleDisableTabAnimations={toggleDisableTabAnimations}
                               fastAnimations={fastAnimations}
                               toggleFastAnimations={toggleFastAnimations}
                               collapseHeader={collapseHeader}

@@ -122,6 +122,10 @@ export const settings = {
             title: "Disable Animations",
             desc: "Turn off all page transitions and card loading animations."
         },
+        disableTabAnimations: {
+            title: "Disable Homepage Tab Switch Animation",
+            desc: "Instantly switch tabs on the homepage without transition animations."
+        },
         fastAnimations: {
             title: "Fast Transitions",
             desc: "Speed up all transition animations (hover, expand, etc)."

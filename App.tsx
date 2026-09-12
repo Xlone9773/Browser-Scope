@@ -48,6 +48,8 @@ const App: React.FC = () => {
     toggleDisableBlur,
     disableAnimations,
     toggleDisableAnimations,
+    disableTabAnimations,
+    toggleDisableTabAnimations,
     fastAnimations,
     toggleFastAnimations,
     collapseHeader,
@@ -838,6 +840,8 @@ const App: React.FC = () => {
         toggleDisableBlur={toggleDisableBlur}
         disableAnimations={disableAnimations}
         toggleDisableAnimations={toggleDisableAnimations}
+        disableTabAnimations={disableTabAnimations}
+        toggleDisableTabAnimations={toggleDisableTabAnimations}
         fastAnimations={fastAnimations}
         toggleFastAnimations={toggleFastAnimations}
         collapseHeader={collapseHeader}
@@ -1010,6 +1014,8 @@ const App: React.FC = () => {
               showQuickSummary={showQuickSummary}
               toggleShowQuickSummary={toggleShowQuickSummary}
               initialAnimationStyle={initialAnimationStyle}
+              disableAnimations={disableAnimations}
+              disableTabAnimations={disableTabAnimations}
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}
