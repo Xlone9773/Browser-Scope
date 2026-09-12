@@ -401,7 +401,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
 
     return (
         <div id="browser-quality-report" className="mt-6 border border-slate-100 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900/50 p-6 shadow-sm overflow-hidden">
-            <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-300 ${isExpanded ? 'pb-6 border-b border-slate-100 dark:border-slate-800' : ''}`}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                         <Gauge className="text-indigo-500 animate-pulse" size={22} />
@@ -488,6 +488,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="overflow-hidden"
             >
+                <div className="pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
                 {isAuditing ? (
                     <div id="audit-loading-indicator" className="py-16 flex flex-col items-center justify-center">
                     <div className="relative w-16 h-16 mb-4">
@@ -499,7 +500,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                     </p>
                 </div>
             ) : results ? (
-                <div id="audit-results-panel" className="mt-6">
+                <div id="audit-results-panel">
                     {/* Summary Card with circular score */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-slate-50/50 dark:bg-slate-800/20 p-5 rounded-2xl border border-slate-100/50 dark:border-slate-800/50 mb-6">
                         <div className="lg:col-span-4 flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-slate-800 pb-4 lg:pb-0 lg:pr-6">
@@ -753,6 +754,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                     </div>
                 </div>
             )}
+                </div>
             </motion.div>
 
             {/* Custom In-App Confirmation Modal */}
