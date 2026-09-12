@@ -70,16 +70,31 @@ jobs:
           fi
 
       - name: Run typecheck
+        id: typecheck_step
         if: steps.check_changes.outputs.changed == 'true' && github.event.inputs.dry_run != 'true'
-        run: npx tsc --noEmit
+        run: |
+          npx tsc --noEmit > tsc-output.log 2>&1
 
       - name: Run tests
+        id: test_step
         if: steps.check_changes.outputs.changed == 'true' && github.event.inputs.dry_run != 'true'
-        run: npx vitest run
+        run: |
+          npx vitest run --reporter=default --reporter=json --outputFile=test-results.json
 
       - name: Run build verification
+        id: build_step
         if: steps.check_changes.outputs.changed == 'true' && github.event.inputs.dry_run != 'true'
-        run: npm run build
+        run: |
+          npm run build > build-output.log 2>&1
+
+      - name: Generate CI Summary (Audit Fix Phase)
+        if: always()
+        run: |
+          npm audit --json > audit-report.json || true
+          if [ "${{ steps.check_changes.outputs.changed }}" = "true" ]; then
+            npx tsx scripts/ci-summary.ts --mode=test --status=${{ steps.test_step.outcome }} || true
+            npx tsx scripts/ci-summary.ts --mode=build --status=${{ steps.build_step.outcome }} || true
+          fi
 
       - name: Show git diff
         if: steps.check_changes.outputs.changed == 'true'
