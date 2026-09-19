@@ -1,5 +1,10 @@
 # Release Notes
 
+## [2.3.0] - 2026-09-19
+
+### 🚀 Highlights & Version Update
+- Bumped application version to `2.3.0`
+
 ## [2.2.0] - 2026-08-30
 
 ### 🚀 Highlights & Version Update
