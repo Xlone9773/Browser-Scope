@@ -36,6 +36,7 @@ export const Select: React.FC<SelectProps> = ({
     const [isVisible, setIsVisible] = useState(false);
     const [coords, setCoords] = useState({ top: 0, left: 0, minWidth: 0 });
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [focusedIndex, setFocusedIndex] = useState(-1);
 
     const selectedLabel = options.find(o => o.id === value)?.label || value;
@@ -65,8 +66,14 @@ export const Select: React.FC<SelectProps> = ({
     const close = () => {
         setIsVisible(false);
         // Wait for animation to finish before unmounting
-        setTimeout(() => setIsOpen(false), 200);
+        if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = setTimeout(() => setIsOpen(false), 200);
     };
+
+    // Clear pending close timer on unmount so it never fires after teardown
+    useEffect(() => () => {
+        if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    }, []);
 
     // Initialize focused index when select opens
     useEffect(() => {
