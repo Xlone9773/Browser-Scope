@@ -1,2 +1,19 @@
+# =============================================================
+# BrowserScope - Advanced Toolbox
+# Site: https://browser-scope.vercel.app
+#
+# Description:
+#   A comprehensive browser and device capability detection tool
+#   featuring a clean, minimalist design.
+#   Runs fully client-side: fingerprinting (canvas/WebGL/audio),
+#   hardware & sensor probing, network diagnostics, PWA detection,
+#   privacy/security checks and developer toolboxes.
+#
+# License: AGPL-3.0, source: https://github.com/Xlone9773/Browser-Scope
+# Last updated: 2026-09-19
+# =============================================================
+
 User-agent: *
 Allow: /
+
+Sitemap: https://browser-scope.vercel.app/sitemap.xml
