@@ -46,7 +46,6 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "vconsole": "^3.15.1",
-    "vercel": "^59.23.2",
     "workbox-precaching": "^7.4.1"
   },
   "devDependencies": {
