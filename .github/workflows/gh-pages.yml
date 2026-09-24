@@ -1,0 +1,58 @@
+name: GitHub Pages Mirror
+
+# Manual deployment of the backup mirror only.
+# Quality gates (lint / unit tests / build analysis) are owned by main.yml —
+# trigger this only after the main CI is green.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build & Deploy backup mirror
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Backup mirror lives under https://<owner>.github.io/<repo>/, so every
+      # asset reference must be rebased. Server bundle and sitemap are skipped:
+      # static hosting has no /api/* and the sitemap should keep pointing at
+      # the primary site.
+      - name: Build (mirror base path)
+        run: npx vite build --base=/${{ github.event.repository.name }}/
+
+      - name: Disable Jekyll processing
+        run: touch dist/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
