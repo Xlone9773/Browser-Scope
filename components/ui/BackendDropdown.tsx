@@ -20,6 +20,7 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
     const [isVisible, setIsVisible] = useState(false); // Controls CSS opacity/transform
     const [coords, setCoords] = useState({ top: 0, left: 0, minWidth: 0 });
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const selectedName = options.find(o => o.id === value)?.name || value;
 
@@ -50,8 +51,14 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
     const close = () => {
         setIsVisible(false);
         // Wait for animation to finish before unmounting
-        setTimeout(() => setIsOpen(false), 200);
+        if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = setTimeout(() => setIsOpen(false), 200);
     };
+
+    // Clear pending close timer on unmount so it never fires after teardown
+    useEffect(() => () => {
+        if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    }, []);
 
     // Handle clicks outside
     useEffect(() => {
