@@ -2,8 +2,62 @@
 
 ## [2.3.0] - 2026-09-19
 
+### 🌐 Site & SEO
+- Added `robots.txt` allowing all crawlers, with a site description header block and a `Sitemap:` directive
+- Added build-time generated `sitemap.xml` (`scripts/generate-sitemap.mjs`, wired into `npm run build` so `lastmod` always matches the deploy date)
+- Added canonical link, `meta description`, and Open Graph / Twitter card tags for crawler summaries and link previews
+- Renamed the page title from "Device Intelligence" to "Advanced Toolbox"
+
+### 🛠️ CI & Tooling
+- Added `gh-pages.yml`: backup mirror deployment, manual `workflow_dispatch` only (quality gates stay in main CI), artifact named `github-pages-<short-sha>` with a Pages-URL job summary
+- Pinned all runners to `ubuntu-24.04` ahead of `ubuntu-latest` migrating to Ubuntu 26.04 (actions/runner-images#14748)
+- Migrated `.husky/pre-commit` to the husky v9 style (deprecated `husky.sh` sourcing removed, v10-ready)
+- Removed the `vercel` CLI from `devDependencies` — it dragged 18 audit findings into the tree and belongs in the global install; `npm audit` is back to 0 vulnerabilities
+- Pinned `@testing-library/jest-dom` to `6.9.1` (6.10.0 is a registry-flagged incorrect release)
+- Replaced `__dirname` with `import.meta.dirname` in `vite.config.ts` / `vitest.config.ts` (forward-compat with Vite's native config loader)
+
+### 🐛 Bug Fixes
+- Fixed an orphaned close-animation timer in `Select`: the 200ms `setTimeout` is now stored in a ref and cleared on unmount, so it can never fire after teardown
+- Fixed the same orphan-timer pattern in `BackendDropdown`
+- Silenced a spurious `act(...)` warning in `BackToTop` tests: same-value functional guards on all three state setters, plus flushing pending MutationObserver microtasks inside `act` in the tests
+- Silenced jsdom "Not implemented" notices at the source: rewired `window.jsdom.virtualConsole` in `test/setup.ts` to drop them and forward real errors to the test-realm console (the old `console.error` filter could never see them — jsdom binds the worker-realm console)
+
+### 🧪 Testing
+- Grew the suite from 249 to 303 test cases; all 17 components under `components/ui` are now covered
+- Added tests for `Toast` (10: context API, 5-toast cap with oldest eviction, auto-dismiss timing, hover pause/resume), `Tabs` (11: keyboard navigation with wrap and disabled-skipping, variant rendering, autoScroll), `BackendDropdown` (8: portal lifecycle, deferred outside-click guard, unmount-timer regression), `FloatingWindow` (8: pointer drag/resize math, 300px clamp, opposite-edge anchoring), and expanded `ErrorBoundary` from 2 to 21 (analysis classification, global listener noise whitelist, recovery actions, copy/clear-cache flows)
+- Raised `testTimeout` from 5s to 10s: with the real canvas prebuilt installed, graphics fingerprint tests do actual rendering and can exceed 5s under full-suite parallelism on a phone SoC
+- Test output is now completely clean: zero act warnings, zero stderr leaks, zero jsdom notices
+
 ### 🚀 Highlights & Version Update
 - Bumped application version to `2.3.0`
+
+---
+
+### 🌐 站点与 SEO
+- 新增 `robots.txt`：允许全部爬虫抓取，头部注释块含站点简介，并声明 `Sitemap:` 指令
+- 新增构建期生成的 `sitemap.xml`（`scripts/generate-sitemap.mjs` 挂入 `npm run build`，`lastmod` 永远等于部署日期）
+- 新增 canonical 链接、`meta description`、Open Graph / Twitter 卡片标签，供爬虫摘要与链接预览使用
+- 页面标题由 "Device Intelligence" 改为 "Advanced Toolbox"
+
+### 🛠️ CI 与工具链
+- 新增 `gh-pages.yml`：备份镜像部署，仅 `workflow_dispatch` 手动触发（质量门禁归主 CI），制品名 `github-pages-<短哈希>` 并输出含 Pages URL 的任务摘要
+- 全部 runner 钉为 `ubuntu-24.04`，抢先于 `ubuntu-latest` 切换 Ubuntu 26.04（actions/runner-images#14748）
+- `.husky/pre-commit` 迁移到 husky v9 写法（移除已废弃的 `husky.sh` source，兼容 v10）
+- 从 `devDependencies` 移除 `vercel` CLI——它向依赖树拖入 18 个安全告警且应走全局安装；`npm audit` 恢复 0 漏洞
+- `@testing-library/jest-dom` 钉到 `6.9.1`（6.10.0 是注册表标记的问题版本）
+- `vite.config.ts` / `vitest.config.ts` 中 `__dirname` 替换为 `import.meta.dirname`（为 Vite 原生配置加载器做前向兼容）
+
+### 🐛 缺陷修复
+- 修复 `Select` 的孤儿关闭动画定时器：200ms `setTimeout` 现存入 ref 并在卸载时清除，绝不会在拆解后再触发
+- 修复 `BackendDropdown` 中同款孤儿定时器
+- 消除 `BackToTop` 测试的伪 `act(...)` 警告：三个 setter 全部改用同值守卫，测试末尾在 `act` 内 flush 待处理的 MutationObserver 微任务
+- 从源头消除 jsdom "Not implemented" 提示：在 `test/setup.ts` 改接 `window.jsdom.virtualConsole`，丢弃该类消息并把真实错误转回测试域 console（旧的 `console.error` 过滤器根本看不见它——jsdom 绑定的是 worker 域 console）
+
+### 🧪 测试
+- 用例从 249 增长到 303，`components/ui` 全部 17 个组件实现覆盖
+- 新增 `Toast`（10 例：context API、5 条上限与最旧淘汰、auto-dismiss 计时、悬停暂停/恢复）、`Tabs`（11 例：键盘导航绕行与跳过禁用、变体渲染、autoScroll）、`BackendDropdown`（8 例：portal 生命周期、延迟外部点击保护、卸载定时器回归）、`FloatingWindow`（8 例：指针拖拽/缩放数学、300px 钳制、对边锚定），`ErrorBoundary` 由 2 例扩到 21 例（分析分类、全局监听噪音白名单、恢复动作、复制/清缓存流程）
+- `testTimeout` 由 5s 提至 10s：接入真实 canvas 预编译包后，图形指纹用例改为真实渲染，在手机 SoC 全量并行下偶发超过 5s
+- 测试输出完全干净：零 act 警告、零 stderr 泄漏、零 jsdom 提示
 
 ## [2.2.0] - 2026-08-30
 
