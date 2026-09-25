@@ -93,6 +93,35 @@ if (typeof window !== "undefined") {
   }
 }
 
+// jsdom forwards its "not implemented" notices (navigation, form submit,
+// ...) through its own captured worker-realm console, bypassing the
+// per-test console.error filter below. Re-wire at the source: drop the
+// benign not-implemented ones, forward everything else to the test realm
+// console so vitest attributes it to the right file.
+if (typeof window !== "undefined") {
+  const vc = (
+    window as unknown as {
+      jsdom?: {
+        virtualConsole?: {
+          removeAllListeners(event: string): void;
+          on(event: string, cb: (e: { message?: string; type?: string; cause?: { stack?: string } }) => void): void;
+        };
+      };
+    }
+  ).jsdom?.virtualConsole;
+  if (vc && typeof vc.removeAllListeners === "function") {
+    vc.removeAllListeners("jsdomError");
+    vc.on("jsdomError", (e) => {
+      if (typeof e?.message === "string" && e.message.includes("Not implemented")) {
+        return;
+      }
+      console.error(
+        e?.type === "unhandled-exception" ? (e.cause?.stack ?? e.message) : e.message
+      );
+    });
+  }
+}
+
 // Suppress known non-critical external errors in tests
 if (typeof console !== "undefined") {
   const originalError = console.error;
