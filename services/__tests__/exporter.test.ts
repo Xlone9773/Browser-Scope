@@ -144,12 +144,22 @@ describe('Exporter Service Unit Tests', () => {
       const onSuccess = vi.fn();
       const onError = vi.fn();
 
+      // The worker error path logs to console.error by design; capture it so
+      // the expected log doesn't leak into vitest output as noise.
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       exportAsJson(mockBrowserData, {}, null, onStart, onSuccess, onError);
 
       await new Promise(resolve => setTimeout(resolve, 10));
 
       expect(onSuccess).not.toHaveBeenCalled();
       expect(onError).toHaveBeenCalledWith('Mock Worker Generation Failed');
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'JSON Export failed inside worker:',
+        'Mock Worker Generation Failed'
+      );
+
+      consoleSpy.mockRestore();
     });
   });
 
