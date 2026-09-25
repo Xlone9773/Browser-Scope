@@ -12,20 +12,30 @@ export const BackToTop: React.FC<BackToTopProps> = ({ label }) => {
   const [hasOpenModal, setHasOpenModal] = useState(false);
 
   useEffect(() => {
+    // Same-value functional updates: React eagerly bails out when the value is
+    // unchanged, so no work is scheduled and listeners/observers that fire
+    // outside act() in tests never trigger spurious act warnings.
     const handleResize = () => {
       // narrow device breakpoint: width < 768px (Tailwind md breakpoint)
-      setIsNarrow(window.innerWidth < 768);
+      setIsNarrow((prev) => {
+        const next = window.innerWidth < 768;
+        return prev === next ? prev : next;
+      });
     };
 
     const handleScroll = () => {
       // Check if scroll position is past the viewport height
-      const isPastViewport = window.scrollY > window.innerHeight;
-      setShowButton(isPastViewport);
+      setShowButton((prev) => {
+        const next = window.scrollY > window.innerHeight;
+        return prev === next ? prev : next;
+      });
     };
 
     const checkModals = () => {
-      const modalExists = document.querySelector('[role="dialog"]') !== null;
-      setHasOpenModal(modalExists);
+      setHasOpenModal((prev) => {
+        const next = document.querySelector('[role="dialog"]') !== null;
+        return prev === next ? prev : next;
+      });
     };
 
     // Initial evaluation

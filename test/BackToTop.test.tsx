@@ -55,7 +55,7 @@ describe("BackToTop component tests", () => {
     });
   });
 
-  it("should not render the button on large desktop viewports even when scrolled", () => {
+  it("should not render the button on large desktop viewports even when scrolled", async () => {
     render(<BackToTop label="Top" />);
 
     // Simulate scroll past viewport height (800px > 768px)
@@ -64,12 +64,16 @@ describe("BackToTop component tests", () => {
       window.dispatchEvent(new Event("scroll"));
     });
 
+    // Flush pending MutationObserver microtasks inside act so the async
+    // modal-check update never lands outside the act scope.
+    await act(async () => {});
+
     // Should not be visible because window.innerWidth is still 1024 (>= 768)
     const btn = screen.queryByLabelText("Top");
     expect(btn).not.toBeInTheDocument();
   });
 
-  it("should not render the button on narrow viewports if not scrolled past viewport height", () => {
+  it("should not render the button on narrow viewports if not scrolled past viewport height", async () => {
     render(<BackToTop label="Top" />);
 
     // Simulate resizing to mobile (375px) but scroll is 0
@@ -78,11 +82,14 @@ describe("BackToTop component tests", () => {
       window.dispatchEvent(new Event("resize"));
     });
 
+    // Flush pending MutationObserver microtasks inside act (see above).
+    await act(async () => {});
+
     const btn = screen.queryByLabelText("Top");
     expect(btn).not.toBeInTheDocument();
   });
 
-  it("should render the button on narrow viewports when scrolled past viewport height and click scrolls to top", () => {
+  it("should render the button on narrow viewports when scrolled past viewport height and click scrolls to top", async () => {
     const scrollToMock = vi.fn();
     Object.defineProperty(window, "scrollTo", {
       writable: true,
@@ -112,6 +119,10 @@ describe("BackToTop component tests", () => {
     act(() => {
       fireEvent.click(btn);
     });
+
+    // Flush pending MutationObserver microtasks inside act (see above).
+    await act(async () => {});
+
     expect(scrollToMock).toHaveBeenCalledWith({
       top: 0,
       behavior: "smooth",

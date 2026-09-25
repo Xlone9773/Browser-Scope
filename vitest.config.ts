@@ -8,6 +8,11 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: "./test/setup.ts",
+    // Real canvas rendering (node-canvas prebuilt) made the graphics
+    // fingerprint tests do actual work instead of failing fast; under full
+    // suite parallelism on a phone SoC they can exceed the default 5s.
+    // 10s still bounds genuine hangs.
+    testTimeout: 10000,
     alias: {
       "@": path.resolve(import.meta.dirname, "."),
     },
