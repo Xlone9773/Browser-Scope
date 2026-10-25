@@ -1,8 +1,3 @@
-# pre-commit.ci runs in an isolated environment without the project's Node.js toolchain.
-# Skip local Node-based linters there; the repository's CI workflow handles JS/TS linting.
-ci:
-  skip: [oxlint, eslint]
-
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -13,19 +8,20 @@ repos:
       - id: check-json
       - id: check-merge-conflict
 
-  # Local developer environment: Node.js and project dependencies must be installed.
+  # pre-commit manages a Node.js runtime and installs this project's npm package
+  # into an isolated hook environment, so no system npx/node_modules are required.
   - repo: local
     hooks:
       - id: oxlint
         name: oxlint (staged JavaScript/TypeScript)
-        entry: npx --no-install oxlint
-        language: system
+        entry: oxlint
+        language: node
         types: [javascript, jsx, ts, tsx]
         pass_filenames: true
 
       - id: eslint
         name: ESLint (staged TypeScript)
-        entry: npx --no-install eslint --cache --cache-strategy content
-        language: system
-        files: \.(ts|tsx)$
+        entry: eslint --cache --cache-strategy content
+        language: node
+        files: \\.(ts|tsx)$
         pass_filenames: true
