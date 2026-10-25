@@ -1,0 +1,28 @@
+# Install with: pre-commit install
+# Run all hooks manually: pre-commit run --all-files
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+
+  # Use the repository's installed Node.js dependencies; no separate runtime download.
+  - repo: local
+    hooks:
+      - id: oxlint
+        name: oxlint (staged JavaScript/TypeScript)
+        entry: npx --no-install oxlint
+        language: system
+        types: [javascript, jsx, ts, tsx]
+        pass_filenames: true
+
+      - id: eslint
+        name: ESLint (staged TypeScript)
+        entry: npx --no-install eslint --cache --cache-strategy content
+        language: system
+        files: \.(ts|tsx)$
+        pass_filenames: true
