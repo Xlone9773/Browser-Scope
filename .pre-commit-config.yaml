@@ -27,5 +27,5 @@ repos:
         name: ESLint (staged TypeScript)
         entry: npx --no-install eslint --cache --cache-strategy content
         language: system
-        files: \\.(ts|tsx)$
+        files: \.(ts|tsx)$
         pass_filenames: true
