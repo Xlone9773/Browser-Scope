@@ -109,7 +109,7 @@ fn hit_sphere(center: vec3<f32>, radius: f32, r: Ray) -> f32 {
 fn main(@builtin(global_invocation_id) id: vec3<u32>) {
     let width = u32(u.resolution.x);
     let height = u32(u.resolution.y);
-    
+
     if (id.x >= width || id.y >= height) { return; }
 
     // Initialize RNG state based on pixel coord and frame
@@ -120,21 +120,21 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
     let clip = uv * 2.0 - 1.0;
     // Fix aspect ratio
     let aspect = u.resolution.x / u.resolution.y;
-    
+
     // LookAt Matrix construction (simplified)
     let w = normalize(u.cameraPos - u.cameraTarget);
     let up = vec3<f32>(0.0, 1.0, 0.0);
     let u_vec = normalize(cross(up, w));
     let v_vec = cross(w, u_vec);
-    
+
     let viewportHeight = 2.0;
     let viewportWidth = aspect * viewportHeight;
     let horizontal = viewportWidth * u_vec;
     let vertical = viewportHeight * v_vec;
     let lowerLeftCorner = u.cameraPos - horizontal/2.0 - vertical/2.0 - w;
-    
+
     let rayDir = normalize(lowerLeftCorner + uv.x * horizontal + (1.0 - uv.y) * vertical - u.cameraPos);
-    
+
     var r = Ray(u.cameraPos, rayDir);
     var col = vec3<f32>(1.0);
     var accumulatedLight = vec3<f32>(0.0);
@@ -196,7 +196,7 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
             let t = 0.5 * (unit_direction.y + 1.0);
             let sky = (1.0 - t) * vec3<f32>(1.0, 1.0, 1.0) + t * vec3<f32>(0.5, 0.7, 1.0);
             accumulatedLight = col * sky;
-            break; 
+            break;
         }
     }
 
@@ -235,7 +235,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       }
     }
   };
-  
+
   // Scene Params
   const [roughness, setRoughness] = useState(0.5);
   const [metalness, setMetalness] = useState(0.0);
@@ -253,7 +253,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
   const isRunningRef = useRef(false);
   const isUnmountedRef = useRef(false);
   const initWebGPURef = useRef<(() => Promise<void>) | null>(null);
-  
+
   // Camera State
   const cameraAngleRef = useRef(0);
   const isDraggingRef = useRef(false);
@@ -285,7 +285,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
         device: device as unknown as Record<string, unknown>,
         format,
         alphaMode: 'premultiplied',
-        usage: TEXTURE_USAGE_COPY_DST | TEXTURE_USAGE_RENDER_ATTACHMENT 
+        usage: TEXTURE_USAGE_COPY_DST | TEXTURE_USAGE_RENDER_ATTACHMENT
       });
 
       const computeTexture = (device as unknown as GPUDeviceLocal).createTexture({
@@ -296,7 +296,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       computeTextureRef.current = computeTexture as unknown as { createView(): unknown };
 
       const shaderModule = (device as unknown as GPUDeviceLocal).createShaderModule({ code: SHADER_CODE });
-      
+
       const pipeline = (device as unknown as GPUDeviceLocal).createComputePipeline({
         layout: 'auto',
         compute: { module: shaderModule, entryPoint: 'main' }
@@ -306,7 +306,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       // Uniform Buffer (size needs to be aligned to 16 bytes)
       // vec2 resolution (8) + time (4) + frame (4) + vec3 camPos (12+4pad) + vec3 camTarget (12+4pad) + rough (4) + metal (4) + vec3 color (12+4pad)
       // Total size: ~64 bytes is safe.
-      const uniformBufferSize = 128; 
+      const uniformBufferSize = 128;
       // GPUBufferUsage logic with fallback
       const BUFFER_USAGE_UNIFORM = window.GPUBufferUsage?.UNIFORM || 0x0040;
       const BUFFER_USAGE_COPY_DST = window.GPUBufferUsage?.COPY_DST || 0x0008;
@@ -338,7 +338,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
     isRunningRef.current = true;
     setIsRunning(true);
     frameCountRef.current = 0;
-    
+
     const render = (time: number) => {
       if (!isRunningRef.current) return;
       if (!deviceRef.current || !pipelineRef.current || !contextRef.current || !uniformBufferRef.current || !computeTextureRef.current) return;
@@ -360,17 +360,17 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       const uniforms = new ArrayBuffer(128);
       const view = new DataView(uniforms);
       const canvas = canvasRef.current!;
-      
+
       view.setFloat32(0, canvas.width, true);
       view.setFloat32(4, canvas.height, true);
       view.setFloat32(8, time / 1000, true);
       view.setUint32(12, frameCountRef.current, true);
-      
+
       // Cam Pos
       view.setFloat32(16, camX, true);
       view.setFloat32(20, 1.0, true); // Height
       view.setFloat32(24, camZ, true);
-      
+
       // Cam Target
       view.setFloat32(32, 0, true);
       view.setFloat32(36, 0, true);
@@ -399,7 +399,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
       passEncoder.setBindGroup(0, bindGroup);
       passEncoder.dispatchWorkgroups(Math.ceil(canvas.width / 8), Math.ceil(canvas.height / 8));
       passEncoder.end();
-      
+
       commandEncoder.copyTextureToTexture(
           { texture: computeTextureRef.current },
           { texture: contextRef.current.getCurrentTexture() },
@@ -425,7 +425,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
   useEffect(() => {
     isUnmountedRef.current = false;
     let localIsUnmounted = false;
-    
+
     const init = async () => {
         if (initWebGPURef.current) {
             await initWebGPURef.current();
@@ -435,7 +435,7 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
         }
     };
     init();
-    
+
     return () => {
         isUnmountedRef.current = true;
         localIsUnmounted = true;
@@ -471,9 +471,9 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
         noPadding
     >
         <div ref={containerRef} className="flex flex-col h-full bg-black relative overflow-hidden group">
-            
+
             {/* Fullscreen Toggle */}
-            <button 
+            <button
                 onClick={toggleFullscreen}
                 className="absolute top-4 right-4 z-50 p-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-lg text-white hover:bg-white/20 transition-colors opacity-0 group-hover:opacity-100"
             >
@@ -481,9 +481,9 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
             </button>
 
             {/* Main Canvas */}
-            <canvas 
+            <canvas
                 ref={canvasRef}
-                width={1280} 
+                width={1280}
                 height={720}
                 className="w-full h-full object-contain cursor-move touch-none"
                 onMouseDown={handleMouseDown}
@@ -522,14 +522,14 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
             {/* Controls Overlay (Bottom Center) */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 w-full max-w-2xl px-4 transition-transform duration-300 translate-y-0 opacity-100">
                 <div className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl flex flex-col md:flex-row gap-6 items-center">
-                    
+
                     {/* Material Controls */}
                     <div className="flex-1 w-full space-y-4">
                         <div className="flex items-center justify-between text-xs text-slate-400 uppercase font-bold tracking-wider mb-2">
                             <span>{t.controls}</span>
                             <Sliders size={14} />
                         </div>
-                        
+
                         <div className="space-y-4">
                             <Slider
                                 value={roughness}
@@ -564,15 +564,15 @@ export const RayTracingModal: React.FC<RayTracingModalProps> = ({ onClose, t }) 
                             <button onClick={() => setColor({ r: 0.3, g: 0.3, b: 0.8 })} className="w-8 h-8 rounded-full bg-blue-500 border-2 border-transparent hover:border-white transition-all ring-1 ring-black/50" />
                             <button onClick={() => setColor({ r: 0.9, g: 0.9, b: 0.9 })} className="w-8 h-8 rounded-full bg-white border-2 border-transparent hover:border-white transition-all ring-1 ring-black/50" />
                         </div>
-                        
+
                         <div className="flex gap-3">
-                            <button 
+                            <button
                                 onClick={resetCamera}
                                 className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-2"
                             >
                                 <RefreshCw size={14} /> {t.reset}
                             </button>
-                            <button 
+                            <button
                                 onClick={isRunning ? stopLoop : startLoop}
                                 className={`px-6 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 ${isRunning ? 'bg-red-600 hover:bg-red-500 text-white' : 'bg-green-600 hover:bg-green-500 text-white'}`}
                             >

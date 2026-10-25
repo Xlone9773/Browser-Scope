@@ -1,0 +1,38 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+
+  # pre-commit downloads a Node.js runtime for these hooks. The first Node hook
+  # installs the project's locked dependencies into the checkout; the second
+  # reuses node_modules. The hook environment also needs a package to bootstrap.
+  - repo: local
+    hooks:
+      - id: oxlint
+        name: oxlint (staged JavaScript/TypeScript)
+        entry: >-
+          bash -c 'if [ ! -x node_modules/.bin/oxlint ] || [ ! -x node_modules/.bin/eslint ]; then
+          npm ci --ignore-scripts --no-audit --no-fund ||
+          npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund;
+          fi; exec ./node_modules/.bin/oxlint "$@"' --
+        language: node
+        additional_dependencies: [oxlint@1.73.0]
+        types: [javascript, jsx, ts, tsx]
+        pass_filenames: true
+
+      - id: eslint
+        name: ESLint (staged TypeScript)
+        entry: >-
+          bash -c 'if [ ! -x node_modules/.bin/oxlint ] || [ ! -x node_modules/.bin/eslint ]; then
+          npm ci --ignore-scripts --no-audit --no-fund ||
+          npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund;
+          fi; exec ./node_modules/.bin/eslint --cache --cache-strategy content "$@"' --
+        language: node
+        additional_dependencies: [eslint@10.9.1]
+        files: \\.(ts|tsx)$
+        pass_filenames: true

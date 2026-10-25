@@ -17,11 +17,11 @@ export const MouseTab: React.FC<MouseTabProps> = ({ t }) => {
     const handleMouseMove = (_e: React.MouseEvent) => {
         const now = performance.now();
         mouseTimestamps.current.push(now);
-        
+
         // Keep only last 1 second of samples
         const oneSecondAgo = now - 1000;
         mouseTimestamps.current = mouseTimestamps.current.filter(t => t > oneSecondAgo);
-        
+
         // Calculate rate
         if (!mouseRaf.current) {
             mouseRaf.current = requestAnimationFrame(() => {
@@ -41,12 +41,12 @@ export const MouseTab: React.FC<MouseTabProps> = ({ t }) => {
 
     return (
         <div className="h-full flex flex-col animate-in fade-in duration-300">
-            <div 
+            <div
                 onMouseMove={handleMouseMove}
                 className="flex-1 bg-white dark:bg-slate-800 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-600 transition-colors cursor-none flex flex-col items-center justify-center p-8 group relative overflow-hidden"
             >
                 <div className="absolute inset-0 bg-indigo-50/50 dark:bg-indigo-900/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                
+
                 <MousePointer2 size={32} className="text-indigo-300 dark:text-indigo-800 mb-4 opacity-50" />
                 <p className="text-slate-400 text-sm text-center max-w-xs mb-8 pointer-events-none select-none">
                     {t.mouse_instruction}

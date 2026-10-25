@@ -63,7 +63,7 @@ A highly polished, detail-oriented browser utility platform and robust testing t
 - **High-Fidelity PDF Diagnostic Reports** - Staggered rendering of active DOM structures to export complete diagnostic reports via `html2canvas` and `jsPDF`.
 - **Software & Asset Attributions** - Comprehensive compliance logs for all integrated dependencies (React, FingerprintJS, Motion, Workbox, etc.) and premium typefaces.
 - **Data Exporter** - Extract entire detection states to localized JSON files.
-- **Floating Monitor Tool** - Minimalist, draggable floating stat overlay. 
+- **Floating Monitor Tool** - Minimalist, draggable floating stat overlay.
 - **PWA Ready** - Fully installable as an offline-first desktop/mobile application.
 
 ---

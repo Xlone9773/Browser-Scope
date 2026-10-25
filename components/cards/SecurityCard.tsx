@@ -25,9 +25,9 @@ export const SecurityCard: React.FC<SecurityCardProps> = React.memo(({ data, web
     <InfoCard title={t.sections.security} icon={ShieldAlert}>
         <InfoItem label={t.labels.is_bot} value={data.isBot ? t.values.detected : t.values.none} subValue={data.isBot ? "Navigator.webdriver" : undefined} />
         <InfoItem label={t.labels.ad_block} value={data.adBlockEnabled ? t.values.detected : t.values.none} />
-        
+
         <div className="py-2 border-t border-slate-100 dark:border-slate-800/50 mt-1">
-           <button 
+           <button
                onClick={onOpenExtensions}
                className="w-full text-left text-sm py-1.5 px-2 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 flex justify-between items-center text-slate-700 dark:text-slate-300 transition-colors"
            >

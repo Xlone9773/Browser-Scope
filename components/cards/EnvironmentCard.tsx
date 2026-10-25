@@ -50,7 +50,7 @@ export const EnvironmentCard: React.FC<EnvironmentCardProps> = React.memo(({ t }
     return (
         <InfoCard title={t.groups?.environment} icon={isTrustSafe && isNormSafe ? ShieldCheck : (isTrustSuspicious || isNormSuspicious ? AlertTriangle : Bot)}>
             <div className="p-6 space-y-4">
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     {/* Trust Score */}
                     <div className={`p-4 rounded-xl border ${trustBgClass} ${trustBorderColor} flex flex-col sm:flex-row items-center gap-4 sm:gap-6 h-full`}>
@@ -59,7 +59,7 @@ export const EnvironmentCard: React.FC<EnvironmentCardProps> = React.memo(({ t }
                             {isTrustSuspicious && <Fingerprint size={32} className="text-amber-500" />}
                             {!isTrustSafe && !isTrustSuspicious && <Bot size={32} className="text-rose-500" />}
                         </div>
-                    
+
                         <div className="flex-1 text-center sm:text-left">
                             <h3 className={`text-lg font-bold mb-1 ${trustColorClass}`}>
                                 {isTrustSafe ? envT.safe : (isTrustSuspicious ? envT.suspicious : envT.danger)}
@@ -82,7 +82,7 @@ export const EnvironmentCard: React.FC<EnvironmentCardProps> = React.memo(({ t }
                             {isNormSuspicious && <AlertTriangle size={32} className="text-amber-500" />}
                             {!isNormSafe && !isNormSuspicious && <AlertTriangle size={32} className="text-rose-500" />}
                         </div>
-                    
+
                         <div className="flex-1 text-center sm:text-left">
                             <h3 className={`text-lg font-bold mb-1 ${normColorClass}`}>
                                 {isNormSafe ? envT.normalcy?.normal : envT.normalcy?.abnormal}

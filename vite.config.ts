@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
         host: '0.0.0.0',
       },
       plugins: [
-        tailwindcss(), 
+        tailwindcss(),
         react(),
         viteCompression({
           algorithm: 'gzip',
@@ -122,4 +122,3 @@ export default defineConfig(({ mode }) => {
       }
     };
 });
-

@@ -4,10 +4,10 @@ import { formatBytes, formatPercent } from '../../utils/formatters';
 
 export const getBatteryInfo = async (): Promise<{ level: string; charging: string; chargingTime: string; dischargingTime: string }> => {
   try {
-    
+
     // @ts-expect-error auto-fixed
     if (navigator.getBattery) {
-      
+
       // @ts-expect-error auto-fixed
       const battery: BatteryManager = await navigator.getBattery();
       const formatTime = (time: number) => {
@@ -39,7 +39,7 @@ export const getStorageEstimate = async (): Promise<{ quota: string, usage: stri
         quota = estimate.quota ? formatBytes(estimate.quota) : 'Unknown';
         usage = estimate.usage ? formatBytes(estimate.usage) : '0 B';
       }
-      
+
       if (navigator.storage && navigator.storage.persisted) {
         persisted = await navigator.storage.persisted();
       }
@@ -54,7 +54,7 @@ export const runAiReadinessCheck = (): AiReadiness => {
     const start = performance.now();
     const durationLimit = 30; // 30ms limit to prevent UI thread blocking while ensuring measurement accuracy
     let iterations = 0;
-    
+
     // Initialize 8 independent floating-point variables to maximize Instruction-Level Parallelism (ILP).
     // This allows the CPU's out-of-order execution engine to run multiple instructions concurrently.
     // The coefficients mult < 1.0 guarantee that each sequence converges stably to a fixed point,
@@ -84,25 +84,25 @@ export const runAiReadinessCheck = (): AiReadiness => {
         }
         iterations++;
     }
-    
+
     const end = performance.now();
     const duration = end - start;
-    
+
     // Total floating-point operations executed
     const totalOps = iterations * 160;
     const durationSeconds = duration / 1000;
-    
+
     // Single-thread GFLOPS
     const singleThreadGflops = (totalOps / durationSeconds) / 1e9;
-    
+
     // Estimate total device CPU capabilities using hardwareConcurrency
     const cores = typeof navigator !== 'undefined' && navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 4;
     const multiCoreScalingEfficiency = 0.85; // Standard efficiency coefficient under high compute workloads
     const estimatedMultiThreadGflops = singleThreadGflops * cores * multiCoreScalingEfficiency;
-    
+
     // Convert to standard scoring (1 GFLOPS = 100 points)
     const score = Math.round(estimatedMultiThreadGflops * 100);
-    
+
     // Categorize performance under standard GFLOPS ranges:
     // Low: < 3 GFLOPS (Legacy or entry-level low-power device cores)
     // Medium: 3 - 10 GFLOPS (Standard multi-core processors, mainstream devices)
@@ -116,13 +116,13 @@ export const runAiReadinessCheck = (): AiReadiness => {
     } else if (estimatedMultiThreadGflops > 3) {
         level = 'Medium';
     }
-    
+
     // Simple verification side-effect to prevent JS compiler optimization from trimming loops
     const checkSum = x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7;
     if (checkSum === 0) {
         console.debug("FMA boundary check passed:", checkSum);
     }
-    
+
     return {
         score,
         flops: estimatedMultiThreadGflops,

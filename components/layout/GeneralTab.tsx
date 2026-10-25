@@ -15,11 +15,11 @@ interface GeneralTabProps {
     toggleDisableBlur: (value: boolean) => void;
 }
 
-export const GeneralTab: React.FC<GeneralTabProps> = ({ 
-    t, 
-    simpleMode, 
-    toggleSimpleMode, 
-    hideScrollbar, 
+export const GeneralTab: React.FC<GeneralTabProps> = ({
+    t,
+    simpleMode,
+    toggleSimpleMode,
+    hideScrollbar,
     toggleHideScrollbar,
     timeFormat,
     setTimeFormat,
@@ -29,7 +29,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     return (
         <div className="max-w-2xl mx-auto space-y-4">
             {/* Simple Mode Toggle */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => toggleSimpleMode(!simpleMode)}
             >
@@ -42,16 +42,16 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={simpleMode} 
-                        onChange={toggleSimpleMode} 
-                        label={t.simpleMode.title} 
+                    <Switch
+                        checked={simpleMode}
+                        onChange={toggleSimpleMode}
+                        label={t.simpleMode.title}
                     />
                 </div>
             </div>
 
             {/* Time Format Toggle */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => setTimeFormat(timeFormat === '24' ? '12' : '24')}
             >
@@ -64,16 +64,16 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={timeFormat === '24'} 
-                        onChange={(val) => setTimeFormat(val ? '24' : '12')} 
-                        label={t.timeFormat.title} 
+                    <Switch
+                        checked={timeFormat === '24'}
+                        onChange={(val) => setTimeFormat(val ? '24' : '12')}
+                        label={t.timeFormat.title}
                     />
                 </div>
             </div>
 
             {/* High Performance (Disable Blur) Toggle */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => toggleDisableBlur(!disableBlur)}
             >
@@ -86,16 +86,16 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={disableBlur} 
-                        onChange={toggleDisableBlur} 
-                        label={t.performance.title} 
+                    <Switch
+                        checked={disableBlur}
+                        onChange={toggleDisableBlur}
+                        label={t.performance.title}
                     />
                 </div>
             </div>
 
             {/* Hide Scrollbar Toggle */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => toggleHideScrollbar(!hideScrollbar)}
             >
@@ -108,10 +108,10 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={hideScrollbar} 
-                        onChange={toggleHideScrollbar} 
-                        label={t.scrollbar.title} 
+                    <Switch
+                        checked={hideScrollbar}
+                        onChange={toggleHideScrollbar}
+                        label={t.scrollbar.title}
                     />
                 </div>
             </div>

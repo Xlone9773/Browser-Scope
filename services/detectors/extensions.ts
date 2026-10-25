@@ -251,4 +251,3 @@ export const detectExtensions = (): DetectedExtension[] => {
 
   return extensions;
 };
-

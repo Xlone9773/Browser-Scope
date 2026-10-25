@@ -55,18 +55,18 @@ export const settings = {
             desc: "Show navigation tabs above the content to filter items. Automatically hides if empty."
         },
         showSearch: {
-        
-        
+
+
             title: "Enable Search Bar",
-        
-        
+
+
             desc: "Display a search bar above the tab bar to quickly filter dashboard categories and card content."
-        
-        
+
+
         },
-        
-        
-        
+
+
+
         searchScope: {
             title: "Search Scope",
             desc: "Select what content the search should match against.",
@@ -138,7 +138,7 @@ export const settings = {
             title: "Custom Display Items",
             desc: "Hide specific cards or groups from the main dashboard if you don't need them."
         },
-        
+
         restoreNotifications: {
             title: "Restore Notifications",
             desc: "Bring back all previously dismissed notification cards at the top of the dashboard.",

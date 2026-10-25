@@ -46,7 +46,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   const [inputs, setInputs] = useState<MIDIInput[]>([]);
   const [_outputs, setOutputs] = useState<MIDIOutput[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
-  
+
   // Audio Config
   const [waveform, setWaveform] = useState<Waveform>('triangle');
   const [octaveShift, setOctaveShift] = useState(0);
@@ -77,7 +77,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
               const nav = navigator as unknown as { requestMIDIAccess?: () => Promise<MIDIAccess> };
               if (nav.requestMIDIAccess) {
                   const midiAccess = await nav.requestMIDIAccess();
-                  
+
                   const updateDevices = () => {
                       setInputs(Array.from(midiAccess.inputs.values()));
                       setOutputs(Array.from(midiAccess.outputs.values()));
@@ -116,7 +116,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
       const [status, data1, data2] = event.data;
       const command = status & 0xf0;
       // const channel = status & 0x0f;
-      
+
       if (command === 144 && data2 > 0) { // Note On
           playNote(data1, data2);
           addLog(`${t.note} On: ${data1} (${getNoteName(data1)}) ${t.velocity}: ${data2}`);
@@ -131,7 +131,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
 
   const playNote = (midiNote: number, velocity: number = 100) => {
       if (!audioContextRef.current) return;
-      
+
       const ctx = audioContextRef.current;
       if (ctx.state === 'suspended') ctx.resume();
 
@@ -205,9 +205,9 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   // Virtual Keyboard Render Logic
   // Render range: C2 (36) to C6 (84). 4 Octaves.
   const startKey = 36 + (octaveShift * 12);
-  const endKey = 84 + (octaveShift * 12); 
+  const endKey = 84 + (octaveShift * 12);
   const _keys = [];
-  
+
   // Pre-calculate visual layout
   // White keys are basic units. Black keys overlay.
   const whiteKeyWidth = 40;
@@ -218,7 +218,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
   // Track white key positions
   let xPos = 0;
   const keyElements: React.JSX.Element[] = [];
-  
+
   // Render White Keys First
   for (let i = startKey; i <= endKey; i++) {
       const isBlack = [1, 3, 6, 8, 10].includes(i % 12);
@@ -230,11 +230,11 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
                   onMouseDown={() => playNote(i)}
                   onMouseUp={() => stopNote(i)}
                   onMouseEnter={(e) => handleKeyEnter(e, i)}
-                  onMouseLeave={() => stopNote(i)} 
+                  onMouseLeave={() => stopNote(i)}
                   className={`absolute top-0 border border-slate-300 dark:border-slate-600 rounded-b-md cursor-pointer transition-colors active:scale-[0.99] origin-top select-none ${isActive ? 'bg-indigo-400 !border-indigo-500 shadow-[0_0_10px_rgba(129,140,248,0.5)] z-10' : 'bg-white dark:bg-slate-300 hover:bg-slate-100'}`}
-                  style={{ 
-                      left: xPos, 
-                      width: whiteKeyWidth, 
+                  style={{
+                      left: xPos,
+                      width: whiteKeyWidth,
                       height: whiteKeyHeight,
                       zIndex: 1
                   }}
@@ -265,9 +265,9 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
                   onMouseEnter={(e) => handleKeyEnter(e, i)}
                   onMouseLeave={() => stopNote(i)}
                   className={`absolute top-0 border border-black rounded-b-sm cursor-pointer transition-colors active:scale-[0.98] origin-top select-none ${isActive ? 'bg-indigo-600 shadow-[0_0_15px_rgba(79,70,229,0.8)]' : 'bg-slate-900 hover:bg-slate-800'}`}
-                  style={{ 
-                      left: xPos - (blackKeyWidth / 2), 
-                      width: blackKeyWidth, 
+                  style={{
+                      left: xPos - (blackKeyWidth / 2),
+                      width: blackKeyWidth,
                       height: blackKeyHeight,
                       zIndex: 20
                   }}
@@ -290,7 +290,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900">
             {/* Top Bar: Devices & Config */}
             <div className="p-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
-                
+
                 {/* Inputs */}
                 <div className="space-y-1">
                     <label className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1.5">
@@ -342,7 +342,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
                 <div className="min-w-full w-max flex-1 flex relative p-8">
                     {/* Background Grid */}
                     <div className="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    
+
                     <div className="relative h-[180px] m-auto shadow-2xl rounded-b-lg origin-center shrink-0 z-10" style={{ width: containerWidth }}>
                         {keyElements}
                         {/* Synth Line Decoration */}
@@ -357,7 +357,7 @@ export const MidiModal: React.FC<MidiModalProps> = ({ onClose, t }) => {
                     <span className="flex items-center gap-2 font-bold uppercase tracking-wider">
                         <Terminal size={14} /> {t.log}
                     </span>
-                    <button 
+                    <button
                         onClick={() => setLogs([])}
                         className="hover:text-white flex items-center gap-1 transition-colors"
                     >

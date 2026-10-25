@@ -5,8 +5,8 @@ export const dashboard = {
   loading: "Сканирование возможностей системы...",
   footer: "BrowserScope - Инструмент анализа возможностей браузера",
   refresh: "Обновить данные",
-  
-  
+
+
   browserCard: {
     title: "Идентификация браузера",
     subtitle: "Текущий используемый браузер, оцененный по характеристикам",
@@ -32,7 +32,7 @@ export const dashboard = {
     bot: "Подозрительная автоматизация",
     tampering: "Подмена отпечатков",
     inconsistency: "Несоответствие оборудования/ОС",
-    
+
   notifications: {
     outdated: {
       title: "Обнаружен устаревший браузер",
@@ -229,7 +229,7 @@ export const dashboard = {
     bodyPlaceholder: "Текст уведомления...",
     btnLabelPlaceholder: "Текст кнопки (необязательно)",
     sendTest: "Отправить тест",
-    
+
     iconUrlPlaceholder: "URL значка (необязательно)",
     addAction: "Добавить действие",
     actionTitlePlaceholder: "Название действия",

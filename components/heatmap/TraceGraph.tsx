@@ -49,11 +49,11 @@ export const TraceGraph: React.FC<TraceGraphProps> = ({ data, height = 200, colo
 
         data.forEach((val, i) => {
             const x = i * stepX;
-            
+
             if (val === null) {
                 // Draw a gap or marker for loss?
                 // Let's break the line to indicate loss
-                started = false; 
+                started = false;
             } else {
                 const y = h - ((val - minVal) / range) * (h - 20) - 10; // 10px padding
                 if (!started) {
@@ -95,10 +95,10 @@ export const TraceGraph: React.FC<TraceGraphProps> = ({ data, height = 200, colo
     }, [data, height, color]);
 
     return (
-        <canvas 
-            ref={canvasRef} 
-            width={800} 
-            height={height} 
+        <canvas
+            ref={canvasRef}
+            width={800}
+            height={height}
             className="w-full h-full"
         />
     );

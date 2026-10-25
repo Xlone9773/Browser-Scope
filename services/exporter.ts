@@ -3,8 +3,8 @@ import { Translation } from '../utils/i18n/types';
 import { generateFilenameTimestamp } from '../utils/formatters';
 
 export const exportAsJson = (
-    data: BrowserData, 
-    permStatus: Record<string, string>, 
+    data: BrowserData,
+    permStatus: Record<string, string>,
     geoData: GeoPosition | null,
     onStart?: () => void,
     onSuccess?: () => void,
@@ -30,7 +30,7 @@ export const exportAsJson = (
     // Handle background response
     worker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; filename?: string; message?: string }>) => {
         const { type, blob, filename: respFilename, message } = event.data;
-        
+
         if (type === 'success' && blob && respFilename) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -40,13 +40,13 @@ export const exportAsJson = (
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            
+
             if (onSuccess) onSuccess();
         } else {
             console.error("JSON Export failed inside worker:", message);
             if (onError) onError(message || "Worker generation failed");
         }
-        
+
         // Terminate worker immediately to avoid leaks
         worker.terminate();
     };
@@ -94,7 +94,7 @@ export const exportAsPdf = (
     // Handle background response
     worker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; filename?: string; message?: string }>) => {
         const { type, blob, filename: respFilename, message } = event.data;
-        
+
         if (type === 'success' && blob && respFilename) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -104,13 +104,13 @@ export const exportAsPdf = (
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            
+
             if (onSuccess) onSuccess();
         } else {
             console.error("PDF Export failed inside worker:", message);
             if (onError) onError(message || "Worker generation failed");
         }
-        
+
         // Terminate worker immediately to avoid leaks
         worker.terminate();
     };
@@ -148,7 +148,7 @@ export const exportAsImage = async (
         // Use standard html-to-image to generate the snapshot
         const isDark = document.documentElement.classList.contains("dark") || theme === "dark";
         const backgroundColor = isDark ? "#0f172a" : "#f8fafc";
-        
+
         // Suppress specific html-to-image console.error messages about cross-origin stylesheets
         const originalConsoleError = console.error;
         console.error = (...args: unknown[]) => {
@@ -204,7 +204,7 @@ export const exportAsImage = async (
         // Convert base64 dataUrl to Blob
         const res = await fetch(dataUrl);
         const blob = await res.blob();
-        
+
         triggerDownload(blob, filename);
         if (onSuccess) onSuccess();
 
@@ -228,4 +228,3 @@ const triggerDownload = (blob: Blob, filename: string) => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 };
-

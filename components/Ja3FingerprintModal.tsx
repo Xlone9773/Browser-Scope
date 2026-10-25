@@ -71,7 +71,7 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
     if (mode === 'userscript') {
       userscriptDetectedRef.current = false;
       setUserscriptDetected(false);
-      
+
       // First ping the script to see if it responds
       window.dispatchEvent(new CustomEvent('PING_TLS_HELPER'));
       // Request fingerprint
@@ -262,7 +262,7 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
                     {t?.mode_userscript || 'Tampermonkey Userscript Guide'}
                   </h5>
                 </div>
-                
+
                 <ol className="list-decimal list-inside text-xs text-slate-600 dark:text-slate-400 space-y-1">
                   <li>安装 <strong>Tampermonkey (篡改猴)</strong> 浏览器扩展。</li>
                   <li>在扩展中点击 <strong>“添加新脚本” (Create a new script)</strong>。</li>

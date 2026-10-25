@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { 
-    Sparkles, 
-    ShieldCheck, 
-    Cpu, 
-    Zap, 
-    Layers, 
-    GitCommit, 
+import {
+    Sparkles,
+    ShieldCheck,
+    Cpu,
+    Zap,
+    Layers,
+    GitCommit,
     Github,
     Fingerprint,
     Box,
@@ -81,16 +81,16 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                     animation: float-slow-3 18s ease-in-out infinite;
                   }
                 `}</style>
-                
+
                 {/* Scrollable Area containing both Hero and Content for seamless integration */}
                 <div className="flex-1 overflow-y-auto custom-scrollbar relative">
-                    
+
                     {/* Hero Header */}
                     <div className="relative pt-12 pb-20 px-8 overflow-hidden bg-slate-900 shrink-0">
                         {/* Background Effects */}
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-black" />
                         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 contrast-150 mix-blend-overlay pointer-events-none transform-gpu will-change-transform" />
-                        
+
                         {/* Animated Orbs - Optimized using high-performance radial gradients and translate3d hardware acceleration */}
                         <div className="absolute -top-24 -right-24 w-96 h-96 bg-[radial-gradient(circle,rgba(99,102,241,0.25)_0%,transparent_70%)] rounded-full animate-float-1 will-change-transform transform-gpu pointer-events-none" />
                         <div className="absolute top-1/3 -left-24 w-72 h-72 bg-[radial-gradient(circle,rgba(168,85,247,0.25)_0%,transparent_70%)] rounded-full animate-float-2 will-change-transform transform-gpu pointer-events-none" />
@@ -120,7 +120,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                     {/* Bento Grid Content - Overlapping Hero */}
                     <div className="px-6 md:px-8 relative z-10 -mt-12 pb-8">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-                            
+
                             {/* Card 1: Privacy */}
                             <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-5 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-lg hover:shadow-xl transition-all group hover:-translate-y-1">
                                 <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl flex items-center justify-center text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
@@ -176,7 +176,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                             {/* Card 5: Open Source */}
                             <div className="bg-slate-900 dark:bg-black p-5 rounded-2xl border border-slate-800 shadow-lg relative overflow-hidden flex flex-col justify-between h-full min-h-[160px] group hover:shadow-xl transition-all">
                                 <div className="absolute inset-0 bg-gradient-to-br from-slate-800/10 to-indigo-900/10 pointer-events-none" />
-                                
+
                                 <div className="relative z-10 flex items-start justify-between w-full">
                                     <div className="flex flex-col text-left">
                                         <h3 className="font-bold text-white text-base">{t.features?.openSource.title}</h3>
@@ -185,9 +185,9 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                             {t.features?.openSource.license}
                                         </span>
                                     </div>
-                                    <a 
-                                        href="https://github.com/Xlone9773/Browser-Scope" 
-                                        target="_blank" 
+                                    <a
+                                        href="https://github.com/Xlone9773/Browser-Scope"
+                                        target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-slate-400 hover:text-white transition-colors"
                                         title="GitHub Repository"
@@ -245,7 +245,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                         <FileText className="text-indigo-500" size={18} />
                                         <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">{currentLicenseTitle}</h4>
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={() => setShowLicense(false)}
                                         className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 font-medium transition-colors cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-1 rounded-md"
                                     >
@@ -266,7 +266,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                 </div>
                                 <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">{t.history}</h3>
                             </div>
-                            
+
                             <div className="relative border-l-2 border-slate-200 dark:border-slate-800 ml-3 space-y-10 pl-8 py-2">
                                 {t.updates && t.updates.map((update, idx) => (
                                     <div key={idx} className="relative group">
@@ -274,7 +274,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                         <div className={`absolute -left-[41px] top-1.5 w-6 h-6 rounded-full border-4 border-slate-50 dark:border-slate-950 flex items-center justify-center transition-colors shadow-sm ${idx === 0 ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
                                             {idx === 0 && <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />}
                                         </div>
-                                        
+
                                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
                                             <span className={`text-lg font-bold tracking-tight ${idx === 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'}`}>
                                                 v{update.version} {update.title ? ` - ${update.title}` : ''}
@@ -283,7 +283,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                                                 {update.date}
                                             </span>
                                         </div>
-                                        
+
                                         <ul className="space-y-2.5">
                                             {update.changes.map((change, cIdx) => (
                                                 <li key={cIdx} className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed flex items-start gap-2.5 group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors">

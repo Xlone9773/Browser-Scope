@@ -35,7 +35,7 @@ const EXTENSION_DESCRIPTIONS: Record<string, string> = {
 export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ extensions, onClose, t }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredExtensions = extensions.filter(ext => 
+  const filteredExtensions = extensions.filter(ext =>
     ext.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -80,8 +80,8 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                 <div className="px-6 py-3 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 shrink-0">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             placeholder={t.search_placeholder}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -97,8 +97,8 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                             const prefix = getPrefix(ext);
                             const desc = t.descriptions?.[ext as keyof typeof t.descriptions] || EXTENSION_DESCRIPTIONS[ext];
                             return (
-                                <div 
-                                    key={ext} 
+                                <div
+                                    key={ext}
                                     className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:shadow-md transition-all duration-200 flex flex-col gap-2 relative overflow-hidden h-full"
                                 >
                                     {/* Header Line */}
@@ -111,9 +111,9 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                                                 {ext}
                                             </h3>
                                         </div>
-                                        <a 
-                                            href={getDocsLink(ext)} 
-                                            target="_blank" 
+                                        <a
+                                            href={getDocsLink(ext)}
+                                            target="_blank"
                                             rel="noreferrer"
                                             className="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-1"
                                             title={t.spec_link}
@@ -131,7 +131,7 @@ export const WebGLExtensionsModal: React.FC<WebGLExtensionsModalProps> = ({ exte
                                             </p>
                                         </div>
                                     )}
-                                    
+
                                     {/* Generic footer for supported items */}
                                     {!desc && (
                                         <div className="flex items-center gap-1.5 mt-auto pt-2">

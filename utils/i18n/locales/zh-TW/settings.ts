@@ -55,18 +55,18 @@ export const settings = {
             desc: "在內容上方顯示用於篩選分類的選項卡，若所有選項卡都為空將自動隱藏。"
         },
         showSearch: {
-        
-        
+
+
             title: "啟用搜尋欄",
-        
-        
+
+
             desc: "在標籤欄上方顯示搜尋欄，以便快速篩選主面板的類目與卡片內容。"
-        
-        
+
+
         },
-        
-        
-        
+
+
+
         searchScope: {
             title: "搜尋範圍",
             desc: "選擇搜尋關鍵字的匹配範圍。",
@@ -138,7 +138,7 @@ export const settings = {
             title: "自訂顯示項目",
             desc: "如果你不希望在主介面看到某些卡片或分組，可以在這裡按需隱藏。"
         },
-        
+
         restoreNotifications: {
             title: "恢復通知卡片",
             desc: "重新顯示在儀表板頂部被您手動關閉的所有通知卡片。",

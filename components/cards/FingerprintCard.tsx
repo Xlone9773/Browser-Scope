@@ -21,10 +21,10 @@ interface FingerprintCardProps {
   onOpenJa3?: () => void;
 }
 
-export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({ 
-    data, 
-    audioSampleRate, 
-    t, 
+export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
+    data,
+    audioSampleRate,
+    t,
     simpleMode,
     onOpenScore,
     onOpenCanvas,
@@ -76,7 +76,7 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
                 </Button>
             </div>
             <InfoItem label={t.labels.audio_rate} value={audioSampleRate} />
-            <div 
+            <div
                 className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 hover:text-indigo-600 dark:hover:text-indigo-400 group cursor-pointer transition-all duration-200 px-2 -mx-2 rounded"
                 onClick={onOpenAudioLatency}
                 title={t.audioLatencyProbing?.title}
@@ -91,7 +91,7 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
                     <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 transition-colors" />
                 </div>
             </div>
-            <div 
+            <div
                 className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 hover:bg-rose-50/50 dark:hover:bg-rose-950/30 hover:text-rose-600 dark:hover:text-rose-400 group cursor-pointer transition-all duration-200 px-2 -mx-2 rounded"
                 onClick={onOpenPoisoning}
             >
@@ -106,7 +106,7 @@ export const FingerprintCard: React.FC<FingerprintCardProps> = React.memo(({
                     <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 group-hover:text-rose-500 transition-colors" />
                 </div>
             </div>
-            <div 
+            <div
                 className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400 group cursor-pointer transition-all duration-200 px-2 -mx-2 rounded"
                 onClick={onOpenJa3}
             >

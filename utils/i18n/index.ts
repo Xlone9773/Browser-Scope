@@ -72,7 +72,7 @@ export const loadLocale = async (lang: Language): Promise<Translation> => {
     } catch (fallbackError) {
       console.error("Critical fallback to English failed:", fallbackError);
     }
-    
+
     // Safety fallback to statically imported English to prevent application crash
     activeTranslations = en;
     return en;

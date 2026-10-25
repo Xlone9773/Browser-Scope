@@ -21,7 +21,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
   }
   let resultCell = vec2<u32>(global_id.x, global_id.y);
-  
+
   var result = 0.0;
   for (var i = 0u; i < u32(firstMatrix.size.y); i = i + 1u) {
     let a = i + resultCell.x * u32(firstMatrix.size.y);
@@ -57,9 +57,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     resultMatrix.size = vec2<f32>(firstMatrix.size.x, secondMatrix.size.y);
   }
   let resultCell = vec2<u32>(global_id.x, global_id.y);
-  
+
   var result = 0.0h; // half-precision accumulator
-  
+
   for (var i = 0u; i < u32(firstMatrix.size.y); i = i + 1u) {
     let a = i + resultCell.x * u32(firstMatrix.size.y);
     let b = resultCell.y + i * u32(secondMatrix.size.y);
@@ -298,4 +298,3 @@ fn main(
   }
 }
 `;
-

@@ -26,7 +26,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const isUnmounted = useRef(false);
-  
+
   const [image, setImage] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [recordingMimeType, setRecordingMimeType] = useState<string>('');
@@ -69,7 +69,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
           deviceId: device.deviceId || `camera-${index}`,
           label: device.label || `Camera ${index + 1}`
         }));
-      
+
       setDevices(videoDevices);
       if (videoDevices.length > 0 && !selectedDeviceId) {
         setSelectedDeviceId(videoDevices[0].deviceId);
@@ -109,12 +109,12 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
 
         // Request audio as well for recording
         localStream = await navigator.mediaDevices.getUserMedia({
-          video: { 
+          video: {
             deviceId: { exact: selectedDeviceId },
             width: { ideal: 3840 },
-            height: { ideal: 2160 } 
+            height: { ideal: 2160 }
           },
-          audio: true 
+          audio: true
         });
 
         if (isUnmounted.current) {
@@ -127,19 +127,19 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
           streamRef.current = localStream;
           setStream(localStream);
           setError(null);
-          
+
           // Get track settings
           const videoTrack = localStream.getVideoTracks()[0];
           const settings = videoTrack.getSettings();
-          
+
           if (settings.width && settings.height) {
             setResolution({ width: settings.width, height: settings.height });
           }
 
           // Try to get capabilities for max resolution (Chrome/Edge only)
-          
+
           if (videoTrack.getCapabilities) {
-             
+
              const caps = videoTrack.getCapabilities();
              if (caps.width && caps.height && caps.width.max && caps.height.max) {
                  setMaxResolution({ width: caps.width.max, height: caps.height.max });
@@ -153,10 +153,10 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
         if (errName === 'NotAllowedError' || errName === 'NotFoundError') {
              try {
                  localStream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
+                    video: {
                         deviceId: { exact: selectedDeviceId },
                         width: { ideal: 3840 },
-                        height: { ideal: 2160 } 
+                        height: { ideal: 2160 }
                     },
                     audio: false
                  });
@@ -223,13 +223,13 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
     if (videoRef.current && canvasRef.current && resolution) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      
+
       const width = video.videoWidth || resolution.width;
       const height = video.videoHeight || resolution.height;
-      
+
       canvas.width = width;
       canvas.height = height;
-      
+
       const ctx = canvas.getContext('2d');
       if (ctx) {
         // Draw the image. If mirrored, flip it.
@@ -248,7 +248,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
   const startRecording = () => {
       if (!stream) return;
       recordedChunks.current = [];
-      
+
       // Determine supported mime type
       const mimeTypes = [
         'video/webm;codecs=vp9',
@@ -264,7 +264,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
           break;
         }
       }
-      
+
       if (!selectedType && MediaRecorder.isTypeSupported('video/mp4')) {
           selectedType = 'video/mp4'; // Fallback check
       }
@@ -274,7 +274,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
       try {
           const options = selectedType ? { mimeType: selectedType } : undefined;
           const recorder = new MediaRecorder(stream, options);
-          
+
           recorder.ondataavailable = (event) => {
               if (event.data.size > 0) {
                   recordedChunks.current.push(event.data);
@@ -316,12 +316,12 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
       }
       link.download = `video-record-${new Date().getTime()}.${ext}`;
     }
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-  
+
   const reset = () => {
       setImage(null);
       setVideoUrl(null);
@@ -339,7 +339,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
     >
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900">
-          
+
           {/* Top Controls */}
           {!image && !videoUrl && (
             <div className="flex flex-col md:flex-row gap-4 mb-4">
@@ -348,8 +348,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                    {t.select_device}
                  </label>
                  <div className="relative">
-                   <Select 
-                     value={selectedDeviceId} 
+                   <Select
+                     value={selectedDeviceId}
                      options={devices.map(device => ({ id: device.deviceId, label: device.label }))}
                      onChange={(val) => setSelectedDeviceId(val as string)}
                      disabled={isRecording}
@@ -357,7 +357,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                    />
                  </div>
                </div>
-               
+
                {/* Resolution Info */}
                <div className="flex-1 flex gap-4">
                   <div className="flex-1 bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 flex flex-col justify-center">
@@ -404,18 +404,18 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                   </div>
                </div>
             ) : videoUrl ? (
-               <video 
-                 controls 
-                 playsInline 
-                 src={videoUrl} 
-                 className="w-full h-full object-contain" 
+               <video
+                 controls
+                 playsInline
+                 src={videoUrl}
+                 className="w-full h-full object-contain"
                />
             ) : (
                <>
-                   <video 
-                     ref={videoRef} 
-                     autoPlay 
-                     playsInline 
+                   <video
+                     ref={videoRef}
+                     autoPlay
+                     playsInline
                      muted // Mute locally to prevent feedback loop during recording
                      className="w-full h-full object-contain transition-transform duration-300"
                      style={{ transform: isMirrored ? 'scaleX(-1)' : 'none' }}
@@ -427,7 +427,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                        </div>
                    ) : null}
                    {/* Mirror Toggle Overlay */}
-                   <button 
+                   <button
                        onClick={() => setIsMirrored(!isMirrored)}
                        className="absolute top-4 left-4 p-2 bg-black/40 text-white rounded-full hover:bg-black/60 transition-colors backdrop-blur-sm"
                        title={t.mirror}
@@ -445,7 +445,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
         <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex justify-center gap-4">
           {!image && !videoUrl ? (
              <div className="flex gap-4">
-                 <button 
+                 <button
                     onClick={captureImage}
                     disabled={!!error || isRecording}
                     className="px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
@@ -453,9 +453,9 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                     <CameraIcon size={20} />
                     {t.take_photo}
                  </button>
-                 
+
                  {!isRecording ? (
-                     <button 
+                     <button
                         onClick={startRecording}
                         disabled={!!error}
                         className="px-6 py-3 bg-red-600 text-white rounded-full font-semibold shadow-lg shadow-red-200 hover:bg-red-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
@@ -464,7 +464,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                         {t.start_record}
                      </button>
                  ) : (
-                    <button 
+                    <button
                         onClick={stopRecording}
                         className="px-6 py-3 bg-slate-800 text-white rounded-full font-semibold shadow-lg hover:bg-slate-900 active:scale-95 transition-all flex items-center gap-2"
                      >
@@ -475,7 +475,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
              </div>
           ) : (
              <>
-               <button 
+               <button
                   onClick={reset}
                   className="px-6 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-2"
                >
@@ -483,7 +483,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                   {t.retake}
                </button>
                {image ? (
-                   <button 
+                   <button
                       onClick={() => downloadMedia('image')}
                       className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-medium shadow-md shadow-emerald-100 hover:bg-emerald-700 transition-colors flex items-center gap-2"
                    >
@@ -492,7 +492,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                    </button>
                ) : null}
                {videoUrl ? (
-                   <button 
+                   <button
                       onClick={() => downloadMedia('video')}
                       className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-medium shadow-md shadow-emerald-100 hover:bg-emerald-700 transition-colors flex items-center gap-2"
                    >

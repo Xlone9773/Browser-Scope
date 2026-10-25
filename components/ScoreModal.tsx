@@ -48,9 +48,9 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
   // --- SVG Radar Chart Logic ---
   const size = 180;
   const center = size / 2;
-  const radius = 60; 
+  const radius = 60;
   const levels = 3;
-  
+
   const axes = [
       { key: 'hardware', label: t.categories?.hardware, icon: Cpu, score: scoreData.categoryScores.hardware },
       { key: 'browser', label: t.categories?.browser, icon: Globe, score: scoreData.categoryScores.browser },
@@ -85,7 +85,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
       const angle = angleSlice * i - Math.PI / 2;
       const x = center + radius * Math.cos(angle);
       const y = center + radius * Math.sin(angle);
-      
+
       const lx = center + (radius + 15) * Math.cos(angle);
       const ly = center + (radius + 15) * Math.sin(angle);
 
@@ -108,26 +108,26 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
         icon={<Fingerprint size={24} />}
         onClose={onClose}
         size="3xl"
-        fullHeight={true} 
+        fullHeight={true}
         noPadding={true}
     >
         {({ close: _close }) => (
             <div className="flex flex-col lg:flex-row h-full bg-slate-50 dark:bg-slate-900 overflow-y-auto lg:overflow-hidden">
-                
+
                 {/* Left Panel: Visuals (Fixed width on desktop) */}
                 <div className="lg:w-[320px] xl:w-[360px] bg-white dark:bg-slate-800 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0 lg:overflow-y-auto">
-                    
+
                     <div className="p-8 flex flex-col items-center justify-center gap-8 min-h-full lg:min-h-0">
                         {/* Score Circle */}
                         <div className="relative w-40 h-40 flex items-center justify-center shrink-0">
                             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                                 <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" strokeWidth="6" className="dark:stroke-slate-700" />
-                                <circle 
-                                    cx="50" cy="50" r="45" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    strokeWidth="6" 
-                                    strokeLinecap="round" 
+                                <circle
+                                    cx="50" cy="50" r="45"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="6"
+                                    strokeLinecap="round"
                                     strokeDasharray="283"
                                     strokeDashoffset={283 - (283 * scoreData.totalScore) / 100}
                                     className={`${getScoreColor(scoreData.totalScore)} transition-all duration-1000 ease-out`}
@@ -147,10 +147,10 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                                 <g transform={`translate(20, 10)`}>
                                     {webs}
                                     {axisLines}
-                                    <polygon 
-                                        points={points} 
-                                        className="fill-indigo-500/20 stroke-indigo-500 dark:stroke-indigo-400 dark:fill-indigo-400/20" 
-                                        strokeWidth="2" 
+                                    <polygon
+                                        points={points}
+                                        className="fill-indigo-500/20 stroke-indigo-500 dark:stroke-indigo-400 dark:fill-indigo-400/20"
+                                        strokeWidth="2"
                                     />
                                     {axes.map((axis, i) => {
                                         const value = axis.score / 100;
@@ -170,7 +170,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
                                 {t.score_explanation}
                             </p>
-                            
+
                             {/* Weights Breakdown */}
                             <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-600 dark:text-slate-400 bg-white/50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-200 dark:border-slate-700 mt-2">
                                 <div className="text-left font-bold text-slate-700 dark:text-slate-300 col-span-2 border-b border-slate-200 dark:border-slate-700 pb-1 mb-1">
@@ -188,7 +188,7 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
 
                 {/* Right Panel: Scrollable Grid List */}
                 <div className="flex-1 flex flex-col lg:h-full overflow-visible lg:overflow-hidden bg-slate-50 dark:bg-slate-900/50">
-                    
+
                     <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm flex justify-between items-center shrink-0">
                         <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
                             <ShieldCheck size={16} className="text-indigo-500" />
@@ -203,11 +203,11 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {scoreData.factors.map((factor) => (
                                 <div key={factor.id} className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm flex gap-3 items-start group hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors h-full">
-                                    
+
                                     {/* Icon */}
                                     <div className={`p-2 rounded-lg mt-0.5 shrink-0 ${
-                                        factor.weightedScore > 0 
-                                        ? 'bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400' 
+                                        factor.weightedScore > 0
+                                        ? 'bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400'
                                         : 'bg-emerald-50 text-emerald-500 dark:bg-emerald-900/20 dark:text-emerald-400'
                                     }`}>
                                         {factor.category === 'hardware' ? <Cpu size={16} /> : null}
@@ -223,8 +223,8 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                                             </span>
                                             <div className="flex flex-col items-end">
                                                 <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap ${
-                                                    factor.weightedScore > 0 
-                                                    ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400' 
+                                                    factor.weightedScore > 0
+                                                    ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400'
                                                     : 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400'
                                                 }`}>
                                                     +{factor.weightedScore.toFixed(2)} {t.pts || "pts"}
@@ -234,13 +234,13 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
                                                 </span>
                                             </div>
                                         </div>
-                                        
+
                                         <div className="mb-2">
                                             <span className="text-xs font-mono text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 px-1.5 py-0.5 rounded break-all">
                                                 {getFactorValue(factor.value)}
                                             </span>
                                         </div>
-                                        
+
                                         {factor.description ? (
                                             <p className="text-[10px] text-slate-400 leading-tight">
                                                 {getFactorDesc(factor.description)}
@@ -249,8 +249,8 @@ export const ScoreModal: React.FC<ScoreModalProps> = ({ scoreData, onClose, t })
 
                                         {/* Mini Impact Bar */}
                                         <div className="w-full bg-slate-100 dark:bg-slate-700 h-1 rounded-full overflow-hidden mt-2">
-                                            <div 
-                                                className={`h-full ${getScoreBg( (factor.score / factor.maxScore) * 100 )}`} 
+                                            <div
+                                                className={`h-full ${getScoreBg( (factor.score / factor.maxScore) * 100 )}`}
                                                 style={{ width: `${Math.max((factor.score / factor.maxScore) * 100, 5)}%` }}
                                             />
                                         </div>

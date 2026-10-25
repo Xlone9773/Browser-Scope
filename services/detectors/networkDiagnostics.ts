@@ -45,18 +45,18 @@ const customFetch = async (url: string, enableUdp: boolean, options: RequestInit
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url, method: options.method || 'GET', useUdp: true })
         });
-        
+
         let proxyData: { status: number; data: string; error?: string };
         try {
             proxyData = await res.json();
         } catch {
             throw new Error(`HTTP ${res.status}: Proxy server error or unreachable.`);
         }
-        
+
         if (!res.ok) {
             throw new Error(`Proxy Error: ${proxyData.error || res.statusText}`);
         }
-        
+
         return {
             ok: true,
             status: proxyData.status,
@@ -74,7 +74,7 @@ const customFetch = async (url: string, enableUdp: boolean, options: RequestInit
     const doUserscriptFetch = (targetUrl: string, opts: RequestInit = {}): Promise<CustomFetchResponse> => {
         return new Promise((resolve, reject) => {
             const requestId = Math.random().toString(36).substring(2, 11);
-            
+
             const handleResponse = (e: Event) => {
                 const customEvent = e as CustomEvent;
                 if (customEvent.detail) {
@@ -175,7 +175,7 @@ export const fetchIpInfoFromSource = async (source: string, enableUdp: boolean =
             return {
                 ip: json.ip as string,
                 success: true,
-                type: 'IPv4/IPv6', 
+                type: 'IPv4/IPv6',
                 country: json.country as string,
                 countryCode: json.countryCode as string,
                 region: json.region as string,
@@ -217,7 +217,7 @@ export const fetchIpInfoFromSource = async (source: string, enableUdp: boolean =
                 postalCode: json.postal as string,
                 userAgent: json.userAgent as string
             };
-        } 
+        }
         else if (source === 'ipapi') {
             const res = await customFetch('https://ipapi.co/json/', enableUdp, { referrerPolicy: 'no-referrer' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -272,18 +272,18 @@ export const detectIpv6 = async (source: string, enableUdp: boolean = false): Pr
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
+
         let url = 'https://api6.ipify.org?format=json';
         if (source === 'seeip') url = 'https://ip6.seeip.org/json';
         if (source === 'icanhazip') url = 'https://ipv6.icanhazip.com';
 
-        const res = await customFetch(url, enableUdp, { 
+        const res = await customFetch(url, enableUdp, {
             signal: controller.signal,
-            mode: 'cors' 
+            mode: 'cors'
         });
         clearTimeout(timeoutId);
         if (!res.ok) throw new Error('Failed');
-        
+
         if (source === 'icanhazip') {
             return (await res.text()).trim();
         } else {
@@ -306,7 +306,7 @@ export const runWebRTCScan = (onCandidate: (c: WebRTCCandidate) => void): Promis
                 if (e.candidate) {
                     const c = e.candidate;
                     const parts = c.candidate.split(' ');
-                    
+
                     const candidateObj: WebRTCCandidate = {
                         id: Math.random().toString(36).substr(2, 9),
                         ip: c.address || parts[4] || '?',
@@ -339,7 +339,7 @@ export const detectDns = async (enableUdp: boolean = false): Promise<{ ip: strin
         const res = await customFetch('https://edns.ip-api.com/json', enableUdp);
         if (!res.ok) throw new Error("API Unreachable");
         const data = (await res.json()) as { dns?: { ip?: string; geo?: string } } | undefined;
-        
+
         if (data && data.dns) {
             return {
                 ip: data.dns.ip || 'Unknown',
@@ -354,7 +354,7 @@ export const detectDns = async (enableUdp: boolean = false): Promise<{ ip: strin
 
 export const detectProtocols = async (): Promise<{ h2: string; h3: string }> => {
     try {
-        const testH2 = 'https://www.google.com/generate_204'; 
+        const testH2 = 'https://www.google.com/generate_204';
         const testH3 = 'https://www.cloudflare.com/cdn-cgi/trace';
 
         await Promise.allSettled([
@@ -368,7 +368,7 @@ export const detectProtocols = async (): Promise<{ h2: string; h3: string }> => 
         const getProto = (url: string) => {
             const entries = performance.getEntriesByName(url);
             if (entries.length > 0) {
-                
+
                                 // @ts-expect-error fixed implicitly typed external libraries
                                 return entries[entries.length - 1].nextHopProtocol || 'any';
             }

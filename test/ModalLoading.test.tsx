@@ -12,9 +12,9 @@ describe("ModalLoading UI component tests", () => {
 
   it("should render custom text correctly", () => {
     render(
-      <ModalLoading 
-        initializingText="Starting up" 
-        loadingText="Please wait" 
+      <ModalLoading
+        initializingText="Starting up"
+        loadingText="Please wait"
       />
     );
     expect(screen.getByText("Starting up")).toBeInTheDocument();

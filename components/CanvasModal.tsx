@@ -47,7 +47,7 @@ export const CanvasModal: React.FC<CanvasModalProps> = ({ imageSrc, onClose, t }
                     <div className="w-full bg-slate-100 dark:bg-black/40 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 shadow-inner flex items-center justify-center p-8">
                         <img src={imageSrc} alt="Canvas Fingerprint Enlarged" className="max-w-full h-auto object-contain shadow-lg rounded bg-white" />
                     </div>
-                    
+
                     {/* Details Footer */}
                     <div className="w-full mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-center gap-8 text-sm text-slate-600 dark:text-slate-300">
                         {dimensions && (

@@ -26,11 +26,11 @@ export const getAllData = async (): Promise<BrowserData> => {
   const cpuModel = estimateCpuFromGpu(gpu.renderer);
   const adBlockEnabled = detectAdBlocker();
   const aiReadiness = runAiReadinessCheck();
-  
+
   const cpuCores = navigator.hardwareConcurrency || 'Unknown';
   // Use Intl formatter for memory if available
   const deviceMemory = nav.deviceMemory ? formatBytes(nav.deviceMemory * 1024 * 1024 * 1024) : 'Unknown';
-  
+
   // Peripherals
   const screenExtended = window.screen.isExtended || false;
   let gamepadsCount = 0;
@@ -53,17 +53,17 @@ export const getAllData = async (): Promise<BrowserData> => {
   // Security
   const isBot = nav.webdriver || false;
   const gpcEnabled = nav.globalPrivacyControl || false;
-  
+
   const pdfViewer = nav.pdfViewerEnabled || false;
   const secureContext = window.isSecureContext;
 
   // AI & Compute
   const wasmSupport = typeof WebAssembly === 'object';
   const wasmSimd = checkWasmSimd();
-  
+
       const windowAi = !!(window.ai || window.model);
   const webnn = !!nav.ml;
-  const webgpuCompute = !!nav.gpu; 
+  const webgpuCompute = !!nav.gpu;
 
   const withTimeout = <T>(promise: Promise<T>, fallback: T, ms: number = 500): Promise<T> => {
       return Promise.race([
@@ -90,9 +90,9 @@ export const getAllData = async (): Promise<BrowserData> => {
   ]);
 
   const score = calculateFingerprintScore({
-      canvasHash: canvasInfo.hash, 
-      webglHash: webglHash, 
-      userAgent: navigator.userAgent, 
+      canvasHash: canvasInfo.hash,
+      webglHash: webglHash,
+      userAgent: navigator.userAgent,
       cpu: cpuCores,
       memory: deviceMemory,
       gpuRenderer: gpu.renderer,

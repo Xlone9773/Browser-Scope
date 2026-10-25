@@ -222,9 +222,9 @@ export const runFontDiagnostic = async (
   // 1. Hook detection on document.fonts
   try {
     const fontsProto = Object.getPrototypeOf(document.fonts);
-    const isForEachHooked = isHooked(document.fonts.forEach as unknown as (...args: never[]) => unknown) || 
+    const isForEachHooked = isHooked(document.fonts.forEach as unknown as (...args: never[]) => unknown) ||
                             (fontsProto && isHooked(fontsProto.forEach as unknown as (...args: never[]) => unknown));
-    const isValuesHooked = isHooked(document.fonts.values as unknown as (...args: never[]) => unknown) || 
+    const isValuesHooked = isHooked(document.fonts.values as unknown as (...args: never[]) => unknown) ||
                            (fontsProto && isHooked(fontsProto.values as unknown as (...args: never[]) => unknown));
     if (isForEachHooked || isValuesHooked) {
       fontPoisoned = true;
@@ -238,7 +238,7 @@ export const runFontDiagnostic = async (
 
   // 2. Local font query interface check (queryLocalFonts)
   log(t.testing_font_query || 'Detecting local font query interface (queryLocalFonts)...');
-  const queryLocalFontsFn = (window as unknown as { queryLocalFonts?: () => unknown }).queryLocalFonts || 
+  const queryLocalFontsFn = (window as unknown as { queryLocalFonts?: () => unknown }).queryLocalFonts ||
                             (navigator as unknown as { queryLocalFonts?: () => unknown }).queryLocalFonts;
   if (queryLocalFontsFn) {
     if (isHooked(queryLocalFontsFn as unknown as (...args: never[]) => unknown)) {
@@ -450,7 +450,7 @@ export const runMediaDiagnostic = async (
     try {
       const serializedFirstRun = JSON.stringify(firstRun.map(d => ({ kind: d.kind, deviceId: d.deviceId })));
       const hasActualIdCurr = firstRun.some(d => d.deviceId && d.deviceId !== 'default');
-      
+
       const baselineRes = await verifyOrStoreBaseline('media_devices', serializedFirstRun);
       if (baselineRes.status === 'TAMPERED') {
         isPoisoned = true;
@@ -547,9 +547,9 @@ export const runRenderAudioDiagnostic = async (
     const currentDivH = probeDiv.clientHeight;
 
     if (
-      currentW !== lastW || 
-      currentH !== lastH || 
-      currentAvailW !== lastAvailW || 
+      currentW !== lastW ||
+      currentH !== lastH ||
+      currentAvailW !== lastAvailW ||
       currentAvailH !== lastAvailH ||
       currentDivW !== lastDivW ||
       currentDivH !== lastDivH
@@ -611,7 +611,7 @@ export const runRenderAudioDiagnostic = async (
       }
       if (!canvasPoisoned && lastHash) {
         log(t.canvas_stable || '✅ 2D Canvas appears stable (no random noise).');
-        
+
         // Cross-Session / Fixed-seed detection via Secure Baseline Vault
         try {
           const baselineRes = await verifyOrStoreBaseline('canvas_2d', lastHash);
@@ -670,7 +670,7 @@ export const runRenderAudioDiagnostic = async (
       }
       if (!webglPoisoned && lastHash) {
         log(t.webgl_stable || '✅ WebGL appears stable (no random noise).');
-        
+
         // Cross-Session / Fixed-seed detection via Secure Baseline Vault
         try {
           const baselineRes = await verifyOrStoreBaseline('webgl', lastHash);
@@ -763,7 +763,7 @@ export const runRenderAudioDiagnostic = async (
     log(t.audio_poisoned || '❌ Audio buffer or latency tampering detected (anti-fingerprinting active).');
   } else if (lastAudioHash) {
     log(t.audio_stable || '✅ Audio APIs stable, no waveform or latency tampering detected.');
-    
+
     // Cross-Session / Fixed-seed detection via Secure Baseline Vault
     try {
       const baselineRes = await verifyOrStoreBaseline('audio', lastAudioHash);
@@ -878,10 +878,10 @@ export const runHardwareDiagnostic = async (
         const workers: Worker[] = [];
         let completedCount = 0;
         let totalOps = 0;
-        
+
         const blob = new Blob([workerCode], { type: 'application/javascript' });
         const workerUrl = URL.createObjectURL(blob);
-        
+
         try {
           for (let i = 0; i < C; i++) {
             const worker = new Worker(workerUrl);
@@ -904,7 +904,7 @@ export const runHardwareDiagnostic = async (
             };
             workers.push(worker);
           }
-          
+
           // Trigger execution
           workers.forEach(w => w.postMessage(duration));
         } catch (err) {
@@ -934,7 +934,7 @@ export const runHardwareDiagnostic = async (
     }
     const speedup = ops / baseOps;
     tempResults.push({ concurrency: c, ops, speedup });
-    
+
     const compLog = (t.hardware_concurrency_completed || '   -> Concurrency {concurrency}: Completed {ops} ops, Relative speedup: {speedup}x')
       .replace('{concurrency}', String(c))
       .replace('{ops}', ops.toLocaleString())

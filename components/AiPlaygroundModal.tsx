@@ -28,11 +28,11 @@ interface AiResultItem {
 export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t }) => {
   const [activeTask, setActiveTask] = useState<TaskType>('sentiment');
   const [inputText, setInputText] = useState('');
-  
+
   // Model State
   const [modelStatus, setModelStatus] = useState<'idle' | 'loading' | 'ready'>('idle');
   const [progress, setProgress] = useState<{status: string, progress?: number, file?: string} | null>(null);
-  
+
   // Result State
   const [result, setResult] = useState<AiResultItem[] | null>(null);
   const [metrics, setMetrics] = useState<{ loadTime?: string, inferenceTime?: string, device?: string }>({});
@@ -52,13 +52,13 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
       setModelStatus('loading');
       setResult(null);
       setMetrics({});
-      
+
       const startTime = performance.now();
 
       try {
-          
+
           const { pipeline, env } = await import('@xenova/transformers');
-          
+
           env.allowLocalModels = false;
           env.useBrowserCache = true;
 
@@ -71,10 +71,10 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                   }
               }
           });
-          
+
           pipelineRef.current = pipe as ((text: string, options?: Record<string, unknown>) => Promise<AiResultItem[]>);
           loadedTaskRef.current = task;
-          
+
           const endTime = performance.now();
           setMetrics(prev => ({ ...prev, loadTime: ((endTime - startTime) / 1000).toFixed(2) + 's' }));
           setModelStatus('ready');
@@ -105,10 +105,10 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
 
   const runInference = async () => {
       if (!pipelineRef.current || !inputText.trim() || isComputing) return;
-      
+
       setIsComputing(true);
       setResult(null);
-      
+
       try {
           const start = performance.now();
           let output: AiResultItem[] | null = null;
@@ -128,7 +128,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
           }
 
           const end = performance.now();
-          
+
           setResult(output);
           setMetrics(prev => ({ ...prev, inferenceTime: (end - start).toFixed(2) + ' ms' }));
       } catch (e: unknown) {
@@ -148,19 +148,19 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
 
   // Safe translation access
   const getTaskTitle = (task: TaskType) => {
-      
+
       return t.tasks?.[task]?.title;
   };
   const getTaskDesc = (task: TaskType) => {
-      
+
       return t.tasks?.[task]?.desc;
   };
   const getTaskInputPlaceholder = (task: TaskType) => {
-      
+
       return t.tasks?.[task]?.input;
   };
   const getTaskBtnText = (task: TaskType) => {
-      
+
       return t.tasks?.[task]?.btn;
   };
 
@@ -178,7 +178,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
         noPadding
     >
         <div className="flex flex-col md:flex-row h-full bg-slate-50 dark:bg-slate-900">
-            
+
             {/* Sidebar / Tabs */}
             <div className="md:w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0">
                 <div className="p-4 border-b border-slate-200 dark:border-slate-700">
@@ -190,8 +190,8 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                                 onClick={() => handleTaskChange(task)}
                                 disabled={isComputing || modelStatus === 'loading'}
                                 className={`flex items-center gap-3 p-3 rounded-lg text-left transition-all ${
-                                    activeTask === task 
-                                    ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 shadow-sm' 
+                                    activeTask === task
+                                    ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 shadow-sm'
                                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                                 } ${isComputing || modelStatus === 'loading' ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
@@ -205,7 +205,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                         ))}
                     </div>
                 </div>
-                
+
                 {/* Stats Panel */}
                 <div className="mt-auto p-4 bg-slate-50 dark:bg-slate-900/50">
                     <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">{t.perf_metrics}</div>
@@ -239,8 +239,8 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{getTaskDesc(activeTask)}</p>
                         </div>
                         <div className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-2 ${
-                            modelStatus === 'ready' 
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800' 
+                            modelStatus === 'ready'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800'
                             : modelStatus === 'loading'
                                 ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800'
                                 : 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
@@ -258,8 +258,8 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                                 <span>{progress?.progress ? Math.round(progress.progress) : 0}%</span>
                             </div>
                             <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                <div 
-                                    className="h-full bg-indigo-500 transition-all duration-200" 
+                                <div
+                                    className="h-full bg-indigo-500 transition-all duration-200"
                                     style={{ width: `${progress?.progress || 5}%` }}
                                 />
                             </div>
@@ -270,24 +270,24 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
 
                 {/* Interaction Area */}
                 <div className="flex-1 p-6 overflow-y-auto bg-slate-50 dark:bg-slate-900/50 flex flex-col">
-                    
+
                     <div className="w-full max-w-3xl mx-auto space-y-6">
                         {/* Input */}
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Input</label>
                             <div className="relative group">
-                                <textarea 
+                                <textarea
                                     value={inputText}
                                     onChange={(e) => setInputText(e.target.value)}
                                     placeholder={modelStatus === 'ready' ? getTaskInputPlaceholder(activeTask) : ""}
                                     className={`w-full p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none resize-none h-32 text-sm text-slate-800 dark:text-slate-200 shadow-sm transition-shadow ${modelStatus !== 'ready' ? 'opacity-50 cursor-not-allowed select-none' : ''}`}
                                     disabled={modelStatus !== 'ready' || isComputing}
                                 />
-                                
+
                                 {/* Overlay for Idle State - Manual Load Trigger */}
                                 {modelStatus === 'idle' && (
                                     <div className="absolute inset-0 flex items-center justify-center z-10">
-                                        <button 
+                                        <button
                                             onClick={handleLoadClick}
                                             className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-2 font-bold"
                                         >
@@ -299,7 +299,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
 
                                 {/* Main Action Button (Only visible if model is ready or loading) */}
                                 {modelStatus !== 'idle' && (
-                                    <button 
+                                    <button
                                         onClick={runInference}
                                         disabled={modelStatus !== 'ready' || isComputing || !inputText}
                                         className={`absolute bottom-3 right-3 px-4 py-2 rounded-lg font-bold text-white shadow-lg flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
@@ -319,7 +319,7 @@ export const AiPlaygroundModal: React.FC<AiPlaygroundModalProps> = ({ onClose, t
                                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t.result_label}</label>
                                 <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm relative overflow-hidden">
                                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-indigo-500 to-purple-500"></div>
-                                    
+
                                     {activeTask === 'sentiment' && (
                                         <div className="flex items-center gap-4">
                                             <div className={`p-3 rounded-full ${result[0].label === 'POSITIVE' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>

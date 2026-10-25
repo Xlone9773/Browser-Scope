@@ -17,13 +17,13 @@ function murmurhash3_32_gc(key: string, seed: number) {
   i = 0;
 
   while (i < bytes) {
-      k1 = 
+      k1 =
         ((key.charCodeAt(i) & 0xff)) |
         ((key.charCodeAt(++i) & 0xff) << 8) |
         ((key.charCodeAt(++i) & 0xff) << 16) |
         ((key.charCodeAt(++i) & 0xff) << 24);
       ++i;
-      
+
       k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
       k1 = (k1 << 15) | (k1 >>> 17);
       k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
@@ -36,23 +36,23 @@ function murmurhash3_32_gc(key: string, seed: number) {
 
   k1 = 0;
 
-  
+
   switch (remainder) {
-      case 3: 
+      case 3:
           k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
           /* falls through */
-      case 2: 
+      case 2:
           k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
           /* falls through */
-      case 1: 
+      case 1:
           k1 ^= (key.charCodeAt(i) & 0xff);
-      
+
       k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
       k1 = (k1 << 15) | (k1 >>> 17);
       k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
       h1 ^= k1;
   }
-  
+
 
   h1 ^= key.length;
 
@@ -108,13 +108,13 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
       setTimeout(() => {
           if (!isMountedRef.current) return;
           const startTime = performance.now();
-          
+
           const fontList = [
-              'Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Verdana', 'Georgia', 
+              'Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Verdana', 'Georgia',
               'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', 'Impact',
               'Microsoft YaHei', 'SimSun', 'SimHei', 'PingFang SC', 'Hiragino Sans GB'
           ];
-          
+
           const baseFonts = ['monospace', 'sans-serif', 'serif'];
           const testString = "mmmmmmmmmmlli";
           const testSize = "72px";
@@ -123,16 +123,16 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
               setLoading(false);
               return;
           }
-          
+
           const s = document.createElement("span");
           s.style.fontSize = testSize;
           s.innerHTML = testString;
           s.style.visibility = "hidden";
           s.style.position = "absolute";
           s.style.left = "-9999px";
-          
+
           const defaultWidths: Record<string, number> = {};
-          
+
           // Get base widths
           baseFonts.forEach(base => {
               s.style.fontFamily = base;
@@ -140,9 +140,9 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
               defaultWidths[base] = s.offsetWidth;
               h.removeChild(s);
           });
-          
+
           const detected: string[] = [];
-          
+
           fontList.forEach(font => {
               let matched = false;
               for (const base of baseFonts) {
@@ -157,7 +157,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
               }
               if (matched) detected.push(font);
           });
-          
+
           if (!isMountedRef.current) return;
           setDetectedFonts(detected);
           const elapsed = Math.round(performance.now() - startTime);
@@ -179,7 +179,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
   // Recalculate hash based on enabled components and salt
   const calculateHash = useCallback((currentComponents: Component[], currentSalt: string, startTime?: number) => {
       const start = startTime || performance.now();
-      
+
       const enabledValues = currentComponents
         .filter(c => c.enabled)
         .map(c => {
@@ -187,7 +187,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
             const val = c.value;
             return typeof val === 'object' ? JSON.stringify(val) : String(val);
         });
-      
+
       // Add salt if present
       if (currentSalt) {
           enabledValues.push(currentSalt);
@@ -296,10 +296,10 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         // Load v5
         const fpPromise = import('fpjs-v5')
           .then((FingerprintJS) => FingerprintJS.load());
-        
+
         const fp = await fpPromise;
         const result = await fp.get();
-        
+
         // Convert v5 components object to our format
         if (result.components) {
             const compsMap = result.components as Record<string, { value: unknown }>;
@@ -311,10 +311,10 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         // Load v4
         const fpPromise = import('@fingerprintjs/fingerprintjs')
           .then((FingerprintJS) => FingerprintJS.load());
-        
+
         const fp = await fpPromise;
         const result = await fp.get();
-        
+
         // Convert v4 components object to our format
         if (result.components) {
             const compsMap = result.components as Record<string, { value: unknown }>;
@@ -326,7 +326,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
         // Load v2 (Fingerprintjs2)
         // @ts-expect-error auto-fixed
         const Fingerprint2 = await import('fingerprintjs2');
-        
+
         // V2 uses a callback pattern usually, but we wrap in promise
         const componentsV2 = await new Promise<{ key: string; value: unknown }[]>((resolve) => {
             if (typeof window.requestIdleCallback === 'function') {
@@ -364,7 +364,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
       Object.keys(rawComponents).forEach(key => delete rawComponents[key]);
 
       setComponents(comps);
-      
+
       // Initial Hash Calculation
       calculateHash(comps, salt, startTime);
 
@@ -383,11 +383,11 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
           runFingerprint();
       }, 0);
       return () => clearTimeout(timer);
-  }, [activeTab, runFingerprint]); 
+  }, [activeTab, runFingerprint]);
 
   // Handle Toggle Component
   const toggleComponent = (key: string) => {
-      const updated = components.map(c => 
+      const updated = components.map(c =>
           c.key === key ? { ...c, enabled: !c.enabled } : c
       );
       setComponents(updated);
@@ -432,8 +432,8 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                         <button
                             onClick={() => setActiveTab('v5')}
                             className={`flex-1 py-1.5 px-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
-                                activeTab === 'v5' 
-                                ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm' 
+                                activeTab === 'v5'
+                                ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm'
                                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
                             }`}
                         >
@@ -442,8 +442,8 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                         <button
                             onClick={() => setActiveTab('v4')}
                             className={`flex-1 py-1.5 px-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
-                                activeTab === 'v4' 
-                                ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm' 
+                                activeTab === 'v4'
+                                ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm'
                                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
                             }`}
                         >
@@ -452,8 +452,8 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                         <button
                             onClick={() => setActiveTab('v2')}
                             className={`flex-1 py-1.5 px-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
-                                activeTab === 'v2' 
-                                ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm' 
+                                activeTab === 'v2'
+                                ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm'
                                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
                             }`}
                         >
@@ -462,8 +462,8 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                         <button
                             onClick={() => setActiveTab('fonts')}
                             className={`flex-1 py-1.5 px-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
-                                activeTab === 'fonts' 
-                                ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm' 
+                                activeTab === 'fonts'
+                                ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm'
                                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
                             }`}
                         >
@@ -477,8 +477,8 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <Settings size={14} className="text-slate-400" />
                             </div>
-                            <input 
-                                type="text" 
+                            <input
+                                type="text"
                                 value={salt}
                                 onChange={handleSaltChange}
                                 placeholder={t.salt_label}
@@ -517,7 +517,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
 
                 {/* Content Area */}
                 <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
-                    
+
                     {activeTab !== 'fonts' ? (
                         <>
                             {/* Components List */}
@@ -531,17 +531,17 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                                 </div>
                                 <div className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600">
                                     {components.map((comp) => (
-                                        <label 
-                                            key={comp.key} 
+                                        <label
+                                            key={comp.key}
                                             className={`flex items-center gap-3 p-2 rounded cursor-pointer transition-colors ${
-                                                comp.enabled 
-                                                ? 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700' 
+                                                comp.enabled
+                                                ? 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700'
                                                 : 'bg-slate-50 dark:bg-slate-900/50 opacity-60'
                                             }`}
                                         >
-                                            <input 
-                                                type="checkbox" 
-                                                checked={comp.enabled} 
+                                            <input
+                                                type="checkbox"
+                                                checked={comp.enabled}
                                                 onChange={() => toggleComponent(comp.key)}
                                                 className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 dark:bg-slate-700 dark:border-slate-600"
                                             />
@@ -576,8 +576,8 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                                             components.filter(c => c.enabled).reduce((acc, curr) => ({
                                                 ...acc,
                                                 [curr.key]: curr.value
-                                            }), {}), 
-                                            null, 
+                                            }), {}),
+                                            null,
                                             2
                                         )}
                                     </pre>
@@ -615,7 +615,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ onClose, t }
                         {t.regenerate || "Regenerate"}
                     </Button>
                     {activeTab !== 'fonts' && (
-                        <Button 
+                        <Button
                             variant="primary"
                             onClick={handleCopy}
                             leftIcon={copied ? <Check size={16} /> : <Copy size={16} />}
