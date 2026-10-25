@@ -3,7 +3,6 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import dgram from "dgram";
 import helmet from "helmet";
-import compression from "compression";
 import cors from "cors";
 import { rateLimit } from "express-rate-limit";
 import { USERSCRIPT_CODE } from "./utils/userscript";
@@ -111,7 +110,6 @@ async function startServer() {
     } : false,
     crossOriginEmbedderPolicy: false // Disabled to allow external resources
   }));
-  app.use(compression());
 
   // Dynamic Whitelist CORS Configuration to avoid Wildcard credential errors
   const whitelist = [
