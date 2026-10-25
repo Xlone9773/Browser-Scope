@@ -44,142 +44,142 @@ export interface DrmSystemDefinition {
 
 export const videoCodecs: VideoCodecDefinition[] = [
     // Standard SDR Codecs
-    { 
-        name: 'H.264 (AVC)', 
+    {
+        name: 'H.264 (AVC)',
         profile: 'High Profile (L5.1)',
-        type: 'video/mp4; codecs="avc1.640033"', 
+        type: 'video/mp4; codecs="avc1.640033"',
         bitDepth: 8,
         tag: 'SDR',
         category: 'sdr',
         description: 'Universal Web & Streaming Standard'
     },
-    { 
-        name: 'H.264 (AVC)', 
+    {
+        name: 'H.264 (AVC)',
         profile: 'Baseline (WebRTC)',
-        type: 'video/mp4; codecs="avc1.42E01E"', 
+        type: 'video/mp4; codecs="avc1.42E01E"',
         bitDepth: 8,
         tag: 'WebRTC',
         category: 'webrtc',
         description: 'Low-latency Mobile & RTC Standard'
     },
-    { 
-        name: 'H.264 (AVC)', 
+    {
+        name: 'H.264 (AVC)',
         profile: 'Main Profile',
-        type: 'video/mp4; codecs="avc1.4D401F"', 
+        type: 'video/mp4; codecs="avc1.4D401F"',
         bitDepth: 8,
         tag: 'SDR',
         category: 'sdr'
     },
-    { 
-        name: 'H.264 (AVC)', 
+    {
+        name: 'H.264 (AVC)',
         profile: 'High 10 (10-bit)',
-        type: 'video/mp4; codecs="avc1.6E0033"', 
+        type: 'video/mp4; codecs="avc1.6E0033"',
         bitDepth: 10,
         tag: 'Pro',
         category: 'sdr',
         description: 'Hi10P Anime & Master Distribution'
     },
-    { 
-        name: 'HEVC (H.265)', 
+    {
+        name: 'HEVC (H.265)',
         profile: 'Main (hvc1)',
-        type: 'video/mp4; codecs="hvc1.1.6.L150.B0"', 
+        type: 'video/mp4; codecs="hvc1.1.6.L150.B0"',
         bitDepth: 8,
         tag: 'SDR',
         category: 'sdr',
         description: 'Out-of-band parameter sets (Standard MP4)'
     },
-    { 
-        name: 'HEVC (H.265)', 
+    {
+        name: 'HEVC (H.265)',
         profile: 'Main (hev1 in-band)',
-        type: 'video/mp4; codecs="hev1.1.6.L150.B0"', 
+        type: 'video/mp4; codecs="hev1.1.6.L150.B0"',
         bitDepth: 8,
         tag: 'SDR',
         category: 'sdr',
         description: 'In-band parameter sets (Apple/Safari Native)'
     },
-    { 
-        name: 'VP9', 
+    {
+        name: 'VP9',
         profile: 'Profile 0 (8-bit 4:2:0)',
-        type: 'video/webm; codecs="vp09.00.51.08.01.01.01.01.00"', 
+        type: 'video/webm; codecs="vp09.00.51.08.01.01.01.01.00"',
         bitDepth: 8,
         tag: 'SDR',
         category: 'sdr',
         description: 'YouTube 4K Mainstream Standard'
     },
-    { 
-        name: 'VP8', 
+    {
+        name: 'VP8',
         profile: 'VP8 (WebM/RTC)',
-        type: 'video/webm; codecs="vp8"', 
+        type: 'video/webm; codecs="vp8"',
         bitDepth: 8,
         tag: 'WebRTC',
         category: 'webrtc',
         description: 'Legacy WebRTC & WebM Standard'
     },
-    { 
-        name: 'AV1', 
+    {
+        name: 'AV1',
         profile: 'Main Profile (8-bit)',
-        type: 'video/mp4; codecs="av01.0.09M.08"', 
+        type: 'video/mp4; codecs="av01.0.09M.08"',
         bitDepth: 8,
         tag: 'SDR',
         category: 'sdr',
         description: 'Next-Gen Royalty-Free Standard'
     },
-    
+
     // HDR & Wide Color Standards
-    { 
-        name: 'HEVC (H.265)', 
+    {
+        name: 'HEVC (H.265)',
         profile: 'Main 10 (HDR10)',
-        type: 'video/mp4; codecs="hvc1.2.4.L153.B0"', 
+        type: 'video/mp4; codecs="hvc1.2.4.L153.B0"',
         hdrConfig: { transferFunction: 'pq', colorGamut: 'rec2020' },
         bitDepth: 10,
         tag: 'HDR10',
         category: 'hdr',
         description: '4K UHD Blu-ray & Streaming HDR Standard'
     },
-    { 
-        name: 'HEVC (H.265)', 
+    {
+        name: 'HEVC (H.265)',
         profile: 'Main 10 (HLG)',
-        type: 'video/mp4; codecs="hvc1.2.4.L153.B0"', 
+        type: 'video/mp4; codecs="hvc1.2.4.L153.B0"',
         hdrConfig: { transferFunction: 'hlg', colorGamut: 'rec2020' },
         bitDepth: 10,
         tag: 'HLG',
         category: 'hdr',
         description: 'Broadcast HDR (BBC/NHK)'
     },
-    { 
-        name: 'HEVC (H.265)', 
+    {
+        name: 'HEVC (H.265)',
         profile: 'Main 10 (HDR10+)',
-        type: 'video/mp4; codecs="hvc1.2.4.L153.B0"', 
+        type: 'video/mp4; codecs="hvc1.2.4.L153.B0"',
         hdrConfig: { transferFunction: 'pq', colorGamut: 'rec2020' },
         bitDepth: 10,
         tag: 'HDR10+',
         category: 'hdr',
         description: 'Dynamic Metadata HDR (Samsung / Prime Video)'
     },
-    { 
-        name: 'VP9', 
+    {
+        name: 'VP9',
         profile: 'Profile 2 (HDR10)',
-        type: 'video/webm; codecs="vp09.02.51.10.01.09.16.09.01"', 
+        type: 'video/webm; codecs="vp09.02.51.10.01.09.16.09.01"',
         hdrConfig: { transferFunction: 'pq', colorGamut: 'rec2020' },
         bitDepth: 10,
         tag: 'HDR10',
         category: 'hdr',
         description: 'YouTube HDR Video Streaming'
     },
-    { 
-        name: 'AV1', 
+    {
+        name: 'AV1',
         profile: 'Main 10 (HDR10)',
-        type: 'video/mp4; codecs="av01.0.12M.10"', 
+        type: 'video/mp4; codecs="av01.0.12M.10"',
         hdrConfig: { transferFunction: 'pq', colorGamut: 'rec2020' },
         bitDepth: 10,
         tag: 'HDR10',
         category: 'hdr',
         description: 'Next-Gen Royalty-Free HDR10'
     },
-    { 
-        name: 'AV1', 
+    {
+        name: 'AV1',
         profile: 'Main 10 (HLG)',
-        type: 'video/mp4; codecs="av01.0.12M.10"', 
+        type: 'video/mp4; codecs="av01.0.12M.10"',
         hdrConfig: { transferFunction: 'hlg', colorGamut: 'rec2020' },
         bitDepth: 10,
         tag: 'HLG',
@@ -188,150 +188,150 @@ export const videoCodecs: VideoCodecDefinition[] = [
     },
 
     // Next-Gen & Professional Codecs
-    { 
-        name: 'VVC (H.266)', 
+    {
+        name: 'VVC (H.266)',
         profile: 'Main 10 (vvc1)',
-        type: 'video/mp4; codecs="vvc1.1.L5.1"', 
+        type: 'video/mp4; codecs="vvc1.1.L5.1"',
         bitDepth: 10,
         tag: 'NextGen',
         category: 'nextgen',
         description: 'MPEG-I Versatile Video Coding (50% bitrate reduction over HEVC)'
     },
-    { 
-        name: 'VVC (H.266)', 
+    {
+        name: 'VVC (H.266)',
         profile: 'Main 10 HDR (vvc1)',
-        type: 'video/mp4; codecs="vvc1.1.L5.1"', 
+        type: 'video/mp4; codecs="vvc1.1.L5.1"',
         hdrConfig: { transferFunction: 'pq', colorGamut: 'rec2020' },
         bitDepth: 10,
         tag: 'NextGen',
         category: 'nextgen',
         description: 'VVC HDR 10-bit Ultra HD'
     },
-    { 
-        name: 'AV1', 
+    {
+        name: 'AV1',
         profile: 'High Profile (4:4:4)',
-        type: 'video/mp4; codecs="av01.1.08M.10"', 
+        type: 'video/mp4; codecs="av01.1.08M.10"',
         bitDepth: 10,
         tag: 'Pro',
         category: 'nextgen',
         description: 'AV1 Professional Color Sampling'
     },
-    { 
-        name: 'AV1', 
+    {
+        name: 'AV1',
         profile: 'Professional (12-bit)',
-        type: 'video/mp4; codecs="av01.2.08M.12"', 
+        type: 'video/mp4; codecs="av01.2.08M.12"',
         bitDepth: 12,
         tag: 'Pro',
         category: 'nextgen',
         description: 'AV1 Cinema & Studio Grade 12-bit'
     },
-    { 
-        name: 'HEVC (H.265)', 
+    {
+        name: 'HEVC (H.265)',
         profile: 'Range Extension (RExt 4:2:2/4:4:4)',
-        type: 'video/mp4; codecs="hvc1.4.10.L150.B0"', 
+        type: 'video/mp4; codecs="hvc1.4.10.L150.B0"',
         bitDepth: 10,
         tag: 'Pro',
         category: 'nextgen',
         description: 'High-end Broadcast Camera Output'
     },
-    { 
-        name: 'VP9', 
+    {
+        name: 'VP9',
         profile: 'Profile 1 (4:4:4 8-bit)',
-        type: 'video/webm; codecs="vp09.01.51.08.01.01.01.01.00"', 
+        type: 'video/webm; codecs="vp09.01.51.08.01.01.01.01.00"',
         bitDepth: 8,
         tag: 'Pro',
         category: 'nextgen'
     },
 
     // Dolby Vision Ecosystem
-    { 
-        name: 'Dolby Vision', 
+    {
+        name: 'Dolby Vision',
         profile: 'Profile 5 (Single-layer HEVC)',
-        type: 'video/mp4; codecs="dvhe.05.06"', 
+        type: 'video/mp4; codecs="dvhe.05.06"',
         hdrConfig: { transferFunction: 'pq', colorGamut: 'rec2020' },
         bitDepth: 10,
         tag: 'Dolby',
         category: 'dolby',
         description: 'Streaming standard (Netflix, Disney+, Apple TV+)'
     },
-    { 
-        name: 'Dolby Vision', 
+    {
+        name: 'Dolby Vision',
         profile: 'Profile 8.1 (HDR10 Base)',
-        type: 'video/mp4; codecs="dvhe.08.06"', 
+        type: 'video/mp4; codecs="dvhe.08.06"',
         hdrConfig: { transferFunction: 'pq', colorGamut: 'rec2020' },
         bitDepth: 10,
         tag: 'Dolby',
         category: 'dolby',
         description: 'Cross-compatible with HDR10 hardware'
     },
-    { 
-        name: 'Dolby Vision', 
+    {
+        name: 'Dolby Vision',
         profile: 'Profile 8.4 (Apple iPhone HDR)',
-        type: 'video/mp4; codecs="dvh1.08.06"', 
+        type: 'video/mp4; codecs="dvh1.08.06"',
         hdrConfig: { transferFunction: 'hlg', colorGamut: 'rec2020' },
         bitDepth: 10,
         tag: 'Dolby',
         category: 'dolby',
         description: 'iPhone 12-16 Camera Native HDR Recording'
     },
-    { 
-        name: 'Dolby Vision', 
+    {
+        name: 'Dolby Vision',
         profile: 'Profile 4 (Dual-track HEVC)',
-        type: 'video/mp4; codecs="dvhe.04.06"', 
+        type: 'video/mp4; codecs="dvhe.04.06"',
         bitDepth: 10,
         tag: 'Dolby',
         category: 'dolby'
     },
 
     // Alpha / Production / Specialized
-    { 
-        name: 'WebM VP9 Alpha', 
+    {
+        name: 'WebM VP9 Alpha',
         profile: 'Transparent Video',
-        type: 'video/webm; codecs="vp09.00.51.08"', 
+        type: 'video/webm; codecs="vp09.00.51.08"',
         bitDepth: 8,
         tag: 'Alpha',
         category: 'nextgen',
         description: 'Alpha Channel Transparent Video for Web UI'
     },
-    { 
-        name: 'Apple ProRes', 
+    {
+        name: 'Apple ProRes',
         profile: 'ProRes 422 HQ',
-        type: 'video/quicktime; codecs="apch"', 
+        type: 'video/quicktime; codecs="apch"',
         bitDepth: 10,
         tag: 'ProRes',
         category: 'nextgen',
         description: 'Apple Post-production Intermediate Codec'
     },
-    { 
-        name: 'Apple ProRes', 
+    {
+        name: 'Apple ProRes',
         profile: 'ProRes 4444 (Alpha)',
-        type: 'video/quicktime; codecs="ap4h"', 
+        type: 'video/quicktime; codecs="ap4h"',
         bitDepth: 12,
         tag: 'ProRes',
         category: 'nextgen',
         description: 'Lossless Visual Quality with Transparency'
     },
-    { 
-        name: 'Motion JPEG', 
+    {
+        name: 'Motion JPEG',
         profile: 'MJPEG',
-        type: 'video/mp4; codecs="mjpg"', 
+        type: 'video/mp4; codecs="mjpg"',
         bitDepth: 8,
         tag: 'Legacy',
         category: 'legacy',
         description: 'Hardware USB Webcam & Industrial Capture'
     },
-    { 
-        name: 'MPEG-4 Visual', 
+    {
+        name: 'MPEG-4 Visual',
         profile: 'Part 2 (DivX / Xvid)',
-        type: 'video/mp4; codecs="mp4v.20.8"', 
+        type: 'video/mp4; codecs="mp4v.20.8"',
         bitDepth: 8,
         tag: 'Legacy',
         category: 'legacy'
     },
-    { 
-        name: 'Ogg Theora', 
+    {
+        name: 'Ogg Theora',
         profile: 'Theora',
-        type: 'video/ogg; codecs="theora"', 
+        type: 'video/ogg; codecs="theora"',
         bitDepth: 8,
         tag: 'Legacy',
         category: 'legacy'
@@ -355,12 +355,12 @@ export const audioCodecs: AudioCodecDefinition[] = [
     { name: 'MP3', type: 'audio/mpeg', label: 'MP3', tag: 'Web', category: 'web' },
     { name: 'Opus', type: 'audio/webm; codecs="opus"', label: 'Opus', tag: 'Web', category: 'web' },
     { name: 'Vorbis', type: 'audio/ogg; codecs="vorbis"', label: 'Vorbis', tag: 'Web', category: 'web' },
-    
+
     // High Fidelity / Lossless
     { name: 'FLAC', type: 'audio/flac', label: 'FLAC', tag: 'Hi-Res', category: 'hires' },
     { name: 'WAV (PCM)', type: 'audio/wav; codecs="1"', label: 'PCM', tag: 'Hi-Res', category: 'hires' },
     { name: 'ALAC', type: 'audio/mp4; codecs="alac"', label: 'Apple Lossless', tag: 'Hi-Res', category: 'hires' },
-    
+
     // Cinema / Surround / Spatial
     { name: 'Dolby Digital', type: 'audio/mp4; codecs="ac-3"', label: 'AC-3', tag: 'Dolby', category: 'cinema' },
     { name: 'Dolby Digital+', type: 'audio/mp4; codecs="ec-3"', label: 'E-AC-3', tag: 'Dolby', category: 'cinema' },
@@ -388,4 +388,3 @@ export const drmSystems: DrmSystemDefinition[] = [
     { id: 'com.apple.fps.3_0', name: 'FairPlay v3', vendor: 'Apple' },
     { id: 'org.w3.clearkey', name: 'ClearKey', vendor: 'W3C' },
 ];
-

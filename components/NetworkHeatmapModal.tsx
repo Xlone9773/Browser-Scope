@@ -27,7 +27,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
   // Global Map State
   const [isRunningMap, setIsRunningMap] = useState(false);
   const [results, setResults] = useState<Record<string, LatencyResult>>({});
-  
+
   // Detail/Trace View State
   const [selectedRegion, setSelectedRegion] = useState<LatencyRegion | null>(null);
   const [traceData, setTraceData] = useState<(number | null)[]>([]); // null = timeout
@@ -79,7 +79,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
 
       while (queue.length > 0 && !abortControllerRef.current.signal.aborted) {
           const batch = queue.splice(0, batchSize);
-          
+
           // Mark as pending
           setResults(prev => {
               const next = { ...prev };
@@ -101,7 +101,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
                   }));
               }
           }));
-          
+
           // Small delay between batches
           await new Promise(r => setTimeout(r, 200));
       }
@@ -112,15 +112,15 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
   // --- Trace Logic (Pseudo-MTR) ---
   const startTrace = () => {
       if (isRunningTrace || !selectedRegion) return;
-      
+
       // Reset stats on start if trace data is empty or if restarting manually
       if (traceData.length === 0 || !isRunningTrace) {
-          setTraceData(Array.from({ length: 60 }, () => 0)); 
+          setTraceData(Array.from({ length: 60 }, () => 0));
           setTraceStats({ count: 0, lossCount: 0, min: Infinity, max: 0, avg: 0, jitter: 0, last: 0 });
       }
-      
+
       setIsRunningTrace(true);
-      
+
       const region = selectedRegion;
 
       const loop = async () => {
@@ -131,10 +131,10 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
           try {
               const controller = new AbortController();
               const timeoutId = setTimeout(() => controller.abort(), 2000);
-              
-              await fetch(targetUrl, { 
-                  mode: 'no-cors', 
-                  cache: 'no-store', 
+
+              await fetch(targetUrl, {
+                  mode: 'no-cors',
+                  cache: 'no-store',
                   method: 'HEAD',
                   signal: controller.signal
               });
@@ -147,12 +147,12 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
 
           // Update Data & Stats
           setTraceData(prev => [...prev.slice(1), latency]);
-          
+
           setTraceStats(prev => {
               const newCount = prev.count + 1;
               const isLoss = latency === null;
               const newLossCount = prev.lossCount + (isLoss ? 1 : 0);
-              
+
               if (isLoss) {
                   return { ...prev, count: newCount, lossCount: newLossCount };
               }
@@ -195,7 +195,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
   useEffect(() => {
       const timer = setTimeout(() => {
           if (selectedRegion) {
-              stopTrace(); 
+              stopTrace();
               setTraceData(Array.from({ length: 60 }, () => 0));
               setTraceStats({ count: 0, lossCount: 0, min: Infinity, max: 0, avg: 0, jitter: 0, last: 0 });
           } else {
@@ -218,7 +218,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
   };
 
   const getRegionName = (id: string, defaultName: string) => {
-      
+
       // @ts-expect-error auto-fixed
       return t.regions?.[id] || defaultName;
   };
@@ -252,13 +252,13 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
         `}</style>
 
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
-            
+
             {selectedRegion ? (
                 // --- VIEW B: DETAILED TRACE (Full Overlay) ---
                 <div className="flex flex-col h-full w-full absolute inset-0 bg-slate-50 dark:bg-slate-900 z-10 animate-slide-right">
                     {/* Header */}
                     <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-between shadow-sm z-20">
-                        <button 
+                        <button
                             onClick={() => setSelectedRegion(null)}
                             className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700 transition-colors"
                         >
@@ -272,10 +272,10 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
                             <div className="h-4 w-px bg-slate-300 dark:bg-slate-600 hidden sm:block" />
                             <span className="font-mono text-xs text-slate-400 hidden sm:block">{selectedRegion.url.split('/')[2]}</span>
                         </div>
-                        
+
                         {/* Prominent Controls */}
                         {!isRunningTrace ? (
-                            <button 
+                            <button
                                 onClick={handleStartTrace}
                                 className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-2"
                             >
@@ -283,7 +283,7 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
                                 {t.start}
                             </button>
                         ) : (
-                            <button 
+                            <button
                                 onClick={handleStopTrace}
                                 className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold shadow-lg shadow-red-500/20 active:scale-95 transition-all flex items-center gap-2 animate-pulse"
                             >
@@ -298,11 +298,11 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
                         <div className={`absolute inset-0 transition-opacity duration-500 ${isRunningTrace ? 'opacity-80' : 'opacity-30 blur-sm'}`}>
                             <TraceGraph data={traceData} height={300} />
                         </div>
-                        
+
                         {/* Overlay for Idle State */}
                         {!isRunningTrace && traceStats.count === 0 && (
                             <div className="absolute inset-0 flex items-center justify-center bg-black/20 z-10">
-                                <button 
+                                <button
                                     onClick={handleStartTrace}
                                     className="group relative flex flex-col items-center justify-center w-32 h-32 rounded-full bg-emerald-600/90 text-white shadow-2xl hover:scale-105 hover:bg-emerald-500 transition-all cursor-pointer backdrop-blur-sm border-4 border-white/10"
                                 >
@@ -355,28 +355,28 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
             ) : (
                 // --- VIEW A: MAP & LIST (Dashboard Layout) ---
                 <div className="flex flex-col lg:flex-row h-full w-full absolute inset-0 bg-slate-50 dark:bg-slate-900 z-0 animate-slide-left">
-                    
+
                     {/* Left/Top: Map Area */}
                     <div className="relative shrink-0 lg:flex-1 bg-slate-100 dark:bg-black/20 flex flex-col justify-center overflow-hidden border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700 min-h-[300px] lg:min-h-0">
                         <div className="w-full h-full p-6 flex items-center justify-center">
                              {/* Map Container */}
                              <div className="w-full max-w-5xl h-full">
-                                <WorldMap 
-                                    regions={localizedRegions} 
-                                    results={results} 
-                                    onRegionSelect={setSelectedRegion} 
+                                <WorldMap
+                                    regions={localizedRegions}
+                                    results={results}
+                                    onRegionSelect={setSelectedRegion}
                                 />
                              </div>
                         </div>
-                        
+
                         {/* Overlay Controls */}
                         <div className="absolute bottom-6 left-0 right-0 flex justify-center pointer-events-none z-10">
-                             <button 
+                             <button
                                 onClick={isRunningMap ? stopTest : runTest}
                                 className={`
                                     pointer-events-auto px-8 py-3 rounded-full font-bold text-white shadow-xl flex items-center gap-2 active:scale-95 transition-all border border-white/10 backdrop-blur-sm
-                                    ${isRunningMap 
-                                        ? 'bg-red-600/90 hover:bg-red-700' 
+                                    ${isRunningMap
+                                        ? 'bg-red-600/90 hover:bg-red-700'
                                         : 'bg-indigo-600/90 hover:bg-indigo-700'}
                                 `}
                             >
@@ -406,15 +406,15 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
                                  {localizedRegions.length} nodes
                              </div>
                         </div>
-                        
+
                         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar min-h-0 bg-slate-50/30 dark:bg-transparent">
                              {/* Responsive Grid: 1 col on mobile, 2 cols on wide list (tablet mode), back to 1 col on desktop sidebar, 2 cols on very wide desktop */}
                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-2 gap-3">
                                 {LATENCY_REGIONS.map((region) => {
                                     const res = results[region.id];
                                     return (
-                                        <div 
-                                            key={region.id} 
+                                        <div
+                                            key={region.id}
                                             onClick={() => setSelectedRegion(region)}
                                             className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center shadow-sm cursor-pointer hover:border-indigo-400 dark:hover:border-indigo-500 transition-all hover:shadow-md group"
                                         >

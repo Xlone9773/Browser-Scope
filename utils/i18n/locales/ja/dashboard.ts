@@ -5,8 +5,8 @@ export const dashboard = {
   loading: "システム機能をスキャン中...",
   footer: "BrowserScope - ブラウザ能力検出ツール",
   refresh: "再検出",
-  
-  
+
+
   browserCard: {
     title: "ブラウザ ID",
     subtitle: "機能に基づいて推定された、現在使用されていると思われるブラウザ",
@@ -32,7 +32,7 @@ export const dashboard = {
     bot: "不審な自動化",
     tampering: "指紋の改ざん",
     inconsistency: "ハードウェア/OSの不一致",
-    
+
   notifications: {
     outdated: {
       title: "古いブラウザが検出されました",
@@ -229,7 +229,7 @@ export const dashboard = {
     bodyPlaceholder: "通知本文...",
     btnLabelPlaceholder: "アクションボタン (オプション)",
     sendTest: "テスト送信",
-    
+
     iconUrlPlaceholder: "アイコン URL (オプション)",
     addAction: "アクションを追加",
     actionTitlePlaceholder: "アクションのタイトル",

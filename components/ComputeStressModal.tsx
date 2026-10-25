@@ -3,8 +3,8 @@ import { Cpu, Zap, Activity, AlertTriangle, Layers, Play, Square, TrendingUp, Mi
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
 import { Select } from './ui/Select';
-import { 
-  MATMUL_SHADER_F32, 
+import {
+  MATMUL_SHADER_F32,
   MATMUL_SHADER_F16,
   ALU_SIMD_SHADER_F32,
   ALU_SIMD_SHADER_F16,
@@ -35,7 +35,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const [isWebGPUSupported, setIsWebGPUSupported] = useState<boolean | null>(null);
   const [hasFp16Support, setHasFp16Support] = useState(false);
   const [adapterName, setAdapterName] = useState(t.checking_gpu || 'Checking GPU...');
-  
+
   const [backend, setBackend] = useState<'webgpu' | 'webgl' | 'cpu'>('webgpu');
   const [isRunning, setIsRunning] = useState(false);
   const [matrixSize, setMatrixSize] = useState(512);
@@ -61,7 +61,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       const s = secs % 60;
       return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
-  
+
   const [graphData, setGraphData] = useState<number[]>(Array.from({ length: HISTORY_LENGTH }, () => 0));
   const [viewMode, setViewMode] = useState<'graph' | 'visual'>('graph');
 
@@ -82,7 +82,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const animRef = useRef<number | null>(null); // For active loops
   const renderLoopRef = useRef<number | null>(null); // For UI render loop
   const isRunningRef = useRef(false);
-  
+
   const visualizerRef = useRef<ParticleSystem | null>(null);
   const gflopsRef = useRef(0);
   const peakGflopsRef = useRef(0);
@@ -172,14 +172,14 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           gl = canvas.getContext('experimental-webgl') as WebGLRenderingContext | null;
       }
       if (!gl) return false;
-      
+
       const vsSource = `
           attribute vec2 position;
           void main() {
               gl_Position = vec4(position, 0.0, 1.0);
           }
       `;
-      
+
       const fsSource = `
           precision highp float;
           uniform vec2 u_resolution;
@@ -210,7 +210,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                   y = ny;
                   d += sin(x) * cos(y);
               }
-              
+
               vec3 col = vec3(
                   sin(d + u_time * 1.0) * 0.4 + 0.6,
                   cos(d - u_time * 0.8) * 0.3 + 0.5,
@@ -219,7 +219,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
               gl_FragColor = vec4(col * (1.0 - length(uv - 0.5) * 0.5), 1.0);
           }
       `;
-      
+
       const compileShader = (src: string, type: number) => {
           const shader = gl!.createShader(type);
           if (!shader) return null;
@@ -231,11 +231,11 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           }
           return shader;
       };
-      
+
       const vs = compileShader(vsSource, gl.VERTEX_SHADER);
       const fs = compileShader(fsSource, gl.FRAGMENT_SHADER);
       if (!vs || !fs) return false;
-      
+
       const program = gl.createProgram();
       if (!program) return false;
       gl.attachShader(program, vs);
@@ -245,7 +245,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           console.error(gl.getProgramInfoLog(program));
           return false;
       }
-      
+
       const positionBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
@@ -256,11 +256,11 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
            1, -1,
            1,  1,
       ]), gl.STATIC_DRAW);
-      
+
       const timeLoc = gl.getUniformLocation(program, 'u_time');
       const resolutionLoc = gl.getUniformLocation(program, 'u_resolution');
       const iterationsLoc = gl.getUniformLocation(program, 'u_iterations');
-      
+
       webglStateRef.current = { gl, program, positionBuffer, timeLoc, resolutionLoc, iterationsLoc };
       return true;
   };
@@ -268,19 +268,19 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const renderWebGLFrame = (time: number, iterations: number) => {
       const { gl, program, positionBuffer, timeLoc, resolutionLoc, iterationsLoc } = webglStateRef.current;
       if (!gl || !program) return;
-      
+
       gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
       gl.useProgram(program);
-      
+
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       const posAttr = gl.getAttribLocation(program, 'position');
       gl.enableVertexAttribArray(posAttr);
       gl.vertexAttribPointer(posAttr, 2, gl.FLOAT, false, 0, 0);
-      
+
       gl.uniform2f(resolutionLoc, gl.canvas.width, gl.canvas.height);
       gl.uniform1f(timeLoc, time / 1000);
       gl.uniform1i(iterationsLoc, iterations);
-      
+
       gl.drawArrays(gl.TRIANGLES, 0, 6);
   };
 
@@ -473,11 +473,11 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                   ctx.stroke();
 
                   if (data.some(v => v > 0)) {
-                      const maxVal = Math.max(peak, 10) * 1.1; 
+                      const maxVal = Math.max(peak, 10) * 1.1;
                       const stepX = width / (HISTORY_LENGTH - 1);
 
                       const gradient = ctx.createLinearGradient(0, 0, 0, height);
-                      gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)'); 
+                      gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)');
                       gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
                       ctx.beginPath();
@@ -499,7 +499,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                           if (i === 0) ctx.moveTo(x, y);
                           else ctx.lineTo(x, y);
                       });
-                      ctx.strokeStyle = '#818cf8'; 
+                      ctx.strokeStyle = '#818cf8';
                       ctx.lineWidth = 2;
                       ctx.stroke();
                   }
@@ -518,9 +518,9 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
           renderLoopRef.current = requestAnimationFrame(loop);
       };
-      
+
       renderLoopRef.current = requestAnimationFrame(loop);
-      
+
       return () => {
           if (renderLoopRef.current) cancelAnimationFrame(renderLoopRef.current);
       };
@@ -627,18 +627,18 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
               isRunningRef.current = false;
               return;
           }
-          
+
           const iterations = Math.max(128, Math.floor(matrixSize / 2));
-          
+
           const webglLoop = () => {
               if (!isRunningRef.current) return;
-              
+
               const now = performance.now();
               renderWebGLFrame(now, iterations);
-              
+
               frames++;
               const elapsed = now - startTime;
-              
+
               if (elapsed >= 200) {
                   // Per-iteration countable flops (sin/cos excluded, see shader
                   // comment above): nx = x*x - y*y + driftX (4), ny = 2.0*x*y
@@ -649,7 +649,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                   const totalOps = opsPerFrame * frames;
                   const seconds = elapsed / 1000;
                   const gflopsVal = (totalOps / seconds) / 1e9;
-                  
+
                   setGflops(gflopsVal);
                   setPeakGflops(prev => Math.max(prev, gflopsVal));
                   setSustainedGflops(gflopsVal);
@@ -674,22 +674,22 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           } else {
               numWorkers = cores;
           }
-          
+
           startCpuWorkers(numWorkers);
           setCpuCores(numWorkers);
-          
+
           const cpuLoop = () => {
               if (!isRunningRef.current) return;
-              
+
               const now = performance.now();
               const elapsed = now - startTime;
-              
+
               if (elapsed >= 200) {
                   const totalOps = accumulatedCpuOpsRef.current;
                   accumulatedCpuOpsRef.current = 0;
                   const seconds = elapsed / 1000;
                   const gflopsVal = (totalOps / seconds) / 1e9;
-                  
+
                   setGflops(gflopsVal);
                   setPeakGflops(prev => Math.max(prev, gflopsVal));
                   setSustainedGflops(gflopsVal);
@@ -742,17 +742,17 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
             {/* Main Visualizer Area */}
             <div className="h-64 bg-black rounded-xl border border-slate-200 dark:border-indigo-900/50 relative overflow-hidden shadow-inner flex flex-col group">
-                
+
                 {/* View Switcher Tabs (Overlay Top Right) */}
                 <div className="absolute top-2 right-2 z-30 flex gap-1 bg-black/50 p-1 rounded-lg backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button 
+                    <button
                         onClick={() => setViewMode('graph')}
                         className={`p-1.5 rounded transition-colors ${viewMode === 'graph' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
                         title={t.perf_graph || "Performance Graph"}
                     >
                         <TrendingUp size={14} />
                     </button>
-                    <button 
+                    <button
                         onClick={() => setViewMode('visual')}
                         className={`p-1.5 rounded transition-colors ${viewMode === 'visual' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
                         title={t.visualizer || "Visualizer"}
@@ -762,26 +762,26 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                 </div>
 
                 {/* Graph Layer */}
-                <canvas 
-                    ref={canvasRef} 
-                    width={600} height={256} 
-                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'graph' ? 'opacity-100' : 'opacity-0'}`} 
+                <canvas
+                    ref={canvasRef}
+                    width={600} height={256}
+                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'graph' ? 'opacity-100' : 'opacity-0'}`}
                 />
-                
+
                 {/* Visualizer Layer (Particles) */}
-                <canvas 
-                    ref={visualizerCanvasRef} 
-                    width={600} height={256} 
-                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'visual' && backend !== 'webgl' ? 'opacity-100' : 'opacity-0'}`} 
+                <canvas
+                    ref={visualizerCanvasRef}
+                    width={600} height={256}
+                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'visual' && backend !== 'webgl' ? 'opacity-100' : 'opacity-0'}`}
                 />
 
                 {/* WebGL Stress Render Layer */}
-                <canvas 
-                    ref={webglCanvasRef} 
-                    width={600} height={256} 
-                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'visual' && backend === 'webgl' ? 'opacity-100' : 'opacity-0'}`} 
+                <canvas
+                    ref={webglCanvasRef}
+                    width={600} height={256}
+                    className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${viewMode === 'visual' && backend === 'webgl' ? 'opacity-100' : 'opacity-0'}`}
                 />
-                
+
                 {/* Metrics Overlay (Always visible) */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20 flex-col">
                     <div className="text-center mix-blend-difference">
@@ -816,10 +816,10 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
             {/* Config & Controls Panel with Quick/Expert Toggles */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                
+
                 {/* Control Panel: Settings & Mode Selection (Spans 2 columns) */}
                 <div className="md:col-span-2 bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5 space-y-4">
-                    
+
                     {/* Mode Toggle Switcher */}
                     {backend === 'webgpu' && (
                         <div className="flex bg-slate-200/50 dark:bg-slate-900/60 p-1 rounded-xl border border-slate-300/30 dark:border-white/5">
@@ -858,7 +858,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                     <Layers size={12} className="text-indigo-500" />
                                     {t.preset_label || "Select Stress Preset"}
                                 </div>
-                                <Select 
+                                <Select
                                     value={selectedPreset}
                                     options={[
                                         { id: 'standard', label: t.preset_standard || 'Standard Run (Matrix)' },
@@ -896,13 +896,13 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                     ) : (
                         /* EXPERT MODE / FALLBACK MODE VIEW */
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fadeIn">
-                            
+
                             {/* Compute Engine */}
                             <div>
                                 <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
                                     {t.engine_label || "Compute Engine"}
                                 </div>
-                                <Select 
+                                <Select
                                     value={backend}
                                     options={[
                                         { id: 'webgpu', label: t.engine_webgpu || 'GPU: WebGPU (Tensor Core)', disabled: isWebGPUSupported === false },
@@ -923,7 +923,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                 <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
                                     {backend === 'cpu' ? (t.cpu_cores_prefix || "Active Cores:") : t.intensity}
                                 </div>
-                                <Select 
+                                <Select
                                     value={matrixSize}
                                     options={backend === 'cpu' ? [
                                         { id: 256, label: t.intensity_cpu_light || 'Light (25% CPU Cores)' },
@@ -947,7 +947,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                 <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
                                     {t.timer_label || "Test Duration"}
                                 </div>
-                                <Select 
+                                <Select
                                     value={selectedDuration}
                                     options={[
                                         { id: 0, label: t.timer_unlimited || 'Infinite' },
@@ -970,7 +970,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                     <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
                                         {t.workload_label || "Workload Type"}
                                     </div>
-                                    <Select 
+                                    <Select
                                         value={workloadType}
                                         options={[
                                             { id: 'gemm', label: t.workload_gemm || 'Matrix Multiply (GEMM)' },
@@ -989,7 +989,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                     <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
                                         {t.memory_label || "Memory / Cache Mode"}
                                     </div>
-                                    <Select 
+                                    <Select
                                         value={memoryMode}
                                         options={[
                                             { id: 'hybrid', label: t.memory_hybrid || 'Compute + Memory Hybrid' },
@@ -1008,21 +1008,21 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                     <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider font-bold">
                                         {t.precision_label || "Float Precision"}
                                     </div>
-                                    <Select 
+                                    <Select
                                         value={precision}
                                         options={[
                                             { id: 'fp32', label: t.precision_fp32 || 'FP32 (Single Precision)' },
-                                            { 
-                                                id: 'fp16', 
-                                                label: hasFp16Support 
-                                                    ? (t.precision_fp16 || 'FP16 (Half Precision)') 
+                                            {
+                                                id: 'fp16',
+                                                label: hasFp16Support
+                                                    ? (t.precision_fp16 || 'FP16 (Half Precision)')
                                                     : (t.precision_fp16_unsupported || 'FP16 (Unsupported)') ,
                                                 disabled: !hasFp16Support
                                             },
-                                            { 
-                                                id: 'fp64', 
-                                                label: t.precision_fp64_unsupported || 'FP64 (Standard/GPU Unsupported)', 
-                                                disabled: true 
+                                            {
+                                                id: 'fp64',
+                                                label: t.precision_fp64_unsupported || 'FP64 (Standard/GPU Unsupported)',
+                                                disabled: true
                                             }
                                         ]}
                                         onChange={(val) => setPrecision(val as 'fp32' | 'fp16' | 'fp64')}
@@ -1034,7 +1034,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                         </div>
                     )}
                 </div>
-                
+
                 {/* Right Panel: Advanced Backend Status Metrics */}
                 <div className="bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5 flex flex-col justify-between">
                     <div className="space-y-3">
@@ -1042,7 +1042,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                             <Activity size={13} className="text-indigo-400" />
                             {t.backend_status || "Backend Status"}
                         </div>
-                        
+
                         <div className="flex items-center gap-2 text-xs font-mono text-slate-700 dark:text-slate-300">
                             {backend === 'webgpu' && (
                                 <>
@@ -1065,7 +1065,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                         </div>
 
                         <div className="h-px bg-slate-200 dark:bg-white/10" />
-                        
+
                         {/* Status Details List */}
                         <div className="space-y-1.5 font-mono text-[10px] text-slate-500 dark:text-slate-400">
                             <div className="flex justify-between">
@@ -1131,11 +1131,11 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
             </div>
 
             {/* Main Button */}
-            <button 
+            <button
                 onClick={isRunning ? stopTest : runTest}
                 className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 group ${
-                    isRunning 
-                    ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20' 
+                    isRunning
+                    ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20'
                     : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/30'
                 }`}
             >

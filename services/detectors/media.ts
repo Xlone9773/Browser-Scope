@@ -19,9 +19,9 @@ export const checkDrmSupport = async (): Promise<DrmSystem[]> => {
     // Parallelize DRM checks
     const checks = systems.map(async (sys) => {
         try {
-            
+
             if (navigator.requestMediaKeySystemAccess) {
-                
+
                 await navigator.requestMediaKeySystemAccess(sys.id, config);
                 return { name: sys.name, supported: true };
             } else {
@@ -62,7 +62,7 @@ export const getMediaSupport = (): { video: CodecInfo[], audio: CodecInfo[], ima
 
   const imageTypes = [
       { name: 'WebP', type: 'image/webp' },
-      { name: 'AVIF', type: 'image/avif' }, 
+      { name: 'AVIF', type: 'image/avif' },
       { name: 'PNG', type: 'image/png' },
       { name: 'JPEG', type: 'image/jpeg' }
   ];
@@ -89,7 +89,7 @@ export const getAudioContextInfo = () => {
     try {
         const ctx = new AudioContextClass();
         const rate = ctx.sampleRate;
-        
+
         let latencyText = 'Unknown';
         if (typeof ctx.outputLatency === 'number' && ctx.outputLatency > 0) {
             latencyText = (ctx.outputLatency * 1000).toFixed(2) + ' ms';
@@ -107,14 +107,14 @@ export const getSpeechVoicesCount = (): Promise<number> => {
     return new Promise(resolve => {
         if (!window.speechSynthesis) { resolve(0); return; }
         let voices = window.speechSynthesis.getVoices();
-        if (voices.length > 0) { resolve(voices.length); } 
+        if (voices.length > 0) { resolve(voices.length); }
         else {
             const handler = () => {
                 voices = window.speechSynthesis.getVoices();
                 resolve(voices.length);
             };
             window.speechSynthesis.onvoiceschanged = handler;
-            
+
             setTimeout(() => {
                 resolve(0);
                 window.speechSynthesis.onvoiceschanged = null;

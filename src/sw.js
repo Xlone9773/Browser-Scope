@@ -15,7 +15,7 @@ self.addEventListener('notificationclick', function(event) {
   event.notification.close();
   const actionId = event.action;
   const data = event.notification.data || {};
-  
+
   if (!actionId) {
     // default click
     event.waitUntil(
@@ -32,7 +32,7 @@ self.addEventListener('notificationclick', function(event) {
     );
     return;
   }
-  
+
   // Action button clicked
   const actionConfig = data.actions && data.actions[actionId];
   if (actionConfig) {

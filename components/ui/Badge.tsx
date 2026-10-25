@@ -10,9 +10,9 @@ interface BadgeProps {
   icon?: React.ReactNode;
 }
 
-export const Badge: React.FC<BadgeProps> = ({ 
-  children, 
-  variant = 'neutral', 
+export const Badge: React.FC<BadgeProps> = ({
+  children,
+  variant = 'neutral',
   className = '',
   icon
 }) => {

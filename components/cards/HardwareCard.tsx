@@ -19,15 +19,15 @@ interface HardwareCardProps {
 }
 
 export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, onOpenGamepad, onOpenWebDevice, onOpenSensors, onOpenTools, onOpenVision, onOpenGraphics, onOpenMidi }) => {
-  
+
   // Parse battery level
   const batteryLevel = parseFloat(data.batteryLevel) || 0;
   const isCharging = data.isCharging === 'Yes' || data.isCharging === t.values.yes;
-  
+
   // Battery color logic
   let batteryColor = 'text-slate-600 dark:text-slate-300';
   let batteryFillColor = 'bg-slate-500';
-  
+
   if (isCharging) {
       batteryColor = 'text-green-600 dark:text-green-400';
       batteryFillColor = 'bg-green-500';
@@ -47,7 +47,7 @@ export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, 
       <div className="group relative">
           <InfoItem label={t.labels.gpu_renderer} value={data.gpuRenderer} />
           {onOpenGraphics && (
-              <button 
+              <button
                 onClick={onOpenGraphics}
                 className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 p-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 shadow-sm"
                 title="View Graphics Limits"
@@ -56,7 +56,7 @@ export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, 
               </button>
           )}
       </div>
-      
+
       {/* GPU Precision Badge */}
       {data.gpuPrecision && (
           <div className="flex items-center justify-between py-1.5 px-2 -mx-2">
@@ -83,8 +83,8 @@ export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, 
           </div>
           {data.batteryLevel !== 'Unknown' && data.batteryLevel !== 'Not Supported' && (
               <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden relative">
-                  <div 
-                      className={`h-full ${batteryFillColor} transition-all duration-500 ease-out`} 
+                  <div
+                      className={`h-full ${batteryFillColor} transition-all duration-500 ease-out`}
                       style={{ width: `${batteryLevel}%` }}
                   />
                   {isCharging && (
@@ -99,7 +99,7 @@ export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, 
               </div>
           )}
       </div>
-      
+
       <div className="flex items-center gap-1.5 py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 px-2 -mx-2 group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded transition-colors" onClick={onOpenGamepad}>
           <Gamepad2 size={16} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />
           <span className="text-sm text-slate-500 font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400">{t.labels.gamepads}</span>

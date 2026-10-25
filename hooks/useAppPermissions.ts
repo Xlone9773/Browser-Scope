@@ -19,7 +19,7 @@ const getSecureGeolocation = (): Promise<GeoPosition> => {
   return new Promise((resolve, reject) => {
     let isMethodOverridden = false;
     let iframe: HTMLIFrameElement | null = null;
-    
+
     try {
       if (typeof document !== "undefined") {
         iframe = document.createElement("iframe");
@@ -58,8 +58,8 @@ const getSecureGeolocation = (): Promise<GeoPosition> => {
               const realAcc = realPos.coords.accuracy;
 
               // Check if the coordinates differ or if the method was overridden
-              const coordsDiffer = 
-                Math.abs(apparentLat - realLat) > 1e-7 || 
+              const coordsDiffer =
+                Math.abs(apparentLat - realLat) > 1e-7 ||
                 Math.abs(apparentLong - realLong) > 1e-7 ||
                 Math.abs(apparentAcc - realAcc) > 1e-4;
 

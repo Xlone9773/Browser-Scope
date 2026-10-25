@@ -1,32 +1,32 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { 
-  simpleHash, 
-  getGPUInfo, 
-  getWebGLExtensions, 
-  getShaderPrecisionFormat, 
-  getCanvasFingerprint, 
-  getWebGLFingerprint 
+import {
+  simpleHash,
+  getGPUInfo,
+  getWebGLExtensions,
+  getShaderPrecisionFormat,
+  getCanvasFingerprint,
+  getWebGLFingerprint
 } from '../detectors/graphics';
-import { 
-  detectOS, 
-  detectBrowser, 
-  detectAdBlocker, 
-  getColorGamut, 
-  getPWAFeatures, 
-  getAdvancedFeatures, 
-  getHighEntropyClientHints 
+import {
+  detectOS,
+  detectBrowser,
+  detectAdBlocker,
+  getColorGamut,
+  getPWAFeatures,
+  getAdvancedFeatures,
+  getHighEntropyClientHints
 } from '../detectors/system';
-import { 
-  getBatteryInfo, 
-  getStorageEstimate, 
-  runAiReadinessCheck, 
-  checkWasmSimd 
+import {
+  getBatteryInfo,
+  getStorageEstimate,
+  runAiReadinessCheck,
+  checkWasmSimd
 } from '../detectors/hardware';
-import { 
-  checkDrmSupport, 
-  getMediaSupport, 
-  getAudioContextInfo, 
-  getSpeechVoicesCount 
+import {
+  checkDrmSupport,
+  getMediaSupport,
+  getAudioContextInfo,
+  getSpeechVoicesCount
 } from '../detectors/media';
 
 describe('Browser Detectors Suite', () => {

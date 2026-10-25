@@ -17,9 +17,9 @@ interface VersionsTabProps {
   needRefresh?: boolean;
 }
 
-export const VersionsTab: React.FC<VersionsTabProps> = ({ 
-  t, 
-  appVersion = "Unknown", 
+export const VersionsTab: React.FC<VersionsTabProps> = ({
+  t,
+  appVersion = "Unknown",
   modules,
   updateServiceWorker,
   manualCheckUpdate,
@@ -134,7 +134,7 @@ export const VersionsTab: React.FC<VersionsTabProps> = ({
             {modules.length}
           </span>
         </h4>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {modules.map((mod) => (
             <div key={mod.id} className="p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center hover:border-slate-300 dark:hover:border-slate-600 transition-colors">

@@ -175,13 +175,13 @@ async function startServer() {
     windowMs: 1 * 60 * 1000, // 1 minute
     max: 1500, // Limit each IP to 1500 requests per `window` (here, per 1 minute)
     message: { error: 'Too many  requests, please try again later.' },
-    standardHeaders: true, 
-    legacyHeaders: false, 
+    standardHeaders: true,
+    legacyHeaders: false,
   });
-  
+
   app.post("/api/proxy", apiLimiter, async (req, res) => {
     const { url, method = "GET", headers = {}, body, useUdp, timeout = 15000 } = req.body;
-    
+
     if (!url) {
       return res.status(400).json({ error: "URL is required" });
     }
@@ -207,7 +207,7 @@ async function startServer() {
       // Handle special IP geolocation queries to prevent always returning Server's IP (Taiwan Taipei)
       if (typeof url === 'string') {
         const lowerUrl = url.toLowerCase();
-        
+
         // 1. my.ippure.com/v1/info
         if (lowerUrl.includes("my.ippure.com/v1/info") || lowerUrl.includes("my.ippure.com")) {
           try {
@@ -291,11 +291,11 @@ async function startServer() {
             // Fetch cloudflare trace
             const traceResponse = await fetch(url, { signal: controller.signal });
             const traceText = await traceResponse.text();
-            
+
             // Replace the IP with the real client IP, and LOC with country code from ipwhois
             const lines = traceText.split('\n');
             const ipAddress = isLocalIp ? "127.0.0.1" : clientIp;
-            
+
             let clientLoc = "XX";
             try {
               const geoResponse = await fetch(`https://ipwho.is/${targetIpForLookup}`, { signal: controller.signal });
@@ -331,7 +331,7 @@ async function startServer() {
          try {
            const parsedUrl = new URL(url);
            const hostname = parsedUrl.hostname;
-           
+
            const client = dgram.createSocket('udp4');
            client.on('error', () => {
                try { client.close(); } catch { /* ignore */ }
@@ -339,14 +339,14 @@ async function startServer() {
            client.send(Buffer.from('PING'), 80, hostname, (_err) => {
                try { client.close(); } catch { /* ignore */ }
            });
-           
+
            const response = await fetch(url, {
               method,
               headers: proxyHeaders,
               body: ["GET", "HEAD"].includes(method.toUpperCase()) ? undefined : typeof body === 'string' ? body : JSON.stringify(body),
               signal: controller.signal
            });
-           
+
            const data = await response.text();
            clearTimeout(timeoutId);
            return res.json({
@@ -369,10 +369,10 @@ async function startServer() {
           body: ["GET", "HEAD"].includes(method.toUpperCase()) ? undefined : typeof body === 'string' ? body : JSON.stringify(body),
           signal: controller.signal
       });
-      
+
       const text = await response.text();
       clearTimeout(timeoutId);
-      
+
       res.json({
          status: response.status,
          data: text

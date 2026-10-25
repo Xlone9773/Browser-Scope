@@ -82,7 +82,7 @@ export function useAppSettings() {
     }
     return 'all';
   });
-  
+
   const updateSearchScope = useCallback((scope: 'all' | 'category' | 'title' | 'value') => {
     setSearchScope(scope);
     localStorage.setItem("searchScope", scope);

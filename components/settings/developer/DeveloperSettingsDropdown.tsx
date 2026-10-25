@@ -175,8 +175,8 @@ export const DeveloperSettingsDropdown: React.FC<DeveloperSettingsDropdownProps>
               { id: "toggle_blur", label: t.config?.snippetToggleBlur },
               { id: "toggle_editable", label: t.config?.snippetToggleEditable },
             ].map(snippet => (
-              <div 
-                key={snippet.id} 
+              <div
+                key={snippet.id}
                 className="flex items-center justify-between cursor-pointer py-1 hover:bg-slate-800/50 rounded px-1 transition"
                 onClick={() => setErudaSnippet(snippet.id, !erudaSnippets[snippet.id])}
               >

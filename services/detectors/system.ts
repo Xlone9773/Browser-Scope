@@ -33,20 +33,20 @@ export const detectBrowser = (): { name: string; version: string } => {
   const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
   let tem;
   let M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-  
+
   if (/trident/i.test(M[1])) {
     tem = /\brv[ :]+(\d+)/.exec(ua) || [];
     return { name: 'IE', version: (tem[1] || '') };
   }
-  
+
   if (M[1] === 'Chrome') {
     tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
     if (tem != null) return { name: tem[1].replace('OPR', 'Opera'), version: tem[2] };
   }
-  
+
   M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
   if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
-  
+
   return { name: M[0], version: M[1] };
 };
 
@@ -55,15 +55,15 @@ export const detectAdBlocker = (): boolean => {
     bait.className = 'pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads text-ad-links ad-sponsor';
     bait.style.cssText = 'height: 10px !important; width: 10px !important; position: absolute; left: -9999px; top: -100px;';
     document.body.appendChild(bait);
-    
-    const detected = bait.offsetParent === null || 
-                     bait.offsetHeight === 0 || 
-                     bait.offsetLeft === 0 || 
-                     bait.offsetTop === 0 || 
-                     bait.clientWidth === 0 || 
+
+    const detected = bait.offsetParent === null ||
+                     bait.offsetHeight === 0 ||
+                     bait.offsetLeft === 0 ||
+                     bait.offsetTop === 0 ||
+                     bait.clientWidth === 0 ||
                      bait.clientHeight === 0 ||
                      window.getComputedStyle(bait).display === 'none';
-    
+
     document.body.removeChild(bait);
     return detected;
 };
@@ -98,7 +98,7 @@ export const getHighEntropyClientHints = async () => {
     if (!n?.userAgentData || !n.userAgentData.getHighEntropyValues) {
         return undefined;
     }
-    
+
     try {
         // Request specific hints
         const hints = ['architecture', 'model', 'platformVersion', 'bitness', 'fullVersionList'];

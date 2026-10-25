@@ -122,7 +122,7 @@ export const Toast: React.FC<ToastProps> = ({ toast, onClose }) => {
       className={`pointer-events-auto relative overflow-hidden flex gap-3 p-4 bg-white/95 dark:bg-slate-900/95 border ${styles.border} ${styles.shadow} rounded-xl shadow-lg backdrop-blur-md max-w-sm w-full transition-shadow duration-200 hover:shadow-xl`}
     >
       <div className={`absolute top-0 bottom-0 left-0 w-1 ${styles.accentLine}`} />
-      
+
       {getIcon()}
 
       <div className="flex-1 min-w-0 pr-4">

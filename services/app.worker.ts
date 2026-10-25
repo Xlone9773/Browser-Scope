@@ -10,13 +10,13 @@ function murmurhash3_32_gc(key: string, seed: number): number {
   i = 0;
 
   while (i < bytes) {
-      k1 = 
+      k1 =
         ((key.charCodeAt(i) & 0xff)) |
         ((key.charCodeAt(++i) & 0xff) << 8) |
         ((key.charCodeAt(++i) & 0xff) << 16) |
         ((key.charCodeAt(++i) & 0xff) << 24);
       ++i;
-      
+
       k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
       k1 = (k1 << 15) | (k1 >>> 17);
       k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
@@ -35,7 +35,7 @@ function murmurhash3_32_gc(key: string, seed: number): number {
       case 2: k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
       /* falls through */
       case 1: k1 ^= (key.charCodeAt(i) & 0xff);
-      
+
       k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
       k1 = (k1 << 15) | (k1 >>> 17);
       k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
@@ -66,7 +66,7 @@ self.onmessage = function (e: MessageEvent) {
 
     if (id === 'cpu') {
       const max = config.primeMax;
-      
+
       // Warm-up (10% of workload) to trigger JIT compilation
       const warmupMax = Math.floor(max * 0.1);
       let warmupCount = 0;
@@ -94,7 +94,7 @@ self.onmessage = function (e: MessageEvent) {
         if (isPrime) count++;
       }
       const duration = Math.max(performance.now() - start, 1);
-      
+
       // Prevent JIT from optimizing count away and calculate physical metric (Primes checked per sec)
       const speed = (max / (duration / 1000) / 1000000).toFixed(1);
       const score = Math.floor(config.multiplier / duration) + (count === warmupCount ? 0 : 0);
@@ -118,7 +118,7 @@ self.onmessage = function (e: MessageEvent) {
         sum += Math.sqrt(i) * Math.sin(i) * Math.cos(i);
       }
       const duration = Math.max(performance.now() - start, 1);
-      
+
       // Incorporate sum checksum into score & details to block JIT elimination
       const score = Math.floor(config.multiplier / duration) + (sum === warmupSum ? 0 : 0);
       const mopsPerSec = (ops / (duration / 1000) / 1000000).toFixed(1);
@@ -145,7 +145,7 @@ self.onmessage = function (e: MessageEvent) {
       const duration = Math.max(performance.now() - start, 1);
       const mbProcessed = (size * 4 * 2.5) / (1024 * 1024);
       const throughput = (mbProcessed / (duration / 1000)).toFixed(0);
-      
+
       // Ensure arr is used to prevent optimizations
       const chk = arr[size - 1] & 0xff;
       const score = Math.floor(config.multiplier / duration) + (chk === 0 ? 0 : 0);
@@ -155,7 +155,7 @@ self.onmessage = function (e: MessageEvent) {
     } else if (id === 'crypto') {
       const size = config.size;
       const tempStr = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      
+
       // Warm-up
       const warmupKey = "abcdefghijklmnopqrstuvwxyz";
       const warmupHash = murmurhash3_32_gc(warmupKey, 123);
@@ -167,14 +167,14 @@ self.onmessage = function (e: MessageEvent) {
         key += tempStr;
       }
       key = key.substring(0, size);
-      
+
       let hashVal = 0;
       const iterations = config.iterations;
       for (let i = 0; i < iterations; i++) {
         hashVal ^= murmurhash3_32_gc(key, 12345 + i);
       }
       const duration = Math.max(performance.now() - start, 1);
-      
+
       const score = Math.floor(config.multiplier / duration) + (hashVal === warmupHash ? 0 : 0);
       const mbs = ((size * iterations) / (1024 * 1024) / (duration / 1000)).toFixed(1);
       const details = `${mbs} MB/s (${duration.toFixed(0)}ms, chk: ${(hashVal & 0xffff).toString(16)})`;
@@ -199,17 +199,17 @@ self.onmessage = function (e: MessageEvent) {
       const start = performance.now();
       const input = new Float32Array(size * size);
       const output = new Float32Array(size * size);
-      
+
       for (let i = 0; i < input.length; i++) {
         input[i] = Math.sin(i) * 0.5 + 0.5;
       }
-      
+
       const kernel = new Float32Array([
         1,  2,  1,
         0,  0,  0,
        -1, -2, -1
       ]);
-      
+
       const passes = config.passes;
       for (let p = 0; p < passes; p++) {
         for (let y = 1; y < size - 1; y++) {
@@ -218,25 +218,25 @@ self.onmessage = function (e: MessageEvent) {
             sum += input[(y - 1) * size + (x - 1)] * kernel[0];
             sum += input[(y - 1) * size + x]       * kernel[1];
             sum += input[(y - 1) * size + (x + 1)] * kernel[2];
-            
+
             sum += input[y * size + (x - 1)]       * kernel[3];
             sum += input[y * size + x]             * kernel[4];
             sum += input[y * size + (x + 1)]       * kernel[5];
-            
+
             sum += input[(y + 1) * size + (x - 1)] * kernel[6];
             sum += input[(y + 1) * size + x]       * kernel[7];
             sum += input[(y + 1) * size + (x + 1)] * kernel[8];
-            
+
             output[y * size + x] = sum;
           }
         }
         input.set(output);
       }
-      
+
       const duration = Math.max(performance.now() - start, 1);
       const ops = size * size * 9 * passes;
       const gflops = (ops / (duration / 1000) / 1000000000).toFixed(2);
-      
+
       // Prevent JIT elimination using center pixel checksum
       const centerPixelVal = output[Math.floor((size * size) / 2)];
       const chk = Math.floor(Math.abs(centerPixelVal) * 100) & 0xffff;
@@ -260,16 +260,16 @@ self.onmessage = function (e: MessageEvent) {
         text += chunk;
       }
       text = text.substring(0, codeLen);
-      
+
       const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
       const emails = text.match(emailRegex) || [];
-      
+
       const apiRegex = /\/api\/v[0-9]\/[a-zA-Z0-9]+/g;
       const paths = text.match(apiRegex) || [];
-      
+
       const varRegex = /(const|let|var)\s+[a-zA-Z0-9_]+\s*=/g;
       const vars = text.match(varRegex) || [];
-      
+
       const totalMatches = emails.length + paths.length + vars.length;
       const duration = Math.max(performance.now() - start, 1);
       const score = Math.floor(config.multiplier / duration) + (totalMatches === warmupMatches.length ? 0 : 0);

@@ -12,7 +12,7 @@ interface AiComputeCardProps {
   data: BrowserData['ai'];
   t: Translation;
   onOpenPlayground: () => void;
-  onOpenStress?: () => void; 
+  onOpenStress?: () => void;
   onRetest: () => void;
 }
 
@@ -31,7 +31,7 @@ export const AiComputeCard: React.FC<AiComputeCardProps> = React.memo(({ data, t
 
   // Get localized description based on level
   const getDescription = (level: string) => {
-      
+
       // @ts-expect-error auto-fixed
       return t.labels.ai_levels?.[level] || level;
   };
@@ -54,7 +54,7 @@ export const AiComputeCard: React.FC<AiComputeCardProps> = React.memo(({ data, t
             <div className="flex justify-between items-center">
                 <span className="text-xs font-semibold text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">{t.labels.ai_readiness}</span>
                 <div className="flex items-center gap-2">
-                    <button 
+                    <button
                         onClick={handleRetest}
                         disabled={isRetesting}
                         className={`p-1 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-800/50 rounded-full transition-all ${isRetesting ? 'animate-spin' : ''}`}
@@ -74,24 +74,24 @@ export const AiComputeCard: React.FC<AiComputeCardProps> = React.memo(({ data, t
         </div>
         <InfoItem label={t.labels.window_ai} value={trVal(data.windowAi)} />
         <InfoItem label={t.labels.webnn} value={trVal(data.webnn)} />
-        
+
         <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50 flex gap-2">
-            <Button 
-                variant="primary" 
-                size="xs" 
-                fullWidth 
-                onClick={onOpenPlayground} 
+            <Button
+                variant="primary"
+                size="xs"
+                fullWidth
+                onClick={onOpenPlayground}
                 leftIcon={<Sparkles size={14} />}
                 className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 border-none"
             >
                 {t.aiPlayground.title}
             </Button>
             {onOpenStress && (
-                <Button 
-                    variant="secondary" 
-                    size="xs" 
-                    fullWidth 
-                    onClick={onOpenStress} 
+                <Button
+                    variant="secondary"
+                    size="xs"
+                    fullWidth
+                    onClick={onOpenStress}
                     leftIcon={<Zap size={14} className="text-amber-500" />}
                 >
                     {t.actions.stress_test}

@@ -25,7 +25,7 @@ export interface SpeedTestPreset {
     supportsUpload: boolean;
     // Map bytes (number) to filename string (e.g. 104857600 -> "100MB")
     // Used to replace {{size}} in url for static backends
-    sizeMap?: Record<number, string>; 
+    sizeMap?: Record<number, string>;
 }
 
 // Common Sizes Constants
@@ -36,55 +36,55 @@ const SIZE_1GB = 1024 * 1024 * 1024;
 // Pre-configured Speed Test Backends
 export const SPEED_TEST_PRESETS: SpeedTestPreset[] = [
     // Global
-    { 
-        id: 'cloudflare', 
-        name: 'Cloudflare (Global Anycast)', 
-        url: 'https://speed.cloudflare.com/__down?bytes=', 
-        isDynamic: true, 
-        supportsUpload: true 
+    {
+        id: 'cloudflare',
+        name: 'Cloudflare (Global Anycast)',
+        url: 'https://speed.cloudflare.com/__down?bytes=',
+        isDynamic: true,
+        supportsUpload: true
     },
-    { 
-        id: 'cachefly', 
-        name: 'CacheFly (Global CDN)', 
-        url: 'https://cachefly.cachefly.net/{{size}}.test', 
-        isDynamic: false, 
+    {
+        id: 'cachefly',
+        name: 'CacheFly (Global CDN)',
+        url: 'https://cachefly.cachefly.net/{{size}}.test',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_10MB]: '10mb',
             [SIZE_100MB]: '100mb'
         }
     },
-    
+
     // East Asia (China focused)
-    { 
-        id: 'ustc_cn', 
-        name: 'USTC Mirror (China/Hefei)', 
-        url: 'https://mirrors.ustc.edu.cn/speedtest/{{size}}.bin', 
-        isDynamic: false, 
+    {
+        id: 'ustc_cn',
+        name: 'USTC Mirror (China/Hefei)',
+        url: 'https://mirrors.ustc.edu.cn/speedtest/{{size}}.bin',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100mb',
             [SIZE_1GB]: '1000mb'
         }
     },
-    { 
-        id: 'nju_cn', 
-        name: 'NJU Mirror (China/Nanjing)', 
-        url: 'https://mirrors.nju.edu.cn/speedtest/{{size}}.bin', 
-        isDynamic: false, 
+    {
+        id: 'nju_cn',
+        name: 'NJU Mirror (China/Nanjing)',
+        url: 'https://mirrors.nju.edu.cn/speedtest/{{size}}.bin',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100mb',
             [SIZE_1GB]: '1000mb'
         }
     },
-    
+
     // Russia & CIS
-    { 
-        id: 'selectel_ru', 
-        name: 'Selectel (Russia/St. Petersburg)', 
-        url: 'https://speedtest.selectel.ru/{{size}}', 
-        isDynamic: false, 
+    {
+        id: 'selectel_ru',
+        name: 'Selectel (Russia/St. Petersburg)',
+        url: 'https://speedtest.selectel.ru/{{size}}',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_10MB]: '10MB',
@@ -92,11 +92,11 @@ export const SPEED_TEST_PRESETS: SpeedTestPreset[] = [
             [SIZE_1GB]: '1GB'
         }
     },
-    { 
-        id: 'tele2_kz', 
-        name: 'Tele2 (Kazakhstan/Almaty)', 
-        url: 'https://speedtest.tele2.kz/{{size}}.bin', 
-        isDynamic: false, 
+    {
+        id: 'tele2_kz',
+        name: 'Tele2 (Kazakhstan/Almaty)',
+        url: 'https://speedtest.tele2.kz/{{size}}.bin',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100MB',
@@ -105,33 +105,33 @@ export const SPEED_TEST_PRESETS: SpeedTestPreset[] = [
     },
 
     // Europe
-    { 
-        id: 'hetzner_de', 
-        name: 'Hetzner (Germany/Falkenstein)', 
-        url: 'https://fsn1-speed.hetzner.com/{{size}}.bin', 
-        isDynamic: false, 
+    {
+        id: 'hetzner_de',
+        name: 'Hetzner (Germany/Falkenstein)',
+        url: 'https://fsn1-speed.hetzner.com/{{size}}.bin',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100MB',
             [SIZE_1GB]: '1GB'
         }
     },
-    { 
-        id: 'hetzner_fi', 
-        name: 'Hetzner (Finland/Helsinki)', 
-        url: 'https://hel1-speed.hetzner.com/{{size}}.bin', 
-        isDynamic: false, 
+    {
+        id: 'hetzner_fi',
+        name: 'Hetzner (Finland/Helsinki)',
+        url: 'https://hel1-speed.hetzner.com/{{size}}.bin',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100MB',
             [SIZE_1GB]: '1GB'
         }
     },
-    { 
-        id: 'scaleway_fr', 
-        name: 'Scaleway (France/Paris)', 
-        url: 'https://ping.online.net/{{size}}.dat', 
-        isDynamic: false, 
+    {
+        id: 'scaleway_fr',
+        name: 'Scaleway (France/Paris)',
+        url: 'https://ping.online.net/{{size}}.dat',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100Mo',
@@ -140,64 +140,64 @@ export const SPEED_TEST_PRESETS: SpeedTestPreset[] = [
     },
 
     // North America
-    { 
-        id: 'vultr_nj', 
-        name: 'Vultr (US East/New Jersey)', 
-        url: 'https://nj-us-ping.vultr.com/vultr.com.{{size}}.bin', 
-        isDynamic: false, 
+    {
+        id: 'vultr_nj',
+        name: 'Vultr (US East/New Jersey)',
+        url: 'https://nj-us-ping.vultr.com/vultr.com.{{size}}.bin',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100MB',
             [SIZE_1GB]: '1000MB'
         }
     },
-    { 
-        id: 'vultr_la', 
-        name: 'Vultr (US West/Los Angeles)', 
-        url: 'https://lax-ca-us-ping.vultr.com/vultr.com.{{size}}.bin', 
-        isDynamic: false, 
+    {
+        id: 'vultr_la',
+        name: 'Vultr (US West/Los Angeles)',
+        url: 'https://lax-ca-us-ping.vultr.com/vultr.com.{{size}}.bin',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100MB',
             [SIZE_1GB]: '1000MB'
         }
     },
-    
+
     // Asia Pacific
-    { 
-        id: 'vultr_sg', 
-        name: 'Vultr (Singapore)', 
-        url: 'https://sgp-ping.vultr.com/vultr.com.{{size}}.bin', 
-        isDynamic: false, 
+    {
+        id: 'vultr_sg',
+        name: 'Vultr (Singapore)',
+        url: 'https://sgp-ping.vultr.com/vultr.com.{{size}}.bin',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100MB',
             [SIZE_1GB]: '1000MB'
         }
     },
-    { 
-        id: 'vultr_tokyo', 
-        name: 'Vultr (Japan/Tokyo)', 
-        url: 'https://hnd-jp-ping.vultr.com/vultr.com.{{size}}.bin', 
-        isDynamic: false, 
+    {
+        id: 'vultr_tokyo',
+        name: 'Vultr (Japan/Tokyo)',
+        url: 'https://hnd-jp-ping.vultr.com/vultr.com.{{size}}.bin',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100MB',
             [SIZE_1GB]: '1000MB'
         }
     },
-    { 
-        id: 'vultr_sydney', 
-        name: 'Vultr (Australia/Sydney)', 
-        url: 'https://syd-au-ping.vultr.com/vultr.com.{{size}}.bin', 
-        isDynamic: false, 
+    {
+        id: 'vultr_sydney',
+        name: 'Vultr (Australia/Sydney)',
+        url: 'https://syd-au-ping.vultr.com/vultr.com.{{size}}.bin',
+        isDynamic: false,
         supportsUpload: false,
         sizeMap: {
             [SIZE_100MB]: '100MB',
             [SIZE_1GB]: '1000MB'
         }
     },
-    
+
     // Custom
     { id: 'custom', name: 'Custom URL', url: '', isDynamic: false, supportsUpload: false }
 ];
@@ -216,7 +216,7 @@ export const useSpeedTest = () => {
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [speedHistory, setSpeedHistory] = useState<number[]>(Array.from({ length: HISTORY_LENGTH }, () => 0));
     const [progress, setProgress] = useState(0);
-    
+
     const abortControllerRef = useRef<AbortController | null>(null);
 
     const updateHistory = useCallback((speed: number) => {
@@ -259,7 +259,7 @@ export const useSpeedTest = () => {
             // If the selected size isn't in the map (shouldn't happen via UI but for safety), fallback to 100MB
             const fallbackKey = Object.keys(backendConfig.sizeMap).find(k => Number(k) === 100*1024*1024) || Object.keys(backendConfig.sizeMap)[0];
             const sizeToUse = sizeString || backendConfig.sizeMap[Number(fallbackKey)];
-            
+
             downloadUrl = backendConfig.url.replace('{{size}}', sizeToUse);
         } else {
             // Legacy/Direct Static file
@@ -280,13 +280,13 @@ export const useSpeedTest = () => {
             // --- Phase 1: Latency (Ping) ---
             // Use the download URL but HEAD request (or small bytes for dynamic)
             // cache: 'no-store' is crucial here to measure real network latency, not disk/memory cache latency.
-            const pingUrl = backendConfig.isDynamic 
-                ? `${backendConfig.url}0` 
+            const pingUrl = backendConfig.isDynamic
+                ? `${backendConfig.url}0`
                 : downloadUrl;
 
             const pings: number[] = [];
             const pingAttempts = 5;
-            
+
             for (let i = 0; i < pingAttempts; i++) {
                 if (signal.aborted) return;
                 const start = performance.now();
@@ -298,10 +298,10 @@ export const useSpeedTest = () => {
                 }
                 const end = performance.now();
                 pings.push(end - start);
-                
+
                 // Update Progress (0-5%)
                 setProgress(((i + 1) / pingAttempts) * 5);
-                
+
                 await new Promise(r => setTimeout(r, 200));
             }
 
@@ -318,10 +318,10 @@ export const useSpeedTest = () => {
             // cache: 'no-store' is VITAL here.
             // 1. It ensures we are testing the network, not the disk cache.
             // 2. It prevents the browser from writing 100MB+ files to the disk cache, avoiding storage bloat.
-            const dlResponse = await fetch(downloadUrl, { 
-                signal, 
+            const dlResponse = await fetch(downloadUrl, {
+                signal,
                 cache: 'no-store',
-                mode: 'cors' 
+                mode: 'cors'
             });
 
             if (dlResponse.body) {
@@ -329,7 +329,7 @@ export const useSpeedTest = () => {
                 let receivedLength = 0;
                 const startTime = performance.now();
                 let lastUpdate = startTime;
-                
+
                 // Target download percentage range: 5% -> 50%
                 // If upload is unsupported, 5% -> 100%
                 const progressStart = 5;
@@ -352,7 +352,7 @@ export const useSpeedTest = () => {
                         updateHistory(mbps);
                         setMetrics(prev => ({ ...prev, download: mbps }));
                         lastUpdate = now;
-                        
+
                         // Calculate Progress
                         const percentage = Math.min((receivedLength / config.downloadSize), 1);
                         setProgress(progressStart + (percentage * progressRange));
@@ -374,14 +374,14 @@ export const useSpeedTest = () => {
 
                 // 10MB random data for upload
                 // We create this buffer once. It will be GC'd when the function exits.
-                const uploadSize = 10 * 1024 * 1024; 
+                const uploadSize = 10 * 1024 * 1024;
                 let uploadData: Uint8Array | null = new Uint8Array(uploadSize);
                 for (let i = 0; i < uploadSize; i += 1024) uploadData[i] = Math.floor(Math.random() * 255);
 
                 await new Promise<void>((resolve, reject) => {
                     const xhr = new XMLHttpRequest();
                     xhr.open('POST', 'https://speed.cloudflare.com/__up', true);
-                    
+
                     // FIX: Set text/plain to attempt preventing Preflight (OPTIONS) request
                     // This creates a "Simple Request" which some servers accept more readily cross-origin.
                     xhr.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
@@ -404,7 +404,7 @@ export const useSpeedTest = () => {
                                 updateHistory(mbps);
                                 setMetrics(prev => ({ ...prev, upload: mbps }));
                                 lastUlUpdate = now;
-                                
+
                                 // Upload Progress: 50% -> 100%
                                 const percentage = e.loaded / e.total;
                                 setProgress(50 + (percentage * 50));
@@ -423,14 +423,14 @@ export const useSpeedTest = () => {
                         console.warn("Upload test failed (likely CORS)");
                         setMetrics(prev => ({ ...prev, upload: 0 }));
                         // Don't fail the whole test, just the upload part
-                        resolve(); 
+                        resolve();
                     };
 
                     xhr.send(uploadData);
                 });
-                
+
                 // Explicit cleanup helper
-                uploadData = null; 
+                uploadData = null;
             } else {
                 // Skip upload for static backends or if unsupported
                 setMetrics(prev => ({ ...prev, upload: 0 }));

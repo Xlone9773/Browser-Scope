@@ -60,12 +60,12 @@ export async function downloadLocale(lang: Language): Promise<boolean> {
   try {
     const loader = localeLoaders[lang];
     if (!loader) return false;
-    
+
     // Dynamically load the module using Vite's loader
     const module = await loader();
     const content = JSON.stringify(module);
     const size = new Blob([content]).size;
-    
+
     const cache = await window.caches.open(LOCALES_CACHE_NAME);
     const cacheKey = `https://local-locales.browserscope/${lang}.json`;
     await cache.put(cacheKey, new Response(content, {

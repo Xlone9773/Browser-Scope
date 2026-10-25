@@ -90,7 +90,7 @@ export const Slider: React.FC<SliderProps> = ({
             <div className="relative flex items-center h-5 select-none touch-none">
                 {/* Visual Track */}
                 <div className="absolute inset-x-0 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                    <div 
+                    <div
                         className={`h-full rounded-full ${currentStyle.track} transition-all duration-75`}
                         style={{ width: `${percentage}%` }}
                     />
@@ -113,13 +113,13 @@ export const Slider: React.FC<SliderProps> = ({
                 />
 
                 {/* Styled Handle Thumb */}
-                <div 
+                <div
                     className={`
                         absolute w-4 h-4 rounded-full ${currentStyle.thumb} border border-white dark:border-slate-900 shadow-md pointer-events-none
                         -translate-x-1/2 left-[calc(var(--pct)*1%)] transition-all duration-75
                         focus:ring-2 focus:ring-offset-1 focus:outline-none dark:focus:ring-offset-slate-800
                     `}
-                    style={{ 
+                    style={{
                         left: `${percentage}%`,
                         '--pct': percentage
                     } as React.CSSProperties}

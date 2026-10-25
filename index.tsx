@@ -21,8 +21,8 @@ window.addEventListener('unhandledrejection', (e) => {
     const msg = e.reason instanceof Error ? e.reason.message : String(e.reason);
     const lowerMsg = msg.toLowerCase();
     if (
-        msg.includes('VConsole is not defined') || 
-        msg.includes('vconsole') || 
+        msg.includes('VConsole is not defined') ||
+        msg.includes('vconsole') ||
         msg.includes('WebSocket closed without opened') ||
         lowerMsg.includes('transition was skipped')
     ) {

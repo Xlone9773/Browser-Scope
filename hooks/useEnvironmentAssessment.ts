@@ -95,7 +95,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
             if (platformDescriptor && (platformDescriptor.value !== undefined || platformDescriptor.get !== undefined)) {
                 addAnomaly('platform_override', 'Platform tampered', 'danger', 'trust', 30);
             }
-            
+
             const languagesDescriptor = Object.getOwnPropertyDescriptor(navigator, 'languages');
             if (languagesDescriptor && (languagesDescriptor.value !== undefined || languagesDescriptor.get !== undefined)) {
                 addAnomaly('languages_override', 'Navigator Languages tampered', 'danger', 'trust', 20);
@@ -137,7 +137,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
 
             // 5. Engine stack mismatches
             try {
-                
+
                                 // @ts-expect-error fixed implicitly typed external libraries
                                 null.test();
             } catch (e: unknown) {
@@ -154,7 +154,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
 
             const ua = navigator.userAgent || '';
             const platform = navigator.platform || '';
-            
+
             // OS Mismatches
             if (ua.includes('Windows') && !platform.includes('Win')) {
                 addAnomaly('os_mismatch', 'Windows UA but non-Win platform', 'danger', 'normalcy', 30);
@@ -165,7 +165,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
             if (ua.includes('Linux') && !platform.includes('Linux') && !platform.includes('Android')) {
                 addAnomaly('os_mismatch', 'Linux UA but non-Linux platform', 'danger', 'normalcy', 30);
             }
-            
+
             // Arch Mismatches (e.g., iPhone returning Linux x86_64 or Desktop returning arm)
             const isUAaarch64 = ua.includes('aarch64') || ua.includes('arm');
             const isPlatformx86 = platform.includes('x86') || platform.includes('i686');
@@ -272,19 +272,19 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                     if (debugInfo) {
                         const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || '';
                         const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || '';
-                        
+
                         // 1. Software renderer check
-                        const isSoftware = /SwiftShader|llvmpipe|Software/i.test(renderer) || 
+                        const isSoftware = /SwiftShader|llvmpipe|Software/i.test(renderer) ||
                                            (/Google Inc\./i.test(vendor) && /Google SwiftShader/i.test(renderer)) ||
                                            /Mesa/i.test(renderer);
                         if (isSoftware) {
                             addAnomaly('software_renderer', 'Software WebGL renderer detected (common in headless/virtual environments)', 'danger', 'trust', 35);
                         }
-                        
+
                         // 2. Platform / Renderer contradiction
                         const isMac = /Mac|iPhone|iPad|iPod/i.test(navigator.platform);
                         const isWin = /Win/i.test(navigator.platform);
-                        
+
                         if (isMac && /Direct3D|Intel\s+HD\s+Graphics\s+Direct3D/i.test(renderer)) {
                             addAnomaly('webgl_os_mismatch', 'WebGL renderer (Direct3D) contradicts Mac platform', 'danger', 'normalcy', 30);
                         }

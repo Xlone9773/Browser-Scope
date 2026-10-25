@@ -90,9 +90,9 @@ export const GeometryTab: React.FC<GeometryTabProps> = React.memo(({ t }) => {
             geomStatus === 'running' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
             'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
           }`}>
-            {geomStatus === 'idle' ? t.status_idle : 
-             geomStatus === 'running' ? t.status_running : 
-             geomStatus === 'poisoned' ? t.status_poisoned : 
+            {geomStatus === 'idle' ? t.status_idle :
+             geomStatus === 'running' ? t.status_running :
+             geomStatus === 'poisoned' ? t.status_poisoned :
              t.status_clean}
           </span>
         </div>

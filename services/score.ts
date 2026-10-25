@@ -79,7 +79,7 @@ const isPrivateIp = (ip: string): boolean => {
 
 export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore => {
     const factors: ScoreFactor[] = [];
-    
+
     const weights = {
         hardware: 0.30,
         browser: 0.30,
@@ -89,11 +89,11 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     };
 
     const addFactor = (
-        id: string, 
-        value: string | number, 
-        score: number, 
-        maxScore: number, 
-        category: 'hardware' | 'browser' | 'screen' | 'media' | 'network', 
+        id: string,
+        value: string | number,
+        score: number,
+        maxScore: number,
+        category: 'hardware' | 'browser' | 'screen' | 'media' | 'network',
         description: string
     ) => {
         const weight = weights[category];
@@ -137,7 +137,7 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     } else {
         addFactor('webgl_hash', 'val_generic', 0, 25, 'browser', 'desc_webgl_generic');
     }
-    
+
     // Installed Fonts (Max 20 pts) - High entropy font enumeration
     const fontCount = typeof input.fontsCount === 'number' ? input.fontsCount : 0;
     if (fontCount > 0) {
@@ -306,12 +306,12 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     } else {
         addFactor('resolution', 'Unknown', 0, 45, 'screen', 'desc_generic');
     }
-    
+
     // Pixel Ratio, Color Depth & HDR (Max 35 pts)
     const dpr = input.pixelRatio || 1;
     const depth = input.colorDepth || 24;
     let advScore = 10;
-    
+
     if (dpr > 1) {
         advScore += (dpr % 1 === 0 ? 12 : 20); // Fractional DPR scaling has higher entropy
     }
@@ -321,11 +321,11 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     advScore = Math.min(35, Math.max(advScore, depth > 0 ? 5 : 0));
     catScreen += advScore;
     addFactor(
-        'screen_advanced', 
-        `DPR ${dpr}${input.hdr ? ', HDR' : ''}`, 
-        advScore, 
-        35, 
-        'screen', 
+        'screen_advanced',
+        `DPR ${dpr}${input.hdr ? ', HDR' : ''}`,
+        advScore,
+        35,
+        'screen',
         advScore > 15 ? 'desc_screen_advanced' : 'desc_generic'
     );
 
@@ -407,7 +407,7 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     } else {
         addFactor('webrtc_leak', 'val_protected', 0, 75, 'network', 'desc_webrtc_safe');
     }
-    
+
     // Network Connection Type (Max 25 pts)
     const netType = input.networkType ? input.networkType.toLowerCase() : '';
     if (netType && netType !== 'unknown') {
@@ -438,7 +438,7 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     calculatedTotal += scores.network * weights.network;
     calculatedTotal += scores.media * weights.media;
     calculatedTotal += scores.screen * weights.screen;
-    
+
     const totalScore = Math.min(100, Math.max(0, Math.round(calculatedTotal)));
 
     let rating = 'Low';
@@ -446,11 +446,10 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     else if (totalScore >= 50) rating = 'High';
     else if (totalScore >= 25) rating = 'Medium';
 
-    return { 
-        totalScore, 
-        rating, 
-        factors, 
-        categoryScores: scores 
+    return {
+        totalScore,
+        rating,
+        factors,
+        categoryScores: scores
     };
 };
-

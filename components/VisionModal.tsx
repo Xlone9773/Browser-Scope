@@ -33,14 +33,14 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
   const [cameraError, setCameraError] = useState<string | null>(null);
 
   // Detection State
-  const [mode, setMode] = useState<'native' | 'polyfill'>(() => 
+  const [mode, setMode] = useState<'native' | 'polyfill'>(() =>
       (typeof window !== 'undefined' && 'BarcodeDetector' in window) ? 'native' : 'polyfill'
   );
   const [isAutoScan, setIsAutoScan] = useState(true); // Toggle between Auto and Manual
   const [isProcessing, setIsProcessing] = useState(false); // For manual capture loading state
   const [lastResult, setLastResult] = useState<string>('');
   const [lastFormat, setLastFormat] = useState<string>('');
-  
+
   // Performance Metrics
   const [fps, setFps] = useState(0);
   const [detectTime, setDetectTime] = useState(0);
@@ -88,9 +88,9 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                   // If label is missing (permission not granted), provide a generic name
                   label: device.label || `Camera ${index + 1}`
               }));
-          
+
           setDevices(videoDevices);
-          
+
           // If we have devices and no selection, pick the first one
           if (videoDevices.length > 0 && !selectedDeviceId) {
               setSelectedDeviceId(videoDevices[0].deviceId);
@@ -118,20 +118,20 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
       if (stream) {
         stream.getTracks().forEach(t => t.stop());
       }
-      
+
       const constraints: MediaStreamConstraints = {
-          video: selectedDeviceId 
+          video: selectedDeviceId
               ? { deviceId: { exact: selectedDeviceId }, width: { ideal: 1280 }, height: { ideal: 720 } }
               : { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: false
       };
 
       const newStream = await navigator.mediaDevices.getUserMedia(constraints);
-      
+
       setStream(newStream);
       setIsCameraActive(true);
       setCameraError(null);
-      
+
       // Update device list now that we have permissions (labels will appear)
       await getDevices();
 
@@ -151,7 +151,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
     setIsCameraActive(false);
     setFps(0);
     setDetectTime(0);
-    
+
     if (videoRef.current) {
         videoRef.current.srcObject = null;
     }
@@ -190,7 +190,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
           videoRef.current.srcObject = stream;
           videoRef.current.onloadedmetadata = () => {
               videoRef.current?.play().catch(e => console.error("Play failed", e));
-              
+
               if (isAutoScan) {
                   if (mode === 'native') detectLoopRef.current();
                   else initPolyfillLoopRef.current();
@@ -214,13 +214,13 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
       frameCount.current++;
 
       if (mode === 'native') {
-          
+
           if (window.BarcodeDetector) {
               try {
-                  
+
                   const barcodeDetector = new BarcodeDetector({ formats: supportedFormats });
                   const startDetect = performance.now();
-                  
+
                   const barcodes: DetectedBarcode[] = await barcodeDetector.detect(video);
                   const endDetect = performance.now();
                   setDetectTime(Math.round(endDetect - startDetect));
@@ -240,7 +240,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                       ctx.font = 'bold 16px monospace';
                       ctx.fillStyle = '#00ff00';
                       ctx.fillText(`${barcode.format}`, x, y - 10);
-                      
+
                       // Corners
                       ctx.fillStyle = 'red';
                       barcode.cornerPoints.forEach(point => {
@@ -266,7 +266,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
       const video = videoRef.current;
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
-      
+
       if (!ctx || video.readyState !== 4) {
           rafId.current = requestAnimationFrame(detectLoop);
           return;
@@ -303,7 +303,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
           }
           // Draw frame
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          
+
           // Flash effect
           const flash = document.createElement('div');
           flash.className = 'absolute inset-0 bg-white z-50 pointer-events-none transition-opacity duration-300';
@@ -318,7 +318,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
   };
 
   // Convert devices to Select options
-  const deviceOptions = devices.length > 0 
+  const deviceOptions = devices.length > 0
     ? devices.map(d => ({ id: d.deviceId, label: d.label }))
     : [{ id: '', label: 'Default Camera' }];
 
@@ -333,10 +333,10 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
     >
         {/* Content */}
         <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
-            
+
             {/* Sidebar Controls */}
             <div className="w-full md:w-80 bg-slate-50 dark:bg-slate-900/50 border-r border-slate-100 dark:border-slate-700 flex flex-col p-4 overflow-y-auto shrink-0">
-                
+
                 {/* Mode Selection */}
                 <div className="mb-6">
                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -344,14 +344,14 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                         {t.detect_mode}
                     </h3>
                     <div className="flex bg-slate-200 dark:bg-slate-800 p-1 rounded-lg mb-4">
-                        <button 
+                        <button
                             onClick={() => setMode('native')}
                             disabled={!hasNativeBarcode}
                             className={`flex-1 py-2 text-xs font-medium rounded-md transition-all ${mode === 'native' ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 disabled:opacity-50'}`}
                         >
                             Native (HW)
                         </button>
-                        <button 
+                        <button
                             onClick={() => setMode('polyfill')}
                             className={`flex-1 py-2 text-xs font-medium rounded-md transition-all ${mode === 'polyfill' ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
@@ -364,7 +364,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                         {t.auto_scan}
                     </h3>
                     <div className="flex items-center gap-3">
-                        <button 
+                        <button
                             onClick={() => setIsAutoScan(!isAutoScan)}
                             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 ${isAutoScan ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-600'}`}
                         >
@@ -385,7 +385,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                         {t.camera_source}
                     </h3>
                     <div className="relative">
-                        <Select 
+                        <Select
                             value={selectedDeviceId}
                             options={deviceOptions}
                             onChange={(val) => handleDeviceChange(val as string)}
@@ -440,19 +440,19 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
             {/* Viewport Area */}
             <div className="flex-1 bg-black relative flex flex-col">
                 <div className="flex-1 relative overflow-hidden flex items-center justify-center bg-zinc-900">
-                    
+
                     {/* Always render video/canvas to ensure Refs are populated, toggle visibility with CSS */}
-                    <video 
-                        ref={videoRef} 
-                        className="absolute inset-0 w-full h-full object-contain opacity-0 pointer-events-none" 
-                        playsInline 
-                        muted 
-                        autoPlay 
+                    <video
+                        ref={videoRef}
+                        className="absolute inset-0 w-full h-full object-contain opacity-0 pointer-events-none"
+                        playsInline
+                        muted
+                        autoPlay
                     />
-                    
-                    <canvas 
-                        ref={canvasRef} 
-                        className={`w-full h-full object-contain transition-opacity duration-300 ${isCameraActive ? 'opacity-100' : 'opacity-0'}`} 
+
+                    <canvas
+                        ref={canvasRef}
+                        className={`w-full h-full object-contain transition-opacity duration-300 ${isCameraActive ? 'opacity-100' : 'opacity-0'}`}
                     />
 
                     {/* Start UI Overlay */}
@@ -464,7 +464,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                                 {cameraError && (
                                     <p className="text-red-400 text-xs mb-4 bg-red-900/20 p-2 rounded">{cameraError}</p>
                                 )}
-                                <button 
+                                <button
                                     onClick={startCamera}
                                     className="px-6 py-3 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-indigo-500/30 flex items-center gap-2 mx-auto"
                                 >
@@ -489,11 +489,11 @@ export const VisionModal: React.FC<VisionModalProps> = ({ onClose, t }) => {
                                     </span>
                                 )}
                             </div>
-                            
+
                             {/* Manual Trigger Button */}
                             {!isAutoScan && (
                                 <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
-                                    <button 
+                                    <button
                                         onClick={handleManualCapture}
                                         disabled={isProcessing}
                                         className="group relative w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border-4 border-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"

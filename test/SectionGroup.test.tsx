@@ -21,17 +21,17 @@ describe("SectionGroup UI component tests", () => {
         <div>Child content</div>
       </SectionGroup>
     );
-    
+
     // Initially expanded
     const expandButton = screen.getByRole("button");
     expect(expandButton).toHaveAttribute("aria-label", "Collapse section");
-    
+
     // Click to collapse
     act(() => {
       fireEvent.click(expandButton);
     });
     expect(screen.getByRole("button")).toHaveAttribute("aria-label", "Expand section");
-    
+
     // Click header to expand
     act(() => {
       fireEvent.click(screen.getByText("Test Title"));

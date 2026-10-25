@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { 
-    Gauge, 
-    Zap, 
-    Shield, 
-    Video, 
-    Cpu, 
-    Compass, 
-    Check, 
-    X, 
+import {
+    Gauge,
+    Zap,
+    Shield,
+    Video,
+    Cpu,
+    Compass,
+    Check,
+    X,
     Trash2,
-    RefreshCw, 
-    ShieldCheck, 
-    CpuIcon, 
+    RefreshCw,
+    ShieldCheck,
+    CpuIcon,
     Info,
     ChevronDown,
     ChevronUp
@@ -348,7 +348,7 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
             };
 
             setResults(newResult);
-            
+
             setHistory((prev: ReportResults[]) => {
                 const existing = prev.filter((item: ReportResults) => item.timestamp !== newResult.timestamp);
                 const updated = [newResult, ...existing].slice(0, 10);
@@ -507,23 +507,23 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                             <div className="relative w-28 h-28 flex items-center justify-center">
                                 {/* Circular progress track */}
                                 <svg className="absolute w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                                    <circle 
-                                        cx="50" 
-                                        cy="50" 
-                                        r="42" 
-                                        stroke="currentColor" 
-                                        strokeWidth="8" 
-                                        fill="transparent" 
+                                    <circle
+                                        cx="50"
+                                        cy="50"
+                                        r="42"
+                                        stroke="currentColor"
+                                        strokeWidth="8"
+                                        fill="transparent"
                                         className="text-slate-200 dark:text-slate-800"
                                     />
-                                    <circle 
-                                        cx="50" 
-                                        cy="50" 
-                                        r="42" 
-                                        stroke="currentColor" 
-                                        strokeWidth="8" 
-                                        fill="transparent" 
-                                        strokeDasharray="263.89" 
+                                    <circle
+                                        cx="50"
+                                        cy="50"
+                                        r="42"
+                                        stroke="currentColor"
+                                        strokeWidth="8"
+                                        fill="transparent"
+                                        strokeDasharray="263.89"
                                         strokeDashoffset={263.89 - (263.89 * results.overallScore) / 100}
                                         className={`${scoreDisplayMode === 'grade' ? getGradeColorClass(getGrade(results.overallScore)) : 'text-indigo-500'} transition-all duration-500`}
                                     />
@@ -576,15 +576,15 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                                     key={key}
                                     onClick={(): void => setActiveTab(key)}
                                     className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all text-left group ${
-                                        activeTab === key 
-                                            ? "bg-indigo-500/5 border-indigo-500/30 text-indigo-600 dark:text-indigo-400 shadow-sm" 
+                                        activeTab === key
+                                            ? "bg-indigo-500/5 border-indigo-500/30 text-indigo-600 dark:text-indigo-400 shadow-sm"
                                             : "bg-transparent border-slate-100 dark:border-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800/20 text-slate-600 dark:text-slate-400"
                                     }`}
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className={`p-1.5 rounded-lg shrink-0 transition-colors ${
-                                            activeTab === key 
-                                                ? "bg-indigo-500 text-white" 
+                                            activeTab === key
+                                                ? "bg-indigo-500 text-white"
                                                 : "bg-slate-100 dark:bg-slate-800 text-slate-500 group-hover:text-indigo-500"
                                         }`}>
                                             {getTabIcon(key)}
@@ -600,8 +600,8 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <div className="w-12 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden hidden sm:block">
-                                            <div 
-                                                className="bg-indigo-500 h-full rounded-full transition-all duration-300" 
+                                            <div
+                                                className="bg-indigo-500 h-full rounded-full transition-all duration-300"
                                                 style={{ width: `${results[key].score}%` }}
                                             />
                                         </div>

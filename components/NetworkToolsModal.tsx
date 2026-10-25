@@ -5,14 +5,14 @@ import { Select } from './ui/Select';
 import { Button } from './ui/Button';
 import { Modal } from './ui/Modal';
 import { Translation } from '../utils/i18n/types';
-import { 
-    fetchIpInfoFromSource, 
-    detectIpv6, 
-    runWebRTCScan, 
-    detectDns, 
-    detectProtocols, 
-    IpInfo, 
-    WebRTCCandidate 
+import {
+    fetchIpInfoFromSource,
+    detectIpv6,
+    runWebRTCScan,
+    detectDns,
+    detectProtocols,
+    IpInfo,
+    WebRTCCandidate
 } from '../services/detectors/networkDiagnostics';
 
 interface NetworkToolsModalProps {
@@ -65,7 +65,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
     // Advanced Diagnostics State
     const [webrtcCandidates, setWebrtcCandidates] = useState<WebRTCCandidate[]>([]);
     const [scanningWebrtc, setScanningWebrtc] = useState(false);
-    
+
     const [dnsInfo, setDnsInfo] = useState<{ip: string, geo: string} | null>(null);
     const [checkingDns, setCheckingDns] = useState(false);
     const [dnsError, setDnsError] = useState<string | null>(null);
@@ -207,7 +207,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
 
     const renderBentoItem = (icon: React.ComponentType<{ size?: number; className?: string }>, label: string, value: string | number | undefined | null | boolean, colorClass = 'text-slate-800 dark:text-slate-200', colSpan = 'col-span-1') => {
         if (value === undefined || value === null || value === '') return null;
-        
+
         const displayValue = typeof value === 'boolean' ? (value ? networkT.ip.yes : networkT.ip.no) : value;
 
         return (
@@ -224,15 +224,15 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
     };
 
     return (
-        <Modal 
+        <Modal
             onClose={onClose}
-            title={t.settings.nav.network} 
+            title={t.settings.nav.network}
             icon={<Wifi size={24} className="text-indigo-500" />}
             size="4xl"
             fullHeight
         >
             <div className="max-w-5xl mx-auto space-y-6">
-                
+
                 {/* Modern IP Configuration Card */}
                 <div className="bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
                     <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700/60 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
@@ -250,7 +250,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                             <div className="space-y-4 flex-1">
                                 <div className="flex items-center gap-3">
                                     <span className="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-500/20 dark:text-indigo-300 rounded-md ring-1 ring-inset ring-indigo-500/20">{networkT.ip.ipv4}</span>
-                                    <Select 
+                                    <Select
                                         value={activeIpv4Source}
                                         options={IPV4_SOURCES}
                                         onChange={(val) => setActiveIpv4Source(val as string)}
@@ -258,7 +258,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                                         fullWidth={false}
                                         className="w-[200px]"
                                     />
-                                    <Button 
+                                    <Button
                                         onClick={handleFetchIp}
                                         isLoading={loadingIp}
                                         variant="secondary"
@@ -275,7 +275,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                                         <span>{ipInfo.error}</span>
                                     </div>
                                 )}
-                                
+
                                 {ipInfo && !ipInfo.error && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-4">
                                         <div className="flex items-center gap-4 border border-slate-200 dark:border-slate-700/60 rounded-xl p-4 bg-slate-50 dark:bg-slate-900/40">
@@ -313,7 +313,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                             <div className="space-y-4 lg:w-1/3 flex-shrink-0">
                                 <div className="flex items-center gap-3">
                                     <span className="px-2.5 py-1 text-xs font-bold text-purple-600 bg-purple-50 dark:bg-purple-500/20 dark:text-purple-300 rounded-md ring-1 ring-inset ring-purple-500/20">{networkT.ip.ipv6}</span>
-                                    <Button 
+                                    <Button
                                         onClick={handleCheckIpv6}
                                         isLoading={checkingIpv6}
                                         variant="secondary"
@@ -323,7 +323,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                                         {networkT.ip.check_v6}
                                     </Button>
                                 </div>
-                                <Select 
+                                <Select
                                     value={activeIpv6Source}
                                     options={IPV6_SOURCES}
                                     onChange={(val) => setActiveIpv6Source(val as string)}
@@ -376,7 +376,7 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                             <Server size={18} className="text-slate-500 text-indigo-500" />
                             <h3 className="font-semibold text-slate-800 dark:text-slate-200">{networkT.diagnostics.title}</h3>
                         </div>
-                        
+
                         <div className="p-6 space-y-6 flex-1 flex flex-col">
                             {/* WebRTC */}
                             <div>
@@ -475,8 +475,8 @@ export const NetworkToolsModal: React.FC<NetworkToolsModalProps> = ({ onClose, t
                                 <h3 className="font-semibold text-slate-800 dark:text-slate-200">{networkT.connectivity.title}</h3>
                             </div>
                             <div className="flex gap-2">
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     value={testUrl}
                                     onChange={(e) => setTestUrl(e.target.value)}
                                     placeholder={networkT.connectivity.placeholder}

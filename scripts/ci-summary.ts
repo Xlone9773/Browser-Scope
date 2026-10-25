@@ -104,12 +104,12 @@ const main = () => {
       try {
         const rawJson = fs.readFileSync(eslintReportPath, 'utf8');
         const report = JSON.parse(rawJson);
-        
+
         if (Array.isArray(report)) {
           report.forEach((fileObj: EslintFileResult) => {
             const relativePath = path.relative(process.cwd(), fileObj.filePath);
             const messages = fileObj.messages || [];
-            
+
             if (messages.length > 0) {
               eslintFilesWithIssuesCount++;
               messages.forEach((msg: EslintMessage) => {
@@ -253,8 +253,8 @@ const main = () => {
         testStats.total = results.numTotalTests || 0;
         testStats.passed = results.numPassedTests || 0;
         testStats.failed = results.numFailedTests || 0;
-        testStats.duration = (results.startTime && Date.now() - results.startTime) 
-          ? Math.round((Date.now() - results.startTime) / 1000) 
+        testStats.duration = (results.startTime && Date.now() - results.startTime)
+          ? Math.round((Date.now() - results.startTime) / 1000)
           : 0;
 
         testSuites.total = results.numTotalTestSuites || 0;
@@ -372,10 +372,10 @@ const main = () => {
         if (!isSuccess || buildLog.toLowerCase().includes('error') || buildLog.toLowerCase().includes('failed')) {
           // Extract error lines to show
           const lines = buildLog.split('\n');
-          const errorLines = lines.filter(line => 
-            line.toLowerCase().includes('error') || 
-            line.toLowerCase().includes('failed') || 
-            line.toLowerCase().includes('exception') || 
+          const errorLines = lines.filter(line =>
+            line.toLowerCase().includes('error') ||
+            line.toLowerCase().includes('failed') ||
+            line.toLowerCase().includes('exception') ||
             line.startsWith('❌')
           );
           if (errorLines.length > 0) {

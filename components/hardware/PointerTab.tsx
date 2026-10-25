@@ -23,7 +23,7 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        
+
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
@@ -51,7 +51,7 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
             // Pressure modulates width: Min 1px, Max 20px
-            const width = Math.max(1, pressure * 20); 
+            const width = Math.max(1, pressure * 20);
             ctx.lineWidth = width;
             ctx.strokeStyle = getStrokeColor(type);
             ctx.stroke();
@@ -63,21 +63,21 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
             const rect = canvas.getBoundingClientRect();
             const lastX = e.clientX - rect.left;
             const lastY = e.clientY - rect.top;
-            
+
             pointers.set(e.pointerId, { lastX, lastY });
-            
+
             // Capture for dragging outside canvas
             canvas.setPointerCapture(e.pointerId);
-            
+
             updateData(e);
         };
 
         const handlePointerMove = (e: PointerEvent) => {
             updateData(e);
-            
+
             const pointer = pointers.get(e.pointerId);
             if (!pointer) return;
-            
+
             // Handle hover state
             if (e.pointerType === 'mouse' && e.buttons === 0) {
                 return;
@@ -95,7 +95,7 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
             // Use reported pressure, or default 0.5 for mouse if button pressed
             let p = e.pressure;
             if (e.pointerType === 'mouse' && e.buttons === 1) p = 0.5;
-            
+
             drawLine(pointer.lastX, pointer.lastY, x, y, p, e.pointerType);
             pointer.lastX = x;
             pointer.lastY = y;
@@ -126,7 +126,7 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
         canvas.addEventListener('pointermove', handlePointerMove);
         canvas.addEventListener('pointerup', handlePointerUp);
         canvas.addEventListener('pointercancel', handlePointerCancel);
-        
+
         return () => {
             canvas.removeEventListener('pointerdown', handlePointerDown);
             canvas.removeEventListener('pointermove', handlePointerMove);
@@ -184,8 +184,8 @@ export const PointerTab: React.FC<PointerTabProps> = ({ t }) => {
 
             {/* Canvas */}
             <div className="flex-1 bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-inner border-2 border-dashed border-slate-200 dark:border-slate-700 relative touch-none">
-                <canvas 
-                    ref={canvasRef} 
+                <canvas
+                    ref={canvasRef}
                     className="w-full h-full block cursor-crosshair touch-none"
                     style={{ touchAction: 'none' }}
                 />

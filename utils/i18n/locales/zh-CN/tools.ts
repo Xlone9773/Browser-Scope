@@ -649,7 +649,7 @@ export const tools = {
     geo_positions_stable: "✅ 连续位置读取与声明的精度一致，未检测到人工噪点特征。",
     geo_accuracy_static: "ℹ️ 所有样本的声明精度完全相同 —— 对于缓存或虚拟定位源是合理的，但单凭此项不能作为断定依据。",
     geo_stable: "✅ 地理位置 API 及其定位特征表现正常，未检测到劫持、Hook 或位置噪点注入。",
-    
+
     // New cross-session / fixed-seed / CSP keys
     status_unknown: "未知",
     canvas_persistent_mismatch: "❌ 检测到 Canvas 跨会话/固定种子投毒：Canvas 渲染在当前会话内表现稳定，但与历史安全基线不一致，提示存在按会话或按域名变化的固定种子噪点注入（典型如 Brave 或 Firefox RFP 防护）。",

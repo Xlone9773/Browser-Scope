@@ -13,12 +13,12 @@ interface FloatingWindowProps {
 
 type DragMode = 'move' | 'resize-nw' | 'resize-ne' | 'resize-sw' | 'resize-se';
 
-export const FloatingWindow: React.FC<FloatingWindowProps> = ({ 
-    title, 
-    onClose, 
-    children, 
-    initialWidth = 600, 
-    initialHeight = 400 
+export const FloatingWindow: React.FC<FloatingWindowProps> = ({
+    title,
+    onClose,
+    children,
+    initialWidth = 600,
+    initialHeight = 400
 }) => {
     // Initial position centered
     const [rect, setRect] = useState({
@@ -40,20 +40,20 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
 
         e.preventDefault();
         e.stopPropagation();
-        
+
         const target = e.currentTarget;
         target.setPointerCapture(e.pointerId);
-        
+
         dragModeRef.current = mode;
         startPosRef.current = { x: e.clientX, y: e.clientY };
-        
+
         if (windowRef.current !== null) {
             const rectDOM = windowRef.current.getBoundingClientRect();
-            startRectRef.current = { 
-                x: rectDOM.left, 
-                y: rectDOM.top, 
-                w: rectDOM.width, 
-                h: rectDOM.height 
+            startRectRef.current = {
+                x: rectDOM.left,
+                y: rectDOM.top,
+                w: rectDOM.width,
+                h: rectDOM.height
             };
         } else {
             startRectRef.current = { ...rect };
@@ -105,7 +105,7 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
                 windowRef.current.style.width = `${newRect.w}px`;
                 windowRef.current.style.height = `${newRect.h}px`;
             }
-            
+
             return null;
         };
 
@@ -117,7 +117,7 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
             window.removeEventListener('pointermove', handleMove);
             window.removeEventListener('pointerup', handleUp);
             window.removeEventListener('pointercancel', handleUp);
-            
+
             if (windowRef.current !== null) {
                 setRect({
                     x: parseFloat(windowRef.current.style.left) || startRectRef.current.x,
@@ -126,14 +126,14 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
                     h: parseFloat(windowRef.current.style.height) || startRectRef.current.h,
                 });
             }
-            
+
             return null;
         };
 
         window.addEventListener('pointermove', handleMove, { passive: false });
         window.addEventListener('pointerup', handleUp);
         window.addEventListener('pointercancel', handleUp);
-        
+
         return null;
     }, [rect]);
 
@@ -143,7 +143,7 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
     };
 
     return typeof document !== 'undefined' ? createPortal(
-        <div 
+        <div
             ref={windowRef}
             contentEditable={false}
             className="fixed z-[9999] bg-slate-900/95 backdrop-blur-md border border-slate-700 rounded-lg shadow-2xl flex flex-col overflow-hidden ring-1 ring-white/10 transition-shadow duration-200"
@@ -156,7 +156,7 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
             }}
         >
             {/* Header / Drag Handle */}
-            <div 
+            <div
                 className="h-10 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-3 cursor-move touch-none select-none shrink-0 group"
                 onPointerDown={(e) => handlePointerDown(e, 'move')}
             >
@@ -165,7 +165,7 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
                     <span className="text-xs font-bold tracking-wide uppercase font-modal-title">{title}</span>
                 </div>
                 <div className="flex items-center gap-1" onPointerDown={handleStopPropagation}>
-                    <button 
+                    <button
                         onClick={onClose}
                         className="p-1.5 hover:bg-slate-700 rounded text-slate-400 hover:text-white transition-colors"
                         title="Dock back to settings"
@@ -181,20 +181,20 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
             </div>
 
             {/* Resize Handles */}
-            <div 
+            <div
                 className="absolute top-0 left-0 w-4 h-4 cursor-nwse-resize touch-none z-50 opacity-0 hover:opacity-100 bg-white/10 transition-opacity rounded-br"
                 onPointerDown={(e) => handlePointerDown(e, 'resize-nw')}
             />
-            <div 
+            <div
                 className="absolute top-0 right-0 w-4 h-4 cursor-nesw-resize touch-none z-50 opacity-0 hover:opacity-100 bg-white/10 transition-opacity rounded-bl"
                 onPointerDown={(e) => handlePointerDown(e, 'resize-ne')}
             />
-            <div 
+            <div
                 className="absolute bottom-0 left-0 w-4 h-4 cursor-nesw-resize touch-none z-50 opacity-0 hover:opacity-100 bg-white/10 transition-opacity rounded-tr"
                 onPointerDown={(e) => handlePointerDown(e, 'resize-sw')}
             />
-            
-            <div 
+
+            <div
                 className="absolute bottom-0 right-0 w-5 h-5 cursor-nwse-resize touch-none z-50 flex items-end justify-end p-1 hover:bg-white/5"
                 onPointerDown={(e) => handlePointerDown(e, 'resize-se')}
             >
@@ -206,4 +206,3 @@ export const FloatingWindow: React.FC<FloatingWindowProps> = ({
         document.body
     ) : null;
 };
-

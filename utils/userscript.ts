@@ -39,7 +39,7 @@ export const USERSCRIPT_CODE = `// ==UserScript==
     win.addEventListener('CORS_REQUEST_SEND', function(e) {
         const customEvent = e;
         if (!customEvent.detail) return;
-        
+
         const { id, url, method, headers, data, timeout, responseType } = customEvent.detail;
 
         if (!id || !url) return;
@@ -53,9 +53,9 @@ export const USERSCRIPT_CODE = `// ==UserScript==
             responseType: responseType || 'text',
             onload: function(response) {
                 win.dispatchEvent(new CustomEvent('CORS_REQUEST_RECEIVE_' + id, {
-                    detail: { 
-                        success: true, 
-                        status: response.status, 
+                    detail: {
+                        success: true,
+                        status: response.status,
                         statusText: response.statusText,
                         responseText: response.responseText,
                         responseHeaders: response.responseHeaders, // 补充返回响应头
@@ -66,8 +66,8 @@ export const USERSCRIPT_CODE = `// ==UserScript==
             },
             onerror: function(err) {
                 win.dispatchEvent(new CustomEvent('CORS_REQUEST_RECEIVE_' + id, {
-                    detail: { 
-                        success: false, 
+                    detail: {
+                        success: false,
                         error: 'Network Error or CORS Block: ' + (err.statusText || 'Unknown'),
                         status: err.status || 0
                     }
@@ -75,8 +75,8 @@ export const USERSCRIPT_CODE = `// ==UserScript==
             },
             ontimeout: function() {
                 win.dispatchEvent(new CustomEvent('CORS_REQUEST_RECEIVE_' + id, {
-                    detail: { 
-                        success: false, 
+                    detail: {
+                        success: false,
                         error: 'Request Timeout (' + (timeout || 15000) + 'ms)',
                         status: 408
                     }

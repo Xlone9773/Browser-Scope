@@ -46,7 +46,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
             if (!('caches' in window)) return;
             const cache = await window.caches.open(CACHE_NAME);
             const updated: Record<string, { isCached: boolean; size: string | null }> = {};
-            
+
             for (const font of FONTS_LIST) {
                 if (font.key === 'geist') continue;
                 const ext = font.cssUrl ? 'css' : 'ttf';
@@ -109,7 +109,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
                   setSwCount(null);
               });
         }
-        
+
         const timer = setTimeout(() => {
             updateFontStatuses();
             updateLocaleStatuses();
@@ -124,7 +124,7 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
         setSessionStorageCount(0);
         window.location.reload();
     };
-  
+
     const unregisterSW = async () => {
         if ('serviceWorker' in navigator) {
             try {
@@ -263,10 +263,10 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
                             <p className="text-xs text-slate-500 dark:text-slate-400">{t.local.clearDesc}</p>
                         </div>
                     </div>
-                    <Button 
-                        variant="danger-soft" 
-                        size="sm" 
-                        onClick={clearStorage} 
+                    <Button
+                        variant="danger-soft"
+                        size="sm"
+                        onClick={clearStorage}
                         leftIcon={<Trash2 size={16} />}
                     >
                         {t.local.clearBtn}
@@ -460,9 +460,9 @@ export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLa
                             <p className="text-xs text-slate-500 dark:text-slate-400">{t.sw.desc}</p>
                         </div>
                     </div>
-                    <Button 
-                        variant="secondary" 
-                        size="sm" 
+                    <Button
+                        variant="secondary"
+                        size="sm"
                         onClick={unregisterSW}
                     >
                         {t.sw.unregisterBtn}
