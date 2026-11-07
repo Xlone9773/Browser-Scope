@@ -74,10 +74,9 @@ export const RefreshRate: React.FC<RefreshRateProps> = ({ label }) => {
   }, []);
 
   return (
-    <InfoItem 
-      label={label} 
-      value={fps !== null ? `${fps} Hz` : 'Calculating...'} 
+    <InfoItem
+      label={label}
+      value={fps !== null ? `${fps} Hz` : 'Calculating...'}
     />
   );
 };
-

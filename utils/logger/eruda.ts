@@ -98,7 +98,7 @@ export async function loadEruda(store: ErudaStore) {
     } catch (e) {
       console.warn("Eruda timing plugin already added or failed to register:", e);
     }
-    
+
     try { const erudaCode = (await import("eruda-code")).default; eruda.add(erudaCode); } catch { /* ignore */ }
     try { const erudaMonitor = (await import("eruda-monitor")).default; eruda.add(erudaMonitor); } catch { /* ignore */ }
     try { const erudaFeatures = (await import("eruda-features")).default; eruda.add(erudaFeatures); } catch { /* ignore */ }

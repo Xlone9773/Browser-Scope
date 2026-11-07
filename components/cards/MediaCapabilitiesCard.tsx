@@ -52,7 +52,7 @@ export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = React
             ))}
             </div>
         </div>
-        <div 
+        <div
             className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50 flex justify-between items-center group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded px-1 -mx-1 transition-colors"
             onClick={onOpenSpeech}
         >
@@ -65,7 +65,7 @@ export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = React
                 {onOpenSpeech && <ChevronRight size={12} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />}
             </div>
         </div>
-        <div 
+        <div
             className="mt-1 flex justify-between items-center group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded px-1 -mx-1 transition-colors"
             onClick={onOpenAudioLatency}
         >
@@ -78,14 +78,14 @@ export const MediaCapabilitiesCard: React.FC<MediaCapabilitiesCardProps> = React
                 {onOpenAudioLatency && <ChevronRight size={12} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />}
             </div>
         </div>
-        
+
         {onOpenVideoTest && (
             <div className="mt-3 pt-3 border-t border-slate-50 dark:border-slate-700/50">
-                <Button 
-                    fullWidth 
-                    variant="soft" 
-                    size="xs" 
-                    onClick={onOpenVideoTest} 
+                <Button
+                    fullWidth
+                    variant="soft"
+                    size="xs"
+                    onClick={onOpenVideoTest}
                     leftIcon={<MonitorPlay size={14} />}
                 >
                     {t.actions.open_video_test}

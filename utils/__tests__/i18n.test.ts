@@ -45,11 +45,11 @@ describe('i18n Real Production Translations Integration', () => {
 
     it('should have identical top-level sections as English', () => {
       const englishSections = Object.keys(translations['en']).sort();
-      
+
       languages.forEach((lang) => {
         if (lang === 'en') return;
         const targetSections = Object.keys(translations[lang]).sort();
-        
+
         // Ensure all top-level sections exist
         englishSections.forEach((section) => {
           expect(targetSections).toContain(section);
@@ -94,7 +94,7 @@ describe('i18n Real Production Translations Integration', () => {
     languages.forEach((lang) => {
       it(`should contain valid non-empty translation values for "${lang}"`, () => {
         const allKeys = getAllKeys(translations[lang]);
-        
+
         const getValue = (obj: Record<string, unknown> | unknown, path: string): unknown => {
           return path.split('.').reduce((acc, key) => (acc as Record<string, unknown>)?.[key], obj);
         };

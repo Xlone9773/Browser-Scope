@@ -92,16 +92,16 @@ interface SettingsModalProps {
   toggleLazyTabChange?: (val: boolean) => void;
 }
 
-export const SettingsModal: React.FC<SettingsModalProps> = ({ 
-    onClose, 
-    t, 
+export const SettingsModal: React.FC<SettingsModalProps> = ({
+    onClose,
+    t,
     themeColor,
     setThemeColor,
     animationStyle,
     setAnimationStyle,
-    simpleMode, 
-    toggleSimpleMode, 
-    hideScrollbar, 
+    simpleMode,
+    toggleSimpleMode,
+    hideScrollbar,
     toggleHideScrollbar,
     globalHideScrollbar,
     toggleGlobalHideScrollbar,
@@ -140,7 +140,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     showQuickSummary,
     toggleShowQuickSummary,
     lang,
-    isDevToolsFloating, 
+    isDevToolsFloating,
     setDevToolsFloating,
     moduleStates = [],
     appVersion,
@@ -224,7 +224,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   // Access structured settings
   const settings = t.settings;
-  
+
   // Helper for Nav Titles
   const getNavTitle = (key: keyof Translation['settings']['nav']) => {
       return settings.nav[key];
@@ -243,111 +243,111 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <>
                   {/* Layout Container */}
                   <div className="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
-                      
+
                       {/* Navigation Tabs */}
-                      <div 
+                      <div
                           ref={tabsContainerRef}
                           className="flex md:flex-col border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 md:w-56 overflow-x-auto md:overflow-visible scrollbar-hide"
                       >
-                          <button 
+                          <button
                               onClick={() => handleTabChange('general')}
                               data-active={activeTab === 'general'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
-                                  ${activeTab === 'general' 
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                  ${activeTab === 'general'
+                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
                                       : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
                               `}
                           >
                               <Sliders size={16} />
                               {getNavTitle('general')}
                           </button>
-                          <button 
+                          <button
                               onClick={() => handleTabChange('appearance')}
                               data-active={activeTab === 'appearance'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
-                                  ${activeTab === 'appearance' 
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                  ${activeTab === 'appearance'
+                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
                                       : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
                               `}
                           >
                               <Palette size={16} />
                               {settings.nav?.appearance}
                           </button>
-                          <button 
+                          <button
                               onClick={() => handleTabChange('storage')}
                               data-active={activeTab === 'storage'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
-                                  ${activeTab === 'storage' 
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                  ${activeTab === 'storage'
+                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
                                       : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
                               `}
                           >
                               <Database size={16} />
                               {getNavTitle('storage')}
                           </button>
-                          <button 
+                          <button
                               onClick={() => handleTabChange('res')}
                               data-active={activeTab === 'res'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
-                                  ${activeTab === 'res' 
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                  ${activeTab === 'res'
+                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
                                       : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
                               `}
                           >
                               <Activity size={16} />
                               {getNavTitle('resources')}
                           </button>
-                          <button 
+                          <button
                               onClick={() => handleTabChange('mod')}
                               data-active={activeTab === 'mod'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
-                                  ${activeTab === 'mod' 
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                  ${activeTab === 'mod'
+                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
                                       : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
                               `}
                           >
                               <Package size={16} />
                               {getNavTitle('modules')}
                           </button>
-                          <button 
+                          <button
                               onClick={() => handleTabChange('ver')}
                               data-active={activeTab === 'ver'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
-                                  ${activeTab === 'ver' 
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                  ${activeTab === 'ver'
+                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
                                       : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
                               `}
                           >
                               <Layers size={16} />
                               {getNavTitle('versions') || 'Versions'}
                           </button>
-                          <button 
+                          <button
                               onClick={() => handleTabChange('dev')}
                               data-active={activeTab === 'dev'}
                               className={`
                                   flex items-center gap-2.5 px-4 py-3 text-sm font-medium transition-all whitespace-nowrap
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
-                                  ${activeTab === 'dev' 
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none' 
+                                  ${activeTab === 'dev'
+                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
                                       : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
                               `}
                           >
@@ -359,7 +359,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       {/* Content Area */}
                       <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
                           {isTabLoading ? (
-                              <div 
+                              <div
                                   className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200"
                                   onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                                       e.stopPropagation();
@@ -376,15 +376,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               </div>
                           ) : null}
                           <Suspense fallback={<div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>}>
-                          
-                           {activeTab === 'appearance' ? (<AppearanceTab 
-                              t={settings.general} 
+
+                           {activeTab === 'appearance' ? (<AppearanceTab
+                              t={settings.general}
                               themeColor={themeColor as SelectColor}
                               setThemeColor={setThemeColor}
                               animationStyle={animationStyle}
                               setAnimationStyle={setAnimationStyle}
-                              simpleMode={simpleMode} 
-                              toggleSimpleMode={toggleSimpleMode} 
+                              simpleMode={simpleMode}
+                              toggleSimpleMode={toggleSimpleMode}
                               hideScrollbar={hideScrollbar}
                               toggleHideScrollbar={toggleHideScrollbar}
                               globalHideScrollbar={globalHideScrollbar}
@@ -421,8 +421,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               toggleFontFix={toggleFontFix}
                           />) : null}
 
-                          {activeTab === 'general' ? (<GeneralTab 
-                              t={settings.general} 
+                          {activeTab === 'general' ? (<GeneralTab
+                              t={settings.general}
                               timeFormat={timeFormat}
                               setTimeFormat={setTimeFormat}
                               enableUdp={enableUdp}
@@ -448,9 +448,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           {activeTab === 'res' ? (<ResourcesTab t={settings.resources} />) : null}
 
                           {(activeTab === 'mod' && settings.modules) ? (
-                              <ModulesTab 
-                                  t={settings.modules} 
-                                  modules={moduleStates} 
+                              <ModulesTab
+                                  t={settings.modules}
+                                  modules={moduleStates}
                                   disableCache={disableCache}
                                   toggleDisableCache={toggleDisableCache}
                                   disableLazyLoading={disableLazyLoading}
@@ -462,8 +462,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               />
                           ) : null}
 
-                          {activeTab === 'ver' && settings.versions ? (<VersionsTab 
-                              t={settings.versions} 
+                          {activeTab === 'ver' && settings.versions ? (<VersionsTab
+                              t={settings.versions}
                               appVersion={appVersion}
                               modules={moduleStates}
                               updateServiceWorker={updateServiceWorker}
@@ -481,15 +481,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-6">
                                   {settings.developer.floating_state?.desc}
                               </p>
-                              <button 
+                              <button
                                   onClick={() => setDevToolsFloating(false)}
                                   className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors font-medium text-sm flex items-center gap-2"
                               >
                                   <Monitor size={16} />
                                   {settings.developer.floating_state?.return}
                               </button>
-                          </div>) : (<DeveloperTab 
-                              t={settings.developer} 
+                          </div>) : (<DeveloperTab
+                              t={settings.developer}
                               isFloating={isDevToolsFloating}
                               toggleFloat={() => setDevToolsFloating(true)}
                           />)) : null}

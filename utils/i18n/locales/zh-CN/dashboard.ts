@@ -6,7 +6,7 @@ export const dashboard = {
   footer: "BrowserScope - 浏览器能力检测工具",
   refresh: "重新检测",
 
-  
+
   browserCard: {
     title: "浏览器身份",
     subtitle: "基于特征探测当前可能正在使用的浏览器",
@@ -32,7 +32,7 @@ export const dashboard = {
     bot: "可疑的脚本或自动化",
     tampering: "指纹篡改",
     inconsistency: "硬件/系统不匹配",
-    
+
   notifications: {
     outdated: {
       title: "检测到过时浏览器",
@@ -230,7 +230,7 @@ export const dashboard = {
     bodyPlaceholder: "通知内容...",
     btnLabelPlaceholder: "操作按钮名称 (可选)",
     sendTest: "发送测试",
-    
+
     iconUrlPlaceholder: "图标 URL (可选)",
     addAction: "添加操作按钮",
     actionTitlePlaceholder: "按钮标题",

@@ -55,18 +55,18 @@ export const settings = {
             desc: "在内容上方显示用于筛选分类的选项卡，若所有选项卡都为空将自动隐藏。"
         },
         showSearch: {
-        
-        
+
+
             title: "启用搜索栏",
-        
-        
+
+
             desc: "在标签栏上方显示搜索栏，以便快速筛选主面板的类目与卡片内容。"
-        
-        
+
+
         },
-        
-        
-        
+
+
+
         searchScope: {
             title: "搜索范围",
             desc: "选择搜索关键字的匹配范围。",
@@ -138,7 +138,7 @@ export const settings = {
             title: "自定义显示项",
             desc: "如果你不希望在主界面看到某些卡片或者分组，可以在这里按需隐藏。"
         },
-        
+
         restoreNotifications: {
             title: "恢复通知卡片",
             desc: "重新显示在仪表盘顶部被您手动关闭的所有通知卡片。",

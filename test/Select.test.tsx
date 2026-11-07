@@ -17,11 +17,11 @@ describe("Select UI component tests", () => {
   it("should open portal when clicked", async () => {
     render(<Select value="opt1" options={options} onChange={() => {}} />);
     const button = screen.getByRole("button");
-    
+
     act(() => {
       fireEvent.click(button);
     });
-    
+
     await waitFor(() => {
       expect(screen.getByText("Option 2")).toBeInTheDocument();
     });
@@ -31,20 +31,20 @@ describe("Select UI component tests", () => {
     const handleChange = vi.fn();
     render(<Select value="opt1" options={options} onChange={handleChange} />);
     const button = screen.getByRole("button");
-    
+
     act(() => {
       fireEvent.click(button);
     });
-    
+
     await waitFor(() => {
       expect(screen.getByText("Option 2")).toBeInTheDocument();
     });
-    
+
     const opt2 = screen.getByText("Option 2");
     act(() => {
       fireEvent.click(opt2);
     });
-    
+
     expect(handleChange).toHaveBeenCalledWith("opt2");
   });
 
@@ -52,11 +52,11 @@ describe("Select UI component tests", () => {
     render(<Select value="opt1" options={options} onChange={() => {}} disabled />);
     const button = screen.getByRole("button");
     expect(button).toBeDisabled();
-    
+
     act(() => {
       fireEvent.click(button);
     });
-    
+
     expect(screen.queryByText("Option 2")).not.toBeInTheDocument();
   });
 });

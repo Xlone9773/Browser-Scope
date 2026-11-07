@@ -41,7 +41,7 @@ export const getWebGLExtensions = (): string[] => {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     if (!gl) return [];
-    
+
     // @ts-expect-error auto-fixed
     const extensions = gl.getSupportedExtensions();
     return extensions ? extensions.sort() : [];
@@ -53,9 +53,9 @@ export const getShaderPrecisionFormat = (): { vertexHigh: string, fragmentHigh: 
         const canvas = document.createElement('canvas');
         const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
         if (!gl) return undefined;
-        
+
         const ctx = gl as WebGLRenderingContext;
-        
+
         // Helper
         const getFormat = (shaderType: number, precisionType: number) => {
             const format = ctx.getShaderPrecisionFormat(shaderType, precisionType);
@@ -65,7 +65,7 @@ export const getShaderPrecisionFormat = (): { vertexHigh: string, fragmentHigh: 
 
         const _vHigh = getFormat(ctx.VERTEX_SHADER, ctx.HIGH_FLOAT);
         const _fHigh = getFormat(ctx.FRAGMENT_SHADER, ctx.HIGH_FLOAT);
-        
+
         // Simpler string rep
         const simple = (f: WebGLShaderPrecisionFormat | null) => {
             if (!f) return 'Low';
@@ -93,7 +93,7 @@ export const getCanvasFingerprint = (): { hash: string; dataUri: string } => {
     canvas.width = 280;
     canvas.height = 60;
     canvas.style.display = 'none';
-    
+
     // Optimization: willReadFrequently hints browser to optimize for frequent readbacks
     let ctx: CanvasRenderingContext2D | null = null;
     try {
@@ -102,32 +102,32 @@ export const getCanvasFingerprint = (): { hash: string; dataUri: string } => {
       // Fallback for extreme situations / older browsers where willReadFrequently throws
       ctx = canvas.getContext('2d');
     }
-    
+
     if (!ctx) return { hash: 'Not Supported', dataUri: '' };
-    
+
     ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.textBaseline = "alphabetic"; ctx.font = "16px 'Arial', sans-serif";
     ctx.fillStyle = "#f60"; ctx.fillRect(100, 5, 60, 20);
     ctx.fillStyle = "#069"; ctx.fillText("BrowserScope v2.1.0", 2, 20);
     ctx.fillStyle = "rgba(102, 204, 0, 0.7)"; ctx.font = "18px 'Times New Roman', serif";
     ctx.fillText("Fingerprint", 5, 45);
-    
+
     ctx.beginPath(); ctx.arc(200, 30, 20, 0, Math.PI * 2, true);
     ctx.arc(200, 30, 10, 0, Math.PI * 2, true);
     ctx.fillStyle = "rgba(200, 0, 200, 0.5)"; ctx.fill("evenodd");
-    
+
     ctx.beginPath(); ctx.moveTo(240, 10); ctx.lineTo(260, 50); ctx.lineTo(220, 50);
     ctx.closePath(); ctx.strokeStyle = "#f0f"; ctx.lineWidth = 3; ctx.stroke();
-    
+
     const dataUri = canvas.toDataURL('image/png') || '';
     if (!dataUri || dataUri === 'data:,') {
       return { hash: 'Render Failed', dataUri: '' };
     }
-    
+
     const b64 = dataUri.replace("data:image/png;base64,", "");
     return { hash: simpleHash(b64), dataUri: dataUri };
-  } catch { 
-    return { hash: 'Error', dataUri: '' }; 
+  } catch {
+    return { hash: 'Error', dataUri: '' };
   }
 };
 

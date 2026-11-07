@@ -10,11 +10,11 @@ interface BackendDropdownProps {
     colorClass: string; // e.g., 'indigo' or 'purple'
 }
 
-export const BackendDropdown: React.FC<BackendDropdownProps> = ({ 
-    value, 
-    options, 
-    onChange, 
-    colorClass 
+export const BackendDropdown: React.FC<BackendDropdownProps> = ({
+    value,
+    options,
+    onChange,
+    colorClass
 }) => {
     const [isOpen, setIsOpen] = useState(false); // Controls DOM mounting
     const [isVisible, setIsVisible] = useState(false); // Controls CSS opacity/transform
@@ -102,7 +102,7 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
         }, 50);
 
         window.addEventListener('resize', handleResize);
-        window.addEventListener('scroll', handleScroll, true); 
+        window.addEventListener('scroll', handleScroll, true);
 
         return () => {
             active = false;
@@ -119,7 +119,7 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
         indigo: 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300',
         purple: 'bg-purple-50 dark:bg-purple-500/20 text-purple-600 dark:text-purple-300'
     };
-    
+
     const ringMap: Record<string, string> = {
         indigo: 'focus:ring-indigo-500/50',
         purple: 'focus:ring-purple-500/50'
@@ -144,7 +144,7 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
             </button>
 
             {isOpen ? createPortal(
-                <div 
+                <div
                     id="dropdown-portal-container"
                     className={`
                         fixed z-[9999] py-1.5
@@ -169,8 +169,8 @@ export const BackendDropdown: React.FC<BackendDropdownProps> = ({
                                 className={`
                                     w-full text-left px-3 py-2.5 text-xs flex items-center justify-between
                                     transition-colors group
-                                    ${value === opt.id 
-                                        ? (activeBgMap[colorClass] || activeBgMap.indigo) + ' font-semibold' 
+                                    ${value === opt.id
+                                        ? (activeBgMap[colorClass] || activeBgMap.indigo) + ' font-semibold'
                                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}
                                 `}
                             >

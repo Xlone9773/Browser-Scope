@@ -12,7 +12,7 @@ describe("Button UI component tests", () => {
   it("should call onClick handler when clicked", () => {
     const handleClick = vi.fn();
     render(<Button onClick={handleClick}>Click Me</Button>);
-    
+
     fireEvent.click(screen.getByText("Click Me"));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -24,7 +24,7 @@ describe("Button UI component tests", () => {
         Click Me
       </Button>
     );
-    
+
     const buttonEl = screen.getByRole("button");
     expect(buttonEl).toBeDisabled();
 

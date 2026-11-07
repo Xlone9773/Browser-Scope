@@ -68,7 +68,7 @@ SOFTWARE.`
             date: "2026-05-03",
             changes: [
                 "🚀 All-New Architecture & Experience Upgrade",
-                "Fixed vConsole loading crash (DevTools runs perfectly now)", 
+                "Fixed vConsole loading crash (DevTools runs perfectly now)",
                 "Enhanced UI by replacing native alerts with a modern system",
                 "Added customizable Notification Action buttons and Icon support",
                 "Improved and resolved multiple compatibility bugs across environments"

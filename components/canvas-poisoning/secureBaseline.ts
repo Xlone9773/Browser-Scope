@@ -201,7 +201,7 @@ const getLocalStorageRecord = (key: string): { record: SignedBaselineRecord | nu
   try {
     const raw = localStorage.getItem(getStorageKey(key));
     if (!raw) return { record: null, raw: null, isTamperedRaw: false };
-    
+
     try {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object' && parsed.key === key && parsed.sig && parsed.hash) {
@@ -262,7 +262,7 @@ export const verifyOrStoreBaseline = async (
       // Restore verified baseline from secure IndexedDB vault
       setLocalStorageRecord(idbRecord);
       sessionCache.set(key, idbRecord);
-      
+
       if (idbRecord.hash === currentHash) {
         return { status: 'MATCH', storedBaseline: idbRecord.hash, currentHash };
       } else {

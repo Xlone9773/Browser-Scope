@@ -12,10 +12,10 @@ describe("Slider UI component tests", () => {
 
   it("should display formatted value if formatValue is provided", () => {
     render(
-      <Slider 
-        value={50} 
-        onChange={() => {}} 
-        formatValue={(val) => `${val}%`} 
+      <Slider
+        value={50}
+        onChange={() => {}}
+        formatValue={(val) => `${val}%`}
       />
     );
     expect(screen.getByText("50%")).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe("Slider UI component tests", () => {
     const handleChange = vi.fn();
     render(<Slider value={50} onChange={handleChange} min={0} max={100} />);
     const inputEl = screen.getByRole("slider");
-    
+
     fireEvent.change(inputEl, { target: { value: "75" } });
     expect(handleChange).toHaveBeenCalledWith(75);
   });

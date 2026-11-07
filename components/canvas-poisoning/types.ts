@@ -33,7 +33,7 @@ export interface PoisoningTranslations {
   viewport_mismatch?: string;
   viewport_poisoned?: string;
   viewport_stable?: string;
-  
+
   // Font translations:
   tab_render_audio?: string;
   tab_font_farbling?: string;
@@ -104,7 +104,7 @@ export interface PoisoningTranslations {
   hardware_ops_label?: string;
   hardware_detected_saturation?: string;
   hardware_physical_cores?: string;
-  
+
   // All tab translations
   tab_all?: string;
   all_detection_title?: string;
@@ -153,7 +153,7 @@ export interface PoisoningTranslations {
   media_persistent_no_baseline?: string;
   label_2d_canvas?: string;
   label_webgl?: string;
-  
+
   // Geolocation translations
   tab_geolocation?: string;
   geolocation_detection_title?: string;
@@ -171,7 +171,7 @@ export interface PoisoningTranslations {
   geo_positions_stable?: string;
   geo_accuracy_static?: string;
   geo_stable?: string;
-  
+
   // New cross-session / fixed-seed / CSP keys
   status_unknown?: string;
   canvas_persistent_mismatch?: string;

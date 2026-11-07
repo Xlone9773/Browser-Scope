@@ -48,7 +48,7 @@ export const SpeedGraph: React.FC<SpeedGraphProps> = ({ data, testState, height 
 
                 ctx.beginPath();
                 ctx.moveTo(0, h);
-                
+
                 data.forEach((val, i) => {
                     const x = i * stepX;
                     const y = h - (val / maxVal) * h;
@@ -77,18 +77,18 @@ export const SpeedGraph: React.FC<SpeedGraphProps> = ({ data, testState, height 
         };
 
         animationRef.current = requestAnimationFrame(draw);
-        
+
         return () => {
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
         };
     }, [data, testState]);
 
     return (
-        <canvas 
-            ref={canvasRef} 
-            width={600} 
-            height={height} 
-            className="absolute inset-0 w-full h-full opacity-50" 
+        <canvas
+            ref={canvasRef}
+            width={600}
+            height={height}
+            className="absolute inset-0 w-full h-full opacity-50"
         />
     );
 };

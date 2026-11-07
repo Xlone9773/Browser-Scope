@@ -90,9 +90,9 @@ export const MediaTab: React.FC<MediaTabProps> = React.memo(({ t }) => {
             mediaStatus === 'running' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
             'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
           }`}>
-            {mediaStatus === 'idle' ? t.status_idle : 
-             mediaStatus === 'running' ? t.status_running : 
-             mediaStatus === 'poisoned' ? t.status_poisoned : 
+            {mediaStatus === 'idle' ? t.status_idle :
+             mediaStatus === 'running' ? t.status_running :
+             mediaStatus === 'poisoned' ? t.status_poisoned :
              t.status_clean}
           </span>
         </div>

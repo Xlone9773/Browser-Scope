@@ -22,27 +22,27 @@ function normalize(str: string): string {
 function fuzzyMatch(text: string, query: string): boolean {
   const normText = normalize(text);
   const normQuery = normalize(query);
-  
+
   if (!normQuery) return true;
   if (!normText) return false;
-  
+
   // Try multi-term matching first (space-separated words)
   const terms = normQuery.split(/\s+/).filter(Boolean);
   if (terms.length > 1) {
     return terms.every(term => normText.includes(term));
   }
-  
+
   // Sequential character matching
   let textIdx = 0;
   let queryIdx = 0;
-  
+
   while (textIdx < normText.length && queryIdx < normQuery.length) {
     if (normText[textIdx] === normQuery[queryIdx]) {
       queryIdx++;
     }
     textIdx++;
   }
-  
+
   return queryIdx === normQuery.length;
 }
 
@@ -55,24 +55,24 @@ function exactMatch(text: string, query: string): boolean {
 
 self.onmessage = (event: MessageEvent<SearchMessage>) => {
   const { query, items, scope, mode } = event.data;
-  
+
   if (!query || !query.trim()) {
     // If query is empty, return all IDs
     self.postMessage({ matchingIds: items.map(item => item.id) });
     return;
   }
-  
+
   const matchingIds: string[] = [];
-  
+
   for (const item of items) {
     // Select text to search based on scope
     const searchText = scope === 'all' ? `${item.title} ${item.content}` : item.content;
     const isMatch = mode === 'exact' ? exactMatch(searchText, query) : fuzzyMatch(searchText, query);
-    
+
     if (isMatch) {
       matchingIds.push(item.id);
     }
   }
-  
+
   self.postMessage({ matchingIds });
 };

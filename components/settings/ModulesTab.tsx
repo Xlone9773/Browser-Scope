@@ -3,18 +3,18 @@ import { Translation } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { ModuleSettingsDropdown } from './modules/ModuleSettingsDropdown';
-import { 
+import {
     Package, Power, Zap, ShieldCheck, CircleOff, Lock, Trash2,
-    Camera, Mic, Layers, Palette, Binary, Info, Compass, Award, 
-    Fingerprint, Gauge, Wrench, Brain, Gamepad2, Laptop, Eye, 
-    Wifi, Flame, Video, Sliders, Music, HardDrive, Globe, Sun, 
-    Puzzle, Languages, ShieldAlert, KeyRound, Monitor, Volume2, 
+    Camera, Mic, Layers, Palette, Binary, Info, Compass, Award,
+    Fingerprint, Gauge, Wrench, Brain, Gamepad2, Laptop, Eye,
+    Wifi, Flame, Video, Sliders, Music, HardDrive, Globe, Sun,
+    Puzzle, Languages, ShieldAlert, KeyRound, Monitor, Volume2,
     Activity, BookOpen, Keyboard, Settings
 } from 'lucide-react';
 
 const getModuleIcon = (id: string, isSystem?: boolean) => {
     if (isSystem) return <ShieldCheck size={18} />;
-    
+
     switch (id) {
         case "camera":
             return <Camera size={18} />;
@@ -111,8 +111,8 @@ interface ModulesTabProps {
     toggleLazyTabChange: (val: boolean) => void;
 }
 
-export const ModulesTab: React.FC<ModulesTabProps> = ({ 
-    t, 
+export const ModulesTab: React.FC<ModulesTabProps> = ({
+    t,
     modules,
     disableCache,
     toggleDisableCache,
@@ -141,9 +141,9 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
     const activeCount = modules.filter(m => m.isOpen).length;
     const cachedCount = modules.filter(m => !m.isOpen && m.isLoaded).length;
     const idleCount = modules.filter(m => !m.isOpen && !m.isLoaded).length;
-    
+
     const activeOrLoadedNonSystemCount = modules.filter(m => !m.isSystem && (m.isOpen || m.isLoaded)).length;
-    
+
     const sortedModules = [...modules].sort((a, b) => {
         if (a.isOpen && !b.isOpen) return -1;
         if (!a.isOpen && b.isOpen) return 1;
@@ -151,7 +151,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
         if (!a.isLoaded && b.isLoaded) return 1;
         return 0;
     });
-    
+
     const closeAll = () => {
         modules.forEach(m => {
             if (!m.isSystem && (m.isOpen || m.isLoaded)) {
@@ -195,9 +195,9 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
                         <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
                             {t?.overlay?.managementUnavailable}
                         </p>
-                        
+
                         <div className="relative w-full flex flex-col items-start" ref={isOverlayActive ? dropdownRef : null}>
-                            <Button 
+                            <Button
                                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                                     e.stopPropagation();
                                     setIsSettingsOpen(!isSettingsOpen);
@@ -226,7 +226,7 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
                     </div>
                 </div>
             ) : null}
-            
+
             <div className={`space-y-6 ${isOverlayActive ? 'opacity-30 pointer-events-none select-none filter blur-sm max-h-[360px] overflow-hidden' : ''}`}>
                 <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                 <div>
@@ -238,14 +238,14 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
                         {t?.desc}
                     </p>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50 w-full xl:w-auto relative">
                     <div className="flex items-center justify-around sm:justify-start gap-4 sm:gap-6 flex-1">
                         <div className="text-center min-w-[3rem]">
                             <div className="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-bold mb-0.5">{t?.status?.active}</div>
                             <div className="text-xl font-mono font-bold text-slate-700 dark:text-slate-200 leading-none">{activeCount}</div>
                         </div>
-                        
+
                         <div className="w-px h-8 bg-slate-200 dark:bg-slate-700"></div>
 
                         <div className="text-center min-w-[3rem]">
@@ -262,11 +262,11 @@ export const ModulesTab: React.FC<ModulesTabProps> = ({
                     </div>
 
                     <div className="w-full h-px sm:w-px sm:h-8 bg-slate-200 dark:bg-slate-700 mx-2 hidden sm:block"></div>
-                    
+
                     <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <Button 
-                            variant="danger-soft" 
-                            size="sm" 
+                        <Button
+                            variant="danger-soft"
+                            size="sm"
                             onClick={closeAll}
                             disabled={activeOrLoadedNonSystemCount === 0}
                             leftIcon={<Power size={16} />}

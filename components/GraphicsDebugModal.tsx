@@ -22,16 +22,16 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      
+
       // 1. WebGL Limits
       const glData: Record<string, unknown> = {};
       try {
         const canvas = document.createElement('canvas');
         const gl = canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        
+
         if (gl) {
             const ctx = gl as WebGLRenderingContext;
-            
+
             const params = [
                 'MAX_TEXTURE_SIZE',
                 'MAX_VIEWPORT_DIMS',
@@ -68,7 +68,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
 
             params.forEach(p => {
                 try {
-                    
+
                     // @ts-expect-error auto-fixed
                     const val = ctx.getParameter(ctx[p]);
                     // Format arrays
@@ -77,17 +77,17 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                     glData[p] = 'Error';
                 }
             });
-            
+
             // Anisotropy check
             const ext = ctx.getExtension('EXT_texture_filter_anisotropic');
             if (ext) {
                 glData['MAX_TEXTURE_MAX_ANISOTROPY'] = ctx.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
             }
-            
+
             // SECURITY: Explicitly lose context and wipe from memory
             const loseCtx = ctx.getExtension('WEBGL_lose_context');
             if (loseCtx) loseCtx.loseContext();
-            
+
         }
       } catch(e) { console.error(e); }
       setWebglInfo(glData);
@@ -103,10 +103,10 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                   for (const key in limits) {
                       gpuData[key] = limits[key];
                   }
-                  
+
                   // Features
                   const features: string[] = [];
-                  
+
                   for (const f of adapter.features) {
                       features.push(f);
                   }
@@ -122,7 +122,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
           gpuData['error'] = 'WebGPU Access Denied or Error';
       }
       setWebgpuInfo(gpuData);
-      
+
       setLoading(false);
     };
 
@@ -165,15 +165,15 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900">
             {/* Tabs */}
             <div className="flex bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shrink-0">
-                <button 
-                    onClick={() => setActiveTab('WebGL')} 
+                <button
+                    onClick={() => setActiveTab('WebGL')}
                     className={`flex-1 py-4 font-medium text-sm transition-colors flex items-center justify-center gap-2 border-b-2 ${activeTab === 'WebGL' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
                 >
                     <Box size={16} />
                     {t.tab_webgl}
                 </button>
-                <button 
-                    onClick={() => setActiveTab('WebGPU')} 
+                <button
+                    onClick={() => setActiveTab('WebGPU')}
                     className={`flex-1 py-4 font-medium text-sm transition-colors flex items-center justify-center gap-2 border-b-2 ${activeTab === 'WebGPU' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
                 >
                     <Cpu size={16} />
@@ -185,7 +185,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
             <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-between items-center gap-4">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                    <input 
+                    <input
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -193,7 +193,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                         className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                     />
                 </div>
-                <button 
+                <button
                     onClick={handleCopy}
                     className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                 >
@@ -230,7 +230,7 @@ export const GraphicsDebugModal: React.FC<GraphicsDebugModalProps> = ({ onClose,
                                 </div>
                             </div>
                         )}
-                        
+
                         {filteredData.length === 0 && (
                             <div className="md:col-span-2 text-center py-10 text-slate-400">
                                 {t.no_params_found || 'No parameters found matching'} "{searchTerm}"

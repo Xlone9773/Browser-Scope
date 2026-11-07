@@ -16,9 +16,9 @@ interface MediaDevicesCardProps {
   onOpenMic: () => void;
 }
 
-export const MediaDevicesCard: React.FC<MediaDevicesCardProps> = React.memo(({ 
-    permStatus, 
-    t, 
+export const MediaDevicesCard: React.FC<MediaDevicesCardProps> = React.memo(({
+    permStatus,
+    t,
     onRequestPermission,
     onOpenCamera,
     onOpenMic
@@ -67,7 +67,7 @@ export const MediaDevicesCard: React.FC<MediaDevicesCardProps> = React.memo(({
                         )}
                 </div>
             </div>
-            
+
             {/* Microphone */}
             <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
                 <div className={`p-2.5 rounded-full ${permStatus.microphone === 'granted' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'}`}>

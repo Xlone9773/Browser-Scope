@@ -3,14 +3,14 @@ import { useCallback } from 'react';
 import { formatNumber, formatPercent, formatList, formatBytes, formatSpeed, formatHertz } from '../utils/formatters';
 
 export const useFormatter = (locale: string) => {
-  
+
   // Advanced: Intl.DisplayNames
   // Returns the name of a language code (e.g. 'zh-CN' -> 'Chinese (Simplified)') in the CURRENT locale
   const formatLanguageName = useCallback((code: string) => {
     try {
-      
+
       if (typeof Intl.DisplayNames !== 'undefined') {
-        
+
         return new Intl.DisplayNames([locale], { type: 'language' }).of(code) || code;
       }
       return code;
@@ -20,9 +20,9 @@ export const useFormatter = (locale: string) => {
   // Returns the name of a region code (e.g. 'US' -> 'United States') in the CURRENT locale
   const formatRegionName = useCallback((code: string) => {
     try {
-      
+
       if (typeof Intl.DisplayNames !== 'undefined') {
-        
+
         return new Intl.DisplayNames([locale], { type: 'region' }).of(code) || code;
       }
       return code;
@@ -33,9 +33,9 @@ export const useFormatter = (locale: string) => {
   // Useful for language switchers
   const formatNativeLanguageName = useCallback((code: string) => {
     try {
-      
+
       if (typeof Intl.DisplayNames !== 'undefined') {
-        
+
         return new Intl.DisplayNames([code], { type: 'language' }).of(code) || code;
       }
       return code;
@@ -58,7 +58,7 @@ export const useFormatter = (locale: string) => {
   const pct = useCallback((n: number, maxD?: number) => formatPercent(n, maxD, locale), [locale]);
   const list = useCallback((l: string[], type?: 'conjunction' | 'disjunction' | 'unit') => formatList(l, type, locale), [locale]);
   const bytes = useCallback((b: number) => formatBytes(b, locale), [locale]);
-  
+
   return {
     locale,
     formatLanguageName,

@@ -25,7 +25,7 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
 
   // Derived state
   const selectedBackend = useMemo(() => SPEED_TEST_PRESETS.find(p => p.id === backend) || SPEED_TEST_PRESETS[0], [backend]);
-  
+
   // Update available sizes when backend changes
   const availableSizes = useMemo(() => {
       if (selectedBackend.isDynamic) {
@@ -71,9 +71,9 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
   const presetOptions = useMemo(() => SPEED_TEST_PRESETS.map(p => ({
       id: p.id,
       // Using new structure: preset_names is now inside speedTest object
-      
+
       // @ts-expect-error auto-fixed
-      label: t.preset_names?.[p.id] 
+      label: t.preset_names?.[p.id]
   })), [t]);
 
   const handleStart = () => {
@@ -110,7 +110,7 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
         size="3xl"
     >
         <div className="flex flex-col gap-6">
-            
+
             {/* Settings Area (Visible when idle) */}
             {testState === 'idle' && (
                 <div className="p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col gap-4 animate-in fade-in slide-in-from-top-2">
@@ -118,13 +118,13 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                         <Settings2 size={16} className="text-slate-400" />
                         <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Configuration</span>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Backend Selector */}
                         <div className="md:col-span-2 lg:col-span-1">
                             <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t.settings.backend}</label>
-                            <Select 
-                                value={backend} 
+                            <Select
+                                value={backend}
                                 options={presetOptions}
                                 onChange={(val) => setBackend(val as string)}
                                 color="indigo"
@@ -135,15 +135,15 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                         {availableSizes.length > 0 && (
                             <div>
                                 <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t.settings.test_size}</label>
-                                <Select 
-                                    value={downloadSize} 
+                                <Select
+                                    value={downloadSize}
                                     options={availableSizes}
                                     onChange={(val) => setDownloadSize(Number(val))}
                                     color="indigo"
                                 />
                             </div>
                         )}
-                        
+
                         {/* Static File Note (If no sizes available) */}
                         {availableSizes.length === 0 && backend !== 'custom' && (
                             <div className="flex items-end pb-2">
@@ -158,7 +158,7 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                     {backend === 'custom' && (
                         <div>
                             <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t.settings.custom_url}</label>
-                            <input 
+                            <input
                                 type="text"
                                 value={customUrl}
                                 onChange={(e) => setCustomUrl(e.target.value)}
@@ -205,14 +205,14 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
             <div className="relative h-64 bg-slate-900 rounded-2xl overflow-hidden shadow-inner border border-slate-700 flex items-center justify-center">
                 {/* Visual Graph Component */}
                 <SpeedGraph data={speedHistory} testState={testState} />
-                
+
                 {/* Central Speed Text */}
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="text-6xl sm:text-7xl font-black text-white tracking-tighter tabular-nums drop-shadow-lg">
                         {formatNumber(metrics.current, 1)}
                     </div>
                     <div className="text-sm font-bold text-indigo-400 uppercase tracking-widest mt-2">{t.metrics.mbps}</div>
-                    
+
                     <div className="mt-6 px-4 py-1.5 bg-black/40 rounded-full backdrop-blur-md text-xs font-medium text-slate-300 border border-white/10 flex items-center gap-2">
                         {testState === 'download' && <ArrowDown size={12} className="text-emerald-400 animate-bounce" />}
                         {testState === 'upload' && <ArrowUp size={12} className="text-purple-400 animate-bounce" />}
@@ -220,7 +220,7 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                         {getStatusText()}
                     </div>
                 </div>
-                
+
                 {/* Provider Tag */}
                 <div className="absolute top-4 left-4 flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                     <Globe size={12} />
@@ -232,8 +232,8 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
 
                 {/* Progress Bar (Absolute Bottom) */}
                 <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-slate-800">
-                    <div 
-                        className="h-full bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-300 ease-out shadow-[0_-2px_10px_rgba(129,140,248,0.5)]" 
+                    <div
+                        className="h-full bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-300 ease-out shadow-[0_-2px_10px_rgba(129,140,248,0.5)]"
                         style={{ width: `${progress}%` }}
                     />
                 </div>
@@ -256,21 +256,21 @@ export const SpeedTestModal: React.FC<SpeedTestModalProps> = ({ onClose, t }) =>
                         <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">{t.metrics.upload}</span>
                     </div>
                     <div className="text-2xl font-mono font-bold text-slate-800 dark:text-white">
-                        {metrics.upload !== null 
-                            ? formatNumber(metrics.upload, 1) 
+                        {metrics.upload !== null
+                            ? formatNumber(metrics.upload, 1)
                             : !selectedBackend.supportsUpload ? <span className="text-xs text-slate-400">N/A</span> : '--'
-                        } 
+                        }
                         {selectedBackend.supportsUpload && <span className="text-xs font-normal text-slate-400">Mbps</span>}
                     </div>
                 </div>
             </div>
 
             {/* Controls */}
-            <button 
+            <button
                 onClick={testState === 'idle' || testState === 'done' || testState === 'error' ? handleStart : stop}
                 className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 ${
-                    testState === 'idle' || testState === 'done' || testState === 'error' 
-                    ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20' 
+                    testState === 'idle' || testState === 'done' || testState === 'error'
+                    ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20'
                     : 'bg-slate-700 hover:bg-slate-800'
                 }`}
             >

@@ -16,7 +16,7 @@ export const applyTheme = (theme: Theme) => {
   } else {
     root.classList.remove('dark');
   }
-  
+
   localStorage.setItem('theme', theme);
 };
 

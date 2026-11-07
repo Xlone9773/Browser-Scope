@@ -21,7 +21,7 @@ describe("Switch UI component tests", () => {
     const handleChange = vi.fn();
     render(<Switch checked={false} onChange={handleChange} label="Test Switch" />);
     const switchEl = screen.getByRole("switch");
-    
+
     fireEvent.click(switchEl);
     expect(handleChange).toHaveBeenCalledWith(true);
   });
@@ -30,7 +30,7 @@ describe("Switch UI component tests", () => {
     const handleChange = vi.fn();
     render(<Switch checked={false} onChange={handleChange} disabled label="Test Switch" />);
     const switchEl = screen.getByRole("switch");
-    
+
     expect(switchEl).toBeDisabled();
     fireEvent.click(switchEl);
     expect(handleChange).not.toHaveBeenCalled();

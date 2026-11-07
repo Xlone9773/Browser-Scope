@@ -27,7 +27,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       expect(score).toBeDefined();
       expect(score.totalScore).toBeGreaterThanOrEqual(0);
       expect(score.totalScore).toBeLessThanOrEqual(100);
@@ -55,7 +55,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       expect(score.totalScore).toBeGreaterThanOrEqual(0);
       expect(score.totalScore).toBeLessThanOrEqual(100);
       expect(score.factors.length).toBeGreaterThanOrEqual(0);
@@ -82,7 +82,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
 
       const score1 = calculateFingerprintScore(input);
       const score2 = calculateFingerprintScore(input);
-      
+
       expect(score1.totalScore).toBe(score2.totalScore);
       expect(score1.rating).toBe(score2.rating);
     });
@@ -112,7 +112,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       // High input should produce high score
       expect(score.totalScore).toBeGreaterThan(50);
     });
@@ -137,7 +137,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       expect(score.totalScore).toBeLessThan(50);
     });
 
@@ -161,7 +161,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       const validRatings = ['Low', 'Medium', 'High', 'Critical'];
       expect(validRatings).toContain(score.rating);
     });
@@ -188,7 +188,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       expect(score.categoryScores).toBeDefined();
       expect(score.categoryScores.hardware).toBeGreaterThanOrEqual(0);
       expect(score.categoryScores.browser).toBeGreaterThanOrEqual(0);
@@ -220,7 +220,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       Object.values(score.categoryScores).forEach(catScore => {
         expect(catScore).toBeGreaterThanOrEqual(0);
         expect(catScore).toBeLessThanOrEqual(100);
@@ -249,7 +249,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       expect(Array.isArray(score.factors)).toBe(true);
       expect(score.factors.length).toBeGreaterThan(0);
     });
@@ -274,7 +274,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       score.factors.forEach((factor: ScoreFactor) => {
         expect(factor.id).toBeDefined();
         expect(typeof factor.id).toBe('string');
@@ -304,7 +304,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       const factorIds = score.factors.map(f => f.id);
       expect(factorIds).toContain('canvas_hash');
       expect(factorIds).toContain('webgl_hash');
@@ -336,7 +336,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       expect(score).toBeDefined();
       expect(score.totalScore).toBeGreaterThanOrEqual(0);
     });
@@ -361,7 +361,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       expect(score).toBeDefined();
       expect(score.totalScore).toBeGreaterThanOrEqual(0);
     });
@@ -389,7 +389,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
       };
 
       const score = calculateFingerprintScore(input);
-      
+
       // Should still produce valid score even with extreme values
       expect(score.totalScore).toBeGreaterThanOrEqual(0);
       expect(score.totalScore).toBeLessThanOrEqual(100);
@@ -415,7 +415,7 @@ describe('Fingerprint Score Calculator (Production Code)', () => {
 
       inputs.forEach(input => {
         const score = calculateFingerprintScore(input);
-        
+
         expect(score.totalScore).toBeGreaterThanOrEqual(0);
         expect(score.totalScore).toBeLessThanOrEqual(100);
         expect(typeof score.rating).toBe('string');

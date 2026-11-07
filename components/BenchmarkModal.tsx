@@ -25,11 +25,11 @@ interface TestItem {
 // Configuration for tests - Multipliers scaled up for 6-digit scores
 const TEST_CONFIG = {
     // Target: ~50k-100k per test for a total of ~300k-600k
-    cpu: { primeMax: 150000, multiplier: 12000000 }, 
-    math: { ops: 2000000, multiplier: 15000000 },    
-    memory: { size: 4000000, multiplier: 18000000 }, 
-    dom: { elements: 4000, multiplier: 10000000 },   
-    gpu: { rects: 3000, multiplier: 15000000 },      
+    cpu: { primeMax: 150000, multiplier: 12000000 },
+    math: { ops: 2000000, multiplier: 15000000 },
+    memory: { size: 4000000, multiplier: 18000000 },
+    dom: { elements: 4000, multiplier: 10000000 },
+    gpu: { rects: 3000, multiplier: 15000000 },
     storage: { writes: 200, multiplier: 40000000 },
     crypto: { size: 1000000, iterations: 10, multiplier: 25000000 },
     convolution: { matrixSize: 512, passes: 12, multiplier: 15000000 },
@@ -41,7 +41,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   const [globalStatus, setGlobalStatus] = useState<'idle' | 'running' | 'done'>('idle');
   // 'all' = running full suite, 'single' = running one specific test
   const [runningMode, setRunningMode] = useState<'all' | 'single' | null>(null);
-  
+
   const [progress, setProgress] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
   const isRunningRef = useRef(false);
@@ -76,7 +76,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   };
 
   const updateTestState = (id: string, updates: Partial<TestItem>) => {
-      setTests(prev => prev.map(test => 
+      setTests(prev => prev.map(test =>
           test.id === id ? { ...test, ...updates } : test
       ));
   };
@@ -98,8 +98,8 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
       }
       // Re-initialize Web Worker for future runs
       workerRef.current = new Worker(new URL('../services/app.worker.ts', import.meta.url), { type: 'module' });
-      
-      setTests(prev => prev.map(test => 
+
+      setTests(prev => prev.map(test =>
           test.status === 'running' ? { ...test, status: 'pending', score: null, details: 'Cancelled' } : test
       ));
       setGlobalStatus('done');
@@ -130,7 +130,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                           resolve({ score: 0, details: "No worker active" });
                           return;
                       }
-                      
+
                       const handleMessage = (e: MessageEvent) => {
                           if (e.data.id === id) {
                               worker.removeEventListener('message', handleMessage);
@@ -141,7 +141,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                               }
                           }
                       };
-                      
+
                       worker.addEventListener('message', handleMessage);
                       worker.postMessage({ id, config: TEST_CONFIG[id] });
                   });
@@ -178,7 +178,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                       fragment.appendChild(el);
                   }
                   container.appendChild(fragment);
-                  
+
                   // Read & modify layout styles (forced reflow safeguard)
                   const children = container.children;
                   let colorCheck = 0;
@@ -214,9 +214,9 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   const iterStart = performance.now();
                   const rects = TEST_CONFIG.gpu.rects;
                   const canvas = document.createElement('canvas');
-                  canvas.width = 800; 
+                  canvas.width = 800;
                   canvas.height = 600;
-                  const ctx = canvas.getContext('2d', { alpha: false }); 
+                  const ctx = canvas.getContext('2d', { alpha: false });
                   if (!ctx) throw new Error("No Context");
 
                   let pathCheck = 0;
@@ -228,7 +228,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                       ctx.fill();
                       pathCheck += i;
                   }
-                  
+
                   const duration = Math.max(performance.now() - iterStart, 1);
                   score = Math.floor(TEST_CONFIG.gpu.multiplier / duration);
                   const kShapesPerSec = ((rects * 2) / (duration / 1000) / 1000).toFixed(1);
@@ -262,7 +262,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   const writes = TEST_CONFIG.storage.writes;
                   const dbName = `bench_db_${Date.now()}_${Math.random()}`;
                   let writeCheck = 0;
-                  
+
                   await new Promise<void>((resolve, reject) => {
                       const req = indexedDB.open(dbName, 1);
                       req.onupgradeneeded = (e: IDBVersionChangeEvent) => {
@@ -274,12 +274,12 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                           const db = target.result;
                           const tx = db.transaction('store', 'readwrite');
                           const store = tx.objectStore('store');
-                          
+
                           for(let i=0; i<writes; i++) {
                               store.add({ id: i, payload: 'x'.repeat(2048) }, i);
                               writeCheck += i;
                           }
-                          
+
                           tx.oncomplete = () => {
                               db.close();
                               indexedDB.deleteDatabase(dbName);
@@ -310,12 +310,12 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
       await new Promise(r => setTimeout(r, 60)); // Inter-task breathing room
 
       const runs: Array<{score: number, details: string}> = [];
-      
+
       for (let r = 0; r < 3; r++) {
           if (cancelledRef.current) break;
           // Progress report: update UI showing current sub-run index
           updateTestState(id, { status: 'running', details: `${t.running || 'Running...'} (${r + 1}/3)` });
-          
+
           const result = await runSingleIteration(id);
           if (cancelledRef.current) break;
           runs.push(result);
@@ -335,13 +335,13 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
       if (isRunningRef.current) return;
       isRunningRef.current = true;
       cancelledRef.current = false;
-      
+
       setGlobalStatus('running');
       setRunningMode('single');
       updateTestState(id, { status: 'running', score: null, details: 'Initializing...' });
 
       const result = await runBenchmarkTask(id);
-      
+
       if (cancelledRef.current) {
           updateTestState(id, { status: 'pending', details: 'Cancelled', score: null });
       } else {
@@ -374,9 +374,9 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
           if (cancelledRef.current) break;
           const test = tests[i];
           updateTestState(test.id, { status: 'running', details: 'Initializing...' });
-          
+
           const result = await runBenchmarkTask(test.id);
-          
+
           if (cancelledRef.current) {
               updateTestState(test.id, { status: 'pending', details: 'Cancelled', score: null });
               break;
@@ -416,15 +416,15 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                     </defs>
                     {/* Background Ring */}
                     <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" strokeWidth="6" className="text-slate-100 dark:text-slate-700" />
-                    
+
                     {/* Progress Ring */}
                     {runningMode !== 'single' && (
-                        <circle 
-                            cx="100" cy="100" r="90" 
-                            fill="none" 
-                            stroke="url(#score-gradient)" 
-                            strokeWidth="6" 
-                            strokeLinecap="round" 
+                        <circle
+                            cx="100" cy="100" r="90"
+                            fill="none"
+                            stroke="url(#score-gradient)"
+                            strokeWidth="6"
+                            strokeLinecap="round"
                             strokeDasharray={2 * Math.PI * 90}
                             strokeDashoffset={2 * Math.PI * 90 * (1 - (runningMode === 'all' ? progress : (totalScore > 0 ? 100 : 0)) / 100)}
                             className="transition-all duration-300 ease-out"
@@ -433,18 +433,18 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
 
                     {/* Spinner Ring for Single Test */}
                     {runningMode === 'single' && (
-                        <circle 
-                            cx="100" cy="100" r="90" 
-                            fill="none" 
-                            stroke="url(#score-gradient)" 
-                            strokeWidth="6" 
-                            strokeLinecap="round" 
-                            strokeDasharray={2 * Math.PI * 90 * 0.25} 
+                        <circle
+                            cx="100" cy="100" r="90"
+                            fill="none"
+                            stroke="url(#score-gradient)"
+                            strokeWidth="6"
+                            strokeLinecap="round"
+                            strokeDasharray={2 * Math.PI * 90 * 0.25}
                             className="animate-[spin_1.5s_linear_infinite]"
                         />
                     )}
                 </svg>
-                
+
                 {/* TEXT CONTAINER - No Rotation Here! */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                     {runningMode === 'single' ? (
@@ -501,23 +501,23 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                                     )}
                                 </div>
                             </div>
-                            
+
                             <div className="flex items-center gap-3">
                                 {test.score !== null && (
                                     <span className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">
                                         {formatNumber(test.score)}
                                     </span>
                                 )}
-                                
+
                                 {test.status === 'running' ? (
                                     <Loader2 size={16} className="text-indigo-500 animate-spin" />
                                 ) : (
-                                    <button 
+                                    <button
                                         onClick={() => handleRunSingle(test.id)}
                                         disabled={globalStatus === 'running'}
                                         className={`p-1.5 rounded-md transition-all ${
-                                            test.status === 'done' 
-                                            ? 'text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30' 
+                                            test.status === 'done'
+                                            ? 'text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30'
                                             : 'text-slate-300 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30'
                                         } disabled:opacity-0 cursor-pointer`}
                                         title="Run single test"
@@ -532,12 +532,12 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
             </div>
 
             {/* Global Action Button */}
-            <button 
+            <button
                 onClick={globalStatus === 'running' ? handleCancel : handleRunAll}
                 className={`
                     w-full py-3.5 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2
-                    ${globalStatus === 'running' 
-                        ? 'bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 dark:hover:bg-rose-950/30 border border-rose-200 dark:border-rose-900/40 text-rose-600 dark:text-rose-400 shadow-none cursor-pointer' 
+                    ${globalStatus === 'running'
+                        ? 'bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 dark:hover:bg-rose-950/30 border border-rose-200 dark:border-rose-900/40 text-rose-600 dark:text-rose-400 shadow-none cursor-pointer'
                         : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200 dark:shadow-indigo-900/20 active:scale-95 cursor-pointer'}
                 `}
             >
@@ -553,7 +553,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                     </>
                 )}
             </button>
-            
+
         </div>
     </Modal>
   );

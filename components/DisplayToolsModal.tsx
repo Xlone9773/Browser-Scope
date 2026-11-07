@@ -29,7 +29,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
 
     // Check support for color(display-p3) syntax
     const isP3Supported = typeof CSS !== 'undefined' && CSS.supports('color', 'color(display-p3 1 0 0)');
-    
+
     // HDR Capabilities
     const isHDR = typeof window !== 'undefined' && window.matchMedia('(dynamic-range: high)').matches;
     const isVideoHDR = typeof window !== 'undefined' && window.matchMedia('(video-dynamic-range: high)').matches;
@@ -37,7 +37,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
     // Full screen color overlay for dead pixel testing
     if (fullScreenColor) {
         return (
-            <div 
+            <div
                 className="fixed inset-0 z-[100] cursor-pointer flex items-center justify-center"
                 style={{ backgroundColor: fullScreenColor }}
                 onClick={() => setFullScreenColor(null)}
@@ -50,21 +50,21 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
     }
 
     return (
-        <Modal 
+        <Modal
             onClose={onClose}
-            title={t.settings.nav.display} 
+            title={t.settings.nav.display}
             icon={<Monitor size={24} className="text-indigo-500" />}
             size="3xl"
             fullHeight
         >
             <div className="max-w-4xl mx-auto space-y-8">
-                    
+
                     {/* Dead Pixel Check */}
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm text-center">
                 <Monitor size={32} className="mx-auto text-indigo-600 dark:text-indigo-400 mb-3" />
                 <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">{displayT.deadPixel.title}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{displayT.deadPixel.desc}</p>
-                
+
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                     <button onClick={() => openFullScreen('#ff0000')} className="h-12 rounded-lg bg-red-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.red}</button>
                     <button onClick={() => openFullScreen('#00ff00')} className="h-12 rounded-lg bg-green-600 hover:scale-105 transition-transform shadow-sm flex items-center justify-center text-white font-bold text-xs">{displayT.deadPixel.colors.green}</button>
@@ -103,16 +103,16 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
 
                 <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">{displayT.hdr.brightnessTest}</h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">{displayT.hdr.brightnessDesc}</p>
-                
+
                 {/* EDR Brightness Test Box */}
                 <div className="relative w-full h-32 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 flex items-center justify-center">
                     {/* Background is Standard White */}
                     <div className="absolute inset-0 bg-white flex items-start justify-start p-2">
                         <span className="text-[10px] font-mono text-black/50">{displayT.hdr.labelSdr} (sRGB 1.0)</span>
                     </div>
-                    
+
                     {/* Center is P3 White (Potential EDR) */}
-                    <div 
+                    <div
                         className="w-1/2 h-1/2 rounded-lg flex items-center justify-center shadow-sm relative z-10"
                         style={{ backgroundColor: 'color(display-p3 1 1 1)' }}
                     >
@@ -136,7 +136,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                 {isP3Supported ? (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {/* Red Test */}
-                        <div 
+                        <div
                             className="aspect-square rounded-xl flex items-center justify-center relative overflow-hidden group"
                             style={{ backgroundColor: 'rgb(255, 0, 0)' }}
                         >
@@ -145,7 +145,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                         </div>
 
                         {/* Green Test */}
-                        <div 
+                        <div
                             className="aspect-square rounded-xl flex items-center justify-center relative overflow-hidden group"
                             style={{ backgroundColor: 'rgb(0, 255, 0)' }}
                         >
@@ -154,7 +154,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                         </div>
 
                         {/* Blue Test */}
-                        <div 
+                        <div
                             className="aspect-square rounded-xl flex items-center justify-center relative overflow-hidden group"
                             style={{ backgroundColor: 'rgb(0, 0, 255)' }}
                         >
@@ -163,7 +163,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                         </div>
 
                         {/* Mixed / Purple Test */}
-                        <div 
+                        <div
                             className="aspect-square rounded-xl flex items-center justify-center relative overflow-hidden group"
                             style={{ backgroundColor: 'rgb(255, 0, 255)' }}
                         >
@@ -193,26 +193,26 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                 <div className="space-y-4">
                     {/* Grayscale Gradient */}
                     <div className="h-16 w-full rounded-lg relative overflow-hidden ring-1 ring-black/10 dark:ring-white/10">
-                        <div 
-                            className="absolute inset-0" 
-                            style={{ 
-                                background: 'linear-gradient(to right, black, white)' 
-                            }} 
+                        <div
+                            className="absolute inset-0"
+                            style={{
+                                background: 'linear-gradient(to right, black, white)'
+                            }}
                         />
                         <div className="absolute top-2 left-2 text-[10px] text-white/50 font-mono mix-blend-difference">Luma</div>
                     </div>
 
                     {/* Color Gradients */}
                     <div className="h-16 w-full rounded-lg relative overflow-hidden ring-1 ring-black/10 dark:ring-white/10">
-                        <div 
-                            className="absolute inset-0" 
-                            style={{ 
-                                background: 'linear-gradient(to right, rgb(20,0,0), rgb(255,0,0))' 
-                            }} 
+                        <div
+                            className="absolute inset-0"
+                            style={{
+                                background: 'linear-gradient(to right, rgb(20,0,0), rgb(255,0,0))'
+                            }}
                         />
                         <div className="absolute top-2 left-2 text-[10px] text-white/50 font-mono">Red 8-bit+</div>
                     </div>
-                    
+
                     {/* Dark Detail Test (Near Black) */}
                     <div className="grid grid-cols-8 h-12 w-full rounded-lg overflow-hidden ring-1 ring-black/10 dark:ring-white/10 text-[10px] text-white/30 font-mono text-center leading-[3rem]">
                         <div style={{backgroundColor: '#000000'}}>0</div>
@@ -227,7 +227,7 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                     <div className="text-center text-[10px] text-slate-400">Near-black steps (0-21 RGB) - Check visibility of darker steps</div>
                 </div>
             </div>
-            
+
             {/* Motion / Refresh Rate Test */}
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden">
                 <style>{`
@@ -242,16 +242,16 @@ export const DisplayToolsModal: React.FC<DisplayToolsModalProps> = ({ onClose, t
                 <div className="flex items-center gap-3 mb-6 relative z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2 rounded-lg inline-flex">
                     <h3 className="font-bold text-slate-800 dark:text-slate-100">{displayT.motion?.title}</h3>
                 </div>
-                
+
                 <div className="w-full relative h-16 bg-slate-900 rounded-lg overflow-hidden [container-type:inline-size]">
                     <div className="absolute inset-y-0 w-[48px] bg-white flex items-center justify-center font-bold text-slate-900 border-x-4 border-indigo-500 ufo-tester will-change-transform shadow-[0_0_15px_rgba(255,255,255,0.5)]">
                         960
                     </div>
                 </div>
-                
+
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 text-center">{displayT.motion?.desc}</p>
             </div>
-            
+
         </div>
         </Modal>
     );

@@ -91,9 +91,9 @@ export const GeolocationTab: React.FC<GeolocationTabProps> = React.memo(({ t }) 
             geoStatus === 'running' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
             'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
           }`}>
-            {geoStatus === 'idle' ? t.status_idle : 
-             geoStatus === 'running' ? t.status_running : 
-             geoStatus === 'poisoned' ? t.status_poisoned : 
+            {geoStatus === 'idle' ? t.status_idle :
+             geoStatus === 'running' ? t.status_running :
+             geoStatus === 'poisoned' ? t.status_poisoned :
              t.status_clean}
           </span>
         </div>

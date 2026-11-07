@@ -9,9 +9,9 @@ import { Button } from '../ui/Button';
 
 interface LocationCardProps {
   data: BrowserData['localization'];
-  geoData: { 
-    latitude: number; 
-    longitude: number; 
+  geoData: {
+    latitude: number;
+    longitude: number;
     accuracy: number;
     isSpoofed?: boolean;
     apparentLat?: number;
@@ -47,17 +47,17 @@ const AnimatedClock = ({ timeFormat: _timeFormat }: { timeFormat: '12' | '24' })
             const seconds = date.getSeconds();
             const minutes = date.getMinutes();
             const hours = date.getHours();
-            
+
             setAngles(prev => {
                 let newSec = seconds * 6;
                 let newMin = minutes * 6 + seconds * 0.1;
                 let newHour = (hours % 12) * 30 + minutes * 0.5;
-                
+
                 // Prevent transition backwards natively by enforcing increment
                 while (newSec < prev.sec) newSec += 360;
                 while (newMin < prev.min) newMin += 360;
                 while (newHour < prev.hour) newHour += 360;
-                
+
                 return { sec: newSec, min: newMin, hour: newHour };
             });
         }, 1000);
@@ -65,15 +65,15 @@ const AnimatedClock = ({ timeFormat: _timeFormat }: { timeFormat: '12' | '24' })
     }, []);
 
     return (
-        <svg 
-            width="32" 
-            height="32" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
+        <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="text-blue-400 dark:text-blue-500/50"
         >
             <circle cx="12" cy="12" r="10" />
@@ -84,11 +84,11 @@ const AnimatedClock = ({ timeFormat: _timeFormat }: { timeFormat: '12' | '24' })
     );
 };
 
-export const LocationCard: React.FC<LocationCardProps> = React.memo(({ 
-    data, 
-    geoData, 
-    permStatus, 
-    t, 
+export const LocationCard: React.FC<LocationCardProps> = React.memo(({
+    data,
+    geoData,
+    permStatus,
+    t,
     onRequestPermission,
     timeFormat,
     lang = 'en'
@@ -112,7 +112,7 @@ export const LocationCard: React.FC<LocationCardProps> = React.memo(({
 
   return (
     <InfoCard title={t.sections.location} icon={MapPin}>
-        
+
         {/* Real-time Clock */}
         <div className="flex items-center justify-between p-3 mb-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-100 dark:border-blue-900/30">
             <div className="flex flex-col">
@@ -125,10 +125,10 @@ export const LocationCard: React.FC<LocationCardProps> = React.memo(({
         </div>
 
         <InfoItem label={t.labels.timezone} value={data.timeZone} />
-        <InfoItem 
-            label={t.labels.locale} 
-            value={data.locale} 
-            subValue={regionName && regionName !== data.locale ? regionName : undefined} 
+        <InfoItem
+            label={t.labels.locale}
+            value={data.locale}
+            subValue={regionName && regionName !== data.locale ? regionName : undefined}
         />
         <InfoItem label={t.labels.calendar} value={data.calendar} />
         {data.numberingSystem ? (
@@ -194,9 +194,9 @@ export const LocationCard: React.FC<LocationCardProps> = React.memo(({
                                 <span className="font-mono text-xs font-medium text-slate-700 dark:text-slate-300">±{geoData.accuracy.toFixed(1)} meters</span>
                             </div>
                         </div>
-                        <a 
-                            href={`https://www.google.com/maps/search/?api=1&query=${geoData.latitude},${geoData.longitude}`} 
-                            target="_blank" 
+                        <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${geoData.latitude},${geoData.longitude}`}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex w-full items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-95 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:ring-slate-500 shadow-sm px-2.5 py-1.5 text-xs gap-1.5"
                         >

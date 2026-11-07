@@ -35,12 +35,12 @@ export const KeyboardTab: React.FC<KeyboardTabProps> = ({ t }) => {
 
     // Helper to format timestamp
     const formatKeyTime = (timestamp: number) => {
-        return new Date(timestamp).toLocaleTimeString([], { 
-            hour12: false, 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit', 
-            fractionalSecondDigits: 3 
+        return new Date(timestamp).toLocaleTimeString([], {
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            fractionalSecondDigits: 3
         } as Intl.DateTimeFormatOptions);
     };
 

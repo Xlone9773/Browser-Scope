@@ -32,11 +32,11 @@ export const UserAgentCard: React.FC<UserAgentCardProps> = React.memo(({ userAge
 
   return (
     <div className="md:col-span-2 lg:col-span-3">
-        <InfoCard 
-            title={t.sections.user_agent} 
+        <InfoCard
+            title={t.sections.user_agent}
             icon={Globe}
             action={hasClientHints ? (
-                <button 
+                <button
                     onClick={() => setShowClientHints(!showClientHints)}
                     className="flex items-center gap-1.5 text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
                 >

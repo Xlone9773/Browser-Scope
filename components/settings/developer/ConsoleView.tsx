@@ -110,7 +110,7 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ t, consoleHistory }) =
     loggerStore.addConsole("input", cmdToRun);
 
     try {
-       
+
       const res = new Function('return ' + cmdToRun)();
       let output = String(res);
       if (typeof res === "object" && res !== null) {

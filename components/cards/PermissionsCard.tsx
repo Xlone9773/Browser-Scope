@@ -126,40 +126,40 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                     </Button>
                 </div>
             </div>
-            
+
             {showNotifTest && permStatus.notifications === 'granted' && (
                 <div className="mt-3 p-3 bg-slate-100 dark:bg-slate-800 rounded-lg flex flex-col gap-2">
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         value={notifTitle}
                         onChange={(e) => setNotifTitle(e.target.value)}
-                        placeholder={t.notificationTest?.titlePlaceholder} 
+                        placeholder={t.notificationTest?.titlePlaceholder}
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
                     />
-                    <textarea 
+                    <textarea
                         value={notifBody}
                         onChange={(e) => setNotifBody(e.target.value)}
-                        placeholder={t.notificationTest?.bodyPlaceholder} 
+                        placeholder={t.notificationTest?.bodyPlaceholder}
                         rows={2}
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 resize-none"
                     ></textarea>
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         value={notifIcon}
                         onChange={(e) => setNotifIcon(e.target.value)}
-                        placeholder={t.notificationTest?.iconUrlPlaceholder} 
+                        placeholder={t.notificationTest?.iconUrlPlaceholder}
                         className="text-xs px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
                     />
-                    
+
                     {/* Actions List */}
                     <div className="flex flex-col gap-2 mt-2 border-t border-slate-200 dark:border-slate-700 pt-2">
                         <div className="flex justify-between items-center">
                             <span className="text-xs font-medium text-slate-500">
                                 Actions ({notifActions.length}/{'Notification' in window ? ((Notification as unknown as { maxActions?: number }).maxActions || 2) : 2})
                             </span>
-                            <Button 
-                                size="xs" 
-                                variant="ghost" 
+                            <Button
+                                size="xs"
+                                variant="ghost"
                                 onClick={() => {
                                     const maxAct = 'Notification' in window ? ((Notification as unknown as { maxActions?: number }).maxActions || 2) : 2;
                                     if (notifActions.length < maxAct) {
@@ -175,8 +175,8 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                         {notifActions.map((act, idx) => (
                             <div key={idx} className="flex flex-col gap-1.5 bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
                                 <div className="flex justify-between items-center gap-2">
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         value={act.title}
                                         onChange={(e) => {
                                             const newActions = [...notifActions];
@@ -196,7 +196,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                                 </div>
                                 <div className="flex gap-2">
                                     <div className="w-32 min-w-[128px] shrink-0">
-                                        <Select 
+                                        <Select
                                             value={act.type}
                                             onChange={(val: unknown) => {
                                                 const newActions = [...notifActions];
@@ -212,8 +212,8 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                                         />
                                     </div>
                                     {act.type === 'url' && (
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             value={act.payload}
                                             onChange={(e) => {
                                                 const newActions = [...notifActions];
@@ -237,7 +237,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                 </div>
             )}
         </div>
-        
+
         {/* MIDI */}
         <div className="flex justify-between items-center py-2.5 border-b border-slate-50 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-2 -mx-2 rounded">
             <div className="flex items-center gap-2">
@@ -253,7 +253,7 @@ export const PermissionsCard: React.FC<PermissionsCardProps> = React.memo(({ per
                 )}
             </div>
         </div>
-        
+
         {/* Action Alert Modal */}
         {actionAlert && (
             <Modal title={actionAlert.title} onClose={() => setActionAlert(null)} size="sm">

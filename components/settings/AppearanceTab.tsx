@@ -77,15 +77,15 @@ interface AppearanceTabProps {
     toggleFontFix?: (value: boolean) => void;
 }
 
-export const AppearanceTab: React.FC<AppearanceTabProps> = ({ 
-    t, 
+export const AppearanceTab: React.FC<AppearanceTabProps> = ({
+    t,
     themeColor,
     setThemeColor,
     animationStyle,
     setAnimationStyle,
-    simpleMode, 
-    toggleSimpleMode, 
-    hideScrollbar, 
+    simpleMode,
+    toggleSimpleMode,
+    hideScrollbar,
     toggleHideScrollbar,
     globalHideScrollbar,
     toggleGlobalHideScrollbar,
@@ -238,7 +238,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     return (
         <div className="max-w-2xl mx-auto space-y-4">
             {/* Simple Mode Toggle */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => toggleSimpleMode(!simpleMode)}
             >
@@ -255,7 +255,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
             </div>
             {/* Show Tabs Option (NEW) */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => toggleShowTabs(!showTabs)}
             >
@@ -272,7 +272,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
             </div>
             {/* Show Search Bar Option */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => toggleShowSearch(!showSearch)}
             >
@@ -332,7 +332,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                         {translationDict.settings?.general?.animationStyle?.desc}
                     </p>
                 </div>
-                <Select 
+                <Select
                     value={animationStyle}
                     onChange={(val) => setAnimationStyle(val as string)}
                     options={[
@@ -357,7 +357,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                         {fontT.desc}
                     </p>
                 </div>
-                
+
                 <div className="space-y-4">
                     {/* Body Font Select */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -369,7 +369,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                                 {fontT.bodyFontDesc}
                             </p>
                         </div>
-                        <Select 
+                        <Select
                             value={bodyFont}
                             onChange={(val) => handleFontChange(val as string, 'body')}
                             options={bodyFontOptions}
@@ -388,7 +388,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                                 {fontT.modalTitleFontDesc}
                             </p>
                         </div>
-                        <Select 
+                        <Select
                             value={modalTitleFont}
                             onChange={(val) => handleFontChange(val as string, 'modal')}
                             options={modalTitleFontOptions}
@@ -407,7 +407,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                                 {fontT.codeFontDesc}
                             </p>
                         </div>
-                        <Select 
+                        <Select
                             value={codeFont}
                             onChange={(val) => handleFontChange(val as string, 'code')}
                             options={codeFontOptions}
@@ -419,7 +419,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             </div>
 
             {/* Font Sharpening & Repair */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => {
                     if (toggleFontFix) {
@@ -440,7 +440,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
             </div>
             {/* Disable Blur */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => toggleDisableBlur(!disableBlur)}
             >
@@ -457,7 +457,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
             </div>
             {/* Hide Scrollbar Toggle */}
-            <div 
+            <div
                 className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${globalHideScrollbar ? 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800 opacity-50 cursor-not-allowed' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
                 onClick={() => { if (!globalHideScrollbar) toggleHideScrollbar(!hideScrollbar); }}
             >
@@ -474,7 +474,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
             </div>
             {/* Global Hide Scrollbar Toggle */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => toggleGlobalHideScrollbar(!globalHideScrollbar)}
             >
@@ -491,7 +491,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
             </div>
             {/* Disable Animations */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => toggleDisableAnimations(!disableAnimations)}
             >
@@ -508,7 +508,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
             </div>
             {/* Disable Homepage Tab Switch Animation */}
-            <div 
+            <div
                 className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${disableAnimations ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
                 onClick={() => {
                     if (!disableAnimations && toggleDisableTabAnimations) {
@@ -525,19 +525,19 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     </p>
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <Switch 
-                        checked={disableAnimations || disableTabAnimations} 
+                    <Switch
+                        checked={disableAnimations || disableTabAnimations}
                         onChange={(val) => {
                             if (!disableAnimations && toggleDisableTabAnimations) {
                                 toggleDisableTabAnimations(val);
                             }
-                        }} 
-                        disabled={disableAnimations} 
+                        }}
+                        disabled={disableAnimations}
                     />
                 </div>
             </div>
             {/* Fast Animations */}
-            <div 
+            <div
                 className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${disableAnimations ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
                 onClick={() => { if (!disableAnimations) toggleFastAnimations(!fastAnimations); }}
             >
@@ -554,7 +554,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
             </div>
             {/* Collapse Header Menu Desktop */}
-            <div 
+            <div
                 className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${!isDesktop ? 'opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'}`}
                 onClick={() => { if (isDesktop) toggleCollapseHeader(!collapseHeader); }}
             >
@@ -590,8 +590,8 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                                 onClick={() => toggleCardHide(card.id)}
                                 className={`
                                     flex items-center gap-2 p-2 rounded-lg text-sm font-medium transition-colors border text-left
-                                    ${isHidden 
-                                        ? 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 line-through' 
+                                    ${isHidden
+                                        ? 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 line-through'
                                         : 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400'}
                                 `}
                             >
@@ -614,7 +614,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     </p>
                 </div>
                 <div>
-                    <CustomRestoreButton 
+                    <CustomRestoreButton
                         onClick={() => toggleShowQuickSummary(true)}
                         disabled={showQuickSummary}
                         activeText={dictSettings.quickSummaryVisibility?.activeState || "Showing"}
@@ -634,7 +634,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     </p>
                 </div>
                 <div>
-                    <CustomRestoreButton 
+                    <CustomRestoreButton
                         onClick={restoreAllNotifications}
                         disabled={dismissedNotificationsCount === 0}
                         activeText={dictSettings.restoreNotifications?.empty || "No dismissed notifications"}

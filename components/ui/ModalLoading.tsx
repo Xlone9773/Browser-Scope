@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { Cpu } from 'lucide-react';
 
-export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: string }> = ({ 
-    initializingText = "Initializing", 
-    loadingText = "Loading Module Resource" 
+export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: string }> = ({
+    initializingText = "Initializing",
+    loadingText = "Loading Module Resource"
 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -20,14 +20,14 @@ export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: s
   }, []);
 
   return (
-    <div 
+    <div
         className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px]"
     >
-        <div 
+        <div
             className={`
-                relative bg-white/90 dark:bg-slate-900/90 p-8 rounded-2xl shadow-2xl 
-                border border-white/20 dark:border-indigo-500/30 
-                flex flex-col items-center gap-6 
+                relative bg-white/90 dark:bg-slate-900/90 p-8 rounded-2xl shadow-2xl
+                border border-white/20 dark:border-indigo-500/30
+                flex flex-col items-center gap-6
                 transform transition-all duration-200 ease-out
                 ${isVisible ? 'scale-100 translate-y-0' : 'scale-95 translate-y-2'}
             `}
@@ -39,10 +39,10 @@ export const ModalLoading: React.FC<{ initializingText?: string, loadingText?: s
             <div className="relative">
                 {/* Outer Ring */}
                 <div className="absolute inset-0 rounded-full border-2 border-indigo-100 dark:border-slate-700" />
-                
+
                 {/* Spinning Segment */}
                 <div className="absolute inset-0 rounded-full border-t-2 border-indigo-500 animate-spin" />
-                
+
                 {/* Inner Pulsing Core */}
                 <div className="relative z-10 w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center shadow-inner border border-slate-100 dark:border-slate-700">
                     <Cpu className="text-indigo-500 animate-pulse" size={28} />

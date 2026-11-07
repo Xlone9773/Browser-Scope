@@ -507,7 +507,7 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
         // Use dimensions based on the selected format
         let pageWidth = 210;
         let pageHeight = 297;
-        
+
         if (format === 'letter') {
             pageWidth = 215.9; // 8.5 inch
             pageHeight = 279.4; // 11 inch
@@ -573,7 +573,7 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
             // Bottom Footer Line
             doc.line(marginX, pageHeight - 12, pageWidth - marginX, pageHeight - 12);
             doc.text("https://browser-scope.vercel.app/", marginX, pageHeight - 8);
-            
+
             // Page number
             const pageCount = doc.getNumberOfPages();
             doc.text(`${tLocal.page} ${pageCount}`, pageWidth - marginX - 15, pageHeight - 8);
@@ -626,7 +626,7 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
             doc.setFontSize(11);
             doc.setTextColor(15, 23, 42); // slate-900
             doc.text(title, marginX, currentY);
-            
+
             doc.setDrawColor(226, 232, 240); // slate-200
             doc.setLineWidth(0.5);
             doc.line(marginX, currentY + 2, pageWidth - marginX, currentY + 2);
@@ -707,7 +707,7 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
             tLocal.pwa_installed, data.system?.isPwaInstalled ? tLocal.yes : tLocal.no,
             tLocal.cookies_enabled, data.system?.cookiesEnabled ? tLocal.yes : tLocal.no
         );
-        
+
         // Render system permissions
         const cameraPerm = permStatus?.camera || tLocal.unknown;
         const microPerm = permStatus?.microphone || tLocal.unknown;
@@ -783,7 +783,7 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
         drawSectionHeader(t.sections?.fingerprints || t.fingerprints?.title || "Fingerprints & Security");
         drawFullRow(tLocal.canvas_hash, data.fingerprints?.canvasHash || tLocal.not_detected);
         drawFullRow(tLocal.webgl_hash, data.fingerprints?.webglHash || tLocal.not_detected);
-        
+
         const adBlockStatus = data.security?.adBlockEnabled ? tLocal.active : tLocal.inactive;
         const botCheck = data.security?.isBot ? tLocal.suspicious_bot : tLocal.pass_human;
         drawGridRow(
@@ -840,7 +840,7 @@ self.onmessage = async (event: MessageEvent<ExportWorkerMessage>) => {
             tLocal.calendar, data.localization?.calendar || tLocal.unknown,
             tLocal.numbering, data.localization?.numberingSystem || tLocal.unknown
         );
-        
+
         const intl = data.localization?.intlSupport;
         if (intl) {
             const intlKeys = [];

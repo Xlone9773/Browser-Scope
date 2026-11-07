@@ -21,7 +21,7 @@ export const LATENCY_REGIONS: LatencyRegion[] = [
     { id: 'us_east', name: 'US East (N. Virginia)', url: 'https://dynamodb.us-east-1.amazonaws.com', coordinates: { x: 23, y: 33 } },
     { id: 'us_west', name: 'US West (California)', url: 'https://dynamodb.us-west-1.amazonaws.com', coordinates: { x: 12, y: 35 } },
     { id: 'ca_central', name: 'Canada (Montreal)', url: 'https://dynamodb.ca-central-1.amazonaws.com', coordinates: { x: 25, y: 30 } },
-    
+
     // South America
     { id: 'sa_brazil', name: 'Brazil (São Paulo)', url: 'https://dynamodb.sa-east-1.amazonaws.com', coordinates: { x: 32, y: 70 } },
     { id: 'sa_chile', name: 'Chile (Santiago)', url: 'https://dynamodb.us-west-2.amazonaws.com', coordinates: { x: 28, y: 82 } }, // Using reliable endpoint

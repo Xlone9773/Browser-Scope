@@ -40,9 +40,9 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const currentDevices = activeTab === 'usb' ? usbDevices : 
-                         activeTab === 'bluetooth' ? btDevices : 
-                         activeTab === 'serial' ? serialDevices : 
+  const currentDevices = activeTab === 'usb' ? usbDevices :
+                         activeTab === 'bluetooth' ? btDevices :
+                         activeTab === 'serial' ? serialDevices :
                          activeTab === 'webauthn' ? webAuthnDevices :
                          nfcDevices;
 
@@ -89,7 +89,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               acceptAllDevices: true,
               optionalServices: ['battery_service', 'device_information']
           });
-          
+
           const nameToTest = device.name || '';
           // Avoid irrelevant devices by matching an optional regex
           if (btRegex.trim()) {
@@ -174,7 +174,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           window.crypto.getRandomValues(challenge);
           const userId = new Uint8Array(16);
           window.crypto.getRandomValues(userId);
-          
+
           const credential = await navigator.credentials.create({
               publicKey: {
                   challenge,
@@ -186,7 +186,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                   attestation: "none"
               }
           });
-          
+
           if (credential) {
               setWebAuthnDevices(prev => [...prev, {
                   id: credential.id,
@@ -208,7 +208,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           setError(null);
           const challenge = new Uint8Array(32);
           window.crypto.getRandomValues(challenge);
-          
+
           const publicKeyOpts: PublicKeyCredentialRequestOptions = {
               challenge,
               rpId: window.location.hostname,
@@ -228,7 +228,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
           };
 
           const credential = await navigator.credentials.get(options);
-          
+
           if (credential) {
               setWebAuthnDevices(prev => [...prev, {
                   id: credential.id + '-auth',
@@ -252,7 +252,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
       setScanning(true);
       setError(null);
       try {
-          
+
           // @ts-expect-error fixed implicitly typed external libraries
           const ndef = new NDEFReader();
           await ndef.scan();
@@ -273,7 +273,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
               });
               setScanning(false);
           });
-          
+
           ndef.addEventListener("error", (e: Event) => {
               handleError(e, "NFC scan error");
               setScanning(false);
@@ -292,11 +292,11 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
       setScanning(true);
       setError(null);
       try {
-          
+
                     // @ts-expect-error fixed implicitly typed external libraries
                     const ndef = new NDEFReader();
           await ndef.write("Hello from BrowserScope!");
-          
+
           setNfcDevices(prev => [...prev, {
                 id: 'write-' + Date.now(),
                 name: `NFC Tag Written`,
@@ -350,8 +350,8 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
 
             {activeTab === 'bluetooth' && (
                 <div className="max-w-md mx-auto w-full mb-6">
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         value={btRegex}
                         onChange={(e) => setBtRegex(e.target.value)}
                         placeholder={t.regex_placeholder}
@@ -363,7 +363,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
             <div className={`flex justify-center mb-6 ${activeTab === 'webauthn' || activeTab === 'nfc' ? 'gap-4 max-w-md mx-auto w-full flex-col sm:flex-row' : ''}`}>
                 {activeTab === 'webauthn' ? (
                     <>
-                        <button 
+                        <button
                             onClick={testWebAuthnReg}
                             disabled={scanning}
                             className="flex-1 px-6 py-3 bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-200 dark:shadow-purple-900/30 text-white rounded-xl transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed"
@@ -371,7 +371,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                             {scanning ? <Radio className="animate-pulse" /> : <Fingerprint />}
                             {t.btn_req_webauthn_reg}
                         </button>
-                        <button 
+                        <button
                             onClick={() => testWebAuthnAuth()}
                             disabled={scanning}
                             className="flex-1 px-6 py-3 bg-fuchsia-600 hover:bg-fuchsia-700 shadow-lg shadow-fuchsia-200 dark:shadow-fuchsia-900/30 text-white rounded-xl transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed"
@@ -382,7 +382,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                     </>
                 ) : activeTab === 'nfc' ? (
                     <>
-                        <button 
+                        <button
                             onClick={scanNfc}
                             disabled={scanning}
                             className="flex-1 px-6 py-3 bg-rose-600 hover:bg-rose-700 shadow-lg shadow-rose-200 dark:shadow-rose-900/30 text-white rounded-xl transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed"
@@ -390,7 +390,7 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                             {scanning ? <Radio className="animate-pulse" /> : <Search />}
                             {t.btn_req_nfc_scan}
                         </button>
-                        <button 
+                        <button
                             onClick={writeNfc}
                             disabled={scanning}
                             className="flex-1 px-6 py-3 bg-pink-600 hover:bg-pink-700 shadow-lg shadow-pink-200 dark:shadow-pink-900/30 text-white rounded-xl transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed"
@@ -400,9 +400,9 @@ export const WebDeviceModal: React.FC<WebDeviceModalProps> = ({ onClose, t }) =>
                         </button>
                     </>
                 ) : (
-                    <button 
+                    <button
                         onClick={
-                            activeTab === 'bluetooth' ? scanBluetooth : 
+                            activeTab === 'bluetooth' ? scanBluetooth :
                             activeTab === 'usb' ? scanUsb : scanSerial
                         }
                         disabled={scanning}

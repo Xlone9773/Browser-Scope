@@ -80,11 +80,11 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
           const onEnded = () => setIsPlaying(false);
           const onPause = () => setIsPlaying(false);
           const onPlay = () => setIsPlaying(true);
-          
+
           player.addEventListener('ended', onEnded);
           player.addEventListener('pause', onPause);
           player.addEventListener('play', onPlay);
-          
+
           return () => {
               player.removeEventListener('ended', onEnded);
               player.removeEventListener('pause', onPause);
@@ -117,7 +117,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
     const isDark = document.documentElement.classList.contains('dark');
     if(isDark) ctx.fillStyle = 'rgb(15, 23, 42)'; // slate-900
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const barWidth = (canvas.width / bufferLength) * 2.5;
     let barHeight;
@@ -157,7 +157,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
               cancelAnimationFrame(animationRef.current);
           }
       }
-      
+
       return () => {
           if (animationRef.current) {
               cancelAnimationFrame(animationRef.current);
@@ -190,7 +190,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
 
      return () => {
          if (animationRef.current) cancelAnimationFrame(animationRef.current);
-         
+
          // Stop recording if active
          if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
             mediaRecorderRef.current.stop();
@@ -213,7 +213,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
   const initAudioAndRecord = async () => {
     try {
       let localStream = streamRef.current;
-      
+
       if (!localStream) {
           localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
           if (isUnmounted.current) {
@@ -223,28 +223,28 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
           streamRef.current = localStream;
           setStream(localStream);
       }
-      
+
       // Setup Audio Context for Visualizer if not already setup
       if (!audioContextRef.current) {
           const AudioContext = window.AudioContext || window.webkitAudioContext;
           const audioCtx = new AudioContext();
           setSampleRate(audioCtx.sampleRate);
-          
+
           const analyzer = audioCtx.createAnalyser();
           const source = audioCtx.createMediaStreamSource(localStream);
-          
+
           analyzer.fftSize = 2048;
           const bufferLength = analyzer.frequencyBinCount;
           const dataArray = new Uint8Array(bufferLength);
-          
+
           source.connect(analyzer);
-          
+
           audioContextRef.current = audioCtx;
           analyzerRef.current = analyzer;
           dataArrayRef.current = dataArray;
           sourceRef.current = source;
       }
-      
+
       // Try to start recording right away
       try {
           const recorder = new MediaRecorder(localStream);
@@ -260,7 +260,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
               const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
               setAudioBlob(blob);
               setAudioUrl(URL.createObjectURL(blob));
-              
+
               const sizeInKB = blob.size / 1024;
               setFileSize(sizeInKB > 1024 ? `${(sizeInKB / 1024).toFixed(2)} MB` : `${sizeInKB.toFixed(2)} KB`);
           };
@@ -271,7 +271,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
           setRecordingDuration(0);
           setAudioBlob(null);
           setAudioUrl(null);
-          
+
       } catch (e: unknown) {
           console.error("Recorder error:", e);
       }
@@ -290,11 +290,11 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
       if (mediaRecorderRef.current && isRecording) {
           mediaRecorderRef.current.stop();
           setIsRecording(false);
-          
+
           if (animationRef.current) {
               cancelAnimationFrame(animationRef.current);
           }
-          
+
           // Optionally release mic directly after stopping
           stopAudioTracks();
       }
@@ -346,7 +346,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
             <>
                 {/* Content */}
                 <div className="flex flex-col gap-6 items-center">
-                    
+
                     {error ? (
                         <div className="text-red-500 font-medium text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg w-full">
                             {error}
@@ -356,7 +356,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
                             {/* Visualizer Area */}
                             <div className="w-full h-32 bg-slate-200 dark:bg-slate-900 rounded-xl overflow-hidden relative shadow-inner border border-slate-200 dark:border-slate-700">
                                 <canvas ref={canvasRef} width={500} height={128} className="w-full h-full" />
-                                
+
                                 {!isRecording && !isPlaying && !audioUrl && (
                                     <div className="absolute inset-0 flex items-center justify-center bg-slate-200 dark:bg-slate-900 z-10">
                                         <span className="text-slate-400 dark:text-slate-500 text-xs font-semibold tracking-wide">
@@ -392,7 +392,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
                             <div className="flex gap-4 items-center">
                                 {!audioUrl ? (
                                     !isRecording ? (
-                                        <button 
+                                        <button
                                             onClick={startRecording}
                                             className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-red-200 dark:shadow-red-900/50 hover:bg-red-600 hover:scale-105 active:scale-95 transition-all"
                                             title={t.start_record}
@@ -400,7 +400,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
                                             <Mic size={32} />
                                         </button>
                                     ) : (
-                                        <button 
+                                        <button
                                             onClick={stopRecording}
                                             className="w-16 h-16 bg-slate-800 dark:bg-slate-600 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-slate-900 dark:hover:bg-slate-700 hover:scale-105 active:scale-95 transition-all"
                                             title={t.stop_record}
@@ -410,22 +410,22 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
                                     )
                                 ) : (
                                     <div className="flex gap-3">
-                                        <button 
+                                        <button
                                             onClick={reset}
                                             className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-all"
                                             title="Reset"
                                         >
                                             <RefreshCw size={20} />
                                         </button>
-                                        
-                                        <button 
+
+                                        <button
                                             onClick={togglePlayback}
                                             className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-indigo-200 dark:shadow-indigo-900/50 hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all"
                                         >
                                             {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
                                         </button>
-                                        
-                                        <button 
+
+                                        <button
                                             onClick={downloadAudio}
                                             className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-all"
                                             title={t.download}
@@ -455,7 +455,7 @@ export const AudioRecorderModal: React.FC<AudioRecorderModalProps> = ({ onClose,
                                     </div>
                                 </div>
                             )}
-                            
+
                             {/* Hidden Audio Element */}
                             {audioUrl && (
                                 <audio ref={audioPlayerRef} src={audioUrl} />

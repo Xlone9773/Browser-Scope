@@ -104,12 +104,12 @@ const main = () => {
       try {
         const rawJson = fs.readFileSync(eslintReportPath, 'utf8');
         const report = JSON.parse(rawJson);
-        
+
         if (Array.isArray(report)) {
           report.forEach((fileObj: EslintFileResult) => {
             const relativePath = path.relative(process.cwd(), fileObj.filePath);
             const messages = fileObj.messages || [];
-            
+
             if (messages.length > 0) {
               eslintFilesWithIssuesCount++;
               messages.forEach((msg: EslintMessage) => {
@@ -253,8 +253,8 @@ const main = () => {
         testStats.total = results.numTotalTests || 0;
         testStats.passed = results.numPassedTests || 0;
         testStats.failed = results.numFailedTests || 0;
-        testStats.duration = (results.startTime && Date.now() - results.startTime) 
-          ? Math.round((Date.now() - results.startTime) / 1000) 
+        testStats.duration = (results.startTime && Date.now() - results.startTime)
+          ? Math.round((Date.now() - results.startTime) / 1000)
           : 0;
 
         testSuites.total = results.numTotalTestSuites || 0;
@@ -372,10 +372,10 @@ const main = () => {
         if (!isSuccess || buildLog.toLowerCase().includes('error') || buildLog.toLowerCase().includes('failed')) {
           // Extract error lines to show
           const lines = buildLog.split('\n');
-          const errorLines = lines.filter(line => 
-            line.toLowerCase().includes('error') || 
-            line.toLowerCase().includes('failed') || 
-            line.toLowerCase().includes('exception') || 
+          const errorLines = lines.filter(line =>
+            line.toLowerCase().includes('error') ||
+            line.toLowerCase().includes('failed') ||
+            line.toLowerCase().includes('exception') ||
             line.startsWith('❌')
           );
           if (errorLines.length > 0) {
@@ -469,33 +469,60 @@ const main = () => {
         const metadata = audit.metadata || {};
         const vulnerabilities = metadata.vulnerabilities || { info: 0, low: 0, moderate: 0, high: 0, critical: 0 };
         const totalVulnerabilities = Object.values(vulnerabilities).reduce((sum: number, val: unknown) => sum + (Number(val) || 0), 0);
+        const packageVulnerabilities = audit.vulnerabilities && typeof audit.vulnerabilities === 'object'
+          ? Object.values(audit.vulnerabilities) as Array<{
+              name?: string; severity?: string; isDirect?: boolean; range?: string; nodes?: string[];
+              via?: Array<string | { title?: string; url?: string; range?: string; severity?: string }>;
+              fixAvailable?: boolean | { name?: string; version?: string; isSemVerMajor?: boolean };
+            }>
+          : [];
+
+        const escapeTableCell = (value: unknown): string =>
+          String(value ?? '—').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ').replace(/`/g, '\\`');
 
         if (totalVulnerabilities === 0) {
           markdown += `> 🟢 **Security Scan Passed!** 0 vulnerabilities detected in direct/indirect dependencies.\n\n`;
         } else {
           const highAndCritical = (vulnerabilities.high || 0) + (vulnerabilities.critical || 0);
           if (highAndCritical > 0) {
-            markdown += `> 🔴 **Security Alert!** Detected **${highAndCritical}** High/Critical vulnerability issues in packages. Please run \`npm audit fix\`!\n\n`;
-            // Set exit code to 1 if critical or high vulnerabilities are detected
+            markdown += `> 🔴 **Security Alert!** Detected **${highAndCritical}** High/Critical vulnerability issues. Review the affected dependency list below.\n\n`;
             process.exitCode = 1;
           } else {
-            markdown += `> 🟡 **Minor Security Warnings.** Detected **${totalVulnerabilities}** low/moderate vulnerabilities.\n\n`;
+            markdown += `> 🟡 **Security Warnings.** Detected **${totalVulnerabilities}** low/moderate vulnerability issues. Review the affected dependency list below.\n\n`;
           }
         }
 
-        markdown += `| Severity Level | Detected Counts | Risk Status |\n`;
-        markdown += `|---|---|---|\n`;
-        markdown += `| 🚨 **Critical** | \`${vulnerabilities.critical || 0}\` | ${vulnerabilities.critical > 0 ? '🔴 Immediate Action Required' : '✅ Secured'} |\n`;
-        markdown += `| ⚠️ **High** | \`${vulnerabilities.high || 0}\` | ${vulnerabilities.high > 0 ? '🟠 Review & Patch' : '✅ Secured'} |\n`;
-        markdown += `| 🟡 **Moderate** | \`${vulnerabilities.moderate || 0}\` | ${vulnerabilities.moderate > 0 ? '🟡 Warning' : '✅ Secured'} |\n`;
-        markdown += `| 🔵 **Low** | \`${vulnerabilities.low || 0}\` | ${vulnerabilities.low > 0 ? '🔵 Low Priority' : '✅ Secured'} |\n`;
+        markdown += `| Severity Level | Detected Counts | Risk Status |\n|---|---:|---|\n`;
+        markdown += `| 🚨 **Critical** | \`${vulnerabilities.critical || 0}\` | ${vulnerabilities.critical > 0 ? '🔴 Immediate Action Required' : '✅ None detected'} |\n`;
+        markdown += `| ⚠️ **High** | \`${vulnerabilities.high || 0}\` | ${vulnerabilities.high > 0 ? '🟠 Review & Patch' : '✅ None detected'} |\n`;
+        markdown += `| 🟡 **Moderate** | \`${vulnerabilities.moderate || 0}\` | ${vulnerabilities.moderate > 0 ? '🟡 Warning' : '✅ None detected'} |\n`;
+        markdown += `| 🔵 **Low** | \`${vulnerabilities.low || 0}\` | ${vulnerabilities.low > 0 ? '🔵 Low Priority' : '✅ None detected'} |\n`;
         markdown += `| ℹ️ **Info** | \`${vulnerabilities.info || 0}\` | \`Info\` |\n\n`;
 
-      } catch {
-        markdown += `> ⚠️ **Notice:** Failed to parse security metrics from \`audit-report.json\`.\n\n`;
+        if (packageVulnerabilities.length > 0) {
+          markdown += `#### 📋 Affected Dependencies\n\n`;
+          markdown += `| Package | Severity | Dependency | Affected Range | Dependency Paths | Advisory / Cause | Fix Available |\n|---|---|---|---|---|---|---|\n`;
+          const severityRank: Record<string, number> = { critical: 0, high: 1, moderate: 2, low: 3, info: 4 };
+          packageVulnerabilities.sort((a, b) => (severityRank[a.severity || 'info'] ?? 5) - (severityRank[b.severity || 'info'] ?? 5) || (a.name || '').localeCompare(b.name || ''));
+          for (const item of packageVulnerabilities) {
+            const advisoryDetails = (item.via || []).map((entry) => {
+              if (typeof entry === 'string') return entry;
+              const title = entry.title || 'Security advisory';
+              return entry.url ? `[${title}](${entry.url})` : title;
+            });
+            const fix = item.fixAvailable === true ? 'Yes (compatible update)' : item.fixAvailable === false || item.fixAvailable == null ? 'No automatic fix reported' : `Yes: ${item.fixAvailable.name || item.name || 'package'}@${item.fixAvailable.version || 'updated version'}${item.fixAvailable.isSemVerMajor ? ' (major update)' : ''}`;
+            const paths = (item.nodes || []).map((node) => `\`${node}\``).join('<br>') || '—';
+            markdown += `| \`${escapeTableCell(item.name)}\` | ${escapeTableCell(item.severity)} | ${item.isDirect ? 'Direct' : 'Transitive'} | ${escapeTableCell(item.range)} | ${paths} | ${advisoryDetails.map(escapeTableCell).join('<br>') || '—'} | ${escapeTableCell(fix)} |\n`;
+          }
+          markdown += `\n`;
+        } else if (totalVulnerabilities > 0) {
+          markdown += `> ⚠️ The report contains vulnerability counts but no per-package entries. Ensure CI saves the full output of \`npm audit --json\`.\n\n`;
+        }
+      } catch (error) {
+        markdown += `> ⚠️ **Notice:** Failed to parse security metrics from \`audit-report.json\`: ${error instanceof Error ? error.message : String(error)}\n\n`;
       }
     } else {
-      markdown += `- No security report found. Ensure \`npm audit\` runs properly before generating summary.\n\n`;
+      markdown += `- No security report found. Ensure \`npm audit --json\` runs before generating the summary.\n\n`;
     }
   }
 

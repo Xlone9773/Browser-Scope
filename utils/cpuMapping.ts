@@ -34,7 +34,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('apple m1 max')) return 'Apple M1 Max';
   if (r.includes('apple m1 pro')) return 'Apple M1 Pro';
   if (r.includes('apple m1')) return 'Apple M1 Series';
-  
+
   // A-Series (Mobile)
   if (r.includes('apple a18 pro')) return 'Apple A18 Pro';
   if (r.includes('apple a18')) return 'Apple A18 / A18 Pro';
@@ -51,7 +51,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('apple a9')) return 'Apple A9 / A9X';
   if (r.includes('apple a8')) return 'Apple A8 / A8X';
   if (r.includes('apple a7')) return 'Apple A7';
-  
+
   // Apple GPU generic fallback
   if (r.includes('apple gpu')) return 'Apple Silicon';
 
@@ -61,10 +61,10 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('adreno x1-45')) return 'Snapdragon X Plus (X1P-45-100 / X1P-42-100 / X1P-46-100)';
   if (r.includes('adreno x1')) return 'Snapdragon X Elite / Plus Series';
   if (r.includes('adreno 8cx')) return 'Snapdragon 8cx Gen 3';
-  if (r.includes('adreno 690')) return 'Snapdragon 8cx Gen 3'; 
+  if (r.includes('adreno 690')) return 'Snapdragon 8cx Gen 3';
   if (r.includes('adreno 685')) return 'Snapdragon 8cx Gen 2';
   if (r.includes('adreno 680')) return 'Snapdragon 8cx';
-  
+
   // Mobile High-end
   if (r.includes('adreno 850')) return 'Snapdragon 8 Elite Gen 6 Pro';
   if (r.includes('adreno 845')) return 'Snapdragon 8 Elite Gen 6';
@@ -76,13 +76,13 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('adreno 735')) return 'Snapdragon 8s Gen 3';
   if (r.includes('adreno 732')) return 'Snapdragon 7+ Gen 3';
   if (r.includes('adreno 730')) return 'Snapdragon 8 Gen 1 / 8+ Gen 1';
-  
+
   // Mobile High/Mid
   if (r.includes('adreno 725')) return 'Snapdragon 7+ Gen 2';
   if (r.includes('adreno 720')) return 'Snapdragon 7 Gen 3';
   if (r.includes('adreno 710')) return 'Snapdragon 7s Gen 2 / 6 Gen 1';
   if (r.includes('adreno 702')) return 'Snapdragon 695 / 4 Gen 1';
-  
+
   // Mobile Legacy High-end
   if (r.includes('adreno 660')) return 'Snapdragon 888 / 888+';
   if (r.includes('adreno 650')) return 'Snapdragon 865 / 870';
@@ -90,7 +90,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('adreno 643')) return 'Snapdragon 7s Gen 2 (Modified)';
   if (r.includes('adreno 640')) return 'Snapdragon 855 / 860';
   if (r.includes('adreno 630')) return 'Snapdragon 845';
-  
+
   // Mobile Mid-range
   if (r.includes('adreno 644')) return 'Snapdragon 7 Gen 1';
   if (r.includes('adreno 642')) return 'Snapdragon 780G';
@@ -126,10 +126,10 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('xclipse 530')) return 'Exynos 1480';
 
   // --- ARM Mali / Immortalis (Mediatek / Exynos / Tensor) ---
-  
+
   // Google Tensor
   if (r.includes('google') && r.includes('mali-g715')) return 'Google Tensor G3 / G4';
-  if (r.includes('google') && r.includes('mali-g710')) return 'Google Tensor G2'; 
+  if (r.includes('google') && r.includes('mali-g710')) return 'Google Tensor G2';
   if (r.includes('google') && r.includes('mali-g78')) return 'Google Tensor';
 
   // Mediatek Dimensity / High-end Mali
@@ -140,7 +140,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('mali-g925')) return 'Dimensity 9400+ / Dimensity 9400 / 8400';
   if (r.includes('immortalis-g720')) return 'Dimensity 9300 / 9300+';
   if (r.includes('immortalis-g715')) return 'Dimensity 9200 / 9200+';
-  
+
   // Mali G-series specific checks
   if (r.includes('mali-g725')) return 'Dimensity 8400';
   if (r.includes('mali-g715') && !r.includes('google')) return 'Dimensity 9200 / 8300';
@@ -179,7 +179,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('arc 130v')) return 'Intel Core Ultra 5 Series 2 (Lunar Lake)';
   if (r.includes('arc 140v') || r.includes('arc 130v')) return 'Intel Core Ultra Series 2 (Lunar Lake)';
   if (r.includes('intel') && r.includes('graphics') && r.includes('arrow lake')) return 'Intel Core Ultra Series 2 Desktop (Arrow Lake)';
-  
+
   // Meteor Lake
   if (r.includes('intel') && r.includes('arc') && !r.includes('pro') && !r.includes('a7') && !r.includes('a5') && !r.includes('a3') && !r.includes('arc b')) return 'Intel Core Ultra (Meteor Lake)';
   if (r.includes('intel arc graphics')) return 'Intel Core Ultra (Meteor Lake) / Arc Discrete';
@@ -189,7 +189,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('iris xe') || r.includes('iris® xe')) return 'Intel Core 11th/12th/13th Gen / Core Ultra Series 1';
   if (r.includes('iris plus')) return 'Intel Core 10th Gen (Ice Lake) / 8th Gen (Coffee Lake)';
   if (r.includes('iris pro') || r.includes('iris graphics')) return 'Intel Core 4th-8th Gen (High-end)';
-  
+
   // UHD Graphics
   if (r.includes('uhd graphics 770')) return 'Intel Core 12th/13th/14th Gen Desktop';
   if (r.includes('uhd graphics 750')) return 'Intel Core 11th Gen Desktop';
@@ -214,7 +214,7 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('hd graphics 3000')) return 'Intel Core 2nd Gen (Sandy Bridge)';
   if (r.includes('hd graphics 2000')) return 'Intel Core 2nd Gen (Sandy Bridge)';
   if (r.includes('hd graphics')) return 'Intel Core Gen 1-3';
-  
+
   // Generic Intel
   if (r.includes('intel') && r.includes('family')) return 'Intel Integrated Graphics';
 
@@ -225,17 +225,17 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
   if (r.includes('radeon 880m')) return 'AMD Ryzen AI 9 365 (Strix Point - Radeon 880M)';
   if (r.includes('radeon 870m')) return 'AMD Ryzen AI PRO 300 Series (Kraken Point - Radeon 870M)';
   if (r.includes('radeon 890m') || r.includes('radeon 880m') || r.includes('radeon 870m')) return 'AMD Ryzen AI 300 Series (Strix Point / Kraken Point)';
-  
+
   // RDNA 3
   if (r.includes('radeon 780m')) return 'AMD Ryzen 7040/8040 Series (Phoenix/Hawk Point)';
   if (r.includes('radeon 760m')) return 'AMD Ryzen 7040/8040 Series';
   if (r.includes('radeon 740m')) return 'AMD Ryzen 7040 Series';
-  
+
   // RDNA 2
   if (r.includes('radeon 680m')) return 'AMD Ryzen 6000 Series (Rembrandt)';
   if (r.includes('radeon 660m')) return 'AMD Ryzen 6000 Series';
   if (r.includes('radeon 610m')) return 'AMD Ryzen 7020 Series / Athlon';
-  
+
   // Vega (Older)
   if (r.includes('radeon vega 11')) return 'AMD Ryzen 5 2400G / 3400G';
   if (r.includes('radeon vega 10')) return 'AMD Ryzen 7 2700U / 3700U / 3750H';
@@ -286,4 +286,3 @@ export const estimateCpuFromGpu = (renderer: string): string | null => {
 
   return null;
 };
-

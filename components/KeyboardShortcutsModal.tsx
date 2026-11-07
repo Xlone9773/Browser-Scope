@@ -71,7 +71,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ 
                 <span className="w-1.5 h-3.5 bg-indigo-500 rounded-full" />
                 {category.title}
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {category.items.map((item, idx) => (
                   <div
@@ -86,7 +86,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ 
                         {item.description}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center gap-1.5 shrink-0 ml-4">
                       {item.keys.map((key, keyIdx) => (
                         <React.Fragment key={keyIdx}>

@@ -1,17 +1,17 @@
 // src/components/canvas-poisoning/AllTab.tsx
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { 
-  ShieldAlert, 
-  RefreshCw, 
-  Activity, 
-  Tv, 
-  Type, 
-  Video, 
-  Cpu, 
-  CheckCircle, 
-  AlertTriangle, 
-  Play, 
+import {
+  ShieldAlert,
+  RefreshCw,
+  Activity,
+  Tv,
+  Type,
+  Video,
+  Cpu,
+  CheckCircle,
+  AlertTriangle,
+  Play,
   Terminal,
   ArrowRight,
   Search,
@@ -22,11 +22,11 @@ import {
 import { motion } from 'motion/react';
 import { Button } from '../ui/Button';
 import { PoisoningTranslations } from './types';
-import { 
-  runGeometryDiagnostic, 
-  runFontDiagnostic, 
-  runMediaDiagnostic, 
-  runRenderAudioDiagnostic, 
+import {
+  runGeometryDiagnostic,
+  runFontDiagnostic,
+  runMediaDiagnostic,
+  runRenderAudioDiagnostic,
   runHardwareDiagnostic,
   runGeolocationDiagnostic
 } from './diagnostics';
@@ -283,7 +283,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
         desc: t.tab_render_audio || 'Render & Audio',
         logs: renderAudioLogs,
         summary: renderAudioResult.status === 'poisoned'
-          ? (t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).') 
+          ? (t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).')
           : (t.clean_log || '✅ High-precision rendering is perfectly stable, consistent, and unaltered.')
       },
       fonts: {
@@ -341,23 +341,23 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
     if (!results) return { level: 'NONE', color: 'text-green-600 dark:text-green-400', label: t.status_clean_env || 'Clean Environment' };
     const poisonedCount = Object.values(results).filter(r => r.status === 'poisoned').length;
     if (poisonedCount === 0) {
-      return { 
-        level: 'NONE', 
-        color: 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900', 
-        label: t.fonts_stable || '✅ Clean Environment' 
+      return {
+        level: 'NONE',
+        color: 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900',
+        label: t.fonts_stable || '✅ Clean Environment'
       };
     }
     if (poisonedCount <= 2) {
-      return { 
-        level: 'MEDIUM', 
-        color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900', 
-        label: t.shield_medium || '🛡️ Privacy Protection Active' 
+      return {
+        level: 'MEDIUM',
+        color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900',
+        label: t.shield_medium || '🛡️ Privacy Protection Active'
       };
     }
-    return { 
-      level: 'HIGH', 
-      color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900', 
-      label: t.shield_high || '🚀 Anti-Fingerprint Shield Active' 
+    return {
+      level: 'HIGH',
+      color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900',
+      label: t.shield_high || '🚀 Anti-Fingerprint Shield Active'
     };
   };
 
@@ -409,7 +409,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
 
       {/* IDLE VIEW */}
       {status === 'idle' && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
@@ -422,7 +422,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
             { id: 'hardware', icon: <Cpu size={20} className="text-blue-500" />, title: t.tab_hardware || 'Hardware Config' },
             { id: 'geolocation', icon: <MapPin size={20} className="text-indigo-500" />, title: t.tab_geolocation || 'Geolocation' }
           ].map((m, index) => (
-            <motion.div 
+            <motion.div
               key={m.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -468,7 +468,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
             </div>
             {/* Progress Bar */}
             <div className="w-full bg-slate-100 dark:bg-slate-700 h-3 rounded-full overflow-hidden relative">
-              <motion.div 
+              <motion.div
                 className="bg-indigo-600 dark:bg-indigo-500 h-full rounded-full"
                 animate={{ width: `${globalProgress}%` }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
@@ -488,18 +488,18 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-500"></span>
               </span>
             </div>
-            <div 
+            <div
               ref={logContainerRef}
               className="p-4 font-mono text-[11px] overflow-y-auto space-y-2 flex-1 scrollbar-thin scrollbar-thumb-slate-800 select-all"
             >
               {runningLogs.map((log, index) => (
                 <div key={index} className={`whitespace-pre-wrap leading-relaxed border-l-2 pl-2 ${
-                  log.includes('❌') 
-                    ? 'text-rose-400 border-rose-500/50' 
-                    : log.includes('✅') 
-                    ? 'text-emerald-400 border-emerald-500/50' 
-                    : log.includes('⚠️') 
-                    ? 'text-amber-400 border-amber-500/50' 
+                  log.includes('❌')
+                    ? 'text-rose-400 border-rose-500/50'
+                    : log.includes('✅')
+                    ? 'text-emerald-400 border-emerald-500/50'
+                    : log.includes('⚠️')
+                    ? 'text-amber-400 border-amber-500/50'
                     : 'text-slate-300 border-slate-800'
                 }`}>
                   {log}
@@ -512,7 +512,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
 
       {/* COMPLETED VIEW - INTERACTIVE BENTO REPORT */}
       {status === 'completed' && results && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
@@ -558,8 +558,8 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
                     transition={{ delay: idx * 0.05 }}
                     onClick={() => setSelectedResultModule(isSelected ? null : (key as keyof AllResults))}
                     className={`p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between shadow-sm relative overflow-hidden select-none group ${
-                      isSelected 
-                        ? 'border-indigo-600 bg-indigo-50/20 dark:border-indigo-400 dark:bg-indigo-950/10 scale-[1.01]' 
+                      isSelected
+                        ? 'border-indigo-600 bg-indigo-50/20 dark:border-indigo-400 dark:bg-indigo-950/10 scale-[1.01]'
                         : 'border-slate-100 bg-white dark:border-slate-700/50 dark:bg-slate-800 hover:border-indigo-300 hover:translate-x-1 dark:hover:border-indigo-800'
                     }`}
                   >
@@ -570,8 +570,8 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
 
                     <div className="flex items-center gap-4 z-10">
                       <div className={`p-3 rounded-xl transition-all ${
-                        isPoisoned 
-                          ? 'bg-rose-50 text-rose-500 dark:bg-rose-950/20 dark:text-rose-400' 
+                        isPoisoned
+                          ? 'bg-rose-50 text-rose-500 dark:bg-rose-950/20 dark:text-rose-400'
                           : item.status === 'unknown'
                           ? 'bg-amber-50 text-amber-500 dark:bg-amber-950/20 dark:text-amber-400'
                           : 'bg-emerald-50 text-emerald-500 dark:bg-emerald-950/20 dark:text-emerald-400'
@@ -662,7 +662,7 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
                         className="bg-transparent border-none outline-none focus:ring-0 text-xs font-mono text-slate-300 w-full placeholder-slate-600"
                       />
                       {logSearchQuery && (
-                        <button 
+                        <button
                           onClick={() => setLogSearchQuery('')}
                           className="text-[10px] bg-slate-800 hover:bg-slate-700 px-1.5 py-0.5 rounded text-slate-400 hover:text-white"
                         >
@@ -676,15 +676,15 @@ export const AllTab: React.FC<AllTabProps> = React.memo(({ t }) => {
                       {results[selectedResultModule].logs
                         .filter(log => log.toLowerCase().includes(logSearchQuery.toLowerCase()))
                         .map((log, index) => (
-                          <div 
-                            key={index} 
+                          <div
+                            key={index}
                             className={`whitespace-pre-wrap leading-relaxed border-l-2 pl-2 ${
-                              log.includes('❌') 
-                                ? 'text-rose-400 border-rose-500/50' 
-                                : log.includes('✅') 
-                                ? 'text-emerald-400 border-emerald-500/50' 
-                                : log.includes('⚠️') 
-                                ? 'text-amber-400 border-amber-500/50' 
+                              log.includes('❌')
+                                ? 'text-rose-400 border-rose-500/50'
+                                : log.includes('✅')
+                                ? 'text-emerald-400 border-emerald-500/50'
+                                : log.includes('⚠️')
+                                ? 'text-amber-400 border-amber-500/50'
                                 : 'text-slate-300 border-slate-800'
                             }`}
                           >

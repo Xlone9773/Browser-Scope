@@ -41,8 +41,8 @@ function lazyWithRetry<T extends React.ComponentType<React.ComponentProps<T>>>(
           <p className="text-sm font-medium text-red-600 dark:text-red-400">
             Failed to load this module.
           </p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-2 text-xs font-semibold px-3 py-1 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 rounded-lg transition-colors"
           >
             Reload Page

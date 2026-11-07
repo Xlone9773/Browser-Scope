@@ -43,7 +43,7 @@ describe('Production LoggerStore Integration Tests', () => {
     it('should capture console outputs with unique IDs and accurate timestamps', () => {
       loggerStore.addConsole('output', 'Standard log message');
       expect(loggerStore.consoleHistory).toHaveLength(1);
-      
+
       const entry = loggerStore.consoleHistory[0];
       expect(entry.type).toBe('output');
       expect(entry.content).toBe('Standard log message');
@@ -55,7 +55,7 @@ describe('Production LoggerStore Integration Tests', () => {
     it('should normalize warning and information log levels into the "output" class', () => {
       loggerStore.addConsole('warn', 'A minor warning alert');
       loggerStore.addConsole('info', 'Some informative feedback');
-      
+
       expect(loggerStore.consoleHistory).toHaveLength(2);
       expect(loggerStore.consoleHistory[0].type).toBe('output');
       expect(loggerStore.consoleHistory[1].type).toBe('output');
@@ -64,7 +64,7 @@ describe('Production LoggerStore Integration Tests', () => {
     it('should preserve "error" and "input" types uniquely', () => {
       loggerStore.addConsole('error', 'Unhandled exception');
       loggerStore.addConsole('input', 'user_action_click');
-      
+
       expect(loggerStore.consoleHistory).toHaveLength(2);
       expect(loggerStore.consoleHistory[0].type).toBe('error');
       expect(loggerStore.consoleHistory[1].type).toBe('input');

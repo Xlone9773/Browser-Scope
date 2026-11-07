@@ -42,12 +42,12 @@ export const DisplayCard: React.FC<DisplayCardProps> = React.memo(({ data, scree
               <InfoItem label={t.labels.hdr} value={trVal(data.hdr)} />
               <InfoItem label={t.labels.display_mode} value={data.displayMode} />
               <InfoItem label={t.labels.dark_mode} value={trVal(data.darkMode)} />
-              
+
               <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50">
-                  <Button 
-                      variant="secondary" 
-                      size="xs" 
-                      onClick={() => window.dispatchEvent(new CustomEvent('open-display-tools'))} 
+                  <Button
+                      variant="secondary"
+                      size="xs"
+                      onClick={() => window.dispatchEvent(new CustomEvent('open-display-tools'))}
                       fullWidth
                       leftIcon={<Monitor size={14} />}
                   >

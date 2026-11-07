@@ -14,7 +14,7 @@ interface NetworkCardProps {
 }
 
 export const NetworkCard: React.FC<NetworkCardProps> = React.memo(({ data, t, simpleMode, onOpenSpeedTest }) => {
-  
+
   const trVal = (val: string | boolean | undefined | null) => {
     if (val === true) return t.values.supported;
     if (val === false) return t.values.not_supported;
@@ -32,7 +32,7 @@ export const NetworkCard: React.FC<NetworkCardProps> = React.memo(({ data, t, si
                 <InfoItem label={t.labels.downlink_max} value={data.downlinkMax} />
                 <InfoItem label={t.labels.rtt} value={data.rtt} />
                 <InfoItem label={t.labels.save_data} value={trVal(data.saveData)} />
-                
+
                 <div className="pt-2 mt-2 border-t border-slate-50 dark:border-slate-700/50 flex flex-col gap-2">
                     <div className="grid grid-cols-2 gap-2">
                         {onOpenSpeedTest && (
@@ -40,19 +40,19 @@ export const NetworkCard: React.FC<NetworkCardProps> = React.memo(({ data, t, si
                                 {t.actions.open_speedtest}
                             </Button>
                         )}
-                        <Button 
-                            variant="secondary" 
-                            size="xs" 
-                            onClick={() => window.dispatchEvent(new CustomEvent('open-heatmap'))} 
+                        <Button
+                            variant="secondary"
+                            size="xs"
+                            onClick={() => window.dispatchEvent(new CustomEvent('open-heatmap'))}
                             leftIcon={<Globe size={14} />}
                         >
                             {t.actions.open_heatmap}
                         </Button>
                     </div>
-                    <Button 
-                        variant="secondary" 
-                        size="xs" 
-                        onClick={() => window.dispatchEvent(new CustomEvent('open-network-tools'))} 
+                    <Button
+                        variant="secondary"
+                        size="xs"
+                        onClick={() => window.dispatchEvent(new CustomEvent('open-network-tools'))}
                         fullWidth
                         leftIcon={<Wifi size={14} />}
                     >

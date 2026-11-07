@@ -192,7 +192,7 @@ export function useCardIndex(browserData: BrowserData | null, t: Translation) {
             t.labels?.os,
             "user agent ua client hints browser headers platform info agent client useragent 代理 浏览器标识 客户端提示 头部 系统 平台 版本"
         ]);
-        
+
         // Group: PWA and Features
         add('pwa', t.groups?.advanced, t.sections?.pwa, [
             browserData.system?.isPwaInstalled,

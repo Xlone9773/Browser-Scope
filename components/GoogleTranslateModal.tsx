@@ -88,10 +88,10 @@ export const GoogleTranslateModal: React.FC<GoogleTranslateModalProps> = ({
       selectEl.value = "";
       selectEl.dispatchEvent(new Event("change"));
     }
-    
+
     // Clear cookies
     clearGoogleTranslateCookie();
-    
+
     window.location.reload();
   };
 

@@ -25,16 +25,16 @@ describe("AppNotification UI component tests", () => {
   it("should display action button if action prop is provided and trigger callback", () => {
     const handleAction = vi.fn();
     render(
-      <AppNotification 
-        type="info" 
-        message="Msg" 
-        action={{ label: "Do Something", onClick: handleAction }} 
+      <AppNotification
+        type="info"
+        message="Msg"
+        action={{ label: "Do Something", onClick: handleAction }}
       />
     );
-    
+
     const actionBtn = screen.getByText("Do Something");
     expect(actionBtn).toBeInTheDocument();
-    
+
     fireEvent.click(actionBtn);
     expect(handleAction).toHaveBeenCalledTimes(1);
   });
@@ -45,12 +45,12 @@ describe("AppNotification UI component tests", () => {
     const { container } = render(
       <AppNotification type="info" message="Msg" onClose={handleClose} />
     );
-    
+
     // Find button containing an svg element (the lucide icon) with no text
     const buttons = container.querySelectorAll("button");
     const closeBtn = Array.from(buttons).find(btn => btn.innerHTML.includes("<svg"));
     expect(closeBtn).toBeInTheDocument();
-    
+
     if (closeBtn) {
       fireEvent.click(closeBtn);
     }

@@ -547,4 +547,3 @@ export const StorageBenchmarkModal: React.FC<StorageBenchmarkModalProps> = ({ on
     </Modal>
   );
 };
-

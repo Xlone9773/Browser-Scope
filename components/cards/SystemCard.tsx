@@ -27,16 +27,16 @@ export const SystemCard: React.FC<SystemCardProps> = React.memo(({ data, t, simp
   return (
     <InfoCard title={t.sections.system} icon={Smartphone}>
       <InfoItem label={t.labels.os} value={data.os} />
-      
+
       {/* Platform / Bitness from Hints if available */}
       {data.clientHints && data.clientHints.platformVersion ? (
           <InfoItem label={t.labels.platform_ver} value={data.clientHints.platformVersion} subValue={data.clientHints.bitness ? `${data.clientHints.bitness}-bit` : undefined} />
       ) : (
           <InfoItem label={t.labels.platform} value={data.platform} />
       )}
-      
+
       <InfoItem label={t.labels.browser} value={`${data.browserName} ${data.browserVersion}`} />
-      
+
       {/* Specific Client Hints */}
       {data.clientHints && !simpleMode && (
           <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 my-1 border border-slate-100 dark:border-slate-700/50">

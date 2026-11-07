@@ -22,10 +22,10 @@ export interface SelectProps {
     size?: 'sm' | 'md';
 }
 
-export const Select: React.FC<SelectProps> = ({ 
-    value, 
-    options, 
-    onChange, 
+export const Select: React.FC<SelectProps> = ({
+    value,
+    options,
+    onChange,
     color = 'indigo',
     disabled = false,
     className = '',
@@ -160,7 +160,7 @@ export const Select: React.FC<SelectProps> = ({
         }, 50);
 
         window.addEventListener('resize', handleResize);
-        window.addEventListener('scroll', handleScroll, true); 
+        window.addEventListener('scroll', handleScroll, true);
 
         return () => {
             active = false;
@@ -174,45 +174,45 @@ export const Select: React.FC<SelectProps> = ({
 
     // Dynamic color maps
     const colorStyles = {
-        indigo: { 
-            active: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300', 
-            ring: 'focus:ring-indigo-500/50' 
+        indigo: {
+            active: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300',
+            ring: 'focus:ring-indigo-500/50'
         },
-        purple: { 
-            active: 'bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300', 
-            ring: 'focus:ring-purple-500/50' 
+        purple: {
+            active: 'bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300',
+            ring: 'focus:ring-purple-500/50'
         },
-        blue: { 
-            active: 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300', 
-            ring: 'focus:ring-blue-500/50' 
+        blue: {
+            active: 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300',
+            ring: 'focus:ring-blue-500/50'
         },
-        emerald: { 
-            active: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300', 
-            ring: 'focus:ring-emerald-500/50' 
+        emerald: {
+            active: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300',
+            ring: 'focus:ring-emerald-500/50'
         },
-        rose: { 
-            active: 'bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300', 
-            ring: 'focus:ring-rose-500/50' 
+        rose: {
+            active: 'bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300',
+            ring: 'focus:ring-rose-500/50'
         },
-        amber: { 
-            active: 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300', 
-            ring: 'focus:ring-amber-500/50' 
+        amber: {
+            active: 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300',
+            ring: 'focus:ring-amber-500/50'
         },
-        violet: { 
-            active: 'bg-violet-50 text-violet-600 dark:bg-violet-900/30 dark:text-violet-300', 
-            ring: 'focus:ring-violet-500/50' 
+        violet: {
+            active: 'bg-violet-50 text-violet-600 dark:bg-violet-900/30 dark:text-violet-300',
+            ring: 'focus:ring-violet-500/50'
         },
-        sky: { 
-            active: 'bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-300', 
-            ring: 'focus:ring-sky-500/50' 
+        sky: {
+            active: 'bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-300',
+            ring: 'focus:ring-sky-500/50'
         },
-        ice: { 
-            active: 'bg-blue-50/70 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300', 
-            ring: 'focus:ring-blue-400/50' 
+        ice: {
+            active: 'bg-blue-50/70 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300',
+            ring: 'focus:ring-blue-400/50'
         },
-        cherry: { 
-            active: 'bg-rose-50/70 text-rose-500 dark:bg-rose-900/20 dark:text-rose-300', 
-            ring: 'focus:ring-rose-400/50' 
+        cherry: {
+            active: 'bg-rose-50/70 text-rose-500 dark:bg-rose-900/20 dark:text-rose-300',
+            ring: 'focus:ring-rose-400/50'
         }
     };
 
@@ -248,7 +248,7 @@ export const Select: React.FC<SelectProps> = ({
             </button>
 
             {isOpen ? createPortal(
-                <div 
+                <div
                     id="select-portal-container"
                     className={`
                         fixed z-[9999] py-1.5
@@ -281,8 +281,8 @@ export const Select: React.FC<SelectProps> = ({
                                         ${sizeStyles[size]}
                                         ${isDisabled
                                             ? 'opacity-40 cursor-not-allowed text-slate-400 dark:text-slate-500 bg-transparent'
-                                            : isSelected 
-                                                ? currentStyle.active + ' font-medium' 
+                                            : isSelected
+                                                ? currentStyle.active + ' font-medium'
                                                 : `text-slate-700 dark:text-slate-300 hover:bg-slate-50/80 dark:hover:bg-slate-700/80 ${isFocused ? 'bg-slate-50/80 dark:bg-slate-700/80' : ''}`}
                                     `}
                                 >

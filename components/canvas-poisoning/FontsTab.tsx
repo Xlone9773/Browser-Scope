@@ -90,9 +90,9 @@ export const FontsTab: React.FC<FontsTabProps> = React.memo(({ t }) => {
             fontStatus === 'running' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
             'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
           }`}>
-            {fontStatus === 'idle' ? t.status_idle : 
-             fontStatus === 'running' ? t.status_running : 
-             fontStatus === 'poisoned' ? t.status_poisoned : 
+            {fontStatus === 'idle' ? t.status_idle :
+             fontStatus === 'running' ? t.status_running :
+             fontStatus === 'poisoned' ? t.status_poisoned :
              t.status_clean}
           </span>
         </div>

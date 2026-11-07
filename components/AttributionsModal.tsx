@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { 
-  Search, 
-  Code, 
-  Type, 
-  ExternalLink, 
-  FileText, 
-  Check, 
+import {
+  Search,
+  Code,
+  Type,
+  ExternalLink,
+  FileText,
+  Check,
   BookOpen,
   XCircle,
   HelpCircle,
@@ -65,12 +65,12 @@ export const AttributionsModal: React.FC<AttributionsModalProps> = ({ onClose, t
       if (activeTab !== 'all' && item.type !== activeTab) {
         return false;
       }
-      
+
       // Search query filter
       if (!searchQuery.trim()) {
         return true;
       }
-      
+
       const query = searchQuery.toLowerCase().trim();
       const roleText = getLocalizedRole(item.roleKey).toLowerCase();
       return (
@@ -102,7 +102,7 @@ export const AttributionsModal: React.FC<AttributionsModalProps> = ({ onClose, t
           <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
             {t.subtitle}
           </p>
-          
+
           <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             {/* Tab Toggles */}
             <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-950/80 rounded-xl border border-slate-200/40 dark:border-slate-800/40 self-start">
@@ -169,7 +169,7 @@ export const AttributionsModal: React.FC<AttributionsModalProps> = ({ onClose, t
                 className="w-full pl-9 pr-8 py-1.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-700 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 transition-shadow"
               />
               {searchQuery && (
-                <button 
+                <button
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                 >
@@ -198,7 +198,7 @@ export const AttributionsModal: React.FC<AttributionsModalProps> = ({ onClose, t
                 const isFont = item.type === 'font';
 
                 return (
-                  <Card 
+                  <Card
                     key={item.id}
                     noPadding
                     className="transition-all duration-200 hover:shadow-md bg-white dark:bg-slate-800/90"
@@ -213,8 +213,8 @@ export const AttributionsModal: React.FC<AttributionsModalProps> = ({ onClose, t
                           <Badge variant="neutral" className="font-mono">
                             v{item.version}
                           </Badge>
-                          <Badge 
-                            variant={isFont ? 'purple' : 'indigo'} 
+                          <Badge
+                            variant={isFont ? 'purple' : 'indigo'}
                             icon={isFont ? <Type size={10} /> : <Code size={10} />}
                           >
                             {isFont ? t.tab_fonts : t.tab_libraries}
@@ -238,10 +238,10 @@ export const AttributionsModal: React.FC<AttributionsModalProps> = ({ onClose, t
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <Button 
-                            variant="secondary" 
-                            size="sm" 
-                            className="p-2" 
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="p-2"
                             title={t.visit_site}
                           >
                             <ExternalLink size={14} />

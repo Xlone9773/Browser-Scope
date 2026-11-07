@@ -29,7 +29,7 @@ export const TouchTab: React.FC<TouchTabProps> = ({ t }) => {
 
         const draw = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             // Instruction bg
             ctx.font = "14px Inter";
             ctx.fillStyle = "#64748b";
@@ -47,10 +47,10 @@ export const TouchTab: React.FC<TouchTabProps> = ({ t }) => {
                 ctx.lineWidth = 3;
                 ctx.stroke();
             });
-            
+
             requestAnimationFrame(draw);
         };
-        
+
         const updateTouch = (e: TouchEvent) => {
             e.preventDefault();
             touches.clear();

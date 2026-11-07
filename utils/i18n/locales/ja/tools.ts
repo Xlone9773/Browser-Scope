@@ -649,7 +649,7 @@ export const tools = {
     geo_positions_stable: "✅ 連続する位置情報の読み取り値は宣言された精度と一致しており、合成ノイズパターンは検出されませんでした。",
     geo_accuracy_static: "ℹ️ すべてのサンプルで宣言された精度が同一です — キャッシュされた、または合成されたソースとして考えられますが、単独では決定的ではありません。",
     geo_stable: "✅ 位置情報 API および位置情報の挙動は安定しており、汚染や Hook は検出されませんでした。",
-    
+
     // New cross-session / fixed-seed / CSP keys
     status_unknown: "不明",
     canvas_persistent_mismatch: "❌ Canvas 永続シード汚染を検出: セッション内の Canvas 描画は安定していますが、セキュア保管庫に保存された履歴基準と異なるため、セッションごとまたはオリジンごとの固定シードのノイズ注入が疑われます（Brave や Firefox RFP などに典型的）。",

@@ -78,11 +78,11 @@ export const FeatureGrid: React.FC<{ items: { name: string; supported: boolean; 
   return (
     <div className="grid grid-cols-2 gap-3">
       {items.map((item) => (
-        <div 
-          key={item.name} 
+        <div
+          key={item.name}
           className={`p-3 rounded-lg border ${
-            item.supported 
-              ? 'bg-green-50/50 border-green-100/50 dark:bg-green-900/10 dark:border-green-800/30' 
+            item.supported
+              ? 'bg-green-50/50 border-green-100/50 dark:bg-green-900/10 dark:border-green-800/30'
               : 'bg-slate-50 border-slate-100 dark:bg-slate-800/50 dark:border-slate-700'
           } flex flex-col gap-1`}
         >

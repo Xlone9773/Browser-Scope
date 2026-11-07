@@ -6,7 +6,7 @@ export const dashboard = {
   footer: "BrowserScope - 瀏覽器能力檢測工具",
   refresh: "重新檢測",
 
-  
+
   browserCard: {
     title: "瀏覽器身分",
     subtitle: "基於特徵探測目前可能正在使用的瀏覽器",
@@ -32,7 +32,7 @@ export const dashboard = {
     bot: "可疑的腳本或自動化",
     tampering: "指紋篡改",
     inconsistency: "硬件/系統不匹配",
-    
+
   notifications: {
     outdated: {
       title: "偵測到過時瀏覽器",
@@ -99,7 +99,7 @@ export const dashboard = {
     advanced: "高級能力與特色介面",
     browser: "瀏覽器"
   },
-  
+
   quickSummary: {
     allClear: "未檢測到關鍵風險",
     allClearDesc: "您的瀏覽器環境看起來是標準的且安全的。",
@@ -229,7 +229,7 @@ export const dashboard = {
     bodyPlaceholder: "通知內容...",
     btnLabelPlaceholder: "操作按鈕名稱 (可選)",
     sendTest: "發送測試",
-    
+
     iconUrlPlaceholder: "圖示 URL (可選)",
     addAction: "新增操作按鈕",
     actionTitlePlaceholder: "按鈕標題",

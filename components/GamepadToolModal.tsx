@@ -92,7 +92,7 @@ export const GamepadToolModal: React.FC<GamepadToolModalProps> = ({ onClose, t }
                             <div className="space-y-4">
                                 <div className="text-xs font-bold text-slate-400 text-center uppercase tracking-wider">Left Stick</div>
                                 <div className="w-32 h-32 mx-auto bg-slate-100 dark:bg-slate-700 rounded-full relative border border-slate-200 dark:border-slate-600 shadow-inner">
-                                    <div 
+                                    <div
                                         className="w-8 h-8 bg-indigo-500 rounded-full absolute shadow-lg transition-transform duration-75"
                                         style={{
                                             top: '50%', left: '50%',
@@ -108,7 +108,7 @@ export const GamepadToolModal: React.FC<GamepadToolModalProps> = ({ onClose, t }
                             <div className="space-y-4">
                                 <div className="text-xs font-bold text-slate-400 text-center uppercase tracking-wider">Right Stick</div>
                                 <div className="w-32 h-32 mx-auto bg-slate-100 dark:bg-slate-700 rounded-full relative border border-slate-200 dark:border-slate-600 shadow-inner">
-                                    <div 
+                                    <div
                                         className="w-8 h-8 bg-indigo-500 rounded-full absolute shadow-lg transition-transform duration-75"
                                         style={{
                                             top: '50%', left: '50%',
@@ -129,4 +129,3 @@ export const GamepadToolModal: React.FC<GamepadToolModalProps> = ({ onClose, t }
     </Modal>
   );
 };
-

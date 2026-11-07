@@ -18,14 +18,14 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
   const isAbsOrientationSupported = typeof window !== 'undefined' && 'AbsoluteOrientationSensor' in window;
 
   const [permissionStatus, setPermissionStatus] = useState<'granted' | 'denied' | 'prompt'>('prompt');
-  
+
   const [accel, setAccel] = useState({ x: 0, y: 0, z: 0 });
   const prevAlphaRef = React.useRef(0);
   const displayAlphaRef = React.useRef(0);
   const [gyro, setGyro] = useState({ alpha: 0, beta: 0, gamma: 0, displayAlpha: 0 });
   const [magnet, setMagnet] = useState<{ x: number, y: number, z: number } | null>(null);
   const [lux, setLux] = useState<number | null>(null);
-  
+
   const [linearAccel, setLinearAccel] = useState<{ x: number, y: number, z: number } | null>(null);
   const [gravity, setGravity] = useState<{ x: number, y: number, z: number } | null>(null);
   const [absOrientation, setAbsOrientation] = useState<number[] | null>(null);
@@ -33,10 +33,10 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
   const handleMotion = (event: DeviceMotionEvent) => {
       if (event.accelerationIncludingGravity) {
           const { x, y, z } = event.accelerationIncludingGravity;
-          setAccel({ 
-              x: x || 0, 
-              y: y || 0, 
-              z: z || 0 
+          setAccel({
+              x: x || 0,
+              y: y || 0,
+              z: z || 0
           });
       }
   };
@@ -44,14 +44,14 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
   const handleOrientation = (event: DeviceOrientationEvent) => {
       const currentAlpha = event.alpha || 0;
       let delta = currentAlpha - prevAlphaRef.current;
-      
+
       // Calculate continuous rotation
       if (delta > 180) {
           delta -= 360;
       } else if (delta < -180) {
           delta += 360;
       }
-      
+
       displayAlphaRef.current += delta;
       prevAlphaRef.current = currentAlpha;
 
@@ -83,7 +83,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
           } catch (error: unknown) {
               console.debug("Magnetometer init error", error);
           }
-      } 
+      }
 
       // Ambient Light Sensor
       if ('AmbientLightSensor' in window && window.AmbientLightSensor) {
@@ -98,7 +98,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
               console.debug("AmbientLightSensor init error", error);
           }
       }
-      
+
       // Linear Acceleration
       if ('LinearAccelerationSensor' in window && window.LinearAccelerationSensor) {
           try {
@@ -137,7 +137,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
               console.debug("AbsoluteOrientationSensor init error", e);
           }
       }
-      
+
       return () => {
           if (magSensor) magSensor.stop();
           if (lightSensor) lightSensor.stop();
@@ -149,11 +149,11 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
 
   const requestPermission = async () => {
       // iOS 13+ requires permission for these events
-      
+
             // @ts-expect-error fixed implicitly typed external libraries
             if (typeof DeviceMotionEvent.requestPermission === 'function') {
           try {
-              
+
                             // @ts-expect-error fixed implicitly typed external libraries
                             const response = await DeviceMotionEvent.requestPermission();
               if (response === 'granted') {
@@ -176,7 +176,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
 
   // Try to start immediately on non-iOS if possible
   useEffect(() => {
-      
+
             // @ts-expect-error fixed implicitly typed external libraries
             if (typeof DeviceMotionEvent.requestPermission !== 'function') {
           setTimeout(() => {
@@ -185,7 +185,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
           window.addEventListener('devicemotion', handleMotion);
           window.addEventListener('deviceorientation', handleOrientation);
       }
-      
+
       return () => {
           window.removeEventListener('devicemotion', handleMotion);
           window.removeEventListener('deviceorientation', handleOrientation);
@@ -203,12 +203,12 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
             <>
                 {/* iOS Permission Button */}
                 {permissionStatus === 'prompt' && (
-                    
+
                                         // @ts-expect-error fixed implicitly typed external libraries
                                         typeof DeviceMotionEvent.requestPermission === 'function' && (
                         <div className="mb-6 text-center">
                             <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">{t.sensor_permission_desc}</p>
-                            <button 
+                            <button
                                 onClick={requestPermission}
                                 className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
                             >
@@ -227,7 +227,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                             </div>
                             <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.accelerometer}</h3>
                         </div>
-                        
+
                         <div className="space-y-4">
                             <div className="space-y-1">
                                 <div className="flex justify-between text-xs text-slate-500">
@@ -235,8 +235,8 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                     <span className="font-mono">{formatNumber(accel.x, 2, 2)} m/s²</span>
                                 </div>
                                 <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                                    <div 
-                                        className="h-full bg-blue-500 transition-all duration-75" 
+                                    <div
+                                        className="h-full bg-blue-500 transition-all duration-75"
                                         style={{ width: `${Math.min(Math.abs(accel.x) * 5, 100)}%` }}
                                     />
                                 </div>
@@ -247,8 +247,8 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                     <span className="font-mono">{formatNumber(accel.y, 2, 2)} m/s²</span>
                                 </div>
                                 <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                                    <div 
-                                        className="h-full bg-blue-500 transition-all duration-75" 
+                                    <div
+                                        className="h-full bg-blue-500 transition-all duration-75"
                                         style={{ width: `${Math.min(Math.abs(accel.y) * 5, 100)}%` }}
                                     />
                                 </div>
@@ -259,8 +259,8 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                     <span className="font-mono">{formatNumber(accel.z, 2, 2)} m/s²</span>
                                 </div>
                                 <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                                    <div 
-                                        className="h-full bg-blue-500 transition-all duration-75" 
+                                    <div
+                                        className="h-full bg-blue-500 transition-all duration-75"
                                         style={{ width: `${Math.min(Math.abs(accel.z) * 5, 100)}%` }}
                                     />
                                 </div>
@@ -291,10 +291,10 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                 <div className="font-mono font-bold text-slate-700 dark:text-slate-300 text-sm">{formatNumber(gyro.gamma, 0)}°</div>
                             </div>
                         </div>
-                        
+
                         {/* Visual compass needle */}
                         <div className="mt-6 flex justify-center">
-                            <div 
+                            <div
                                 className="w-16 h-16 rounded-full border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center transition-transform duration-200 ease-out"
                                 style={{ transform: `rotate(${gyro.displayAlpha}deg)` }}
                             >
@@ -314,7 +314,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                 <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.magnetometer}</h3>
                             </div>
                         </div>
-                        
+
                         {magnet ? (
                                 <div className="grid grid-cols-3 gap-2 h-10 items-center">
                                 <div className="text-center">
@@ -356,7 +356,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                 <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.ambient_light}</h3>
                             </div>
                         </div>
-                        
+
                         {lux !== null ? (
                             <div className="flex flex-col items-center justify-center h-[75px]">
                                 <div className="text-3xl font-mono font-bold text-slate-800 dark:text-slate-100 mb-2 leading-none">
@@ -364,7 +364,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                 </div>
                                 {/* Visual Bar for Light Level (Logarithmic scale approx 0 to 50000) */}
                                 <div className="w-full h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden relative mt-1">
-                                    <div 
+                                    <div
                                         className="absolute top-0 left-0 h-full bg-gradient-to-r from-slate-700 to-amber-400 dark:from-slate-600 dark:to-amber-300 transition-all duration-300"
                                         style={{ width: `${Math.min((Math.log10(lux + 1) / 4.7) * 100, 100)}%` }}
                                     />
@@ -400,7 +400,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                             </div>
                             <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.linear_accel}</h3>
                         </div>
-                        
+
                         {linearAccel ? (
                             <div className="space-y-4 h-[116px]">
                                 <div className="space-y-1">
@@ -409,8 +409,8 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                         <span className="font-mono">{formatNumber(linearAccel.x, 2, 2)} m/s²</span>
                                     </div>
                                     <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                                        <div 
-                                            className="h-full bg-blue-500 transition-all duration-75" 
+                                        <div
+                                            className="h-full bg-blue-500 transition-all duration-75"
                                             style={{ width: `${Math.min(Math.abs(linearAccel.x) * 5, 100)}%` }}
                                         />
                                     </div>
@@ -421,8 +421,8 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                         <span className="font-mono">{formatNumber(linearAccel.y, 2, 2)} m/s²</span>
                                     </div>
                                     <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                                        <div 
-                                            className="h-full bg-blue-500 transition-all duration-75" 
+                                        <div
+                                            className="h-full bg-blue-500 transition-all duration-75"
                                             style={{ width: `${Math.min(Math.abs(linearAccel.y) * 5, 100)}%` }}
                                         />
                                     </div>
@@ -433,8 +433,8 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                         <span className="font-mono">{formatNumber(linearAccel.z, 2, 2)} m/s²</span>
                                     </div>
                                     <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                                        <div 
-                                            className="h-full bg-blue-500 transition-all duration-75" 
+                                        <div
+                                            className="h-full bg-blue-500 transition-all duration-75"
                                             style={{ width: `${Math.min(Math.abs(linearAccel.z) * 5, 100)}%` }}
                                         />
                                     </div>
@@ -469,7 +469,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                 <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.gravity}</h3>
                             </div>
                         </div>
-                        
+
                         {gravity ? (
                             <div className="grid grid-cols-3 gap-2 h-10 items-center">
                                 <div className="text-center">
@@ -511,7 +511,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                                 <h3 className="font-bold text-slate-700 dark:text-slate-200">{t.abs_orientation}</h3>
                             </div>
                         </div>
-                        
+
                         {absOrientation ? (
                             <div className="grid grid-cols-4 gap-2 h-10 items-center">
                                 <div className="text-center">
@@ -547,7 +547,7 @@ export const SensorModal: React.FC<SensorModalProps> = ({ onClose, t }) => {
                         )}
                     </div>
                 </div>
-                
+
                 <div className="mt-4 text-center text-xs text-slate-400">
                     {t.data_source_desc}
                 </div>

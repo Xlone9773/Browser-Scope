@@ -53,25 +53,25 @@ export const renderAudio = async (): Promise<Float32Array | null> => {
     const extWindow = window as unknown as ExtendedWindow;
     const AudioCtx = window.OfflineAudioContext || extWindow.webkitOfflineAudioContext;
     if (!AudioCtx) return null;
-    
-    const ctx = new AudioCtx(1, 44100 * 0.05, 44100); 
+
+    const ctx = new AudioCtx(1, 44100 * 0.05, 44100);
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    
+
     osc.type = 'sine';
     osc.frequency.setValueAtTime(440, 0);
     osc.frequency.exponentialRampToValueAtTime(880, 0.04);
-    
+
     gain.gain.setValueAtTime(1, 0);
     gain.gain.linearRampToValueAtTime(0.01, 0.04);
-    
+
     osc.connect(gain);
     gain.connect(ctx.destination);
-    
+
     osc.start(0);
     const renderedBuffer = await ctx.startRendering();
     if (!renderedBuffer) return null;
-    
+
     return renderedBuffer.getChannelData(0).slice(0, 150);
   } catch {
     return null;

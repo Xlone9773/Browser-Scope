@@ -45,11 +45,11 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
               return a.lang.localeCompare(b.lang) || a.name.localeCompare(b.name);
           });
           setVoices(vs);
-          
+
           // Extract unique langs
           const langMap = new Map<string, string>();
           vs.forEach((v: SpeechSynthesisVoice) => {
-              langMap.set(v.lang, v.lang); 
+              langMap.set(v.lang, v.lang);
           });
           const langOpts = Array.from(langMap.keys()).sort().map((l: string) => ({ id: l, label: l }));
           setLanguages([{ id: 'all', label: 'All Languages' }, ...langOpts]);
@@ -58,9 +58,9 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
       // Firefox sometimes needs a slight delay or requires getVoices to be called once to trigger onvoiceschanged
       window.speechSynthesis.getVoices();
       loadVoices();
-      
+
       window.speechSynthesis.onvoiceschanged = loadVoices;
-      
+
       return () => {
           if (window.speechSynthesis) {
               window.speechSynthesis.onvoiceschanged = null;
@@ -81,7 +81,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
           utteranceRef.current.onerror = null;
       }
       utteranceRef.current = null;
-      
+
       // Use setTimeout to prevent cancel() from squashing the next speak() call (common Safari/Chrome bug)
       setTimeout(() => {
           // Adapt text based on language language code (e.g. 'zh-CN', 'ja-JP', etc.)
@@ -101,27 +101,27 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
           } else if (voice.lang.startsWith('de')) {
               text = `Hallo, mein Name ist ${voice.name}. Dies ist ein Sprachtest.`;
           }
-          
+
           const utterance = new SpeechSynthesisUtterance(text);
           utteranceRef.current = utterance; // Prevent garbage collection
           utterance.voice = voice;
-          
+
           // Wait for start event
           utterance.onstart = () => {
               setPlayingVoiceURI(voice.voiceURI);
           };
-          
+
           utterance.onend = () => {
               setPlayingVoiceURI(null);
               utteranceRef.current = null;
           };
-          
+
           utterance.onerror = (e: SpeechSynthesisErrorEvent) => {
               console.error("SpeechSynthesis error: ", e);
               setPlayingVoiceURI(null);
               utteranceRef.current = null;
           };
-          
+
           window.speechSynthesis.speak(utterance);
       }, 50);
   };
@@ -157,7 +157,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
             <div className="p-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 grid grid-cols-1 sm:grid-cols-2 gap-4 shrink-0">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                    <input 
+                    <input
                         type="text"
                         value={searchTerm}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
@@ -165,7 +165,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
                         className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                     />
                 </div>
-                <Select 
+                <Select
                     value={selectedLang}
                     options={languages}
                     onChange={(val: unknown) => setSelectedLang(val as string)}
@@ -198,7 +198,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
                                         </span>
                                     ) : null}
                                 </div>
-                                
+
                                 <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
                                     <span className="flex items-center gap-1 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded">
                                         <Globe size={12} /> {voice.lang}
@@ -208,7 +208,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
                                     </span>
                                 </div>
 
-                                <button 
+                                <button
                                     onClick={() => playSample(voice)}
                                     className={`mt-2 w-full py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-2 ${playingVoiceURI === voice.voiceURI ? 'bg-indigo-600 text-white animate-pulse' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
                                 >
@@ -223,7 +223,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
                     </div>
                 )}
             </div>
-            
+
             <div className="p-3 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-center text-xs text-slate-400">
                 Total Voices: {voices.length}
             </div>

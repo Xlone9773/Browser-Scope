@@ -60,7 +60,7 @@ const Switch: React.FC<{ checked: boolean; onChange: (val: boolean) => void; lab
         onClick={() => !disabled && onChange(!checked)}
         disabled={disabled}
         className={`
-            relative inline-flex h-8 w-14 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent 
+            relative inline-flex h-8 w-14 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent
             transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 dark:focus:ring-offset-slate-800
             ${checked ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}
             ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
@@ -70,7 +70,7 @@ const Switch: React.FC<{ checked: boolean; onChange: (val: boolean) => void; lab
         <span
             aria-hidden="true"
             className={`
-                pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 
+                pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0
                 transition duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
                 ${checked ? 'translate-x-6' : 'translate-x-0'}
             `}
@@ -78,8 +78,8 @@ const Switch: React.FC<{ checked: boolean; onChange: (val: boolean) => void; lab
     </button>
 );
 
-export const GeneralTab: React.FC<GeneralTabProps> = ({ 
-    t, 
+export const GeneralTab: React.FC<GeneralTabProps> = ({
+    t,
     timeFormat,
     setTimeFormat,
     enableUdp,
@@ -119,7 +119,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
 
     const checkUserscriptStatus = React.useCallback(() => {
         setCheckingUserscript(true);
-        
+
         const handlePong = () => {
             setUserscriptConnected(true);
             setCheckingUserscript(false);
@@ -158,12 +158,12 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
 
     const checkUdpSupport = React.useCallback((force = false) => {
         if (!force && udpSupported !== null) return;
-        
+
         // Use timeout to prevent synchronous state update in effect
         if (force) {
             setTimeout(() => setUdpSupported(null), 0);
         }
-        
+
         fetch('/api/udp-status')
             .then(res => res.json())
             .then(data => {
@@ -228,7 +228,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
             }
         };
         reader.readAsText(file);
-        
+
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
@@ -237,7 +237,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     return (
         <div className="max-w-2xl mx-auto space-y-4">
             {/* Time Format Toggle */}
-            <div 
+            <div
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between cursor-pointer transition-colors hover:border-indigo-200 dark:hover:border-indigo-800"
                 onClick={() => setTimeFormat(timeFormat === '24' ? '12' : '24')}
             >
@@ -286,7 +286,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                                     {t.udpBypass?.checkingUdp}
                                 </p>
                             ) : null}
-                            
+
                             <div className="flex items-center gap-2 mt-2">
                                 <button
                                     onClick={() => setShowUdpDetails(!showUdpDetails)}
@@ -355,11 +355,11 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                                 <p className="text-sm text-slate-500 dark:text-slate-400 max-w-lg leading-relaxed mt-1">
                                     {t.userscriptBypass.desc}
                                 </p>
-                                
+
                                 <div className="flex items-center gap-2 mt-2">
                                     <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
-                                        userscriptConnected 
-                                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30' 
+                                        userscriptConnected
+                                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30'
                                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
                                     }`}>
                                         <span className={`w-1.5 h-1.5 rounded-full ${userscriptConnected ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
@@ -377,12 +377,12 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                                         <Download className="w-3.5 h-3.5" />
                                         {t.userscriptBypass.quickInstall}
                                     </a>
-                                    
+
                                     <button
                                         onClick={() => setShowInstallGuide(!showInstallGuide)}
                                         className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${
-                                            showInstallGuide 
-                                                ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-900 dark:text-indigo-300' 
+                                            showInstallGuide
+                                                ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-900 dark:text-indigo-300'
                                                 : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                                         }`}
                                     >
@@ -481,101 +481,101 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                                         <tbody className="divide-y divide-slate-100 dark:divide-slate-700 text-slate-500 dark:text-slate-400">
                                             <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10">
                                                 <td className="p-3 font-medium text-slate-700 dark:text-slate-300">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Routing Path" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "路由路徑" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "路由路径" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Routing Path" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "路由路徑" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "路由路径" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "ルーティング経路" : "Маршрутизация"}
                                                 </td>
                                                 <td className="p-3">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Cloud Proxy Server (decryption risk)" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "雲端代理伺服器 (潛在解密風險)" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "云端代理服务器 (潜在解密风险)" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Cloud Proxy Server (decryption risk)" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "雲端代理伺服器 (潛在解密風險)" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "云端代理服务器 (潜在解密风险)" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "クラウドプロキシサーバー (解読リスクあり)" : "Облачный прокси (риск дешифрования)"}
                                                 </td>
                                                 <td className="p-3 text-indigo-600 dark:text-indigo-400 font-medium">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Direct Local Connection (Fully Private)" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "本地真實直連 (完全私密/安全)" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "本地真实直连 (完全私密/安全)" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Direct Local Connection (Fully Private)" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "本地真實直連 (完全私密/安全)" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "本地真实直连 (完全私密/安全)" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "ローカル直接接続 (完全非公開)" : "Прямое локальное подключение (приватно)"}
                                                 </td>
                                             </tr>
                                             <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10">
                                                 <td className="p-3 font-medium text-slate-700 dark:text-slate-300">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Outbound Latency" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "傳輸延遲" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "传输延迟" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Outbound Latency" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "傳輸延遲" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "传输延迟" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "送信遅延" : "Задержка"}
                                                 </td>
                                                 <td className="p-3">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Medium-High (due to hops)" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "中等至偏高 (需伺服器中轉)" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "中等至偏高 (需服务器中转)" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Medium-High (due to hops)" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "中等至偏高 (需伺服器中轉)" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "中等至偏高 (需服务器中转)" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "中〜高 (中継ノード経由のため)" : "Средняя/Высокая (из-за узлов)"}
                                                 </td>
                                                 <td className="p-3 text-emerald-600 dark:text-emerald-400 font-medium">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Extremely Low (Direct to target)" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "極低 (與目標節點直接通訊)" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "极低 (与目标节点直接通讯)" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Extremely Low (Direct to target)" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "極低 (與目標節點直接通訊)" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "极低 (与目标节点直接通讯)" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "極低 (ターゲットに直接通信)" : "Минимальная (напрямую к цели)"}
                                                 </td>
                                             </tr>
                                             <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10">
                                                 <td className="p-3 font-medium text-slate-700 dark:text-slate-300">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Outbound IP Detected" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "檢測到出口 IP" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "检测到出口 IP" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Outbound IP Detected" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "檢測到出口 IP" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "检测到出口 IP" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "検出されるIPアドレス" : "Определяемый IP"}
                                                 </td>
                                                 <td className="p-3">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Proxy Node IP" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "雲端代理伺服器 IP" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "云端代理服务器 IP" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Proxy Node IP" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "雲端代理伺服器 IP" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "云端代理服务器 IP" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "プロキシサーバーのIP" : "IP-адрес прокси-узла"}
                                                 </td>
                                                 <td className="p-3 text-indigo-600 dark:text-indigo-400 font-medium">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Your Real Internet IP" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "您的真實寬頻/本地 IP" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "您的真实宽带/本地 IP" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Your Real Internet IP" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "您的真實寬頻/本地 IP" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "您的真实宽带/本地 IP" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "実際のプロバイダIP" : "Ваш реальный интернет IP"}
                                                 </td>
                                             </tr>
                                             <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10">
                                                 <td className="p-3 font-medium text-slate-700 dark:text-slate-300">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Concurrency & Limits" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "併發與頻率限制" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "并发与频率限制" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Concurrency & Limits" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "併發與頻率限制" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "并发与频率限制" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "同時実行制限" : "Лимиты частоты"}
                                                 </td>
                                                 <td className="p-3">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Subject to rate limiters" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "受限於伺服器防刷與流量頻控" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "受限于服务器防刷与流量频控" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Subject to rate limiters" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "受限於伺服器防刷與流量頻控" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "受限于服务器防刷与流量频控" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "サーバー側制限あり" : "Зависит от лимитов прокси"}
                                                 </td>
                                                 <td className="p-3 text-emerald-600 dark:text-emerald-400 font-medium">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Unlimited (Uncapped)" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "無任何限制" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "无任何限制" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Unlimited (Uncapped)" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "無任何限制" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "无任何限制" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "無制限" : "Без ограничений"}
                                                 </td>
                                             </tr>
                                             <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10">
                                                 <td className="p-3 font-medium text-slate-700 dark:text-slate-300">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Initial Setup" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "首次安裝配置" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "首次安装配置" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Initial Setup" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "首次安裝配置" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "首次安装配置" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "初期セットアップ" : "Начальная настройка"}
                                                 </td>
                                                 <td className="p-3">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Instant (1-click toggle)" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "免配置 (一鍵開啟)" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "免配置 (一键开启)" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Instant (1-click toggle)" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "免配置 (一鍵開啟)" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "免配置 (一键开启)" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "不要 (ワンクリック起動)" : "Мгновенно (в 1 клик)"}
                                                 </td>
                                                 <td className="p-3 text-slate-600 dark:text-slate-400">
-                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Required (1-time script install)" : 
-                                                     t.userscriptBypass.methodHeader === "特性對比" ? "需要首次配置安裝 (約1分鐘)" : 
-                                                     t.userscriptBypass.methodHeader === "特性对比" ? "需要首次配置安装 (约1分钟)" : 
+                                                    {t.userscriptBypass.methodHeader === "Feature" ? "Required (1-time script install)" :
+                                                     t.userscriptBypass.methodHeader === "特性對比" ? "需要首次配置安裝 (約1分鐘)" :
+                                                     t.userscriptBypass.methodHeader === "特性对比" ? "需要首次配置安装 (约1分钟)" :
                                                      t.userscriptBypass.methodHeader === "特性の比較" ? "必要 (スクリプト初回インストールのみ)" : "Нужна (разовый импорт скрипта)"}
                                                 </td>
                                             </tr>
@@ -587,7 +587,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     </div>
                 </div>
             ) : null}
-            
+
             {/* Application Export Settings */}
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                 <div className="flex flex-col gap-1">
@@ -598,13 +598,13 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         {t.appExportSettings?.desc || "控制仪表盘「导出」功能的格式与清晰度。"}
                     </p>
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             {t.appExportSettings?.imageScale || "图片上采样率"}
                         </label>
-                        <Select 
+                        <Select
                             value={imageExportScale || 2}
                             onChange={(value: unknown) => updateImageExportScale ? updateImageExportScale(Number(value)) : null}
                             options={[
@@ -615,12 +615,12 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                             ]}
                         />
                     </div>
-                    
+
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             {t.appExportSettings?.pdfFormat || "PDF 页面格式"}
                         </label>
-                        <Select 
+                        <Select
                             value={pdfExportFormat || 'a4'}
                             onChange={(value: unknown) => updatePdfExportFormat ? updatePdfExportFormat(value as 'a4' | 'letter' | 'legal') : null}
                             options={[
@@ -635,7 +635,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             {t.appExportSettings?.pdfFont || "PDF 导出字体"}
                         </label>
-                        <Select 
+                        <Select
                             value={pdfExportFont || 'auto'}
                             onChange={(value: unknown) => updatePdfExportFont ? updatePdfExportFont(value as 'auto' | 'helvetica' | 'times' | 'courier') : null}
                             options={[
@@ -660,23 +660,23 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                     </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                    <input 
-                        type="file" 
-                        accept="application/json" 
-                        ref={fileInputRef} 
-                        style={{ display: 'none' }} 
-                        onChange={handleImportSettings} 
+                    <input
+                        type="file"
+                        accept="application/json"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        onChange={handleImportSettings}
                     />
-                    <Button 
-                        variant="soft" 
+                    <Button
+                        variant="soft"
                         onClick={() => fileInputRef.current?.click()}
                         leftIcon={<Upload size={16} />}
                         className="font-medium"
                     >
                         {t.exportSettings?.importBtn || "Import"}
                     </Button>
-                    <Button 
-                        variant="primary" 
+                    <Button
+                        variant="primary"
                         onClick={handleExportSettings}
                         leftIcon={<Download size={16} />}
                         className="font-medium"

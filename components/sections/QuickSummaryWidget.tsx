@@ -55,7 +55,7 @@ export const QuickSummaryWidget: React.FC<QuickSummaryWidgetProps> = ({ data, t,
       descKey: 'adBlockerDesc'
     });
   }
-  
+
   if (data.system.browserName === 'Brave' || data.system.browserName.includes('Tor')) {
     flags.push({
       id: 'privacyBrowser',
@@ -128,8 +128,8 @@ export const QuickSummaryWidget: React.FC<QuickSummaryWidgetProps> = ({ data, t,
     <div className="w-full relative mb-6">
       <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
         {sortedFlags.map((flag, idx) => (
-          <div 
-            key={flag.id} 
+          <div
+            key={flag.id}
             className={`relative rounded-xl p-4 border flex items-start gap-3 transition-colors ${getColorClass(flag.type)} ${
               idx === sortedFlags.length - 1 ? 'pr-12' : ''
             }`}

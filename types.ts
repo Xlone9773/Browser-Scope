@@ -113,7 +113,7 @@ export interface BrowserData {
   };
   hardware: {
     cpuCores: number | string;
-    cpuModel?: string; 
+    cpuModel?: string;
     memory: number | string;
     gpuRenderer: string;
     gpuVendor: string;
@@ -124,7 +124,7 @@ export interface BrowserData {
     dischargingTime: string;
     touchPoints: number;
     audioSampleRate: string;
-    screenExtended: boolean; 
+    screenExtended: boolean;
     gamepads: number;
     gpuPrecision?: {
         vertexHigh: string;
@@ -147,7 +147,7 @@ export interface BrowserData {
       pixelRatio: number;
       colorDepth: number;
       orientation: string;
-      orientationAngle: string; 
+      orientationAngle: string;
       darkMode: boolean;
       colorGamut: string;
       hdr: boolean;
@@ -158,33 +158,33 @@ export interface BrowserData {
       effectiveType: string;
       type: string;
       downlink: string;
-      downlinkMax: string; 
+      downlinkMax: string;
       rtt: string;
       saveData: boolean;
-      webrtcIp: string; 
+      webrtcIp: string;
   };
-  security: { 
+  security: {
       isBot: boolean;
       gpcEnabled: boolean;
       pdfViewer: boolean;
       secureContext: boolean;
-      adBlockEnabled: boolean; 
+      adBlockEnabled: boolean;
   };
-  ai: { 
+  ai: {
       wasmSupport: boolean;
       wasmSimd: boolean;
       webnn: boolean;
       windowAi: boolean;
       webgpuCompute: boolean;
-      readiness: AiReadiness; 
+      readiness: AiReadiness;
   };
   media: {
       video: CodecInfo[];
       audio: CodecInfo[];
-      images: CodecInfo[]; 
-      drm: DrmSystem[]; 
+      images: CodecInfo[];
+      drm: DrmSystem[];
       speechVoices: number;
-      audioChannels: number | string; 
+      audioChannels: number | string;
   };
   storage: {
       quota: string;
@@ -268,7 +268,7 @@ declare global {
     position?: () => void;
     _devTools: ErudaDevTools;
   }
-  
+
   interface Window {
       BarcodeDetector: typeof BarcodeDetector;
       FaceDetector: unknown;

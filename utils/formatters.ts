@@ -18,7 +18,7 @@ const getNumberFormatter = (locale: string | undefined, options?: Intl.NumberFor
 const getListFormatter = (locale: string | undefined, options?: Intl.ListFormatOptions) => {
     // Only available in modern browsers
     if (typeof Intl.ListFormat === 'undefined') return null;
-    
+
     const key = `${locale || 'default'}-${JSON.stringify(options)}`;
     if (!listFormatters.has(key)) {
         listFormatters.set(key, new Intl.ListFormat(locale, options));
@@ -37,7 +37,7 @@ export const formatBytes = (bytes: number, locale?: string): string => {
   const k = 1024;
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   const sizes = ['byte', 'kilobyte', 'megabyte', 'gigabyte', 'terabyte', 'petabyte'];
-  
+
   // Guard against very large numbers out of range
   const unitIndex = Math.min(i, sizes.length - 1);
   const value = bytes / Math.pow(k, unitIndex);
@@ -61,7 +61,7 @@ export const formatBytes = (bytes: number, locale?: string): string => {
  */
 export const formatSpeed = (mbps: number, locale?: string): string => {
     if (isNaN(mbps) || mbps === 0) return 'Unknown';
-    
+
     try {
         return getNumberFormatter(locale, {
             style: 'unit',
@@ -121,12 +121,12 @@ export const formatPercent = (ratio: number, maxDecimals: number = 0, locale?: s
  */
 export const formatList = (list: string[], type: 'conjunction' | 'disjunction' | 'unit' = 'conjunction', locale?: string): string => {
     if (!list || list.length === 0) return '';
-    
+
     const formatter = getListFormatter(locale, { style: 'long', type });
     if (formatter) {
         return formatter.format(list);
     }
-    
+
     // Fallback
     return list.join(', ');
 };
@@ -147,10 +147,10 @@ export const generateFilenameTimestamp = (): string => {
         minute: '2-digit',
         hour12: false
     });
-    
+
     // Format parts and replace standard separators with hyphens for filename safety
     const parts = formatter.formatToParts(now);
     const getPart = (type: string) => parts.find(p => p.type === type)?.value || '00';
-    
+
     return `${getPart('year')}-${getPart('month')}-${getPart('day')}-${getPart('hour')}-${getPart('minute')}`;
 };

@@ -649,7 +649,7 @@ export const tools = {
     geo_positions_stable: "✅ Consecutive positional reads are consistent with the declared accuracy, no synthetic noise pattern detected.",
     geo_accuracy_static: "ℹ️ Declared accuracy value is identical across all samples — plausible for a cached/synthetic source, though not conclusive on its own.",
     geo_stable: "✅ Geolocation APIs and positional behavior appear stable, no poisoning or hooks detected.",
-    
+
     // New cross-session / fixed-seed / CSP keys
     status_unknown: "Unknown",
     canvas_persistent_mismatch: "❌ Canvas Persistent Seed Poisoning detected: Canvas rendering is stable in this session, but the fingerprint differs from the stored secure baseline, indicating per-session or per-origin fixed-seed noise injection (typical of Brave or Firefox RFP).",

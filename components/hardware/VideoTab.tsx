@@ -60,17 +60,17 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
             setIsTesting(true);
             const tempVideoResults: VideoCodecRow[] = [];
             const tempAudioResults: AudioCodecRow[] = [];
-            
+
             let done = 0;
             const total = (videoCodecs.length * videoResolutions.length) + (audioCodecs.length * audioConfigs.length);
 
             // --- Run Video Tests ---
             for (const codec of videoCodecs) {
-                const row: VideoCodecRow = { 
-                    codec: codec.name, 
-                    profile: codec.profile, 
+                const row: VideoCodecRow = {
+                    codec: codec.name,
+                    profile: codec.profile,
                     bitDepth: codec.bitDepth,
-                    tag: codec.tag, 
+                    tag: codec.tag,
                     tests: []
                 };
 
@@ -78,7 +78,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                     try {
                         if (navigator.mediaCapabilities) {
                             const config: MediaDecodingConfiguration = {
-                                type: 'file', 
+                                type: 'file',
                                 video: {
                                     contentType: codec.type,
                                     width: res.width,
@@ -110,7 +110,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                 const resResults = await Promise.all(resPromises);
                 row.tests = resResults;
                 tempVideoResults.push(row);
-                
+
                 done += videoResolutions.length;
                 setProgress(Math.round((done / total) * 100));
                 setVideoResults([...tempVideoResults]);
@@ -137,7 +137,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                                     samplerate: conf.samplerate
                                 }
                             };
-                            
+
                             const info = await navigator.mediaCapabilities.decodingInfo(config);
                             return {
                                 ...conf,
@@ -215,7 +215,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                     </div>
                 ) : (
                     <div className="flex items-center gap-3">
-                        <button 
+                        <button
                             onClick={() => setShowSupportedOnly(!showSupportedOnly)}
                             className={`text-xs font-medium px-2 py-1 rounded border transition-colors flex items-center gap-1 ${showSupportedOnly ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400' : 'bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400'}`}
                         >
@@ -253,7 +253,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                                         </span>
                                     </div>
                                 </div>
-                                
+
                                 <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
                                     {row.tests.map((test: VideoTestResultItem, idx: number) => (
                                         <div key={idx} className={`p-3 flex flex-col gap-1.5 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
@@ -309,7 +309,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                                         {row.tag}
                                     </span>
                                 </div>
-                                
+
                                 <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700">
                                     {row.tests.map((test: AudioTestResultItem, idx: number) => (
                                         <div key={idx} className={`p-3 flex flex-col gap-1 items-center justify-center text-center transition-colors ${test.supported ? '' : 'bg-slate-50/50 dark:bg-slate-800/30 opacity-60'}`}>
@@ -336,7 +336,7 @@ export const VideoTab: React.FC<VideoTabProps> = ({ t, values, labels }) => {
                     </div>
                 </div>
             )}
-            
+
             {/* Legend */}
             <div className="mt-4 flex gap-4 text-[10px] text-slate-400 justify-center pb-2 flex-wrap">
                 <div className="flex items-center gap-1"><Battery size={12} className="text-green-500" /> {t.video_efficient}</div>

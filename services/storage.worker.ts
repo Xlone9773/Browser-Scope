@@ -32,8 +32,8 @@ async function cleanup(filename: string, tgt: string) {
             await new Promise<void>((resolve) => {
                 const req = indexedDB.deleteDatabase('BrowserScopeBench');
                 req.onsuccess = () => resolve();
-                req.onerror = () => resolve(); 
-                req.onblocked = () => resolve(); 
+                req.onerror = () => resolve();
+                req.onblocked = () => resolve();
             });
         } else if (tgt === 'cache') {
             if (typeof caches !== 'undefined') {
@@ -44,7 +44,7 @@ async function cleanup(filename: string, tgt: string) {
                 const root = await navigator.storage.getDirectory();
                 try {
                     // Modern way to iterate over directory
-                    
+
                                         // @ts-expect-error fixed implicitly typed external libraries
                                         for await (const [name, _handle] of root) {
                         if (name.startsWith('bench_')) {
@@ -85,13 +85,13 @@ self.onmessage = async function(e: MessageEvent) {
     try {
         // --- WRITE PHASE ---
         const startWrite = performance.now();
-        
+
         let writeDb: IDBDatabase | null = null;
         if (target === 'idb') {
             writeDb = await openDB();
             for(let i=0; i<chunks; i++) {
                 if (isStopping) break;
-                const chunk = generateData(CHUNK_SIZE); 
+                const chunk = generateData(CHUNK_SIZE);
                 const txStart = performance.now();
                 const tx = writeDb.transaction('store', 'readwrite');
                 const store = tx.objectStore('store');
@@ -102,7 +102,7 @@ self.onmessage = async function(e: MessageEvent) {
                     req.onerror = () => reject(req.error);
                 });
                 writeLatencies.push(performance.now() - txStart);
-                
+
                 const now = performance.now();
                 const elapsed = (now - startWrite) / 1000;
                 const written = (i + 1) * CHUNK_SIZE;
@@ -114,22 +114,22 @@ self.onmessage = async function(e: MessageEvent) {
                 });
             }
             writeDb.close();
-        } 
+        }
         else if (target === 'cache') {
             if (typeof caches === 'undefined') {
                 throw new Error("Cache API not supported inside worker");
             }
             const cache = await caches.open('bench-cache');
-            const data = generateData(totalBytes); 
+            const data = generateData(totalBytes);
             const response = new Response(data);
-            
+
             // To avoid blob scheme issues, always use absolute URL with http(s)
             const cacheUrl = new URL(filename, origin || self.location.origin).toString();
 
             const txStart = performance.now();
             await cache.put(cacheUrl, response);
             writeLatencies.push(performance.now() - txStart);
-            
+
             const now = performance.now();
             const elapsed = (now - startWrite) / 1000;
             self.postMessage({
@@ -138,14 +138,14 @@ self.onmessage = async function(e: MessageEvent) {
                 speed: (totalBytes / 1024 / 1024) / elapsed,
                 progress: 50
             });
-        } 
+        }
         else if (target === 'opfs') {
             if (!navigator.storage || !navigator.storage.getDirectory) {
                 throw new Error("OPFS is not supported inside worker context");
             }
             const root = await navigator.storage.getDirectory();
             const handle = await root.getFileHandle(filename, { create: true });
-            
+
             let writable: FileSystemSyncAccessHandle | FileSystemWritableFileStream | undefined;
             let isSync = false;
             const opfsHandle = handle as FileSystemFileHandle & { createSyncAccessHandle?: () => Promise<FileSystemSyncAccessHandle> };
@@ -159,13 +159,13 @@ self.onmessage = async function(e: MessageEvent) {
             } else {
                 writable = await handle.createWritable();
             }
-            
+
             let offset = 0;
             for(let i=0; i<chunks; i++) {
                 if (isStopping) break;
                 const chunk = generateData(CHUNK_SIZE);
                 const arrayBuffer = await chunk.arrayBuffer();
-                
+
                 const txStart = performance.now();
                 if (isSync && writable) {
                     (writable as FileSystemSyncAccessHandle).write(new Uint8Array(arrayBuffer), { at: offset });
@@ -174,11 +174,11 @@ self.onmessage = async function(e: MessageEvent) {
                     await (writable as FileSystemWritableFileStream).write(chunk);
                 }
                 writeLatencies.push(performance.now() - txStart);
-                
+
                 const now = performance.now();
                 const elapsed = (now - startWrite) / 1000;
                 const written = (i + 1) * CHUNK_SIZE;
-                
+
                 self.postMessage({
                     type: 'progress',
                     phase: 'writing',
@@ -203,7 +203,7 @@ self.onmessage = async function(e: MessageEvent) {
         const endWrite = performance.now();
         const writeDuration = endWrite - startWrite;
         const writeSpeed = (totalBytes / 1024 / 1024) / (writeDuration / 1000);
-        
+
         const avgWriteLat = writeLatencies.length > 0 ? writeLatencies.reduce((a,b)=>a+b,0)/writeLatencies.length : 0;
         const peakWriteLat = writeLatencies.length > 0 ? Math.max(...writeLatencies) : 0;
 
@@ -238,7 +238,7 @@ self.onmessage = async function(e: MessageEvent) {
                 const now = performance.now();
                 const elapsed = (now - startRead) / 1000;
                 const read = (i + 1) * CHUNK_SIZE;
-                
+
                 self.postMessage({
                     type: 'progress',
                     phase: 'reading',
@@ -257,7 +257,7 @@ self.onmessage = async function(e: MessageEvent) {
                 await res.blob();
             }
             readLatencies.push(performance.now() - txStart);
-            
+
             const now = performance.now();
             const elapsed = (now - startRead) / 1000;
             self.postMessage({
@@ -276,7 +276,7 @@ self.onmessage = async function(e: MessageEvent) {
                 const fileLength = accessHandle.getSize();
                 const buffer = new Uint8Array(CHUNK_SIZE);
                 let readBytes = 0;
-                
+
                 while (readBytes < fileLength) {
                     if (isStopping) break;
                     const chunkStart = performance.now();
@@ -284,10 +284,10 @@ self.onmessage = async function(e: MessageEvent) {
                     if (n === 0) break;
                     readLatencies.push(performance.now() - chunkStart);
                     readBytes += n;
-                    
+
                     const now = performance.now();
                     const elapsed = (now - startRead) / 1000;
-                    
+
                     self.postMessage({
                         type: 'progress',
                         phase: 'reading',
@@ -307,10 +307,10 @@ self.onmessage = async function(e: MessageEvent) {
                     if (done) break;
                     readLatencies.push(performance.now() - chunkStart);
                     readBytes += (value as Uint8Array).length;
-                    
+
                     const now = performance.now();
                     const elapsed = (now - startRead) / 1000;
-                    
+
                     self.postMessage({
                         type: 'progress',
                         phase: 'reading',

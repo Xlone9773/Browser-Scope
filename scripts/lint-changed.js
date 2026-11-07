@@ -22,7 +22,7 @@ try {
     if (!line) continue;
     const status = line.substring(0, 2);
     if (status.includes('D')) continue; // Ignore deleted files
-    
+
     let filePath = line.substring(3).trim();
     if (status.startsWith('R')) { // Handle renames
       const parts = filePath.split(' -> ');
@@ -40,7 +40,7 @@ let gitDiffSuccess = false;
 
 if (isCI) {
   console.log('🤖 Detected GitHub Actions CI environment. Detecting committed files...');
-  
+
   const diffStrategies = [];
 
   // Strategy A: Pull Request event (compare HEAD against target branch)
@@ -150,4 +150,3 @@ function runFullScan() {
 
   console.log('\n✅ Full scan linting completed successfully!');
 }
-
