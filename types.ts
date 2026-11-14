@@ -33,6 +33,7 @@ export interface ExtendedNavigator extends Navigator {
   nfc?: unknown;
   // keyboard may be present or null in some browsers (e.g., Brave), so type as optional | null
   keyboard?: NavigatorKeyboard | null;
+  getBattery?: () => Promise<BatteryManager>;
 }
 
 export interface CodecInfo {

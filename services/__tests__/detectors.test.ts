@@ -18,6 +18,10 @@ import {
 } from '../detectors/system';
 import {
   getBatteryInfo,
+  formatBatteryTime,
+  formatBatterySnapshot,
+  isBatteryValueReadable,
+  subscribeBatteryUpdates,
   getStorageEstimate,
   runAiReadinessCheck,
   checkWasmSimd
@@ -277,6 +281,109 @@ describe('Browser Detectors Suite', () => {
       expect(battery).toBeDefined();
       expect(battery).toHaveProperty('level');
       expect(battery).toHaveProperty('charging');
+    });
+
+    it('should retry transient getBattery rejections and NaN levels', async () => {
+      let calls = 0;
+      const navWithBattery = navigator as unknown as {
+        getBattery?: () => Promise<{
+          level: number;
+          charging: boolean;
+          chargingTime: number;
+          dischargingTime: number;
+        }>;
+      };
+      const originalGetBattery = navWithBattery.getBattery;
+
+      navWithBattery.getBattery = vi.fn().mockImplementation(async () => {
+        calls++;
+        if (calls === 1) {
+          throw new Error('Transient IPC error');
+        }
+        if (calls === 2) {
+          return { level: Number.NaN, charging: false, chargingTime: Infinity, dischargingTime: Infinity };
+        }
+        return { level: 0.64, charging: true, chargingTime: 1800, dischargingTime: Infinity };
+      });
+
+      try {
+        const battery = await getBatteryInfo({ retries: 2, retryDelayMs: 5 });
+        expect(calls).toBe(3);
+        expect(battery).toEqual({
+          level: '64%',
+          charging: 'Yes',
+          chargingTime: '30m',
+          dischargingTime: 'N/A',
+        });
+      } finally {
+        if (originalGetBattery) {
+          navWithBattery.getBattery = originalGetBattery;
+        } else {
+          delete navWithBattery.getBattery;
+        }
+      }
+    });
+
+    it('should subscribe to BatteryManager updates and clean up listeners', async () => {
+      const listeners = new Map<string, Set<() => void>>();
+      const mockBattery = {
+        level: 0.5,
+        charging: false,
+        chargingTime: Infinity,
+        dischargingTime: 3600,
+        addEventListener: vi.fn((event: string, cb: () => void) => {
+          if (!listeners.has(event)) listeners.set(event, new Set());
+          listeners.get(event)!.add(cb);
+        }),
+        removeEventListener: vi.fn((event: string, cb: () => void) => {
+          listeners.get(event)?.delete(cb);
+        }),
+      };
+
+      const navWithBattery = navigator as unknown as { getBattery?: () => Promise<typeof mockBattery> };
+      const originalGetBattery = navWithBattery.getBattery;
+      navWithBattery.getBattery = vi.fn().mockResolvedValue(mockBattery);
+
+      const updates: Array<{ level: string; charging: string }> = [];
+      const unsubscribe = subscribeBatteryUpdates((info) => {
+        updates.push({ level: info.level, charging: info.charging });
+      });
+
+      try {
+        await new Promise((r) => setTimeout(r, 10));
+        expect(updates).toEqual([{ level: '50%', charging: 'No' }]);
+
+        mockBattery.level = 0.82;
+        mockBattery.charging = true;
+        listeners.get('levelchange')?.forEach((cb) => cb());
+        expect(updates).toEqual([
+          { level: '50%', charging: 'No' },
+          { level: '82%', charging: 'Yes' },
+        ]);
+
+        unsubscribe();
+        expect(mockBattery.removeEventListener).toHaveBeenCalled();
+        mockBattery.level = 0.9;
+        listeners.get('levelchange')?.forEach((cb) => cb());
+        expect(updates.length).toBe(2);
+      } finally {
+        unsubscribe();
+        if (originalGetBattery) {
+          navWithBattery.getBattery = originalGetBattery;
+        } else {
+          delete navWithBattery.getBattery;
+        }
+      }
+    });
+
+    it('should validate formatBatteryTime, formatBatterySnapshot, and isBatteryValueReadable', () => {
+      expect(formatBatteryTime(Number.NaN)).toBe('N/A');
+      expect(formatBatteryTime(Infinity)).toBe('N/A');
+      expect(formatBatteryTime(3660)).toBe('1h 1m');
+      expect(formatBatterySnapshot(null)).toBeNull();
+      expect(isBatteryValueReadable('Timeout')).toBe(false);
+      expect(isBatteryValueReadable('Unavailable')).toBe(false);
+      expect(isBatteryValueReadable('75%')).toBe(true);
     });
 
     it('should fetch storage estimate', async () => {

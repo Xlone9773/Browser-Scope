@@ -81,7 +81,7 @@ export const getAllData = async (): Promise<BrowserData> => {
       drmSupport,
       clientHints // New
   ] = await Promise.all([
-      withTimeout(getBatteryInfo(), { level: 'Timeout', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' }),
+      withTimeout(getBatteryInfo(), { level: 'Timeout', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' }, 2500),
       withTimeout(getStorageEstimate(), { quota: 'Unknown', usage: 'Unknown', persisted: false }),
       withTimeout(getWebRTCIP(), 'Timeout'),
       withTimeout(getSpeechVoicesCount(), 0),

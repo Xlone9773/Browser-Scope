@@ -1,5 +1,6 @@
 
 import { FingerprintScore, ScoreFactor } from '../types';
+import { isBatteryValueReadable } from './detectors/hardware';
 
 export interface ScoreInput {
     canvasHash: string;
@@ -257,7 +258,7 @@ export const calculateFingerprintScore = (input: ScoreInput): FingerprintScore =
     }
 
     // Battery Status (Max 10 pts) - Ephemeral side-channel
-    if (input.battery && input.battery !== 'Unknown' && input.battery !== 'Not Supported' && input.battery !== 'N/A' && input.battery !== '-') {
+    if (isBatteryValueReadable(input.battery)) {
         catHardware += 10;
         addFactor('battery_status', 'val_readable', 10, 10, 'hardware', 'desc_battery_unique');
     } else {

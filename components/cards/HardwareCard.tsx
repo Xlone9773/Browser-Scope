@@ -5,6 +5,7 @@ import { InfoCard, InfoItem } from '../InfoCard';
 import { Translation } from '../../utils/i18n/types';
 import { BrowserData } from '../../types';
 import { Button } from '../ui/Button';
+import { isBatteryValueReadable } from '../../services/detectors/hardware';
 
 interface HardwareCardProps {
   data: BrowserData['hardware'];
@@ -21,7 +22,8 @@ interface HardwareCardProps {
 export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, onOpenGamepad, onOpenWebDevice, onOpenSensors, onOpenTools, onOpenVision, onOpenGraphics, onOpenMidi }) => {
 
   // Parse battery level
-  const batteryLevel = parseFloat(data.batteryLevel) || 0;
+  const isBatteryReadable = isBatteryValueReadable(data.batteryLevel);
+  const batteryLevel = isBatteryReadable ? Math.min(100, Math.max(0, parseFloat(data.batteryLevel) || 0)) : 0;
   const isCharging = data.isCharging === 'Yes' || data.isCharging === t.values.yes;
 
   // Battery color logic
@@ -78,10 +80,10 @@ export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, 
                   {t.labels.battery}
               </span>
               <span className={`text-sm font-bold font-mono ${batteryColor}`}>
-                  {data.batteryLevel !== 'Unknown' && data.batteryLevel !== 'Not Supported' ? data.batteryLevel : 'N/A'}
+                  {isBatteryReadable ? data.batteryLevel : 'N/A'}
               </span>
           </div>
-          {data.batteryLevel !== 'Unknown' && data.batteryLevel !== 'Not Supported' && (
+          {isBatteryReadable && (
               <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden relative">
                   <div
                       className={`h-full ${batteryFillColor} transition-all duration-500 ease-out`}
@@ -92,7 +94,7 @@ export const HardwareCard: React.FC<HardwareCardProps> = React.memo(({ data, t, 
                   )}
               </div>
           )}
-          {isCharging && data.chargingTime !== 'Infinity' && data.chargingTime !== 'N/A' && (
+          {isBatteryReadable && isCharging && data.chargingTime && data.chargingTime !== 'Infinity' && data.chargingTime !== 'N/A' && data.chargingTime !== '-' && (
               <div className="text-[10px] text-green-600 dark:text-green-400 mt-1 flex items-center gap-1">
                   <Zap size={10} />
                   Full in {data.chargingTime}

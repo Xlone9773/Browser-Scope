@@ -1,31 +1,147 @@
 
-import { BatteryManager, AiReadiness } from '../../types';
+import { BatteryManager, AiReadiness, ExtendedNavigator } from '../../types';
 import { formatBytes, formatPercent } from '../../utils/formatters';
 
-export const getBatteryInfo = async (): Promise<{ level: string; charging: string; chargingTime: string; dischargingTime: string }> => {
-  try {
+export interface BatteryInfo {
+  level: string;
+  charging: string;
+  chargingTime: string;
+  dischargingTime: string;
+}
 
-    // @ts-expect-error auto-fixed
-    if (navigator.getBattery) {
+const UNREADABLE_BATTERY_VALUES = new Set([
+  '',
+  'Unknown',
+  'Not Supported',
+  'Timeout',
+  'Unavailable',
+  'N/A',
+  '-',
+]);
 
-      // @ts-expect-error auto-fixed
-      const battery: BatteryManager = await navigator.getBattery();
-      const formatTime = (time: number) => {
-          if (time === Infinity || time === 0) return 'N/A';
-          const hrs = Math.floor(time / 3600);
-          const mins = Math.floor((time % 3600) / 60);
-          if (hrs > 0) return `${hrs}h ${mins}m`;
-          return `${mins}m`;
-      };
-      return {
-        level: formatPercent(battery.level),
-        charging: battery.charging ? 'Yes' : 'No',
-        chargingTime: formatTime(battery.chargingTime),
-        dischargingTime: formatTime(battery.dischargingTime)
-      };
-    }
+export const isBatteryValueReadable = (level?: string | null): boolean => {
+  if (!level) return false;
+  const trimmed = level.trim();
+  if (UNREADABLE_BATTERY_VALUES.has(trimmed)) return false;
+  return !Number.isNaN(parseFloat(trimmed));
+};
+
+export const formatBatteryTime = (time: unknown): string => {
+  if (typeof time !== 'number' || !Number.isFinite(time) || time <= 0) {
+    return 'N/A';
+  }
+  const hrs = Math.floor(time / 3600);
+  const mins = Math.floor((time % 3600) / 60);
+  if (hrs > 0) return `${hrs}h ${mins}m`;
+  return `${mins}m`;
+};
+
+export const formatBatterySnapshot = (
+  battery: Partial<BatteryManager> | null | undefined
+): BatteryInfo | null => {
+  if (!battery || typeof battery.level !== 'number' || !Number.isFinite(battery.level)) {
+    return null;
+  }
+  const clampedLevel = Math.min(1, Math.max(0, battery.level));
+  return {
+    level: formatPercent(clampedLevel),
+    charging: battery.charging ? 'Yes' : 'No',
+    chargingTime: formatBatteryTime(battery.chargingTime),
+    dischargingTime: formatBatteryTime(battery.dischargingTime),
+  };
+};
+
+export interface GetBatteryOptions {
+  retries?: number;
+  retryDelayMs?: number;
+}
+
+export const getBatteryInfo = async (options: GetBatteryOptions = {}): Promise<BatteryInfo> => {
+  const { retries = 2, retryDelayMs = 150 } = options;
+  const nav = typeof navigator !== 'undefined' ? (navigator as ExtendedNavigator) : undefined;
+
+  if (!nav || typeof nav.getBattery !== 'function') {
     return { level: 'Not Supported', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' };
-  } catch { return { level: 'Unavailable', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' }; }
+  }
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const battery = await nav.getBattery();
+      const formatted = formatBatterySnapshot(battery);
+      if (formatted) {
+        return formatted;
+      }
+    } catch {
+      // Transient IPC/permission failure; retry below if attempts remain
+    }
+
+    if (attempt < retries) {
+      await new Promise((resolve) => setTimeout(resolve, retryDelayMs * (attempt + 1)));
+    }
+  }
+
+  return { level: 'Unavailable', charging: 'Unknown', chargingTime: '-', dischargingTime: '-' };
+};
+
+export const subscribeBatteryUpdates = (
+  onUpdate: (info: BatteryInfo) => void,
+  options: GetBatteryOptions = {}
+): (() => void) => {
+  const { retries = 2, retryDelayMs = 200 } = options;
+  const nav = typeof navigator !== 'undefined' ? (navigator as ExtendedNavigator) : undefined;
+  if (!nav || typeof nav.getBattery !== 'function') {
+    return () => {};
+  }
+
+  let cancelled = false;
+  let batteryRef: BatteryManager | null = null;
+
+  const handleChange = () => {
+    if (cancelled || !batteryRef) return;
+    const formatted = formatBatterySnapshot(batteryRef);
+    if (formatted) {
+      onUpdate(formatted);
+    }
+  };
+
+  const events = ['levelchange', 'chargingchange', 'chargingtimechange', 'dischargingtimechange'] as const;
+
+  const attach = async () => {
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      if (cancelled) return;
+      try {
+        const battery = await nav.getBattery!();
+        if (cancelled) return;
+        if (battery) {
+          batteryRef = battery;
+          handleChange();
+          if (typeof battery.addEventListener === 'function') {
+            for (const eventName of events) {
+              battery.addEventListener(eventName, handleChange);
+            }
+          }
+          return;
+        }
+      } catch {
+        // Transient error; retry below if attempts remain
+      }
+
+      if (attempt < retries && !cancelled) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs * (attempt + 1)));
+      }
+    }
+  };
+
+  void attach();
+
+  return () => {
+    cancelled = true;
+    if (batteryRef && typeof batteryRef.removeEventListener === 'function') {
+      for (const eventName of events) {
+        batteryRef.removeEventListener(eventName, handleChange);
+      }
+    }
+  };
 };
 
 export const getStorageEstimate = async (): Promise<{ quota: string, usage: string, persisted: boolean }> => {

@@ -104,10 +104,12 @@ async function startServer() {
         workerSrc: ["'self'", "blob:"],
         childSrc: ["'self'", "blob:"],
         frameSrc: ["'self'"],
+        frameAncestors: ["'self'", "https://aistudio.google.com", "https://*.google.com", "https://*.googleusercontent.com", "https://*.run.app"],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
       }
     } : false,
+    xFrameOptions: false,
     crossOriginEmbedderPolicy: false // Disabled to allow external resources
   }));
 

@@ -1,13 +1,19 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { BrowserData } from "../types";
 import { getAllData } from "../services/detectionService";
-import { runAiReadinessCheck } from "../services/detectors/hardware";
+import {
+  BatteryInfo,
+  isBatteryValueReadable,
+  runAiReadinessCheck,
+  subscribeBatteryUpdates,
+} from "../services/detectors/hardware";
 
 export function useAppData(steps: string[]) {
   const [data, setData] = useState<BrowserData | null>(null);
   const [showLoader, setShowLoader] = useState(true);
   const [fadeLoader, setFadeLoader] = useState(true);
   const [loadingText, setLoadingText] = useState("");
+  const latestBatteryRef = useRef<BatteryInfo | null>(null);
 
   const stepsRef = useRef(steps);
   useEffect(() => {
@@ -42,7 +48,22 @@ export function useAppData(steps: string[]) {
       setLoadingText(validSteps[validSteps.length - 1]);
     }
 
-    setData(info);
+    const cachedBattery = latestBatteryRef.current;
+    const mergedInfo =
+      cachedBattery && !isBatteryValueReadable(info.hardware.batteryLevel)
+        ? {
+            ...info,
+            hardware: {
+              ...info.hardware,
+              batteryLevel: cachedBattery.level,
+              isCharging: cachedBattery.charging,
+              chargingTime: cachedBattery.chargingTime,
+              dischargingTime: cachedBattery.dischargingTime,
+            },
+          }
+        : info;
+
+    setData(mergedInfo);
 
     setFadeLoader(true);
     setTimeout(() => {
@@ -61,6 +82,35 @@ export function useAppData(steps: string[]) {
         },
       };
     });
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = subscribeBatteryUpdates((battery) => {
+      latestBatteryRef.current = battery;
+      setData((prev) => {
+        if (!prev) return prev;
+        if (
+          prev.hardware.batteryLevel === battery.level &&
+          prev.hardware.isCharging === battery.charging &&
+          prev.hardware.chargingTime === battery.chargingTime &&
+          prev.hardware.dischargingTime === battery.dischargingTime
+        ) {
+          return prev;
+        }
+        return {
+          ...prev,
+          hardware: {
+            ...prev.hardware,
+            batteryLevel: battery.level,
+            isCharging: battery.charging,
+            chargingTime: battery.chargingTime,
+            dischargingTime: battery.dischargingTime,
+          },
+        };
+      });
+    });
+
+    return unsubscribe;
   }, []);
 
   return {
