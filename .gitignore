@@ -36,3 +36,5 @@ eslint-report.json
 tsc-output.log
 build-output.log
 audit-report.json
+audit-fix-summary.md
+package.json.bak
