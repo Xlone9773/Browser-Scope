@@ -236,7 +236,13 @@ export const tools = {
     active_workers_prefix: "Active Workers",
     label_total_threads: "Total Threads",
     logical_cores_prefix: "Logical cores",
-    status_unknown: "Unknown"
+    status_unknown: "Unknown",
+    timing_source_label: "Timing Method",
+    timing_gpu_timer: "GPU Hardware Timer",
+    timing_fence_sync: "WebGL2 Sync Fence",
+    timing_readback_sync: "Readback Barrier",
+    webgl_version_label: "API Version",
+    error_webgl_verification_failed: "The WebGL ALU correctness check failed on this GPU. Results would not be trustworthy, so the test was aborted."
   },
   gamepadTool: {
     title: "Gamepad",

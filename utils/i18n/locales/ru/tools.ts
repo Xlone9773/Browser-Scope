@@ -236,7 +236,13 @@ export const tools = {
     active_workers_prefix: "Активные потоки",
     label_total_threads: "Всего потоков",
     logical_cores_prefix: "Логические ядра",
-    status_unknown: "Неизвестно"
+    status_unknown: "Неизвестно",
+    timing_source_label: "Метод замера",
+    timing_gpu_timer: "Аппаратный таймер GPU",
+    timing_fence_sync: "Барьер WebGL2 Fence",
+    timing_readback_sync: "Синхронное чтение пикселя",
+    webgl_version_label: "Версия API",
+    error_webgl_verification_failed: "Проверка корректности WebGL ALU не пройдена на этом GPU. Результаты недостоверны, тест прерван."
   },
   gamepadTool: {
     title: "Геймпад",

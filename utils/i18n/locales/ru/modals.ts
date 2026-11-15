@@ -238,7 +238,7 @@ Copyright (c) 2026 BrowserScope Contributors
     math_test: "Математические операции",
     memory_test: "Пропускная способность памяти",
     dom_test: "Операции с DOM",
-    gpu_test: "Рендеринг Canvas",
+    gpu_test: "WebGL / GPU рендеринг",
     storage_test: "IOPS Базы данных",
     crypto_test: "Криптографический хэш",
     convolution_test: "Свёртка изображения",

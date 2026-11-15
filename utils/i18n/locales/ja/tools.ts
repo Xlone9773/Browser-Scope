@@ -236,7 +236,13 @@ export const tools = {
     active_workers_prefix: "有効なスレッド",
     label_total_threads: "総計算スレッド数",
     logical_cores_prefix: "論理コア数",
-    status_unknown: "不明"
+    status_unknown: "不明",
+    timing_source_label: "計測方式",
+    timing_gpu_timer: "GPU ハードウェアタイマー",
+    timing_fence_sync: "WebGL2 同期フェンス",
+    timing_readback_sync: "ピクセル読戻同期",
+    webgl_version_label: "API バージョン",
+    error_webgl_verification_failed: "このGPUでWebGL ALU正確性検証に失敗しました。結果の信頼性がないため、テストを中止しました。"
   },
   gamepadTool: {
     title: "ゲームパッド",

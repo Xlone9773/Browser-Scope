@@ -5,6 +5,7 @@ import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
 import { Modal } from './ui/Modal';
 import { getErrorMessage } from '../utils/error';
+import { runGpuBenchmarkIteration } from './compute/engines/benchmarkGpuRunner';
 
 interface BenchmarkModalProps {
   onClose: () => void;
@@ -109,7 +110,6 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
 
   // --- Run a single iteration of a test ---
   const runSingleIteration = useCallback(async (id: TestItem['id']): Promise<{score: number, details: string}> => {
-      const start = performance.now();
       let score = 0;
       let details = "";
 
@@ -199,40 +199,9 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   break;
               }
               case 'gpu': {
-                  // JIT Calibration / Warm-up
-                  const warmCanvas = document.createElement('canvas');
-                  warmCanvas.width = 100;
-                  warmCanvas.height = 100;
-                  const warmCtx = warmCanvas.getContext('2d');
-                  if (warmCtx) {
-                      for (let i = 0; i < 50; i++) {
-                          warmCtx.fillRect(i % 10, i / 10, 5, 5);
-                      }
-                  }
-
-                  // Real measured execution
-                  const iterStart = performance.now();
-                  const rects = TEST_CONFIG.gpu.rects;
-                  const canvas = document.createElement('canvas');
-                  canvas.width = 800;
-                  canvas.height = 600;
-                  const ctx = canvas.getContext('2d', { alpha: false });
-                  if (!ctx) throw new Error("No Context");
-
-                  let pathCheck = 0;
-                  for(let i=0; i<rects; i++) {
-                      ctx.fillStyle = `rgba(${i%255},${(i*5)%255},${(i*10)%255},0.5)`;
-                      ctx.fillRect(Math.random()*800, Math.random()*600, 60, 60);
-                      ctx.beginPath();
-                      ctx.arc(Math.random()*800, Math.random()*600, 20, 0, Math.PI*2);
-                      ctx.fill();
-                      pathCheck += i;
-                  }
-
-                  const duration = Math.max(performance.now() - iterStart, 1);
-                  score = Math.floor(TEST_CONFIG.gpu.multiplier / duration);
-                  const kShapesPerSec = ((rects * 2) / (duration / 1000) / 1000).toFixed(1);
-                  details = `${kShapesPerSec}K shapes/s (${duration.toFixed(0)}ms, chk: ${(pathCheck & 0xffff).toString(16)})`;
+                  const gpuResult = await runGpuBenchmarkIteration(() => cancelledRef.current);
+                  score = gpuResult.score;
+                  details = gpuResult.details;
                   break;
               }
               case 'storage': {

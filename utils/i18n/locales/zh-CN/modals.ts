@@ -238,7 +238,7 @@ export const modals = {
     math_test: "浮点运算性能",
     memory_test: "内存读写吞吐",
     dom_test: "DOM 操作性能",
-    gpu_test: "Canvas 渲染性能",
+    gpu_test: "WebGL / GPU 渲染性能",
     storage_test: "数据库 IOPS",
     crypto_test: "密码学哈希",
     convolution_test: "图像矩阵卷积",

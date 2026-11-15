@@ -250,7 +250,7 @@ SOFTWARE.`
     math_test: "Math Operations",
     memory_test: "Memory Throughput",
     dom_test: "DOM Manipulation",
-    gpu_test: "Canvas Rendering",
+    gpu_test: "WebGL / GPU Rendering",
     storage_test: "Database IOPS",
     crypto_test: "Cryptographic Hash",
     convolution_test: "Image Convolution",

@@ -238,7 +238,7 @@ Copyright (c) 2026 BrowserScope Contributors
     math_test: "浮動小数点演算",
     memory_test: "メモリスループット",
     dom_test: "DOM操作性能",
-    gpu_test: "Canvas描画性能",
+    gpu_test: "WebGL / GPU 描画性能",
     storage_test: "データベースIOPS",
     crypto_test: "暗号ハッシュ",
     convolution_test: "画像行列畳み込み",

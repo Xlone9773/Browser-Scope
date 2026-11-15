@@ -236,7 +236,13 @@ export const tools = {
     active_workers_prefix: "活躍工作線程",
     label_total_threads: "總計算線程數",
     logical_cores_prefix: "邏輯核心數",
-    status_unknown: "未知"
+    status_unknown: "未知",
+    timing_source_label: "計時方式",
+    timing_gpu_timer: "GPU 硬體計時器",
+    timing_fence_sync: "WebGL2 同步柵欄",
+    timing_readback_sync: "像素回讀同步",
+    webgl_version_label: "圖形介面",
+    error_webgl_verification_failed: "WebGL ALU 正確性校驗在目前 GPU 上未通過，結果不可信，測試已中止。"
   },
   gamepadTool: {
     title: "遊戲手把",

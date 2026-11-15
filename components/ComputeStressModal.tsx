@@ -17,6 +17,8 @@ import { getErrorMessage } from '../utils/error';
 import { resolvePreset, describePreset, type PresetId } from './compute/presets';
 import { pipelineCacheKey } from './compute/flops';
 import { runWebGpuBenchmark, type RunPhase } from './compute/engines/webgpuBenchmark';
+import { runWebGlBenchmark } from './compute/engines/webglBenchmark';
+import type { TimingSource } from './compute/webgl/webglTimer';
 import type {
   GPUAdapter,
   GPUDevice,
@@ -64,11 +66,15 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
 
   const [graphData, setGraphData] = useState<number[]>(Array.from({ length: HISTORY_LENGTH }, () => 0));
   const [viewMode, setViewMode] = useState<'graph' | 'visual'>('graph');
+  const [webglVersion, setWebglVersion] = useState<'WebGL 2.0' | 'WebGL 1.0' | null>(null);
+  const [webglTimingSource, setWebglTimingSource] = useState<TimingSource | null>(null);
+  const [effectiveGridSize, setEffectiveGridSize] = useState<number | null>(null);
 
   // Refs for loop access to avoid dependency churn and memory leaks
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visualizerCanvasRef = useRef<HTMLCanvasElement>(null);
   const webglCanvasRef = useRef<HTMLCanvasElement>(null);
+  const viewModeRef = useRef<'graph' | 'visual'>('graph');
 
   const adapterRef = useRef<GPUAdapter | null>(null);
   const deviceRef = useRef<GPUDevice | null>(null);
@@ -92,20 +98,11 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const workersRef = useRef<Worker[]>([]);
   const accumulatedCpuOpsRef = useRef<number>(0);
 
-  // WebGL context states
-  const webglStateRef = useRef<{
-      gl: WebGLRenderingContext | null;
-      program: WebGLProgram | null;
-      positionBuffer: WebGLBuffer | null;
-      timeLoc: WebGLUniformLocation | null;
-      resolutionLoc: WebGLUniformLocation | null;
-      iterationsLoc: WebGLUniformLocation | null;
-  }>({ gl: null, program: null, positionBuffer: null, timeLoc: null, resolutionLoc: null, iterationsLoc: null });
-
-  // Sync state to refs for the animation loop
+  // Sync state to refs for animation & async compute loops
   useEffect(() => { gflopsRef.current = gflops; }, [gflops]);
   useEffect(() => { peakGflopsRef.current = peakGflops; }, [peakGflops]);
   useEffect(() => { graphDataRef.current = graphData; }, [graphData]);
+  useEffect(() => { viewModeRef.current = viewMode; }, [viewMode]);
 
   // Sync Preset selections in Quick Mode
   useEffect(() => {
@@ -149,141 +146,6 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       workersRef.current = [];
   };
 
-  const destroyWebGLResources = () => {
-      const { gl, program, positionBuffer } = webglStateRef.current;
-      if (gl) {
-          if (program) gl.deleteProgram(program);
-          if (positionBuffer) gl.deleteBuffer(positionBuffer);
-          const loseCtx = gl.getExtension('WEBGL_lose_context');
-          loseCtx?.loseContext();
-      }
-      webglStateRef.current = { gl: null, program: null, positionBuffer: null, timeLoc: null, resolutionLoc: null, iterationsLoc: null };
-  };
-
-  // WebGL GPGPU stress compiler (shader is static, so compile once and reuse across runs)
-  const initWebGL = () => {
-      if (webglStateRef.current.program) return true;
-
-      const canvas = webglCanvasRef.current;
-      if (!canvas) return false;
-
-      let gl = canvas.getContext('webgl');
-      if (!gl) {
-          gl = canvas.getContext('experimental-webgl') as WebGLRenderingContext | null;
-      }
-      if (!gl) return false;
-
-      const vsSource = `
-          attribute vec2 position;
-          void main() {
-              gl_Position = vec4(position, 0.0, 1.0);
-          }
-      `;
-
-      const fsSource = `
-          precision highp float;
-          uniform vec2 u_resolution;
-          uniform float u_time;
-          uniform int u_iterations;
-
-          void main() {
-              vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-              float x = uv.x * 3.0 - 1.5;
-              float y = uv.y * 2.0 - 1.0;
-
-              float d = 0.0;
-              int limit = u_iterations;
-              if (limit > 1500) limit = 1500;
-
-              // u_time is a uniform, so these were loop-invariant: any
-              // correct GLSL compiler already hoists them out, which means
-              // counting them per-iteration in the FLOP estimate below would
-              // charge for work that never actually executes inside the loop.
-              float driftX = sin(u_time * 0.15) * 0.3;
-              float driftY = cos(u_time * 0.1) * 0.25;
-
-              for (int i = 0; i < 1500; i++) {
-                  if (i >= limit) break;
-                  float nx = x * x - y * y + driftX;
-                  float ny = 2.0 * x * y + driftY;
-                  x = nx;
-                  y = ny;
-                  d += sin(x) * cos(y);
-              }
-
-              vec3 col = vec3(
-                  sin(d + u_time * 1.0) * 0.4 + 0.6,
-                  cos(d - u_time * 0.8) * 0.3 + 0.5,
-                  sin(d * 1.5 + u_time * 1.2) * 0.2 + 0.8
-              );
-              gl_FragColor = vec4(col * (1.0 - length(uv - 0.5) * 0.5), 1.0);
-          }
-      `;
-
-      const compileShader = (src: string, type: number) => {
-          const shader = gl!.createShader(type);
-          if (!shader) return null;
-          gl!.shaderSource(shader, src);
-          gl!.compileShader(shader);
-          if (!gl!.getShaderParameter(shader, gl!.COMPILE_STATUS)) {
-              console.error(gl!.getShaderInfoLog(shader));
-              return null;
-          }
-          return shader;
-      };
-
-      const vs = compileShader(vsSource, gl.VERTEX_SHADER);
-      const fs = compileShader(fsSource, gl.FRAGMENT_SHADER);
-      if (!vs || !fs) return false;
-
-      const program = gl.createProgram();
-      if (!program) return false;
-      gl.attachShader(program, vs);
-      gl.attachShader(program, fs);
-      gl.linkProgram(program);
-      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-          console.error(gl.getProgramInfoLog(program));
-          return false;
-      }
-
-      const positionBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-          -1, -1,
-           1, -1,
-          -1,  1,
-          -1,  1,
-           1, -1,
-           1,  1,
-      ]), gl.STATIC_DRAW);
-
-      const timeLoc = gl.getUniformLocation(program, 'u_time');
-      const resolutionLoc = gl.getUniformLocation(program, 'u_resolution');
-      const iterationsLoc = gl.getUniformLocation(program, 'u_iterations');
-
-      webglStateRef.current = { gl, program, positionBuffer, timeLoc, resolutionLoc, iterationsLoc };
-      return true;
-  };
-
-  const renderWebGLFrame = (time: number, iterations: number) => {
-      const { gl, program, positionBuffer, timeLoc, resolutionLoc, iterationsLoc } = webglStateRef.current;
-      if (!gl || !program) return;
-
-      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-      gl.useProgram(program);
-
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      const posAttr = gl.getAttribLocation(program, 'position');
-      gl.enableVertexAttribArray(posAttr);
-      gl.vertexAttribPointer(posAttr, 2, gl.FLOAT, false, 0, 0);
-
-      gl.uniform2f(resolutionLoc, gl.canvas.width, gl.canvas.height);
-      gl.uniform1f(timeLoc, time / 1000);
-      gl.uniform1i(iterationsLoc, iterations);
-
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
-  };
-
   const destroyActiveBuffers = () => {
       activeBuffersRef.current.forEach(buffer => buffer.destroy());
       activeBuffersRef.current = [];
@@ -311,7 +173,6 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   useEffect(() => {
       return () => {
           stopTest();
-          destroyWebGLResources();
           pipelineCacheRef.current.clear();
           deviceRef.current?.destroy();
           deviceRef.current = null;
@@ -373,10 +234,14 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
             setIsWebGPUSupported(false);
         }
 
-        // Fallback checks
+        // Fallback checks (prefer WebGL2, immediately release probe context)
         if (!webgpuOk) {
             const canvas = document.createElement('canvas');
-            const gl = (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
+            const gl = (
+                canvas.getContext('webgl2') ||
+                canvas.getContext('webgl') ||
+                canvas.getContext('experimental-webgl')
+            ) as WebGLRenderingContext | null;
             if (gl) {
                 setBackend('webgl');
                 const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
@@ -386,6 +251,8 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                 } else {
                     setAdapterName(t.backend_webgl_info || 'Standard WebGL Context');
                 }
+                const loseCtx = gl.getExtension('WEBGL_lose_context');
+                loseCtx?.loseContext();
             } else {
                 setBackend('cpu');
                 setAdapterName(t.backend_cpu_info_prefix || 'CPU Environment (Multi-threaded Fallback)');
@@ -545,7 +412,8 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       setGraphData(Array.from({ length: HISTORY_LENGTH }, () => 0));
       isRunningRef.current = true;
 
-      if (selectedDuration > 0) {
+      const startDurationTimer = () => {
+          if (selectedDuration <= 0 || runIdRef.current !== myRunId || !isRunningRef.current) return;
           setTimeLeft(selectedDuration);
           // Track an absolute deadline rather than decrementing a counter
           // each tick: background tabs throttle setInterval to as little as
@@ -565,10 +433,17 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                   stopTest();
               }
           }, 1000);
+      };
+
+      if (timerIntervalRef.current) {
+          clearInterval(timerIntervalRef.current);
+          timerIntervalRef.current = null;
+      }
+      if (selectedDuration > 0) {
+          setTimeLeft(selectedDuration);
       }
 
       let startTime = performance.now();
-      let frames = 0;
       accumulatedCpuOpsRef.current = 0;
 
       if (backend === 'webgpu') {
@@ -597,7 +472,12 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
               () => runIdRef.current !== myRunId,
               () => !isRunningRef.current,
               {
-                  onPhaseChange: setRunPhase,
+                  onPhaseChange: (phase) => {
+                      setRunPhase(phase);
+                      if (phase === 'running') {
+                          startDurationTimer();
+                      }
+                  },
                   onVerification: setVerificationStatus,
                   onBuffersCreated: (buffers) => { activeBuffersRef.current.push(...buffers); },
                   onSample: (val, peak, sustained) => {
@@ -620,49 +500,58 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           );
 
       } else if (backend === 'webgl') {
-          const ok = initWebGL();
-          if (!ok) {
-              console.error("WebGL initialization failed");
+          const canvas = webglCanvasRef.current;
+          if (!canvas) {
               setIsRunning(false);
               isRunningRef.current = false;
               return;
           }
 
-          const iterations = Math.max(128, Math.floor(matrixSize / 2));
+          setWebglVersion(null);
+          setWebglTimingSource(null);
+          setEffectiveGridSize(null);
 
-          const webglLoop = () => {
-              if (!isRunningRef.current) return;
-
-              const now = performance.now();
-              renderWebGLFrame(now, iterations);
-
-              frames++;
-              const elapsed = now - startTime;
-
-              if (elapsed >= 200) {
-                  // Per-iteration countable flops (sin/cos excluded, see shader
-                  // comment above): nx = x*x - y*y + driftX (4), ny = 2.0*x*y
-                  // + driftY (3), d += sin(x)*cos(y) (2, only the multiply and
-                  // accumulating add) = 9 total.
-                  const FLOPS_PER_ITERATION = 9;
-                  const opsPerFrame = 600 * 256 * iterations * FLOPS_PER_ITERATION;
-                  const totalOps = opsPerFrame * frames;
-                  const seconds = elapsed / 1000;
-                  const gflopsVal = (totalOps / seconds) / 1e9;
-
-                  setGflops(gflopsVal);
-                  setPeakGflops(prev => Math.max(prev, gflopsVal));
-                  setSustainedGflops(gflopsVal);
-                  updateGraph(gflopsVal);
-
-                  startTime = now;
-                  frames = 0;
-              }
-              animRef.current = requestAnimationFrame(webglLoop);
-          };
-          animRef.current = requestAnimationFrame(webglLoop);
+          runWebGlBenchmark(
+              canvas,
+              {
+                  matrixSize,
+                  shouldRenderPreview: () => viewModeRef.current === 'visual',
+              },
+              () => runIdRef.current !== myRunId,
+              () => !isRunningRef.current,
+              {
+                  onPhaseChange: (phase) => {
+                      setRunPhase(phase);
+                      if (phase === 'running') {
+                          startDurationTimer();
+                      }
+                  },
+                  onVerification: setVerificationStatus,
+                  onCapabilityDetected: ({ glVersion, timingSource, effectiveGridSize: resolvedGrid }) => {
+                      setWebglVersion(glVersion);
+                      setWebglTimingSource(timingSource);
+                      setEffectiveGridSize(resolvedGrid);
+                  },
+                  onSample: (val, peak, sustained) => {
+                      setGflops(val);
+                      setPeakGflops(peak);
+                      setSustainedGflops(sustained);
+                      updateGraph(val);
+                  },
+                  onError: (kind) => {
+                      const message = kind === 'verification'
+                          ? (t.error_webgl_verification_failed || 'The WebGL ALU correctness check failed on this GPU. Results would not be trustworthy, so the test was aborted.')
+                          : kind === 'device-lost'
+                              ? (t.error_device_lost || 'The GPU device was lost. Please reopen this test to continue.')
+                              : (t.error_shader_compile || 'Failed to compile or allocate GPU resources for this configuration.');
+                      setGpuError(message);
+                      stopTest();
+                  },
+              },
+          );
 
       } else if (backend === 'cpu') {
+          startDurationTimer();
           const cores = typeof navigator !== 'undefined' && navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 4;
           let numWorkers: number;
           if (matrixSize === 256) {
@@ -911,6 +800,11 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                     ]}
                                     onChange={(val) => {
                                         setBackend(val as 'webgpu' | 'webgl' | 'cpu');
+                                        setVerificationStatus('unverified');
+                                        setWebglVersion(null);
+                                        setWebglTimingSource(null);
+                                        setEffectiveGridSize(null);
+                                        setGpuError(null);
                                         stopTest();
                                     }}
                                     disabled={isRunning}
@@ -1091,18 +985,40 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                             <div className="flex justify-between">
                                 <span>{t.label_grid_size || "Grid Size"}:</span>
                                 <span className="text-slate-800 dark:text-slate-200 font-bold">
-                                    {backend === 'cpu' ? `${t.active_workers_prefix || 'Active Workers'}: ${cpuCores}` : `${matrixSize} x ${matrixSize}`}
+                                    {backend === 'cpu'
+                                        ? `${t.active_workers_prefix || 'Active Workers'}: ${cpuCores}`
+                                        : backend === 'webgl' && effectiveGridSize
+                                            ? `${effectiveGridSize} x ${effectiveGridSize}`
+                                            : `${matrixSize} x ${matrixSize}`}
                                 </span>
                             </div>
-                            {backend === 'webgpu' && (
+                            {backend === 'webgl' && webglVersion && (
                                 <div className="flex justify-between">
-                                    <span>{t.label_total_threads || "Total Threads"}:</span>
-                                    <span className="text-slate-800 dark:text-slate-200 font-bold">
-                                        {(matrixSize * matrixSize).toLocaleString()}
+                                    <span>{t.webgl_version_label || "API Version"}:</span>
+                                    <span className="text-slate-800 dark:text-slate-200 font-bold">{webglVersion}</span>
+                                </div>
+                            )}
+                            {backend === 'webgl' && webglTimingSource && (
+                                <div className="flex justify-between">
+                                    <span>{t.timing_source_label || "Timing Method"}:</span>
+                                    <span className="text-indigo-500 dark:text-indigo-400 font-bold">
+                                        {webglTimingSource === 'gpu-timer'
+                                            ? (t.timing_gpu_timer || 'GPU Hardware Timer')
+                                            : webglTimingSource === 'fence-sync'
+                                                ? (t.timing_fence_sync || 'WebGL2 Sync Fence')
+                                                : (t.timing_readback_sync || 'Readback Barrier')}
                                     </span>
                                 </div>
                             )}
-                            {backend === 'webgpu' && (
+                            {backend !== 'cpu' && (
+                                <div className="flex justify-between">
+                                    <span>{t.label_total_threads || "Total Threads"}:</span>
+                                    <span className="text-slate-800 dark:text-slate-200 font-bold">
+                                        {((backend === 'webgl' && effectiveGridSize ? effectiveGridSize : matrixSize) ** 2).toLocaleString()}
+                                    </span>
+                                </div>
+                            )}
+                            {backend !== 'cpu' && (
                                 <div className="flex justify-between">
                                     <span>{t.verify_label || "Correctness Check"}:</span>
                                     <span className={`font-bold ${
