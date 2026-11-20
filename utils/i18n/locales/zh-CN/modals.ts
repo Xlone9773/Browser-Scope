@@ -243,7 +243,11 @@ export const modals = {
     crypto_test: "密码学哈希",
     convolution_test: "图像矩阵卷积",
     regex_test: "正则表达式解析",
-    worker_status: "Web Worker 已启用 (多线程高效)"
+    worker_status: "Web Worker 已启用 (多线程高效)",
+    status_initializing: "正在初始化...",
+    status_cancelled: "已取消",
+    status_failed: "执行失败",
+    run_single_hint: "运行单项测试"
   },
   graphicsModal: {
     supported_features: "支持的特性",

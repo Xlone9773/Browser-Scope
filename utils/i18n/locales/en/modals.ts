@@ -255,7 +255,11 @@ SOFTWARE.`
     crypto_test: "Cryptographic Hash",
     convolution_test: "Image Convolution",
     regex_test: "Regex Parsing",
-    worker_status: "Web Worker Active (Multi-Threaded)"
+    worker_status: "Web Worker Active (Multi-Threaded)",
+    status_initializing: "Initializing...",
+    status_cancelled: "Cancelled",
+    status_failed: "Failed",
+    run_single_hint: "Run single test"
   },
   graphicsModal: {
     supported_features: "Supported Features",

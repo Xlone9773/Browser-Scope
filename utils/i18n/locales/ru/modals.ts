@@ -243,7 +243,11 @@ Copyright (c) 2026 BrowserScope Contributors
     crypto_test: "Криптографический хэш",
     convolution_test: "Свёртка изображения",
     regex_test: "Парсинг регулярных выражений",
-    worker_status: "Web Worker активен (Многопоточность)"
+    worker_status: "Web Worker активен (Многопоточность)",
+    status_initializing: "Инициализация...",
+    status_cancelled: "Отменено",
+    status_failed: "Ошибка",
+    run_single_hint: "Запустить этот тест"
   },
   graphicsModal: {
     supported_features: "Поддерживаемые возможности",

@@ -242,7 +242,14 @@ export const tools = {
     timing_fence_sync: "WebGL2 Sync Fence",
     timing_readback_sync: "Readback Barrier",
     webgl_version_label: "API Version",
-    error_webgl_verification_failed: "The WebGL ALU correctness check failed on this GPU. Results would not be trustworthy, so the test was aborted."
+    error_webgl_verification_failed: "The WebGL ALU correctness check failed on this GPU. Results would not be trustworthy, so the test was aborted.",
+    workload_cpu_short: "Multi-thread FP64 FMA",
+    timing_cpu_channel: "MessageChannel (Unclamped)",
+    cpu_batch_size_label: "Batch / Thread",
+    error_cpu_verification_failed: "The CPU arithmetic correctness check failed across worker threads. Results would not be trustworthy, so the test was aborted.",
+    error_cpu_worker_failed: "One or more CPU worker threads failed to initialize or crashed during execution.",
+    precision_fp32_wasm_simd: "FP32 (Wasm SIMD v128)",
+    workload_cpu_simd_short: "Multi-thread SIMD v128 FMA"
   },
   gamepadTool: {
     title: "Gamepad",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Cpu, Zap, Activity, AlertTriangle, Layers, Play, Square, TrendingUp, Microscope, Eye, Clock, HelpCircle, HardDrive, ShieldAlert, Cpu as CpuIcon } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { formatNumber } from '../utils/formatters';
@@ -18,6 +18,9 @@ import { resolvePreset, describePreset, type PresetId } from './compute/presets'
 import { pipelineCacheKey } from './compute/flops';
 import { runWebGpuBenchmark, type RunPhase } from './compute/engines/webgpuBenchmark';
 import { runWebGlBenchmark } from './compute/engines/webglBenchmark';
+import { runCpuBenchmark } from './compute/engines/cpuBenchmark';
+import { resolveCpuWorkerCount, type CpuComputeMode } from './compute/cpu/cpuFlops';
+import { getWasmSimdRunner } from './compute/cpu/wasmSimdKernel';
 import type { TimingSource } from './compute/webgl/webglTimer';
 import type {
   GPUAdapter,
@@ -32,6 +35,7 @@ interface ComputeStressModalProps {
 }
 
 const HISTORY_LENGTH = 60;
+const UI_TELEMETRY_INTERVAL_MS = 250;
 
 export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose, t }) => {
   const [isWebGPUSupported, setIsWebGPUSupported] = useState<boolean | null>(null);
@@ -69,6 +73,9 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const [webglVersion, setWebglVersion] = useState<'WebGL 2.0' | 'WebGL 1.0' | null>(null);
   const [webglTimingSource, setWebglTimingSource] = useState<TimingSource | null>(null);
   const [effectiveGridSize, setEffectiveGridSize] = useState<number | null>(null);
+  const [cpuBatchIterations, setCpuBatchIterations] = useState<number | null>(null);
+  const [cpuComputeMode, setCpuComputeMode] = useState<CpuComputeMode | null>(null);
+  const hasWasmSimdSupport = useMemo(() => getWasmSimdRunner() !== null, []);
 
   // Refs for loop access to avoid dependency churn and memory leaks
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -86,23 +93,25 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
   const [gpuError, setGpuError] = useState<string | null>(null);
 
   const animRef = useRef<number | null>(null); // For active loops
-  const renderLoopRef = useRef<number | null>(null); // For UI render loop
+  const renderLoopRef = useRef<number | null>(null); // For particle visual rAF loop
   const isRunningRef = useRef(false);
 
   const visualizerRef = useRef<ParticleSystem | null>(null);
   const gflopsRef = useRef(0);
-  const peakGflopsRef = useRef(0);
-  const graphDataRef = useRef<number[]>([]);
+  const lastUiSampleTimeRef = useRef(0);
 
-  // CPU Multi-threaded Worker references
-  const workersRef = useRef<Worker[]>([]);
-  const accumulatedCpuOpsRef = useRef<number>(0);
-
-  // Sync state to refs for animation & async compute loops
+  // Sync state to refs for particle animation & async compute loops
   useEffect(() => { gflopsRef.current = gflops; }, [gflops]);
-  useEffect(() => { peakGflopsRef.current = peakGflops; }, [peakGflops]);
-  useEffect(() => { graphDataRef.current = graphData; }, [graphData]);
   useEffect(() => { viewModeRef.current = viewMode; }, [viewMode]);
+
+  // Keep active CPU thread count preview aligned with intensity & hardware concurrency
+  useEffect(() => {
+    const logicalCores =
+      typeof navigator !== 'undefined' && navigator.hardwareConcurrency
+        ? navigator.hardwareConcurrency
+        : 4;
+    setCpuCores(resolveCpuWorkerCount(matrixSize, logicalCores));
+  }, [matrixSize]);
 
   // Sync Preset selections in Quick Mode
   useEffect(() => {
@@ -115,36 +124,6 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       setSelectedDuration(preset.duration);
     }
   }, [testMode, selectedPreset, hasFp16Support, backend]);
-
-  // CPU Workers control. Uses a real worker module (components/compute/workers/cpuStress.worker.ts)
-  // instead of a blob URL, and its 'stop' message actually takes effect — the
-  // worker yields between batches via setTimeout so its message queue isn't
-  // starved, rather than relying solely on terminate().
-  const startCpuWorkers = (numWorkers: number) => {
-      stopCpuWorkers();
-      accumulatedCpuOpsRef.current = 0;
-
-      const activeWorkers: Worker[] = [];
-      for (let i = 0; i < numWorkers; i++) {
-          const worker = new Worker(new URL('./compute/workers/cpuStress.worker.ts', import.meta.url), { type: 'module' });
-          worker.onmessage = (e) => {
-              if (e.data.cmd === 'progress') {
-                  accumulatedCpuOpsRef.current += e.data.ops;
-              }
-          };
-          worker.postMessage({ cmd: 'start' });
-          activeWorkers.push(worker);
-      }
-      workersRef.current = activeWorkers;
-  };
-
-  const stopCpuWorkers = () => {
-      workersRef.current.forEach(w => {
-          w.postMessage({ cmd: 'stop' });
-          w.terminate();
-      });
-      workersRef.current = [];
-  };
 
   const destroyActiveBuffers = () => {
       activeBuffersRef.current.forEach(buffer => buffer.destroy());
@@ -164,7 +143,6 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           clearInterval(timerIntervalRef.current);
           timerIntervalRef.current = null;
       }
-      stopCpuWorkers();
       destroyActiveBuffers();
       setIsRunning(false);
       setRunPhase('idle');
@@ -255,6 +233,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                 loseCtx?.loseContext();
             } else {
                 setBackend('cpu');
+                setMatrixSize(2048);
                 setAdapterName(t.backend_cpu_info_prefix || 'CPU Environment (Multi-threaded Fallback)');
             }
         }
@@ -315,86 +294,120 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       return true;
   };
 
-  // UI Render Loop (Graph / Visualizer)
+  // Reactive Graph Renderer: redraws strictly on telemetry updates (4Hz) with zero rAF loop
   useEffect(() => {
+      if (viewMode !== 'graph' || !canvasRef.current) return;
+
+      const ctx = canvasRef.current.getContext('2d');
+      if (!ctx) return;
+
+      const width = canvasRef.current.width;
+      const height = canvasRef.current.height;
+      ctx.clearRect(0, 0, width, height);
+
+      // Grid Lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 1; i < 4; i++) {
+          const y = (height / 4) * i;
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+      }
+      ctx.stroke();
+
+      if (graphData.some((v) => v > 0)) {
+          const maxVal = Math.max(peakGflops, 10) * 1.1;
+          const stepX = width / (HISTORY_LENGTH - 1);
+
+          const gradient = ctx.createLinearGradient(0, 0, 0, height);
+          gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)');
+          gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+          ctx.beginPath();
+          ctx.moveTo(0, height);
+          graphData.forEach((val, i) => {
+              const x = i * stepX;
+              const y = height - (val / maxVal) * height;
+              ctx.lineTo(x, y);
+          });
+          ctx.lineTo(width, height);
+          ctx.closePath();
+          ctx.fillStyle = gradient;
+          ctx.fill();
+
+          ctx.beginPath();
+          graphData.forEach((val, i) => {
+              const x = i * stepX;
+              const y = height - (val / maxVal) * height;
+              if (i === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+          });
+          ctx.strokeStyle = '#818cf8';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+      }
+  }, [viewMode, graphData, peakGflops]);
+
+  // Particle Visualizer rAF Loop: active ONLY while viewing 'visual' mode on non-WebGL & running
+  useEffect(() => {
+      if (viewMode !== 'visual' || backend === 'webgl' || !visualizerCanvasRef.current) {
+          return;
+      }
+
+      if (!visualizerRef.current) {
+          visualizerRef.current = new ParticleSystem(
+              1000,
+              visualizerCanvasRef.current.width,
+              visualizerCanvasRef.current.height,
+          );
+      }
+
+      const ctx = visualizerCanvasRef.current.getContext('2d');
+      if (!ctx) return;
+
+      if (!isRunning) {
+          visualizerRef.current.update(0, ctx);
+          return;
+      }
+
       const loop = () => {
-          if (viewMode === 'graph' && canvasRef.current) {
-              const ctx = canvasRef.current.getContext('2d');
-              const width = canvasRef.current.width;
-              const height = canvasRef.current.height;
-              const data = graphDataRef.current;
-              const peak = peakGflopsRef.current;
-
-              if (ctx) {
-                  ctx.clearRect(0, 0, width, height);
-
-                  // Grid Lines
-                  ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-                  ctx.lineWidth = 1;
-                  ctx.beginPath();
-                  for(let i=1; i<4; i++) {
-                      const y = (height / 4) * i;
-                      ctx.moveTo(0, y);
-                      ctx.lineTo(width, y);
-                  }
-                  ctx.stroke();
-
-                  if (data.some(v => v > 0)) {
-                      const maxVal = Math.max(peak, 10) * 1.1;
-                      const stepX = width / (HISTORY_LENGTH - 1);
-
-                      const gradient = ctx.createLinearGradient(0, 0, 0, height);
-                      gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)');
-                      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-                      ctx.beginPath();
-                      ctx.moveTo(0, height);
-                      data.forEach((val, i) => {
-                          const x = i * stepX;
-                          const y = height - (val / maxVal) * height;
-                          ctx.lineTo(x, y);
-                      });
-                      ctx.lineTo(width, height);
-                      ctx.closePath();
-                      ctx.fillStyle = gradient;
-                      ctx.fill();
-
-                      ctx.beginPath();
-                      data.forEach((val, i) => {
-                          const x = i * stepX;
-                          const y = height - (val / maxVal) * height;
-                          if (i === 0) ctx.moveTo(x, y);
-                          else ctx.lineTo(x, y);
-                      });
-                      ctx.strokeStyle = '#818cf8';
-                      ctx.lineWidth = 2;
-                      ctx.stroke();
-                  }
-              }
+          if (!isRunningRef.current || viewModeRef.current !== 'visual') {
+              renderLoopRef.current = null;
+              return;
           }
-
-          else if (viewMode === 'visual' && backend !== 'webgl' && visualizerCanvasRef.current) {
-              if (!visualizerRef.current) {
-                  visualizerRef.current = new ParticleSystem(1000, visualizerCanvasRef.current.width, visualizerCanvasRef.current.height);
-              }
-              const ctx = visualizerCanvasRef.current.getContext('2d');
-              if (ctx) {
-                  visualizerRef.current.update(gflopsRef.current, ctx);
-              }
-          }
-
+          visualizerRef.current?.update(gflopsRef.current, ctx);
           renderLoopRef.current = requestAnimationFrame(loop);
       };
 
       renderLoopRef.current = requestAnimationFrame(loop);
 
       return () => {
-          if (renderLoopRef.current) cancelAnimationFrame(renderLoopRef.current);
+          if (renderLoopRef.current) {
+              cancelAnimationFrame(renderLoopRef.current);
+              renderLoopRef.current = null;
+          }
       };
-  }, [viewMode, backend]);
+  }, [viewMode, backend, isRunning]);
 
   const updateGraph = (newVal: number) => {
       setGraphData(prev => [...prev.slice(1), newVal]);
+  };
+
+  // Decouple React telemetry state & graph repaint from fast compute batches or display rAF
+  const commitUiSample = (val: number, peak: number, sustained: number) => {
+      const now = performance.now();
+      if (
+          lastUiSampleTimeRef.current !== 0 &&
+          now - lastUiSampleTimeRef.current < UI_TELEMETRY_INTERVAL_MS
+      ) {
+          return;
+      }
+      lastUiSampleTimeRef.current = now;
+      setGflops(val);
+      setPeakGflops(peak);
+      setSustainedGflops(sustained);
+      updateGraph(val);
   };
 
   const runTest = async () => {
@@ -409,6 +422,8 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       setPeakGflops(0);
       setSustainedGflops(0);
       setVerificationStatus('unverified');
+      setCpuComputeMode(null);
+      lastUiSampleTimeRef.current = 0;
       setGraphData(Array.from({ length: HISTORY_LENGTH }, () => 0));
       isRunningRef.current = true;
 
@@ -442,9 +457,6 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
       if (selectedDuration > 0) {
           setTimeLeft(selectedDuration);
       }
-
-      let startTime = performance.now();
-      accumulatedCpuOpsRef.current = 0;
 
       if (backend === 'webgpu') {
           if (!deviceRef.current) {
@@ -480,12 +492,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                   },
                   onVerification: setVerificationStatus,
                   onBuffersCreated: (buffers) => { activeBuffersRef.current.push(...buffers); },
-                  onSample: (val, peak, sustained) => {
-                      setGflops(val);
-                      setPeakGflops(peak);
-                      setSustainedGflops(sustained);
-                      updateGraph(val);
-                  },
+                  onSample: commitUiSample,
                   onError: (kind) => {
                       const message = kind === 'verification'
                           ? (t.error_verification_failed || 'The GEMM correctness check failed on this GPU. Results would not be trustworthy, so the test was aborted.')
@@ -532,12 +539,7 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                       setWebglTimingSource(timingSource);
                       setEffectiveGridSize(resolvedGrid);
                   },
-                  onSample: (val, peak, sustained) => {
-                      setGflops(val);
-                      setPeakGflops(peak);
-                      setSustainedGflops(sustained);
-                      updateGraph(val);
-                  },
+                  onSample: commitUiSample,
                   onError: (kind) => {
                       const message = kind === 'verification'
                           ? (t.error_webgl_verification_failed || 'The WebGL ALU correctness check failed on this GPU. Results would not be trustworthy, so the test was aborted.')
@@ -551,48 +553,42 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
           );
 
       } else if (backend === 'cpu') {
-          startDurationTimer();
-          const cores = typeof navigator !== 'undefined' && navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 4;
-          let numWorkers: number;
-          if (matrixSize === 256) {
-              numWorkers = Math.max(1, Math.round(cores * 0.25));
-          } else if (matrixSize === 512) {
-              numWorkers = Math.max(1, Math.round(cores * 0.50));
-          } else if (matrixSize === 1024) {
-              numWorkers = Math.max(1, Math.round(cores * 0.75));
-          } else {
-              numWorkers = cores;
-          }
+          setCpuBatchIterations(null);
 
-          startCpuWorkers(numWorkers);
-          setCpuCores(numWorkers);
-
-          const cpuLoop = () => {
-              if (!isRunningRef.current) return;
-
-              const now = performance.now();
-              const elapsed = now - startTime;
-
-              if (elapsed >= 200) {
-                  const totalOps = accumulatedCpuOpsRef.current;
-                  accumulatedCpuOpsRef.current = 0;
-                  const seconds = elapsed / 1000;
-                  const gflopsVal = (totalOps / seconds) / 1e9;
-
-                  setGflops(gflopsVal);
-                  setPeakGflops(prev => Math.max(prev, gflopsVal));
-                  setSustainedGflops(gflopsVal);
-                  updateGraph(gflopsVal);
-
-                  startTime = now;
-              }
-              animRef.current = requestAnimationFrame(cpuLoop);
-          };
-          animRef.current = requestAnimationFrame(cpuLoop);
+          runCpuBenchmark(
+              { matrixSize },
+              () => runIdRef.current !== myRunId,
+              () => !isRunningRef.current,
+              {
+                  onPhaseChange: (phase) => {
+                      setRunPhase(phase);
+                      if (phase === 'running') {
+                          startDurationTimer();
+                      }
+                  },
+                  onVerification: setVerificationStatus,
+                  onWorkersReady: ({ activeWorkers, batchIterations, computeMode }) => {
+                      setCpuCores(activeWorkers);
+                      setCpuBatchIterations(batchIterations);
+                      setCpuComputeMode(computeMode);
+                  },
+                  onSample: commitUiSample,
+                  onError: (kind) => {
+                      const message = kind === 'verification'
+                          ? (t.error_cpu_verification_failed || 'The CPU arithmetic correctness check failed across worker threads. Results would not be trustworthy, so the test was aborted.')
+                          : (t.error_cpu_worker_failed || 'One or more CPU worker threads failed to initialize or crashed during execution.');
+                      setGpuError(message);
+                      stopTest();
+                  },
+              },
+          );
       }
   };
 
   const stability = peakGflops > 0 ? Math.round((sustainedGflops / peakGflops) * 100) : 100;
+
+  const activeCpuMode: CpuComputeMode =
+      cpuComputeMode ?? (hasWasmSimdSupport ? 'wasm-simd' : 'scalar-js');
 
   const presetInfo = describePreset(selectedPreset, t);
 
@@ -799,11 +795,20 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                         { id: 'cpu', label: t.engine_cpu || 'CPU: Multi-threaded Workload' }
                                     ]}
                                     onChange={(val) => {
-                                        setBackend(val as 'webgpu' | 'webgl' | 'cpu');
+                                        const nextBackend = val as 'webgpu' | 'webgl' | 'cpu';
+                                        const prevBackend = backend;
+                                        setBackend(nextBackend);
+                                        if (nextBackend === 'cpu') {
+                                            setMatrixSize(2048);
+                                        } else if (prevBackend === 'cpu' && matrixSize === 2048) {
+                                            setMatrixSize(512);
+                                        }
                                         setVerificationStatus('unverified');
                                         setWebglVersion(null);
                                         setWebglTimingSource(null);
                                         setEffectiveGridSize(null);
+                                        setCpuBatchIterations(null);
+                                        setCpuComputeMode(null);
                                         setGpuError(null);
                                         stopTest();
                                     }}
@@ -965,13 +970,25 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                             <div className="flex justify-between">
                                 <span>{t.label_precision || "Precision"}:</span>
                                 <span className="text-slate-800 dark:text-slate-200 font-bold uppercase">
-                                    {backend === 'webgpu' ? precision : backend === 'webgl' ? (t.precision_fp32_simulated || 'FP32 (Simulated)') : (t.precision_fp64_native || 'FP64 (Native)')}
+                                    {backend === 'webgpu'
+                                        ? precision
+                                        : backend === 'webgl'
+                                            ? (t.precision_fp32_simulated || 'FP32 (Simulated)')
+                                            : activeCpuMode === 'wasm-simd'
+                                                ? (t.precision_fp32_wasm_simd || 'FP32 (Wasm SIMD v128)')
+                                                : (t.precision_fp64_native || 'FP64 (Native)')}
                                 </span>
                             </div>
                             <div className="flex justify-between">
                                 <span>{t.label_workload || "Workload"}:</span>
                                 <span className="text-slate-800 dark:text-slate-200 font-bold">
-                                    {backend === 'webgpu' ? (workloadType === 'gemm' ? (t.workload_gemm_short || 'GEMM Matrix') : (t.workload_simd_short || 'SIMD FMA Vector')) : (t.workload_shader_short || 'Shader Raster')}
+                                    {backend === 'webgpu'
+                                        ? (workloadType === 'gemm' ? (t.workload_gemm_short || 'GEMM Matrix') : (t.workload_simd_short || 'SIMD FMA Vector'))
+                                        : backend === 'cpu'
+                                            ? (activeCpuMode === 'wasm-simd'
+                                                ? (t.workload_cpu_simd_short || 'Multi-thread SIMD v128 FMA')
+                                                : (t.workload_cpu_short || 'Multi-thread FP64 FMA'))
+                                            : (t.workload_shader_short || 'Shader Raster')}
                                 </span>
                             </div>
                             {backend === 'webgpu' && (
@@ -992,6 +1009,22 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                             : `${matrixSize} x ${matrixSize}`}
                                 </span>
                             </div>
+                            {backend === 'cpu' && (
+                                <div className="flex justify-between">
+                                    <span>{t.timing_source_label || "Timing Method"}:</span>
+                                    <span className="text-indigo-500 dark:text-indigo-400 font-bold">
+                                        {t.timing_cpu_channel || 'MessageChannel (Unclamped)'}
+                                    </span>
+                                </div>
+                            )}
+                            {backend === 'cpu' && cpuBatchIterations !== null && (
+                                <div className="flex justify-between">
+                                    <span>{t.cpu_batch_size_label || "Batch / Thread"}:</span>
+                                    <span className="text-slate-800 dark:text-slate-200 font-bold">
+                                        {cpuBatchIterations.toLocaleString()}
+                                    </span>
+                                </div>
+                            )}
                             {backend === 'webgl' && webglVersion && (
                                 <div className="flex justify-between">
                                     <span>{t.webgl_version_label || "API Version"}:</span>
@@ -1018,21 +1051,19 @@ export const ComputeStressModal: React.FC<ComputeStressModalProps> = ({ onClose,
                                     </span>
                                 </div>
                             )}
-                            {backend !== 'cpu' && (
-                                <div className="flex justify-between">
-                                    <span>{t.verify_label || "Correctness Check"}:</span>
-                                    <span className={`font-bold ${
-                                        verificationStatus === 'passed' ? 'text-green-500'
-                                        : verificationStatus === 'failed' ? 'text-red-500'
-                                        : 'text-slate-500 dark:text-slate-400'
-                                    }`}>
-                                        {verificationStatus === 'passed' ? (t.verify_passed || 'Passed')
-                                            : verificationStatus === 'failed' ? (t.verify_failed || 'Failed')
-                                            : verificationStatus === 'skipped' ? (t.verify_skipped || 'N/A (no ground truth)')
-                                            : (t.status_unknown || 'Unknown')}
-                                    </span>
-                                </div>
-                            )}
+                            <div className="flex justify-between">
+                                <span>{t.verify_label || "Correctness Check"}:</span>
+                                <span className={`font-bold ${
+                                    verificationStatus === 'passed' ? 'text-green-500'
+                                    : verificationStatus === 'failed' ? 'text-red-500'
+                                    : 'text-slate-500 dark:text-slate-400'
+                                }`}>
+                                    {verificationStatus === 'passed' ? (t.verify_passed || 'Passed')
+                                        : verificationStatus === 'failed' ? (t.verify_failed || 'Failed')
+                                        : verificationStatus === 'skipped' ? (t.verify_skipped || 'N/A (no ground truth)')
+                                        : (t.status_unknown || 'Unknown')}
+                                </span>
+                            </div>
                         </div>
                     </div>
 

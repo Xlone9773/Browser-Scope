@@ -242,7 +242,14 @@ export const tools = {
     timing_fence_sync: "WebGL2 同期フェンス",
     timing_readback_sync: "ピクセル読戻同期",
     webgl_version_label: "API バージョン",
-    error_webgl_verification_failed: "このGPUでWebGL ALU正確性検証に失敗しました。結果の信頼性がないため、テストを中止しました。"
+    error_webgl_verification_failed: "このGPUでWebGL ALU正確性検証に失敗しました。結果の信頼性がないため、テストを中止しました。",
+    workload_cpu_short: "マルチスレッド FP64 FMA",
+    timing_cpu_channel: "MessageChannel (4ms制限なし)",
+    cpu_batch_size_label: "バッチ反復/コア",
+    error_cpu_verification_failed: "ワーカースレッドで CPU 演算正確性検証に失敗しました。結果の信頼性がないためテストを中止しました。",
+    error_cpu_worker_failed: "1つ以上の CPU ワーカースレッドが初期化に失敗したか、実行中にエラーが発生しました。",
+    precision_fp32_wasm_simd: "FP32 (Wasm SIMD v128 ベクトル)",
+    workload_cpu_simd_short: "マルチスレッド SIMD v128 FMA"
   },
   gamepadTool: {
     title: "ゲームパッド",

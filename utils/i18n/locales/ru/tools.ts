@@ -242,7 +242,14 @@ export const tools = {
     timing_fence_sync: "Барьер WebGL2 Fence",
     timing_readback_sync: "Синхронное чтение пикселя",
     webgl_version_label: "Версия API",
-    error_webgl_verification_failed: "Проверка корректности WebGL ALU не пройдена на этом GPU. Результаты недостоверны, тест прерван."
+    error_webgl_verification_failed: "Проверка корректности WebGL ALU не пройдена на этом GPU. Результаты недостоверны, тест прерван.",
+    workload_cpu_short: "Многопоточный FP64 FMA",
+    timing_cpu_channel: "MessageChannel (без лимита 4 мс)",
+    cpu_batch_size_label: "Пакет / поток",
+    error_cpu_verification_failed: "Проверка корректности вычислений CPU не пройдена в рабочих потоках. Результаты недостоверны, тест прерван.",
+    error_cpu_worker_failed: "Ошибка инициализации или сбой одного или нескольких рабочих потоков CPU.",
+    precision_fp32_wasm_simd: "FP32 (Wasm SIMD v128)",
+    workload_cpu_simd_short: "Многопоточный SIMD v128 FMA"
   },
   gamepadTool: {
     title: "Геймпад",

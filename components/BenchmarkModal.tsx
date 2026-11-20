@@ -48,6 +48,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   const isRunningRef = useRef(false);
   const cancelledRef = useRef(false);
   const workerRef = useRef<Worker | null>(null);
+  const requestSeqRef = useRef(0);
 
   useEffect(() => {
     workerRef.current = new Worker(new URL('../services/app.worker.ts', import.meta.url), { type: 'module' });
@@ -93,6 +94,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
   // --- Cancellation Mechanism ---
   const handleCancel = () => {
       cancelledRef.current = true;
+      requestSeqRef.current += 1;
       if (workerRef.current) {
           workerRef.current.terminate();
           workerRef.current = null;
@@ -101,7 +103,9 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
       workerRef.current = new Worker(new URL('../services/app.worker.ts', import.meta.url), { type: 'module' });
 
       setTests(prev => prev.map(test =>
-          test.status === 'running' ? { ...test, status: 'pending', score: null, details: 'Cancelled' } : test
+          test.status === 'running'
+            ? { ...test, status: 'pending', score: null, details: t.status_cancelled || 'Cancelled' }
+            : test
       ));
       setGlobalStatus('done');
       setRunningMode(null);
@@ -124,16 +128,23 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                   if (!workerRef.current) {
                       throw new Error("Web Worker not initialized");
                   }
+                  const activeRequestId = ++requestSeqRef.current;
                   const resultPlan = await new Promise<{score: number, details: string}>((resolve, reject) => {
                       const worker = workerRef.current;
                       if (!worker) {
-                          resolve({ score: 0, details: "No worker active" });
+                          resolve({ score: 0, details: t.status_failed || 'Failed' });
                           return;
                       }
 
+                      const cleanupListeners = () => {
+                          worker.removeEventListener('message', handleMessage);
+                          worker.removeEventListener('error', handleError);
+                          worker.removeEventListener('messageerror', handleError);
+                      };
+
                       const handleMessage = (e: MessageEvent) => {
-                          if (e.data.id === id) {
-                              worker.removeEventListener('message', handleMessage);
+                          if (e.data?.id === id && e.data?.requestId === activeRequestId) {
+                              cleanupListeners();
                               if (e.data.success) {
                                   resolve({ score: e.data.score, details: e.data.details });
                               } else {
@@ -142,8 +153,15 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                           }
                       };
 
+                      const handleError = () => {
+                          cleanupListeners();
+                          reject(new Error('Benchmark worker crashed or failed to respond'));
+                      };
+
                       worker.addEventListener('message', handleMessage);
-                      worker.postMessage({ id, config: TEST_CONFIG[id] });
+                      worker.addEventListener('error', handleError);
+                      worker.addEventListener('messageerror', handleError);
+                      worker.postMessage({ id, requestId: activeRequestId, config: TEST_CONFIG[id] });
                   });
                   score = resultPlan.score;
                   details = resultPlan.details;
@@ -268,11 +286,11 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
           }
       } catch (e: unknown) {
           console.error("Benchmark iteration failed", getErrorMessage(e));
-          return { score: 0, details: "Failed" };
+          return { score: 0, details: t.status_failed || 'Failed' };
       }
 
       return { score, details };
-  }, []);
+  }, [t.status_failed]);
 
   // --- Orchestrate multiple runs to calculate the median ---
   const runBenchmarkTask = useCallback(async (id: TestItem['id']): Promise<{score: number, details: string}> => {
@@ -291,14 +309,14 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
       }
 
       if (cancelledRef.current || runs.length === 0) {
-          return { score: 0, details: "Cancelled" };
+          return { score: 0, details: t.status_cancelled || 'Cancelled' };
       }
 
       // Sort by score ascending to compute the exact statistical median
       runs.sort((a, b) => a.score - b.score);
       const medianResult = runs[Math.floor(runs.length / 2)];
       return medianResult;
-  }, [runSingleIteration, t.running]);
+  }, [runSingleIteration, t.running, t.status_cancelled]);
 
   const handleRunSingle = async (id: TestItem['id']) => {
       if (isRunningRef.current) return;
@@ -307,12 +325,12 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
 
       setGlobalStatus('running');
       setRunningMode('single');
-      updateTestState(id, { status: 'running', score: null, details: 'Initializing...' });
+      updateTestState(id, { status: 'running', score: null, details: t.status_initializing || 'Initializing...' });
 
       const result = await runBenchmarkTask(id);
 
       if (cancelledRef.current) {
-          updateTestState(id, { status: 'pending', details: 'Cancelled', score: null });
+          updateTestState(id, { status: 'pending', details: t.status_cancelled || 'Cancelled', score: null });
       } else {
           setTests(prev => {
               const newTests = prev.map(t => t.id === id ? { ...t, status: 'done' as const, score: result.score, details: result.details } : t);
@@ -342,12 +360,12 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
       for (let i = 0; i < tests.length; i++) {
           if (cancelledRef.current) break;
           const test = tests[i];
-          updateTestState(test.id, { status: 'running', details: 'Initializing...' });
+          updateTestState(test.id, { status: 'running', details: t.status_initializing || 'Initializing...' });
 
           const result = await runBenchmarkTask(test.id);
 
           if (cancelledRef.current) {
-              updateTestState(test.id, { status: 'pending', details: 'Cancelled', score: null });
+              updateTestState(test.id, { status: 'pending', details: t.status_cancelled || 'Cancelled', score: null });
               break;
           }
 
@@ -419,7 +437,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                     {runningMode === 'single' ? (
                         <div className="flex flex-col items-center animate-pulse">
                             <Activity size={32} className="text-indigo-500 mb-2" />
-                            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Running...</span>
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t.running || 'Running...'}</span>
                         </div>
                     ) : runningMode === 'all' ? (
                         <div className="flex flex-col items-center">
@@ -489,7 +507,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ onClose, t }) =>
                                             ? 'text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30'
                                             : 'text-slate-300 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30'
                                         } disabled:opacity-0 cursor-pointer`}
-                                        title="Run single test"
+                                        title={t.run_single_hint || "Run single test"}
                                     >
                                         {test.status === 'done' ? <RotateCw size={14} /> : <Play size={14} fill="currentColor" />}
                                     </button>

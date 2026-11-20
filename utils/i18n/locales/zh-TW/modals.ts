@@ -243,7 +243,11 @@ export const modals = {
     crypto_test: "密碼學雜湊",
     convolution_test: "影像矩陣卷積",
     regex_test: "正規表示式解析",
-    worker_status: "Web Worker 啟用中 (多線程高效率)"
+    worker_status: "Web Worker 啟用中 (多線程高效率)",
+    status_initializing: "正在初始化...",
+    status_cancelled: "已取消",
+    status_failed: "執行失敗",
+    run_single_hint: "執行單項測試"
   },
   graphicsModal: {
     supported_features: "支援的特性",

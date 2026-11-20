@@ -242,7 +242,14 @@ export const tools = {
     timing_fence_sync: "WebGL2 同步柵欄",
     timing_readback_sync: "像素回讀同步",
     webgl_version_label: "圖形介面",
-    error_webgl_verification_failed: "WebGL ALU 正確性校驗在目前 GPU 上未通過，結果不可信，測試已中止。"
+    error_webgl_verification_failed: "WebGL ALU 正確性校驗在目前 GPU 上未通過，結果不可信，測試已中止。",
+    workload_cpu_short: "多線程 FP64 FMA",
+    timing_cpu_channel: "MessageChannel (無 4ms 鉗位)",
+    cpu_batch_size_label: "單核批疊代",
+    error_cpu_verification_failed: "CPU 浮點計算正確性校驗在工作線程上未通過，結果不可信，測試已中止。",
+    error_cpu_worker_failed: "一個或多個 CPU 工作線程初始化失敗或執行異常，測試已中止。",
+    precision_fp32_wasm_simd: "FP32 (Wasm SIMD v128 向量)",
+    workload_cpu_simd_short: "多線程 SIMD v128 向量 FMA"
   },
   gamepadTool: {
     title: "遊戲手掣",

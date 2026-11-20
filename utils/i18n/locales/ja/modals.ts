@@ -243,7 +243,11 @@ Copyright (c) 2026 BrowserScope Contributors
     crypto_test: "暗号ハッシュ",
     convolution_test: "画像行列畳み込み",
     regex_test: "正規表現パース",
-    worker_status: "Web Worker 有効 (マルチスレッド高速)"
+    worker_status: "Web Worker 有効 (マルチスレッド高速)",
+    status_initializing: "初期化中...",
+    status_cancelled: "キャンセル済み",
+    status_failed: "失敗",
+    run_single_hint: "単体テストを実行"
   },
   graphicsModal: {
     supported_features: "サポートされている機能",
