@@ -7,7 +7,6 @@ export const dashboard = {
   footer: "BrowserScope - Device Intelligence Tool",
   refresh: "Refresh Data",
 
-
   browserCard: {
     title: "Browser Identity",
     subtitle: "Current actively used browser estimated by features",
@@ -460,7 +459,6 @@ export const dashboard = {
     "title": "JA3/JA4 Fingerprint",
     "detect": "Detect"
   },
-
 
   "analysis_no_error": "No error object available.",
   "analysis_null_reference": "Null reference error",

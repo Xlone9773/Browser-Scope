@@ -16,18 +16,6 @@ interface BenchmarkResult {
   speedup: number;
 }
 
-const workerCode = `
-  self.onmessage = function(e) {
-    const duration = e.data || 50;
-    const start = performance.now();
-    let ops = 0;
-    while (performance.now() - start < duration) {
-      ops += Math.sin(ops) + Math.cos(ops);
-    }
-    self.postMessage(ops);
-  };
-`;
-
 export const HardwareTab: React.FC<HardwareTabProps> = React.memo(({ t }) => {
   const [hwStatus, setHwStatus] = useState<'idle' | 'running' | 'poisoned' | 'clean' | 'unknown'>(() => {
     try {

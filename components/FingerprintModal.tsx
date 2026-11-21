@@ -36,7 +36,6 @@ function murmurhash3_32_gc(key: string, seed: number) {
 
   k1 = 0;
 
-
   switch (remainder) {
       case 3:
           k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
@@ -52,7 +51,6 @@ function murmurhash3_32_gc(key: string, seed: number) {
       k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
       h1 ^= k1;
   }
-
 
   h1 ^= key.length;
 

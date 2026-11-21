@@ -160,9 +160,9 @@ export function useSwipeGesture(options: SwipeGestureOptions): SwipeHandlers {
 
     if (isFastFlick || isLargeDrag) {
       if (deltaX < 0) {
-        onSwipeLeft ? onSwipeLeft() : null;
+        onSwipeLeft?.();
       } else {
-        onSwipeRight ? onSwipeRight() : null;
+        onSwipeRight?.();
       }
     }
   }, [angleRatio, minDistance, minVelocity, onSwipeLeft, onSwipeRight]);

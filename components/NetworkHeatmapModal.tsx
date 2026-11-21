@@ -7,7 +7,6 @@ import { measureLatency, LATENCY_REGIONS, LatencyResult, LatencyRegion } from '.
 import { WorldMap } from './heatmap/WorldMap';
 import { TraceGraph } from './heatmap/TraceGraph';
 
-
 interface NetworkHeatmapModalProps {
   onClose: () => void;
   t: Translation['heatmap'];
@@ -207,7 +206,6 @@ export const NetworkHeatmapModal: React.FC<NetworkHeatmapModalProps> = ({ onClos
           stopTrace();
       };
   }, [selectedRegion]);
-
 
   // Helpers
   const getLatencyColor = (latency: number) => {

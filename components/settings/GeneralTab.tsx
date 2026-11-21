@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { RotateCcw, Check, Download, Upload, Terminal, Copy, Radio, HelpCircle, Scale, AlertTriangle } from 'lucide-react';
+import { Check, Download, Upload, Terminal, Copy, Radio, HelpCircle, Scale, AlertTriangle } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Select } from '../ui/Select';
 import { Translation } from '../../utils/i18n/types';
@@ -27,29 +27,6 @@ interface GeneralTabProps {
     pdfExportFont?: 'auto' | 'helvetica' | 'times' | 'courier';
     updatePdfExportFont?: (value: 'auto' | 'helvetica' | 'times' | 'courier') => void;
 }
-
-// Custom Premium Restore Button Component
-interface CustomRestoreButtonProps {
-    onClick: () => void;
-    disabled: boolean;
-    activeText: string;
-    inactiveText: string;
-}
-
-const CustomRestoreButton: React.FC<CustomRestoreButtonProps> = ({ onClick, disabled, activeText, inactiveText }) => {
-    return (
-        <Button
-            variant={disabled ? "secondary" : "soft"}
-            onClick={onClick}
-            disabled={disabled}
-            size="md"
-            leftIcon={disabled ? <Check className="w-4.5 h-4.5 text-emerald-500 shrink-0" /> : <RotateCcw className="w-4.5 h-4.5 shrink-0 transition-transform duration-500 group-hover:rotate-180" />}
-            className="min-w-[140px] font-semibold rounded-xl group select-none active:scale-[0.97] transition-all"
-        >
-            <span className="truncate">{disabled ? activeText : inactiveText}</span>
-        </Button>
-    );
-};
 
 // Custom Switch Component with Spring Animation
 const Switch: React.FC<{ checked: boolean; onChange: (val: boolean) => void; label?: string; disabled?: boolean }> = ({ checked, onChange, label, disabled = false }) => (
@@ -84,13 +61,13 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     setTimeFormat,
     enableUdp,
     toggleEnableUdp,
-    hiddenCards = [],
-    setHiddenCards,
-    restoreAllNotifications,
-    dismissedNotificationsCount = 0,
-    translationDict,
-    showQuickSummary = false,
-    toggleShowQuickSummary,
+    hiddenCards: _hiddenCards = [],
+    setHiddenCards: _setHiddenCards,
+    restoreAllNotifications: _restoreAllNotifications,
+    dismissedNotificationsCount: _dismissedNotificationsCount = 0,
+    translationDict: _translationDict,
+    showQuickSummary: _showQuickSummary = false,
+    toggleShowQuickSummary: _toggleShowQuickSummary,
     lang: _lang,
     imageExportScale,
     updateImageExportScale,

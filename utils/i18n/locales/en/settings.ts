@@ -55,18 +55,9 @@ export const settings = {
             desc: "Show navigation tabs above the content to filter items. Automatically hides if empty."
         },
         showSearch: {
-
-
             title: "Enable Search Bar",
-
-
             desc: "Display a search bar above the tab bar to quickly filter dashboard categories and card content."
-
-
         },
-
-
-
         searchScope: {
             title: "Search Scope",
             desc: "Select what content the search should match against.",

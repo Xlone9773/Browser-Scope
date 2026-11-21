@@ -293,7 +293,7 @@ export const useEnvironmentAssessment = (): EnvironmentAssessment => {
                         }
                     }
                 }
-            } catch (e) {
+            } catch {
                 // ignore
             }
 

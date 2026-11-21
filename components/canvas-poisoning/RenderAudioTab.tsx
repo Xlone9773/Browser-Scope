@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ShieldAlert, RefreshCw, Activity } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { PoisoningTranslations, ExtendedWindow } from './types';
+import { PoisoningTranslations } from './types';
 import { runRenderAudioDiagnostic } from './diagnostics';
 
 interface RenderAudioTabProps {
@@ -53,27 +53,6 @@ export const RenderAudioTab: React.FC<RenderAudioTabProps> = React.memo(({ t }) 
   const addLog = useCallback((msg: string) => {
     setLogs((prev) => [...prev, msg]);
   }, []);
-
-  const drawCanvas = (ctx: CanvasRenderingContext2D, offset: number) => {
-    ctx.clearRect(0, 0, 200, 50);
-    const gradient = ctx.createLinearGradient(0, 0, 200, 50);
-    gradient.addColorStop(0, '#ff0000');
-    gradient.addColorStop(0.5, '#00ff00');
-    gradient.addColorStop(1, '#0000ff');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 200, 50);
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '16px "Arial", sans-serif';
-    ctx.fillText('Noise Test ' + offset, 10, 30);
-    ctx.beginPath();
-    ctx.arc(150, 25, 10, 0, Math.PI * 2);
-    ctx.stroke();
-  };
-
-  const drawWebGL = (gl: WebGLRenderingContext, offset: number) => {
-    gl.clearColor(0.2, 0.4 + offset / 100, 0.6, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-  };
 
   const runTest = async () => {
     setStatus('running');

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { HardDrive, Play, Square, AlertTriangle, FileText, Download, Trash2, Cpu, Sparkles, RefreshCw, CheckCircle2, Database } from 'lucide-react';
+import { HardDrive, Play, Square, AlertTriangle, FileText, Download, Trash2, Cpu, Sparkles, RefreshCw, Database } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 import { Select } from './ui/Select';

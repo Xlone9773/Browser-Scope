@@ -26,8 +26,6 @@ import { Modal } from './ui/Modal';
 import { Tabs, TabItem } from './ui/Tabs';
 import {
     useVideoDecodeTests,
-    VideoCodecRow,
-    AudioCodecRow,
     VideoTestResultItem,
     AudioTestResultItem
 } from '../hooks/useVideoDecodeTests';

@@ -4,7 +4,6 @@ import { Music, Activity, Terminal, RefreshCw, ArrowRightLeft } from 'lucide-rea
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
 
-
 interface MidiModalProps {
   onClose: () => void;
   t: Translation['midiModal'];

@@ -189,7 +189,7 @@ export function resolveCssUrls(cssText: string, baseUrl: string): string {
         try {
             const absoluteUrl = new URL(path, baseUrl).href;
             return `@import url("${absoluteUrl}");`;
-        } catch (e) {
+        } catch {
             return match;
         }
     });
@@ -202,7 +202,7 @@ export function resolveCssUrls(cssText: string, baseUrl: string): string {
         try {
             const absoluteUrl = new URL(path, baseUrl).href;
             return `url("${absoluteUrl}")`;
-        } catch (e) {
+        } catch {
             return match;
         }
     });

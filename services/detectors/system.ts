@@ -117,7 +117,6 @@ export const getHighEntropyClientHints = async () => {
 };
 
 export const getPWAFeatures = (): FeatureItem[] => {
-  const n = getNavigator();
   return [
     { name: 'Web App Manifest', key: 'manifest', supported: !!(typeof document !== 'undefined' && document.querySelector && document.querySelector('link[rel="manifest"]')), description: 'Defines PWA branding and behavior' },
     { name: 'Standalone Mode', key: 'standalone', supported: typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches, description: 'Running as installed app' },

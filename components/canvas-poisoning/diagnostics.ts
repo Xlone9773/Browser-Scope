@@ -1082,8 +1082,6 @@ export const runGeolocationDiagnostic = async (
     onProgress(100);
     if (isPoisoned) {
       log(t.poisoned_log || '⚠️ Environment is likely poisoned (Noise Injection detected).');
-    } else {
-      null;
     }
     return { status: isPoisoned ? 'poisoned' : 'clean', logs };
   }
@@ -1165,8 +1163,6 @@ export const runGeolocationDiagnostic = async (
     const distinctAccuracies = new Set(samples.map((s) => Math.round(s.accuracy)));
     if (distinctAccuracies.size === 1 && samples.length >= 5) {
       log(t.geo_accuracy_static || 'ℹ️ Declared accuracy value is identical across all samples — plausible for a cached/synthetic source, though not conclusive on its own.');
-    } else {
-      null;
     }
   }
 

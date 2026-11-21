@@ -6,7 +6,6 @@ export const dashboard = {
   footer: "BrowserScope - 瀏覽器能力檢測工具",
   refresh: "重新檢測",
 
-
   browserCard: {
     title: "瀏覽器身分",
     subtitle: "基於特徵探測目前可能正在使用的瀏覽器",
@@ -222,7 +221,6 @@ export const dashboard = {
         Low: "僅限基礎網頁任務。"
     }
   },
-
 
   notificationTest: {
     titlePlaceholder: "通知標題",
@@ -461,7 +459,6 @@ export const dashboard = {
     "title": "JA3/JA4 指紋",
     "detect": "檢測"
   },
-
 
   "analysis_no_error": "沒有可用的錯誤物件。",
   "analysis_null_reference": "空引用錯誤",

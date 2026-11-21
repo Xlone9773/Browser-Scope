@@ -158,10 +158,6 @@ export const BrowserReport: React.FC<BrowserReportProps> = ({ t }) => {
         emptyStateDesc: t.browserReport?.emptyStateDesc || "Click \"Run Audit\" to evaluate browser rendering, compute power, codecs, and privacy performance."
     };
 
-    const handleRequestClearAll = useCallback((): void => {
-        setConfirmAction('clearAll');
-    }, []);
-
     const handleRequestDeleteCurrent = useCallback((): void => {
         if (history.length <= 1) {
             setConfirmAction('clearAll');

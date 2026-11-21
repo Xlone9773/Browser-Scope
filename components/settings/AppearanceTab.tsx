@@ -3,13 +3,10 @@ import { RotateCcw, Check, Type } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Select, SelectColor } from '../ui/Select';
 import { Switch } from '../ui/Switch';
-import { Translation } from '../../utils/i18n/types';
+import { Translation, Language } from '../../utils/i18n/types';
 import { FONTS_LIST, isFontCompatibleWithLang } from '../../utils/fonts';
 import { useToast } from '../../hooks/useToast';
-import { Language } from '../../utils/i18n/types';
 import { resolveProgressiveBlurState, supportsProgressiveBlur } from '../../utils/progressiveBlur';
-
-
 
 // Custom Premium Restore Button Component
 interface CustomRestoreButtonProps {

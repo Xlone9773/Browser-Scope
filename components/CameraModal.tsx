@@ -177,9 +177,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onClose, t }) => {
                          setResolution({ width: settings.width, height: settings.height });
                      }
                  }
-                 return; // Successfully recovered without audio
              } catch (retryErr: unknown) {
-                                  handleError(retryErr);
+                 handleError(retryErr);
              }
         } else {
              handleError(err);

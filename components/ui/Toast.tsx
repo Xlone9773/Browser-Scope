@@ -24,7 +24,6 @@ export interface ToastContextType {
   clearAll: () => void;
 }
 
-
 interface ToastProps {
   toast: ToastItem;
   onClose: (id: string) => void;

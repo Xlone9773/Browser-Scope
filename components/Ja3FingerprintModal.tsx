@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Shield, Fingerprint, Activity, Server, Hash, Copy, Check, Info, HelpCircle, Terminal, KeyRound } from 'lucide-react';
+import { Shield, Fingerprint, Activity, Server, Hash, Copy, Check, Info, Terminal, KeyRound } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { USERSCRIPT_CODE } from '../utils/userscript';
@@ -104,7 +104,7 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
         const json = await res.json();
         setData(json);
         setError(null);
-      } catch (err) {
+      } catch {
         setError(t?.direct_desc || 'Direct fetch blocked by CORS.');
       } finally {
         setLoading(false);
@@ -125,12 +125,11 @@ export const Ja3FingerprintModal: React.FC<Ja3FingerprintModalProps> = ({ onClos
         const json = JSON.parse(result.data);
         setData(json);
         setError(null);
-      } catch (err) {
+      } catch {
         setError('Failed to fetch TLS Fingerprint via Backend Proxy.');
       } finally {
         setLoading(false);
       }
-      return;
     }
   };
 

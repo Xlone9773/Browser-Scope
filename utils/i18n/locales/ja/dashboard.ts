@@ -6,7 +6,6 @@ export const dashboard = {
   footer: "BrowserScope - ブラウザ能力検出ツール",
   refresh: "再検出",
 
-
   browserCard: {
     title: "ブラウザ ID",
     subtitle: "機能に基づいて推定された、現在使用されていると思われるブラウザ",
@@ -222,7 +221,6 @@ export const dashboard = {
         Low: "基本的なWebタスク向けです。"
     }
   },
-
 
   notificationTest: {
     titlePlaceholder: "通知タイトル",
@@ -461,7 +459,6 @@ export const dashboard = {
     "title": "JA3/JA4 指紋",
     "detect": "検出"
   },
-
 
   "analysis_no_error": "エラーオブジェクトはありません。",
   "analysis_null_reference": "Null 参照エラー",

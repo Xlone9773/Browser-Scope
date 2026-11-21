@@ -98,9 +98,8 @@ class NetworkRequestLogger {
         try {
             if (typeof window === 'undefined' || !window.fetch) return;
             const originalFetch = window.fetch.bind(window);
-            const self = this;
 
-            const customFetch = async function (input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+            const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
                 const id = Math.random().toString(36).substring(2, 11);
                 const startTime = performance.now();
                 const timestamp = new Date();
@@ -154,13 +153,13 @@ class NetworkRequestLogger {
                     initiator: isUdp ? 'UDP Proxy Engine' : 'Native Browser Fetch'
                 };
 
-                self.addLog(logItem);
+                this.addLog(logItem);
 
                 try {
                     const response = await originalFetch(input, init);
                     const duration = Math.round(performance.now() - startTime);
 
-                    self.addLog({
+                    this.addLog({
                         ...logItem,
                         status: response.status,
                         duration
@@ -169,7 +168,7 @@ class NetworkRequestLogger {
                     return response;
                 } catch (err) {
                     const duration = Math.round(performance.now() - startTime);
-                    self.addLog({
+                    this.addLog({
                         ...logItem,
                         status: 'FAILED',
                         duration
@@ -208,8 +207,6 @@ class NetworkRequestLogger {
     }
 
     private setupUserscriptListeners() {
-        const self = this;
-
         // Map to track start times of userscript requests
         const activeRequests: Record<string, { startTime: number; url: string; method: string; timestamp: Date }> = {};
 
@@ -239,7 +236,7 @@ class NetworkRequestLogger {
                 initiator: 'Tampermonkey Bypass'
             };
 
-            self.addLog(logItem);
+            this.addLog(logItem);
         });
 
         // We listen dynamically to CORS_REQUEST_RECEIVE_* events
@@ -249,7 +246,7 @@ class NetworkRequestLogger {
             if (typeof window === 'undefined' || !window.dispatchEvent) return;
             const originalDispatch = window.dispatchEvent.bind(window);
 
-            const customDispatch = function (event: Event): boolean {
+            const customDispatch = (event: Event): boolean => {
                 const result = originalDispatch(event);
 
                 if (event.type.startsWith('CORS_REQUEST_RECEIVE_')) {
@@ -260,7 +257,7 @@ class NetworkRequestLogger {
                         const customEvent = event as CustomEvent;
                         const status = customEvent.detail?.success ? (customEvent.detail.status || 200) : 'FAILED';
 
-                        self.addLog({
+                        this.addLog({
                             id,
                             url: reqInfo.url,
                             method: reqInfo.method,

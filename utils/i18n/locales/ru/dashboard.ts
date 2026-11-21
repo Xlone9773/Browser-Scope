@@ -6,7 +6,6 @@ export const dashboard = {
   footer: "BrowserScope - Инструмент анализа возможностей браузера",
   refresh: "Обновить данные",
 
-
   browserCard: {
     title: "Идентификация браузера",
     subtitle: "Текущий используемый браузер, оцененный по характеристикам",
@@ -222,7 +221,6 @@ export const dashboard = {
         Low: "Базовые веб-задачи."
     }
   },
-
 
   notificationTest: {
     titlePlaceholder: "Заголовок уведомления",
@@ -461,7 +459,6 @@ export const dashboard = {
     "title": "Отпечаток JA3/JA4",
     "detect": "Обнаружить"
   },
-
 
   "analysis_no_error": "Объект ошибки недоступен.",
   "analysis_null_reference": "Ошибка нулевой ссылки",

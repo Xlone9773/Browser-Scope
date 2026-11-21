@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Database, RefreshCw, Trash2, Type, DownloadCloud, CheckCircle2, AlertCircle, X, Globe } from 'lucide-react';
-import { Translation } from '../../utils/i18n/types';
+import { Database, RefreshCw, Trash2, Type, DownloadCloud, CheckCircle2, AlertCircle, Globe } from 'lucide-react';
+import { Translation, Language } from '../../utils/i18n/types';
 import { Button } from '../ui/Button';
-import { Language } from '../../utils/i18n/types';
 import { useToast } from '../../hooks/useToast';
 import { languageNames } from '../../utils/i18n/index';
-import { getDownloadedLocales, downloadLocale, deleteLocale, getLocaleSize, isLocaleDownloaded } from '../../utils/i18n/localeCache';
+import { downloadLocale, deleteLocale, getLocaleSize, isLocaleDownloaded } from '../../utils/i18n/localeCache';
 import { FONTS_LIST, resolveCssUrls } from '../../utils/fonts';
 
 interface StorageTabProps {
@@ -16,7 +15,7 @@ interface StorageTabProps {
 
 const CACHE_NAME = "browserscope-fonts";
 
-export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLang }) => {
+export const StorageTab: React.FC<StorageTabProps> = ({ t, lang = 'en', changeLang: _changeLang }) => {
     const [localStorageCount, setLocalStorageCount] = useState(() => typeof window !== 'undefined' ? localStorage.length : 0);
     const [sessionStorageCount, setSessionStorageCount] = useState(() => typeof window !== 'undefined' ? sessionStorage.length : 0);
     const [swCount, setSwCount] = useState<number | null>(null);

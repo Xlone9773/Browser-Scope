@@ -117,7 +117,7 @@ export const SpeechExplorerModal: React.FC<SpeechExplorerModalProps> = ({ onClos
           };
 
           utterance.onerror = (e: SpeechSynthesisErrorEvent) => {
-              console.error("SpeechSynthesis error: ", e);
+              console.error("SpeechSynthesis error:", e);
               setPlayingVoiceURI(null);
               utteranceRef.current = null;
           };

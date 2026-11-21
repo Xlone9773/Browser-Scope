@@ -128,7 +128,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = React.memo(({
   hiddenCards,
   matchedCardIds,
   activeTab,
-  slideDirection = 0,
+  slideDirection: _slideDirection = 0,
   geoData,
   permStatus,
   open,
