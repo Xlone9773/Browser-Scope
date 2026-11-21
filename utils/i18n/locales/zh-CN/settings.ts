@@ -119,8 +119,8 @@ export const settings = {
             desc: "禁用模糊特效与透明度以提升界面流畅度（减少 GPU 消耗）。"
         },
         progressiveBlur: {
-            title: "渐进模糊（实验性试点）",
-            desc: "为悬浮导航背板启用多层线性渐进背景模糊（当前试点应用于设置弹窗移动端顶部 Tab）。",
+            title: "渐进模糊",
+            desc: "为首页搜索栏、导航栏及设置悬浮 Tab 背板启用多层渐进背景模糊。",
             unsupportedHint: "当前浏览器不支持 backdrop-filter 与 mask-image 渐进模糊合成，已锁定为实体背板。",
             disabledByBlurHint: "已随全局「禁用模糊」同步关闭，当前退回为不透明实体背板。"
         },

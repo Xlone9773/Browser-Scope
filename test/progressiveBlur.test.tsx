@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ProgressiveBlur } from '../components/ui/ProgressiveBlur';
 import { ToastProvider } from '../components/ui/Toast';
 import { SettingsModal } from '../components/SettingsModal';
+import { SearchBarAndTabs } from '../components/layout/SearchBarAndTabs';
 import { en } from '../utils/i18n/en';
 import {
   buildProgressiveBlurCssVars,
@@ -11,7 +12,7 @@ import {
   supportsProgressiveBlur,
 } from '../utils/progressiveBlur';
 
-describe('ProgressiveBlur capability, state matrix, and Settings mobile pilot', () => {
+describe('ProgressiveBlur capability, state matrix, Settings mobile & SearchBarAndTabs', () => {
   const originalCss = globalThis.CSS;
   const originalScrollIntoView = Element.prototype.scrollIntoView;
 
@@ -337,5 +338,59 @@ describe('ProgressiveBlur capability, state matrix, and Settings mobile pilot', 
     const fallbackBackdrop = document.body.querySelector('[data-progressive-blur="fallback"]');
     expect(fallbackBackdrop).not.toBeNull();
     expect(fallbackBackdrop?.className).toContain('md:hidden');
+  });
+
+  it('SearchBarAndTabs renders feathered ProgressiveBlur when active and opaque fallback when disabled or turned off', () => {
+    Object.defineProperty(globalThis, 'CSS', {
+      value: { supports: () => true },
+      configurable: true,
+      writable: true,
+    });
+
+    const tabs = [
+      { id: 'all' as const, label: 'All', icon: <span>A</span> },
+      { id: 'browser' as const, label: 'Browser', icon: <span>B</span> },
+    ];
+
+    const baseSearchProps = {
+      showSearch: true,
+      showTabs: true,
+      showSearchSettings: false,
+      setShowSearchSettings: vi.fn(),
+      handleSearch: vi.fn(),
+      searchScope: 'all' as const,
+      updateSearchScope: vi.fn(),
+      searchMode: 'fuzzy' as const,
+      updateSearchMode: vi.fn(),
+      availableTabs: tabs,
+      activeTab: 'all' as const,
+      setActiveTab: vi.fn(),
+      setSlideDirection: vi.fn(),
+      tabsContainerRef: { current: null },
+      activeTabRef: { current: null },
+      themeColor: 'indigo',
+      disableBlur: false,
+      enableProgressiveBlur: true,
+      t: en,
+    };
+
+    const { container, rerender } = render(<SearchBarAndTabs {...baseSearchProps} />);
+
+    const activeBlur = container.querySelector('[data-progressive-blur="active"]') as HTMLElement | null;
+    expect(activeBlur).not.toBeNull();
+    expect(activeBlur?.style.getPropertyValue('--pb-mask-start')).toBe('68%');
+    expect(activeBlur?.className).toContain('-bottom-7');
+
+    rerender(<SearchBarAndTabs {...baseSearchProps} showSearchSettings={true} />);
+    const expandedBlur = container.querySelector('[data-progressive-blur="active"]') as HTMLElement | null;
+    expect(expandedBlur?.style.getPropertyValue('--pb-mask-start')).toBe('78%');
+
+    rerender(<SearchBarAndTabs {...baseSearchProps} enableProgressiveBlur={false} />);
+    expect(container.querySelector('[data-progressive-blur="active"]')).toBeNull();
+    expect(container.querySelector('[data-progressive-blur="fallback"]')).not.toBeNull();
+
+    rerender(<SearchBarAndTabs {...baseSearchProps} disableBlur={true} />);
+    expect(container.querySelector('[data-progressive-blur="active"]')).toBeNull();
+    expect(container.querySelector('[data-progressive-blur="fallback"]')).not.toBeNull();
   });
 });

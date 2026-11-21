@@ -996,6 +996,8 @@ const App: React.FC = () => {
               tabsContainerRef={tabsContainerRef}
               activeTabRef={activeTabRef}
               themeColor={themeColor}
+              disableBlur={disableBlur}
+              enableProgressiveBlur={enableProgressiveBlur}
               t={t}
             />
 

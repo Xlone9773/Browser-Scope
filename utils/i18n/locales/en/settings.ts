@@ -119,8 +119,8 @@ export const settings = {
             desc: "Disable blur effects and transparency to improve UI fluidity."
         },
         progressiveBlur: {
-            title: "Progressive Blur (Pilot)",
-            desc: "Apply multi-layer gradient backdrop blur behind floating navigation tabs (currently active on mobile Settings).",
+            title: "Progressive Blur",
+            desc: "Apply multi-layer gradient backdrop blur behind floating search bars and navigation tabs.",
             unsupportedHint: "Your browser does not support backdrop-filter + mask-image progressive blur compositing.",
             disabledByBlurHint: "Automatically suspended while Global Disable Blur is enabled; falls back to an opaque backing plate."
         },

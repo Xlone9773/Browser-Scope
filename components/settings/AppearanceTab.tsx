@@ -473,7 +473,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                     <Switch checked={disableBlur} onChange={toggleDisableBlur} />
                 </div>
             </div>
-            {/* Progressive Blur Pilot Toggle */}
+            {/* Progressive Blur Toggle */}
             <div
                 className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${
                     pbState.isToggleDisabled
@@ -484,10 +484,10 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
             >
                 <div className="flex flex-col gap-1 pr-4">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        {t.progressiveBlur?.title || 'Progressive Blur (Pilot)'}
+                        {t.progressiveBlur?.title || 'Progressive Blur'}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                        {t.progressiveBlur?.desc || 'Apply multi-layer gradient backdrop blur behind floating mobile Settings tabs.'}
+                        {t.progressiveBlur?.desc || 'Apply multi-layer gradient backdrop blur behind floating navigation and search toolbars.'}
                     </p>
                     {!pbState.isSupported ? (
                         <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
