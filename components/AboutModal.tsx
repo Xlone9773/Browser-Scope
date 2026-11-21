@@ -15,19 +15,33 @@ import {
 } from 'lucide-react';
 import { Translation } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
+import { ProgressiveBlur } from './ui/ProgressiveBlur';
 
 interface AboutModalProps {
   onClose: () => void;
   t: Translation['aboutModal'];
+  disableBlur?: boolean;
+  enableProgressiveBlur?: boolean;
 }
 
-export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
+export const AboutModal: React.FC<AboutModalProps> = ({
+  onClose,
+  t,
+  disableBlur = false,
+  enableProgressiveBlur = true,
+}) => {
   const currentVersion = t.updates && t.updates[0] ? t.updates[0].version : '1.6.0';
   const [showLicense, setShowLicense] = useState(false);
+  const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
 
   const openSource = (t.features?.openSource || {}) as Record<string, string>;
   const currentLicenseText = openSource.licenseText || '';
   const currentLicenseTitle = openSource.licenseTitle || 'LICENSE (MIT)';
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const pastHero = e.currentTarget.scrollTop > 220;
+    setIsScrolledPastHero((prev) => (prev === pastHero ? prev : pastHero));
+  };
 
   return (
     <Modal
@@ -38,7 +52,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
         noPadding
     >
         {({ close: _close }) => (
-            <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
+            <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 progressive-blur-surface-slate-950 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5 dark:ring-white/10 relative">
                 {/* Scoped style block for hardware-accelerated animations */}
                 <style>{`
                   @keyframes float-slow-1 {
@@ -83,7 +97,10 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                 `}</style>
 
                 {/* Scrollable Area containing both Hero and Content for seamless integration */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar relative">
+                <div
+                  onScroll={handleScroll}
+                  className="flex-1 overflow-y-auto custom-scrollbar relative"
+                >
 
                     {/* Hero Header */}
                     <div className="relative pt-12 pb-20 px-8 overflow-hidden bg-slate-900 shrink-0">
@@ -298,6 +315,32 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose, t }) => {
                         </div>
                     </div>
                 </div>
+
+                {/* Top & Bottom Scroll-Edge Progressive Blur Overlays */}
+                <ProgressiveBlur
+                  enabled={enableProgressiveBlur}
+                  disabled={disableBlur}
+                  direction="to bottom"
+                  baseBlur={0}
+                  maxBlur={12}
+                  maskStart="20%"
+                  maskEnd="98%"
+                  overlayAlpha={isScrolledPastHero ? 0.78 : 0}
+                  className="absolute top-0 inset-x-0 h-12 z-20"
+                  fallbackClassName="hidden"
+                />
+                <ProgressiveBlur
+                  enabled={enableProgressiveBlur}
+                  disabled={disableBlur}
+                  direction="to top"
+                  baseBlur={0}
+                  maxBlur={12}
+                  maskStart="20%"
+                  maskEnd="98%"
+                  overlayAlpha={0.8}
+                  className="absolute bottom-0 inset-x-0 h-14 z-20"
+                  fallbackClassName="hidden"
+                />
             </div>
         )}
     </Modal>

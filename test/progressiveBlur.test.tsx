@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ProgressiveBlur } from '../components/ui/ProgressiveBlur';
 import { ToastProvider } from '../components/ui/Toast';
 import { SettingsModal } from '../components/SettingsModal';
+import { AboutModal } from '../components/AboutModal';
 import { SearchBarAndTabs } from '../components/layout/SearchBarAndTabs';
 import { en } from '../utils/i18n/en';
 import {
@@ -392,5 +393,52 @@ describe('ProgressiveBlur capability, state matrix, Settings mobile & SearchBarA
     rerender(<SearchBarAndTabs {...baseSearchProps} disableBlur={true} />);
     expect(container.querySelector('[data-progressive-blur="active"]')).toBeNull();
     expect(container.querySelector('[data-progressive-blur="fallback"]')).not.toBeNull();
+  });
+
+  it('AboutModal mounts top and bottom ProgressiveBlur scroll-edge overlays and respects disableBlur/enableProgressiveBlur', () => {
+    Object.defineProperty(globalThis, 'CSS', {
+      value: { supports: () => true },
+      configurable: true,
+      writable: true,
+    });
+
+    const { rerender } = render(
+      <AboutModal
+        onClose={vi.fn()}
+        t={en.aboutModal}
+        disableBlur={false}
+        enableProgressiveBlur={true}
+      />,
+    );
+
+    const activeLayers = Array.from(
+      document.body.querySelectorAll('[data-progressive-blur="active"]'),
+    ) as HTMLElement[];
+    expect(activeLayers).toHaveLength(2);
+    expect(activeLayers[0].style.getPropertyValue('--pb-direction')).toBe('to bottom');
+    expect(activeLayers[0].style.getPropertyValue('--pb-overlay-alpha')).toBe('0');
+    expect(activeLayers[1].style.getPropertyValue('--pb-direction')).toBe('to top');
+    expect(activeLayers[1].style.getPropertyValue('--pb-overlay-alpha')).toBe('0.8');
+
+    const scrollContainer = activeLayers[0].parentElement?.querySelector('.overflow-y-auto') as HTMLElement | null;
+    expect(scrollContainer).not.toBeNull();
+    if (scrollContainer) {
+      Object.defineProperty(scrollContainer, 'scrollTop', { value: 260, configurable: true });
+      fireEvent.scroll(scrollContainer);
+    }
+
+    const updatedTopLayer = document.body.querySelector('[data-progressive-blur="active"]') as HTMLElement | null;
+    expect(updatedTopLayer?.style.getPropertyValue('--pb-overlay-alpha')).toBe('0.78');
+
+    rerender(
+      <AboutModal
+        onClose={vi.fn()}
+        t={en.aboutModal}
+        disableBlur={true}
+        enableProgressiveBlur={true}
+      />,
+    );
+    expect(document.body.querySelectorAll('[data-progressive-blur="active"]')).toHaveLength(0);
+    expect(document.body.querySelectorAll('[data-progressive-blur="fallback"]')).toHaveLength(2);
   });
 });

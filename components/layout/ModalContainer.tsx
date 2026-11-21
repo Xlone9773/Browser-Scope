@@ -227,7 +227,12 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
         ) : null}
 
         {visibility.about ? (
-          <Components.about onClose={() => close("about")} t={t.aboutModal} />
+          <Components.about
+            onClose={() => close("about")}
+            t={t.aboutModal}
+            disableBlur={disableBlur}
+            enableProgressiveBlur={enableProgressiveBlur}
+          />
         ) : null}
 
         {visibility.sensor ? (

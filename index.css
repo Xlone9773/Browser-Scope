@@ -47,6 +47,11 @@ body.font-rendering-fix {
   --pb-fallback-border: #334155;
 }
 
+.dark .progressive-blur-surface-slate-950 {
+  --pb-tint-rgb: 2 6 23;
+  --pb-fallback-bg: #020617;
+}
+
 .progressive-blur-fallback {
   background-color: var(--pb-fallback-bg);
   border-color: var(--pb-fallback-border);
