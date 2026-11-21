@@ -34,3 +34,100 @@ body.font-rendering-fix {
   text-rendering: optimizeLegibility;
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.01);
 }
+
+:root {
+  --pb-tint-rgb: 248 250 252;
+  --pb-fallback-bg: #f8fafc;
+  --pb-fallback-border: #f1f5f9;
+}
+
+.dark {
+  --pb-tint-rgb: 15 23 42;
+  --pb-fallback-bg: #0f172a;
+  --pb-fallback-border: #334155;
+}
+
+.progressive-blur-fallback {
+  background-color: var(--pb-fallback-bg);
+  border-color: var(--pb-fallback-border);
+}
+
+.progressive-blur-base {
+  backdrop-filter: blur(var(--pb-base-blur, 0px));
+  -webkit-backdrop-filter: blur(var(--pb-base-blur, 0px));
+  mask-image: linear-gradient(
+    var(--pb-direction, to bottom),
+    rgb(0 0 0 / 1) var(--pb-mask-start, 46%),
+    rgb(0 0 0 / 0.38) var(--pb-feather-mid1, 68%),
+    rgb(0 0 0 / 0) var(--pb-mask-end, 98%)
+  );
+  -webkit-mask-image: linear-gradient(
+    var(--pb-direction, to bottom),
+    rgb(0 0 0 / 1) var(--pb-mask-start, 46%),
+    rgb(0 0 0 / 0.38) var(--pb-feather-mid1, 68%),
+    rgb(0 0 0 / 0) var(--pb-mask-end, 98%)
+  );
+}
+
+.progressive-blur-feather {
+  backdrop-filter: blur(var(--pb-mid-blur, 5px));
+  -webkit-backdrop-filter: blur(var(--pb-mid-blur, 5px));
+  mask-image: linear-gradient(
+    var(--pb-direction, to bottom),
+    rgb(0 0 0 / 1) var(--pb-feather-start, 51%),
+    rgb(0 0 0 / 0.62) var(--pb-feather-mid1, 68%),
+    rgb(0 0 0 / 0.22) var(--pb-feather-mid2, 82%),
+    rgb(0 0 0 / 0.05) var(--pb-feather-mid3, 92%),
+    rgb(0 0 0 / 0) var(--pb-mask-end, 98%)
+  );
+  -webkit-mask-image: linear-gradient(
+    var(--pb-direction, to bottom),
+    rgb(0 0 0 / 1) var(--pb-feather-start, 51%),
+    rgb(0 0 0 / 0.62) var(--pb-feather-mid1, 68%),
+    rgb(0 0 0 / 0.22) var(--pb-feather-mid2, 82%),
+    rgb(0 0 0 / 0.05) var(--pb-feather-mid3, 92%),
+    rgb(0 0 0 / 0) var(--pb-mask-end, 98%)
+  );
+}
+
+.progressive-blur-layer {
+  backdrop-filter: blur(var(--pb-max-blur, 14px));
+  -webkit-backdrop-filter: blur(var(--pb-max-blur, 14px));
+  mask-image: linear-gradient(
+    var(--pb-direction, to bottom),
+    rgb(0 0 0 / 1) var(--pb-mask-start, 46%),
+    rgb(0 0 0 / 0.65) var(--pb-peak-mid1, 58%),
+    rgb(0 0 0 / 0.22) var(--pb-peak-mid2, 71%),
+    rgb(0 0 0 / 0) var(--pb-peak-end, 83%)
+  );
+  -webkit-mask-image: linear-gradient(
+    var(--pb-direction, to bottom),
+    rgb(0 0 0 / 1) var(--pb-mask-start, 46%),
+    rgb(0 0 0 / 0.65) var(--pb-peak-mid1, 58%),
+    rgb(0 0 0 / 0.22) var(--pb-peak-mid2, 71%),
+    rgb(0 0 0 / 0) var(--pb-peak-end, 83%)
+  );
+}
+
+.progressive-blur-scrim {
+  background: linear-gradient(
+    var(--pb-direction, to bottom),
+    rgb(var(--pb-tint-rgb) / var(--pb-overlay-alpha, 0.72)) var(--pb-mask-start, 46%),
+    rgb(var(--pb-tint-rgb) / var(--pb-scrim-alpha-mid1, 0.49)) var(--pb-feather-mid1, 68%),
+    rgb(var(--pb-tint-rgb) / var(--pb-scrim-alpha-mid2, 0.2)) var(--pb-feather-mid2, 82%),
+    rgb(var(--pb-tint-rgb) / var(--pb-scrim-alpha-mid3, 0.04)) var(--pb-feather-mid3, 92%),
+    rgb(var(--pb-tint-rgb) / 0) var(--pb-mask-end, 98%)
+  );
+}
+
+body.no-blur .progressive-blur-base,
+body.no-blur .progressive-blur-feather,
+body.no-blur .progressive-blur-layer,
+body.no-blur .progressive-blur-scrim {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+  background: var(--pb-fallback-bg) !important;
+}
+

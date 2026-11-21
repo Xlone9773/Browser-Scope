@@ -118,6 +118,12 @@ export const settings = {
             title: "ブラーを無効化",
             desc: "ブラー効果と透明度を無効にし、UIの滑らかさを向上させます。"
         },
+        progressiveBlur: {
+            title: "プログレッシブブラー（試験導入）",
+            desc: "フローティングタブ背面に多層グラデーションの背景ぼかしを適用します（現在は設定画面モバイル上部タブで先行適用中）。",
+            unsupportedHint: "ご利用のブラウザは backdrop-filter と mask-image の合成に対応していないため有効化できません。",
+            disabledByBlurHint: "「ブラーを無効化」が有効なため連動停止し、不透明な背面パネルへフォールバックしています。"
+        },
         animations: {
             title: "アニメーションを無効にする",
             desc: "ページ遷移とカードの読み込みアニメーションをオフにします。"

@@ -118,6 +118,12 @@ export const settings = {
             title: "停用模糊",
             desc: "停用模糊特效與透明度以提升介面流暢度（減少 GPU 消耗）。"
         },
+        progressiveBlur: {
+            title: "漸進模糊（實驗性試點）",
+            desc: "為懸浮導覽背板啟用多層線性漸進背景模糊（目前試點應用於設定視窗行動端頂部 Tab）。",
+            unsupportedHint: "目前瀏覽器不支援 backdrop-filter 與 mask-image 漸進模糊合成，已鎖定為實體背板。",
+            disabledByBlurHint: "已隨全域「停用模糊」同步關閉，目前退回為不透明實體背板。"
+        },
         animations: {
             title: "禁用動畫",
             desc: "關閉頁面切換和卡片下載等所有動畫效果。"

@@ -1,8 +1,10 @@
 
-import React, { useState, Suspense, useTransition, useRef, useEffect } from 'react';
+import React, { useState, Suspense, useTransition, useRef, useEffect, useMemo } from 'react';
 import { Database, Activity, Sliders, Monitor, Terminal, Loader2, Package, Layers, Palette } from 'lucide-react';
 import { Translation, Language } from '../utils/i18n/types';
 import { Modal } from './ui/Modal';
+import { ProgressiveBlur } from './ui/ProgressiveBlur';
+import { resolveProgressiveBlurState, supportsProgressiveBlur } from '../utils/progressiveBlur';
 
 import { SelectColor } from './ui/Select';
 import type { ModuleState } from './settings/ModulesTab';
@@ -33,6 +35,8 @@ interface SettingsModalProps {
   setTimeFormat: (format: '12' | '24') => void;
   disableBlur: boolean;
   toggleDisableBlur: (value: boolean) => void;
+  enableProgressiveBlur?: boolean;
+  toggleEnableProgressiveBlur?: (value: boolean) => void;
   disableAnimations: boolean;
   toggleDisableAnimations: (value: boolean) => void;
   disableTabAnimations?: boolean;
@@ -109,6 +113,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setTimeFormat,
     disableBlur,
     toggleDisableBlur,
+    enableProgressiveBlur = true,
+    toggleEnableProgressiveBlur,
     disableAnimations,
     toggleDisableAnimations,
     disableTabAnimations = false,
@@ -225,6 +231,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   // Access structured settings
   const settings = t.settings;
 
+  const isProgressiveBlurSupported = useMemo(() => supportsProgressiveBlur(), []);
+  const progressiveBlurState = resolveProgressiveBlurState({
+      isSupported: isProgressiveBlurSupported,
+      disableBlur,
+      enableProgressiveBlur,
+  });
+  const isMobileProgressiveActive = progressiveBlurState.isEffectActive;
+  const mobileActiveTabBg = isMobileProgressiveActive
+      ? 'bg-white/75 dark:bg-slate-800/75 md:bg-white md:dark:bg-slate-800 md:shadow-none'
+      : 'bg-white dark:bg-slate-800 shadow-sm md:shadow-none';
+
   // Helper for Nav Titles
   const getNavTitle = (key: keyof Translation['settings']['nav']) => {
       return settings.nav[key];
@@ -242,13 +259,29 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {({ close: _close }) => (
               <>
                   {/* Layout Container */}
-                  <div className="flex flex-col md:flex-row flex-1 overflow-hidden h-full">
+                  <div className="flex flex-col md:flex-row flex-1 overflow-hidden h-full relative">
 
-                      {/* Navigation Tabs */}
-                      <div
-                          ref={tabsContainerRef}
-                          className="flex md:flex-col border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 md:w-56 overflow-x-auto md:overflow-visible scrollbar-hide"
-                      >
+                      {/* Navigation Tabs (Mobile floating progressive-blur backdrop; Desktop left sidebar unchanged) */}
+                      <div className="absolute inset-x-0 top-0 z-20 md:static md:z-auto md:w-56 md:shrink-0 md:border-r md:border-slate-100 md:dark:border-slate-700 md:bg-slate-50 md:dark:bg-slate-900/50">
+                          <ProgressiveBlur
+                              enabled={enableProgressiveBlur}
+                              disabled={disableBlur}
+                              baseBlur={0}
+                              maxBlur={14}
+                              maskStart="46%"
+                              maskEnd="98%"
+                              overlayAlpha={0.76}
+                              className={
+                                  isMobileProgressiveActive
+                                      ? 'md:hidden absolute inset-x-0 top-0 -bottom-8'
+                                      : 'md:hidden absolute inset-0'
+                              }
+                              fallbackClassName="border-b border-slate-100 dark:border-slate-700"
+                          />
+                          <div
+                              ref={tabsContainerRef}
+                              className="relative z-10 flex md:flex-col overflow-x-auto md:overflow-visible scrollbar-hide"
+                          >
                           <button
                               onClick={() => handleTabChange('general')}
                               data-active={activeTab === 'general'}
@@ -257,8 +290,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
                                   ${activeTab === 'general'
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
-                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                                      ? `border-indigo-500 text-indigo-600 dark:text-indigo-400 ${mobileActiveTabBg}`
+                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'}
                               `}
                           >
                               <Sliders size={16} />
@@ -272,8 +305,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
                                   ${activeTab === 'appearance'
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
-                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                                      ? `border-indigo-500 text-indigo-600 dark:text-indigo-400 ${mobileActiveTabBg}`
+                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'}
                               `}
                           >
                               <Palette size={16} />
@@ -287,8 +320,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
                                   ${activeTab === 'storage'
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
-                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                                      ? `border-indigo-500 text-indigo-600 dark:text-indigo-400 ${mobileActiveTabBg}`
+                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'}
                               `}
                           >
                               <Database size={16} />
@@ -302,8 +335,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
                                   ${activeTab === 'res'
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
-                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                                      ? `border-indigo-500 text-indigo-600 dark:text-indigo-400 ${mobileActiveTabBg}`
+                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'}
                               `}
                           >
                               <Activity size={16} />
@@ -317,8 +350,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
                                   ${activeTab === 'mod'
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
-                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                                      ? `border-indigo-500 text-indigo-600 dark:text-indigo-400 ${mobileActiveTabBg}`
+                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'}
                               `}
                           >
                               <Package size={16} />
@@ -332,8 +365,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
                                   ${activeTab === 'ver'
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
-                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                                      ? `border-indigo-500 text-indigo-600 dark:text-indigo-400 ${mobileActiveTabBg}`
+                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'}
                               `}
                           >
                               <Layers size={16} />
@@ -347,17 +380,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                   flex-1 md:flex-none justify-center md:justify-start
                                   border-b-2 md:border-b-0 md:border-l-[3px]
                                   ${activeTab === 'dev'
-                                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm md:shadow-none'
-                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                                      ? `border-indigo-500 text-indigo-600 dark:text-indigo-400 ${mobileActiveTabBg}`
+                                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'}
                               `}
                           >
                               <Terminal size={16} />
                               {getNavTitle('developer')}
                           </button>
+                          </div>
                       </div>
 
-                      {/* Content Area */}
-                      <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
+                      {/* Content Area (Mobile gets top padding matching floating tab height so content scrolls smoothly underneath) */}
+                      <div className="flex-1 h-full overflow-y-auto px-6 pb-6 pt-[4.25rem] md:pt-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar relative">
                           {isTabLoading ? (
                               <div
                                   className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200"
@@ -391,6 +425,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                               toggleGlobalHideScrollbar={toggleGlobalHideScrollbar}
                               disableBlur={disableBlur}
                               toggleDisableBlur={toggleDisableBlur}
+                              enableProgressiveBlur={enableProgressiveBlur}
+                              toggleEnableProgressiveBlur={toggleEnableProgressiveBlur}
                               disableAnimations={disableAnimations}
                               toggleDisableAnimations={toggleDisableAnimations}
                               disableTabAnimations={disableTabAnimations}

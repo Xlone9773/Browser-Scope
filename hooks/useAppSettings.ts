@@ -41,6 +41,10 @@ export function useAppSettings() {
   const [disableBlur, setDisableBlur] = useState<boolean>(
     () => localStorage.getItem("disableBlur") === "true",
   );
+  const [enableProgressiveBlur, setEnableProgressiveBlur] = useState<boolean>(() => {
+    const saved = localStorage.getItem("enableProgressiveBlur");
+    return saved === null ? true : saved === "true";
+  });
   const [disableAnimations, setDisableAnimations] = useState<boolean>(
     () => localStorage.getItem("disableAnimations") === "true",
   );
@@ -350,6 +354,11 @@ export function useAppSettings() {
     localStorage.setItem("disableBlur", String(value));
   }, []);
 
+  const toggleEnableProgressiveBlur = useCallback((value: boolean) => {
+    setEnableProgressiveBlur(value);
+    localStorage.setItem("enableProgressiveBlur", String(value));
+  }, []);
+
   const toggleDisableAnimations = useCallback((value: boolean) => {
     setDisableAnimations(value);
     localStorage.setItem("disableAnimations", String(value));
@@ -514,6 +523,8 @@ export function useAppSettings() {
     updateTimeFormat,
     disableBlur,
     toggleDisableBlur,
+    enableProgressiveBlur,
+    toggleEnableProgressiveBlur,
     disableAnimations,
     toggleDisableAnimations,
     disableTabAnimations,

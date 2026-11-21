@@ -118,6 +118,12 @@ export const settings = {
             title: "Disable Blur",
             desc: "Disable blur effects and transparency to improve UI fluidity."
         },
+        progressiveBlur: {
+            title: "Progressive Blur (Pilot)",
+            desc: "Apply multi-layer gradient backdrop blur behind floating navigation tabs (currently active on mobile Settings).",
+            unsupportedHint: "Your browser does not support backdrop-filter + mask-image progressive blur compositing.",
+            disabledByBlurHint: "Automatically suspended while Global Disable Blur is enabled; falls back to an opaque backing plate."
+        },
         animations: {
             title: "Disable Animations",
             desc: "Turn off all page transitions and card loading animations."

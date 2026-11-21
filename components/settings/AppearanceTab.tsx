@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { RotateCcw, Check, Type } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Select, SelectColor } from '../ui/Select';
@@ -7,6 +7,7 @@ import { Translation } from '../../utils/i18n/types';
 import { FONTS_LIST, isFontCompatibleWithLang } from '../../utils/fonts';
 import { useToast } from '../../hooks/useToast';
 import { Language } from '../../utils/i18n/types';
+import { resolveProgressiveBlurState, supportsProgressiveBlur } from '../../utils/progressiveBlur';
 
 
 
@@ -47,6 +48,8 @@ interface AppearanceTabProps {
     toggleGlobalHideScrollbar: (value: boolean) => void;
     disableBlur: boolean;
     toggleDisableBlur: (value: boolean) => void;
+    enableProgressiveBlur?: boolean;
+    toggleEnableProgressiveBlur?: (value: boolean) => void;
     disableAnimations: boolean;
     toggleDisableAnimations: (value: boolean) => void;
     disableTabAnimations?: boolean;
@@ -91,6 +94,8 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
     toggleGlobalHideScrollbar,
     disableBlur,
     toggleDisableBlur,
+    enableProgressiveBlur = true,
+    toggleEnableProgressiveBlur,
     disableAnimations,
     toggleDisableAnimations,
     disableTabAnimations = false,
@@ -129,6 +134,18 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    const isProgressiveSupported = useMemo(() => supportsProgressiveBlur(), []);
+    const pbState = resolveProgressiveBlurState({
+        isSupported: isProgressiveSupported,
+        disableBlur,
+        enableProgressiveBlur,
+    });
+    const handleProgressiveBlurToggle = (nextVal: boolean) => {
+        if (!pbState.isToggleDisabled && toggleEnableProgressiveBlur) {
+            toggleEnableProgressiveBlur(nextVal);
+        }
+    };
 
     const toast = useToast();
     const fontT = t.fontSettings || {
@@ -454,6 +471,41 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
                 </div>
                 <div onClick={(e) => e.stopPropagation()}>
                     <Switch checked={disableBlur} onChange={toggleDisableBlur} />
+                </div>
+            </div>
+            {/* Progressive Blur Pilot Toggle */}
+            <div
+                className={`p-5 rounded-xl border shadow-sm flex items-center justify-between transition-colors ${
+                    pbState.isToggleDisabled
+                        ? 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800 opacity-50 cursor-not-allowed'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-200 dark:hover:border-indigo-800'
+                }`}
+                onClick={() => handleProgressiveBlurToggle(!enableProgressiveBlur)}
+            >
+                <div className="flex flex-col gap-1 pr-4">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        {t.progressiveBlur?.title || 'Progressive Blur (Pilot)'}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        {t.progressiveBlur?.desc || 'Apply multi-layer gradient backdrop blur behind floating mobile Settings tabs.'}
+                    </p>
+                    {!pbState.isSupported ? (
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                            {t.progressiveBlur?.unsupportedHint || 'Current browser does not support progressive backdrop-filter masking.'}
+                        </p>
+                    ) : pbState.isBlockedByDisableBlur ? (
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                            {t.progressiveBlur?.disabledByBlurHint || 'Suspended while Disable Blur is enabled; using opaque backing plate.'}
+                        </p>
+                    ) : null}
+                </div>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Switch
+                        checked={pbState.isSwitchChecked}
+                        onChange={handleProgressiveBlurToggle}
+                        disabled={pbState.isToggleDisabled}
+                        label={t.progressiveBlur?.title || 'Progressive Blur'}
+                    />
                 </div>
             </div>
             {/* Hide Scrollbar Toggle */}

@@ -26,6 +26,8 @@ interface ModalContainerProps {
   setTimeFormat: (format: "12" | "24") => void;
   disableBlur: boolean;
   toggleDisableBlur: (disable: boolean) => void;
+  enableProgressiveBlur?: boolean;
+  toggleEnableProgressiveBlur?: (enable: boolean) => void;
   disableAnimations: boolean;
   toggleDisableAnimations: (disable: boolean) => void;
   disableTabAnimations?: boolean;
@@ -106,6 +108,8 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   setTimeFormat,
   disableBlur,
   toggleDisableBlur,
+  enableProgressiveBlur,
+  toggleEnableProgressiveBlur,
   disableAnimations,
   toggleDisableAnimations,
   disableTabAnimations,
@@ -271,6 +275,8 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
             setTimeFormat={setTimeFormat}
             disableBlur={disableBlur}
             toggleDisableBlur={toggleDisableBlur}
+            enableProgressiveBlur={enableProgressiveBlur}
+            toggleEnableProgressiveBlur={toggleEnableProgressiveBlur}
             disableAnimations={disableAnimations}
             toggleDisableAnimations={toggleDisableAnimations}
             disableTabAnimations={disableTabAnimations}

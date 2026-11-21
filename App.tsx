@@ -46,6 +46,8 @@ const App: React.FC = () => {
     updateTimeFormat,
     disableBlur,
     toggleDisableBlur,
+    enableProgressiveBlur,
+    toggleEnableProgressiveBlur,
     disableAnimations,
     toggleDisableAnimations,
     disableTabAnimations,
@@ -838,6 +840,8 @@ const App: React.FC = () => {
         setTimeFormat={updateTimeFormat}
         disableBlur={disableBlur}
         toggleDisableBlur={toggleDisableBlur}
+        enableProgressiveBlur={enableProgressiveBlur}
+        toggleEnableProgressiveBlur={toggleEnableProgressiveBlur}
         disableAnimations={disableAnimations}
         toggleDisableAnimations={toggleDisableAnimations}
         disableTabAnimations={disableTabAnimations}
